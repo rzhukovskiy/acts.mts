@@ -1,0 +1,11 @@
+body {
+    background-color: #dededc;
+    }
+
+.login-form {
+    margin-top: 100px;
+    width: 300px;
+    }
+    .login-form button {
+        width: 300px;
+        }
