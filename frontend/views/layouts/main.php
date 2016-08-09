@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use common\widgets\Menu\menuLeftWidget;
 
 AppAsset::register($this);
 ?>
@@ -28,16 +29,16 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Мтранссервис::Акты',
+        'brandLabel' => 'Мтранссервис',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-default',
         ],
     ]);
-    $menuItems = [];
-    if (!empty(Yii::$app->user->identity->username)) {
-        $menuItems[] = ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout']];
-    }
+        $menuItems = [];
+        if (!\Yii::$app->user->isGuest) {
+            $menuItems[] = [ 'label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => [ '/site/logout' ] ];
+        }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
@@ -45,9 +46,19 @@ AppAsset::register($this);
     NavBar::end();
     ?>
 
-    <div class="container">
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3">
+                <?= menuLeftWidget::widget() ?>
+            </div>
+            <div class="col-sm-9">
+                <?= Breadcrumbs::widget([
+                    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                ]) ?>
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
+        </div>
     </div>
 </div>
 
