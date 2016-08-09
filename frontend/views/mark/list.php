@@ -15,7 +15,7 @@
     $this->title = 'Марки';
     $this->params[ 'breadcrumbs' ][] = $this->title;
 ?>
-<div class="mark-index">
+<div class="mark-list">
 
     <?= Tabs::widget( [
         'items' => [

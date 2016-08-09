@@ -15,7 +15,7 @@
     $this->title = 'Виды ТС';
     $this->params[ 'breadcrumbs' ][] = $this->title;
 ?>
-<div class="type-index">
+<div class="type-list">
 
     <?= Tabs::widget( [
         'items' => [
