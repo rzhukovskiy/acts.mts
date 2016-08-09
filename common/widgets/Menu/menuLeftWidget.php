@@ -46,7 +46,7 @@
                 ],
                 [
                     'label' => 'Пользователи',
-                    'url' => [ '/user' ],
+                    //'url' => [ '/user' ],
                 ],
                 [
                     'label' => 'Карты',
@@ -58,31 +58,31 @@
                 ],
                 [
                     'label' => 'Типы ТС',
-                    'url' => [ '/car/type' ],
+                    //'url' => [ '/car/type' ],
                 ],
                 [
                     'label' => 'История машин',
-                    'url' => [ '/car/history' ],
+                    //'url' => [ '/car/history' ],
                 ],
                 [
                     'label' => 'Кол-во ТС',
-                    'url' => [ '/car/list/count' ],
+                    'url' => [ '/car-count/list' ],
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    'url' => [ '/statistic/partner' ],
+                    //'url' => [ '/statistic/partner' ],
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    'url' => [ '/statistic/company' ],
+                    //'url' => [ '/statistic/company' ],
                 ],
                 [
                     'label' => 'Акты',
-                    'url' => [ '/act' ],
+                    //'url' => [ '/act' ],
                 ],
                 [
                     'label' => 'Ошибочные акты',
-                    'url' => [ '/act/list/error' ],
+                    //'url' => [ '/act/list/error' ],
                 ],
                 [
                     'label' => 'Выход',

@@ -16,6 +16,8 @@ use Yii;
  */
 class Car extends \yii\db\ActiveRecord
 {
+    public $carsCountByType;
+
     /**
      * @inheritdoc
      */
@@ -43,11 +45,11 @@ class Car extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'company_id' => 'Company ID',
-            'number' => 'Number',
-            'mark_id' => 'Mark ID',
-            'type_id' => 'Type ID',
-            'is_infected' => 'Is Infected',
+            'company_id' => 'Компания',
+            'number' => 'Номер',
+            'mark_id' => 'Марка',
+            'type_id' => 'Тип',
+            'is_infected' => 'Дизенфицировать',
         ];
     }
 
