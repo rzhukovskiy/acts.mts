@@ -1,6 +1,6 @@
 <?php
 
-    use common\widgets\Tabs\TabsWidget;
+    use yii\bootstrap\Tabs;
     use yii\grid\GridView;
     use yii\helpers\Html;
     use yii\widgets\Pjax;
@@ -17,10 +17,17 @@
 ?>
 <div class="mark-index">
 
-    <?= TabsWidget::widget( [
+    <?= Tabs::widget( [
         'items' => [
-            'type' => [ 'url' => '/type', 'name' => 'Виды ТС' ],
-            'list' => [ 'url' => '/mark', 'name' => 'Марки ТС' ],
+            [
+                'label' => 'Марки ТС',
+                'url' => false,
+                'active' => true
+            ],
+            [
+                'label' => 'Виды ТС',
+                'url' => '/type',
+            ],
         ]
     ] ) ?>
     <h1><?= Html::encode( $this->title ) ?></h1>
@@ -47,7 +54,7 @@
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{delete}',
                 'buttons' => [
-                    'update' => function ( $url, $model ) {
+                    'update' => function ( $url ) {
                         return Html::a(
                             '<span class="glyphicon glyphicon-screenshot"></span>',
                             $url );
@@ -56,4 +63,5 @@
             ],
         ],
     ] ); ?>
-    <?php Pjax::end(); ?></div>
+    <?php Pjax::end(); ?>
+</div>
