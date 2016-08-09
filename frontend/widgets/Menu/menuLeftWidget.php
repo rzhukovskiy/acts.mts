@@ -6,7 +6,7 @@
      * Time: 19:23
      */
 
-    namespace common\widgets\Menu;
+    namespace frontend\widgets\Menu;
 
     use yii\bootstrap\Widget;
 
@@ -32,7 +32,7 @@
         public $items;
 
         //инициализация пунктов меню
-        public function getItems()
+        protected function getItems()
         {
             if ( !empty( $this->items ) )
                 return $this->items;
@@ -55,6 +55,7 @@
                 [
                     'label' => 'Типы и марки ТС',
                     'url' => [ '/mark/list' ],
+                    'active' => in_array(\Yii::$app->controller->id, ['mark', 'type']),
                 ],
                 [
                     'label' => 'Типы ТС',
@@ -67,6 +68,7 @@
                 [
                     'label' => 'Кол-во ТС',
                     'url' => [ '/car-count/list' ],
+                    'active' => \Yii::$app->controller->id == 'car-count',
                 ],
                 [
                     'label' => 'Статистика партнеров',
