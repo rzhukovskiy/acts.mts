@@ -27,31 +27,21 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'Мтранссервис',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar navbar-default',
-        ],
-    ]);
-        $menuItems = [];
-        if (!\Yii::$app->user->isGuest) {
-            $menuItems[] = [ 'label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => [ '/site/logout' ] ];
-        }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
-
     <div class="container-fluid">
+        <div class="row top">
+            <div class="col-sm-12">
+            <?= Html::a(
+                'Выход (' . Yii::$app->user->identity->username . ')',
+                '/site/logout',
+                ['class' => 'btn btn-primary btn-sm pull-right']
+            ) ?>
+            </div>
+        </div>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <?= menuLeftWidget::widget() ?>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
                 <?= Breadcrumbs::widget([
                     'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                 ]) ?>

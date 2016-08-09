@@ -8,12 +8,12 @@
  */
 $this->title = \common\models\Company::$listType[$type]['ru'];
 
-echo $this->render('_form', [
+echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form', [
     'model' => $model,
     'type' => $type,
 ]);
 
-echo $this->render($listType[$type]['en'] . '/_list', [
+echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_list', [
     'dataProvider' => $dataProvider,
     'type' => $type,
 ]);

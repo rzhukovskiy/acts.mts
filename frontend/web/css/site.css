@@ -1,5 +1,12 @@
 body {
     background-color: #dededc;
+    font-size: 14px;
+    }
+.top {
+    margin: 10px 0;
+    }
+.panel-body {
+    padding: 0;
     }
 
 .login-form {

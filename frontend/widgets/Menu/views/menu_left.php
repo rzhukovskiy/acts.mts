@@ -15,5 +15,6 @@
 
     echo Menu::widget( [
         'items' => $items,
-        'options' => ['class' => 'nav nav-pills nav-stacked']
+        'options' => ['class' => 'list-group'],
+        'itemOptions' => ['class' => 'list-group-item'],
     ] );

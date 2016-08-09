@@ -8,6 +8,7 @@
 
     namespace frontend\widgets\Menu;
 
+    use common\models\Company;
     use yii\bootstrap\Widget;
 
     class menuLeftWidget extends Widget
@@ -39,10 +40,28 @@
 
             $items = [
                 [
-                    'label' => 'Услуги',
+                    'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_OWNER ],
                 ],
                 [
-                    'label' => '—',
+                    'label' => Company::$listType[Company::TYPE_WASH]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_WASH ],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_SERVICE]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_SERVICE ],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_TIRES]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_TIRES ],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_DISINFECT]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_DISINFECT ],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
+                    'url' => [ '/company/list?type=' . Company::TYPE_UNIVERSAL ],
                 ],
                 [
                     'label' => 'Пользователи',
@@ -85,16 +104,6 @@
                 [
                     'label' => 'Ошибочные акты',
                     //'url' => [ '/act/list/error' ],
-                ],
-                [
-                    'label' => 'Выход',
-                    'url' => [ '/site/logout' ],
-                    'visible' => !(\Yii::$app->user->isGuest),
-                ],
-                [
-                    'label' => 'Вход',
-                    'url' => [ '/site/login' ],
-                    'visible' => \Yii::$app->user->isGuest,
                 ],
             ];
 
