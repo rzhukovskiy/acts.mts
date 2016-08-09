@@ -58,17 +58,17 @@ class m130524_201442_init extends Migration
         }
 
 
-        $this->createIndex('idx_UNIQUE_name_83_00','acts_company','name',1);
-        $this->createIndex('idx_address_83_01','acts_company','address',0);
-        $this->createIndex('idx_parent_id_83_02','acts_company','parent_id',0);
-        $this->createIndex('idx_UNIQUE_username_85_03','acts_user','username',1);
-        $this->createIndex('idx_UNIQUE_email_85_04','acts_user','email',1);
-        $this->createIndex('idx_UNIQUE_password_reset_token_85_05','acts_user','password_reset_token',1);
-        $this->createIndex('idx_company_id_85_06','acts_user','company_id',0);
+        $this->createIndex('idx_UNIQUE_name_83_00','{{%company}}','name',1);
+        $this->createIndex('idx_address_83_01','{{%company}}','address',0);
+        $this->createIndex('idx_parent_id_83_02','{{%company}}','parent_id',0);
+        $this->createIndex('idx_UNIQUE_username_85_03','{{%user}}','username',1);
+        $this->createIndex('idx_UNIQUE_email_85_04','{{%user}}','email',1);
+        $this->createIndex('idx_UNIQUE_password_reset_token_85_05','{{%user}}','password_reset_token',1);
+        $this->createIndex('idx_company_id_85_06','{{%user}}','company_id',0);
 
         $this->execute('SET foreign_key_checks = 0');
-        $this->addForeignKey('fk_acts_company_83_00','{{%acts_company}}', 'parent_id', '{{%acts_company}}', 'id', 'CASCADE', 'CASCADE' );
-        $this->addForeignKey('fk_acts_company_85_01','{{%acts_user}}', 'company_id', '{{%acts_company}}', 'id', 'CASCADE', 'CASCADE' );
+        $this->addForeignKey('fk_acts_company_83_00','{{%company}}', 'parent_id', '{{%company}}', 'id', 'CASCADE', 'CASCADE' );
+        $this->addForeignKey('fk_acts_company_85_01','{{%user}}', 'company_id', '{{%company}}', 'id', 'CASCADE', 'CASCADE' );
         $this->execute('SET foreign_key_checks = 1;');
     }
 
