@@ -12,8 +12,3 @@ echo $this->render('_form', [
     'model' => $model,
     'type' => $type,
 ]);
-
-echo $this->render($listType[$type]['en'] . '/_list', [
-    'dataProvider' => $dataProvider,
-    'type' => $type,
-]);
