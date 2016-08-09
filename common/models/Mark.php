@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\query\MarkQuery;
 
 /**
  * This is the model class for table "{{%mark}}".
@@ -39,7 +40,7 @@ class Mark extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Название',
         ];
     }
 
@@ -49,6 +50,6 @@ class Mark extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \common\models\query\MarkQuery(get_called_class());
+        return new MarkQuery(get_called_class());
     }
 }
