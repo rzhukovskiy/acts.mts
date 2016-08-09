@@ -52,7 +52,9 @@ AppAsset::register($this);
                 <?= menuLeftWidget::widget() ?>
             </div>
             <div class="col-sm-9">
-                <?= Breadcrumbs::widget() ?>
+                <?= Breadcrumbs::widget([
+                    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                ]) ?>
                 <?= Alert::widget() ?>
                 <?= $content ?>
             </div>
