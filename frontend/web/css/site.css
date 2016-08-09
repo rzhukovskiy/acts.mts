@@ -9,3 +9,18 @@ body {
     .login-form button {
         width: 300px;
         }
+
+/* footer */
+.footer {
+    text-align: center;
+}
+.footer a {
+    background: url('../images/logo.png') 40px 0 no-repeat;
+    display: inline-block;
+    font-size: 16px;
+    height: 120px;
+    line-height: 240px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    width: 200px;
+}
