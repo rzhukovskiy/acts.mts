@@ -1,8 +1,10 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Company;
 use common\models\User;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
@@ -91,7 +93,7 @@ class SiteController extends Controller
             return Yii::$app->getResponse()->redirect('site/index');
         }
         if (Yii::$app->user->can(User::ROLE_ADMIN)) {
-            return Yii::$app->getResponse()->redirect('company/list');
+            return Yii::$app->getResponse()->redirect(Url::toRoute(['company/list', 'type' => Company::TYPE_OWNER]));
         }
     }
 }
