@@ -9,11 +9,8 @@ class m130524_201442_init extends Migration
         $tables = Yii::$app->db->schema->getTableNames();
         $dbType = $this->db->driverName;
         $tableOptions_mysql = "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB";
-        $tableOptions_mssql = "";
-        $tableOptions_pgsql = "";
-        $tableOptions_sqlite = "";
-        /* MYSQL */
-        if (!in_array('company', $tables))  {
+
+        if (!in_array('acts_company', $tables))  {
             if ($dbType == "mysql") {
                 $this->createTable('{{%company}}', [
                     'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
@@ -37,8 +34,7 @@ class m130524_201442_init extends Migration
             }
         }
 
-        /* MYSQL */
-        if (!in_array('user', $tables))  {
+        if (!in_array('acts_user', $tables))  {
             if ($dbType == "mysql") {
                 $this->createTable('{{%user}}', [
                     'id' => 'INT(11) NOT NULL AUTO_INCREMENT',

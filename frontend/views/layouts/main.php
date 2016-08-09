@@ -34,7 +34,10 @@ AppAsset::register($this);
             'class' => 'navbar navbar-default',
         ],
     ]);
-    $menuItems[] = ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout']];
+    $menuItems = [];
+    if (!empty(Yii::$app->user->identity->username)) {
+        $menuItems[] = ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout']];
+    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
