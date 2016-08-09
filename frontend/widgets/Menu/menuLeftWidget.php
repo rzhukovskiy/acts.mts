@@ -6,7 +6,7 @@
      * Time: 19:23
      */
 
-    namespace common\widgets\Menu;
+    namespace frontend\widgets\Menu;
 
     use yii\bootstrap\Widget;
 
@@ -32,7 +32,7 @@
         public $items;
 
         //инициализация пунктов меню
-        public function getItems()
+        protected function getItems()
         {
             if ( !empty( $this->items ) )
                 return $this->items;
