@@ -52,11 +52,9 @@ AppAsset::register($this);
     </div>
 </div>
 
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; Mtransservice <?= date('Y') ?></p>
-    </div>
-</footer>
+
+    <?=$this->render('parts/_footer') ?>
+
 
 <?php $this->endBody() ?>
 </body>
