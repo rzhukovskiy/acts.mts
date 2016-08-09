@@ -58,6 +58,9 @@
          */
         private function getActiveElement()
         {
+            if (empty($this->items))
+                return null;
+
             $active = \Yii::$app->controller->action->id;
 
             foreach ( $this->items as $key => $item ) {
