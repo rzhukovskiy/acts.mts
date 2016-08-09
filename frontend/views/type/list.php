@@ -21,7 +21,7 @@
         'items' => [
             [
                 'label' => 'Марки ТС',
-                'url' => '/mark',
+                'url' => '/mark/list',
             ],
             [
                 'label' => 'Виды ТС',

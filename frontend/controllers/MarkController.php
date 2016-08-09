@@ -33,7 +33,7 @@ class MarkController extends Controller
      * Lists all Mark models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionList()
     {
         $request = Yii::$app->request;
 
@@ -45,7 +45,7 @@ class MarkController extends Controller
         if ($model->load($request->post()) && $model->save())
             return $this->refresh();
 
-        return $this->render('index', [
+        return $this->render('list', [
             'model' => $model,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
