@@ -16,9 +16,9 @@
             $canAccess = !isset( $value[ 'role' ] ) || Yii::$app->user->checkAccess( $value[ 'role' ]);
             if ( $canAccess )
                 if ( $key == $active )
-                    $this->render( 'tabsmenu/_item_active', array( 'key' => $key, 'value' => $value ) );
+                    $this->render( '_item_active', array( 'key' => $key, 'value' => $value ) );
                 else
-                    $this->render( 'tabsmenu/_item', array( 'key' => $key, 'value' => $value ) );
+                    $this->render( '_item', array( 'key' => $key, 'value' => $value ) );
         }
     ?>
 </ul><!--maintabmenu-->
