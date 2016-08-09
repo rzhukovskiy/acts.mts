@@ -41,8 +41,8 @@ class Type extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'image' => 'Image',
+            'name' => 'Название',
+            'image' => 'Изображение',
         ];
     }
 
