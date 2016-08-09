@@ -46,7 +46,7 @@
                 ],
                 [
                     'label' => 'Пользователи',
-                    'url' => [ '/user' ],
+                    //'url' => [ '/user' ],
                 ],
                 [
                     'label' => 'Карты',
@@ -54,35 +54,37 @@
                 ],
                 [
                     'label' => 'Типы и марки ТС',
-                    'url' => [ '/mark' ],
+                    'url' => [ '/mark/list' ],
+                    'active' => in_array(\Yii::$app->controller->id, ['mark', 'type']),
                 ],
                 [
                     'label' => 'Типы ТС',
-                    'url' => [ '/car/type' ],
+                    //'url' => [ '/car/type' ],
                 ],
                 [
                     'label' => 'История машин',
-                    'url' => [ '/car/history' ],
+                    //'url' => [ '/car/history' ],
                 ],
                 [
                     'label' => 'Кол-во ТС',
-                    'url' => [ '/car/list/count' ],
+                    'url' => [ '/car-count/list' ],
+                    'active' => \Yii::$app->controller->id == 'car-count',
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    'url' => [ '/statistic/partner' ],
+                    //'url' => [ '/statistic/partner' ],
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    'url' => [ '/statistic/company' ],
+                    //'url' => [ '/statistic/company' ],
                 ],
                 [
                     'label' => 'Акты',
-                    'url' => [ '/act' ],
+                    //'url' => [ '/act' ],
                 ],
                 [
                     'label' => 'Ошибочные акты',
-                    'url' => [ '/act/list/error' ],
+                    //'url' => [ '/act/list/error' ],
                 ],
                 [
                     'label' => 'Выход',

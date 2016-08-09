@@ -15,4 +15,5 @@
 
     echo Menu::widget( [
         'items' => $items,
+        'options' => ['class' => 'nav nav-pills nav-stacked']
     ] );
