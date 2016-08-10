@@ -31,3 +31,9 @@ body {
     margin-bottom: 30px;
     width: 200px;
 }
+
+/* end footer */
+
+.list-group-item.active a {
+    color: white;
+}
