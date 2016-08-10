@@ -63,6 +63,7 @@ class CompanyController extends Controller
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'type' => $type,
+            'model' => new Company(),
         ]);
     }
 

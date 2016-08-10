@@ -2,7 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $type integer common\models\Company
+ * @var $type integer
  */
 
 use yii\grid\GridView;

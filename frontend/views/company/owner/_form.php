@@ -1,11 +1,9 @@
 <?php
 
 /**
- * @var $model \common\models\CompanyQuery
- * @var $type integer common\models\Company
+ * @var $model \common\models\Company
+ * @var $type integer
  */
-
-use yii\grid\GridView;
 
 ?>
 <div class="panel panel-primary">

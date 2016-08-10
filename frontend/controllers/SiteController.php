@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\models\Company;
 use common\models\User;
+use frontend\models\SignupForm;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -24,10 +25,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'error'],
+                        'actions' => ['index', 'error', 'signup'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -86,6 +87,27 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+
+    /**
+     * Signs user up.
+     *
+     * @return mixed
+     */
+    public function actionSignup()
+    {
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
 
     public function goHome()
     {
