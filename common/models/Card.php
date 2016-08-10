@@ -33,7 +33,7 @@ class Card extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%service}}';
+        return '{{%card}}';
     }
 
     /**
@@ -78,7 +78,7 @@ class Card extends ActiveRecord
         );
     }
 
-    public function beforeSave()
+    public function beforeSave($insert)
     {
         if ($this->isNewRecord && !$this->number) {
             $salt = self::randomSalt();

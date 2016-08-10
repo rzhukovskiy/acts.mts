@@ -68,6 +68,23 @@ class CompanyController extends Controller
     }
 
     /**
+     * Lists all Company models.
+     * @param integer $type
+     * @return mixed
+     */
+    public function actionCreate($type)
+    {
+        $model = new Company();
+        $model->type = $type;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['company/list', 'type' => $type]);
+        } else {
+            return $this->goBack();
+        }
+    }
+
+    /**
      * Displays a single Company model.
      * @param integer $id
      * @return mixed

@@ -22,6 +22,15 @@ class CompanyQuery extends ActiveQuery
     }
 
     /**
+     * @param integer $type
+     * @return $this
+     */
+    public function byType($type)
+    {
+        return $this->andWhere(['type' => $type]);
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function created()

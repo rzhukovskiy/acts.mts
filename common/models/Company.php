@@ -27,6 +27,9 @@ use yii\db\ActiveRecord;
  * @property Company $parent
  * @property Company[] $children
  * @property Card[] $cards
+ *
+ * @property string $cardList
+ * @property array $requisitesList
  */
 class Company extends ActiveRecord
 {
@@ -94,10 +97,23 @@ class Company extends ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name', 'address'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Название',
+            'address' => 'Город',
+            'parent_id' => 'Родительская',
         ];
     }
 
@@ -131,5 +147,84 @@ class Company extends ActiveRecord
     public function getCards()
     {
         return $this->hasMany(Card::className(), ['company_id' => 'id']);
+    }
+
+    public function getCarsCount()
+    {
+        return count(Car::findAll(['company_id' => $this->id]));
+    }
+
+    public function getTrucksCount()
+    {
+        return count(Car::findAll(['company_id' => $this->id]));
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardsAsString()
+    {
+        $range = '';
+        $previous = -1;
+        $i = 0;
+        $cnt = count($this->cards);
+        foreach ($this->cards as $card) {
+            $i++;
+            if ($card->number - 1 == $previous) {
+                if (substr($range, -1) != '-') {
+                    $range .= '-';
+                }
+            } else {
+                if ($previous > 0) {
+                    if (substr($range, -1) == '-') {
+                        $range .= $previous . ', ';
+                    } else {
+                        $range .= ', ';
+                    }
+                }
+                $range .= $card->number;
+            }
+            if ($i == $cnt) {
+                $range .= $card->number;
+            }
+            $previous = $card->number;
+        }
+
+        return $range;
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (empty($this->parent_id)) {
+            $this->is_main = 1;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!empty($this->cardList)) {
+            $card = new Card();
+            $card->company_id = $this->id;
+            $card->number = $this->cardList;
+            $card->save();
+        }
+
+        if (!empty($this->requisitesList)) {
+            foreach ($this->requisitesList as $requisitesData) {
+                $requisites = new Requisites();
+                $requisites->load($requisitesData);
+                $requisites->save();
+            }
+        }
     }
 }
