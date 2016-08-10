@@ -42,6 +42,7 @@
                 [
                     'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
                     'url' => [ '/company/list?type=' . Company::TYPE_OWNER ],
+                    'active' => (\Yii::$app->controller->id == 'company' && \Yii::$app->request->get('type') == Company::TYPE_OWNER),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_WASH]['ru'],
@@ -65,11 +66,13 @@
                 ],
                 [
                     'label' => 'Пользователи',
-                    //'url' => [ '/user' ],
+                    'url' => [ '/user/company' ],
+                    'active' => \Yii::$app->controller->id == 'user',
                 ],
                 [
                     'label' => 'Карты',
-                    'url' => [ '/card' ],
+                    'url' => [ '/card/list' ],
+                    'active' => \Yii::$app->controller->id == 'card',
                 ],
                 [
                     'label' => 'Типы и марки ТС',
@@ -78,11 +81,13 @@
                 ],
                 [
                     'label' => 'Типы ТС',
-                    //'url' => [ '/car/type' ],
+                    'url' => [ '/image/list' ],
+                    'active' => \Yii::$app->controller->id == 'image',
                 ],
                 [
                     'label' => 'История машин',
-                    //'url' => [ '/car/history' ],
+                    'url' => [ '/car/list' ],
+                    'active' => \Yii::$app->controller->id == 'car',
                 ],
                 [
                     'label' => 'Кол-во ТС',
@@ -91,19 +96,23 @@
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    //'url' => [ '/statistic/partner' ],
+                    'url' => [ '/statistic/list', 'type' => 2 ],
+                    'active' => \Yii::$app->controller->id == 'statistic',
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    //'url' => [ '/statistic/company' ],
+                    'url' => [ '/company-statistic/list', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'company-statistic',
                 ],
                 [
                     'label' => 'Акты',
-                    //'url' => [ '/act' ],
+                    'url' => [ '/act/list', 'type' => 2 ],
+                    'active' => \Yii::$app->controller->id == 'act',
                 ],
                 [
                     'label' => 'Ошибочные акты',
-                    //'url' => [ '/act/list/error' ],
+                    'url' => [ '/archive/error', 'type' => 2 ],
+                    'active' => \Yii::$app->controller->id == 'archive',
                 ],
             ];
 
