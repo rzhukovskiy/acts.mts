@@ -1,11 +1,10 @@
 <?php
 namespace common\models;
 
+use common\models\query\CompanyQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use common\models\Card;
 
 /**
  * Company model
@@ -15,9 +14,7 @@ use common\models\Card;
  * @property string $name
  * @property string $address
  * @property string $phone
- * @property string $contact
- * @property string $contract
- * @property string $act_header
+ * @property string $director
  * @property integer $type
  * @property integer $status
  * @property integer $is_split
@@ -99,6 +96,7 @@ class Company extends ActiveRecord
         return [
             [['name'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
     }
@@ -133,24 +131,5 @@ class Company extends ActiveRecord
     public function getCards()
     {
         return $this->hasMany(Card::className(), ['company_id' => 'id']);
-    }
-}
-
-class CompanyQuery extends ActiveQuery
-{
-    /**
-     * @return ActiveQuery
-     */
-    public function active()
-    {
-        return $this->andWhere(['status' => Company::STATUS_ACTIVE]);
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function created()
-    {
-        return $this->andWhere(['status' => Company::STATUS_NEW]);
     }
 }

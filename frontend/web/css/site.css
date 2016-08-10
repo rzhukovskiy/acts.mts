@@ -1,6 +1,6 @@
 body {
     background-color: #dededc;
-    font-size: 14px;
+    font-size: 12px;
     }
 .top {
     margin: 10px 0;
@@ -16,6 +16,7 @@ body {
     .login-form button {
         width: 300px;
         }
+
 
 /* footer */
 .footer {

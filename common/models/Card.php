@@ -3,20 +3,19 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use common\models\Company;
 
 /**
- * This is the model class for table "{{card}}".
+ * Card model
  *
- * The followings are the available columns in table '{{card}}':
  * @property int $id
  * @property int $company_id
  * @property int $number
- * @property int $active
- * @property string $create_date
- * @property Company $cardCompany
+ * @property int $status
+ * @property integer $created_at
+ * @property integer $updated_at
+ *
+ * @property Company $company
  */
 class Card extends ActiveRecord
 {
@@ -25,72 +24,45 @@ class Card extends ActiveRecord
     const STATUS_ACTIVE = 1;
 
     public $cardStatus = array(
-        'Активен',
+        'Активна',
         'Заблокирована'
     );
 
     /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     * @return Card the static model class
+     * @inheritdoc
      */
-    public static function model($className = __CLASS__)
+    public static function tableName()
     {
-        return parent::model($className);
-    }
-
-    public function tableName()
-    {
-        return '{{card}}';
-    }
-
-    public function rules()
-    {
-        return array(
-            array('company_id, number', 'required'),
-            array('id, number, type, active, create_date, cardCompany', 'safe', 'on' => 'search'),
-        );
-    }
-
-    public function relations()
-    {
-        return array(
-            'cardCompany' => array(self::BELONGS_TO, 'Company', 'company_id'),
-        );
+        return '{{%service}}';
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+     * @inheritdoc
      */
-    public function search()
+    public function behaviors()
     {
-        // Warning: Please modify the following code to remove attributes that
-        // should not be searched.
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
 
-        $criteria = new CDbCriteria;
-        $criteria->with = array('cardCompany');
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['number', 'company_id'], 'required'],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+        ];
+    }
 
-        if (!Yii::app()->user->checkAccess(User::ADMIN_ROLE)) {
-            $criteria->compare('company_id', Yii::app()->user->model->company_id);
-            $criteria->compare('cardCompany.parent_id', Yii::app()->user->model->company_id, false, 'OR');
-        }
-
-        $criteria->compare('id', $this->id);
-        $criteria->compare('number', $this->number);
-        $criteria->compare('company_id', $this->company_id);
-        $criteria->compare('active', $this->active);
-
-        $criteria->compare('cardCompany.name', isset($this->cardCompany->name) ? $this->cardCompany->name : $this->cardCompany, true);
-
-        $sort = new CSort;
-        $sort->defaultOrder = 'company_id, number';
-        $sort->applyOrder($criteria);
-
-        return new CActiveDataProvider(get_class($this), array(
-            'criteria' => $criteria,
-            'pagination' => false,
-        ));
+    /**
+     * @return Company
+     */
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
     public function attributeLabels()
@@ -99,9 +71,10 @@ class Card extends ActiveRecord
             'id' => 'ID',
             'number' => 'Номер карты',
             'company_id' => 'Компания',
-            'active' => 'Active',
-            'create_date' => 'Create Date',
-            'card_company' => 'Компания',
+            'status' => 'Статус',
+            'created_at' => 'Создана',
+            'updated_at' => 'Изменена',
+            'company' => 'Компания',
         );
     }
 
@@ -110,7 +83,7 @@ class Card extends ActiveRecord
         if ($this->isNewRecord && !$this->number) {
             $salt = self::randomSalt();
             $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
-        } elseif($this->IsNewRecord) {
+        } elseif($this->getIsNewRecord()) {
             $numPointList = explode('-', $this->number);
             if(count($numPointList) > 1) {
                 for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
