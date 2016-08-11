@@ -1,21 +1,26 @@
 <?php
 
+    use yii\bootstrap\ActiveForm;
     use yii\helpers\Html;
-    use yii\widgets\ActiveForm;
 
     /* @var $this yii\web\View */
-    /* @var $model common\models\Type */
+    /* @var $model common\models\Mark */
     /* @var $form yii\widgets\ActiveForm */
 ?>
-<div class="type-form">
+<div class="mark-form">
     <?php
         $form = ActiveForm::begin();
-
         echo $form->field( $model, 'name' )->textInput( [ 'maxlength' => true ] );
-        //echo $form->field( $model, 'image' )->textInput( [ 'maxlength' => true ] );
+
+        if (!empty($model->image))
+            echo Html::img('/images/cars/'.$model->image, ['style' => 'height: 100px']);
+
+        echo $form->field( $model, 'imageFile' )->fileInput();
     ?>
     <div class="form-group">
-        <?= Html::submitButton( $model->isNewRecord ? 'Создать' : 'Сохранить', [ 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary' ] ) ?>
+        <?= Html::submitButton( $model->isNewRecord ? 'Добавить' : 'Сохранить', [ 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary' ] ) ?>
     </div>
+
     <?php ActiveForm::end(); ?>
+
 </div>

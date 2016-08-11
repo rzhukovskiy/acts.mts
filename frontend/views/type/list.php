@@ -1,68 +1,52 @@
 <?php
-
-    use yii\bootstrap\Tabs;
+    use yii\bootstrap\Html;
     use yii\grid\GridView;
-    use yii\helpers\Html;
-    use yii\widgets\Pjax;
 
     /**
      * @var $this yii\web\View
-     * @var $model \common\models\Type
-     * @var $searchModel common\models\search\TypeSearch
-     * @var $dataProvider yii\data\ActiveDataProvider
+     * @var $dataProvider \yii\data\ActiveDataProvider
+     * @var $newTypeModel \common\models\Type
+     * @var $searchModel \common\models\search\TypeSearch;
      */
 
-    $this->title = 'Виды ТС';
+    $this->title = 'Типы ТС';
     $this->params[ 'breadcrumbs' ][] = $this->title;
 ?>
-<div class="type-list">
-
-    <?= Tabs::widget( [
-        'items' => [
-            [
-                'label' => 'Марки ТС',
-                'url' => '/mark/list',
-            ],
-            [
-                'label' => 'Виды ТС',
-                'url' => false,
-                'active' => true
-            ],
-        ]
-    ] ) ?>
-
-    <h1><?= Html::encode( $this->title ) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= $this->render( '_form', [
-            'model' => $model,
-        ] ) ?>
-    </p>
-    <?php Pjax::begin(); ?>
-    <?= GridView::widget( [
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            [ 'class' => 'yii\grid\SerialColumn' ],
-            [
-                'attribute' => 'name',
-                'content' => function ( $data ) {
-                    return Html::a( $data->name, [ '/type/update', 'id' => $data->id ] );
-                },
-            ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{delete}',
-                'buttons' => [
-                    'update' => function ( $url ) {
-                        return Html::a(
-                            '<span class="glyphicon glyphicon-screenshot"></span>',
-                            $url );
-                    },
-                ],
-            ],
-        ],
-    ] ); ?>
-    <?php Pjax::end(); ?>
+<div class="image-list">
+    <h1 class="page-header"><?= Html::encode( $this->title ) ?></h1>
+    <div class="well">
+        <h4>Добавить тип</h4>
+        <?= $this->render( '_form', [ 'model' => $newTypeModel ] ) ?>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Типы ТС</div>
+        <div class="panel-body">
+            <?php
+                echo GridView::widget( [
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        [ 'class' => 'yii\grid\SerialColumn' ],
+                        [
+                            'attribute' => 'name',
+                            'content' => function ( $data ) {
+                                return Html::a( $data->name, [ 'image/update', 'id' => $data->id ] );
+                            }
+                        ],
+                        [
+                            'attribute' => 'image',
+                            'content' => function ( $data ) {
+                                return Html::img( '/images/cars/' . $data->image, [ 'style' => 'height:100px;' ] );
+                            },
+                            'filter' => false,
+                        ],
+                        [
+                            'class' => 'yii\grid\ActionColumn',
+                            'template' => '{delete}',
+                        ],
+                    ]
+                ] );
+            ?>
+        </div>
+    </div>
 </div>

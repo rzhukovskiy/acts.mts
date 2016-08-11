@@ -81,8 +81,8 @@
                 ],
                 [
                     'label' => 'Типы ТС',
-                    'url' => [ '/image/list' ],
-                    'active' => \Yii::$app->controller->id == 'image',
+                    'url' => [ '/type/list' ],
+                    'active' => \Yii::$app->controller->id == 'type',
                 ],
                 [
                     'label' => 'История машин',
