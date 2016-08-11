@@ -75,9 +75,9 @@
                     'active' => \Yii::$app->controller->id == 'card',
                 ],
                 [
-                    'label' => 'Типы и марки ТС',
+                    'label' => 'Марки ТС',
                     'url' => [ '/mark/list' ],
-                    'active' => in_array(\Yii::$app->controller->id, ['mark', 'type']),
+                    'active' => \Yii::$app->controller->id == 'mark',
                 ],
                 [
                     'label' => 'Типы ТС',

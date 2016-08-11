@@ -63,7 +63,7 @@ class MarkController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['list']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -81,7 +81,7 @@ class MarkController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['list']);
     }
 
     /**
