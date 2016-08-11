@@ -23,17 +23,17 @@ class Card extends ActiveRecord
     const STATUS_NOT_ACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
-    public $cardStatus = array(
+    public $cardStatus = [
         'Активна',
         'Заблокирована'
-    );
+    ];
 
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%service}}';
+        return '{{%card}}';
     }
 
     /**
@@ -78,31 +78,33 @@ class Card extends ActiveRecord
         );
     }
 
-    public function beforeSave()
-    {
-        if ($this->isNewRecord && !$this->number) {
-            $salt = self::randomSalt();
-            $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
-        } elseif($this->getIsNewRecord()) {
-            $numPointList = explode('-', $this->number);
-            if(count($numPointList) > 1) {
-                for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
-                    $card = clone $this;
-                    $card->number = $num;
-                    $card->save();
-                }
-                $this->number = intval($numPointList[1]);
-            }
-            $existed = Card::model()->find('number = :number', [':number' => $this->number]);
-            if ($existed) {
-                Act::model()->updateAll(['is_fixed' => 1], 'card_id = :card_id', [':card_id' => $existed->id]);
-                $existed->company_id = $this->company_id;
-                $existed->save();
-                return false;
-            }
-        }
-        return true;
-    }
+// TODO: refactor to Yii2
+//
+//    public function beforeSave()
+//    {
+//        if ($this->isNewRecord && !$this->number) {
+//            $salt = self::randomSalt();
+//            $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
+//        } elseif($this->getIsNewRecord()) {
+//            $numPointList = explode('-', $this->number);
+//            if(count($numPointList) > 1) {
+//                for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
+//                    $card = clone $this;
+//                    $card->number = $num;
+//                    $card->save();
+//                }
+//                $this->number = intval($numPointList[1]);
+//            }
+//            $existed = Card::model()->find('number = :number', [':number' => $this->number]);
+//            if ($existed) {
+//                Act::model()->updateAll(['is_fixed' => 1], 'card_id = :card_id', [':card_id' => $existed->id]);
+//                $existed->company_id = $this->company_id;
+//                $existed->save();
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     public function randomSalt()
     {
