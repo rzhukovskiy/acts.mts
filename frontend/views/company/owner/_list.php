@@ -10,12 +10,13 @@ use yii\grid\GridView;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">Список компаний</h3>
+        Список компаний
     </div>
     <div class="panel-body">
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
+            'layout' => '{items}',
             'columns' => [
                 [
                     'header' => '№',
@@ -38,7 +39,7 @@ use yii\grid\GridView;
                 [
                     'label' => 'Количество прицепов',
                     'value' => function ($data) {
-                        return $data->tracksCount;
+                        return $data->trucksCount;
                     },
                 ],
                 ['class' => 'yii\grid\ActionColumn'],
