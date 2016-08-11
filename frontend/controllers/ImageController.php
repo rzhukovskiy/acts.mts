@@ -6,12 +6,27 @@
     use Yii;
     use yii\web\Controller;
     use common\models\Type;
-    use yii\data\ActiveDataProvider;
     use yii\web\NotFoundHttpException;
     use yii\web\UploadedFile;
+    use yii\filters\VerbFilter;
 
     class ImageController extends Controller
     {
+        /**
+         * @inheritdoc
+         */
+        public function behaviors()
+        {
+            return [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ];
+        }
+
         /**
          * Lists all Mark models.
          * @return mixed
