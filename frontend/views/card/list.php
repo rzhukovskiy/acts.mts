@@ -1,9 +1,44 @@
 <?php
-/* @var $this yii\web\View */
-?>
-<h1>card/list</h1>
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+    use yii\grid\GridView;
+    use yii\helpers\Html;
+    use yii\widgets\Pjax;
+
+    /**
+     * @var $this yii\web\View
+     * @var $searchModel common\models\search\CardSearch
+     * @var $dataProvider yii\data\ActiveDataProvider
+     * @var $companyDropDownData array
+     */
+
+    $this->title = 'Карты';
+    $this->params[ 'breadcrumbs' ][] = $this->title;
+?>
+<div class="card-index">
+
+    <h1><?= Html::encode( $this->title ) ?></h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Карты в обращении</div>
+        <div class="panel-body">
+            <?php Pjax::begin(); ?>
+            <?= GridView::widget( [
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    [ 'class' => 'yii\grid\SerialColumn' ],
+
+                    'number',
+                    [
+                        'attribute' => 'company_id',
+                        'content' => function ( $data ) {
+                            return $data->company->name;
+                        },
+                        'filter' => Html::activeDropDownList( $searchModel, 'company_id', $companyDropDownData, [ 'class' => 'form-control', 'prompt' => 'Все компании' ] ),
+                    ],
+                ],
+            ] ); ?>
+            <?php Pjax::end(); ?>
+        </div>
+    </div>
+</div>

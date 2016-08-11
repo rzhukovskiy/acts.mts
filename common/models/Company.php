@@ -5,6 +5,7 @@ use common\models\query\CompanyQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * Company model
@@ -131,5 +132,10 @@ class Company extends ActiveRecord
     public function getCards()
     {
         return $this->hasMany(Card::className(), ['company_id' => 'id']);
+    }
+
+    public static function dataDropDownList()
+    {
+        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
     }
 }
