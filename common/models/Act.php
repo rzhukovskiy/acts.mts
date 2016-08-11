@@ -33,6 +33,8 @@ use yii\db\ActiveRecord;
  * @property string $number
  * @property string $extra_number
  *
+ * @property array $serviceList
+ *
  * @property Company $client
  * @property Company $partner
  * @property Type $type
@@ -68,7 +70,7 @@ class Act extends ActiveRecord
     {
         return [
             [['partner_id', 'card_id', 'number'], 'required'],
-            [['mark_id', 'type_id', 'number', 'expense', 'income', 'profit'], 'safe'],
+            [['mark_id', 'type_id', 'number', 'expense', 'income', 'profit', 'service_type', 'serviceList'], 'safe'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
         ];
     }
@@ -145,8 +147,70 @@ class Act extends ActiveRecord
                 $this->mark_id = $car->mark_id;
                 $this->type_id = $car->type_id;
             }
+
+            /**
+             * суммируем все указанные услуги и считаем доход, расход и прибыль\
+             */
+            if (!empty($this->servicesList)) {
+                foreach ($this->servicesList as $serviceData) {
+                    $totalExpense = 0;
+                    $totalIncome = 0;
+
+                    $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                    if (!empty($clientService) && $clientService->service->is_fixed) {
+                        $totalIncome += $clientService->price * $serviceData['amount'];
+                    } else {
+                        $totalIncome += $serviceData['price'] * $serviceData['amount'];
+                    }
+
+                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                    if (!empty($clientService) && $clientService->service->is_fixed) {
+                        $totalExpense += $partnerService->price * $serviceData['amount'];
+                    } else {
+                        $totalExpense += $serviceData['price'] * $serviceData['amount'];
+                    }
+                }
+
+                $this->income = $totalIncome;
+                $this->expense = $totalExpense;
+                $this->profit = $this->income - $this->expense;
+            }
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        /**
+         * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
+         */
+        if (!empty($this->servicesList)) {
+            foreach ($this->servicesList as $serviceData) {
+                if (!empty($serviceData['scope_id'])) {
+                    $scope = ActScope::findOne(['id' => $serviceData['scope_id']]);
+                } else {
+                    $scope = new ActScope();
+                }
+
+                $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                if (!empty($clientService) && $clientService->service->is_fixed) {
+                    $scope->company_service_id = $clientService->id;
+                    $scope->price = $clientService->price;
+                } else {
+                    $scope->price = $serviceData['price'];
+                }
+                $scope->amount = $serviceData['amount'];
+
+                $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                if (!empty($clientService) && $clientService->service->is_fixed) {
+                    $totalExpense += $partnerService->price * $serviceData['amount'];
+                } else {
+                    $totalExpense += $serviceData['price'] * $serviceData['amount'];
+                }
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
     }
 }
