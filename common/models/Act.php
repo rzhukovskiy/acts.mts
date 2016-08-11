@@ -62,6 +62,18 @@ class Act extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['partner_id', 'card_id', 'number'], 'required'],
+            [['mark_id', 'type_id', 'number', 'expense', 'income', 'profit'], 'safe'],
+            ['service_type', 'default', 'value' => Service::TYPE_WASH],
+        ];
+    }
+
+    /**
      * @return Company
      */
     public function getClient()
@@ -107,5 +119,34 @@ class Act extends ActiveRecord
     public function getScopes()
     {
         return $this->hasMany(ActScope::className(), ['act_id' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            //определяем клиента по карте
+            if (empty($this->client_id)) {
+                $card = Card::findOne(['number' => $this->card_id]);
+
+                if (empty($card)) {
+                    return false;
+                }
+
+                $this->client_id = $card->company->id;
+            }
+
+            //номер в верхний регистр
+            $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
+            $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
+
+            //подставляем тип и марку из машины, если нашли по номеру
+            $car = Car::findOne(['number' => $this->number]);
+            if ($car) {
+                $this->mark_id = $car->mark_id;
+                $this->type_id = $car->type_id;
+            }
+        }
+
+        return parent::beforeSave($insert);
     }
 }
