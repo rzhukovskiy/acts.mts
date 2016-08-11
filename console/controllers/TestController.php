@@ -29,17 +29,17 @@
             $users = [
                 [
                     'username' => 'admin',
-                    'role' => 0,
+                    'role' => User::ROLE_ADMIN,
                     'email' => 'admin@admin.ru',
                 ],
                 [
                     'username' => 'client',
-                    'role' => 1,
+                    'role' => User::ROLE_CLIENT,
                     'email' => 'client@client.ru',
                 ],
                 [
                     'username' => 'company',
-                    'role' => 2,
+                    'role' => User::ROLE_PARTNER,
                     'email' => 'company@company.ru',
                 ],
             ];
