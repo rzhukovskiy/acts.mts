@@ -112,7 +112,7 @@ class SiteController extends Controller
     public function goHome()
     {
         if (Yii::$app->user->isGuest) {
-            return $this->redirect('site/index');
+            return $this->redirect('/site/index');
         }
         if (Yii::$app->user->can(User::ROLE_ADMIN)) {
             return $this->redirect(['company/list', 'type' => Company::TYPE_OWNER]);

@@ -196,23 +196,13 @@ class Company extends ActiveRecord
 
     /**
      * @param bool $insert
-     * @return bool
-     */
-    public function beforeSave($insert)
-    {
-        if (empty($this->parent_id)) {
-            $this->is_main = 1;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param bool $insert
      * @param array $changedAttributes
      */
     public function afterSave($insert, $changedAttributes)
     {
+        /**
+         * смотрим есть ли карты и сохраняем
+         */
         if (!empty($this->cardList)) {
             $card = new Card();
             $card->company_id = $this->id;
@@ -220,6 +210,9 @@ class Company extends ActiveRecord
             $card->save();
         }
 
+        /**
+         * реквизиты. разделяются по типам сервисов Service::$serviceList
+         */
         if (!empty($this->requisitesList)) {
             foreach ($this->requisitesList as $requisitesData) {
                 $requisites = new Requisites();

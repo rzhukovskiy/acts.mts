@@ -17,8 +17,8 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $act_id
  * @property integer $company_service_id
- * @property integer $expense
  * @property integer $price
+ * @property integer $amount
  * @property integer $type
  * @property integer $created_at
  * @property integer $updated_at
