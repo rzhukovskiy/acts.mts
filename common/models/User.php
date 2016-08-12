@@ -18,6 +18,7 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property integer $status
  * @property integer $role
+ * @property integer $company_id
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
@@ -55,6 +56,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            ['username', 'unique'],
+            ['email', 'email'],
+            [['role', 'company_id'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
@@ -189,5 +193,27 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
+    public static function getRoleName($role)
+    {
+        switch ($role) {
+            case static::ROLE_ADMIN :
+                return 'Admin';
+            case static::ROLE_CLIENT :
+                return 'Client';
+            case static::ROLE_PARTNER :
+                return 'Partner';
+            case static::ROLE_WATCHER :
+                return 'Watcher';
+
+            default :
+                return 'God';
+        }
     }
 }

@@ -66,7 +66,7 @@
                 ],
                 [
                     'label' => 'Пользователи',
-                    'url' => [ '/user/company' ],
+                    'url' => [ '/user/list', 'type' => Company::TYPE_OWNER ],
                     'active' => \Yii::$app->controller->id == 'user',
                 ],
                 [

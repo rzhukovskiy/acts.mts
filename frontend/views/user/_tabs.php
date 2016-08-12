@@ -1,41 +1,45 @@
 <?php
     use yii\bootstrap\Tabs;
+    use common\models\Company;
 
     /**
      * @var $this \yii\web\View
      * @var $active string
      */
 
+    $action = \Yii::$app->controller->action->id;
+    $requestType = Yii::$app->request->get('type');
+
     $items = [
         [
             'label' => 'Компания',
-            'url' => '/user/company',
-            'active' => \Yii::$app->controller->action->id == 'company',
+            'url' => ['/user/list', 'type'=> Company::TYPE_OWNER],
+            'active' => $action == 'list' && $requestType == Company::TYPE_OWNER,
         ],
         [
             'label' => 'Мойка',
-            'url' => '/user/carwash',
-            'active' => \Yii::$app->controller->action->id == 'carwash',
+            'url' => ['/user/list', 'type' => Company::TYPE_WASH],
+            'active' => $action == 'list' && $requestType == Company::TYPE_WASH,
         ],
         [
             'label' => 'Сервис',
-            'url' => '/user/service',
-            'active' => \Yii::$app->controller->action->id == 'service',
+            'url' => ['/user/list', 'type' => Company::TYPE_SERVICE],
+            'active' => $action == 'list' && $requestType == Company::TYPE_SERVICE,
         ],
         [
             'label' => 'Шиномонтаж',
-            'url' => '/user/tires',
-            'active' => \Yii::$app->controller->action->id == 'tires',
+            'url' => ['/user/list', 'type' => Company::TYPE_TIRES],
+            'active' => $action == 'list' && $requestType == Company::TYPE_TIRES,
         ],
         [
             'label' => 'Дезинфекция',
-            'url' => '/user/disinfection',
-            'active' => \Yii::$app->controller->action->id == 'disinfection',
+            'url' => ['/user/list', 'type' => Company::TYPE_DISINFECT],
+            'active' => $action == 'list' && $requestType == Company::TYPE_DISINFECT,
         ],
         [
             'label' => 'Универсальная',
-            'url' => '/user/universal',
-            'active' => \Yii::$app->controller->action->id == 'universal',
+            'url' => ['/user/list', 'type' => Company::TYPE_UNIVERSAL],
+            'active' => $action == 'list' && $requestType == Company::TYPE_UNIVERSAL,
         ],
     ];
 

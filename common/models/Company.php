@@ -229,9 +229,23 @@ class Company extends ActiveRecord
         }
     }
 
-
-    public static function dataDropDownList()
+    /**
+     * Набор данных для выпадайки
+     *
+     * @param null|integer $type
+     * @return array
+     */
+    public static function dataDropDownList($type = null)
     {
-        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
+        $query = static::find();
+
+        if (!is_null($type))
+            $query = $query->andWhere(['type' => $type]);
+
+        $query = $query
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($query, 'id', 'name');
     }
 }
