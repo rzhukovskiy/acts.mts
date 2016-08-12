@@ -18,13 +18,14 @@
 
     <h1><?= Html::encode( $this->title ) ?></h1>
 
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading">Карты в обращении</div>
         <div class="panel-body">
             <?php Pjax::begin(); ?>
             <?= GridView::widget( [
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
+                'summary' => false,
                 'columns' => [
                     [ 'class' => 'yii\grid\SerialColumn' ],
 
