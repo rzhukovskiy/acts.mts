@@ -31,7 +31,7 @@
         public function down()
         {
             $this->execute( 'SET foreign_key_checks = 0' );
-            $this->dropTable('{{$card}}');
+            $this->dropTable('{{%card}}');
             $this->execute( 'SET foreign_key_checks = 1;' );
         }
     }
