@@ -37,7 +37,8 @@ class Requisites extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'contract'],'required'],
+            [['company_id', 'contract'], 'required'],
+            [['header', 'type'], 'safe'],
             ['type', 'default', 'value' => Service::TYPE_WASH],
 
         ];

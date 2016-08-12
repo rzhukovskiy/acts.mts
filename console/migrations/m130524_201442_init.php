@@ -6,52 +6,39 @@ class m130524_201442_init extends Migration
 {
     public function up()
     {
-        $tables = Yii::$app->db->schema->getTableNames();
-        $dbType = $this->db->driverName;
-        $tableOptions_mysql = "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB";
+        $this->createTable('{{%company}}', [
+            'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
+            0 => 'PRIMARY KEY (`id`)',
+            'parent_id' => 'INT(10) UNSIGNED NULL',
+            'name' => 'VARCHAR(45) NOT NULL',
+            'address' => 'VARCHAR(255) NULL',
+            'phone' => 'VARCHAR(255) NULL',
+            'director' => 'VARCHAR(255) NULL',
+            'type' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
+            'is_split' => 'TINYINT(1) UNSIGNED NOT NULL',
+            'is_infected' => 'TINYINT(1) UNSIGNED NOT NULL',
+            'is_main' => 'TINYINT(1) UNSIGNED NOT NULL',
+            'is_sign' => 'TINYINT(1) UNSIGNED NOT NULL',
+            'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
+            'created_at' => 'INT(11) NOT NULL',
+            'updated_at' => 'INT(11) NOT NULL',
+        ], "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB");
 
-        if (!in_array('acts_company', $tables))  {
-            if ($dbType == "mysql") {
-                $this->createTable('{{%company}}', [
-                    'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-                    0 => 'PRIMARY KEY (`id`)',
-                    'parent_id' => 'INT(10) UNSIGNED NULL',
-                    'name' => 'VARCHAR(45) NOT NULL',
-                    'address' => 'VARCHAR(255) NULL',
-                    'phone' => 'VARCHAR(255) NULL',
-                    'contact' => 'VARCHAR(255) NULL',
-                    'type' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
-                    'contract' => 'VARCHAR(255) NULL',
-                    'act_header' => 'TEXT NULL',
-                    'is_split' => 'TINYINT(1) UNSIGNED NOT NULL',
-                    'is_infected' => 'TINYINT(1) UNSIGNED NOT NULL',
-                    'is_main' => 'TINYINT(1) UNSIGNED NOT NULL',
-                    'is_sign' => 'TINYINT(1) UNSIGNED NOT NULL',
-                    'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
-                    'created_at' => 'INT(11) NOT NULL',
-                    'updated_at' => 'INT(11) NOT NULL',
-                ], $tableOptions_mysql);
-            }
-        }
 
-        if (!in_array('acts_user', $tables))  {
-            if ($dbType == "mysql") {
-                $this->createTable('{{%user}}', [
-                    'id' => 'INT(11) NOT NULL AUTO_INCREMENT',
-                    0 => 'PRIMARY KEY (`id`)',
-                    'username' => 'VARCHAR(255) NOT NULL',
-                    'role' => 'SMALLINT(6) NOT NULL',
-                    'company_id' => 'INT(10) UNSIGNED NULL',
-                    'auth_key' => 'VARCHAR(32) NOT NULL',
-                    'password_hash' => 'VARCHAR(255) NOT NULL',
-                    'password_reset_token' => 'VARCHAR(255) NULL',
-                    'email' => 'VARCHAR(255) NOT NULL',
-                    'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
-                    'created_at' => 'INT(11) NOT NULL',
-                    'updated_at' => 'INT(11) NOT NULL',
-                ], $tableOptions_mysql);
-            }
-        }
+        $this->createTable('{{%user}}', [
+            'id' => 'INT(11) NOT NULL AUTO_INCREMENT',
+            0 => 'PRIMARY KEY (`id`)',
+            'username' => 'VARCHAR(255) NOT NULL',
+            'role' => 'SMALLINT(6) NOT NULL',
+            'company_id' => 'INT(10) UNSIGNED NULL',
+            'auth_key' => 'VARCHAR(32) NOT NULL',
+            'password_hash' => 'VARCHAR(255) NOT NULL',
+            'password_reset_token' => 'VARCHAR(255) NULL',
+            'email' => 'VARCHAR(255) NOT NULL',
+            'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
+            'created_at' => 'INT(11) NOT NULL',
+            'updated_at' => 'INT(11) NOT NULL',
+        ], "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB");
 
 
         $this->createIndex('idx_UNIQUE_name_83_00','{{%company}}','name',1);
@@ -70,11 +57,7 @@ class m130524_201442_init extends Migration
 
     public function down()
     {
-        $this->execute('SET foreign_key_checks = 0');
-        $this->execute('DROP TABLE IF EXISTS `acts_company`');
-        $this->execute('SET foreign_key_checks = 1;');
-        $this->execute('SET foreign_key_checks = 0');
-        $this->execute('DROP TABLE IF EXISTS `acts_user`');
-        $this->execute('SET foreign_key_checks = 1;');
+        $this->dropTable('{{%company}}');
+        $this->execute('{{%user}}');
     }
 }

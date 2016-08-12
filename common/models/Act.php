@@ -45,6 +45,7 @@ use yii\db\ActiveRecord;
  */
 class Act extends ActiveRecord
 {
+    public $serviceList;
     /**
      * @inheritdoc
      */
@@ -185,30 +186,37 @@ class Act extends ActiveRecord
         /**
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
-        if (!empty($this->servicesList)) {
-            foreach ($this->servicesList as $serviceData) {
-                if (!empty($serviceData['scope_id'])) {
-                    $scope = ActScope::findOne(['id' => $serviceData['scope_id']]);
-                } else {
-                    $scope = new ActScope();
-                }
+        if ($insert) {
+            if (!empty($this->servicesList)) {
+                foreach ($this->servicesList as $serviceData) {
+                    $clientScope = new ActScope();
+                    $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                    if (!empty($clientService) && $clientService->service->is_fixed) {
+                        $clientScope->company_service_id = $clientService->id;
+                        $clientScope->price = $clientService->price;
+                    } else {
+                        //на 20% увеличиваем цену для клиента
+                        $clientScope->price = 1.2 * $serviceData['price'];
+                    }
+                    $clientScope->amount = $serviceData['amount'];
+                    $clientScope->description = $serviceData['description'];
+                    $clientScope->save();
 
-                $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
-                if (!empty($clientService) && $clientService->service->is_fixed) {
-                    $scope->company_service_id = $clientService->id;
-                    $scope->price = $clientService->price;
-                } else {
-                    $scope->price = $serviceData['price'];
+                    $partnerScope = new ActScope();
+                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                    if (!empty($partnerService) && $partnerService->service->is_fixed) {
+                        $partnerScope->company_service_id = $partnerService->id;
+                        $partnerScope->price = $partnerService->price;
+                    } else {
+                        $clientScope->price = $serviceData['price'];
+                    }
+                    $partnerScope->amount = $serviceData['amount'];
+                    $partnerScope->description = $serviceData['description'];
+                    $partnerScope->save();
                 }
-                $scope->amount = $serviceData['amount'];
-
-                $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-                if (!empty($clientService) && $clientService->service->is_fixed) {
-                    $totalExpense += $partnerService->price * $serviceData['amount'];
-                } else {
-                    $totalExpense += $serviceData['price'] * $serviceData['amount'];
-                }
-            }
+            }            
+        } else {
+            //TODO: act editing for admin and partner
         }
 
         parent::afterSave($insert, $changedAttributes);

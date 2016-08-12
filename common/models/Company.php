@@ -28,12 +28,16 @@ use yii\helpers\ArrayHelper;
  * @property Company $parent
  * @property Company[] $children
  * @property Card[] $cards
+ * @property Requisites[] $requisites
  *
  * @property string $cardList
  * @property array $requisitesList
  */
 class Company extends ActiveRecord
 {
+    public $cardList;
+    public $requisitesList;
+    
     const STATUS_DELETED = 0;
     const STATUS_NEW     = 1;
     const STATUS_ARCHIVE = 2;
@@ -99,6 +103,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
+            [['director', 'is_split', 'cardList', 'requisitesList'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -115,6 +120,9 @@ class Company extends ActiveRecord
             'name' => 'Название',
             'address' => 'Город',
             'parent_id' => 'Родительская',
+            'cardList' => 'Список карт',
+            'is_split' => 'Разделять прицеп',
+            'director' => 'Директор',
         ];
     }
 
@@ -148,6 +156,14 @@ class Company extends ActiveRecord
     public function getCards()
     {
         return $this->hasMany(Card::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return Requisites[]
+     */
+    public function getRequisites()
+    {
+        return $this->hasMany(Requisites::className(), ['company_id' => 'id']);
     }
 
     public function getCarsCount()
@@ -217,9 +233,12 @@ class Company extends ActiveRecord
             foreach ($this->requisitesList as $requisitesData) {
                 $requisites = new Requisites();
                 $requisites->load($requisitesData);
+                $requisites->company_id = $this->id;
                 $requisites->save();
             }
         }
+
+        $this->delete();
     }
 
     /**
