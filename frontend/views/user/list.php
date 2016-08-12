@@ -15,9 +15,7 @@ $this->title = 'Пользователи';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
-
     <?= $this->render('_tabs') ?>
-    <h1><?= Html::encode($this->title) ?></h1>
     <div class="panel panel-primary">
         <div class="panel-heading">Добавить пользователя</div>
         <div class="panel-body">
@@ -37,7 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'summary' => false,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'header' => '№',
+                        'class' => 'yii\grid\SerialColumn'
+                    ],
 
                     [
                         'attribute' => 'username',

@@ -20,6 +20,7 @@
             $companyId = null;
 
             $query = Car::find()
+                ->with(['type'])
                 ->carsCountByTypes( $companyId );
 
             $carByTypes = new ActiveDataProvider( [

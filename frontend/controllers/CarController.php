@@ -2,12 +2,12 @@
 
 namespace frontend\controllers;
 
-use Yii;
 use common\models\Car;
 use common\models\search\CarSearch;
+use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -42,6 +42,22 @@ class CarController extends Controller
     {
         $searchModel = new CarSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query
+            ->with([
+                'company' => function ($query) {
+                    $query->select('id, name');
+                },
+                'type' => function ($query) {
+                    $query->select('id, name');
+                },
+                'mark' => function ($query) {
+                    $query->select('id, name');
+                }
+            ]);
+        $dataProvider->pagination = [
+            'pageSize' => 300,
+        ];
+        $dataProvider->sort = false;
 
         return $this->render('list', [
             'searchModel' => $searchModel,

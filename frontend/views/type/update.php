@@ -10,11 +10,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Марки', 'url' => ['/mark/list
 $this->params['breadcrumbs'][] = 'Редатировать: ' . $model->name;
 ?>
 <div class="mark-update">
-
-    <h1><?= $this->title ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <div class="panel panel-primary">
+        <div class="panel-heading">Редактировать тип</div>
+        <div class="panel-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+            ]) ?>
+        </div>
+    </div>
 
 </div>

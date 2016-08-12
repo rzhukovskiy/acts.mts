@@ -39,6 +39,7 @@ class MarkController extends Controller
 
         $searchModel = new MarkSearch();
         $dataProvider = $searchModel->search($request->queryParams);
+        $dataProvider->pagination = false;
 
         $model = new Mark();
 
