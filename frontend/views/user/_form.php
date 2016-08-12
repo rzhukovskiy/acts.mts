@@ -11,7 +11,13 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="user-form">
     <?php
-    $form = ActiveForm::begin();
+    $form = ActiveForm::begin([
+        'options' => ['class' => 'form-horizontal col-sm-12'],
+        'fieldConfig' => [
+            'template' => '{label}<div class="col-sm-6 input-sm">{input}{error}</div>',
+            'labelOptions' => ['class' => 'col-sm-2 control-label'],
+        ],
+    ]);
     echo $form->field($model, 'username')->textInput();
     echo $form->field($model, 'password')->passwordInput();
     echo $form->field($model, 'email')->textInput();
@@ -25,7 +31,9 @@ use yii\widgets\ActiveForm;
         );
     ?>
     <div class="form-group">
-        <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary']) ?>
+        <div class="col-sm-6 col-sm-offset-2">
+            <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary']) ?>
+        </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
