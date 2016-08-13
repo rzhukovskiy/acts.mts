@@ -57,7 +57,9 @@ class m130524_201442_init extends Migration
 
     public function down()
     {
+        $this->execute('SET foreign_key_checks = 0');
         $this->dropTable('{{%company}}');
-        $this->execute('{{%user}}');
+        $this->dropTable('{{%user}}');
+        $this->execute('SET foreign_key_checks = 1');
     }
 }

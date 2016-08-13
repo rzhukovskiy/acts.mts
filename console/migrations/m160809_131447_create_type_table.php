@@ -12,23 +12,15 @@ class m160809_131447_create_type_table extends Migration
      */
     public function up()
     {
-        $tables = Yii::$app->db->schema->getTableNames();
-        $dbType = $this->db->driverName;
         $tableOptions_mysql = "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB";
+        $this->createTable('{{%type}}', [
+            'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
+            0 => 'PRIMARY KEY (`id`)',
+            'name' => 'VARCHAR(255) NOT NULL',
+            'image' => 'VARCHAR(45) NULL',
+        ], $tableOptions_mysql);
 
-        /* MYSQL */
-        if (!in_array('type', $tables))  {
-            if ($dbType == "mysql") {
-                $this->createTable('{{%type}}', [
-                    'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-                    0 => 'PRIMARY KEY (`id`)',
-                    'name' => 'VARCHAR(255) NOT NULL',
-                    'image' => 'VARCHAR(45) NULL',
-                ], $tableOptions_mysql);
-            }
-        }
-
-        $this->createIndex('idx_UNIQUE_name_89_01','{{%type}}','name',1);
+        $this->createIndex('idx_UNIQUE_name_89_01', '{{%type}}', 'name', 1);
     }
 
     /**
