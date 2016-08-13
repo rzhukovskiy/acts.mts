@@ -24,8 +24,8 @@ class userDebugPanel extends Panel
     {
         $currentUser = \Yii::$app->user->identity;
         $html = Html::beginTag('div', ['class' => 'yii-debug-toolbar__block']);
-        $link = 'Login: ';
-        $link .= Html::tag('span', 'User: ' . $currentUser->username, ['class' => 'yii-debug-toolbar__label']);
+        $link = 'User: ';
+        $link .= Html::tag('span', $currentUser->username, ['class' => 'yii-debug-toolbar__label']);
         $link .= ' Role: ';
         $link .= Html::tag('span', User::getRoleName($currentUser->role), ['class' => 'yii-debug-toolbar__label yii-debug-toolbar__label_info']);
         $html .= Html::a($link, $this->getUrl());
