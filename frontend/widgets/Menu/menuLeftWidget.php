@@ -45,7 +45,10 @@ class menuLeftWidget extends Widget
             [
                 'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
                 'url' => ['/company/list?type=' . Company::TYPE_OWNER],
-                'active' => (\Yii::$app->controller->id == 'company' && \Yii::$app->request->get('type') == Company::TYPE_OWNER),
+                'active' => (
+                    Yii::$app->controller->id == 'company' &&
+                    Yii::$app->request->get('type') == Company::TYPE_OWNER
+                ),
                 'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
             ],
             [
@@ -71,6 +74,12 @@ class menuLeftWidget extends Widget
             [
                 'label' => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
                 'url' => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
+                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
+            ],
+
+            [
+                'label' => 'Услуги',
+                'url' => ['/service/index'],
                 'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
             ],
 

@@ -15,6 +15,6 @@
 
     echo Menu::widget( [
         'items' => $items,
-        'options' => ['class' => 'list-group'],
+        'options' => ['class' => 'list-group menu-left'],
         'itemOptions' => ['class' => 'list-group-item'],
     ] );
