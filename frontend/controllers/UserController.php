@@ -9,10 +9,11 @@ use common\models\LoginForm;
 use common\models\search\UserSearch;
 use common\models\User;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
-use yii\helpers\Url;
 
 class UserController extends \yii\web\Controller
 {
@@ -28,6 +29,20 @@ class UserController extends \yii\web\Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN],
+                    ],
+                    [
+                        'actions' => ['login'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_PARTNER, User::ROLE_CLIENT, User::ROLE_WATCHER],
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -140,7 +155,10 @@ class UserController extends \yii\web\Controller
         $loginModel = new LoginForm([
             'username' => $model->username,
         ]);
-        if ($loginModel->virtualLogin()){
+
+        // TODO: редирект на основании роли пользователя.
+        // TODO: Например: клиента в расходы, партнера в раздел добавления машин
+        if ($loginModel->virtualLogin()) {
 
             return $this->goHome();
         } else

@@ -8,6 +8,8 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
+use common\models\User;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -26,6 +28,20 @@ class CarController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN],
+                    ],
+                    [
+                        'actions' => ['my-cars'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_CLIENT],
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -60,6 +76,22 @@ class CarController extends Controller
         $dataProvider->sort = false;
 
         return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionMyCars()
+    {
+        $searchModel = new CarSearch();
+        if (!empty(Yii::$app->user->identity->company_id))
+            $searchModel->company_id = Yii::$app->user->identity->company_id;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
+
+
+        return $this->render('my-cars', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

@@ -15,9 +15,6 @@
     $this->params[ 'breadcrumbs' ][] = $this->title;
 ?>
 <div class="card-index">
-
-    <h1><?= Html::encode( $this->title ) ?></h1>
-
     <div class="panel panel-primary">
         <div class="panel-heading">Карты в обращении</div>
         <div class="panel-body">

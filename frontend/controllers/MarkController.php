@@ -2,12 +2,14 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use Yii;
 use common\models\Mark;
 use common\models\search\MarkSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * MarkController implements the CRUD actions for Mark model.
@@ -24,6 +26,15 @@ class MarkController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN],
+                    ],
                 ],
             ],
         ];

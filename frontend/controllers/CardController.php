@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use common\models\Company;
 use Yii;
 use common\models\Card;
@@ -9,6 +10,7 @@ use frontend\models\search\CardSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 class CardController extends Controller
 {
@@ -23,6 +25,21 @@ class CardController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['list, view, create, update, delete'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN],
+                    ],
+                    [
+                        'actions' => ['company-cards'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_CLIENT],
+                    ],
                 ],
             ],
         ];
@@ -43,6 +60,11 @@ class CardController extends Controller
             'dataProvider' => $dataProvider,
             'companyDropDownData' => $companyDropDownData,
         ]);
+    }
+
+    public function actionCompanyCards()
+    {
+        return $this->render('company-cards');
     }
 
     /**
