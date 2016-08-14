@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m160812_133129_created_requisites extends Migration
+class m160812_133129_create_requisites_table extends Migration
 {
     public function up()
     {
@@ -20,6 +20,8 @@ class m160812_133129_created_requisites extends Migration
 
     public function down()
     {
+        $this->execute( 'SET foreign_key_checks = 0' );
         $this->dropTable('{{%requisites}}');
+        $this->execute( 'SET foreign_key_checks = 1;' );
     }
 }

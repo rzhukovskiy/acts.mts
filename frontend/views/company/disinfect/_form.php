@@ -12,7 +12,7 @@ use common\models\Requisites;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?=$model->isNewRecord ? 'Добавление компании' : 'Редактирование компании ' . $model->name?>
+        <?=$model->isNewRecord ? 'Добавление дезинфекции' : 'Редактирование дезинфекции ' . $model->name?>
     </div>
     <div class="panel-body">
         <?php
@@ -49,27 +49,25 @@ use common\models\Requisites;
                 </div>
             </div>
             <?= $form->field($model, 'director') ?>
-            <?php foreach(Service::$listType as $id => $type) {
+            <?php
+                $id = $model->type;
+                $type = Service::$listType[$model->type];
                 $existed = $model->isNewRecord ? null : Requisites::findOne(['company_id' => $model->id, 'type' => $id])
             ?>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label"><?=$type['ru']?></label>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Договор</label>
+                <div class="col-sm-6">
+                    <?= Html::textInput("Company[requisitesList][$id][Requisites][contract]", $existed ? $existed->contract : '', ['class' => 'form-control input-sm'])?>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Договор</label>
-                    <div class="col-sm-6">
-                        <?= Html::textInput("Company[requisitesList][$id][Requisites][contract]", $existed ? $existed->contract : '', ['class' => 'form-control input-sm'])?>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Текст заголовка</label>
+                <div class="col-sm-6">
+                    <?= Html::textarea("Company[requisitesList][$id][Requisites][header]", $existed ? $existed->header : '', ['class' => 'form-control input-sm'])?>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Текст заголовка</label>
-                    <div class="col-sm-6">
-                        <?= Html::textarea("Company[requisitesList][$id][Requisites][header]", $existed ? $existed->header : '', ['class' => 'form-control input-sm'])?>
-                    </div>
-                </div>
-                <?= Html::hiddenInput("Company[requisitesList][$id][Requisites][type]", $id)?>
-                <?= Html::hiddenInput("Company[requisitesList][$id][Requisites][id]", $existed ? $existed->id : '')?>
-            <?php } ?>
+            </div>
+            <?= Html::hiddenInput("Company[requisitesList][$id][Requisites][type]", $id)?>
+            <?= Html::hiddenInput("Company[requisitesList][$id][Requisites][id]", $existed ? $existed->id : '')?>
         </div>
 
         <div class="form-group">

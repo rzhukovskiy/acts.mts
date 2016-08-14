@@ -10,12 +10,25 @@ body {
     }
 
 .login-form {
-    margin-top: 100px;
+    margin-top: 200px;
     width: 300px;
     }
     .login-form button {
         width: 300px;
         }
+
+/* left menu */
+.menu-left {
+    font-weight: bold;
+    }
+
+/* panels */
+.panel-heading {
+    font-weight: bold;
+    }
+.price-from label {
+    display: block;
+    }
 
 /* footer */
 .footer {

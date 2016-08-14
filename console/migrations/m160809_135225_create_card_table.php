@@ -2,7 +2,7 @@
 
     use yii\db\Migration;
 
-    class m160809_135225_cards_added extends Migration
+    class m160809_135225_create_card_table extends Migration
     {
         public function up()
         {
@@ -14,8 +14,8 @@
                 'company_id' => 'INT(10) UNSIGNED NOT NULL',
                 'number' => 'INT(11) NOT NULL',
                 'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
-                'created_at' => 'DATETIME NOT NULL',
-                'updated_at' => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+                'created_at' => 'INT(11) NOT NULL',
+                'updated_at' => 'INT(11) NOT NULL',
             ], $tableOptions_mysql );
 
 

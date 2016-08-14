@@ -24,18 +24,22 @@ class Service extends ActiveRecord
 
     static $listType = [
         self::TYPE_WASH => [
+            'id' => self::TYPE_WASH,
             'en' => 'wash',
             'ru' => 'услуги мойки',
         ],
         self::TYPE_SERVICE => [
+            'id' => self::TYPE_SERVICE,
             'en' => 'service',
             'ru' => 'услуги сервиса',
         ],
         self::TYPE_TIRES => [
+            'id' => self::TYPE_TIRES,
             'en' => 'tires',
             'ru' => 'услуги шиномонтажа',
         ],
         self::TYPE_DISINFECT => [
+            'id' => self::TYPE_DISINFECT,
             'en' => 'disinfect',
             'ru' => 'услуги дезинфекции',
         ],
@@ -65,8 +69,22 @@ class Service extends ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'company_id'], 'required'],
+            [['description'], 'required'],
+            [['is_fixed'], 'safe'],
             ['type', 'default', 'value' => self::TYPE_WASH],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'description' => 'Услуга',
+            'type' => 'Тип услуги',
+            'is_fixed' => 'Цена фиксирована',
         ];
     }
 }

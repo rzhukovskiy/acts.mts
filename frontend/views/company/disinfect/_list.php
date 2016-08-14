@@ -2,25 +2,34 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $type integer common\models\Company
  */
 
 use yii\grid\GridView;
 
 ?>
-<div class="panel-heading">
-    <h3 class="panel-title">Список дезинфекций</h3>
-</div>
-<div class="row">
-    <?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'name',
-            'address',
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]);
-    ?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Список дезинфекций
+    </div>
+    <div class="panel-body">
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'layout' => '{items}',
+            'emptyText' => '',
+            'columns' => [
+                [
+                    'header' => '№',
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                'name',
+                'address',
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{update} {delete}'
+                ],
+            ],
+        ]);
+        ?>
+    </div>
 </div>
