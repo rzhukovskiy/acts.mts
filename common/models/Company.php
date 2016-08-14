@@ -293,4 +293,20 @@ class Company extends ActiveRecord
             ],
         ]);
     }
+
+    /**
+     * @return ActiveDataProvider
+     */
+    public function getCarDataProvider()
+    {
+        return new ActiveDataProvider([
+            'query' => Car::find()->where(['company_id' => $this->id]),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'number' => SORT_DESC,
+                ]
+            ],
+        ]);
+    }
 }

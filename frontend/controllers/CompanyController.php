@@ -72,7 +72,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Lists all Company models.
+     * Creates Company model.
      * @param integer $type
      * @return mixed
      */

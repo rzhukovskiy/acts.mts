@@ -46,7 +46,7 @@ use common\models\Type;
         </table>
         <?php ActiveForm::end() ?>
 
-        <?= $this->render('_price_list', [
+        <?= $this->render('/company-service/_list', [
             'dataProvider' => $model->getPriceDataProvider($type),
         ]); ?>
     </div>

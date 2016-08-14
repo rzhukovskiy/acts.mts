@@ -2,6 +2,7 @@
 
 /**
  * @var $model \common\models\Company
+ * @var $type integer
  */
 
 use yii\helpers\Html;

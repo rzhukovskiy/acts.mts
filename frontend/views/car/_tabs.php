@@ -26,4 +26,4 @@
 
     echo Tabs::widget( [
         'items' => $items,
-    ] ) ?>
+    ] );
