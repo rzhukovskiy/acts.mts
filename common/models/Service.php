@@ -26,22 +26,22 @@ class Service extends ActiveRecord
         self::TYPE_WASH => [
             'id' => self::TYPE_WASH,
             'en' => 'wash',
-            'ru' => 'услуги мойки',
+            'ru' => 'Мойка',
         ],
         self::TYPE_SERVICE => [
             'id' => self::TYPE_SERVICE,
             'en' => 'service',
-            'ru' => 'услуги сервиса',
+            'ru' => 'Сервис',
         ],
         self::TYPE_TIRES => [
             'id' => self::TYPE_TIRES,
             'en' => 'tires',
-            'ru' => 'услуги шиномонтажа',
+            'ru' => 'Шиномонтаж',
         ],
         self::TYPE_DISINFECT => [
             'id' => self::TYPE_DISINFECT,
             'en' => 'disinfect',
-            'ru' => 'услуги дезинфекции',
+            'ru' => 'Дезинфекция',
         ],
     ];
 
