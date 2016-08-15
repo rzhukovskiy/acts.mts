@@ -24,7 +24,10 @@
                 'filterModel' => $searchModel,
                 'summary' => false,
                 'columns' => [
-                    [ 'class' => 'yii\grid\SerialColumn' ],
+                    [
+                        'header' => '№',
+                        'class' => 'yii\grid\SerialColumn'
+                    ],
 
                     'number',
                     [
