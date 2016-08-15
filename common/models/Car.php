@@ -13,6 +13,8 @@ use Yii;
  * @property integer $mark_id
  * @property integer $type_id
  * @property integer $is_infected
+ *
+ * @property Company $company
  */
 class Car extends \yii\db\ActiveRecord
 {

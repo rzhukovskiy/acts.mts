@@ -31,7 +31,7 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list, view, create, update, delete'],
+                        'actions' => ['list', 'view', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],

@@ -9,7 +9,7 @@
 ?>
 <footer class="footer">
     <div class="container">
-        <a href="http://mtransservice.ru">mtransservice.ru &copy;</a> <?= date( 'Y' ) ?>
+        <a href="http://mtransservice.ru">mtransservice.ru &copy;</a>
     </div>
 </footer>
 

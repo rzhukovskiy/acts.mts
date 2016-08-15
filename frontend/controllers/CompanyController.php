@@ -10,6 +10,7 @@ namespace frontend\controllers;
 
 
 use common\models\Company;
+use common\models\CompanyService;
 use common\models\User;
 use yii;
 use yii\data\ActiveDataProvider;
@@ -29,7 +30,7 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -51,7 +52,7 @@ class CompanyController extends Controller
     public function actionList($type)
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Company::find()->active()->where('type = :type',[':type' => $type]),
+            'query' => Company::find()->active()->where(['type' => $type]),
             'pagination' => false,
             'sort' => [
                 'defaultOrder' => [
@@ -60,15 +61,18 @@ class CompanyController extends Controller
             ],
         ]);
 
+        $model = new Company();
+        $model->type = $type;
+
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'type' => $type,
-            'model' => new Company(),
+            'model' => $model,
         ]);
     }
 
     /**
-     * Lists all Company models.
+     * Creates Company model.
      * @param integer $type
      * @return mixed
      */
@@ -85,18 +89,6 @@ class CompanyController extends Controller
     }
 
     /**
-     * Displays a single Company model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -107,9 +99,12 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['update', 'id' => $model->id]);
         } else {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->render('update', [
+                'model' => $this->findModel($id),
+                ''
+            ]);
         }
     }
 
@@ -124,6 +119,27 @@ class CompanyController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['list']);
+    }
+
+    public function actionAddPrice($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($priceData = Yii::$app->request->post('Price')) {
+            foreach ($priceData['type'] as $type_id) {
+                foreach ($priceData['service'] as $service_id => $price) {
+                    $companyService = new CompanyService();
+                    $companyService->company_id = $model->id;
+                    $companyService->service_id = $service_id;
+                    $companyService->type_id = $type_id;
+                    $companyService->price = $price;
+
+                    $companyService->save();
+                }
+            }
+        }
+
+        return $this->redirect(['update', 'id' => $model->id]);
     }
 
     /**

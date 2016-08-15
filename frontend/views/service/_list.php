@@ -1,19 +1,17 @@
 <?php
 
-/**
- * @var $dataProvider yii\data\ActiveDataProvider
- */
-
 use yii\grid\GridView;
+use common\models\Service;
 
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Список компаний
     </div>
     <div class="panel-body">
-        <?=
-        GridView::widget([
+        <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'layout' => '{items}',
             'emptyText' => '',
@@ -22,24 +20,17 @@ use yii\grid\GridView;
                     'header' => '№',
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'name',
-                'address',
+                'description',
                 [
-                    'label' => 'Количество карт',
+                    'attribute' => 'type',
                     'value' => function ($data) {
-                        return $data->cardsAsString;
+                        return Service::$listType[$data->type]['ru'];
                     },
                 ],
                 [
-                    'label' => 'Количество машин',
+                    'attribute' => 'is_fixed',
                     'value' => function ($data) {
-                        return $data->carsCount;
-                    },
-                ],
-                [
-                    'label' => 'Количество прицепов',
-                    'value' => function ($data) {
-                        return $data->trucksCount;
+                        return $data->is_fixed ? 'Да' : 'Нет';
                     },
                 ],
                 [
@@ -47,7 +38,6 @@ use yii\grid\GridView;
                     'template' => '{update} {delete}'
                 ],
             ],
-        ]);
-        ?>
+        ]); ?>
     </div>
 </div>

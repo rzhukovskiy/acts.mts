@@ -4,6 +4,7 @@ namespace common\models;
 use common\models\query\CompanyQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
@@ -103,7 +104,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['director', 'is_split', 'cardList', 'requisitesList'], 'safe'],
+            [['parent_id', 'director', 'is_split', 'cardList', 'requisitesList'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -231,14 +232,16 @@ class Company extends ActiveRecord
          */
         if (!empty($this->requisitesList)) {
             foreach ($this->requisitesList as $requisitesData) {
-                $requisites = new Requisites();
+                if (!empty($requisitesData['Requisites']['id'])) {
+                    $requisites = Requisites::findOne(['id' => $requisitesData['Requisites']['id']]);
+                } else {
+                    $requisites = new Requisites();
+                }
                 $requisites->load($requisitesData);
                 $requisites->company_id = $this->id;
                 $requisites->save();
             }
         }
-
-        $this->delete();
     }
 
     /**
@@ -259,5 +262,51 @@ class Company extends ActiveRecord
             ->all();
 
         return ArrayHelper::map($query, 'id', 'name');
+    }
+
+    /**
+     * Эмулируем софт-делит
+     *
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+        $this->status = self::STATUS_DELETED;
+        $this->save();
+
+        return false;
+    }
+
+    /**
+     * @param $type integer
+     * @return ActiveDataProvider
+     */
+    public function getPriceDataProvider($type)
+    {
+        return new ActiveDataProvider([
+            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'type_id' => SORT_DESC,
+                ]
+            ],
+        ]);
+    }
+
+    /**
+     * @return ActiveDataProvider
+     */
+    public function getCarDataProvider()
+    {
+        return new ActiveDataProvider([
+            'query' => Car::find()->where(['company_id' => $this->id]),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'number' => SORT_DESC,
+                ]
+            ],
+        ]);
     }
 }

@@ -1,21 +1,51 @@
 body {
     background-color: #dededc;
+    font-family: Helvetica,sans-serif;
     font-size: 12px;
     }
 .top {
     margin: 10px 0;
     }
-.panel-body {
-    padding: 0;
-    }
 
+/* login */
 .login-form {
-    margin-top: 100px;
+    margin-top: 200px;
     width: 300px;
     }
     .login-form button {
         width: 300px;
         }
+
+/* left menu */
+.menu-left {
+    font-weight: bold;
+    position: fixed;
+    top: 10px;
+    }
+    .menu-left a {
+        display: block;
+        padding: 7px 15px;
+        }
+    .menu-left .list-group-item {
+        padding: 0;
+        }
+    .list-group-item:hover {
+        background: #eee;
+        }
+    .menu-left .list-group-item.active a {
+        color: white;
+        }
+
+/* panels */
+.panel-body {
+    padding: 0;
+    }
+.panel-heading {
+    font-weight: bold;
+    }
+.price-from label {
+    display: block;
+    }
 
 /* footer */
 .footer {
@@ -33,7 +63,3 @@ body {
 }
 
 /* end footer */
-
-.list-group-item.active a {
-    color: white;
-}

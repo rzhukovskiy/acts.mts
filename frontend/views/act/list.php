@@ -1,21 +1,24 @@
 <?php
-    use common\models\Company;
+    use common\models\User;
 
     /**
      * @var $this yii\web\View
      * @var $type null|integer
+     * @var $dataProvider yii\data\ActiveDataProvider
+     * @var $model \common\models\Act
      */
 
-    echo $this->render( '_tabs' );
-?>
-    <h1>acts/list</h1>
+    $request = Yii::$app->request;
 
-    <p>
-        You may change the content of this page by modifying
-        the file <code><?= __FILE__; ?></code>.
-    </p>
-<?php
-    echo $this->render( Company::$listType[ $type ][ 'en' ] . '/_list', [
-        'dataProvider' => null,
+    echo $this->render( '_tabs' );
+
+    if (Yii::$app->user->role == User::ROLE_PARTNER) {
+        echo $this->render( $request->get('company') ? 'client/_form' : 'partner/_form', [
+            'model' => $model,
+        ] );        
+    }
+
+    echo $this->render( $request->get('company') ? 'client/_list' : 'partner/_list', [
+        'dataProvider' => $dataProvider,
     ] );
 

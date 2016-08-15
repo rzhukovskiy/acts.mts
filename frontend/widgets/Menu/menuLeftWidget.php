@@ -48,27 +48,61 @@ class menuLeftWidget extends Widget
                 [
                     'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_OWNER],
-                    'active' => (\Yii::$app->controller->id == 'company' && \Yii::$app->request->get('type') == Company::TYPE_OWNER),
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_OWNER ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_OWNER)
+                    ),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_WASH]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_WASH],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_WASH ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_WASH)
+                    ),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_SERVICE]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_SERVICE],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_SERVICE ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_SERVICE)
+                    ),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_TIRES]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_TIRES],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_TIRES ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_TIRES)
+                    ),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_DISINFECT]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_DISINFECT],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_DISINFECT ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_DISINFECT)
+                    ),
                 ],
                 [
                     'label' => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' &&
+                        (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL ||
+                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_UNIVERSAL)
+                    ),
+                ],
+
+                [
+                    'label' => 'Услуги',
+                    'url' => ['/service/index'],
                 ],
 
                 [

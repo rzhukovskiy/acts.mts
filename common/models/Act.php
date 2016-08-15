@@ -20,8 +20,7 @@ use yii\db\ActiveRecord;
  * @property integer $type_id
  * @property integer $mark_id
  * @property integer $card_id
- * @property integer $is_closed
- * @property integer $is_fixed
+ * @property integer $status
  * @property integer $expense
  * @property integer $income
  * @property integer $profit
@@ -45,6 +44,10 @@ use yii\db\ActiveRecord;
  */
 class Act extends ActiveRecord
 {
+    const STATUS_NEW = 0;
+    const STATUS_CLOSED = 1;
+    const STATUS_FIXED = 2;
+    
     public $serviceList;
     /**
      * @inheritdoc
