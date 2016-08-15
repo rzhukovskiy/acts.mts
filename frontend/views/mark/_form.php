@@ -18,6 +18,7 @@ use yii\helpers\Html;
         'fieldConfig' => [
             'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
             'labelOptions' => ['class' => 'col-sm-2 control-label'],
+            'inputOptions' => ['class' => 'form-control input-sm'],
         ],
     ]); ?>
 

@@ -19,6 +19,7 @@ use yii\widgets\ActiveForm;
         'fieldConfig' => [
             'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
             'labelOptions' => ['class' => 'col-sm-2 control-label'],
+            'inputOptions' => ['class' => 'form-control input-sm'],
         ],
     ]);
     echo $form->field($model, 'username')->textInput();
@@ -27,10 +28,7 @@ use yii\widgets\ActiveForm;
     echo $form->field($model, 'company_id')
         ->dropDownList(
             $companyDropDownData,
-            [
-                'class' => 'form-control',
-                'prompt' => 'Все компании'
-            ]
+            [ 'prompt' => 'Все компании']
         );
     ?>
     <div class="form-group">

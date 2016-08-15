@@ -17,6 +17,7 @@ use yii\helpers\Html;
         'fieldConfig' => [
             'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
             'labelOptions' => ['class' => 'col-sm-2 control-label'],
+            'inputOptions' => ['class' => 'form-control input-sm'],
         ],
     ]);
     echo $form->field($model, 'name')->textInput(['maxlength' => true]);
@@ -30,7 +31,7 @@ use yii\helpers\Html;
         </div>
     </div>
     <?php
-    echo $form->field($model, 'imageFile')->fileInput();
+    echo $form->field($model, 'imageFile')->fileInput(['class' => false]);
     ?>
     <div class="form-group">
         <div class="col-sm-6 col-sm-offset-2">
