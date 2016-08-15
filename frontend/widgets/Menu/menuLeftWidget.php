@@ -40,136 +40,146 @@ class menuLeftWidget extends Widget
         if (!empty($this->items))
             return $this->items;
 
-        $items = [
-            // Admin links
-            [
-                'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_OWNER],
-                'active' => (\Yii::$app->controller->id == 'company' && \Yii::$app->request->get('type') == Company::TYPE_OWNER),
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => Company::$listType[Company::TYPE_WASH]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_WASH],
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => Company::$listType[Company::TYPE_SERVICE]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_SERVICE],
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => Company::$listType[Company::TYPE_TIRES]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_TIRES],
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => Company::$listType[Company::TYPE_DISINFECT]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_DISINFECT],
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
-                'url' => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
+        $items = [];
 
-            [
-                'label' => 'Пользователи',
-                'url' => ['/user/list', 'type' => Company::TYPE_OWNER],
-                'active' => \Yii::$app->controller->id == 'user',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Карты',
-                'url' => ['/card/list'],
-                'active' => \Yii::$app->controller->id == 'card',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Марки ТС',
-                'url' => ['/mark/list'],
-                'active' => \Yii::$app->controller->id == 'mark',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Типы ТС',
-                'url' => ['/type/list'],
-                'active' => \Yii::$app->controller->id == 'type',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'История машин',
-                'url' => ['/car/list'],
-                'active' => \Yii::$app->controller->id == 'car',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Кол-во ТС',
-                'url' => ['/car-count/list'],
-                'active' => \Yii::$app->controller->id == 'car-count',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Статистика партнеров',
-                'url' => ['/statistic/list', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'statistic',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Статистика компаний',
-                'url' => ['/company-statistic/list', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'company-statistic',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Акты',
-                'url' => ['/act/list', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'act',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
-            [
-                'label' => 'Ошибочные акты',
-                'url' => ['/archive/error', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'archive',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-            ],
+        // Admin links
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $items = [
+                [
+                    'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_OWNER],
+                    'active' => (\Yii::$app->controller->id == 'company' && \Yii::$app->request->get('type') == Company::TYPE_OWNER),
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_WASH]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_WASH],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_SERVICE]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_SERVICE],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_TIRES]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_TIRES],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_DISINFECT]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_DISINFECT],
+                ],
+                [
+                    'label' => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
+                    'url' => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
+                ],
 
+                [
+                    'label' => 'Пользователи',
+                    'url' => ['/user/list', 'type' => Company::TYPE_OWNER],
+                    'active' => \Yii::$app->controller->id == 'user',
+                ],
+                [
+                    'label' => 'Карты',
+                    'url' => ['/card/list'],
+                    'active' => \Yii::$app->controller->id == 'card',
+                ],
+                [
+                    'label' => 'Марки ТС',
+                    'url' => ['/mark/list'],
+                    'active' => \Yii::$app->controller->id == 'mark',
+                ],
+                [
+                    'label' => 'Типы ТС',
+                    'url' => ['/type/list'],
+                    'active' => \Yii::$app->controller->id == 'type',
+                ],
+                [
+                    'label' => 'История машин',
+                    'url' => ['/car/list'],
+                    'active' => \Yii::$app->controller->id == 'car',
+                ],
+                [
+                    'label' => 'Кол-во ТС',
+                    'url' => ['/car-count/list'],
+                    'active' => \Yii::$app->controller->id == 'car-count',
+                ],
+                [
+                    'label' => 'Статистика партнеров',
+                    'url' => ['/statistic/list', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'statistic',
+                ],
+                [
+                    'label' => 'Статистика компаний',
+                    'url' => ['/company-statistic/list', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'company-statistic',
+                ],
+                [
+                    'label' => 'Акты',
+                    'url' => ['/act/list', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'act',
+                ],
+                [
+                    'label' => 'Ошибочные акты',
+                    'url' => ['/archive/error', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'archive',
+                ],
+            ];
+        }
+
+        if (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
             // Partner links
-
-
-            // Client links
-            [
-                'label' => 'Карты',
-                'url' => ['/card/company-cards'],
-                'active' => \Yii::$app->controller->id == 'card',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_CLIENT,
-            ],
-            [
-                'label' => 'История машин',
-                'url' => ['/car/my-cars'],
-                'active' => \Yii::$app->controller->id == 'car',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_CLIENT,
-            ],
-            [
-                'label' => 'Кол-во ТС',
-                'url' => ['/car-count/list'],
-                'active' => \Yii::$app->controller->id == 'car-count',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_CLIENT,
-            ],
-            [
-                'label' => 'Расходы',
+            $items = [
+                [
+                    'label' => 'Типы ТС',
+                    'url' => ['/type/list'],
+                    'active' => \Yii::$app->controller->id == 'type',
+                ],
+                [
+                    'label' => 'Доходы',
 //                'url' => ['/archive/error', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'archive',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_CLIENT,
-            ],
-            [
-                'label' => 'Услуги',
+                    'active' => \Yii::$app->controller->id == '',
+                ],
+                [
+                    'label' => 'Добавить машину',
 //                'url' => ['/archive/error', 'type' => 2],
-                'active' => \Yii::$app->controller->id == 'archive',
-                'visible' => Yii::$app->user->identity->role == User::ROLE_CLIENT,
-            ],
-        ];
+                    'active' => \Yii::$app->controller->id == '',
+                ],
+                [
+                    'label' => 'Архив',
+//                'url' => ['/archive/error', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == '',
+                ],
+            ];
+        }
+
+        // Client links
+        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
+            $items = [
+                [
+                    'label' => 'Карты',
+                    'url' => ['/card/company-cards'],
+                    'active' => \Yii::$app->controller->id == 'card',
+                ],
+                [
+                    'label' => 'История машин',
+                    'url' => ['/car/my-cars'],
+                    'active' => \Yii::$app->controller->id == 'car',
+                ],
+                [
+                    'label' => 'Кол-во ТС',
+                    'url' => ['/car-count/list'],
+                    'active' => \Yii::$app->controller->id == 'car-count',
+                ],
+                [
+                    'label' => 'Расходы',
+//                'url' => ['/archive/error', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'archive',
+                ],
+                [
+                    'label' => 'Услуги',
+//                'url' => ['/archive/error', 'type' => 2],
+                    'active' => \Yii::$app->controller->id == 'archive',
+                ],
+            ];
+        }
 
         return $items;
     }
