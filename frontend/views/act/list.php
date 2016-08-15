@@ -12,7 +12,7 @@
 
     echo $this->render( '_tabs' );
 
-    if (Yii::$app->user->role == User::ROLE_PARTNER) {
+    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
         echo $this->render( $request->get('company') ? 'client/_form' : 'partner/_form', [
             'model' => $model,
         ] );        

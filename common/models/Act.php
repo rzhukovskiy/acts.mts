@@ -73,8 +73,8 @@ class Act extends ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'card_id', 'number'], 'required'],
-            [['mark_id', 'type_id', 'number', 'expense', 'income', 'profit', 'service_type', 'serviceList'], 'safe'],
+            [['partner_id', 'card_id', 'mark_id', 'type_id', 'number'], 'required'],
+            [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList'], 'safe'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
         ];
     }
@@ -197,12 +197,13 @@ class Act extends ActiveRecord
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $clientScope->company_service_id = $clientService->id;
                         $clientScope->price = $clientService->price;
+                        $clientScope->description = $clientService->description;
                     } else {
                         //на 20% увеличиваем цену для клиента
                         $clientScope->price = 1.2 * $serviceData['price'];
+                        $clientScope->description = $serviceData['description'];
                     }
                     $clientScope->amount = $serviceData['amount'];
-                    $clientScope->description = $serviceData['description'];
                     $clientScope->save();
 
                     $partnerScope = new ActScope();
@@ -210,11 +211,12 @@ class Act extends ActiveRecord
                     if (!empty($partnerService) && $partnerService->service->is_fixed) {
                         $partnerScope->company_service_id = $partnerService->id;
                         $partnerScope->price = $partnerService->price;
+                        $partnerScope->description = $partnerService->description;
                     } else {
                         $clientScope->price = $serviceData['price'];
+                        $partnerScope->description = $serviceData['description'];
                     }
                     $partnerScope->amount = $serviceData['amount'];
-                    $partnerScope->description = $serviceData['description'];
                     $partnerScope->save();
                 }
             }            
