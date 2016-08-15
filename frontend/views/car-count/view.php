@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id' => 'car-count-view',
                 'layout' => "{summary}\n{items}\n{pager}",
                 'summary' => false,
+                'emptyText' => '',
                 'columns' => [
                     [
                         'header' => '№',

@@ -23,6 +23,7 @@
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'summary' => false,
+                'emptyText' => '',
                 'columns' => [
                     [
                         'header' => '№',
