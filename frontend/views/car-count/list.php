@@ -25,7 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => "{summary}\n{items}\n{pager}",
                 'summary' => false,
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'header' => '№',
+                        'class' => 'yii\grid\SerialColumn'
+                    ],
                     [
                         'attribute' => 'carsCountByType',
                         'label' => 'Кол-во'
