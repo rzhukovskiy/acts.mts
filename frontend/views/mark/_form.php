@@ -11,9 +11,12 @@ use yii\helpers\Html;
 <div class="mark-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['class' => 'form-horizontal col-sm-12'],
+        'options' => [
+            'class' => 'form-horizontal col-sm-12',
+            'style' => 'margin-top: 20px;'
+        ],
         'fieldConfig' => [
-            'template' => '{label}<div class="col-sm-6 input-sm">{input}{error}</div>',
+            'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
             'labelOptions' => ['class' => 'col-sm-2 control-label'],
         ],
     ]); ?>
@@ -22,7 +25,7 @@ use yii\helpers\Html;
 
     <div class="form-group">
         <div class="col-sm-6 col-sm-offset-2">
-            <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
 
