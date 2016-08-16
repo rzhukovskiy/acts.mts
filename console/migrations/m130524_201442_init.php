@@ -48,11 +48,6 @@ class m130524_201442_init extends Migration
         $this->createIndex('idx_UNIQUE_email_85_04','{{%user}}','email',1);
         $this->createIndex('idx_UNIQUE_password_reset_token_85_05','{{%user}}','password_reset_token',1);
         $this->createIndex('idx_company_id_85_06','{{%user}}','company_id',0);
-
-        $this->execute('SET foreign_key_checks = 0');
-        $this->addForeignKey('fk_acts_company_83_00','{{%company}}', 'parent_id', '{{%company}}', 'id', 'CASCADE', 'CASCADE' );
-        $this->addForeignKey('fk_acts_company_85_01','{{%user}}', 'company_id', '{{%company}}', 'id', 'CASCADE', 'CASCADE' );
-        $this->execute('SET foreign_key_checks = 1;');
     }
 
     public function down()
