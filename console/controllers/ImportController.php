@@ -190,13 +190,13 @@
             $this->stdout("Requisites done!\n");
         }
 
-        public function actionActData($new_prefix = '', $old_prefix = '')
+        public function actionPriceData($new_prefix = '', $old_prefix = '')
         {
             $this->new_prefix = $new_prefix;
             $this->old_prefix = $old_prefix;
 
-            //$this->importServices();
-            //$this->importPrices();
+            $this->importServices();
+            $this->importPrices();
             $this->importTiresServices();
         }
 
