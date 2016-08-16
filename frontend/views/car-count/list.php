@@ -31,14 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'yii\grid\SerialColumn'
                     ],
                     [
-                        'attribute' => 'carsCountByType',
-                        'label' => 'Кол-во'
-                    ],
-                    [
                         'attribute' => 'type.name',
                         'content' => function ($data) {
                             return Html::a($data->type->name, ['car-count/view', 'type' => $data->type->id]);
                         },
+                    ],
+                    [
+                        'attribute' => 'carsCountByType',
+                        'label' => 'Кол-во'
                     ],
                 ],
             ]);
