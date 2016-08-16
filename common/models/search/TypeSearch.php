@@ -19,7 +19,7 @@ class TypeSearch extends Type
     {
         return [
             [['id'], 'integer'],
-            [['name', 'image'], 'safe'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -61,9 +61,6 @@ class TypeSearch extends Type
         $query->andFilterWhere([
             'id' => $this->id,
         ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'image', $this->image]);
 
         return $dataProvider;
     }

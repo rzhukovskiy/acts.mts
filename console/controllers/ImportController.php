@@ -40,6 +40,7 @@
         {
             $this->new_prefix = $new_prefix;
             $this->old_prefix = $old_prefix;
+
             $this->importCompanies();
             $this->importMarks();
             $this->importTypes();
@@ -187,5 +188,128 @@
             }
 
             $this->stdout("Requisites done!\n");
+        }
+
+        public function actionActData($new_prefix = '', $old_prefix = '')
+        {
+            $this->new_prefix = $new_prefix;
+            $this->old_prefix = $old_prefix;
+
+            //$this->importServices();
+            //$this->importPrices();
+            $this->importTiresServices();
+        }
+
+        private function importServices()
+        {
+            $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_prefix}tires_service ORDER BY pos")->queryAll();
+            $now = time();
+
+            $this->new_db->createCommand("INSERT into {$this->new_prefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
+                  (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
+                  (NULL, 1, " . Company::TYPE_WASH . ", 'двигатель', $now, $now),
+                  (NULL, 1, " . Company::TYPE_DISINFECT . ", 'дезинфекция', $now, $now)
+                ")->execute();
+
+            foreach ($rows as $rowData) {
+                $now = time();
+
+                $type = Company::TYPE_TIRES;
+                $insert = "(NULL,
+                {$rowData['is_fixed']},
+                $type,
+                '{$rowData['description']}',
+                $now,
+                $now)";
+
+                $this->new_db->createCommand("INSERT into {$this->new_prefix}service VALUES $insert")->execute();
+            }
+
+            $this->stdout("Services done!\n");
+        }
+
+        private function importPrices()
+        {
+            $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_prefix}price")->queryAll();
+
+            foreach ($rows as $rowData) {
+                if (!empty($rowData['inside'])) {
+                    $now = time();
+                    $insert = "(NULL,
+                        {$rowData['company_id']},
+                        1,
+                        {$rowData['type_id']},
+                        {$rowData['inside']},
+                        $now,
+                        $now)";
+
+                    $this->new_db->createCommand("INSERT into {$this->new_prefix}company_service VALUES $insert")->execute();
+                }
+
+                if (!empty($rowData['outside'])) {
+                    $now = time();
+                    $insert = "(NULL,
+                        {$rowData['company_id']},
+                        2,
+                        {$rowData['type_id']},
+                        {$rowData['outside']},
+                        $now,
+                        $now)";
+
+                    $this->new_db->createCommand("INSERT into {$this->new_prefix}company_service VALUES $insert")->execute();
+                }
+
+                if (!empty($rowData['engine'])) {
+                    $now = time();
+                    $insert = "(NULL,
+                        {$rowData['company_id']},
+                        3,
+                        {$rowData['type_id']},
+                        {$rowData['outside']},
+                        $now,
+                        $now)";
+
+                    $this->new_db->createCommand("INSERT into {$this->new_prefix}company_service VALUES $insert")->execute();
+                }
+
+                if (!empty($rowData['disinfection'])) {
+                    $now = time();
+                    $insert = "(NULL,
+                        {$rowData['company_id']},
+                        4,
+                        {$rowData['type_id']},
+                        {$rowData['disinfection']},
+                        $now,
+                        $now)";
+
+                    $this->new_db->createCommand("INSERT into {$this->new_prefix}company_service VALUES $insert")->execute();
+                }
+            }
+
+            $this->stdout("Prices done!\n");
+        }
+
+        private function importTiresServices()
+        {
+            $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_prefix}company_tires_service")->queryAll();
+            foreach ($rows as $rowData) {
+                $now = time();
+                $oldServiceData = $this->old_db->createCommand("SELECT * FROM {$this->old_prefix}tires_service WHERE id = {$rowData['tires_service_id']}")->queryOne();
+                $description = $oldServiceData['description'];
+                $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_prefix}service WHERE description LIKE '$description'")->queryOne();
+                if(!empty($serviceData)) {
+                    $insert = "(NULL,
+                        {$rowData['company_id']},
+                        {$rowData['id']},
+                        {$rowData['type_id']},
+                        {$rowData['price']},
+                        $now,
+                        $now)";
+
+                    $this->new_db->createCommand("INSERT into {$this->new_prefix}company_service VALUES $insert")->execute();
+                }
+            }
+
+            $this->stdout("Tires services done!\n");
         }
     }
