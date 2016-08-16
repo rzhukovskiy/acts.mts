@@ -11,8 +11,12 @@ $(document).ready(function() {
         newEntry.find('input').each(function() {
             $(this).attr('name', $(this).attr('name').replace(oldScopeIndex, scopeIndex));
         });
+        newEntry.find('select').each(function() {
+            $(this).attr('name', $(this).attr('name').replace(oldScopeIndex, scopeIndex));
+        });
 
         newEntry.find('input').val('');
+        newEntry.find('input[type=number]').val(1);
         currentEntry.find('.glyphicon-plus').removeClass('glyphicon-plus').addClass('glyphicon-minus');
         currentEntry.find('.addButton').removeClass('addButton').addClass('removeButton');
         oldScopeIndex++;

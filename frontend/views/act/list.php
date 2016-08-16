@@ -6,7 +6,10 @@
      * @var $type null|integer
      * @var $dataProvider yii\data\ActiveDataProvider
      * @var $model \common\models\Act
+     * @var $serviceList array
      */
+
+    $this->title = 'Акты';
 
     $request = Yii::$app->request;
 
@@ -14,6 +17,7 @@
 
     if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
         echo $this->render( $request->get('company') ? 'client/_form' : 'partner/_form', [
+            'serviceList' => $serviceList,
             'model' => $model,
         ] );        
     }
