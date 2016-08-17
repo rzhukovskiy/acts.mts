@@ -9,6 +9,7 @@
 namespace common\models;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * Act model
@@ -127,6 +128,15 @@ class Act extends ActiveRecord
     public function getScopes()
     {
         return $this->hasMany(ActScope::className(), ['act_id' => 'id']);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getPeriodList()
+    {
+        $periods = (new Query())->select('DISTINCT YEAR(FROM_UNIXTIME(`served_at`)) as periods')->from(Act::tableName())->column();
+        return array_combine($periods, $periods);
     }
 
     public function beforeSave($insert)

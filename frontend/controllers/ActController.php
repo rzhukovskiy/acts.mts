@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
 use Yii;
@@ -38,20 +39,29 @@ class ActController extends Controller
 
     public function actionList( $type, $company = false )
     {
+        $period = Yii::$app->request->get('period', date('m') . '-' . date('Y'));
+        list($month, $year) = explode('-', $period);
+        
         $dataProvider = new ActiveDataProvider([
-            'query' => Act::find()->where(['service_type' => $type]),
+            'query' => Act::find()
+                ->where(['service_type' => $type])
+                ->andWhere(['MONTH(FROM_UNIXTIME(`served_at`))' => $month])
+                ->andWhere(['YEAR(FROM_UNIXTIME(`served_at`))' => $year])
+                ->joinWith(['card', 'type', 'mark']),
             'pagination' => false,
         ]);
         if ($company) {
             $dataProvider->sort = [
                 'defaultOrder' => [
                     'client_id' => SORT_DESC,
+                    'served_at' => SORT_ASC,
                 ]
             ];
         } else {
             $dataProvider->sort = [
                 'defaultOrder' => [
                     'partner_id' => SORT_DESC,
+                    'served_at' => SORT_ASC,
                 ]
             ];
         }
@@ -61,8 +71,10 @@ class ActController extends Controller
 
         $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
 
+        $searchModel = new ActSearch();
         return $this->render('list', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
             'serviceList' => $serviceList,

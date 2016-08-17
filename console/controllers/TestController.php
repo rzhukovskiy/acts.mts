@@ -68,7 +68,7 @@
             $user->updated_at = time();
 
             if ($user->save()) {
-                $this->stdout("Generate: $username@password, role: $role\n");
+                $this->stdout("Generate: $username@811601, role: $role\n");
 
                 return true;
             }
