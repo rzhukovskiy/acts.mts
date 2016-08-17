@@ -53,8 +53,6 @@ class Act extends ActiveRecord
     public $serviceList;
     public $time_str;
 
-    public $countServe; // сколько обслужено машин (кол-во актов)
-
     /**
      * @inheritdoc
      */
