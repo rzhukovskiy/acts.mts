@@ -64,8 +64,6 @@ class Car extends \yii\db\ActiveRecord
         return new \common\models\query\CarQuery(get_called_class());
     }
 
-    // TODO: add relation for Company, Act
-
     public function getMark(  )
     {
         return $this->hasOne(Mark::className(), ['id' => 'mark_id']);

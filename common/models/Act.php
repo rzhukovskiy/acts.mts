@@ -51,6 +51,9 @@ class Act extends ActiveRecord
     
     public $serviceList;
     public $time_str;
+
+    public $countServe; // сколько обслужено машин (кол-во актов)
+
     /**
      * @inheritdoc
      */
@@ -120,6 +123,7 @@ class Act extends ActiveRecord
     {
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
+
 
     /**
      * @return ActScope[]
