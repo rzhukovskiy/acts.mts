@@ -30,6 +30,7 @@ echo $this->render('_tabs');
                     'header' => '№',
                     'class' => 'yii\grid\SerialColumn',
                     'footer' => 'Итого:',
+                    'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'partner_id',
@@ -49,6 +50,7 @@ echo $this->render('_tabs');
                     'attribute' => 'countServe',
                     'header' => 'Обслужено',
                     'footer' => number_format($totalServe, 0, '', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
@@ -57,6 +59,7 @@ echo $this->render('_tabs');
                         return number_format($data->expense, 2, ',', ' ');
                     },
                     'footer' => number_format($totalExpense, 2, ',', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'profit',
@@ -65,6 +68,7 @@ echo $this->render('_tabs');
                         return number_format($data->profit, 2, ',', ' ');
                     },
                     'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
                 ['class' => 'yii\grid\ActionColumn'],
