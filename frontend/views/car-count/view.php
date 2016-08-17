@@ -30,11 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'yii\grid\SerialColumn'
                     ],
                     [
-                        'attribute' => 'number',
-                    ],
-                    [
                         'attribute' => 'mark.name',
                         'label' => 'Марка',
+                    ],
+                    [
+                        'attribute' => 'number',
                     ],
                     [
                         'attribute' => 'is_infected',

@@ -17,7 +17,6 @@ class m160809_131447_create_type_table extends Migration
             'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
             0 => 'PRIMARY KEY (`id`)',
             'name' => 'VARCHAR(255) NOT NULL',
-            'image' => 'VARCHAR(45) NULL',
         ], $tableOptions_mysql);
 
         $this->createIndex('idx_UNIQUE_name_89_01', '{{%type}}', 'name', 1);

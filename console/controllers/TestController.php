@@ -28,7 +28,7 @@
         {
             $users = [
                 [
-                    'username' => 'admin',
+                    'username' => 'Gerbert88',
                     'role' => User::ROLE_ADMIN,
                     'email' => 'admin@admin.ru',
                 ],
@@ -62,13 +62,13 @@
             $user->username = $username;
             $user->role = $role;
             $user->auth_key = 'test';
-            $user->password_hash = \Yii::$app->security->generatePasswordHash('password');
+            $user->password_hash = \Yii::$app->security->generatePasswordHash('811601');
             $user->email = $email;
             $user->created_at = time();
             $user->updated_at = time();
 
             if ($user->save()) {
-                $this->stdout("Generate: $username@password, role: $role\n");
+                $this->stdout("Generate: $username@811601, role: $role\n");
 
                 return true;
             }

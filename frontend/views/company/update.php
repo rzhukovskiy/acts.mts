@@ -32,7 +32,9 @@ foreach (Service::$listType as $id => $type) {
     }
 }
 
-echo $this->render('/car/_form', [
-    'model' => new Car(),
-    'companyModel' => $model,
-]);
+if ($type == Company::TYPE_OWNER) {
+    echo $this->render('/car/_form', [
+        'model' => new Car(),
+        'companyModel' => $model,
+    ]);
+}

@@ -5,6 +5,7 @@
      * @var $this yii\web\View
      * @var $type null|integer
      * @var $dataProvider yii\data\ActiveDataProvider
+     * @var $searchModel \common\models\search\ActSearch
      * @var $model \common\models\Act
      * @var $serviceList array
      */
@@ -24,5 +25,6 @@
 
     echo $this->render( $request->get('company') ? 'client/_list' : 'partner/_list', [
         'dataProvider' => $dataProvider,
+        'searchModel' => $searchModel,
     ] );
 

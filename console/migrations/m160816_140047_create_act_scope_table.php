@@ -23,7 +23,6 @@ class m160816_140047_create_act_scope_table extends Migration
             'description' => 'VARCHAR(255) NOT NULL',
             'created_at' => 'INT(11) NOT NULL',
             'updated_at' => 'INT(11) NOT NULL',
-            'served_at' => 'INT(11) NOT NULL',
         ], "CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB");
     }
 

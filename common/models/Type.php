@@ -4,6 +4,7 @@
 
     use common\models\query\TypeQuery;
     use Yii;
+    use yii\db\ActiveRecord;
     use yii\web\UploadedFile;
 
     /**
@@ -11,9 +12,8 @@
      *
      * @property integer $id
      * @property string $name
-     * @property string $image
      */
-    class Type extends \yii\db\ActiveRecord
+    class Type extends ActiveRecord
     {
         /**
          * @var UploadedFile
@@ -36,7 +36,6 @@
             return [
                 [ [ 'name' ], 'required' ],
                 [ [ 'name' ], 'string', 'max' => 255 ],
-                [ [ 'image' ], 'string', 'max' => 45 ],
                 [ [ 'name' ], 'unique' ],
                 [ [ 'imageFile' ], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg' ],
             ];
@@ -72,8 +71,8 @@
         {
             if ( $this->validate() ) {
                 $path = Yii::getAlias( '@webroot' ) . '/images/cars/';
-                $fileName = $this->image;
-                $this->imageFile->saveAs( $path . $fileName );
+                $fileName = $this->id;
+                $this->imageFile->saveAs( $path . $fileName . '.jpg');
 
                 return true;
             }
@@ -90,11 +89,11 @@
         protected function deleteImage( $imageName = null )
         {
             if ( is_null( $imageName ) )
-                $imageName = $this->image;
+                $imageName = $this->id;
 
             $path = Yii::getAlias( '@webroot' ) . '/images/cars/';
 
-            return unlink( $path . $imageName );
+            return unlink( $path . $imageName . '.jpg' );
         }
 
         public function beforeDelete()

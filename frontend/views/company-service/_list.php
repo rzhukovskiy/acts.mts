@@ -26,9 +26,5 @@ echo GridView::widget([
             },
         ],
         'price',
-        [
-            'class' => 'yii\grid\ActionColumn',
-            'template' => '{update} {delete}'
-        ],
     ],
 ]);
