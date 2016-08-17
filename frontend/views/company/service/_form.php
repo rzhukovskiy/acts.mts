@@ -37,7 +37,7 @@ use common\models\Requisites;
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
-                <span data-toggle="collapse" data-target="#details">Подробнее</span>
+                <span data-toggle="collapse" data-target="#details" class="pseudo">Подробнее</span>
             </div>
         </div>
 

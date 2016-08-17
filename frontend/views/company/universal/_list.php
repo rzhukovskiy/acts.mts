@@ -15,6 +15,7 @@ use yii\grid\GridView;
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
+            'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'emptyText' => '',
             'columns' => [

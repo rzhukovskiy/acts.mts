@@ -32,7 +32,7 @@ foreach (Service::$listType as $id => $type) {
     }
 }
 
-if ($type == Company::TYPE_OWNER) {
+if ($model->type == Company::TYPE_OWNER) {
     echo $this->render('/car/_form', [
         'model' => new Car(),
         'companyModel' => $model,

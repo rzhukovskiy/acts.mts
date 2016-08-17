@@ -1,11 +1,21 @@
 body {
     background-color: #dededc;
+    color: #4582ec;
     font-family: Helvetica,sans-serif;
     font-size: 12px;
     }
+.grid-view {
+     font-size: 14px;
+ }
 .top {
     margin: 10px 0;
     }
+.pseudo {
+    color: #4582ec;
+    cursor: pointer;
+    border-bottom: dashed 1px #134fb8;
+    padding: 0 10px;
+}
 
 /* login */
 .login-form {
@@ -41,11 +51,21 @@ body {
     padding: 0;
     }
 .panel-heading {
+    font-size: larger;
     font-weight: bold;
     }
 .price-from label {
     display: block;
     }
+
+/* tabs */
+.nav>li>a {
+    background-color: #eee;
+    font-weight: bold;
+}
+.nav>li>a:hover {
+    background-color: #ddd;
+}
 
 /* footer */
 .footer {
@@ -62,4 +82,9 @@ body {
     width: 200px;
 }
 
-/* end footer */
+/* buttons */
+.glyphicon-pencil, .glyphicon-trash {
+    font-size: larger;
+    font-weight: bold;
+    margin: 0 10px;
+}

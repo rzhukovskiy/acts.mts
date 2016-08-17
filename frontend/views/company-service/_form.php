@@ -21,13 +21,13 @@ use common\models\Type;
             'action' => ['company/add-price', 'id' => $model->id],
             'options' => ['class' => 'form-horizontal price-from'],
         ]) ?>
-        <table class="table table-striped table-bordered">
+        <table class="table table-bordered">
             <tbody>
             <tr>
                 <td>
                     <?= Html::checkboxList('Price[type]', [], Type::find()->select(['name', 'id'])->indexBy('id')->column()) ?>
                 </td>
-                <td>
+                <td style="vertical-align: middle">
                     <?php foreach (Service::findAll(['type' => $type, 'is_fixed' => 1]) as $service) { ?>
                         <div class="form-group">
                             <label class="control-label col-sm-4"><?= $service->description ?></label>

@@ -8,6 +8,7 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => '{items}',
     'emptyText' => '',
+    'tableOptions' => ['class' => 'table table-bordered'],
     'columns' => [
         [
             'header' => '№',

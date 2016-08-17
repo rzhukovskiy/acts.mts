@@ -41,7 +41,7 @@ class CardSearch extends CommonCardSearch
      */
     public function search($params)
     {
-        $query = Card::find();
+        $query = Card::find()->orderBy('company_id');
 
         // add conditions that should always apply here
 

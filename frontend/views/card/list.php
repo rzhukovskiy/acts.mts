@@ -29,8 +29,6 @@
                         'header' => '№',
                         'class' => 'yii\grid\SerialColumn'
                     ],
-
-                    'number',
                     [
                         'attribute' => 'company_id',
                         'content' => function ( $data ) {
@@ -38,6 +36,7 @@
                         },
                         'filter' => Html::activeDropDownList( $searchModel, 'company_id', $companyDropDownData, [ 'class' => 'form-control', 'prompt' => 'Все компании' ] ),
                     ],
+                    'number',
                 ],
             ] ); ?>
             <?php Pjax::end(); ?>

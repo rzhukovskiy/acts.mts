@@ -63,20 +63,22 @@
                 $now = time();
                 $rowData['parent_id'] = $rowData['parent_id'] ? $rowData['parent_id'] : 'NULL';
                 $type = $listType[$rowData['type']];
+                $status = $rowData['is_deleted'] ? Company::STATUS_DELETED : Company::STATUS_ACTIVE;
+
                 $insert = "({$rowData['id']},
-                {$rowData['parent_id']},
-                '{$rowData['name']}',
-                '{$rowData['address']}',
-                '{$rowData['phone']}',
-                '{$rowData['contact']}',
-                $type,
-                {$rowData['is_split']},
-                {$rowData['is_infected']},
-                {$rowData['is_main']},
-                {$rowData['is_sign']},
-                10,
-                $now,
-                $now)";
+                    {$rowData['parent_id']},
+                    '{$rowData['name']}',
+                    '{$rowData['address']}',
+                    '{$rowData['phone']}',
+                    '{$rowData['contact']}',
+                    $type,
+                    {$rowData['is_split']},
+                    {$rowData['is_infected']},
+                    {$rowData['is_main']},
+                    {$rowData['is_sign']},
+                    $status,
+                    $now,
+                    $now)";
 
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
 
@@ -295,7 +297,7 @@
                 if(!empty($serviceData)) {
                     $insert = "(NULL,
                         {$rowData['company_id']},
-                        {$rowData['id']},
+                        {$serviceData['id']},
                         {$rowData['type_id']},
                         {$rowData['price']},
                         $now,
