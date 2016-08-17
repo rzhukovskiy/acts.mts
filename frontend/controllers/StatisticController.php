@@ -14,7 +14,11 @@ class StatisticController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         if (!empty($type))
-            $dataProvider->query->andWhere(['type_id' => $type]);
+            $dataProvider->query
+                ->groupBy('partner_id')
+                ->orderBy('expense DESC')
+                ->andWhere(['type_id' => $type])
+            ;
 
         $dataProvider->query
             ->with(['partner', 'client', 'type', 'card']);

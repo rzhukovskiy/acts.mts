@@ -27,8 +27,8 @@ echo $this->render('_tabs');
                 'header' => '№',
                 'class' => 'yii\grid\SerialColumn',
             ],
-
-            //'partner_id',
+            'id',
+            'partner_id',
             [
                 'attribute' => 'partner_id',
                 'content' => function($data) {
