@@ -86,7 +86,7 @@
                         {$rowData['id']},
                         $type,
                         '{$rowData['contract']}',
-                        '{$rowData['header']}'
+                        '{$rowData['act_header']}'
                     )";
 
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
