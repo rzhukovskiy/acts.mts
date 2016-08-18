@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-jui": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "*",
-        "c006/yii2-migration-utility": "dev-master"
+        "c006/yii2-migration-utility": "dev-master",
+        "kartik-v/yii2-grid": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

@@ -28,7 +28,8 @@ use yii\grid\GridView;
                 'address',
                 [
                     'label' => 'Количество карт',
-                    'options' => ['style' => 'width:200px'],
+                    'contentOptions' => ['style' => 'max-width:200px'],
+                    'options' => ['style' => 'max-width:200px'],
                     'value' => function ($data) {
                         return count($data->cards) . ' (' . $data->cardsAsString . ')';
                     },

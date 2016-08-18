@@ -47,6 +47,7 @@ class CarSearch extends Car
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);

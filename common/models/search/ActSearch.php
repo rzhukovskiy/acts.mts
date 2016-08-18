@@ -9,26 +9,36 @@ use common\models\Act;
 
 /**
  * CardSearch represents the model behind the search form about `common\models\Card`.
+ * @property string $period
+ * @property integer $day
  */
 class ActSearch extends Act
 {
+    public $period;
+    public $day;
+    
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['partner_id', 'card_id', 'mark_id', 'type_id'], 'integer'],
-            [['number', 'extra_number', 'served_at'], 'string'],
+            [['partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
+            [['number', 'extra_number', 'period'], 'string'],
+            ['period', 'default', 'value' => date('n') . '-' . date('Y')],
         ];
     }
+
     /**
      * @inheritdoc
      */
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return [
+            Act::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            Act::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
+        ];
     }
 
     /**
@@ -46,6 +56,7 @@ class ActSearch extends Act
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
@@ -56,6 +67,28 @@ class ActSearch extends Act
             return $dataProvider;
         }
 
+        switch ($this->scenario) {
+            case Act::SCENARIO_CLIENT:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'client',
+                ]);
+
+                $query->orderBy('parent_id, client_id, served_at');
+                break;
+            default:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'partner',
+                ]);
+
+                $query->orderBy('parent_id, partner_id, served_at');
+        }
+        
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -65,6 +98,9 @@ class ActSearch extends Act
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'service_type' => $this->service_type,
+            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
+            'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
         ]);
 
         return $dataProvider;

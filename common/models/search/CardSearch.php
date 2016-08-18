@@ -46,6 +46,7 @@ class CardSearch extends Card
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);

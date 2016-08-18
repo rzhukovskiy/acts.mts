@@ -4,9 +4,6 @@ body {
     font-family: Helvetica,sans-serif;
     font-size: 12px;
     }
-.grid-view {
-     font-size: 14px;
- }
 .top {
     margin: 10px 0;
     }
@@ -87,4 +84,22 @@ body {
     font-size: larger;
     font-weight: bold;
     margin: 0 10px;
+}
+
+/* tables */
+.grid-view {
+    font-size: 14px;
+}
+.grid-view thead {
+    background: #eee;
+}
+.form-control {
+    padding: 2px;
+}
+.kv-grid-group-row .parent {
+    font-weight: bold;
+}
+.kv-grid-group-row {
+    color: #ffffff;
+    background-color: #4582ec;
 }

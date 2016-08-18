@@ -47,6 +47,7 @@ class MarkSearch extends Mark
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
