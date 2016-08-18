@@ -37,7 +37,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['my-cars'],
+                        'actions' => ['list'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ]
