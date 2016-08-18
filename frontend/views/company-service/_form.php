@@ -16,6 +16,10 @@ use common\models\Type;
         <?= 'Редактирование прайса на ' . Service::$listType[$type]['ru'] ?>
     </div>
     <div class="panel-body">
+        <?= $this->render('/company-service/_list', [
+            'dataProvider' => $model->getPriceDataProvider($type),
+        ]); ?>
+
         <?php
         $form = ActiveForm::begin([
             'action' => ['company/add-price', 'id' => $model->id],
@@ -45,9 +49,5 @@ use common\models\Type;
             </tbody>
         </table>
         <?php ActiveForm::end() ?>
-
-        <?= $this->render('/company-service/_list', [
-            'dataProvider' => $model->getPriceDataProvider($type),
-        ]); ?>
     </div>
 </div>
