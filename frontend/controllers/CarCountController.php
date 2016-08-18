@@ -2,12 +2,16 @@
 namespace frontend\controllers;
 
 use common\models\Car;
+use common\models\Company;
+use common\models\search\CarSearch;
 use common\models\Type;
 use common\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * Created by PhpStorm.
@@ -64,21 +68,42 @@ class CarCountController extends Controller
 
     public function actionView($type)
     {
-        $query = Car::find()
-            ->with(['mark', 'type'])
-            ->byType($type);
+        $typeModel = $this->findModel($type);
 
-        $provider = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => false,
-            'pagination' => false
-        ]);
+        $searchModel = new CarSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query
+            ->byType($type)
+            ->with(['mark', 'type']);
 
-        $typeModel = Type::findOne($type);
+        if (!empty($company))
+            $dataProvider->query
+                ->andWhere(['company_id' => $company]);
+
+        $dataProvider->pagination = false;
+
+        // TODO: need to refactor this shit
+        $carModels = $dataProvider->getModels();
+        $companyIds = ArrayHelper::getColumn($carModels, 'company_id');
+        $companyIds = array_unique($companyIds);
+        $companyModels = Company::find()
+            ->andWhere(['in', 'id', $companyIds])
+            ->all();
+        $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
 
         return $this->render('view', [
-            'provider' => $provider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
             'typeModel' => $typeModel,
+            'companyDropDownData' => $companyDropDownData,
         ]);
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = Type::findOne($id)) == null)
+            throw new NotFoundHttpException('Page not found!');
+
+        return $model;
     }
 }
