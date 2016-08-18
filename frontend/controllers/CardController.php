@@ -31,12 +31,12 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['company-cards'],
+                        'actions' => ['list'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
@@ -52,30 +52,19 @@ class CardController extends Controller
     public function actionList()
     {
         $searchModel = new CardSearch();
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
+            $searchModel->company_id = Yii::$app->user->identity->company->id;
+        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [
+            'model' => new Card(),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'companyDropDownData' => $companyDropDownData,
-        ]);
-    }
-
-    public function actionCompanyCards()
-    {
-        return $this->render('company-cards');
-    }
-
-    /**
-     * Displays a single Card model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 
@@ -89,11 +78,9 @@ class CardController extends Controller
         $model = new Card();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['list']);
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return $this->redirect(['list']);
         }
     }
 
@@ -108,7 +95,7 @@ class CardController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['list']);
         } else {
             return $this->render('update', [
                 'model' => $model,

@@ -189,12 +189,12 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Карты',
-                    'url' => ['/card/company-cards'],
+                    'url' => ['/card/list'],
                     'active' => \Yii::$app->controller->id == 'card',
                 ],
                 [
                     'label' => 'История машин',
-                    'url' => ['/car/my-cars'],
+                    'url' => ['/car/list'],
                     'active' => \Yii::$app->controller->id == 'car',
                 ],
                 [
@@ -204,12 +204,12 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Расходы',
-//                'url' => ['/archive/error', 'type' => 2],
+                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
                     'active' => \Yii::$app->controller->id == 'archive',
                 ],
                 [
                     'label' => 'Услуги',
-//                'url' => ['/archive/error', 'type' => 2],
+                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
                     'active' => \Yii::$app->controller->id == 'archive',
                 ],
             ];

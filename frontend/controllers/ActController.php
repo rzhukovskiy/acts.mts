@@ -32,6 +32,11 @@ class ActController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
+                    [
+                        'actions' => ['list', 'view'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_CLIENT],
+                    ],
                 ],
             ],
         ];

@@ -1,6 +1,6 @@
 body {
     background-color: #dededc;
-    color: #4582ec;
+    color: #069;
     font-family: Helvetica,sans-serif;
     font-size: 12px;
     }
@@ -8,9 +8,9 @@ body {
     margin: 10px 0;
     }
 .pseudo {
-    color: #4582ec;
+    color: #069;
     cursor: pointer;
-    border-bottom: dashed 1px #134fb8;
+    border-bottom: dashed 1px #069;
     padding: 0 10px;
 }
 
@@ -49,7 +49,7 @@ body {
     }
 .panel-heading {
     font-size: larger;
-    font-weight: bold;
+    text-shadow: 1px 1px #222;
     }
 .price-from label {
     display: block;
@@ -58,7 +58,7 @@ body {
 /* tabs */
 .nav>li>a {
     background-color: #eee;
-    font-weight: bold;
+    font-size: larger;
 }
 .nav>li>a:hover {
     background-color: #ddd;
@@ -101,5 +101,5 @@ body {
 }
 .kv-grid-group-row {
     color: #ffffff;
-    background-color: #4582ec;
+    background-color: #428bca;
 }
