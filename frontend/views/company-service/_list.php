@@ -17,7 +17,7 @@ echo GridView::widget([
         [
             'attribute' => 'type_id',
             'value' => function ($data) {
-                return $data->getSamePrices();
+                return $data->type->name;
             },
         ],
         [
