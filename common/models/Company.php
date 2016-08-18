@@ -212,7 +212,7 @@ class Company extends ActiveRecord
                 }
                 $range .= $card->number;
             }
-            if ($i == $cnt) {
+            if ($i == $cnt && $card->number - 1 == $previous) {
                 $range .= $card->number;
             }
             $previous = $card->number;
