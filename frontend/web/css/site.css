@@ -48,8 +48,9 @@ body {
     padding: 0;
     }
 .panel-heading {
-    font-size: larger;
+    font-size: 16px;
     text-shadow: 1px 1px #222;
+    text-transform: uppercase;
     }
 .price-from label {
     display: block;
@@ -80,10 +81,10 @@ body {
 }
 
 /* buttons */
-.glyphicon-pencil, .glyphicon-trash {
+.glyphicon-pencil, .glyphicon-trash, .glyphicon-eye-open {
     font-size: larger;
     font-weight: bold;
-    margin: 0 10px;
+    margin: 0 10px 0 0;
 }
 
 /* tables */

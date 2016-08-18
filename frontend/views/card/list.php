@@ -27,6 +27,8 @@ echo GridView::widget([
     'filterModel' => $admin ? $searchModel : null,
     'floatHeader' => $admin,
     'floatHeaderOptions' => ['scrollingTop' => '0'],
+    'hover' => false,
+    'striped' => false,
     'export' => false,
     'summary' => false,
     'emptyText' => '',
@@ -42,14 +44,15 @@ echo GridView::widget([
             'header' => '№',
             'class' => 'yii\grid\SerialColumn'
         ],
-        'number',
         [
             'attribute' => 'company_id',
+            'filter' => Html::activeDropDownList($searchModel, 'company_id', $companyDropDownData, ['class' => 'form-control', 'prompt' => 'Все компании']),
             'content' => function ($data) {
                 return $data->company->name;
             },
-            'filter' => Html::activeDropDownList($searchModel, 'company_id', $companyDropDownData, ['class' => 'form-control', 'prompt' => 'Все компании']),
+            'visible' => $admin,
         ],
+        'number',
     ],
 ]);
 Pjax::end();

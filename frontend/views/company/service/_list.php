@@ -2,6 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel \common\models\search\CompanySearch
  */
 
 use yii\grid\GridView;
@@ -15,6 +16,7 @@ use yii\grid\GridView;
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'emptyText' => '',

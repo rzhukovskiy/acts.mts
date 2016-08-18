@@ -57,6 +57,7 @@ class CardController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->joinWith(['company']);
         $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [

@@ -52,6 +52,7 @@ class Act extends ActiveRecord
 
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_CLIENT = 'client';
+    const SCENARIO_CAR = 'car';
     
     public $serviceList;
     public $time_str;

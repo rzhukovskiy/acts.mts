@@ -33,12 +33,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'type.name',
                         'content' => function ($data) {
-                            return Html::a($data->type->name, ['car-count/view', 'type' => $data->type->id]);
+                            return $data->type->name;
                         },
                     ],
                     [
                         'attribute' => 'carsCountByType',
                         'label' => 'Кол-во'
+                    ],
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'template' => '{view}',
+                        'buttons' => [
+                            'view' => function ($url, $data, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'type' => $data->type->id]);
+                            },
+                        ],
                     ],
                 ],
             ]);

@@ -25,7 +25,8 @@ class ActSearch extends Act
         return [
             [['partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
             [['number', 'extra_number', 'period'], 'string'],
-            ['period', 'default', 'value' => date('n') . '-' . date('Y')],
+            ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
+            ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
     }
 
@@ -36,8 +37,9 @@ class ActSearch extends Act
     {
         // bypass scenarios() implementation in the parent class
         return [
-            Act::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            Act::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
+            self::SCENARIO_CAR => ['day', 'period'],
+            self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
         ];
     }
 
@@ -68,7 +70,7 @@ class ActSearch extends Act
         }
 
         switch ($this->scenario) {
-            case Act::SCENARIO_CLIENT:
+            case self::SCENARIO_CLIENT:
                 $query->joinWith([
                     'type',
                     'mark',
@@ -90,11 +92,12 @@ class ActSearch extends Act
         }
         
         // grid filtering conditions
+        $query->alias('act');
         $query->andFilterWhere([
             'id' => $this->id,
             'client_id' => $this->client_id,
             'partner_id' => $this->partner_id,
-            'number' => $this->number,
+            'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
