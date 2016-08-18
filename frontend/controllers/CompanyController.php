@@ -11,6 +11,7 @@ namespace frontend\controllers;
 
 use common\models\Company;
 use common\models\CompanyService;
+use common\models\search\CompanySearch;
 use common\models\User;
 use yii;
 use yii\data\ActiveDataProvider;
@@ -51,21 +52,22 @@ class CompanyController extends Controller
      */
     public function actionList($type)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Company::find()->active()->where(['type' => $type]),
-            'pagination' => false,
-            'sort' => [
-                'defaultOrder' => [
-                    'created_at' => SORT_DESC,
-                ]
-            ],
-        ]);
+        $searchModel = new CompanySearch();
+        $searchModel->type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'created_at' => SORT_DESC,
+            ]
+        ];
 
         $model = new Company();
         $model->type = $type;
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
         ]);

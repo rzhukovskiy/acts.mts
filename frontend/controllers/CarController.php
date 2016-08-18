@@ -2,7 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\models\Act;
 use common\models\Car;
+use common\models\Company;
+use common\models\search\ActSearch;
 use common\models\search\CarSearch;
 use Yii;
 use yii\filters\VerbFilter;
@@ -33,11 +36,11 @@ class CarController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['list', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'view', 'create', 'update', 'delete'],
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list'],
+                        'actions' => ['list', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ]
@@ -58,43 +61,36 @@ class CarController extends Controller
     public function actionList()
     {
         $searchModel = new CarSearch();
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
+            $searchModel->company_id = Yii::$app->user->identity->company->id;
+        } else {
+            $searchModel->company_id = Company::find()->with('cars')->one()->id;
+        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query
-            ->with([
-                'company' => function ($query) {
-                    $query->select('id, name');
-                },
-                'type' => function ($query) {
-                    $query->select('id, name');
-                },
-                'mark' => function ($query) {
-                    $query->select('id, name');
-                }
-            ]);
-        $dataProvider->pagination = [
-            'pageSize' => 300,
-        ];
-        $dataProvider->sort = false;
+
+        $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+            'companyDropDownData' => $companyDropDownData,
         ]);
     }
 
-    public function actionMyCars()
+    public function actionView($id)
     {
-        $searchModel = new CarSearch();
-        if (!empty(Yii::$app->user->identity->company_id))
-            $searchModel->company_id = Yii::$app->user->identity->company_id;
+        $model = $this->findModel($id);
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel->number = $model->number;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination = false;
 
-
-        return $this->render('my-cars', [
-            'searchModel' => $searchModel,
+        return $this->render('view', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'model' => $model,
         ]);
     }
 
@@ -136,18 +132,6 @@ class CarController extends Controller
     public function actionUpload()
     {
         return $this->render('upload');
-    }
-
-    /**
-     * Displays a single Car model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**

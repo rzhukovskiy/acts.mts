@@ -5,12 +5,12 @@ namespace common\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Car;
+use common\models\Company;
 
 /**
- * CarSearch represents the model behind the search form about `common\models\Car`.
+ * CardSearch represents the model behind the search form about `common\models\Card`.
  */
-class CarSearch extends Car
+class CompanySearch extends Company
 {
     /**
      * @inheritdoc
@@ -18,8 +18,7 @@ class CarSearch extends Car
     public function rules()
     {
         return [
-            [['id', 'company_id', 'mark_id', 'type_id', 'is_infected'], 'integer'],
-            [['number'], 'safe'],
+            [['name', 'address'], 'string'],
         ];
     }
 
@@ -41,7 +40,7 @@ class CarSearch extends Car
      */
     public function search($params)
     {
-        $query = Car::find();
+        $query = Company::find();
 
         // add conditions that should always apply here
 
@@ -61,24 +60,10 @@ class CarSearch extends Car
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'company_id' => $this->company_id,
-            'mark_id' => $this->mark_id,
-            'type_id' => $this->type_id,
-            'is_infected' => $this->is_infected,
+            'type' => $this->type,
         ]);
-
-        $query->andFilterWhere(['like', 'number', $this->number]);
-        $query->joinWith(['company', 'type', 'mark', 'acts act']);
-        $query->alias('car');
-
-        $query->select(['*', 'COUNT(act.id) AS actsCount']);
-        $query->having('actsCount != 0');
-        $query->groupBy(['car.id']);
-        $query->orderBy([
-            'parent_id' => SORT_ASC,
-            'company_id' => SORT_ASC,
-            'actsCount' => SORT_DESC
-        ]);
+        $query->andFilterWhere(['like', 'address', $this->address]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

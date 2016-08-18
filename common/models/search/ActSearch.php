@@ -25,7 +25,6 @@ class ActSearch extends Act
         return [
             [['partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
             [['number', 'extra_number', 'period'], 'string'],
-            ['period', 'default', 'value' => date('n') . '-' . date('Y')],
         ];
     }
 
@@ -90,11 +89,12 @@ class ActSearch extends Act
         }
         
         // grid filtering conditions
+        $query->alias('act');
         $query->andFilterWhere([
             'id' => $this->id,
             'client_id' => $this->client_id,
             'partner_id' => $this->partner_id,
-            'number' => $this->number,
+            'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
