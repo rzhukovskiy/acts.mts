@@ -81,7 +81,7 @@ body {
 }
 
 /* buttons */
-.glyphicon-pencil, .glyphicon-trash {
+.glyphicon-pencil, .glyphicon-trash, .glyphicon-eye-open {
     font-size: larger;
     font-weight: bold;
     margin: 0 10px 0 0;

@@ -21,7 +21,6 @@ if ($admin) {
 Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
     'floatHeader' => $admin,
     'floatHeaderOptions' => ['scrollingTop' => '0'],
     'hover' => false,
@@ -50,14 +49,6 @@ echo GridView::widget([
             'groupedRow' => true,
             'groupOddCssClass' => '',
             'groupEvenCssClass' => '',
-            'visible' => $admin,
-        ],
-        [
-            'attribute' => 'company_id',
-            'filter' => Html::activeDropDownList($searchModel, 'company_id', $companyDropDownData, ['class' => 'form-control', 'prompt' => 'Все компании']),
-            'content' => function ($data) {
-                return $data->company->name;
-            },
             'visible' => $admin,
         ],
         [

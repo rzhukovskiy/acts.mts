@@ -63,8 +63,6 @@ class CarController extends Controller
         $searchModel = new CarSearch();
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $searchModel->company_id = Yii::$app->user->identity->company->id;
-        } else {
-            $searchModel->company_id = Company::find()->with('cars')->one()->id;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -82,7 +80,7 @@ class CarController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CAR]);
         $searchModel->number = $model->number;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
