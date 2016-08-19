@@ -10,7 +10,8 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Типы ТС';
-$this->params['breadcrumbs'][] = $this->title;
+
+echo $this->render('_tabs');
 ?>
 <div class="image-list">
     <div class="panel panel-primary">
