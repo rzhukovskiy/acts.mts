@@ -1,7 +1,9 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this yii\web\View
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $type int
+ */
 
 use yii\grid\GridView;
 echo GridView::widget([

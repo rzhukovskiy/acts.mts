@@ -19,15 +19,15 @@ echo $this->render(Company::$listType[$model->type]['en'] . '/_form', [
     'model' => $model,
 ]);
 
-foreach (Service::$listType as $id => $type) {
+foreach (Service::$listType as $type_id => $type) {
     if (($model->type == Company::TYPE_OWNER ||
             $model->type == Company::TYPE_UNIVERSAL ||
-            $model->type == $id
+            $model->type == $type_id
         ) && Service::findAll(['type' => $type, 'is_fixed' => 1])
     ) {
         echo $this->render('/company-service/_form', [
             'model' => $model,
-            'type' => $id,
+            'type' => $type_id,
         ]);
     }
 }

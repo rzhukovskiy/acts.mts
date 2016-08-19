@@ -87,6 +87,21 @@ class CompanyService extends ActiveRecord
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
 
+    /**
+     * @param $service_id int
+     * @return int
+     */
+    public function getPriceForService($service_id)
+    {
+        $companyService =  self::findOne([
+            'company_id' => $this->company_id,
+            'type_id' => $this->type_id,
+            'service_id' => $service_id,
+        ]);
+
+        return $companyService ? $companyService->price : 0;
+    }
+
     public function beforeSave($insert)
     {
         $existed = CompanyService::findOne([

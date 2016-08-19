@@ -2,13 +2,14 @@
 
 /**
  * @var $model \common\models\Company
- * @var $type \common\models\Type
+ * @var $type int
  */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Service;
 use common\models\Type;
+use common\models\Company;
 
 ?>
 <div class="panel panel-primary">
@@ -16,8 +17,12 @@ use common\models\Type;
         <?= 'Редактирование прайса на ' . Service::$listType[$type]['ru'] ?>
     </div>
     <div class="panel-body">
-        <?= $this->render('/company-service/_list', [
+        <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT]) ? $this->render('/company-service/merged/_list', [
             'dataProvider' => $model->getPriceDataProvider($type),
+            'type' => $type,
+        ]) : $this->render('/company-service/split/_list', [
+            'dataProvider' => $model->getPriceDataProvider($type),
+            'type' => $type,
         ]); ?>
 
         <?php

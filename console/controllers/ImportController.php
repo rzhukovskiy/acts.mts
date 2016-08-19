@@ -262,7 +262,7 @@
                         {$rowData['company_id']},
                         3,
                         {$rowData['type_id']},
-                        {$rowData['outside']},
+                        {$rowData['engine']},
                         $now,
                         $now)";
 
