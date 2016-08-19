@@ -10,7 +10,6 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Список типов ТС';
-$this->params['breadcrumbs'][] = $this->title;
 
 ?>
 <div class="car-count-index">

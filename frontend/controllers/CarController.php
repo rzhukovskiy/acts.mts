@@ -60,7 +60,7 @@ class CarController extends Controller
      */
     public function actionList()
     {
-        $searchModel = new CarSearch();
+        $searchModel = new CarSearch(['scenario' => Car::SCENARIO_HISTORY]);
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $searchModel->company_id = Yii::$app->user->identity->company->id;
         }
@@ -89,6 +89,7 @@ class CarController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

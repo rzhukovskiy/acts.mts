@@ -202,15 +202,15 @@ class menuLeftWidget extends Widget
                     'url' => ['/car-count/list'],
                     'active' => \Yii::$app->controller->id == 'car-count',
                 ],
-                [
-                    'label' => 'Расходы',
-                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
-                    'active' => \Yii::$app->controller->id == 'archive',
-                ],
+//                [
+//                    'label' => 'Расходы',
+//                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
+//                    'active' => \Yii::$app->controller->id == 'archive',
+//                ],
                 [
                     'label' => 'Услуги',
                     'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
-                    'active' => \Yii::$app->controller->id == 'archive',
+                    'active' => \Yii::$app->controller->id == 'act',
                 ],
             ];
         }

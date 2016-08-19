@@ -23,6 +23,8 @@ use yii\db\ActiveRecord;
  */
 class Car extends ActiveRecord
 {
+    const SCENARIO_HISTORY = 'history';
+
     public $carsCountByType;
     public $listService;
 

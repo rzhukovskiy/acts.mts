@@ -3,6 +3,7 @@
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\ActSearch
+ * @var $role string
  */
 
 use kartik\grid\GridView;
@@ -11,6 +12,8 @@ use common\models\Company;
 use common\models\Card;
 use common\models\Mark;
 use common\models\Type;
+use common\models\User;
+use common\models\Service;
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -41,7 +44,7 @@ echo GridView::widget([
             'value' => function ($data) {
                 return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
             },
-            'group' => true,
+            'group' => $role == User::ROLE_ADMIN,
             'groupedRow' => true,
             'groupOddCssClass' => function ($data, $key, $index, $widget) {
                 return isset($data->client->parent) ? 'parent' : 'hidden';
@@ -61,14 +64,15 @@ echo GridView::widget([
                         'style' => 'font-weight:bold;'
                     ]
                 ];
-            }
+            },
+            'visible' => $role == User::ROLE_ADMIN
         ],
         [
             'attribute' => 'client_id',
             'value' => function ($data) {
                 return isset($data->client) ? $data->client->name . '-' . $data->client->address : 'error';
             },
-            'group' => true,
+            'group' => $role == User::ROLE_ADMIN,
             'subGroupOf' => 1,
             'groupedRow' => true,
             'groupOddCssClass' => 'child',
@@ -82,7 +86,8 @@ echo GridView::widget([
                     ],
                     'options' => ['style' => 'font-size: smaller; font-weight:bold;']
                 ];
-            }
+            },
+            'visible' => $role == User::ROLE_ADMIN,
         ],
         [
             'attribute' => 'period',
@@ -112,6 +117,7 @@ echo GridView::widget([
             'value' => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
+            'visible' => $role == User::ROLE_ADMIN,
         ],
         [
             'attribute' => 'card_id',
@@ -124,7 +130,10 @@ echo GridView::widget([
             'options' => ['style' => 'min-width:80px'],
         ],
         'number',
-        'extra_number',
+        [
+            'attribute' => 'extra_number',
+            'visible' => $role == User::ROLE_ADMIN,
+        ],
         [
             'attribute' => 'mark_id',
             'filter' => Mark::find()->select(['name', 'id'])->indexBy('id')->column(),
@@ -140,15 +149,28 @@ echo GridView::widget([
             },
         ],
         [
+            'header' => 'Услуга',
+            'value' => function ($data) {
+                return Service::$listType[$data->service_type]['ru'];
+            }
+        ],
+        [
             'attribute' => 'income',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM,
+        ],
+        [
+            'attribute' => 'partner.address',
+            'value' => function ($data) {
+                return $data->partner->address;
+            }
         ],
         'check',
         [
             'header' => '',
             'class' => 'kartik\grid\ActionColumn',
-            'template' => '{update} {delete}'
+            'template' => '{update} {delete}',
+            'visible' => $role == User::ROLE_ADMIN,
         ],
     ],
 ]);

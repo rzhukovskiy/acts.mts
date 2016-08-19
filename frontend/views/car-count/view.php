@@ -10,22 +10,23 @@ use yii\widgets\Pjax;
  * @var $searchModel \common\models\search\CarSearch
  * @var $typeModel \common\models\Type
  * @var $companyDropDownData array
+ * @var $admin null|bool
  */
 
 $this->title = 'ТС типа «' . Html::encode($typeModel->name) . '»';
-$this->params['breadcrumbs'][] = ['label' => 'Типы ТС', 'url' => ['list']];
-$this->params['breadcrumbs'][] = $this->title;
 
 ?>
 <div class="car-count-view">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            Поиск
+    <?php if ($admin) { ?>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Поиск
+            </div>
+            <div class="panel-body">
+                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => $typeModel->id]); ?>
+            </div>
         </div>
-        <div class="panel-body">
-            <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => $typeModel->id]); ?>
-        </div>
-    </div>
+    <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading"><?= $this->title ?></div>
         <div class="panel-body">
@@ -54,6 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'content' => function ($data) {
                             return $data->is_infected ? 'Да' : 'Нет';
                         },
+                        'visible' => $admin,
                     ],
                 ]
             ]);

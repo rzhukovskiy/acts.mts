@@ -56,7 +56,6 @@ echo GridView::widget([
             'content' => function ($data) {
                 return !empty($data->mark->name) ? Html::encode($data->mark->name) : '';
             },
-            'filter' => false,
         ],
         'number',
         [
@@ -64,14 +63,12 @@ echo GridView::widget([
             'content' => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : '';
             },
-            'filter' => false,
         ],
         [
             'attribute' => 'listService',
             'content' => function ($data) {
                 return count($data->acts);
             },
-            'filter' => false,
         ],
         [
             'class' => 'yii\grid\ActionColumn',

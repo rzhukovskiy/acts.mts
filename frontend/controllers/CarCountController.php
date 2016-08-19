@@ -71,6 +71,9 @@ class CarCountController extends Controller
         $typeModel = $this->findModel($type);
 
         $searchModel = new CarSearch();
+        if (!empty(Yii::$app->user->identity->company_id)) {
+            $searchModel->company_id = Yii::$app->user->identity->company->id;
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
             ->byType($type)

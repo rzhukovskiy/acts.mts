@@ -45,6 +45,13 @@ class ActController extends Controller
     public function actionList( $type, $company = false )
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
+        if (!empty(Yii::$app->user->identity->company_id)) {
+            if ($company) {
+                $searchModel->client_id = Yii::$app->user->identity->company->id;
+            } else {
+                $searchModel->partner_id = Yii::$app->user->identity->company->id;
+            }
+        }
         $searchModel->service_type = $type;
         
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -61,6 +68,7 @@ class ActController extends Controller
             'company' => $company,
             'model' => $model,
             'serviceList' => $serviceList,
+            'role' => Yii::$app->user->identity->role,
         ]);
     }
 
@@ -73,7 +81,7 @@ class ActController extends Controller
     {
         $model = new Act();
         $model->service_type = $type;
-        $model->partner_id = 2;
+        $model->partner_id = Yii::$app->user->identity->company_id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(Yii::$app->request->referrer);

@@ -195,11 +195,16 @@ class Act extends ActiveRecord
             $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
             $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
 
-            //подставляем тип и марку из машины, если нашли по номеру
+            //подставляем тип и марку из машины, если нашли по номеру и инкрементим количество обслуживаний
             $car = Car::findOne(['number' => $this->number]);
             if ($car) {
                 $this->mark_id = $car->mark_id;
                 $this->type_id = $car->type_id;
+                $car->updateAllCounters(['act_count' => 1]);
+            }
+            $car = Car::findOne(['number' => $this->extra_number]);
+            if ($car) {
+                $car->updateAllCounters(['act_count' => 1]);
             }
 
             /**
@@ -242,7 +247,6 @@ class Act extends ActiveRecord
          */
         if ($insert) {
             if (!empty($this->serviceList)) {
-                print_r($this->serviceList);die;
                 foreach ($this->serviceList as $serviceData) {
                     $clientScope = new ActScope();
                     $clientScope->company_id = $this->client_id;
@@ -282,5 +286,19 @@ class Act extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterDelete()
+    {
+        //декрементим количество обслуживаний
+        $car = Car::findOne(['number' => $this->number]);
+        if ($car) {
+            $car->updateAllCounters(['act_count' => -1]);
+        }
+
+        $car = Car::findOne(['number' => $this->extra_number]);
+        if ($car) {
+            $car->updateAllCounters(['act_count' => -1]);
+        }
     }
 }
