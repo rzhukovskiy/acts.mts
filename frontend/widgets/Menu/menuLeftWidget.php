@@ -9,17 +9,13 @@
 namespace frontend\widgets\Menu;
 
 use common\models\Company;
+use common\models\Service;
 use common\models\User;
 use Yii;
 use yii\bootstrap\Widget;
 
 class menuLeftWidget extends Widget
 {
-    public $msgcount;
-    public $creditcount;
-    public $ticketcount;
-    public $paymentcount;
-    public $domaincount;
     /**
      * @var $items []
      * label: string, optional
@@ -102,7 +98,7 @@ class menuLeftWidget extends Widget
 
                 [
                     'label' => 'Услуги',
-                    'url' => ['/service/index'],
+                    'url' => ['service/index', 'ServiceSearch[type]' => Service::TYPE_WASH],
                 ],
 
                 [

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\search\ServiceSearch;
 use Yii;
 use common\models\Service;
 use yii\data\ActiveDataProvider;
@@ -35,13 +36,15 @@ class ServiceController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Service::find(),
-        ]);
+        $searchModel = new ServiceSearch();
+        $dataProvider = new ActiveDataProvider($searchModel->search(Yii::$app->request->queryParams));
+        $model = new Service();
+        $model->type = $searchModel->type;
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'model' => new Service(),
+            'searchModel' => $searchModel,
+            'model' => $model,
         ]);
     }
 

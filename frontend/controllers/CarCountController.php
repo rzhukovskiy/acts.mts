@@ -37,7 +37,7 @@ class CarCountController extends Controller
                     [
                         'actions' => ['list', 'view'],
                         'allow' => true,
-                        'roles' => [User::ROLE_CLIENT, User::ROLE_PARTNER, User::ROLE_WATCHER],
+                        'roles' => [User::ROLE_CLIENT, User::ROLE_WATCHER],
                     ]
                 ]
             ]
@@ -50,19 +50,27 @@ class CarCountController extends Controller
         if (!empty(Yii::$app->user->identity->company_id)) {
             $companyId = Yii::$app->user->identity->company_id;
         }
-        $query = Car::find()
+
+        $searchModel = new CarSearch();
+        if (!empty(Yii::$app->user->identity->company_id)) {
+            $searchModel->company_id = Yii::$app->user->identity->company->id;
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query
             ->with(['type'])
             ->carsCountByTypes($companyId);
 
-        $carByTypes = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => false,
-            'pagination' => false,
-        ]);
+        $companyModels = Company::find()
+            ->andWhere(['type' => Company::TYPE_OWNER])
+            ->all();
+        $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
 
         return $this->render('list', [
-            'carByTypes' => $carByTypes,
+            'searchModel' => $searchModel,
+            'carByTypes' => $dataProvider,
             'companyId' => $companyId,
+            'companyDropDownData' => $companyDropDownData,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 
@@ -85,12 +93,8 @@ class CarCountController extends Controller
 
         $dataProvider->pagination = false;
 
-        // TODO: need to refactor this shit
-        $carModels = $dataProvider->getModels();
-        $companyIds = ArrayHelper::getColumn($carModels, 'company_id');
-        $companyIds = array_unique($companyIds);
         $companyModels = Company::find()
-            ->andWhere(['in', 'id', $companyIds])
+            ->andWhere(['type' => Company::TYPE_OWNER])
             ->all();
         $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
 
@@ -99,6 +103,7 @@ class CarCountController extends Controller
             'dataProvider' => $dataProvider,
             'typeModel' => $typeModel,
             'companyDropDownData' => $companyDropDownData,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

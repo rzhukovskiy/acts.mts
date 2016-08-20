@@ -22,7 +22,7 @@ Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'floatHeader' => $admin,
-    'floatHeaderOptions' => ['scrollingTop' => '0'],
+    'floatHeaderOptions' => ['top' => '0'],
     'hover' => false,
     'striped' => false,
     'export' => false,

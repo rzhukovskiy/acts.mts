@@ -26,7 +26,7 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $admin ? $searchModel : null,
     'floatHeader' => $admin,
-    'floatHeaderOptions' => ['scrollingTop' => '0'],
+    'floatHeaderOptions' => ['top' => '0'],
     'hover' => false,
     'striped' => false,
     'export' => false,

@@ -5,9 +5,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\models\Service;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Service */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $this yii\web\View
+ * @var $model common\models\Service
+ * @var $form yii\widgets\ActiveForm
+ * @var $searchModel common\models\search\ServiceSearch
+ */
 ?>
 
 <div class="panel panel-primary">

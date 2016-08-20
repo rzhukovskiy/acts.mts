@@ -15,7 +15,6 @@ use yii\widgets\ActiveForm;
 <div class="car-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['view', 'type' => $type],
         'method' => 'get',
         'id' => 'search-cars',
         'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
@@ -28,13 +27,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'company_id')->dropDownList($companyDropDownData, ['prompt' => 'Все компании']) ?>
 
-    <?php
-    // TODO: Точно пригодится искать по какому-то из этих параметров
-    //echo $form->field($model, 'number');
-    //echo $form->field($model, 'mark_id');
-    //echo $form->field($model, 'type_id');
-    // echo $form->field($model, 'is_infected');
-    ?>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">
             <?= Html::submitButton('Показать машины', ['class' => 'btn btn-primary btn-sm']) ?>

@@ -98,7 +98,7 @@ class Act extends ActiveRecord
             'client_id' => 'Клиент',
             'card_id' => 'Карта',
             'number' => 'Номер',
-            'extra_number' => 'Номер п/п',
+            'extra_number' => 'п/п',
             'mark_id' => 'Марка',
             'type_id' => 'Тип',
             'income' => 'Сумма',

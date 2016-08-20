@@ -6,6 +6,8 @@ use yii\grid\GridView;
 /**
  * @var $this \yii\web\View
  * @var $carByTypes \yii\data\ActiveDataProvider
+ * @var $searchModel \common\models\search\CarSearch
+ * @var $companyDropDownData array
  *
  */
 
@@ -13,7 +15,16 @@ $this->title = 'Список типов ТС';
 
 ?>
 <div class="car-count-index">
-    <h1></h1>
+    <?php if ($admin) { ?>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Поиск
+            </div>
+            <div class="panel-body">
+                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => $typeModel->id]); ?>
+            </div>
+        </div>
+    <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading"><?= $this->title ?></div>
         <div class="panel-body">
@@ -43,8 +54,8 @@ $this->title = 'Список типов ТС';
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{view}',
                         'buttons' => [
-                            'view' => function ($url, $data, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'type' => $data->type->id]);
+                            'view' => function ($url, $data, $key) use($searchModel) {
+                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'type' => $data->type->id, 'CarSearch[company_id]' => $searchModel->company_id]);
                             },
                         ],
                     ],

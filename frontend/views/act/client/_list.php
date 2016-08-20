@@ -6,14 +6,14 @@
  * @var $role string
  */
 
-use kartik\grid\GridView;
 use common\models\Act;
-use common\models\Company;
 use common\models\Card;
 use common\models\Mark;
+use common\models\Service;
 use common\models\Type;
 use common\models\User;
-use common\models\Service;
+use kartik\grid\GridView;
+use yii\helpers\Html;
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -21,7 +21,7 @@ echo GridView::widget([
     'summary' => false,
     'emptyText' => '',
     'floatHeader' => true,
-    'floatHeaderOptions' => ['scrollingTop' => '0'],
+    'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
         'heading' => 'Список актов',
@@ -33,6 +33,28 @@ echo GridView::widget([
     'striped' => false,
     'export' => false,
     'showPageSummary' => true,
+    'beforeHeader' => [
+        [
+            'columns' => [
+                [
+                    'content' => 'Период:',
+                    'options' => ['style' => 'vertical-align: middle'],
+                ],
+                [
+                    'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
+                    'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
+                ],'','',
+                [
+                    'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+                ],
+                [
+                    'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
+                    'options' => ['colspan' => 5],
+                ],
+            ],
+            'options' => ['class' => 'filters', 'id' => 'w1-filters'],
+        ],
+    ],
     'columns' => [
         [
             'header' => '№',
@@ -90,18 +112,6 @@ echo GridView::widget([
             'visible' => $role == User::ROLE_ADMIN,
         ],
         [
-            'attribute' => 'period',
-            'filter' => Act::getPeriodList(),
-            'value' => function ($data) {
-                return date('m-Y', $data->served_at);
-            },
-            'filterOptions' => ['style' => 'min-width:105px'],
-            'contentOptions' => ['style' => 'min-width:105px'],
-            'options' => ['style' => 'min-width:105px'],
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_COUNT,
-        ],
-        [
             'attribute' => 'day',
             'filter' => Act::getDayList(),
             'value' => function ($data) {
@@ -110,14 +120,6 @@ echo GridView::widget([
             'filterOptions' => ['style' => 'min-width:60px'],
             'contentOptions' => ['style' => 'min-width:60px'],
             'options' => ['style' => 'min-width:60px'],
-        ],
-        [
-            'attribute' => 'client_id',
-            'filter' => Company::find()->select(['name', 'id'])->indexBy('id')->column(),
-            'value' => function ($data) {
-                return isset($data->client) ? $data->client->name : 'error';
-            },
-            'visible' => $role == User::ROLE_ADMIN,
         ],
         [
             'attribute' => 'card_id',
@@ -129,17 +131,17 @@ echo GridView::widget([
             'contentOptions' => ['style' => 'min-width:80px'],
             'options' => ['style' => 'min-width:80px'],
         ],
-        'number',
-        [
-            'attribute' => 'extra_number',
-            'visible' => $role == User::ROLE_ADMIN,
-        ],
         [
             'attribute' => 'mark_id',
             'filter' => Mark::find()->select(['name', 'id'])->indexBy('id')->column(),
             'value' => function ($data) {
                 return isset($data->mark) ? $data->mark->name : 'error';
             },
+        ],
+        'number',
+        [
+            'attribute' => 'extra_number',
+            'visible' => $role == User::ROLE_ADMIN,
         ],
         [
             'attribute' => 'type_id',
@@ -149,15 +151,15 @@ echo GridView::widget([
             },
         ],
         [
+            'attribute' => 'expense',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
+        ],
+        [
             'header' => 'Услуга',
             'value' => function ($data) {
                 return Service::$listType[$data->service_type]['ru'];
             }
-        ],
-        [
-            'attribute' => 'income',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM,
         ],
         [
             'attribute' => 'partner.address',

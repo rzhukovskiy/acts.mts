@@ -202,8 +202,8 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}tires_service ORDER BY pos")->queryAll();
             $now = time();
 
-            $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
-                  (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
+            $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
+                  (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
                   (NULL, 1, " . Company::TYPE_WASH . ", 'двигатель', $now, $now),
                   (NULL, 1, " . Company::TYPE_DISINFECT . ", 'дезинфекция', $now, $now)
                 ")->execute();
@@ -230,26 +230,26 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price")->queryAll();
 
             foreach ($rows as $rowData) {
-                if (!empty($rowData['inside'])) {
+                if (!empty($rowData['outside'])) {
                     $now = time();
                     $insert = "(NULL,
                         {$rowData['company_id']},
                         1,
                         {$rowData['type_id']},
-                        {$rowData['inside']},
+                        {$rowData['outside']},
                         $now,
                         $now)";
 
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company_service VALUES $insert")->execute();
                 }
 
-                if (!empty($rowData['outside'])) {
+                if (!empty($rowData['inside'])) {
                     $now = time();
                     $insert = "(NULL,
                         {$rowData['company_id']},
                         2,
                         {$rowData['type_id']},
-                        {$rowData['outside']},
+                        {$rowData['inside']},
                         $now,
                         $now)";
 
