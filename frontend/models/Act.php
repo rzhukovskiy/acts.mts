@@ -45,6 +45,14 @@ class Act extends CommonAct
     public $countServe; // сколько обслужено машин (кол-во актов)
 
     /**
+     * Атрибуты для статистики
+     */
+    public $month;
+    public $year;
+    public $numActs;
+
+
+    /**
      * @inheritdoc
      */
     public function rules()

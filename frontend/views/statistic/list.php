@@ -17,9 +17,22 @@ use dosamigos\chartjs\ChartJs;
 echo $this->render('_tabs');
 ?>
 <div class="panel panel-primary">
+    <div class="panel-heading">
+        Фильтр данных по времени
+    </div>
     <div class="panel-body">
-        <?php Pjax::begin(); ?>
-        <?= GridView::widget([
+        <?=$this->render('_search')?>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <?= $this->title ?>
+    </div>
+    <div class="panel-body">
+        <?php
+        Pjax::begin();
+        echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => false,
             'summary' => false,
@@ -73,8 +86,8 @@ echo $this->render('_tabs');
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],
-        ]); ?>
-        <?php Pjax::end(); ?>
+        ]);
+        Pjax::end(); ?>
         <hr>
         <?php
         echo ChartJs::widget([

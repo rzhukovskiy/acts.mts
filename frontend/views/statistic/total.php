@@ -1,13 +1,121 @@
 <?php
-    /**
-     * @var $this yii\web\View
-     */
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+use dosamigos\chartjs\ChartJs;
+use common\models\Service;
 
-    echo $this->render( '_tabs' );
+/**
+ * @var $this yii\web\View
+ * @var $dataProvider \yii\data\ActiveDataProvider
+ */
+
+$this->title = 'Общая статистика';
+echo $this->render('_tabs');
 ?>
-<h1>statistic/total</h1>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Общая статистика
+    </div>
+    <div class="panel-body">
+        <?php
+        Pjax::begin();
+        echo GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => false,
+            'summary' => false,
+            'emptyCell' => '',
+            'showFooter' => true,
+            'columns' => [
+                [
+                    'header' => '№',
+                    'class' => 'yii\grid\SerialColumn',
+                    'footer' => 'Итого:',
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
+                    'attribute' => 'service_type',
+                    'header' => 'Услуга',
+                    'content' => function ($data) {
+                        return !empty($data->service_type) ? Service::$listType[$data->service_type]['ru'] : '—';
+                    },
+                ],
+                [
+                    'attribute' => 'countServe',
+                    'header' => 'Обслужено',
+                    'footer' => number_format($totalServe, 0, '', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
+                    'attribute' => 'expense',
+                    'header' => 'Расход',
+                    'content' => function ($data) {
+                        return number_format($data->expense, 2, ',', ' ');
+                    },
+                    'footer' => number_format($totalExpense, 2, ',', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
+                    'attribute' => 'profit',
+                    'header' => 'Прибыль',
+                    'content' => function ($data) {
+                        return number_format($data->profit, 2, ',', ' ');
+                    },
+                    'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]);
+        Pjax::end();
+        ?>
+        <hr>
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="well" style="margin-left: 20px">
+                    <h4>Прибыль по месяцам</h4>
+                    <?php
+                    echo ChartJs::widget([
+                        'type' => 'line',
+                        'options' => [
+                            'id' => 'stat_by_months',
+                            'height' => 110,
+                            'width' => 150,
+                            'scales' => [
+                                'xAxes' => [
+                                    'type' => 'linear',
+                                    'position' => 'bottom',
+                                ]
+                            ]
+                        ],
+                        'data' => $monthChart,
+
+                    ]);
+                    ?>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="well">
+                    <h4>Общая статистика услуг</h4>
+                    <?php
+                    echo ChartJs::widget([
+                        'type' => 'pie',
+                        'options' => [
+                            'id' => 'stat_by_service',
+                            'height' => 110,
+                            'width' => 150
+                        ],
+                        'clientOptions' => [
+                            'legend' => [
+                                'position' => 'bottom'
+                            ]
+                        ],
+                        'data' => $chartData
+                    ]);
+                    ?>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -29,7 +29,7 @@
             'active' => $request->get('type') == '5',
         ],
         [
-            'label' => 'Универсальная',
+            'label' => 'Общая',
             'url' => '/statistic/total',
             'active' => Yii::$app->controller->action->id == 'total',
         ],
