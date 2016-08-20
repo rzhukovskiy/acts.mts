@@ -12,6 +12,8 @@ use yii\data\ActiveDataProvider;
  */
 class ActSearch extends Act
 {
+    public $dateMonth; // display year and month on /statistic/view
+
     public $dateFrom;
     public $dateTo;
 

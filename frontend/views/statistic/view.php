@@ -1,32 +1,30 @@
 <?php
 
 use yii\grid\GridView;
-use yii\widgets\Pjax;
-use dosamigos\chartjs\ChartJs;
 use yii\bootstrap\Html;
+use dosamigos\chartjs\ChartJs;
 
 /**
- * @var $this yii\web\View
- * @var $type integer
- * @var $searchModel \frontend\models\search\ActSearch
+ * @var $this \yii\web\View
+ * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
- * @var $chartData array
- * @var $totalServe float
- * @var $totalProfit float
- * @var $totalExpense float
  */
 
-echo $this->render('_tabs');
+$this->title = $model->name;
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Фильтр данных по времени
     </div>
     <div class="panel-body">
-        <?= $this->render('_search', [
-            'type' => $type,
-            'model' => $searchModel,
-        ]) ?>
+        <?php
+                echo $this->render('_search', [
+                    'type' => null,
+                    'companyId' => $model->id,
+                    'model' => $searchModel,
+                ]);
+        ?>
     </div>
 </div>
 
@@ -36,13 +34,11 @@ echo $this->render('_tabs');
     </div>
     <div class="panel-body">
         <?php
-        // TODO: Change formatting to Yii2 style
-        Pjax::begin();
+
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => false,
-            'summary' => false,
-            'emptyCell' => '',
+            'layout' => '{items}',
+            'emptyText' => '',
             'showFooter' => true,
             'columns' => [
                 [
@@ -51,18 +47,14 @@ echo $this->render('_tabs');
                     'footer' => 'Итого:',
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
+
+                // TODO: group by year maybe?
                 [
-                    'attribute' => 'partner_id',
-                    'header' => 'Партнер',
+                    'header' => 'Дата',
+                    'attribute' => 'dateMonth',
                     'content' => function ($data) {
-                        return !empty($data->partner->name) ? Html::a($data->partner->name, ['/statistic/view', 'id' => $data->partner->id]) : '—';
-                    },
-                ],
-                [
-                    'header' => 'Город',
-                    'attribute' => 'company_id',
-                    'content' => function ($data) {
-                        return !empty($data->partner->address) ? $data->partner->address : '-';
+                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:F Y');
+                        return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id]);
                     }
                 ],
                 [
@@ -81,6 +73,15 @@ echo $this->render('_tabs');
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
+                    'attribute' => 'income',
+                    'header' => 'Доход',
+                    'content' => function ($data) {
+                        return number_format($data->income, 2, ',', ' ');
+                    },
+                    'footer' => $totalIncome,
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
@@ -95,17 +96,18 @@ echo $this->render('_tabs');
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/view', 'id' => $model->partner->id]);
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/by-day', 'id' => $model->partner->id]);
                         }
                     ]
                 ],
-            ],
+            ]
         ]);
-        Pjax::end(); ?>
+        ?>
         <hr>
         <?php
+        //var_dump($chartData);
         echo ChartJs::widget([
-            'type' => 'pie',
+            'type' => 'line',
             'options' => [
                 'height' => 200,
                 'width' => 400

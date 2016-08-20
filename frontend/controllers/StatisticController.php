@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use frontend\models\search\ActSearch;
 use common\models\Service;
+use yii\web\NotFoundHttpException;
 
 class StatisticController extends Controller
 {
@@ -135,10 +136,88 @@ class StatisticController extends Controller
         ]);
     }
 
+    /**
+     * @param $id int Company::id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionView($id)
+    {
+        $companyModel = $this->findCompanyModel($id);
+
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'search_by_date';
+        $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+
+        $dataProvider->pagination = false;
+
+        $dataProvider->query
+            ->addSelect("DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m')) as dateMonth")
+            ->addSelect('COUNT({{%act}}.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('partner_id')
+            ->groupBy(["DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m'))"])
+            ->orderBy('dateMonth ASC')
+            ->with(['partner']);
+
+        $totalProfit = 0;
+        $totalServe = 0;
+        $totalExpense = 0;
+        $totalIncome = 0;
+        $chartData = [];
+        $models = $dataProvider->getModels();
+        foreach ($models as $index => $model) {
+            $chartData = $this->viewChartData($chartData, $model);
+            $totalProfit += $model->profit;
+            $totalServe += $model->countServe;
+            $totalExpense += $model->expense;
+            $totalIncome += $model->income;
+        }
+
+        return $this->render('view', [
+            'model' => $companyModel,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'chartData' => $chartData,
+            'totalServe' => $totalServe,
+            'totalProfit' => number_format($totalProfit, 2, '.', ' '),
+            'totalIncome' => number_format($totalIncome, 2, '.', ' '),
+            'totalExpense' => number_format($totalExpense, 2, '.', ' '),
+        ]);
+    }
+
+
+    public function actionByDay($id)
+    {
+        $companyModel = $this->findCompanyModel($id);
+
+        $this->render('by-day');
+    }
+
+    /**
+     * @param $data
+     * @param $model
+     * @return mixed
+     */
+    private function viewChartData($data, $model)
+    {
+        $data['labels'][] = $model->dateMonth;
+        $data['datasets'][0]['data'][] = $model->profit;
+
+        return $data;
+    }
+
+    /**
+     * @param $dataProvider
+     * @param $searchModel
+     * @return array
+     */
     private function monthCartData($dataProvider, $searchModel)
     {
         $currentYear = date('Y');
-        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo))-1 : date('m');
+        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo)) - 1 : date('m');
 
         $models = $dataProvider->query
             ->addSelect('COUNT(id) as numActs')
@@ -155,7 +234,7 @@ class StatisticController extends Controller
         $data = [];
 
         for ($i = 0; $i <= $currentMonth; $i++) {
-            $labels[] = $this->month[$i+1];
+            $labels[] = $this->month[$i + 1];
             $data[$i] = [
                 'x' => $i,
                 'y' => 0
@@ -189,12 +268,12 @@ class StatisticController extends Controller
         ];
 
         foreach ($models->all() as $model) {
-            $dataSet[$model->service_type]['data'][(int)$model->month-1] = [
+            $dataSet[$model->service_type]['data'][(int)$model->month - 1] = [
                 'x' => (int)$model->month,
                 'y' => $model->profit
             ];
-            $tempTotal =  $totalChart['data'][(int)$model->month-1]['y'];
-            $totalChart['data'][(int)$model->month-1] = [
+            $tempTotal = $totalChart['data'][(int)$model->month - 1]['y'];
+            $totalChart['data'][(int)$model->month - 1] = [
                 'x' => (int)$model->month,
                 'y' => $tempTotal + $model->profit,
             ];
@@ -203,7 +282,7 @@ class StatisticController extends Controller
 
         $monthData = [
             'labels' => $labels,
-            'datasets' =>  array_values($dataSet),
+            'datasets' => array_values($dataSet),
         ];
 
         return $monthData;
@@ -239,6 +318,15 @@ class StatisticController extends Controller
         }
 
         return $color;
+    }
+
+
+    private function findCompanyModel($id)
+    {
+        if (($companyModel = Company::findOne($id)) == null)
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        return $companyModel;
     }
 
 }

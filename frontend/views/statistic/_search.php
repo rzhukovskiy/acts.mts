@@ -9,9 +9,13 @@ use kartik\date\DatePicker;
  * @var $type integer
  */
 
-$action = ['/statistic/list', 'type' => $type];
-if ($type == 'total')
-    $action = ['/statistic/' . $type];
+if (!is_null($type)) {
+    $action = ['/statistic/list', 'type' => $type];
+    if ($type == 'total')
+        $action = ['/statistic/' . $type];
+}
+if (!empty($companyId))
+    $action = ['/statistic/view', 'id' => $companyId];
 
 $form = ActiveForm::begin([
     'action' => $action,
@@ -37,7 +41,7 @@ echo $form->field($model, 'dateFrom')->widget(DatePicker::class, [
 ?>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::submitButton('Показать', ['class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
 <?php
