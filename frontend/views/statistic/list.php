@@ -6,12 +6,13 @@ use dosamigos\chartjs\ChartJs;
 
 /**
  * @var $this yii\web\View
- * @var $type null|string
- * @var $dataProvider
- * @var $chartData
- * @var $totalServe
- * @var $totalProfit
- * @var $totalExpense
+ * @var $type integer
+ * @var $searchModel \frontend\models\search\ActSearch
+ * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $chartData array
+ * @var $totalServe float
+ * @var $totalProfit float
+ * @var $totalExpense float
  */
 
 echo $this->render('_tabs');
@@ -21,7 +22,10 @@ echo $this->render('_tabs');
         Фильтр данных по времени
     </div>
     <div class="panel-body">
-        <?=$this->render('_search')?>
+        <?=$this->render('_search', [
+            'type' => $type,
+            'model' => $searchModel,
+        ])?>
     </div>
 </div>
 
@@ -31,6 +35,7 @@ echo $this->render('_tabs');
     </div>
     <div class="panel-body">
         <?php
+        // TODO: Change formatting to Yii2 style
         Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -62,7 +67,7 @@ echo $this->render('_tabs');
                 [
                     'attribute' => 'countServe',
                     'header' => 'Обслужено',
-                    'footer' => number_format($totalServe, 0, '', ' '),
+                    'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
@@ -71,7 +76,7 @@ echo $this->render('_tabs');
                     'content' => function ($data) {
                         return number_format($data->expense, 2, ',', ' ');
                     },
-                    'footer' => number_format($totalExpense, 2, ',', ' '),
+                    'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
@@ -80,7 +85,7 @@ echo $this->render('_tabs');
                     'content' => function ($data) {
                         return number_format($data->profit, 2, ',', ' ');
                     },
-                    'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 

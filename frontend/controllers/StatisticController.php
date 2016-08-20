@@ -6,7 +6,6 @@ use common\models\Company;
 use frontend\models\Act;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
 use frontend\models\search\ActSearch;
 use common\models\Service;
@@ -37,20 +36,26 @@ class StatisticController extends Controller
     ];
     private $month = ["1" => "Январь", "2" => "Февраль", "3" => "Март", "4" => "Апрель", "5" => "Май", "6" => "Июнь", "7" => "Июль", "8" => "Август", "9" => "Сентябрь", "10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь"];
 
+    /**
+     * @param null $type
+     * @return string
+     */
     public function actionList($type = null)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Act::find(),
-            'pagination' => false
-        ]);
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'search_by_date';
+        $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
 
         if (!empty($type)) {
             $dataProvider->query
                 ->andWhere(['type_id' => $type]);
+
             $this->view->title = Company::$listType[$type][ru] . '. Статистика';
         }
 
         $dataProvider->query
+            ->addSelect('served_at')
             ->addSelect('COUNT({{%act}}.id) AS countServe')
             ->addSelect('SUM(expense) as expense')
             ->addSelect('SUM(profit) as profit')
@@ -74,11 +79,13 @@ class StatisticController extends Controller
         }
 
         return $this->render('list', [
+            'type' => $type,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'chartData' => $chartData,
-            'totalProfit' => $totalProfit,
-            'totalServe' => $totalServe,
-            'totalExpense' => $totalExpense,
+            'totalProfit' => number_format($totalProfit, 0, '', ' '),
+            'totalServe' => number_format($totalServe, 0, '', ' '),
+            'totalExpense' => number_format($totalExpense, 0, '', ' '),
         ]);
     }
 
