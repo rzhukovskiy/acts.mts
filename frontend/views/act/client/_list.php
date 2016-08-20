@@ -76,10 +76,10 @@ echo GridView::widget([
             },
             'groupFooter' => function ($data, $key, $index, $widget) {
                 return [
-                    'mergeColumns'=>[[0,10]],
+                    'mergeColumns'=>[[0,8]],
                     'content' => [
                         0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
-                        11 => GridView::F_COUNT,
+                        9 => GridView::F_COUNT,
                     ],
                     'options' => [
                         'class' => isset($data->client->parent) ? '' : 'hidden',
@@ -101,10 +101,10 @@ echo GridView::widget([
             'groupEvenCssClass' => 'child',
             'groupFooter' => function ($data, $key, $index, $widget) {
                 return [
-                    'mergeColumns'=>[[3,10]],
+                    'mergeColumns'=>[[3,8]],
                     'content' => [
                         3 => 'Итого по ' . $data->client->name,
-                        11 => GridView::F_SUM,
+                        9 => GridView::F_SUM,
                     ],
                     'options' => ['style' => 'font-size: smaller; font-weight:bold;']
                 ];
