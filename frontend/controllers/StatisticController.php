@@ -91,10 +91,10 @@ class StatisticController extends Controller
 
     public function actionTotal($type = null)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Act::find(),
-            'pagination' => false
-        ]);
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'search_by_date';
+        $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
 
         if (!is_null($type))
             $dataProvider->query->andWhere(['type_id' => $type]);
@@ -124,31 +124,32 @@ class StatisticController extends Controller
         }
 
         return $this->render('total', [
+            'type' => $type,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'chartData' => $chartData,
             'totalProfit' => $totalProfit,
             'totalServe' => $totalServe,
             'totalExpense' => $totalExpense,
-            'monthChart' => $this->monthCartData(),
+            'monthChart' => $this->monthCartData($dataProvider, $searchModel),
         ]);
     }
 
-    private function monthCartData()
+    private function monthCartData($dataProvider, $searchModel)
     {
         $currentYear = date('Y');
-        $currentMonth = date('m');
+        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo))-1 : date('m');
 
-        $models = Act::find()
+        $models = $dataProvider->query
             ->addSelect('COUNT(id) as numActs')
             ->groupBy(["DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m'))", 'service_type'])
             ->addSelect('SUM(profit) as profit')
             ->addSelect('type_id')
             ->addSelect('service_type')
-            ->addSelect("DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y')) as year")
-            ->addSelect("DATE_FORMAT(FROM_UNIXTIME(served_at),('%m')) as month")
-            ->andWhere(["DATE_FORMAT(FROM_UNIXTIME(served_at), ('%Y'))" => $currentYear])
+            ->addSelect("YEAR(FROM_UNIXTIME(served_at)) as year")
+            ->addSelect("MONTH(FROM_UNIXTIME(served_at)) as month")
+            ->andWhere(["YEAR(FROM_UNIXTIME(served_at))" => $currentYear])
             ->with(['type']);
-
 
         $labels = [];
         $data = [];

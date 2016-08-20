@@ -9,8 +9,12 @@ use kartik\date\DatePicker;
  * @var $type integer
  */
 
+$action = ['/statistic/list', 'type' => $type];
+if ($type == 'total')
+    $action = ['/statistic/' . $type];
+
 $form = ActiveForm::begin([
-    'action' => ['/statistic/list', 'type' => $type],
+    'action' => $action,
     'method' => 'get',
     'id' => 'search-form',
     'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],

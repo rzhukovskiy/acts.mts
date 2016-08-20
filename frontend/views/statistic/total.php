@@ -1,4 +1,5 @@
 <?php
+
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use dosamigos\chartjs\ChartJs;
@@ -6,12 +7,30 @@ use common\models\Service;
 
 /**
  * @var $this yii\web\View
+ * @var $type int
+ * @var $searchModel \frontend\models\search\ActSearch
  * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $chartData array
+ * @var $totalProfit int
+ * @var $totalServe int
+ * @var $totalExpense int
+ * @var $monthChart array
  */
 
 $this->title = 'Общая статистика';
 echo $this->render('_tabs');
 ?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Фильтр данных по времени
+    </div>
+    <div class="panel-body">
+        <?=$this->render('_search', [
+            'type' => 'total',
+            'model' => $searchModel,
+        ])?>
+    </div>
+</div>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Общая статистика
