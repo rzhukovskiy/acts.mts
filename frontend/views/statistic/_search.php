@@ -29,7 +29,7 @@ $form = ActiveForm::begin([
     ],
 ]);
 
-echo $form->field($model, 'dateFrom')->widget(DatePicker::class, [
+echo $form->field($model, 'dateFrom')->widget(DatePicker::className(), [
     'model' => $model,
     'attribute' => 'dateFrom',
     'attribute2' => 'dateTo',
