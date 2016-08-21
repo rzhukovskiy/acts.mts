@@ -15,9 +15,44 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
+if ($role == User::ROLE_ADMIN) {
+    $headerColumns = [
+        [
+            'content' => 'Период:',
+            'options' => ['style' => 'vertical-align: middle'],
+        ],
+        [
+            'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
+            'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
+        ],'','',
+        [
+            'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+        ],
+        [
+            'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
+            'options' => ['colspan' => 5],
+        ],
+    ];
+} else {
+    $headerColumns = [
+        [
+            'content' => 'Период:',
+            'options' => ['style' => 'vertical-align: middle'],
+        ],
+        [
+            'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
+            'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
+        ],
+        [
+            'content' => '',
+            'options' => ['colspan' => $searchModel->service_type == Service::TYPE_WASH ? 6 : 4],
+        ],
+    ];
+}
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
+    'filterModel' => $role == User::ROLE_ADMIN ? $searchModel : null,
     'summary' => false,
     'emptyText' => '',
     'floatHeader' => true,
@@ -35,23 +70,7 @@ echo GridView::widget([
     'showPageSummary' => true,
     'beforeHeader' => [
         [
-            'columns' => [
-                [
-                    'content' => 'Период:',
-                    'options' => ['style' => 'vertical-align: middle'],
-                ],
-                [
-                    'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
-                    'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-                ],'','',
-                [
-                    'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
-                ],
-                [
-                    'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
-                    'options' => ['colspan' => 5],
-                ],
-            ],
+            'columns' => $headerColumns,
             'options' => ['class' => 'filters', 'id' => 'w1-filters'],
         ],
     ],
@@ -151,12 +170,13 @@ echo GridView::widget([
             },
         ],
         [
-            'attribute' => 'expense',
+            'attribute' => 'income',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM,
         ],
         [
             'header' => 'Услуга',
+            'visible' => $searchModel->service_type == Service::TYPE_WASH,
             'value' => function ($data) {
                 return Service::$listType[$data->service_type]['ru'];
             }
@@ -167,7 +187,10 @@ echo GridView::widget([
                 return $data->partner->address;
             }
         ],
-        'check',
+        [
+            'attribute' => 'check',
+            'visible' => $searchModel->service_type == Service::TYPE_WASH,
+        ],
         [
             'header' => '',
             'class' => 'kartik\grid\ActionColumn',

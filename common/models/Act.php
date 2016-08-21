@@ -11,6 +11,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\web\UploadedFile;
 
 /**
  * Act model
@@ -57,6 +58,10 @@ class Act extends ActiveRecord
     public $serviceList;
     public $time_str;
     /**
+     * @var UploadedFile
+     */
+    public $image;
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -82,6 +87,7 @@ class Act extends ActiveRecord
         return [
             [['partner_id', 'card_id', 'mark_id', 'type_id', 'number'], 'required'],
             [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str'], 'safe'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
         ];
     }
@@ -106,6 +112,8 @@ class Act extends ActiveRecord
             'check' => 'Чек',
             'period' => 'Период',
             'day' => 'День',
+            'time_str' => 'Дата',
+            'image' => 'Загрузка чека',
         ];
     }
 
@@ -152,9 +160,17 @@ class Act extends ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getScopes()
+    public function getPartnerScopes()
     {
-        return $this->hasMany(ActScope::className(), ['act_id' => 'id']);
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id'])->where(['company_id' => $this->partner_id]);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getClientScopes()
+    {
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id'])->where(['company_id' => $this->client_id]);
     }
 
     /**
@@ -172,6 +188,20 @@ class Act extends ActiveRecord
     public static function getDayList()
     {
         return array_combine(range(1, 31), range(1, 31));
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getImageLink()
+    {
+        if (file_exists('checks/' . $this->id . '.jpg')) {
+            return '/checks/' . $this->id . '.jpg';
+        }
+        if (file_exists('checks/' . $this->id . '.png')) {
+            return '/checks/' . $this->id . '.png';
+        }
+        return false;
     }
 
     public function beforeSave($insert)
@@ -234,6 +264,8 @@ class Act extends ActiveRecord
                 $this->income = $totalIncome;
                 $this->expense = $totalExpense;
                 $this->profit = $this->income - $this->expense;
+            } else {
+                return false;
             }
         }
 
@@ -246,17 +278,27 @@ class Act extends ActiveRecord
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
         if ($insert) {
+            //сохраняем картинку чека
+            if ($this->image) {
+                $this->image->saveAs('checks/' . $this->id . '.' . $this->image->extension);
+            }
+
             if (!empty($this->serviceList)) {
                 foreach ($this->serviceList as $serviceData) {
                     $clientScope = new ActScope();
                     $clientScope->company_id = $this->client_id;
                     $clientScope->act_id = $this->id;
-                    $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                    if (!empty($serviceData['service_id'])) {
+                        $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
 
-                    if (!empty($clientService) && $clientService->service->is_fixed) {
-                        $clientScope->company_service_id = $clientService->id;
-                        $clientScope->price = $clientService->price;
-                        $clientScope->description = $clientService->service->description;
+                        if (!empty($clientService) && $clientService->service->is_fixed) {
+                            $clientScope->company_service_id = $clientService->id;
+                            $clientScope->price = $clientService->price;
+                            $clientScope->description = $clientService->service->description;
+                        } else {
+                            $clientScope->price = 0;
+                            $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
                     } else {
                         //на 20% увеличиваем цену для клиента
                         $clientScope->price = 1.2 * $serviceData['price'];
@@ -268,11 +310,17 @@ class Act extends ActiveRecord
                     $partnerScope = new ActScope();
                     $partnerScope->company_id = $this->partner_id;
                     $partnerScope->act_id = $this->id;
-                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-                    if (!empty($partnerService) && $partnerService->service->is_fixed) {
-                        $partnerScope->company_service_id = $partnerService->id;
-                        $partnerScope->price = $partnerService->price;
-                        $partnerScope->description = $partnerService->service->description;
+                    if (!empty($serviceData['service_id'])) {
+                        $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+
+                        if (!empty($clientService) && $partnerService->service->is_fixed) {
+                            $partnerScope->company_service_id = $partnerService->id;
+                            $partnerScope->price = $partnerService->price;
+                            $partnerScope->description = $partnerService->service->description;
+                        } else {
+                            $partnerScope->price = 0;
+                            $partnerScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
                     } else {
                         $clientScope->price = $serviceData['price'];
                         $partnerScope->description = $serviceData['description'];

@@ -7,7 +7,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
+use kartik\date\DatePicker;
 use common\models\Mark;
 use common\models\Type;
 use common\models\Card;
@@ -29,15 +29,19 @@ use common\models\Card;
             <tr>
                 <td>
                     <?= $form->field($model, 'time_str')->widget(DatePicker::classname(), [
+                        'type' => DatePicker::TYPE_INPUT,
                         'language' => 'ru',
-                        'dateFormat' => 'dd-MM-yyyy',
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'dd-mm-yyyy'
+                        ],
                         'options' => [
                             'class' => 'form-control',
                         ]
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'card_id')->dropdownList(Card::find()->select(['number', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'card_id')->dropdownList(Card::find()->select(['number', 'id'])->indexBy('id')->column(), ['style' => 'min-width: 60px'])->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'number')->error(false) ?>
@@ -51,22 +55,22 @@ use common\models\Card;
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>
                 </td>
+                <td>
+                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+                </td>
             </tr>
             <tr>
-                <td colspan="6">
+                <td colspan="7">
                     <div class="form-group">
                         <div class="col-xs-6">
                             <?php if (!empty($serviceList)) { ?>
-                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'Услуга']) ?>
+                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
                             <?php } else { ?>
                                 <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                             <?php } ?>
                         </div>
                         <div class="col-xs-1">
-                            <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'form-control input-sm', 'placeholder' => 'Количество']) ?>
-                        </div>
-                        <div class="col-xs-1">
-                            <?= Html::textInput("Act[serviceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Цена']) ?>
+                            <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                         </div>
                         <div class="col-xs-1">
                             <button type="button" class="btn btn-primary input-sm addButton"><i class="glyphicon glyphicon-plus"></i></button>
@@ -75,7 +79,7 @@ use common\models\Card;
                 </td>
             </tr>
             <tr>
-                <td colspan="6">
+                <td colspan="7">
                     <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary btn-sm']) ?>
                 </td>
             </tr>

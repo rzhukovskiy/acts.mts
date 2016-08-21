@@ -635,4 +635,39 @@
 
             $this->stdout("Acts done!\n");
         }
+
+        public function actionUserData()
+        {
+            $this->importUsers();
+        }
+
+        private function importUsers()
+        {
+            $listRole = [
+                'admin' => User::ROLE_ADMIN,
+                'partner' => User::ROLE_PARTNER,
+                'client' => User::ROLE_CLIENT,
+            ];
+
+            $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}user")->queryAll();
+            foreach ($rows as $rowData) {
+                $now = time();
+                $company_id = $rowData['company_id'] ? $rowData['company_id'] : 'NULL';
+                $insert = "(NULL,
+                        '{$rowData['email']}',
+                        {$listRole[$rowData['role']]},
+                        $company_id,
+                        '{$rowData['salt']}',
+                        '{$rowData['password']}',
+                        NULL,
+                        NULL,
+                        10,
+                        $now,
+                        $now)";
+
+                $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}user VALUES $insert")->execute();
+            }
+
+            $this->stdout("Users done!\n");
+        }
     }

@@ -34,7 +34,7 @@ class m130524_201442_init extends Migration
             'auth_key' => 'VARCHAR(32) NOT NULL',
             'password_hash' => 'VARCHAR(255) NOT NULL',
             'password_reset_token' => 'VARCHAR(255) NULL',
-            'email' => 'VARCHAR(255) NOT NULL',
+            'email' => 'VARCHAR(255) NULL',
             'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
             'created_at' => 'INT(11) NOT NULL',
             'updated_at' => 'INT(11) NOT NULL',

@@ -152,20 +152,20 @@ class menuLeftWidget extends Widget
         if (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
             // Partner links
             $items = [
-                [
-                    'label' => 'Доходы',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
-                ],
+//                [
+//                    'label' => 'Доходы',
+//                    'url' => ['/archive/error', 'type' => 2],
+//                    'active' => Yii::$app->controller->id == '',
+//                ],
                 [
                     'label' => 'Добавить машину',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
+                    'url' => ['/act/create', 'type' => Yii::$app->user->identity->company->type],
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'create',
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
+                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
                 ],
             ];
         }
@@ -195,7 +195,7 @@ class menuLeftWidget extends Widget
 //                ],
                 [
                     'label' => 'Услуги',
-                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
+                    'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',
                 ],
             ];

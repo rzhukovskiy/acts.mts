@@ -95,6 +95,7 @@ class ActSearch extends Act
         $query->alias('act');
         $query->andFilterWhere([
             'id' => $this->id,
+            'card_id' => $this->card_id,
             'client_id' => $this->client_id,
             'partner_id' => $this->partner_id,
             'act.number' => $this->number,
