@@ -3,16 +3,16 @@
 use yii\bootstrap\Html;
 use yii\grid\GridView;
 use dosamigos\chartjs\ChartJs;
+use common\components\DateHelper;
 
 /**
  * @var $this \yii\web\View
  * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $searchModel \frontend\models\search\ActSearch
+ * @var $chartData array
+ * @var $chartTitle string
  */
-
-$this->title = $model->name;
-
 ?>
 
 <div class="panel panel-primary">
@@ -39,7 +39,7 @@ $this->title = $model->name;
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:Y-d (l)');
+                        $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
                         return Html::a($date, ['/statistic/by-hours', 'id' => $data->partner->id, 'date' => $data->dateMonth]);
                     }
                 ],
@@ -53,7 +53,7 @@ $this->title = $model->name;
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->expense, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->expense);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -62,7 +62,7 @@ $this->title = $model->name;
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return number_format($data->income, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->income);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -71,7 +71,7 @@ $this->title = $model->name;
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->profit);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -79,5 +79,26 @@ $this->title = $model->name;
             ]
         ])
         ?>
+        <hr>
+        <div class="col-sm-12">
+            <div class="well">
+                <h4 class="text-center"><?=$chartTitle?></h4>
+                <?php
+                echo ChartJs::widget([
+                    'type' => 'bar',
+                    'options' => [
+                        'height' => 100,
+                        'width' => 400
+                    ],
+                    'clientOptions' => [
+                        'legend' => [
+                            'position' => 'bottom'
+                        ]
+                    ],
+                    'data' => $chartData
+                ]);
+                ?>
+            </div>
+        </div>
     </div>
 </div>

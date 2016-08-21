@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\bootstrap\Html;
 use dosamigos\chartjs\ChartJs;
+use common\components\DateHelper;
 
 /**
  * @var $this \yii\web\View
@@ -11,24 +12,12 @@ use dosamigos\chartjs\ChartJs;
  * @var $searchModel \frontend\models\search\ActSearch
  */
 
-$this->title = $model->name;
-
+echo $this->render('_search', [
+    'type' => null,
+    'companyId' => $model->id,
+    'model' => $searchModel,
+]);
 ?>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        Фильтр данных по времени
-    </div>
-    <div class="panel-body">
-        <?php
-                echo $this->render('_search', [
-                    'type' => null,
-                    'companyId' => $model->id,
-                    'model' => $searchModel,
-                ]);
-        ?>
-    </div>
-</div>
-
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $this->title ?>
@@ -54,7 +43,7 @@ $this->title = $model->name;
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:F Y');
+                        $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
                         return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id, 'date' => $data->dateMonth]);
                     }
                 ],
@@ -68,7 +57,7 @@ $this->title = $model->name;
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->expense, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->expense);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -77,7 +66,7 @@ $this->title = $model->name;
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return number_format($data->income, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->income);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -86,7 +75,7 @@ $this->title = $model->name;
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->profit);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -97,7 +86,7 @@ $this->title = $model->name;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/by-day', 'id' => $model->partner->id,  'date' => $model->dateMonth]);
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/by-day', 'id' => $model->partner->id, 'date' => $model->dateMonth]);
                         }
                     ]
                 ],
@@ -105,21 +94,25 @@ $this->title = $model->name;
         ]);
         ?>
         <hr>
-        <?php
-        //var_dump($chartData);
-        echo ChartJs::widget([
-            'type' => 'line',
-            'options' => [
-                'height' => 100,
-                'width' => 400
-            ],
-            'clientOptions' => [
-                'legend' => [
-                    'position' => 'bottom'
-                ]
-            ],
-            'data' => $chartData
-        ]);
-        ?>
+        <div class="col-sm-12">
+            <div class="well">
+                <h4 class="text-center">Статистика за все время</h4>
+                <?php
+                echo ChartJs::widget([
+                    'type' => 'bar',
+                    'options' => [
+                        'height' => 100,
+                        'width' => 400
+                    ],
+                    'clientOptions' => [
+                        'legend' => [
+                            'position' => 'bottom',
+                        ]
+                    ],
+                    'data' => $chartData
+                ]);
+                ?>
+            </div>
+        </div>
     </div>
 </div>

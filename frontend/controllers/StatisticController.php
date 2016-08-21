@@ -10,6 +10,7 @@ use yii\web\Controller;
 use frontend\models\search\ActSearch;
 use common\models\Service;
 use yii\web\NotFoundHttpException;
+use common\components\DateHelper;
 
 class StatisticController extends Controller
 {
@@ -145,6 +146,8 @@ class StatisticController extends Controller
     {
         $companyModel = $this->findCompanyModel($id);
 
+        $this->view->title = 'Статистика "'. $companyModel->name;
+
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
         $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
@@ -194,6 +197,8 @@ class StatisticController extends Controller
     {
         $companyModel = $this->findCompanyModel($id);
 
+        $this->view->title = 'Статистика "'. $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
+
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
         $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
@@ -213,17 +218,39 @@ class StatisticController extends Controller
             ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
             ->orderBy('dateMonth ASC');
 
+        $models = $dataProvider->getModels();
+        $chartData = [];
+        $totalProfit = 0;
+        $totalServe = 0;
+        $totalExpense = 0;
+        $totalIncome = 0;
+        foreach ($models as $model) {
+            $chartData = $this->byDayChartData($chartData, $model);
+            $totalProfit += $model->profit;
+            $totalServe += $model->countServe;
+            $totalExpense += $model->expense;
+            $totalIncome += $model->income;
+        }
+        $formatter = Yii::$app->formatter;
 
         return $this->render('by-day', [
             'model' => $companyModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'chartData' => $chartData,
+            'chartTitle' => DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date)),
+            'totalServe' => $totalServe,
+            'totalProfit' => $formatter->asCurrency($totalProfit),
+            'totalIncome' => $formatter->asCurrency($totalIncome),
+            'totalExpense' => $formatter->asCurrency($totalExpense),
         ]);
     }
 
     public function actionByHours($id, $date)
     {
         $companyModel = $this->findCompanyModel($id);
+
+        $this->view->title = 'Статистика "'. $companyModel->name . '" за ' . date('d', strtotime($date)) . ' ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
 
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
@@ -233,7 +260,7 @@ class StatisticController extends Controller
 
         $dataProvider->query
             ->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect(['id', 'expense', 'income', 'profit', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->addSelect(['id', 'check', 'expense', 'income', 'profit', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
             ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date])
             ->andWhere(['partner_id' => $id])
             ->with(['partner', 'type', 'mark', 'card'])
@@ -253,9 +280,9 @@ class StatisticController extends Controller
             'model' => $companyModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'totalProfit' => number_format($totalProfit, 2, '.', ' '),
-            'totalExpense' => number_format($totalExpense, 2, '.', ' '),
-            'totalIncome' => number_format($totalIncome, 2, '.', ' '),
+            'totalProfit' => Yii::$app->formatter->asCurrency($totalProfit),
+            'totalExpense' => Yii::$app->formatter->asCurrency($totalExpense),
+            'totalIncome' => Yii::$app->formatter->asCurrency($totalIncome),
         ]);
     }
 
@@ -274,9 +301,24 @@ class StatisticController extends Controller
      * @param $model
      * @return mixed
      */
+    private function byDayChartData($data, $model)
+    {
+        $data['labels'][] = date('d', strtotime($model->dateMonth));
+        $data['datasets'][0]['label'] = 'Прибыль';
+        $data['datasets'][0]['data'][] = $model->profit;
+
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @param $model
+     * @return mixed
+     */
     private function viewChartData($data, $model)
     {
-        $data['labels'][] = $model->dateMonth;
+        $data['labels'][] = DateHelper::getMonthName($model->dateMonth, 0) . ' ' . date('Y', strtotime($model->dateMonth));
+        $data['datasets'][0]['label'] = 'Прибыль';
         $data['datasets'][0]['data'][] = $model->profit;
 
         return $data;

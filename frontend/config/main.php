@@ -11,7 +11,6 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
-    'timeZone' => 'UTC',
     'modules' => [
         'utility' => [
             'class' => 'c006\utility\migration\Module',
@@ -56,13 +55,6 @@ return [
             'rules' => [
             ],
         ],
-
-        'formatter' => [
-            'locale' => 'ru-RU',
-            'timeZone' => 'Europe/Moscow',
-            'defaultTimeZone' => 'UTC',
-        ]
-
     ],
     'params' => $params,
 ];

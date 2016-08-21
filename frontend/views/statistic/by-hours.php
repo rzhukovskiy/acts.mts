@@ -1,7 +1,7 @@
 <?php
 use yii\grid\GridView;
 use yii\bootstrap\Html;
-
+use common\components\DateHelper;
 /**
  * @var $this \yii\web\View
  * @var $model \common\models\Company
@@ -13,8 +13,6 @@ use yii\bootstrap\Html;
  * @var $totalExpense float
  * @var $totalIncome float
  */
-
-$this->title = $model->name;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -35,12 +33,13 @@ $this->title = $model->name;
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
-                // TODO: group by year maybe?
                 [
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:Y-m-d (l)');
+                        $unixDate = strtotime($data->dateMonth);
+                        $date = date('d', $unixDate) . ' ' . DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', $unixDate);
+
                         return $date;
                     }
                 ],
@@ -68,7 +67,7 @@ $this->title = $model->name;
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->expense, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->expense);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -77,7 +76,7 @@ $this->title = $model->name;
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return number_format($data->income, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->income);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -86,11 +85,12 @@ $this->title = $model->name;
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->profit);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
+                'check',
 
                 [
                     'class' => 'yii\grid\ActionColumn',

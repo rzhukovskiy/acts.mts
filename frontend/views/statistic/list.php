@@ -1,7 +1,6 @@
 <?php
 
 use yii\grid\GridView;
-use yii\widgets\Pjax;
 use dosamigos\chartjs\ChartJs;
 use yii\bootstrap\Html;
 
@@ -17,27 +16,18 @@ use yii\bootstrap\Html;
  */
 
 echo $this->render('_tabs');
-?>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        Фильтр данных по времени
-    </div>
-    <div class="panel-body">
-        <?= $this->render('_search', [
-            'type' => $type,
-            'model' => $searchModel,
-        ]) ?>
-    </div>
-</div>
 
+echo $this->render('_search', [
+    'type' => $type,
+    'model' => $searchModel,
+])
+?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $this->title ?>
     </div>
     <div class="panel-body">
         <?php
-        // TODO: Change formatting to Yii2 style
-        Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
@@ -100,10 +90,11 @@ echo $this->render('_tabs');
                 ],
             ],
         ]);
-        Pjax::end(); ?>
+       ?>
         <hr>
         <?php
         echo ChartJs::widget([
+            'id' => 'allPie',
             'type' => 'pie',
             'options' => [
                 'height' => 100,
@@ -111,11 +102,37 @@ echo $this->render('_tabs');
             ],
             'clientOptions' => [
                 'legend' => [
-                    'position' => 'bottom'
-                ]
+                    'display' => false,
+                    'position' => 'bottom',
+                ],
+                'tooltips' => [
+                    'mode' => 'x-axis',
+                ],
             ],
             'data' => $chartData
         ]);
         ?>
     </div>
 </div>
+<?php
+//echo $this->registerJs('
+//chartJS_allPie.defaults.global.onAnimationComplete: function () {
+//            var self = this;
+//
+//            var elementsArray = [];
+//            Chart.helpers.each(self.data.datasets, function (dataset, datasetIndex) {
+//                Chart.helpers.each(dataset.metaData, function (element, index) {
+//                    var tooltip = new Chart.Tooltip({
+//                        _chart: self.chart,
+//                        _data: self.data,
+//                        _options: self.options,
+//                        _active: [element]
+//                    }, self);
+//
+//                    tooltip.update();
+//                    tooltip.transition(Chart.helpers.easingEffects.linear).draw();
+//                }, self);
+//            }, self);
+//        }
+//');
+?>
