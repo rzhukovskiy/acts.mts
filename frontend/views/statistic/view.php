@@ -8,6 +8,7 @@ use dosamigos\chartjs\ChartJs;
  * @var $this \yii\web\View
  * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $searchModel \frontend\models\search\ActSearch
  */
 
 $this->title = $model->name;
@@ -54,7 +55,7 @@ $this->title = $model->name;
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:F Y');
-                        return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id]);
+                        return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id, 'date' => $data->dateMonth]);
                     }
                 ],
                 [
@@ -96,7 +97,7 @@ $this->title = $model->name;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/by-day', 'id' => $model->partner->id]);
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/by-day', 'id' => $model->partner->id,  'date' => $model->dateMonth]);
                         }
                     ]
                 ],
@@ -109,7 +110,7 @@ $this->title = $model->name;
         echo ChartJs::widget([
             'type' => 'line',
             'options' => [
-                'height' => 200,
+                'height' => 100,
                 'width' => 400
             ],
             'clientOptions' => [

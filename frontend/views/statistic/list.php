@@ -40,7 +40,6 @@ echo $this->render('_tabs');
         Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => false,
             'summary' => false,
             'emptyCell' => '',
             'showFooter' => true,
@@ -107,7 +106,7 @@ echo $this->render('_tabs');
         echo ChartJs::widget([
             'type' => 'pie',
             'options' => [
-                'height' => 200,
+                'height' => 100,
                 'width' => 400
             ],
             'clientOptions' => [

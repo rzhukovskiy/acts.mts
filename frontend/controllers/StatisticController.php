@@ -189,11 +189,73 @@ class StatisticController extends Controller
     }
 
 
-    public function actionByDay($id)
+    public function actionByDay($id, $date)
     {
         $companyModel = $this->findCompanyModel($id);
 
-        $this->render('by-day');
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'search_by_date';
+        $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+
+        $dataProvider->pagination = false;
+
+        $dataProvider->query
+            ->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect('COUNT({{%act}}.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('partner_id')
+            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
+            ->orderBy('dateMonth ASC')
+            ->andWhere(["DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m'))" => $date])
+            ->with(['partner']);
+
+
+        return $this->render('by-day', [
+            'model' => $companyModel,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionByHours($id, $date)
+    {
+        $companyModel = $this->findCompanyModel($id);
+
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'search_by_date';
+        $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+
+        $dataProvider->pagination = false;
+
+        $dataProvider->query
+            ->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect('COUNT({{%act}}.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect(['id', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->with(['partner', 'type', 'mark', 'card'])
+            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
+            ->orderBy('dateMonth ASC')
+            ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date]);
+
+        return $this->render('by-hours', [
+            'model' => $companyModel,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionViewAct($id)
+    {
+        if (($actModel = Act::findOne($id)) == null)
+            throw new NotFoundHttpException('The requested page does not exist.');
+
+        return $this->render('view-act', [
+            'model' => $actModel,
+        ]);
     }
 
     /**
