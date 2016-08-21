@@ -24,7 +24,7 @@ use common\models\Card;
             'action' => ['act/create', 'type' => $model->service_type],
             'id' => 'act-form',
         ]) ?>
-        <table class="table table-striped table-bordered">
+        <table class="table table-bordered">
             <tbody>
             <tr>
                 <td>

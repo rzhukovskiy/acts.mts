@@ -8,20 +8,35 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="card-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'company_id')->textInput() ?>
-
-    <?= $form->field($model, 'number')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <?= $model->isNewRecord ? 'Добавление карты' : 'Редактирование карты ' . $model->number ?>
     </div>
+    <div class="panel-body">
 
-    <?php ActiveForm::end(); ?>
+        <?php
+        $form = ActiveForm::begin([
+            'action' => $model->isNewRecord ? ['card/create'] : ['card/update', 'id' => $model->id],
+            'id' => 'card-form',
+            'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+            'fieldConfig' => [
+                'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
+                'labelOptions' => ['class' => 'col-sm-2 control-label'],
+                'inputOptions' => ['class' => 'form-control input-sm'],
+            ],
+        ])
+        ?>
 
+        <?= $form->field($model, 'company_id')->dropDownList($companyDropDownData) ?>
+
+        <?= $form->field($model, 'number') ?>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+            </div>
+        </div>
+
+        <?php ActiveForm::end() ?>
+    </div>
 </div>

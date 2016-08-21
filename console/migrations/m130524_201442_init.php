@@ -10,7 +10,7 @@ class m130524_201442_init extends Migration
             'id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
             0 => 'PRIMARY KEY (`id`)',
             'parent_id' => 'INT(10) UNSIGNED NULL',
-            'name' => 'VARCHAR(45) NOT NULL',
+            'name' => 'VARCHAR(255) NOT NULL',
             'address' => 'VARCHAR(255) NULL',
             'phone' => 'VARCHAR(255) NULL',
             'director' => 'VARCHAR(255) NULL',

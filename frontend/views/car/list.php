@@ -1,65 +1,79 @@
 <?php
 
 use yii\bootstrap\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\widgets\Pjax;
 
 /**
  * @var $this yii\web\View
  * @var $searchModel common\models\search\CarSearch
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $companyDropDownData array
+ * @var $admin null|bool
  */
 
-$this->title = 'Cars';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Машины';
 
-echo $this->render('_tabs');
-?>
-<div class="car-index">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Машины</div>
-        <div class="panel-body">
-            <?php Pjax::begin(); ?>
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'summary' => false,
-                'columns' => [
-                    [
-                        'header' => '№',
-                        'class' => 'yii\grid\SerialColumn'
-                    ],
+if ($admin) {
+    echo $this->render('_tabs');
+}
 
-                    [
-                        'attribute' => 'company_id',
-                        'content' => function ($data) {
-                            return Html::encode($data->company->name);
-                        },
-                        'filter' => false,
-                    ],
-                    'number',
-                    [
-                        'attribute' => 'mark_id',
-                        'content' => function ($data) {
-                            return !empty($data->mark->name) ? Html::encode($data->mark->name) : '';
-                        },
-                        'filter' => false,
-                    ],
-                    [
-                        'attribute' => 'type_id',
-                        'content' => function ($data) {
-                            return !empty($data->type->name) ? Html::encode($data->type->name) : '';
-                        },
-                        'filter' => false,
-                    ],
-
-                    [
-                        'class' => 'yii\grid\ActionColumn',
-                        'template' => '{view}',
-                    ],
-                ],
-            ]); ?>
-            <?php Pjax::end(); ?>
-        </div>
-    </div>
-</div>
+Pjax::begin();
+echo GridView::widget([
+    'dataProvider' => $dataProvider,
+    'floatHeader' => $admin,
+    'floatHeaderOptions' => ['top' => '0'],
+    'hover' => false,
+    'striped' => false,
+    'export' => false,
+    'summary' => false,
+    'emptyText' => '',
+    'panel' => [
+        'type' => 'primary',
+        'heading' => 'Машины',
+        'before' => false,
+        'footer' => false,
+        'after' => false,
+    ],
+    'columns' => [
+        [
+            'header' => '№',
+            'class' => 'yii\grid\SerialColumn'
+        ],
+        [
+            'attribute' => 'company_id',
+            'content' => function ($data) {
+                return $data->company->name;
+            },
+            'group' => $admin,
+            'groupedRow' => true,
+            'groupOddCssClass' => '',
+            'groupEvenCssClass' => '',
+            'visible' => $admin,
+        ],
+        [
+            'attribute' => 'mark_id',
+            'content' => function ($data) {
+                return !empty($data->mark->name) ? Html::encode($data->mark->name) : '';
+            },
+        ],
+        'number',
+        [
+            'attribute' => 'type_id',
+            'content' => function ($data) {
+                return !empty($data->type->name) ? Html::encode($data->type->name) : '';
+            },
+        ],
+        [
+            'attribute' => 'listService',
+            'content' => function ($data) {
+                return count($data->acts);
+            },
+        ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{view}',
+        ],
+    ],
+]);
+Pjax::end();

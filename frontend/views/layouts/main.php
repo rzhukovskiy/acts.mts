@@ -28,14 +28,14 @@ AppAsset::register($this);
         <?php if (!empty(Yii::$app->user->identity->username)) { ?>
             <div class="row top">
                 <div class="col-sm-12">
-                    <?php if(Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
-                    <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-default btn-sm pull-right']) ?>
-                    <?php endif; ?>
                     <?= Html::a(
                         'Выход (' . Yii::$app->user->identity->username . ')',
                         '/site/logout',
                         ['class' => 'btn btn-primary btn-sm pull-right']
                     ) ?>
+                    <?php if(Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
+                        <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-default btn-sm pull-right']) ?>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php } ?>

@@ -37,7 +37,7 @@ use common\models\Requisites;
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
-                <span data-toggle="collapse" data-target="#details">Подробнее</span>
+                <span data-toggle="collapse" data-target="#details" class="pseudo">Подробнее</span>
             </div>
         </div>
 
@@ -63,8 +63,8 @@ use common\models\Requisites;
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Текст заголовка</label>
-                <div class="col-sm-6">
-                    <?= Html::textarea("Company[requisitesList][$id][Requisites][header]", $existed ? $existed->header : '', ['class' => 'form-control input-sm'])?>
+                <div class="col-sm-8">
+                    <?= Html::textarea("Company[requisitesList][$id][Requisites][header]", $existed ? $existed->header : '', ['rows' => 10, 'class' => 'form-control input-sm'])?>
                 </div>
             </div>
             <?= Html::hiddenInput("Company[requisitesList][$id][Requisites][type]", $id)?>

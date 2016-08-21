@@ -2,6 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel \common\models\search\CompanySearch
  */
 
 use yii\grid\GridView;
@@ -15,7 +16,10 @@ use yii\grid\GridView;
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
+            'tableOptions' => ['class' => 'table table-bordered'],
             'emptyText' => '',
             'columns' => [
                 [
@@ -26,18 +30,20 @@ use yii\grid\GridView;
                 'address',
                 [
                     'label' => 'Количество карт',
+                    'contentOptions' => ['style' => 'max-width:200px'],
+                    'options' => ['style' => 'max-width:200px'],
                     'value' => function ($data) {
-                        return $data->cardsAsString;
+                        return count($data->cards) . ' (' . $data->cardsAsString . ')';
                     },
                 ],
                 [
-                    'label' => 'Количество машин',
+                    'label' => 'Машин',
                     'value' => function ($data) {
                         return $data->carsCount;
                     },
                 ],
                 [
-                    'label' => 'Количество прицепов',
+                    'label' => 'Прицепов',
                     'value' => function ($data) {
                         return $data->trucksCount;
                     },

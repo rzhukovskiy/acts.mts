@@ -9,17 +9,13 @@
 namespace frontend\widgets\Menu;
 
 use common\models\Company;
+use common\models\Service;
 use common\models\User;
 use Yii;
 use yii\bootstrap\Widget;
 
 class menuLeftWidget extends Widget
 {
-    public $msgcount;
-    public $creditcount;
-    public $ticketcount;
-    public $paymentcount;
-    public $domaincount;
     /**
      * @var $items []
      * label: string, optional
@@ -102,58 +98,53 @@ class menuLeftWidget extends Widget
 
                 [
                     'label' => 'Услуги',
-                    'url' => ['/service/index'],
+                    'url' => ['service/index', 'ServiceSearch[type]' => Service::TYPE_WASH],
                 ],
 
                 [
                     'label' => 'Пользователи',
                     'url' => ['/user/list', 'type' => Company::TYPE_OWNER],
-                    'active' => \Yii::$app->controller->id == 'user',
+                    'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
                     'label' => 'Карты',
                     'url' => ['/card/list'],
-                    'active' => \Yii::$app->controller->id == 'card',
+                    'active' => Yii::$app->controller->id == 'card',
                 ],
                 [
-                    'label' => 'Марки ТС',
+                    'label' => 'Марки и Типы',
                     'url' => ['/mark/list'],
-                    'active' => \Yii::$app->controller->id == 'mark',
-                ],
-                [
-                    'label' => 'Типы ТС',
-                    'url' => ['/type/list'],
-                    'active' => \Yii::$app->controller->id == 'type',
+                    'active' => Yii::$app->controller->id == 'mark' || Yii::$app->controller->id == 'type',
                 ],
                 [
                     'label' => 'История машин',
                     'url' => ['/car/list'],
-                    'active' => \Yii::$app->controller->id == 'car',
+                    'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
                     'label' => 'Кол-во ТС',
                     'url' => ['/car-count/list'],
-                    'active' => \Yii::$app->controller->id == 'car-count',
+                    'active' => Yii::$app->controller->id == 'car-count',
                 ],
                 [
                     'label' => 'Статистика партнеров',
                     'url' => ['/statistic/list', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'statistic',
+                    'active' => Yii::$app->controller->id == 'statistic',
                 ],
                 [
                     'label' => 'Статистика компаний',
                     'url' => ['/company-statistic/list', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'company-statistic',
+                    'active' => Yii::$app->controller->id == 'company-statistic',
                 ],
                 [
                     'label' => 'Акты',
                     'url' => ['/act/list', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'act',
+                    'active' => Yii::$app->controller->id == 'act',
                 ],
                 [
                     'label' => 'Ошибочные акты',
                     'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'archive',
+                    'active' => Yii::$app->controller->id == 'archive',
                 ],
             ];
         }
@@ -162,24 +153,19 @@ class menuLeftWidget extends Widget
             // Partner links
             $items = [
                 [
-                    'label' => 'Типы ТС',
-                    'url' => ['/type/list'],
-                    'active' => \Yii::$app->controller->id == 'type',
-                ],
-                [
                     'label' => 'Доходы',
-//                'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == '',
+                    'url' => ['/archive/error', 'type' => 2],
+                    'active' => Yii::$app->controller->id == '',
                 ],
                 [
                     'label' => 'Добавить машину',
-//                'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == '',
+                    'url' => ['/archive/error', 'type' => 2],
+                    'active' => Yii::$app->controller->id == '',
                 ],
                 [
                     'label' => 'Архив',
-//                'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == '',
+                    'url' => ['/archive/error', 'type' => 2],
+                    'active' => Yii::$app->controller->id == '',
                 ],
             ];
         }
@@ -189,28 +175,28 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Карты',
-                    'url' => ['/card/company-cards'],
-                    'active' => \Yii::$app->controller->id == 'card',
+                    'url' => ['/card/list'],
+                    'active' => Yii::$app->controller->id == 'card',
                 ],
                 [
                     'label' => 'История машин',
-                    'url' => ['/car/my-cars'],
-                    'active' => \Yii::$app->controller->id == 'car',
+                    'url' => ['/car/list'],
+                    'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
                     'label' => 'Кол-во ТС',
                     'url' => ['/car-count/list'],
-                    'active' => \Yii::$app->controller->id == 'car-count',
+                    'active' => Yii::$app->controller->id == 'car-count',
                 ],
-                [
-                    'label' => 'Расходы',
-//                'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'archive',
-                ],
+//                [
+//                    'label' => 'Расходы',
+//                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
+//                    'active' => Yii::$app->controller->id == 'archive',
+//                ],
                 [
                     'label' => 'Услуги',
-//                'url' => ['/archive/error', 'type' => 2],
-                    'active' => \Yii::$app->controller->id == 'archive',
+                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
+                    'active' => Yii::$app->controller->id == 'act',
                 ],
             ];
         }

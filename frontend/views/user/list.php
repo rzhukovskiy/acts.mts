@@ -32,7 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php Pjax::begin(); ?>
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
                 'summary' => false,
                 'emptyText' => '',
                 'columns' => [
@@ -76,21 +75,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{delete}',
-                        'buttons' => [
-                            'delete' => function ($url, $model, $key) {
-                                $options = [
-                                    'title' => Yii::t('yii', 'Delete'),
-                                    'aria-label' => Yii::t('yii', 'Delete'),
-                                    'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    'data-method' => 'post',
-                                    'data-pjax' => '0',
-                                ];
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/user/delete',
-                                    'id' => $model->id,
-                                    'type' => $model->company->type],
-                                    $options);
-                            },
-                        ]
                     ],
                 ],
             ]); ?>

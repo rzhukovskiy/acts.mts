@@ -117,5 +117,8 @@ class SiteController extends Controller
         if (Yii::$app->user->can(User::ROLE_ADMIN)) {
             return $this->redirect(['company/list', 'type' => Company::TYPE_OWNER]);
         }
+        if (Yii::$app->user->can(User::ROLE_CLIENT)) {
+            return $this->redirect(['act/list', 'type' => Company::TYPE_OWNER]);
+        }
     }
 }

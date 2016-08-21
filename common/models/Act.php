@@ -8,6 +8,7 @@
 
 namespace common\models;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 
@@ -34,7 +35,6 @@ use yii\db\Query;
  * @property string $extra_number
  *
  * @property array $serviceList
- * @property array $time_str
  *
  * @property Company $client
  * @property Company $partner
@@ -49,6 +49,10 @@ class Act extends ActiveRecord
     const STATUS_NEW = 0;
     const STATUS_CLOSED = 1;
     const STATUS_FIXED = 2;
+
+    const SCENARIO_PARTNER = 'partner';
+    const SCENARIO_CLIENT = 'client';
+    const SCENARIO_CAR = 'car';
     
     public $serviceList;
     public $time_str;
@@ -84,7 +88,30 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return Company
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'served_at' => 'Дата',
+            'partner_id' => 'Партнер',
+            'client_id' => 'Клиент',
+            'card_id' => 'Карта',
+            'number' => 'Номер',
+            'extra_number' => 'п/п',
+            'mark_id' => 'Марка',
+            'type_id' => 'Тип',
+            'income' => 'Сумма',
+            'expense' => 'Сумма',
+            'check' => 'Чек',
+            'period' => 'Период',
+            'day' => 'День',
+        ];
+    }
+
+    /**
+     * @return ActiveQuery
      */
     public function getClient()
     {
@@ -92,7 +119,7 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return Company
+     * @return ActiveQuery
      */
     public function getPartner()
     {
@@ -100,7 +127,7 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return Card
+     * @return ActiveQuery
      */
     public function getCard()
     {
@@ -108,7 +135,7 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return Mark
+     * @return ActiveQuery
      */
     public function getMark()
     {
@@ -116,7 +143,7 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return Type
+     * @return ActiveQuery
      */
     public function getType()
     {
@@ -125,7 +152,7 @@ class Act extends ActiveRecord
 
 
     /**
-     * @return ActScope[]
+     * @return ActiveQuery
      */
     public function getScopes()
     {
@@ -137,8 +164,16 @@ class Act extends ActiveRecord
      */
     public static function getPeriodList()
     {
-        $periods = (new Query())->select('DISTINCT YEAR(FROM_UNIXTIME(`served_at`)) as periods')->from(Act::tableName())->column();
+        $periods = (new Query())->select(['DISTINCT DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y") as periods'])->orderBy('served_at')->from(Act::tableName())->column();
         return array_combine($periods, $periods);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getDayList()
+    {
+        return array_combine(range(1, 31), range(1, 31));
     }
 
     public function beforeSave($insert)
@@ -162,11 +197,16 @@ class Act extends ActiveRecord
             $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
             $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
 
-            //подставляем тип и марку из машины, если нашли по номеру
+            //подставляем тип и марку из машины, если нашли по номеру и инкрементим количество обслуживаний
             $car = Car::findOne(['number' => $this->number]);
             if ($car) {
                 $this->mark_id = $car->mark_id;
                 $this->type_id = $car->type_id;
+                $car->updateAllCounters(['act_count' => 1]);
+            }
+            $car = Car::findOne(['number' => $this->extra_number]);
+            if ($car) {
+                $car->updateAllCounters(['act_count' => 1]);
             }
 
             /**
@@ -209,7 +249,6 @@ class Act extends ActiveRecord
          */
         if ($insert) {
             if (!empty($this->serviceList)) {
-                print_r($this->serviceList);die;
                 foreach ($this->serviceList as $serviceData) {
                     $clientScope = new ActScope();
                     $clientScope->company_id = $this->client_id;
@@ -249,5 +288,19 @@ class Act extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterDelete()
+    {
+        //декрементим количество обслуживаний
+        $car = Car::findOne(['number' => $this->number]);
+        if ($car) {
+            $car->updateAllCounters(['act_count' => -1]);
+        }
+
+        $car = Car::findOne(['number' => $this->extra_number]);
+        if ($car) {
+            $car->updateAllCounters(['act_count' => -1]);
+        }
     }
 }

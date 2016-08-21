@@ -8,18 +8,25 @@ use yii\data\ActiveDataProvider;
 use common\models\Act;
 
 /**
- * ActSearch represents the model behind the search form about `common\models\Act`.
+ * CardSearch represents the model behind the search form about `common\models\Card`.
+ * @property string $period
+ * @property integer $day
  */
 class ActSearch extends Act
 {
+    public $period;
+    public $day;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'partner_id', 'client_id', 'type_id', 'card_id', 'mark_id', 'expense', 'income', 'profit', 'service_type', 'status', 'created_at', 'updated_at', 'served_at'], 'integer'],
-            [['number', 'extra_number', 'check'], 'safe'],
+            [['partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
+            [['number', 'extra_number', 'period'], 'string'],
+            ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
+            ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
     }
 
@@ -29,7 +36,11 @@ class ActSearch extends Act
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return [
+            self::SCENARIO_CAR => ['day', 'period'],
+            self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
+        ];
     }
 
     /**
@@ -47,6 +58,7 @@ class ActSearch extends Act
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
@@ -57,22 +69,41 @@ class ActSearch extends Act
             return $dataProvider;
         }
 
+        switch ($this->scenario) {
+            case self::SCENARIO_CLIENT:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'client',
+                ]);
+
+                $query->orderBy('parent_id, client_id, served_at');
+                break;
+            default:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'partner',
+                ]);
+
+                $query->orderBy('parent_id, partner_id, served_at');
+        }
+
         // grid filtering conditions
+        $query->alias('act');
         $query->andFilterWhere([
             'id' => $this->id,
-            'partner_id' => $this->partner_id,
             'client_id' => $this->client_id,
-            'type_id' => $this->type_id,
-            'card_id' => $this->card_id,
-            'mark_id' => $this->mark_id,
-            'expense' => $this->expense,
-            'income' => $this->income,
-            'profit' => $this->profit,
-            'service_type' => $this->service_type,
+            'partner_id' => $this->partner_id,
+            'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'served_at' => $this->served_at,
+            'service_type' => $this->service_type,
+            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
+            'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
         ]);
 
         $query->andFilterWhere(['like', 'number', $this->number])

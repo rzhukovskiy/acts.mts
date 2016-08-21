@@ -1,13 +1,16 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this yii\web\View
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $type int
+ */
 
 use yii\grid\GridView;
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => '{items}',
     'emptyText' => '',
+    'tableOptions' => ['class' => 'table table-bordered'],
     'columns' => [
         [
             'header' => '№',
@@ -16,7 +19,7 @@ echo GridView::widget([
         [
             'attribute' => 'type_id',
             'value' => function ($data) {
-                return $data->getSamePrices();
+                return $data->type->name;
             },
         ],
         [

@@ -5,12 +5,12 @@ namespace common\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Card;
+use common\models\Company;
 
 /**
  * CardSearch represents the model behind the search form about `common\models\Card`.
  */
-class CardSearch extends Card
+class CompanySearch extends Company
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class CardSearch extends Card
     public function rules()
     {
         return [
-            [['id', 'company_id', 'number', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'address'], 'string'],
         ];
     }
 
@@ -40,7 +40,7 @@ class CardSearch extends Card
      */
     public function search($params)
     {
-        $query = Card::find();
+        $query = Company::find();
 
         // add conditions that should always apply here
 
@@ -60,12 +60,10 @@ class CardSearch extends Card
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'company_id' => $this->company_id,
-            'number' => $this->number,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'type' => $this->type,
         ]);
+        $query->andFilterWhere(['like', 'address', $this->address]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

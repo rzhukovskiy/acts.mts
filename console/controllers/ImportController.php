@@ -63,20 +63,22 @@
                 $now = time();
                 $rowData['parent_id'] = $rowData['parent_id'] ? $rowData['parent_id'] : 'NULL';
                 $type = $listType[$rowData['type']];
+                $status = $rowData['is_deleted'] ? Company::STATUS_DELETED : Company::STATUS_ACTIVE;
+
                 $insert = "({$rowData['id']},
-                {$rowData['parent_id']},
-                '{$rowData['name']}',
-                '{$rowData['address']}',
-                '{$rowData['phone']}',
-                '{$rowData['contact']}',
-                $type,
-                {$rowData['is_split']},
-                {$rowData['is_infected']},
-                {$rowData['is_main']},
-                {$rowData['is_sign']},
-                10,
-                $now,
-                $now)";
+                    {$rowData['parent_id']},
+                    '{$rowData['name']}',
+                    '{$rowData['address']}',
+                    '{$rowData['phone']}',
+                    '{$rowData['contact']}',
+                    $type,
+                    {$rowData['is_split']},
+                    {$rowData['is_infected']},
+                    {$rowData['is_main']},
+                    {$rowData['is_sign']},
+                    $status,
+                    $now,
+                    $now)";
 
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
 
@@ -200,8 +202,8 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}tires_service ORDER BY pos")->queryAll();
             $now = time();
 
-            $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
-                  (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
+            $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
+                  (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
                   (NULL, 1, " . Company::TYPE_WASH . ", 'двигатель', $now, $now),
                   (NULL, 1, " . Company::TYPE_DISINFECT . ", 'дезинфекция', $now, $now)
                 ")->execute();
@@ -228,26 +230,26 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price")->queryAll();
 
             foreach ($rows as $rowData) {
-                if (!empty($rowData['inside'])) {
+                if (!empty($rowData['outside'])) {
                     $now = time();
                     $insert = "(NULL,
                         {$rowData['company_id']},
                         1,
                         {$rowData['type_id']},
-                        {$rowData['inside']},
+                        {$rowData['outside']},
                         $now,
                         $now)";
 
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company_service VALUES $insert")->execute();
                 }
 
-                if (!empty($rowData['outside'])) {
+                if (!empty($rowData['inside'])) {
                     $now = time();
                     $insert = "(NULL,
                         {$rowData['company_id']},
                         2,
                         {$rowData['type_id']},
-                        {$rowData['outside']},
+                        {$rowData['inside']},
                         $now,
                         $now)";
 
@@ -260,7 +262,7 @@
                         {$rowData['company_id']},
                         3,
                         {$rowData['type_id']},
-                        {$rowData['outside']},
+                        {$rowData['engine']},
                         $now,
                         $now)";
 
@@ -295,7 +297,7 @@
                 if(!empty($serviceData)) {
                     $insert = "(NULL,
                         {$rowData['company_id']},
-                        {$rowData['id']},
+                        {$serviceData['id']},
                         {$rowData['type_id']},
                         {$rowData['price']},
                         $now,

@@ -5,6 +5,7 @@ use common\models\query\CompanyQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
@@ -29,6 +30,7 @@ use yii\helpers\ArrayHelper;
  * @property Company $parent
  * @property Company[] $children
  * @property Card[] $cards
+ * @property Cars[] $cars
  * @property Requisites[] $requisites
  *
  * @property string $cardList
@@ -136,7 +138,7 @@ class Company extends ActiveRecord
     }
 
     /**
-     * @return Company
+     * @return ActiveQuery
      */
     public function getParent()
     {
@@ -144,7 +146,7 @@ class Company extends ActiveRecord
     }
 
     /**
-     * @return Company[]
+     * @return ActiveQuery
      */
     public function getChildren()
     {
@@ -152,15 +154,23 @@ class Company extends ActiveRecord
     }
 
     /**
-     * @return Card[]
+     * @return ActiveQuery
      */
     public function getCards()
     {
-        return $this->hasMany(Card::className(), ['company_id' => 'id']);
+        return $this->hasMany(Card::className(), ['company_id' => 'id'])->orderBy('number');
     }
 
     /**
-     * @return Requisites[]
+     * @return ActiveQuery
+     */
+    public function getCars()
+    {
+        return $this->hasMany(Car::className(), ['company_id' => 'id'])->orderBy('number');
+    }
+
+    /**
+     * @return ActiveQuery
      */
     public function getRequisites()
     {
@@ -169,12 +179,12 @@ class Company extends ActiveRecord
 
     public function getCarsCount()
     {
-        return count(Car::findAll(['company_id' => $this->id]));
+        return count($this->getCars()->where('type_id != 7')->all());
     }
 
     public function getTrucksCount()
     {
-        return count(Car::findAll(['company_id' => $this->id]));
+        return count($this->getCars()->where('type_id = 7')->all());
     }
 
     /**
@@ -202,7 +212,7 @@ class Company extends ActiveRecord
                 }
                 $range .= $card->number;
             }
-            if ($i == $cnt) {
+            if ($i == $cnt && $card->number - 1 == $previous) {
                 $range .= $card->number;
             }
             $previous = $card->number;
@@ -283,15 +293,27 @@ class Company extends ActiveRecord
      */
     public function getPriceDataProvider($type)
     {
-        return new ActiveDataProvider([
-            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
-            'pagination' => false,
-            'sort' => [
-                'defaultOrder' => [
-                    'type_id' => SORT_DESC,
-                ]
-            ],
-        ]);
+        if($type == Company::TYPE_WASH) {
+            return new ActiveDataProvider([
+                'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`type_id`'),
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [
+                        'type_id' => SORT_DESC,
+                    ]
+                ],
+            ]);
+        } else {
+            return new ActiveDataProvider([
+                'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [
+                        'type_id' => SORT_DESC,
+                    ]
+                ],
+            ]);
+        }
     }
 
     /**

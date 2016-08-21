@@ -4,6 +4,7 @@
  * @var $this yii\web\View
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $model common\models\Company
+ * @var $searchModel \common\models\search\CompanySearch
  * @var $type integer
  */
 $this->title = \common\models\Company::$listType[$type]['ru'];
@@ -15,5 +16,6 @@ echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form', [
 
 echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_list', [
     'dataProvider' => $dataProvider,
+    'searchModel' => $searchModel,
     'type' => $type,
 ]);

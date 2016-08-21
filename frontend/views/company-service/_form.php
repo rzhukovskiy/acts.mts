@@ -2,13 +2,14 @@
 
 /**
  * @var $model \common\models\Company
- * @var $type \common\models\Type
+ * @var $type int
  */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Service;
 use common\models\Type;
+use common\models\Company;
 
 ?>
 <div class="panel panel-primary">
@@ -16,18 +17,26 @@ use common\models\Type;
         <?= 'Редактирование прайса на ' . Service::$listType[$type]['ru'] ?>
     </div>
     <div class="panel-body">
+        <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT]) ? $this->render('/company-service/merged/_list', [
+            'dataProvider' => $model->getPriceDataProvider($type),
+            'type' => $type,
+        ]) : $this->render('/company-service/split/_list', [
+            'dataProvider' => $model->getPriceDataProvider($type),
+            'type' => $type,
+        ]); ?>
+
         <?php
         $form = ActiveForm::begin([
             'action' => ['company/add-price', 'id' => $model->id],
             'options' => ['class' => 'form-horizontal price-from'],
         ]) ?>
-        <table class="table table-striped table-bordered">
+        <table class="table table-bordered">
             <tbody>
             <tr>
                 <td>
                     <?= Html::checkboxList('Price[type]', [], Type::find()->select(['name', 'id'])->indexBy('id')->column()) ?>
                 </td>
-                <td>
+                <td style="vertical-align: middle">
                     <?php foreach (Service::findAll(['type' => $type, 'is_fixed' => 1]) as $service) { ?>
                         <div class="form-group">
                             <label class="control-label col-sm-4"><?= $service->description ?></label>
@@ -45,9 +54,5 @@ use common\models\Type;
             </tbody>
         </table>
         <?php ActiveForm::end() ?>
-
-        <?= $this->render('/company-service/_list', [
-            'dataProvider' => $model->getPriceDataProvider($type),
-        ]); ?>
     </div>
 </div>

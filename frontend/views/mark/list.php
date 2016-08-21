@@ -12,7 +12,8 @@ use yii\widgets\Pjax;
  */
 
 $this->title = 'Марки';
-$this->params['breadcrumbs'][] = $this->title;
+
+echo $this->render('_tabs');
 ?>
 <div class="mark-list">
     <div class="panel panel-primary">

@@ -2,7 +2,9 @@
 
 namespace common\models;
 
+use common\models\query\CarQuery;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%car}}".
@@ -15,10 +17,16 @@ use Yii;
  * @property integer $is_infected
  *
  * @property Company $company
+ * @property Mark $mark
+ * @property Type $type
+ * @property Act $acts
  */
-class Car extends \yii\db\ActiveRecord
+class Car extends ActiveRecord
 {
+    const SCENARIO_HISTORY = 'history';
+
     public $carsCountByType;
+    public $listService;
 
     /**
      * @inheritdoc
@@ -52,6 +60,7 @@ class Car extends \yii\db\ActiveRecord
             'mark_id' => 'Марка',
             'type_id' => 'Тип',
             'is_infected' => 'Дизенфицировать',
+            'listService' => 'Обслуживания',
         ];
     }
 
@@ -61,7 +70,7 @@ class Car extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \common\models\query\CarQuery(get_called_class());
+        return new CarQuery(get_called_class());
     }
 
     public function getMark(  )
@@ -77,5 +86,10 @@ class Car extends \yii\db\ActiveRecord
     public function getCompany()
     {
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
+    public function getActs()
+    {
+        return $this->hasMany(Act::className(), ['number' => 'number']);
     }
 }

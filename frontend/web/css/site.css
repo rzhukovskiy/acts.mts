@@ -1,11 +1,18 @@
 body {
     background-color: #dededc;
+    color: #069;
     font-family: Helvetica,sans-serif;
     font-size: 12px;
     }
 .top {
     margin: 10px 0;
     }
+.pseudo {
+    color: #069;
+    cursor: pointer;
+    border-bottom: dashed 1px #069;
+    padding: 0 10px;
+}
 
 /* login */
 .login-form {
@@ -41,11 +48,22 @@ body {
     padding: 0;
     }
 .panel-heading {
-    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 1px 1px #222;
+    text-transform: uppercase;
     }
 .price-from label {
     display: block;
     }
+
+/* tabs */
+.nav>li>a {
+    background-color: #eee;
+    font-size: larger;
+}
+.nav>li>a:hover {
+    background-color: #ddd;
+}
 
 /* footer */
 .footer {
@@ -62,4 +80,27 @@ body {
     width: 200px;
 }
 
-/* end footer */
+/* buttons */
+.glyphicon-pencil, .glyphicon-trash, .glyphicon-eye-open {
+    font-size: larger;
+    font-weight: bold;
+    margin: 0 10px 0 0;
+}
+
+/* tables */
+.grid-view {
+    font-size: 14px;
+}
+.grid-view thead {
+    background: #eee;
+}
+.form-control {
+    padding: 2px;
+}
+.kv-grid-group-row .parent {
+    font-weight: bold;
+}
+.kv-grid-group-row {
+    color: #ffffff;
+    background-color: #428bca;
+}
