@@ -279,7 +279,7 @@ class StatisticController extends Controller
     private function monthCartData($dataProvider, $searchModel)
     {
         $currentYear = date('Y');
-        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo)) - 1 : date('m');
+        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo)) - 1 : (int)date('m') -1 ;
 
         $models = $dataProvider->query
             ->addSelect('COUNT(id) as numActs')

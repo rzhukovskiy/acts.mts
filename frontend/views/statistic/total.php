@@ -98,14 +98,8 @@ echo $this->render('_tabs');
                         'type' => 'line',
                         'options' => [
                             'id' => 'stat_by_months',
-                            'height' => 110,
-                            'width' => 150,
-                            'scales' => [
-                                'xAxes' => [
-                                    'type' => 'linear',
-                                    'position' => 'bottom',
-                                ]
-                            ]
+                            'height' => 180,
+                            'width' => 400,
                         ],
                         'data' => $monthChart,
 
