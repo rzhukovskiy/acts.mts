@@ -57,6 +57,21 @@ class Act extends ActiveRecord
     public $serviceList;
     public $time_str;
 
+    public static $listStatus = [
+        self::STATUS_NEW => [
+            'ru' => 'Новый',
+            'en' => 'new',
+        ],
+        self::STATUS_CLOSED => [
+            'ru' => 'Закрыт',
+            'en' => 'closed',
+        ],
+        self::STATUS_FIXED => [
+            'ru' => 'Исправлен',
+            'en' => 'fixed',
+        ]
+    ];
+
     /**
      * @inheritdoc
      */

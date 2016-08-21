@@ -158,6 +158,7 @@ class StatisticController extends Controller
             ->addSelect('SUM(income) as income')
             ->addSelect('SUM(profit) as profit')
             ->addSelect('partner_id')
+            ->andWhere(['partner_id' => $id])
             ->groupBy(["DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m'))"])
             ->orderBy('dateMonth ASC')
             ->with(['partner']);
@@ -206,10 +207,11 @@ class StatisticController extends Controller
             ->addSelect('SUM(income) as income')
             ->addSelect('SUM(profit) as profit')
             ->addSelect('partner_id')
-            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
-            ->orderBy('dateMonth ASC')
             ->andWhere(["DATE_FORMAT(FROM_UNIXTIME(served_at),('%Y-%m'))" => $date])
-            ->with(['partner']);
+            ->andWhere(['partner_id' => $id])
+            ->with(['partner'])
+            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
+            ->orderBy('dateMonth ASC');
 
 
         return $this->render('by-day', [
@@ -231,20 +233,29 @@ class StatisticController extends Controller
 
         $dataProvider->query
             ->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect('COUNT({{%act}}.id) AS countServe')
-            ->addSelect('SUM(expense) as expense')
-            ->addSelect('SUM(income) as income')
-            ->addSelect('SUM(profit) as profit')
-            ->addSelect(['id', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->addSelect(['id', 'expense', 'income', 'profit', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date])
+            ->andWhere(['partner_id' => $id])
             ->with(['partner', 'type', 'mark', 'card'])
-            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
-            ->orderBy('dateMonth ASC')
-            ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date]);
+            ->orderBy('dateMonth ASC');
+
+        $totalProfit = 0;
+        $totalExpense = 0;
+        $totalIncome = 0;
+        $models = $dataProvider->getModels();
+        foreach ($models as $index => $model) {
+            $totalProfit += $model->profit;
+            $totalExpense += $model->expense;
+            $totalIncome += $model->income;
+        }
 
         return $this->render('by-hours', [
             'model' => $companyModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'totalProfit' => number_format($totalProfit, 2, '.', ' '),
+            'totalExpense' => number_format($totalExpense, 2, '.', ' '),
+            'totalIncome' => number_format($totalIncome, 2, '.', ' '),
         ]);
     }
 

@@ -39,7 +39,7 @@ $this->title = $model->name;
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:d (l)');
+                        $date = Yii::$app->formatter->asDate($data->dateMonth, 'php:Y-d (l)');
                         return Html::a($date, ['/statistic/by-hours', 'id' => $data->partner->id, 'date' => $data->dateMonth]);
                     }
                 ],
