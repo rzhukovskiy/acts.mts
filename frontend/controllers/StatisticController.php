@@ -53,7 +53,7 @@ class StatisticController extends Controller
             $dataProvider->query
                 ->andWhere(['type_id' => $type]);
 
-            $this->view->title = Company::$listType[$type][ru] . '. Статистика';
+            $this->view->title = Company::$listType[$type]['ru'] . '. Статистика';
         }
 
         $dataProvider->query
