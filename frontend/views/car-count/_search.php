@@ -8,14 +8,20 @@ use yii\widgets\ActiveForm;
  * @var $model common\models\search\CarSearch
  * @var $form yii\widgets\ActiveForm
  * @var $companyDropDownData array
- * @var $type integer
+ * @var $type integer | null
  */
+
+if (!is_null($type))
+    $action = ['car-count/view', 'type' => $type];
+else
+    $action = ['car-count/list']
 ?>
 
 <div class="car-search">
 
     <?php $form = ActiveForm::begin([
         'method' => 'get',
+        'action' => $action,
         'id' => 'search-cars',
         'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
         'fieldConfig' => [

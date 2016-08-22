@@ -85,7 +85,7 @@ class CarCountController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
             ->byType($type)
-            ->with(['mark', 'type']);
+            ->with(['mark', 'type', 'company']);
 
         if (!empty($company))
             $dataProvider->query
@@ -93,10 +93,7 @@ class CarCountController extends Controller
 
         $dataProvider->pagination = false;
 
-        $companyModels = Company::find()
-            ->andWhere(['type' => Company::TYPE_OWNER])
-            ->all();
-        $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
+        $companyDropDownData = ArrayHelper::map($dataProvider->getModels(), 'company_id', 'company.name');
 
         return $this->render('view', [
             'searchModel' => $searchModel,

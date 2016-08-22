@@ -8,7 +8,6 @@ use yii\grid\GridView;
  * @var $carByTypes \yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CarSearch
  * @var $companyDropDownData array
- *
  */
 
 $this->title = 'Список типов ТС';
@@ -21,7 +20,7 @@ $this->title = 'Список типов ТС';
                 Поиск
             </div>
             <div class="panel-body">
-                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => $typeModel->id]); ?>
+                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => null]); ?>
             </div>
         </div>
     <?php } ?>
