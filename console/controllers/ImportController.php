@@ -116,7 +116,8 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}type")->queryAll();
             foreach ($rows as $rowData) {
                 $insert = "({$rowData['id']},
-                '{$rowData['name']}')";
+                '{$rowData['name']}',
+                '{$rowData['image']}')";
 
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}type VALUES $insert")->execute();
             }

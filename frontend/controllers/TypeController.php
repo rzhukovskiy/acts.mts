@@ -34,6 +34,7 @@
         public function actionList()
         {
             $newTypeModel = new Type();
+            var_dump($newTypeModel->attributes);
             $searchModel = new TypeSearch();
 
             $dataProvider = $searchModel

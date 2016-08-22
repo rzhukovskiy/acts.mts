@@ -12,6 +12,7 @@
      *
      * @property integer $id
      * @property string $name
+     * @property string $image
      */
     class Type extends ActiveRecord
     {
@@ -37,6 +38,7 @@
                 [ [ 'name' ], 'required' ],
                 [ [ 'name' ], 'string', 'max' => 255 ],
                 [ [ 'name' ], 'unique' ],
+                [ [ 'image'], 'string', 'max' => 150 ],
                 [ [ 'imageFile' ], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg' ],
             ];
         }
