@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use dosamigos\chartjs\ChartJs;
 use common\models\Service;
+use yii\bootstrap\Html;
 
 /**
  * @var $this yii\web\View
@@ -19,18 +20,11 @@ use common\models\Service;
 
 $this->title = 'Общая статистика';
 echo $this->render('_tabs');
-?>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        Фильтр данных по времени
-    </div>
-    <div class="panel-body">
-        <?=$this->render('_search', [
-            'type' => 'total',
-            'model' => $searchModel,
-        ])?>
-    </div>
-</div>
+
+echo $this->render('_search', [
+    'type' => 'total',
+    'model' => $searchModel,
+]) ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Общая статистика
@@ -55,7 +49,12 @@ echo $this->render('_tabs');
                     'attribute' => 'service_type',
                     'header' => 'Услуга',
                     'content' => function ($data) {
-                        return !empty($data->service_type) ? Service::$listType[$data->service_type]['ru'] : '—';
+                        if (empty($data->service_type))
+                            $title = '—';
+                        else
+                            $title = Html::a(Service::$listType[$data->service_type]['ru'], ['/statistic/list', 'type' => $data->service_type]);
+
+                        return $title;
                     },
                 ],
                 [
@@ -83,7 +82,15 @@ echo $this->render('_tabs');
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
-                ['class' => 'yii\grid\ActionColumn'],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/list', 'type' => $model->service_type]);
+                        },
+                    ]
+                ],
             ],
         ]);
         Pjax::end();
