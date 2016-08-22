@@ -38,8 +38,7 @@
                 [ [ 'name' ], 'required' ],
                 [ [ 'name' ], 'string', 'max' => 255 ],
                 [ [ 'name' ], 'unique' ],
-                [ [ 'image'], 'string', 'max' => 150 ],
-                [ [ 'imageFile' ], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg' ],
+                [ [ 'imageFile' ], 'file', 'skipOnEmpty' => false, 'extensions' => 'jpg' ],
             ];
         }
 
