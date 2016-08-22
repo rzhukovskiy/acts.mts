@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\ActScope;
 use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
@@ -10,6 +11,7 @@ use common\models\Act;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
 class ActController extends Controller
@@ -24,7 +26,7 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -76,7 +78,7 @@ class ActController extends Controller
      * @param integer $type
      * @return mixed
      */
-    public function actionCreate($type)
+    public function actionCreate( $type )
     {
         $model = new Act();
         $model->service_type = $type;
@@ -97,5 +99,54 @@ class ActController extends Controller
             'role' => Yii::$app->user->identity->role,
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Updates Act model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate( $id )
+    {
+        $model = $this->findModel($id);
+        $model->time_str = date('d-m-Y', $model->served_at);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->goBack();
+        } else {
+            $clientScopes = ActScope::findAll(['act_id' => $model->id, 'company_id' => $model->client_id]);
+            $partnerScopes = ActScope::findAll(['act_id' => $model->id, 'company_id' => $model->partner_id]);
+
+            $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
+            return $this->render('update', [
+                'model' => $model,
+                'serviceList' => $serviceList,
+                'clientScopes' => $clientScopes,
+                'partnerScopes' => $partnerScopes,
+            ]);
+        }
+    }
+
+    /**
+     * Finds the Act model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Act the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Act::findOne($id)) !== null) {
+            if (
+                Yii::$app->user->can(User::ROLE_ADMIN) ||
+                Yii::$app->user->can(User::ROLE_WATCHER) ||
+                Yii::$app->user->identity->company_id == $model->partner_id ||
+                Yii::$app->user->identity->company_id == $model->client_id
+            ) {
+                return $model;
+            }
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
