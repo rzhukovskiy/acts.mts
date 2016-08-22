@@ -70,11 +70,7 @@ class StatisticController extends Controller
         $totalProfit = 0;
         $totalServe = 0;
         $totalExpense = 0;
-        $chartData = [];
         foreach ($models as $index => $model) {
-            $chartData['labels'][] = $model->partner->name;
-            $chartData['datasets'][0]['data'][] = $model->profit;
-            $chartData['datasets'][0]['backgroundColor'][] = $this->generateRandomRgba(true);
             $totalProfit += $model->profit;
             $totalServe += $model->countServe;
             $totalExpense += $model->expense;
@@ -84,7 +80,6 @@ class StatisticController extends Controller
             'type' => $type,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'chartData' => $chartData,
             'totalProfit' => number_format($totalProfit, 0, '', ' '),
             'totalServe' => number_format($totalServe, 0, '', ' '),
             'totalExpense' => number_format($totalExpense, 0, '', ' '),
@@ -96,6 +91,7 @@ class StatisticController extends Controller
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
         $dataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
+        $chartDataProvider = $searchModel->searchByDate(Yii::$app->request->queryParams);
         $dataProvider->pagination = false;
 
         if (!is_null($type))
@@ -111,15 +107,11 @@ class StatisticController extends Controller
             ->orderBy('profit DESC')
             ->with(['partner', 'client', 'type']);
 
-        $models = $dataProvider->getModels();
         $totalProfit = 0;
         $totalServe = 0;
         $totalExpense = 0;
-        $chartData = [];
+        $models = $dataProvider->getModels();
         foreach ($models as $index => $model) {
-            $chartData['labels'][] = Service::$listType[$model->service_type]['ru'];
-            $chartData['datasets'][0]['data'][] = $model->profit;
-            $chartData['datasets'][0]['backgroundColor'][] = $this->colors[$model->service_type]['border'];
             $totalProfit += $model->profit;
             $totalServe += $model->countServe;
             $totalExpense += $model->expense;
@@ -129,12 +121,40 @@ class StatisticController extends Controller
             'type' => $type,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'chartData' => $chartData,
+            'chartData' => $this->chartTotal($chartDataProvider),
             'totalProfit' => $totalProfit,
             'totalServe' => $totalServe,
             'totalExpense' => $totalExpense,
             'monthChart' => $this->monthCartData($dataProvider, $searchModel),
         ]);
+    }
+
+    private function chartTotal(ActiveDataProvider $dataProvider)
+    {
+        $dataProvider->query
+            ->select("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect('SUM(profit) as profit')
+            ->andWhere(['YEAR(FROM_UNIXTIME(served_at))' => date('Y')])
+            ->groupBy(["MONTH(FROM_UNIXTIME(served_at))"]);
+
+        $models = $dataProvider->getModels();
+
+        $data = [];
+        for ($i = 1; $i<= 12; $i++) {
+            $month = DateHelper::getMonthNameByNum($i);
+            $data[] = [
+                'x' => $i,
+                'y' => 0,
+                'label' => $month[0],
+            ];
+        }
+
+        foreach ($models as $model) {
+            $month = (int) date('m',strtotime($model->dateMonth));
+            $data[$month-1]['y'] = $model->profit;
+        }
+
+        return json_encode($data);
     }
 
     /**
@@ -146,7 +166,7 @@ class StatisticController extends Controller
     {
         $companyModel = $this->findCompanyModel($id);
 
-        $this->view->title = 'Статистика "'. $companyModel->name;
+        $this->view->title = 'Статистика "' . $companyModel->name;
 
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
@@ -170,10 +190,8 @@ class StatisticController extends Controller
         $totalServe = 0;
         $totalExpense = 0;
         $totalIncome = 0;
-        $chartData = [];
         $models = $dataProvider->getModels();
         foreach ($models as $index => $model) {
-            $chartData = $this->viewChartData($chartData, $model);
             $totalProfit += $model->profit;
             $totalServe += $model->countServe;
             $totalExpense += $model->expense;
@@ -184,7 +202,7 @@ class StatisticController extends Controller
             'model' => $companyModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'chartData' => $chartData,
+            'chartData' => $this->chartByMonth($models),
             'totalServe' => $totalServe,
             'totalProfit' => number_format($totalProfit, 2, '.', ' '),
             'totalIncome' => number_format($totalIncome, 2, '.', ' '),
@@ -192,12 +210,34 @@ class StatisticController extends Controller
         ]);
     }
 
+    private function chartByMonth($models)
+    {
+        // { x: 10, y: 297571, label: 'Venezuela'},
+        // month, profit, label: Month: profit
+        $data = [];
+        for ($i = 1; $i<= 12; $i++) {
+            $month = DateHelper::getMonthNameByNum($i);
+            $data[] = [
+                'x' => $i,
+                'y' => 0,
+                'label' => $month[0],
+            ];
+        }
+
+        foreach ($models as $model) {
+            $month = (int) date('m',strtotime($model->dateMonth));
+            $data[$month]['y'] = $model->profit;
+        }
+
+        return json_encode($data);
+    }
+
 
     public function actionByDay($id, $date)
     {
         $companyModel = $this->findCompanyModel($id);
 
-        $this->view->title = 'Статистика "'. $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
+        $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
 
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
@@ -250,7 +290,7 @@ class StatisticController extends Controller
     {
         $companyModel = $this->findCompanyModel($id);
 
-        $this->view->title = 'Статистика "'. $companyModel->name . '" за ' . date('d', strtotime($date)) . ' ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
+        $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . date('d', strtotime($date)) . ' ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
 
         $searchModel = new ActSearch();
         $searchModel->scenario = 'search_by_date';
@@ -332,7 +372,7 @@ class StatisticController extends Controller
     private function monthCartData($dataProvider, $searchModel)
     {
         $currentYear = date('Y');
-        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo)) - 1 : (int)date('m') -1 ;
+        $currentMonth = isset($searchModel->dateTo) ? (int)date('m', strtotime($searchModel->dateTo)) - 1 : (int)date('m') - 1;
 
         $models = $dataProvider->query
             ->addSelect('COUNT(id) as numActs')
@@ -343,7 +383,7 @@ class StatisticController extends Controller
             ->addSelect("YEAR(FROM_UNIXTIME(served_at)) as year")
             ->addSelect("MONTH(FROM_UNIXTIME(served_at)) as month")
             ->andWhere(["YEAR(FROM_UNIXTIME(served_at))" => $currentYear])
-            ->andWhere(['<=', "MONTH(FROM_UNIXTIME(served_at))", $currentMonth]) // если не ограничить появляются артефакты
+            ->andWhere(['<=', "MONTH(FROM_UNIXTIME(served_at))", $currentMonth])// если не ограничить появляются артефакты
             ->with(['type']);
 
         $labels = [];
