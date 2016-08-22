@@ -343,6 +343,7 @@ class StatisticController extends Controller
             ->addSelect("YEAR(FROM_UNIXTIME(served_at)) as year")
             ->addSelect("MONTH(FROM_UNIXTIME(served_at)) as month")
             ->andWhere(["YEAR(FROM_UNIXTIME(served_at))" => $currentYear])
+            ->andWhere(['<=', "MONTH(FROM_UNIXTIME(served_at))", $currentMonth]) // если не ограничить появляются артефакты
             ->with(['type']);
 
         $labels = [];
@@ -383,13 +384,15 @@ class StatisticController extends Controller
         ];
 
         foreach ($models->all() as $model) {
-            $dataSet[$model->service_type]['data'][(int)$model->month - 1] = [
+            $tempModelMonth = ((int)$model->month);
+            $dataSet[$model->service_type]['data'][$tempModelMonth - 1] = [
                 'x' => (int)$model->month,
                 'y' => $model->profit
             ];
-            $tempTotal = $totalChart['data'][(int)$model->month - 1]['y'];
-            $totalChart['data'][(int)$model->month - 1] = [
-                'x' => (int)$model->month,
+
+            $tempTotal = $totalChart['data'][$tempModelMonth - 1]['y'];
+            $totalChart['data'][$tempModelMonth - 1] = [
+                'x' => $tempModelMonth,
                 'y' => $tempTotal + $model->profit,
             ];
         }
