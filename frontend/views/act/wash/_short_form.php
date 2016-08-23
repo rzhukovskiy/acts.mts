@@ -11,6 +11,9 @@ use kartik\date\DatePicker;
 use common\models\Mark;
 use common\models\Type;
 use common\models\Card;
+use common\models\Car;
+use kartik\select2\Select2;
+use yii\jui\AutoComplete;
 
 ?>
 
@@ -40,11 +43,24 @@ use common\models\Card;
                         ]
                     ])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'card_id')->dropdownList(Card::find()->select(['number', 'id'])->indexBy('id')->column(), ['style' => 'min-width: 60px'])->error(false) ?>
+                <td style="min-width: 100px">
+                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
+                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
+                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
+                        'language' => 'ru',
+                        'pluginOptions' => [
+                        ],
+                    ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'number')->error(false) ?>
+                    <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [
+                        'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
+                        'clientOptions' => [
+                            'source' => Car::find()->select('number as value')->asArray()->all(),
+                            'minLength'=>'2',
+                            'autoFill'=>true,
+                        ],
+                    ])->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
@@ -61,7 +77,13 @@ use common\models\Card;
             </tr>
             <tr>
                 <td colspan="7">
-                    <div class="form-group">
+                    <div class="form-group row" style="height: 5px;">
+                        <div class="col-xs-12">
+                            <label class="control-label">Услуга</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="height: 25px;">
                         <div class="col-xs-6">
                             <?php if (!empty($serviceList)) { ?>
                                 <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>

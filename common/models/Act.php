@@ -245,23 +245,13 @@ class Act extends ActiveRecord
         }
 
         if ($insert) {
-            //инкрементим количество обслуживаний
-            $car = Car::findOne(['number' => $this->number]);
-            if ($car) {
-                $car->updateAllCounters(['act_count' => 1]);
-            }
-            $car = Car::findOne(['number' => $this->extra_number]);
-            if ($car) {
-                $car->updateAllCounters(['act_count' => 1]);
-            }
             /**
              * суммируем все указанные услуги и считаем доход, расход и прибыль\
              */
             if (!empty($this->serviceList)) {
+                $totalExpense = 0;
+                $totalIncome = 0;
                 foreach ($this->serviceList as $serviceData) {
-                    $totalExpense = 0;
-                    $totalIncome = 0;
-
                     $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $totalIncome += $clientService->price * $serviceData['amount'];
@@ -378,7 +368,7 @@ class Act extends ActiveRecord
                             $clientScope->price = $clientService->price;
                             $clientScope->description = $clientService->service->description;
                         } else {
-                            $clientScope->price = $serviceData['price'];
+                            $clientScope->price = 1.2 * $serviceData['price'];
                             $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
@@ -414,19 +404,5 @@ class Act extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
-    }
-
-    public function afterDelete()
-    {
-        //декрементим количество обслуживаний
-        $car = Car::findOne(['number' => $this->number]);
-        if ($car) {
-            $car->updateAllCounters(['act_count' => -1]);
-        }
-
-        $car = Car::findOne(['number' => $this->extra_number]);
-        if ($car) {
-            $car->updateAllCounters(['act_count' => -1]);
-        }
     }
 }

@@ -5,15 +5,38 @@
  * @var $serviceList array
  */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
-use common\models\Mark;
-use common\models\Type;
-use common\models\Card;
 use common\models\Car;
+use common\models\Card;
+use common\models\Mark;
+use common\models\Service;
+use common\models\Type;
+use kartik\date\DatePicker;
 use kartik\select2\Select2;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 use yii\jui\AutoComplete;
+use yii\web\View;
+
+if (!empty($serviceList)) {
+    $fixedList = json_encode(Service::find()
+        ->where(['type' => $model->service_type])
+        ->select('is_fixed')->indexBy('id')->column());
+    
+    $script = <<< JS
+    var serviceList = $fixedList;
+    $('.scope-price').hide();
+
+    $(document).on('change', '.scope-service', function () {
+        var fixed = serviceList[$(this).val()];
+        if (fixed > 0) {
+            $(this).parent().parent().find('.scope-price').hide();
+        } else {
+            $(this).parent().parent().find('.scope-price').show();
+        }
+    });
+JS;
+    $this->registerJs($script, View::POS_READY);
+}
 
 ?>
 
@@ -57,8 +80,8 @@ use yii\jui\AutoComplete;
                         'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
                         'clientOptions' => [
                             'source' => Car::find()->select('number as value')->asArray()->all(),
-                            'minLength'=>'2',
-                            'autoFill'=>true,
+                            'minLength' => '2',
+                            'autoFill' => true,
                         ],
                     ])->error(false) ?>
                 </td>
@@ -68,33 +91,40 @@ use yii\jui\AutoComplete;
                 <td>
                     <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
-                </td>
-                <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
-                </td>
             </tr>
             <tr>
-                <td colspan="7">
-                    <div class="form-group row" style="height: 5px;">
-                        <div class="col-xs-12">
+                <td colspan="5">
+                    <div class="form-group" style="height: 5px;">
+                        <div class="col-xs-6">
                             <label class="control-label">Услуга</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <label class="control-label">Количество</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <label class="control-label">Цена</label>
+                        </div>
+                        <div class="col-xs-1">
                         </div>
                     </div>
 
                     <div class="form-group" style="height: 25px;">
                         <div class="col-xs-6">
                             <?php if (!empty($serviceList)) { ?>
-                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
+                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
                             <?php } else { ?>
                                 <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                             <?php } ?>
                         </div>
                         <div class="col-xs-1">
-                            <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                            <?= Html::hiddenInput("Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                            <button type="button" class="btn btn-primary input-sm addButton"><i class="glyphicon glyphicon-plus"></i></button>
+                            <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                        </div>
+                        <div class="col-xs-1">
+                            <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-primary input-sm addButton"><i
+                                    class="glyphicon glyphicon-plus"></i></button>
                         </div>
                     </div>
                 </td>
