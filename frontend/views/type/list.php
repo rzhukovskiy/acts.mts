@@ -43,7 +43,7 @@ echo $this->render('_tabs');
                     [
                         'attribute' => 'image',
                         'content' => function ($data) {
-                            return Html::img('/images/cars/' . $data->image, ['style' => 'height:100px;']);
+                            return Html::img('/images/cars/' . $data->id . '.jpg', ['style' => 'height:100px;']);
                         },
                         'filter' => false,
                     ],

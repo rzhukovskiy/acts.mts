@@ -34,16 +34,13 @@
         public function actionList()
         {
             $newTypeModel = new Type();
-            var_dump($newTypeModel->attributes);
             $searchModel = new TypeSearch();
 
-            $dataProvider = $searchModel
-                ->search(Yii::$app->request->queryParams);
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination = false;
 
             if ( $newTypeModel->load( Yii::$app->request->post() ) ) {
                 $newTypeModel->imageFile = UploadedFile::getInstance( $newTypeModel, 'imageFile' );
-                $newTypeModel->image = $newTypeModel->imageFile->baseName . '.' . $newTypeModel->imageFile->extension;
 
                 if ($newTypeModel->save()) {
                     $newTypeModel->upload();

@@ -34,7 +34,27 @@
             $this->stdout('   import/base-data' . " — imports base data from previous version.\n");
             $this->stdout('   import/price-data' . " — imports data about services and prices from previous version.\n");
             $this->stdout('   import/act-data' . " — imports acts from previous version.\n");
+            $this->stdout('   import/user-data' . " — import user from previous version.\n");
+            $this->stdout('   import/all' . " — import all tables.\n");
             $this->stdout("\n");
+        }
+
+        public function actionAll()
+        {
+            $this->importCompanies();
+            $this->importMarks();
+            $this->importTypes();
+            $this->importCars();
+            $this->importCards();
+            $this->importRequisites();
+
+            $this->importServices();
+            $this->importPrices();
+            $this->importTiresServices();
+
+            $this->importActs();
+
+            $this->importUsers();
         }
 
         public function actionBaseData()
@@ -116,8 +136,7 @@
             $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}type")->queryAll();
             foreach ($rows as $rowData) {
                 $insert = "({$rowData['id']},
-                '{$rowData['name']}',
-                '{$rowData['image']}')";
+                '{$rowData['name']}')";
 
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}type VALUES $insert")->execute();
             }
