@@ -52,15 +52,9 @@ use common\models\Card;
                 <td>
                     <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
-                </td>
-                <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
-                </td>
             </tr>
             <tr>
-                <td colspan="7">
+                <td colspan="5">
                     <div class="form-group">
                         <div class="col-xs-6">
                             <?php if (!empty($serviceList)) { ?>

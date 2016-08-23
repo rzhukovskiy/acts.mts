@@ -11,9 +11,12 @@ use common\models\Card;
 use common\models\Company;
 use common\models\Mark;
 use common\models\Type;
+use common\models\Car;
 use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use kartik\select2\Select2;
+use yii\jui\AutoComplete;
 
 ?>
 
@@ -24,7 +27,7 @@ use yii\helpers\Html;
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([
-            'action' => ['act/update', 'id' => $id],
+            'action' => ['act/update', 'id' => $model->id],
             'id' => 'act-form',
         ]) ?>
         <table class="table table-bordered">
@@ -55,10 +58,23 @@ use yii\helpers\Html;
             </tr>
             <tr>
                 <td>
-                    <?= $form->field($model, 'card_id')->dropdownList(Card::find()->select(['number', 'id'])->indexBy('id')->column(), ['style' => 'min-width: 60px'])->error(false) ?>
+                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
+                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
+                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'number')->error(false) ?>
+                    <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [
+                        'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
+                        'clientOptions' => [
+                            'source' => Car::find()->select('number as value')->asArray()->all(),
+                            'minLength'=>'3',
+                            'autoFill'=>true,
+                        ],
+                    ])->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
@@ -71,12 +87,11 @@ use yii\helpers\Html;
                 <td colspan="4">
                     <div class="col-sm-6">
                         Услуги партнера
-                        <?php $i = 1;
-                        foreach ($partnerScopes as $scope) { ?>
+                        <?php foreach ($partnerScopes as $scope) { ?>
                             <div class="form-group">
                                 <div class="col-xs-6">
                                     <?php if (!empty($serviceList)) { ?>
-                                        <?= Html::dropDownList("Act[partnerServiceList][$scope->id][service_id]", $scope->companyService->service_id,
+                                        <?= Html::dropDownList("Act[partnerServiceList][$scope->id][service_id]", $scope->service_id,
                                             $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
                                     <?php } else { ?>
                                         <?= Html::textInput("Act[partnerServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
@@ -89,24 +104,43 @@ use yii\helpers\Html;
                                     <?= Html::textInput("Act[partnerServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <button type="button"
-                                            class="btn btn-primary input-sm <?= $i == count($partnerScopes) ? 'addButton' : 'removeButton' ?>">
-                                        <i
-                                            class="glyphicon <?= $i == count($partnerScopes) ? 'glyphicon-plus' : 'glyphicon-minus' ?>"></i>
+                                    <button type="button" class="btn btn-primary input-sm removeButton">
+                                        <i class="glyphicon glyphicon-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <?php $i++;
-                        } ?>
+                        <?php } ?>
+
+                        <div class="form-group">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[partnerServiceList][0][service_id]", '',
+                                        $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[partnerServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('number', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::textInput("Act[partnerServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                                <button type="button" class="btn btn-primary input-sm addButton">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="col-sm-6">
                         Услуги клиента
-                        <?php $i = 1;
-                        foreach ($clientScopes as $scope) { ?>
+                        <?php foreach ($clientScopes as $scope) { ?>
                             <div class="form-group">
                                 <div class="col-xs-6">
                                     <?php if (!empty($serviceList)) { ?>
-                                        <?= Html::dropDownList("Act[clientServiceList][$scope->id][service_id]", $scope->companyService->service_id,
+                                        <?= Html::dropDownList("Act[clientServiceList][$scope->id][service_id]", $scope->service_id,
                                             $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
                                     <?php } else { ?>
                                         <?= Html::textInput("Act[clientServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
@@ -119,21 +153,40 @@ use yii\helpers\Html;
                                     <?= Html::textInput("Act[clientServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <button type="button"
-                                            class="btn btn-primary input-sm <?= $i == count($clientScopes) ? 'addButton' : 'removeButton' ?>">
-                                        <i
-                                            class="glyphicon <?= $i == count($clientScopes) ? 'glyphicon-plus' : 'glyphicon-minus' ?>"></i>
+                                    <button type="button" class="btn btn-primary input-sm removeButton">
+                                        <i class="glyphicon glyphicon-minus"></i>
                                     </button>
                                 </div>
                             </div>
-                            <?php $i++;
-                        } ?>
+                        <?php } ?>
+
+                        <div class="form-group">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[clientServiceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[clientServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('number', "Act[clientServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::textInput("Act[clientServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                                <button type="button" class="btn btn-primary input-sm addButton">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="7">
-                    <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary btn-sm']) ?>
+                    <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
+                    <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
                 </td>
             </tr>
             </tbody>

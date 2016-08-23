@@ -17,7 +17,7 @@ class m160816_140047_create_act_scope_table extends Migration
             0 => 'PRIMARY KEY (`id`)',
             'act_id' => 'INT(10) UNSIGNED NULL',
             'company_id' => 'INT(10) UNSIGNED NULL',
-            'company_service_id' => 'INT(10) UNSIGNED NULL',
+            'service_id' => 'INT(10) UNSIGNED NULL',
             'amount' => 'SMALLINT(6) NOT NULL DEFAULT \'0\'',
             'price' => 'SMALLINT(6) NOT NULL DEFAULT \'0\'',
             'description' => 'VARCHAR(255) NOT NULL',

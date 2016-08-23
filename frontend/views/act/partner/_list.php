@@ -43,7 +43,7 @@ if ($role == User::ROLE_ADMIN) {
         [
             'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
             'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-        ],'','','','','','',
+        ],'','','','','',
     ];
 }
 

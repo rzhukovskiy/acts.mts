@@ -112,10 +112,10 @@ class ActController extends Controller
         $model->time_str = date('d-m-Y', $model->served_at);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->goBack();
+            return $this->redirect(Yii::$app->request->post('__returnUrl'));
         } else {
-            $clientScopes = ActScope::findAll(['act_id' => $model->id, 'company_id' => $model->client_id]);
-            $partnerScopes = ActScope::findAll(['act_id' => $model->id, 'company_id' => $model->partner_id]);
+            $clientScopes = $model->getClientScopes()->all();
+            $partnerScopes = $model->getPartnerScopes()->all();
 
             $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
             return $this->render('update', [
@@ -125,6 +125,19 @@ class ActController extends Controller
                 'partnerScopes' => $partnerScopes,
             ]);
         }
+    }
+
+    /**
+     * Deletes an existing Act model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**

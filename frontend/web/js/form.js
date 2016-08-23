@@ -1,6 +1,5 @@
 $(document).ready(function() {
     scopeIndex = 0;
-    oldScopeIndex = 0;
     $('#act-form').on('click', '.addButton', function(e)
     {
         scopeIndex++;
@@ -9,17 +8,16 @@ $(document).ready(function() {
         var currentEntry = $(this).parents('.form-group:last'),
             newEntry = $(currentEntry.clone()).insertAfter(currentEntry);
         newEntry.find('input').each(function() {
-            $(this).attr('name', $(this).attr('name').replace(oldScopeIndex, scopeIndex));
+            $(this).attr('name', $(this).attr('name').replace(/[0-9]+/g, scopeIndex));
         });
         newEntry.find('select').each(function() {
-            $(this).attr('name', $(this).attr('name').replace(oldScopeIndex, scopeIndex));
+            $(this).attr('name', $(this).attr('name').replace(/[0-9]+/g, scopeIndex));
         });
 
         newEntry.find('input').val('');
         newEntry.find('input.not-null').val(1);
         currentEntry.find('.glyphicon-plus').removeClass('glyphicon-plus').addClass('glyphicon-minus');
         currentEntry.find('.addButton').removeClass('addButton').addClass('removeButton');
-        oldScopeIndex++;
     }).on('click', '.removeButton', function(e)
     {
         $(this).parents('.form-group:first').remove();

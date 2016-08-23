@@ -361,7 +361,7 @@
                         $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}service WHERE description LIKE '{$scopeData['description']}'")->queryOne();
 
                         if (empty($serviceData['id'])) {
-                            $companyServiceData['id'] = 'NULL';
+                            $serviceData['id'] = 'NULL';
                             $companyServiceData['price'] = $scopeData['expense'];
                             $serviceData['description'] = $scopeData['description'];
                         } else {
@@ -371,15 +371,15 @@
 
                             if (empty($companyServiceData)) {
                                 $companyServiceData['id'] = 'NULL';
-                                $companyServiceData['price'] = 0;
+                                $companyServiceData['price'] = $scopeData['expense'];
                             }
                         }
 
                         $insert = "(NULL,
                             $act_id,
                             {$rowData['partner_id']},
-                            {$companyServiceData['id']},
-                            1,
+                            {$serviceData['id']},
+                            {$scopeData['amount']},
                             {$companyServiceData['price']},
                             '{$serviceData['description']}',
                             $now,
@@ -388,7 +388,7 @@
                         $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}act_scope VALUES $insert")->execute();
 
                         if (empty($serviceData['id'])) {
-                            $companyServiceData['id'] = 'NULL';
+                            $serviceData['id'] = 'NULL';
                             $companyServiceData['price'] = $scopeData['income'];
                             $serviceData['description'] = $scopeData['description'];
                         } else {
@@ -398,15 +398,15 @@
 
                             if (empty($companyServiceData)) {
                                 $companyServiceData['id'] = 'NULL';
-                                $companyServiceData['price'] = 0;
+                                $companyServiceData['price'] = $scopeData['income'];
                             }
                         }
 
                         $insert = "(NULL,
                             $act_id,
                             {$rowData['client_id']},
-                            {$companyServiceData['id']},
-                            1,
+                            {$serviceData['id']},
+                            {$scopeData['amount']},
                             {$companyServiceData['price']},
                             '{$serviceData['description']}',
                             $now,
@@ -454,7 +454,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['partner_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -478,7 +478,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['partner_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -502,7 +502,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['partner_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -526,7 +526,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['client_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -550,7 +550,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['client_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -574,7 +574,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['client_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -598,7 +598,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['partner_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
@@ -622,7 +622,7 @@
                         $insert = "(NULL,
                         $act_id,
                         {$rowData['client_id']},
-                        {$companyServiceData['id']},
+                        {$serviceData['id']},
                         1,
                         {$companyServiceData['price']},
                         '{$serviceData['description']}',
