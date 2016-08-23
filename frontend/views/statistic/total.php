@@ -15,7 +15,6 @@ use common\assets\CanvasJs\CanvasJsAsset;
  * @var $totalProfit int
  * @var $totalServe int
  * @var $totalExpense int
- * @var $monthChart array
  */
 
 CanvasJsAsset::register($this);

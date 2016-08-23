@@ -2,8 +2,8 @@
 
 use yii\bootstrap\Html;
 use yii\grid\GridView;
-use dosamigos\chartjs\ChartJs;
 use common\components\DateHelper;
+use common\assets\CanvasJs\CanvasJsAsset;
 
 /**
  * @var $this \yii\web\View
@@ -13,6 +13,8 @@ use common\components\DateHelper;
  * @var $chartData array
  * @var $chartTitle string
  */
+
+CanvasJsAsset::register($this);
 ?>
 
 <div class="panel panel-primary">
@@ -34,7 +36,6 @@ use common\components\DateHelper;
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
-                // TODO: group by year maybe?
                 [
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
@@ -81,24 +82,73 @@ use common\components\DateHelper;
         ?>
         <hr>
         <div class="col-sm-12">
-            <div class="well">
-                <h4 class="text-center"><?=$chartTitle?></h4>
-                <?php
-                echo ChartJs::widget([
-                    'type' => 'bar',
-                    'options' => [
-                        'height' => 100,
-                        'width' => 400
+            <div id="chart_div" style="width:100%;height:500px;"></div>
+            <?php
+            $js = '
+                var it = 1;
+                var dataTable = '.$chartData.';
+                CanvasJS.addColorSet("blue",["#428bca"]);
+
+                var options = {
+                    colorSet: "blue",
+                    title: {
+                        text: "'.$chartTitle.'",
+                        fontColor: "#069",
+                        fontSize: 22
+                    },
+                    dataPointMaxWidth: 30,
+                    subtitles:[
+                        {
+                            text: "Прибыль",
+                            horizontalAlign: "left",
+                            fontSize: 14,
+                            fontColor: "#069",
+                            margin: 20
+                        }
                     ],
-                    'clientOptions' => [
-                        'legend' => [
-                            'position' => 'bottom'
+                    data: [
+                        {
+                            type: "column",
+                            dataPoints: dataTable
+                        }
+                    ],
+                    axisX:{
+                        title: "Дни месяца",
+                        titleFontSize: 14,
+                        titleFontColor: "#069",
+                        titleFontWeight: "bold",
+                        labelFontColor: "#069",
+                        labelFontWeight: "bold",
+                        interval: 1,
+                        lineThickness: 1,
+                        labelFontSize: 14,
+                        lineColor: "black",
+                        margin: 20
+                    },
+
+                    axisY:{
+                        labelFontColor: "#069",
+                        labelFontWeight: "bold",
+                        tickThickness: 1,
+                        gridThickness: 1,
+                        lineThickness: 1,
+                        labelFontSize: 14,
+                        lineColor: "black",
+                        valueFormatString: "### ### ###",
+                        stripLines:[
+                            {
+                                thickness: 1,
+                                value:0,
+                                color:"#000"
+                            }
                         ]
-                    ],
-                    'data' => $chartData
-                ]);
-                ?>
-            </div>
+                    }
+                };
+
+                $("#chart_div").CanvasJSChart(options);';
+
+            $this->registerJs($js);
+            ?>
         </div>
     </div>
 </div>

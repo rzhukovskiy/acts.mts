@@ -96,6 +96,7 @@ echo $this->render('_search', [
         <hr>
         <div id="chart_div" style="width:100%;height:500px;"></div>
         <?php
+        // TODO: refactor it, plz, move collecting data into controller
         $js = "
             var dataTable = [];
             console.log('Hello');

@@ -5,6 +5,7 @@ namespace frontend\models\search;
 use frontend\models\Act;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 
 /**
@@ -32,28 +33,126 @@ class ActSearch extends Act
     public function scenarios()
     {
         $scenarios = [
-            'search_by_date' => ['dateFrom', 'dateTo'],
+            'statistic_partner_filter' => ['dateFrom', 'dateTo'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);
     }
 
     /**
-     * Test:
-     * SELECT count(a.id), count(a.expense), count(a.profit), c.name
-     * FROM `act` a
-     * LEFT JOIN company c ON a.partner_id = c.id
-     * WHERE DATE(FROM_UNIXTIME(`served_at`))
-     * BETWEEN '2016-01-01' AND '2016-01-20'
-     * GROUP BY type_id;
+     * Поиск по типу услуги
      *
      * @param $params
      * @return ActiveDataProvider
      */
-    public function searchByDate($params)
+    public function searchByType($params)
     {
         $query = static::find();
 
+        $query->addSelect('served_at')
+            ->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('partner_id')
+            ->groupBy('partner_id')
+            ->orderBy('profit DESC')
+            ->with(['partner', 'client']);
+
+        return $this->createProvider($params, $query);
+    }
+
+    /**
+     * Поиск по для выбранного типа по месяцам
+     *
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchTypeByMonth($params)
+    {
+        $query = static::find();
+
+        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('partner_id')
+            ->groupBy(["MONTH(dateMonth)"])
+            ->orderBy('dateMonth ASC')
+            ->with(['partner']);
+
+        return $this->createProvider($params, $query);
+    }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchByDays($params)
+    {
+        $query = static::find();
+
+        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect('COUNT({{%act}}.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('partner_id')
+            ->with(['partner'])
+            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
+            ->orderBy('dateMonth ASC');
+
+        return $this->createProvider($params, $query);
+    }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchDayCars($params)
+    {
+        $query = static::find();
+
+        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
+            ->addSelect(['id', 'check', 'expense', 'income', 'profit', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->with(['partner', 'type', 'mark', 'card'])
+            ->orderBy('dateMonth ASC');
+
+        return $this->createProvider($params, $query);
+    }
+
+    /**
+     * Поиск для общей статистики
+     *
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchTotal($params)
+    {
+        $query = static::find();
+
+        $query->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
+            ->addSelect('SUM(expense) as expense')
+            ->addSelect('SUM(profit) as profit')
+            ->addSelect('SUM(income) as income')
+            ->addSelect('service_type')
+            ->groupBy('service_type')
+            ->orderBy('profit DESC')
+            ->with(['partner', 'client', 'type']);
+
+        return $this->createProvider($params, $query);
+    }
+
+    /**
+     * Общий провайдер для статистики
+     *
+     * @param $params
+     * @param $query
+     * @return ActiveDataProvider
+     */
+    private function createProvider($params, ActiveQuery $query)
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -71,7 +170,6 @@ class ActSearch extends Act
      * Creates data provider instance with search query applied
      *
      * @param array $params
-     *
      * @return ActiveDataProvider
      */
     public function search($params)
@@ -79,7 +177,6 @@ class ActSearch extends Act
         $query = static::find();
 
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
