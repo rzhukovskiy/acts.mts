@@ -28,7 +28,8 @@ use yii\grid\GridView;
                 'address',
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update} {delete}'
+                    'template' => '{update} {delete}',
+                    'contentOptions' => ['style' => 'min-width: 80px'],
                 ],
             ],
         ]);

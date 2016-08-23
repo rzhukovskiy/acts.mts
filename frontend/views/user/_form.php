@@ -24,7 +24,6 @@ use yii\widgets\ActiveForm;
     ]);
     echo $form->field($model, 'username')->textInput();
     echo $form->field($model, 'password')->passwordInput();
-    echo $form->field($model, 'email')->textInput();
     echo $form->field($model, 'company_id')
         ->dropDownList(
             $companyDropDownData,

@@ -61,6 +61,7 @@ class UserController extends \yii\web\Controller
         $dataProvider->query
             ->joinWith('company')
             ->andWhere(['type' => $type]);
+        $dataProvider->pagination = false;
 
         $newUser = new userAddForm();
         $newUser->role = User::ROLE_PARTNER;
