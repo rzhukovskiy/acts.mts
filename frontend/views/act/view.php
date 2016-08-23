@@ -23,14 +23,14 @@ echo Tabs::widget([
             'active' => false,
         ],
         [
-            'label' => 'Редактирование',
+            'label' => 'Просмотр',
             'url' => '#',
             'active' => true,
         ],
     ],
 ]);
 
-echo $this->render('_form', [
+echo $this->render('_view', [
     'model' => $model,
     'serviceList' => $serviceList,
     'clientScopes' => $clientScopes,

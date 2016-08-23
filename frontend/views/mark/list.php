@@ -45,14 +45,7 @@ echo $this->render('_tabs');
                     ],
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'template' => '{delete}',
-                        'buttons' => [
-                            'update' => function ($url) {
-                                return Html::a(
-                                    '<span class="glyphicon glyphicon-screenshot"></span>',
-                                    $url);
-                            },
-                        ],
+                        'template' => '{update}{delete}',
                     ],
                 ],
             ]); ?>

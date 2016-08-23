@@ -26,7 +26,7 @@ use yii\helpers\Html;
         <div class="col-sm-6 col-sm-offset-2">
             <?php
             if (!empty($model->image))
-                echo Html::img('/images/cars/' . $model->image, ['style' => 'height: 100px']);
+                echo Html::img('/images/cars/' . $model->id . '.jpg', ['style' => 'height: 100px']);
             ?>
         </div>
     </div>

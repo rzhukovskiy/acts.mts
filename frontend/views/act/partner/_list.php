@@ -14,6 +14,7 @@ use common\models\Type;
 use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use kartik\date\DatePicker;
 
 
 if ($role == User::ROLE_ADMIN) {
@@ -23,9 +24,24 @@ if ($role == User::ROLE_ADMIN) {
             'options' => ['style' => 'vertical-align: middle'],
         ],
         [
-            'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
+            'content' => DatePicker::widget([
+                'model' => $searchModel,
+                'attribute' => 'period',
+                'type' => DatePicker::TYPE_INPUT,
+                'language' => 'ru',
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                    'format' => 'm-yyyy',
+                ],
+                'options' => [
+                    'class' => 'form-control',
+                ]
+            ]),
             'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-        ],'','',
+        ], '', '',
         [
             'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
         ],
@@ -41,9 +57,24 @@ if ($role == User::ROLE_ADMIN) {
             'options' => ['style' => 'vertical-align: middle'],
         ],
         [
-            'content' => Html::activeDropDownList($searchModel, 'period', Act::getPeriodList(),['class' => 'form-control']),
+            'content' => DatePicker::widget([
+                'model' => $searchModel,
+                'attribute' => 'period',
+                'type' => DatePicker::TYPE_INPUT,
+                'language' => 'ru',
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                    'format' => 'm-yyyy',
+                ],
+                'options' => [
+                    'class' => 'form-control',
+                ]
+            ]),
             'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-        ],'','','','','',
+        ], '', '', '', '', '',
     ];
 }
 
@@ -68,7 +99,7 @@ $columns = [
         },
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
-                'mergeColumns'=>[[0,8]],
+                'mergeColumns' => [[0, 8]],
                 'content' => [
                     0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
                     9 => GridView::F_COUNT,
@@ -92,7 +123,7 @@ $columns = [
         'groupEvenCssClass' => 'child',
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
-                'mergeColumns'=>[[3,8]],
+                'mergeColumns' => [[3, 8]],
                 'content' => [
                     3 => 'Итого по ' . $data->partner->name,
                     9 => GridView::F_SUM,
@@ -145,7 +176,7 @@ $columns = [
     [
         'header' => 'Услуга',
         'value' => function ($data) {
-            if($data->service_type == Service::TYPE_WASH) {
+            if ($data->service_type == Service::TYPE_WASH) {
                 /** @var \common\models\ActScope $scope */
                 $services = [];
                 foreach ($data->partnerScopes as $scope) {
@@ -172,10 +203,11 @@ $columns = [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
         'template' => '{update} {delete}',
+        'contentOptions' => ['style' => 'min-width: 80px'],
     ],
 ];
 if ($role != User::ROLE_ADMIN) {
-    unset($columns[1],$columns[2],$columns[12]);
+    unset($columns[1], $columns[2], $columns[12]);
 }
 
 
@@ -188,7 +220,7 @@ echo GridView::widget([
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Список актов',
+        'heading' => 'Услуги',
         'before' => false,
         'footer' => false,
         'after' => false,

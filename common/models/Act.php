@@ -188,15 +188,6 @@ class Act extends ActiveRecord
     /**
      * @return string[]
      */
-    public static function getPeriodList()
-    {
-        $periods = (new Query())->select(['DISTINCT DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y") as periods'])->orderBy('served_at')->from(Act::tableName())->column();
-        return array_combine($periods, $periods);
-    }
-
-    /**
-     * @return string[]
-     */
     public static function getDayList()
     {
         return array_combine(range(1, 31), range(1, 31));

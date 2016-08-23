@@ -41,15 +41,8 @@ echo $this->render('_tabs');
                         }
                     ],
                     [
-                        'attribute' => 'image',
-                        'content' => function ($data) {
-                            return Html::img('/images/cars/' . $data->id . '.jpg', ['style' => 'height:100px;']);
-                        },
-                        'filter' => false,
-                    ],
-                    [
                         'class' => 'yii\grid\ActionColumn',
-                        'template' => '{delete}',
+                        'template' => '{update}{delete}',
                     ],
                 ]
             ]);

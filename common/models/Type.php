@@ -38,7 +38,7 @@
                 [ [ 'name' ], 'required' ],
                 [ [ 'name' ], 'string', 'max' => 255 ],
                 [ [ 'name' ], 'unique' ],
-                [ [ 'imageFile' ], 'file', 'skipOnEmpty' => false, 'extensions' => 'jpg' ],
+                [ [ 'imageFile' ], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg' ],
             ];
         }
 
@@ -51,6 +51,7 @@
                 'id' => 'ID',
                 'name' => 'Название',
                 'image' => 'Изображение',
+                'imageFile' => 'Изображение',
             ];
         }
 
@@ -70,7 +71,7 @@
          */
         public function upload()
         {
-            if ( $this->validate() ) {
+            if ( $this->validate() && $this->imageFile ) {
                 $path = Yii::getAlias( '@webroot' ) . '/images/cars/';
                 $fileName = $this->id;
                 $this->imageFile->saveAs( $path . $fileName . '.jpg');
@@ -96,35 +97,4 @@
 
             return unlink( $path . $imageName . '.jpg' );
         }
-
-        public function beforeDelete()
-        {
-            if ( parent::beforeDelete() ) {
-                $this->deleteImage();
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public function beforeSave( $insert )
-        {
-            if ( parent::beforeSave( $insert ) ) {
-                if ( !$this->isNewRecord ) {
-                    if ( $this->getOldAttribute( 'image' ) != $this->image ) {
-                        // не останавливаю если ошибка при удалени файла,
-                        // надеюсь на эксепшн в вызываемой функции
-                        // хотя картинка пусть валяется на сервере, главное данные заменить.
-                        $this->deleteImage( $this->getOldAttribute( 'image' ) );
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-
     }
