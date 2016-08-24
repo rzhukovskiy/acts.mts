@@ -106,7 +106,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['parent_id', 'director', 'is_split', 'cardList', 'requisitesList'], 'safe'],
+            [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -125,6 +125,7 @@ class Company extends ActiveRecord
             'parent_id' => 'Родительская',
             'cardList' => 'Список карт',
             'is_split' => 'Разделять прицеп',
+            'is_sign' => 'Подпись',
             'director' => 'Директор',
         ];
     }

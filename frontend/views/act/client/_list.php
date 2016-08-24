@@ -58,6 +58,7 @@ $columns = [
     [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
+        'contentOptions' => ['style' => 'max-width: 40px'],
         'pageSummary' => 'Всего',
     ],
     [

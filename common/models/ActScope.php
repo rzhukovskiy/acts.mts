@@ -50,6 +50,16 @@ class ActScope extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            ['price', 'default', 'value' => 0],
+        ];
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getService()

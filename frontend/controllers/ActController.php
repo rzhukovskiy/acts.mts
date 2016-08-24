@@ -9,6 +9,7 @@ use common\models\User;
 use Yii;
 use common\models\Act;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
@@ -41,7 +42,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'view', 'create'],
+                        'actions' => ['list', 'view', 'create', 'sign'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -89,6 +90,9 @@ class ActController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->image = UploadedFile::getInstance($model, 'image');
             if ($model->save()) {
+                if (Yii::$app->user->identity->company->is_sign) {
+                    return $this->redirect(['act/sign', 'id' => $model->id]);
+                }
                 return $this->redirect(Yii::$app->request->referrer);
             }
         }
@@ -140,6 +144,46 @@ class ActController extends Controller
         return $this->render('view', [
             'model' => $model,
             'company' => $company,
+        ]);
+    }
+
+    /**
+     * Signs Act model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionSign( $id )
+    {
+        $model = $this->findModel($id);
+
+        if (isset($_POST['name'])) {
+            $data = explode('base64,', $_POST['name']);
+
+            $str = base64_decode($data[1]);
+            $image = imagecreatefromstring($str);
+
+            imagealphablending($image, false);
+            imagesavealpha($image, true);
+            $dir = 'files/signs/';
+            imagepng($image, $dir . $id . '-name.png');
+            return Json::encode(['file' => $id]);
+        }
+
+        if (isset($_POST['sign'])) {
+            $data = explode('base64,', $_POST['sign']);
+
+            $str = base64_decode($data[1]);
+            $image = imagecreatefromstring($str);
+
+            imagealphablending($image, false);
+            imagesavealpha($image, true);
+            $dir = 'files/signs/';
+            imagepng($image, $dir . $id . '-sign.png');
+            return Json::encode(['file' => $id]);
+        }
+
+        return $this->render('sign', [
+            'model' => $model,
         ]);
     }
 

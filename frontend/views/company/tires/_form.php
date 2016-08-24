@@ -42,6 +42,7 @@ use common\models\Requisites;
         </div>
 
         <div id="details" class="collapse">
+            <?= $form->field($model, 'is_sign')->checkbox([], false) ?>
             <?= $form->field($model, 'is_split')->checkbox([], false) ?>
             <?= $form->field($model, 'cardList') ?>
             <div class="form-group">
