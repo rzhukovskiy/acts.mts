@@ -7,6 +7,7 @@
  */
 
 namespace common\models;
+
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -56,7 +57,7 @@ class Act extends ActiveRecord
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_CLIENT = 'client';
     const SCENARIO_CAR = 'car';
-    
+
     public $serviceList;
     public $clientServiceList;
     public $partnerServiceList;
@@ -65,6 +66,7 @@ class Act extends ActiveRecord
      * @var UploadedFile
      */
     public $image;
+
     /**
      * @inheritdoc
      */
@@ -214,14 +216,8 @@ class Act extends ActiveRecord
         }
 
         //определяем клиента по карте
-        if (empty($this->client_id)) {
-            $card = Card::findOne(['number' => $this->card_id]);
-
-            if (empty($card)) {
-                return false;
-            }
-
-            $this->client_id = $card->company->id;
+        if (!empty($this->card)) {
+            $this->client_id = $this->card->company_id;
         }
 
         //номер в верхний регистр
@@ -233,6 +229,14 @@ class Act extends ActiveRecord
         if ($car) {
             $this->mark_id = $car->mark_id;
             $this->type_id = $car->type_id;
+
+            if (empty($this->client_id)) {
+                $this->client_id = $car->company_id;
+            }
+        }
+
+        if (empty($this->client_id)) {
+            return false;
         }
 
         if ($insert) {
@@ -391,7 +395,7 @@ class Act extends ActiveRecord
                     $partnerScope->amount = $serviceData['amount'];
                     $partnerScope->save();
                 }
-            }            
+            }
         }
 
         parent::afterSave($insert, $changedAttributes);

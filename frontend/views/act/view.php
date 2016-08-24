@@ -3,12 +3,8 @@ use yii\bootstrap\Tabs;
 
 /**
  * @var $this yii\web\View
- * @var $type null|integer
  * @var $model \common\models\Act
- * @var $serviceList array
- * @var $clientScopes \common\models\ActScope[]
- * @var $partnerScopes \common\models\ActScope[]
- * @var $role string
+ * @var $company bool
  */
 
 $this->title = 'Редактирование акта';
@@ -23,16 +19,13 @@ echo Tabs::widget([
             'active' => false,
         ],
         [
-            'label' => 'Просмотр',
+            'label' => 'Предварительный акт',
             'url' => '#',
             'active' => true,
         ],
     ],
 ]);
 
-echo $this->render('_view', [
+echo $this->render($company ? 'client/_view' : 'partner/_view', [
     'model' => $model,
-    'serviceList' => $serviceList,
-    'clientScopes' => $clientScopes,
-    'partnerScopes' => $partnerScopes,
 ]);

@@ -128,6 +128,22 @@ class ActController extends Controller
     }
 
     /**
+     * Shows Act model.
+     * @param integer $id
+     * @param bool $company
+     * @return mixed
+     */
+    public function actionView( $id, $company = false )
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('view', [
+            'model' => $model,
+            'company' => $company,
+        ]);
+    }
+
+    /**
      * Deletes an existing Act model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id

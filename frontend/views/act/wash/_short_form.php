@@ -46,9 +46,10 @@ use yii\jui\AutoComplete;
                 <td style="min-width: 100px">
                     <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
                         'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
+                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
                         'language' => 'ru',
                         'pluginOptions' => [
+                            'initValueText' => 'asdasd',
                         ],
                     ])->error(false) ?>
                 </td>
@@ -63,10 +64,10 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), ['max-width'])->error(false) ?>
+                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>

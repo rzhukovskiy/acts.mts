@@ -112,3 +112,47 @@ body {
 .select2-container--krajee .select2-selection--single .select2-selection__arrow {
     height: 38px;
 }
+
+/* act-table */
+.panel.acts .panel-body {
+    padding: 20px;
+}
+.act {
+    border-collapse: collapse;
+    color: #000;
+    font-size: 14px;
+    width: 100%;
+    border: 1px solid black;
+}
+.act td {
+    border: 1px solid black;
+    padding: 10px 5px 0px 5px;
+}
+.act th {
+    border: 1px solid black;
+    color: #069;
+    font-size: 16px;
+    text-align: left;
+    text-transform: uppercase;
+    padding: 10px 5px 0 5px;
+}
+.act .strong {
+    font-weight: bold;
+}
+.act .header {
+    color: #069;
+    font-weight: bold;
+}
+
+span.sign {
+    font-size: 14px;
+    color: #069;
+}
+table.sign {
+    color: #000;
+    font-size: 14px;
+}
+
+.extra-number {
+    display: none;
+}

@@ -16,67 +16,43 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
 
-
-if ($role == User::ROLE_ADMIN) {
-    $headerColumns = [
-        [
-            'content' => 'Период:',
-            'options' => ['style' => 'vertical-align: middle'],
-        ],
-        [
-            'content' => DatePicker::widget([
-                'model' => $searchModel,
-                'attribute' => 'period',
-                'type' => DatePicker::TYPE_INPUT,
-                'language' => 'ru',
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'changeMonth' => true,
-                    'changeYear' => true,
-                    'showButtonPanel' => true,
-                    'format' => 'm-yyyy',
-                ],
-                'options' => [
-                    'class' => 'form-control',
-                ]
-            ]),
-            'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-        ],'','',
-        [
-            'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
-        ],
-        [
-            'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
-            'options' => ['colspan' => 5],
-        ],
-    ];
-} else {
-    $headerColumns = [
-        [
-            'content' => 'Период:',
-            'options' => ['style' => 'vertical-align: middle'],
-        ],
-        [
-            'content' => DatePicker::widget([
-                'model' => $searchModel,
-                'attribute' => 'period',
-                'type' => DatePicker::TYPE_INPUT,
-                'language' => 'ru',
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'changeMonth' => true,
-                    'changeYear' => true,
-                    'showButtonPanel' => true,
-                    'format' => 'm-yyyy',
-                ],
-                'options' => [
-                    'class' => 'form-control',
-                ]
-            ]),
-            'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter'],
-        ],'','','','','',
-    ];
-}
+$headerColumns = [
+    [
+        'content' => 'Период:',
+        'options' => ['style' => 'vertical-align: middle'],
+    ],
+    [
+        'content' => DatePicker::widget([
+            'model' => $searchModel,
+            'attribute' => 'period',
+            'type' => DatePicker::TYPE_INPUT,
+            'language' => 'ru',
+            'pluginOptions' => [
+                'autoclose' => true,
+                'changeMonth' => true,
+                'changeYear' => true,
+                'showButtonPanel' => true,
+                'format' => 'm-yyyy',
+            ],
+            'options' => [
+                'class' => 'form-control',
+            ]
+        ]),
+        'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
+    ],
+    '',
+    '',
+    '',
+    [
+        'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+    ],
+    [
+        'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
+        'options' => ['colspan' => 3],
+    ],
+    '',
+    '',
+];
 
 $columns = [
     [
@@ -154,7 +130,7 @@ $columns = [
     ],
     [
         'attribute' => 'mark_id',
-        'filter' => Mark::find()->select(['name', 'id'])->indexBy('id')->column(),
+        'filter' => Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
         'value' => function ($data) {
             return isset($data->mark) ? $data->mark->name : 'error';
         },
@@ -163,7 +139,7 @@ $columns = [
     'extra_number',
     [
         'attribute' => 'type_id',
-        'filter' => Type::find()->select(['name', 'id'])->indexBy('id')->column(),
+        'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
         },
@@ -208,12 +184,31 @@ $columns = [
     [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
-        'template' => '{update} {delete}',
-        'contentOptions' => ['style' => 'min-width: 80px'],
+        'template' => $role == User::ROLE_ADMIN ? '{update}{delete}{view}' : '{view}',
+        'contentOptions' => ['style' => 'min-width: 120px'],
+        'buttons' => [
+            'view' => function ($url, $data, $key) {
+                if (in_array($data->service_type, [Service::TYPE_TIRES, Service::TYPE_SERVICE])) {
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id, 'company' => 1]);
+                } else {
+                    return '';
+                }
+            },
+        ],
     ],
 ];
+
+if ($searchModel->service_type != Service::TYPE_WASH) {
+    unset($columns[10], $columns[11]);
+    unset($headerColumns[7], $headerColumns[8]);
+}
+if ($searchModel->service_type == Service::TYPE_DISINFECT) {
+    unset($columns[4]);
+}
 if ($role != User::ROLE_ADMIN) {
-    unset($columns[1],$columns[2],$columns[13]);
+    unset($columns[1], $columns[2]);
+    $headerColumns[5]['content'] = '';
+    $headerColumns[6]['content'] = '';
 }
 
 
@@ -239,6 +234,17 @@ echo GridView::widget([
         [
             'columns' => $headerColumns,
             'options' => ['class' => 'filters', 'id' => 'w1-filters'],
+        ],
+        [
+            'columns' => [
+                [
+                    'content' => '&nbsp',
+                    'options' => [
+                        'colspan' => count($columns),
+                    ]
+                ]
+            ],
+            'options' => ['class' => 'kv-grid-group-row'],
         ],
     ],
     'columns' => $columns,

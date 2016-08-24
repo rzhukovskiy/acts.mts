@@ -69,7 +69,7 @@ JS;
                 <td style="min-width: 100px">
                     <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
                         'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
+                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
                         'language' => 'ru',
                         'pluginOptions' => [
                         ],
@@ -86,10 +86,10 @@ JS;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), ['max-width'])->error(false) ?>
+                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
             </tr>
             <tr>
@@ -120,7 +120,7 @@ JS;
                             <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                         </div>
                         <div class="col-xs-1">
-                            <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                            <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
                         </div>
                         <div class="col-xs-1">
                             <button type="button" class="btn btn-primary input-sm addButton"><i

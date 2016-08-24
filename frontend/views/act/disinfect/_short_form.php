@@ -43,15 +43,6 @@ use yii\jui\AutoComplete;
                         ]
                     ])->error(false) ?>
                 </td>
-                <td style="min-width: 100px">
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                        ],
-                    ])->error(false) ?>
-                </td>
                 <td>
                     <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [
                         'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
@@ -63,10 +54,10 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), ['max-width'])->error(false) ?>
+                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>
@@ -76,7 +67,7 @@ use yii\jui\AutoComplete;
                 </td>
             </tr>
             <tr>
-                <td colspan="7">
+                <td colspan="6">
                     <div class="form-group row" style="height: 5px;">
                         <div class="col-xs-12">
                             <label class="control-label">Услуга</label>

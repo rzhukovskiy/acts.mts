@@ -29,11 +29,11 @@ use common\models\Type;
         ]) ?>
         <?= $form->field($model, 'number') ?>
         <?= $form->field($model, 'mark_id')->dropdownList(
-            Mark::find()->select(['name', 'id'])->indexBy('id')->column(),
+            Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
             ['prompt' => 'выберите марку ТС']
         ) ?>
         <?= $form->field($model, 'type_id')->dropdownList(
-            Type::find()->select(['name', 'id'])->indexBy('id')->column(),
+            Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
             ['prompt' => 'выберите тип ТС']
         ) ?>
         <?= $form->field($model, 'is_infected')->checkbox([], false) ?>
