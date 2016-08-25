@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @var $searchModel common\models\search\CarSearch
+ * @var $searchModel common\models\search\ActSearch
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $model common\models\Car
  */
 
-use common\models\Card;
 use common\models\Company;
 use common\models\Service;
+use kartik\date\DatePicker;
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
 use yii\bootstrap\Tabs;
@@ -34,6 +34,7 @@ echo Tabs::widget([
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'summary' => false,
     'emptyText' => '',
     'panel' => [
@@ -42,6 +43,55 @@ echo GridView::widget([
         'before' => false,
         'footer' => false,
         'after' => false,
+    ],
+    'beforeHeader' => [
+        [
+            'columns' => [
+                [
+                    'content' => 'Выбор даты:',
+                    'options' => ['style' => 'vertical-align: middle'],
+                ],
+                [
+                    'content' => DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => 'dateFrom',
+                        'attribute2' => 'dateTo',
+                        'separator' => '-',
+                        'type' => DatePicker::TYPE_RANGE,
+                        'language' => 'ru',
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'changeMonth' => true,
+                            'changeYear' => true,
+                            'showButtonPanel' => true,
+                            'format' => 'dd-mm-yyyy',
+                        ],
+                        'options' => [
+                            'class' => 'form-control',
+                        ]
+                    ]),
+                    'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
+                ],
+                [
+                    'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
+                ],
+                '',
+                '',
+                '',
+            ],
+            'options' => ['class' => 'filters extend-header', 'id' => 'w1-filters'],
+        ],
+        [
+            'columns' => [
+                [
+                    'content' => '&nbsp',
+                    'options' => [
+                        'colspan' => 7,
+                    ]
+                ]
+            ],
+            'options' => ['class' => 'kv-grid-group-row'],
+        ],
     ],
     'hover' => false,
     'striped' => false,
@@ -58,19 +108,12 @@ echo GridView::widget([
             'value' => function ($data) {
                 return date('d-m-Y', $data->served_at);
             },
-            'filterOptions' => ['style' => 'min-width:60px'],
-            'contentOptions' => ['style' => 'min-width:60px'],
-            'options' => ['style' => 'min-width:60px'],
         ],
         [
             'attribute' => 'card_id',
-            'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
             'value' => function ($data) {
                 return isset($data->card) ? $data->card->number : 'error';
             },
-            'filterOptions' => ['style' => 'min-width:80px'],
-            'contentOptions' => ['style' => 'min-width:80px'],
-            'options' => ['style' => 'min-width:80px'],
         ],
         [
             'header' => 'Услуга',

@@ -1,8 +1,8 @@
 <?php
 
-use yii\bootstrap\Html;
+use kartik\date\DatePicker;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
+use yii\bootstrap\Html;
 
 /**
  * @var $this yii\web\View
@@ -18,7 +18,6 @@ if ($admin) {
     echo $this->render('_tabs');
 }
 
-Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -29,6 +28,54 @@ echo GridView::widget([
     'export' => false,
     'summary' => false,
     'emptyText' => '',
+    'beforeHeader' => [
+        [
+            'columns' => [
+                [
+                    'content' => 'Выбор даты:',
+                    'options' => ['style' => 'vertical-align: middle'],
+                ],
+                [
+                    'content' => DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => 'dateFrom',
+                        'attribute2' => 'dateTo',
+                        'separator' => '-',
+                        'type' => DatePicker::TYPE_RANGE,
+                        'language' => 'ru',
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'changeMonth' => true,
+                            'changeYear' => true,
+                            'showButtonPanel' => true,
+                            'format' => 'dd-mm-yyyy',
+                        ],
+                        'options' => [
+                            'class' => 'form-control',
+                        ]
+                    ]),
+                    'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
+                ],
+                [
+                    'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
+                ],
+                '',
+                '',
+            ],
+            'options' => ['class' => 'filters extend-header', 'id' => 'w2-filters'],
+        ],
+        [
+            'columns' => [
+                [
+                    'content' => '&nbsp',
+                    'options' => [
+                        'colspan' => 7,
+                    ]
+                ]
+            ],
+            'options' => ['class' => 'kv-grid-group-row'],
+        ],
+    ],
     'panel' => [
         'type' => 'primary',
         'heading' => 'Машины',
@@ -82,4 +129,3 @@ echo GridView::widget([
         ],
     ],
 ]);
-Pjax::end();

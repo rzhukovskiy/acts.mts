@@ -14,6 +14,8 @@ use common\models\Act;
  */
 class ActSearch extends Act
 {
+    public $dateFrom;
+    public $dateTo;
     public $period;
     public $day;
     
@@ -37,10 +39,10 @@ class ActSearch extends Act
     {
         // bypass scenarios() implementation in the parent class
         return [
-            self::SCENARIO_CAR => ['day', 'period'],
+            self::SCENARIO_CAR => ['card_id', 'number', 'dateFrom', 'dateTo'],
             self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
             self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_HISTORY => ['number']
+            self::SCENARIO_HISTORY => ['number', 'dateFrom', 'dateTo'],
         ];
     }
 
@@ -87,8 +89,24 @@ class ActSearch extends Act
                     'mark',
                     'client',
                 ]);
+                if ($this->dateFrom) {
+                    $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
+                }
                 $query->orderBy('parent_id, client_id, actsCount DESC');
                 break;
+
+            case self::SCENARIO_CAR:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'client',
+                ]);
+                if ($this->dateFrom) {
+                    $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
+                }
+                $query->orderBy('parent_id, client_id, served_at DESC');
+                break;
+
             default:
                 $query->joinWith([
                     'type',
