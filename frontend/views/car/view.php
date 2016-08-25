@@ -6,12 +6,31 @@
  * @var $model common\models\Car
  */
 
-use kartik\grid\GridView;
-use common\models\Act;
-use common\models\Company;
 use common\models\Card;
+use common\models\Company;
+use common\models\Service;
+use kartik\grid\GridView;
+use yii\bootstrap\Html;
+use yii\bootstrap\Tabs;
 
 $this->title = 'История машины ' . $model->number;
+
+$request = Yii::$app->request;
+
+echo Tabs::widget([
+    'items' => [
+        [
+            'label' => 'Машины',
+            'url' => ['car/list'],
+            'active' => false,
+        ],
+        [
+            'label' => 'История машины',
+            'url' => '#',
+            'active' => true,
+        ],
+    ],
+]);
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -35,20 +54,9 @@ echo GridView::widget([
             'pageSummary' => 'Итого',
         ],
         [
-            'attribute' => 'period',
-            'filter' => Act::getPeriodList(),
+            'attribute' => 'served_at',
             'value' => function ($data) {
-                return date('m-Y', $data->served_at);
-            },
-            'filterOptions' => ['style' => 'min-width:105px'],
-            'contentOptions' => ['style' => 'min-width:105px'],
-            'options' => ['style' => 'min-width:105px'],
-        ],
-        [
-            'attribute' => 'day',
-            'filter' => Act::getDayList(),
-            'value' => function ($data) {
-                return date('j', $data->served_at);
+                return date('d-m-Y', $data->served_at);
             },
             'filterOptions' => ['style' => 'min-width:60px'],
             'contentOptions' => ['style' => 'min-width:60px'],
@@ -65,6 +73,20 @@ echo GridView::widget([
             'options' => ['style' => 'min-width:80px'],
         ],
         [
+            'header' => 'Услуга',
+            'value' => function ($data) {
+                if ($data->service_type == Service::TYPE_WASH) {
+                    /** @var \common\models\ActScope $scope */
+                    $services = [];
+                    foreach ($data->partnerScopes as $scope) {
+                        $services[] = $scope->description;
+                    }
+                    return implode('+', $services);
+                }
+                return Service::$listType[$data->service_type]['ru'];
+            }
+        ],
+        [
             'attribute' => 'partner.address',
             'filter' => Company::find()->select(['name', 'id'])->indexBy('id')->column(),
             'value' => function ($data) {
@@ -72,15 +94,22 @@ echo GridView::widget([
             },
         ],
         [
-            'header' => 'Услуга',
-            'value' => function ($data) {
-                return \common\models\Service::$listType[$data->service_type]['ru'];
-            }
-        ],
-        [
             'attribute' => 'income',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM,
+        ],
+        [
+            'header' => '',
+            'class' => 'kartik\grid\ActionColumn',
+            'template' => '{view}',
+            'buttons' => [
+                'view' => function ($url, $data, $key) {
+                    if ($data->service_type == Service::TYPE_WASH) {
+                        return '';
+                    }
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['act-view', 'id' => $data->id]);
+                },
+            ],
         ],
     ],
 ]);

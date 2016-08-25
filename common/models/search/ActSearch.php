@@ -39,7 +39,8 @@ class ActSearch extends Act
         return [
             self::SCENARIO_CAR => ['day', 'period'],
             self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
+            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_HISTORY => ['number']
         ];
     }
 
@@ -77,8 +78,16 @@ class ActSearch extends Act
                     'card',
                     'client',
                 ]);
-
                 $query->orderBy('parent_id, client_id, served_at');
+                break;
+
+            case self::SCENARIO_HISTORY:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'client',
+                ]);
+                $query->orderBy('parent_id, client_id, actsCount DESC');
                 break;
             default:
                 $query->joinWith([

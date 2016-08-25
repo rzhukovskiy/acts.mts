@@ -6,7 +6,7 @@ use yii\widgets\Pjax;
 
 /**
  * @var $this yii\web\View
- * @var $searchModel common\models\search\CarSearch
+ * @var $searchModel common\models\search\ActSearch
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $companyDropDownData array
  * @var $admin null|bool
@@ -21,6 +21,7 @@ if ($admin) {
 Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'floatHeader' => $admin,
     'floatHeaderOptions' => ['top' => '0'],
     'hover' => false,
@@ -43,7 +44,7 @@ echo GridView::widget([
         [
             'attribute' => 'company_id',
             'content' => function ($data) {
-                return $data->company->name;
+                return $data->client->name;
             },
             'group' => $admin,
             'groupedRow' => true,
@@ -65,14 +66,19 @@ echo GridView::widget([
             },
         ],
         [
-            'attribute' => 'listService',
+            'attribute' => 'actsCount',
             'content' => function ($data) {
-                return count($data->acts);
+                return $data->actsCount;
             },
         ],
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{view}',
+            'buttons' => [
+                'view' => function ($url, $data, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->car->id]);
+                },
+            ],
         ],
     ],
 ]);

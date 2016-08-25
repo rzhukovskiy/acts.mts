@@ -29,7 +29,6 @@ class CarSearch extends Car
     public function scenarios()
     {
         return [
-            self::SCENARIO_HISTORY => ['company_id', 'number'],
             self::SCENARIO_DEFAULT => ['company_id', 'number'],
         ];
     }
@@ -70,20 +69,6 @@ class CarSearch extends Car
         ]);
 
         $query->andFilterWhere(['like', 'number', $this->number]);
-
-        if ($this->scenario == self::SCENARIO_HISTORY) {
-            $query->joinWith(['company', 'type', 'mark', 'acts act']);
-            $query->alias('car');
-
-            $query->select(['*', 'COUNT(act.id) AS actsCount']);
-            $query->having('actsCount != 0');
-            $query->groupBy(['car.id']);
-            $query->orderBy([
-                'parent_id' => SORT_ASC,
-                'company_id' => SORT_ASC,
-                'actsCount' => SORT_DESC
-            ]);
-        }
 
         return $dataProvider;
     }

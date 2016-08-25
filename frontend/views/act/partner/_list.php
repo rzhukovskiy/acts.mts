@@ -227,7 +227,7 @@ echo GridView::widget([
     'beforeHeader' => [
         [
             'columns' => $headerColumns,
-            'options' => ['class' => 'filters', 'id' => 'w1-filters'],
+            'options' => ['class' => 'filters extend-header', 'id' => 'w1-filters'],
         ],
         [
             'columns' => [

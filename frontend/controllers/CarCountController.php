@@ -93,7 +93,10 @@ class CarCountController extends Controller
 
         $dataProvider->pagination = false;
 
-        $companyDropDownData = ArrayHelper::map($dataProvider->getModels(), 'company_id', 'company.name');
+        $companyModels = Company::find()
+            ->andWhere(['type' => Company::TYPE_OWNER])
+            ->all();
+        $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
 
         return $this->render('view', [
             'searchModel' => $searchModel,

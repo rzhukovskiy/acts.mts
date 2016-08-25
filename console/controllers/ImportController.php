@@ -375,6 +375,16 @@
 
                     $act_id = $this->new_db->lastInsertID;
 
+                    if ($rowData['sign']) {
+                        $file = "http://docs.mtransservice.ru/files/signs/{$rowData['sign']}-sign.png";
+                        $newfile = "frontend/web/files/checks/$act_id-sign.png";
+                        copy($file, $newfile);
+
+                        $file = "http://docs.mtransservice.ru/files/signs/{$rowData['sign']}-name.png";
+                        $newfile = "frontend/web/files/checks/$act_id-name.png";
+                        copy($file, $newfile);
+                    }
+
                     $scopes = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']}")->queryAll();
                     foreach ($scopes as $scopeData) {
                         $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}service WHERE description LIKE '{$scopeData['description']}'")->queryOne();
@@ -458,6 +468,12 @@
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}act VALUES $insert")->execute();
 
                     $act_id = $this->new_db->lastInsertID;
+
+                    if ($rowData['check_image']) {
+                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['check_image']}";
+                        $newfile = "frontend/web/files/checks/$act_id.jpg";
+                        copy($file, $newfile);
+                    }
 
                     if (in_array($rowData['partner_service'], [0,2,6,8])) {
                         $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}service WHERE description LIKE 'снаружи'")->queryOne();

@@ -11,17 +11,13 @@ use yii\widgets\ActiveForm;
  * @var $type integer | null
  */
 
-if (!is_null($type))
-    $action = ['car-count/view', 'type' => $type];
-else
-    $action = ['car-count/list']
 ?>
 
 <div class="car-search">
 
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => $action,
+        'action' => ['car-count/list'],
         'id' => 'search-cars',
         'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
         'fieldConfig' => [
@@ -36,7 +32,6 @@ else
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">
             <?= Html::submitButton('Показать машины', ['class' => 'btn btn-primary btn-sm']) ?>
-            <?= Html::resetButton('Сбросить', ['class' => 'btn btn-default btn-sm']) ?>
         </div>
     </div>
 

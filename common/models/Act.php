@@ -11,7 +11,6 @@ namespace common\models;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\db\Query;
 use yii\web\UploadedFile;
 
 /**
@@ -55,6 +54,7 @@ class Act extends ActiveRecord
     const STATUS_FIXED = 2;
 
     const SCENARIO_PARTNER = 'partner';
+    const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
     const SCENARIO_CAR = 'car';
 
@@ -62,6 +62,7 @@ class Act extends ActiveRecord
     public $clientServiceList;
     public $partnerServiceList;
     public $time_str;
+    public $actsCount;
     /**
      * @var UploadedFile
      */
@@ -120,6 +121,7 @@ class Act extends ActiveRecord
             'day' => 'День',
             'time_str' => 'Дата',
             'image' => 'Загрузка чека',
+            'actsCount' => 'Обслуживания',
         ];
     }
 
@@ -145,6 +147,14 @@ class Act extends ActiveRecord
     public function getCard()
     {
         return $this->hasOne(Card::className(), ['id' => 'card_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getCar()
+    {
+        return $this->hasOne(Car::className(), ['number' => 'number']);
     }
 
     /**
@@ -200,11 +210,11 @@ class Act extends ActiveRecord
      */
     public function getImageLink()
     {
-        if (file_exists('checks/' . $this->id . '.jpg')) {
-            return '/checks/' . $this->id . '.jpg';
+        if (file_exists('files/checks/' . $this->id . '.jpg')) {
+            return '/files/checks/' . $this->id . '.jpg';
         }
-        if (file_exists('checks/' . $this->id . '.png')) {
-            return '/checks/' . $this->id . '.png';
+        if (file_exists('files/checks/' . $this->id . '.png')) {
+            return '/files/checks/' . $this->id . '.png';
         }
         return false;
     }

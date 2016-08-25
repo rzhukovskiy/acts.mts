@@ -122,7 +122,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
-                    'label' => 'Кол-во ТС',
+                    'label' => 'Количество ТС',
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
@@ -184,7 +184,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
-                    'label' => 'Кол-во ТС',
+                    'label' => 'Количество ТС',
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
