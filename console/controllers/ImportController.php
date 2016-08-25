@@ -126,20 +126,6 @@ class ImportController extends Controller
                     )";
 
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
-            } else {
-                $requisites = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}requisites WHERE company_id = {{$rowData['id']}}")->queryAll();
-                foreach ($requisites as $requisitesData) {
-                    $requisitesType = $listType[$requisitesData['service_type']];
-                    $insert = "(
-                        NULL,
-                        {$rowData['id']},
-                        $requisitesType,
-                        '{$requisitesData['contract']}',
-                        '{$requisitesData['act_header']}'
-                    )";
-
-                    $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
-                }
             }
         }
 
