@@ -19,7 +19,7 @@ echo $this->render('_tabs', [
 ]);
 
 if ($role == User::ROLE_PARTNER) {
-    echo $this->render(Service::$listType[$type]['en'] . '/_short_form', [
+    echo $this->render('partner/' . Service::$listType[$type]['en'] . '/_short_form', [
         'serviceList' => $serviceList,
         'model' => $model,
         'role' => $role,

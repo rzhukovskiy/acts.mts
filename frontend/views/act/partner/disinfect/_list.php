@@ -38,9 +38,7 @@ $headerColumns = [
                 'class' => 'form-control',
             ]
         ]),
-        'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
     ],
-    '',
     '',
     '',
     [
@@ -48,7 +46,6 @@ $headerColumns = [
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
-        'options' => ['colspan' => 3],
     ],
 ];
 
@@ -62,34 +59,34 @@ $columns = [
     [
         'attribute' => 'parent_id',
         'value' => function ($data) {
-            return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
+            return isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов';
         },
         'group' => true,
         'groupedRow' => true,
         'groupOddCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->client->parent) ? 'parent' : 'hidden';
+            return isset($data->partner->parent) ? 'parent' : 'hidden';
         },
         'groupEvenCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->client->parent) ? 'parent' : 'hidden';
+            return isset($data->partner->parent) ? 'parent' : 'hidden';
         },
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
-                'mergeColumns'=>[[0,8]],
+                'mergeColumns'=>[[0,6]],
                 'content' => [
-                    0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
-                    9 => GridView::F_COUNT,
+                    0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
+                    7 => GridView::F_SUM,
                 ],
                 'options' => [
-                    'class' => isset($data->client->parent) ? '' : 'hidden',
+                    'class' => isset($data->partner->parent) ? '' : 'hidden',
                     'style' => 'font-weight:bold;'
                 ]
             ];
         },
     ],
     [
-        'attribute' => 'client_id',
+        'attribute' => 'partner_id',
         'value' => function ($data) {
-            return isset($data->client) ? $data->client->name . ' - ' . $data->client->address : 'error';
+            return isset($data->partner) ? $data->partner->name . ' - ' . $data->partner->address : 'error';
         },
         'group' => true,
         'subGroupOf' => 1,
@@ -98,10 +95,10 @@ $columns = [
         'groupEvenCssClass' => 'child',
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
-                'mergeColumns'=>[[3,8]],
+                'mergeColumns'=>[[3,6]],
                 'content' => [
-                    3 => 'Итого по ' . $data->client->name,
-                    9 => GridView::F_SUM,
+                    3 => 'Итого по ' . $data->partner->name,
+                    7 => GridView::F_SUM,
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
@@ -113,19 +110,7 @@ $columns = [
         'value' => function ($data) use($role) {
             return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
         },
-        'filterOptions' => ['style' => 'min-width:60px'],
-        'contentOptions' => ['style' => 'min-width:60px'],
-        'options' => ['style' => 'min-width:60px'],
-    ],
-    [
-        'attribute' => 'card_id',
-        'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-        'value' => function ($data) {
-            return isset($data->card) ? $data->card->number : 'error';
-        },
-        'filterOptions' => ['style' => 'min-width:80px'],
-        'contentOptions' => ['style' => 'min-width:80px'],
-        'options' => ['style' => 'min-width:80px'],
+        'contentOptions' => ['style' => 'max-width: 100px'],
     ],
     [
         'attribute' => 'mark_id',
@@ -143,78 +128,22 @@ $columns = [
         },
     ],
     [
-        'header' => 'Услуга',
-        'value' => function ($data) {
-            if($data->service_type == Service::TYPE_WASH) {
-                /** @var \common\models\ActScope $scope */
-                $services = [];
-                foreach ($data->clientScopes as $scope) {
-                    $services[] = $scope->description;
-                }
-                return implode('+', $services);
-            }
-            return Service::$listType[$data->service_type]['ru'];
-        }
-    ],
-    [
         'attribute' => 'expense',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
     ],
     [
-        'attribute' => 'partner.address',
-        'value' => function ($data) {
-            return $data->partner->address;
-        },
-    ],
-    [
-        'attribute' => 'check',
-        'value' => function ($data) {
-            $imageLink = $data->getImageLink();
-            if ($imageLink) {
-                return Html::a($data->check, $imageLink, ['class' => 'preview']);
-            }
-            return 'error';
-        },
-        'format' => 'raw',
-        'visible' => $searchModel->service_type == Service::TYPE_WASH,
-    ],
-    [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
-        'template' => $role == User::ROLE_ADMIN ? '{update}{delete}{view}' : '{view}',
+        'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 100px'],
-        'buttons' => [
-            'view' => function ($url, $data, $key) {
-                if (in_array($data->service_type, [Service::TYPE_TIRES, Service::TYPE_SERVICE])) {
-                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id, 'company' => 1]);
-                } else {
-                    return '';
-                }
-            },
-        ],
     ],
 ];
 
-if ($searchModel->service_type != Service::TYPE_WASH) {
-    unset($columns[10], $columns[11]);
-    unset($headerColumns[7], $headerColumns[8]);
-}
-if ($searchModel->service_type == Service::TYPE_DISINFECT) {
-    unset($columns[4]);
-}
 if ($role != User::ROLE_ADMIN) {
-    unset($columns[1], $columns[2]);
+    unset($columns[8], $columns[1], $columns[2]);
+    $headerColumns[4]['content'] = '';
     $headerColumns[5]['content'] = '';
-    $headerColumns[6]['content'] = '';
-    if (in_array($searchModel->service_type, [Service::TYPE_WASH, Service::TYPE_DISINFECT])) {
-        unset($columns[12]);
-        unset($headerColumns[6]);
-    }
-} else {
-    if ($searchModel->service_type == Service::TYPE_WASH) {
-        unset($columns[10]);
-    }
 }
 
 
