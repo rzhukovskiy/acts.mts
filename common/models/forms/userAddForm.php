@@ -39,9 +39,9 @@ class userAddForm extends Model
     public function save()
     {
         $values = $this->attributes;
-        $values['password'] = Yii::$app->security->generatePasswordHash($this->password);
         $model = new User($values);
         $model->auth_key = '';
+        $model->salt = Yii::$app->security->generateRandomString();
         $model->created_at = time();
         $model->updated_at = time();
         if ($model->save())

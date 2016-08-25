@@ -149,8 +149,10 @@ class menuLeftWidget extends Widget
             ];
         }
 
+        // Partner links
         if (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
-            // Partner links
+            /** @var Company $company */
+            $company = Yii::$app->user->identity->company;
             $items = [
 //                [
 //                    'label' => 'Доходы',
@@ -159,12 +161,12 @@ class menuLeftWidget extends Widget
 //                ],
                 [
                     'label' => 'Добавить машину',
-                    'url' => ['/act/create', 'type' => Yii::$app->user->identity->company->type],
+                    'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
                     'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'create',
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
+                    'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
                     'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
                 ],
             ];

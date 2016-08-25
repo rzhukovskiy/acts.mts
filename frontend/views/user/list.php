@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
  */
 
 $this->title = 'Пользователи';
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="user-index">
     <?= $this->render('_tabs') ?>
@@ -75,7 +75,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'template' => '{delete}',
+                        'template' => '{update}{delete}',
+                        'buttons' => [
+                            'update' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/user/update', 'id' => $model->id, 'type' => $model->company->type]);
+                            },
+                        ]
                     ],
                 ],
             ]); ?>

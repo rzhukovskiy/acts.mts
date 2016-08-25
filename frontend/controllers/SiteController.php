@@ -121,7 +121,13 @@ class SiteController extends Controller
             return $this->redirect(['act/list', 'type' => Company::TYPE_WASH, 'company' => true]);
         }
         if (Yii::$app->user->can(User::ROLE_PARTNER)) {
-            return $this->redirect(['act/create', 'type' => Yii::$app->user->identity->company->type]);
+            /** @var Company $company */
+            $company = Yii::$app->user->identity->company;
+            if ($company->type == Company::TYPE_UNIVERSAL) {
+                return $this->redirect(['act/create', 'type' => $company->serviceTypes[0]->type]);
+            } else {
+                return $this->redirect(['act/create', 'type' => $company->type]);
+            }
         }
     }
 }

@@ -357,7 +357,7 @@ class Act extends ActiveRecord
         if ($insert) {
             //сохраняем картинку чека
             if ($this->image) {
-                $this->image->saveAs('checks/' . $this->id . '.' . $this->image->extension);
+                $this->image->saveAs('files/checks/' . $this->id . '.' . $this->image->extension);
             }
 
             if (!empty($this->serviceList)) {
