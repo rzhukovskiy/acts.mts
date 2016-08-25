@@ -50,8 +50,6 @@ $headerColumns = [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
         'options' => ['colspan' => 3],
     ],
-    '',
-    '',
 ];
 
 $columns = [
@@ -112,8 +110,8 @@ $columns = [
     [
         'attribute' => 'day',
         'filter' => Act::getDayList(),
-        'value' => function ($data) {
-            return date('j', $data->served_at);
+        'value' => function ($data) use($role) {
+            return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
         },
         'filterOptions' => ['style' => 'min-width:60px'],
         'contentOptions' => ['style' => 'min-width:60px'],
@@ -137,24 +135,12 @@ $columns = [
         },
     ],
     'number',
-    'extra_number',
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
         },
-    ],
-    [
-        'attribute' => 'expense',
-        'pageSummary' => true,
-        'pageSummaryFunc' => GridView::F_SUM,
-    ],
-    [
-        'attribute' => 'partner.address',
-        'value' => function ($data) {
-            return $data->partner->address;
-        }
     ],
     [
         'header' => 'Услуга',
@@ -168,6 +154,17 @@ $columns = [
                 return implode('+', $services);
             }
             return Service::$listType[$data->service_type]['ru'];
+        }
+    ],
+    [
+        'attribute' => 'expense',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+    ],
+    [
+        'attribute' => 'partner.address',
+        'value' => function ($data) {
+            return $data->partner->address;
         }
     ],
     [
@@ -186,7 +183,7 @@ $columns = [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
         'template' => $role == User::ROLE_ADMIN ? '{update}{delete}{view}' : '{view}',
-        'contentOptions' => ['style' => 'min-width: 120px'],
+        'contentOptions' => ['style' => 'min-width: 100px'],
         'buttons' => [
             'view' => function ($url, $data, $key) {
                 if (in_array($data->service_type, [Service::TYPE_TIRES, Service::TYPE_SERVICE])) {
@@ -210,6 +207,12 @@ if ($role != User::ROLE_ADMIN) {
     unset($columns[1], $columns[2]);
     $headerColumns[5]['content'] = '';
     $headerColumns[6]['content'] = '';
+    if (in_array($searchModel->service_type, [Service::TYPE_WASH, Service::TYPE_DISINFECT])) {
+        unset($columns[12]);
+        unset($headerColumns[6]);
+    }
+} else {
+    unset($columns[11]);
 }
 
 

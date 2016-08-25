@@ -116,6 +116,9 @@ body {
     border-right: none;
     border-left: none;
 }
+.table>tfoot>tr.warning>td {
+    background: none;
+}
 
 /* act-table */
 .panel.acts .panel-body {
