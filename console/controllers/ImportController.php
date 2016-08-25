@@ -103,7 +103,7 @@ class ImportController extends Controller
             $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
 
             if ($type == Company::TYPE_UNIVERSAL) {
-                $serviceTypes = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}company_service WHERE company_id = {{$rowData['id']}}")->queryAll();
+                $serviceTypes = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}company_service WHERE company_id = {$rowData['id']}")->queryAll();
                 foreach ($serviceTypes as $serviceData) {
                     $companyServiceType = $listType[$serviceData['service']];
                     $insert = "(
