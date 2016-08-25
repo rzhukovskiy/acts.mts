@@ -62,34 +62,34 @@ $columns = [
     [
         'attribute' => 'parent_id',
         'value' => function ($data) {
-            return isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов';
+            return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
         },
         'group' => true,
         'groupedRow' => true,
         'groupOddCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->partner->parent) ? 'parent' : 'hidden';
+            return isset($data->client->parent) ? 'parent' : 'hidden';
         },
         'groupEvenCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->partner->parent) ? 'parent' : 'hidden';
+            return isset($data->client->parent) ? 'parent' : 'hidden';
         },
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
                 'mergeColumns'=>[[0,8]],
                 'content' => [
-                    0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
+                    0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
                     9 => GridView::F_COUNT,
                 ],
                 'options' => [
-                    'class' => isset($data->partner->parent) ? '' : 'hidden',
+                    'class' => isset($data->client->parent) ? '' : 'hidden',
                     'style' => 'font-weight:bold;'
                 ]
             ];
         },
     ],
     [
-        'attribute' => 'partner_id',
+        'attribute' => 'client_id',
         'value' => function ($data) {
-            return isset($data->partner) ? $data->partner->name . '-' . $data->partner->address : 'error';
+            return isset($data->client) ? $data->client->name . ' - ' . $data->client->address : 'error';
         },
         'group' => true,
         'subGroupOf' => 1,
@@ -100,7 +100,7 @@ $columns = [
             return [
                 'mergeColumns'=>[[3,8]],
                 'content' => [
-                    3 => 'Итого по ' . $data->partner->name,
+                    3 => 'Итого по ' . $data->client->name,
                     9 => GridView::F_SUM,
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
@@ -148,7 +148,7 @@ $columns = [
             if($data->service_type == Service::TYPE_WASH) {
                 /** @var \common\models\ActScope $scope */
                 $services = [];
-                foreach ($data->partnerScopes as $scope) {
+                foreach ($data->clientScopes as $scope) {
                     $services[] = $scope->description;
                 }
                 return implode('+', $services);
@@ -165,7 +165,7 @@ $columns = [
         'attribute' => 'partner.address',
         'value' => function ($data) {
             return $data->partner->address;
-        }
+        },
     ],
     [
         'attribute' => 'check',
@@ -212,7 +212,9 @@ if ($role != User::ROLE_ADMIN) {
         unset($headerColumns[6]);
     }
 } else {
-    unset($columns[10]);
+    if ($searchModel->service_type == Service::TYPE_WASH) {
+        unset($columns[10]);
+    }
 }
 
 

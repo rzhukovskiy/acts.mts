@@ -186,7 +186,7 @@ class Act extends ActiveRecord
      */
     public function getPartnerScopes()
     {
-        return $this->hasMany(ActScope::className(), ['act_id' => 'id'])->where(['company_id' => $this->partner_id]);
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id', 'company_id' => 'partner_id']);
     }
 
     /**
@@ -194,7 +194,7 @@ class Act extends ActiveRecord
      */
     public function getClientScopes()
     {
-        return $this->hasMany(ActScope::className(), ['act_id' => 'id'])->where(['company_id' => $this->client_id]);
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id', 'company_id' => 'client_id']);
     }
 
     /**

@@ -79,8 +79,20 @@ class ActSearch extends Act
                     'mark',
                     'card',
                     'client',
+                    'clientScopes',
                 ]);
-                $query->orderBy('parent_id, client_id, served_at');
+                $query->orderBy('parent_id, act.client_id, served_at');
+                break;
+
+            case self::SCENARIO_PARTNER:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'partner',
+                    'partnerScopes',
+                ]);
+                $query->orderBy('parent_id, act.partner_id, served_at');
                 break;
 
             case self::SCENARIO_HISTORY:

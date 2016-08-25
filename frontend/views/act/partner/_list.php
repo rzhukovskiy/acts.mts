@@ -92,7 +92,7 @@ $columns = [
     [
         'attribute' => 'partner_id',
         'value' => function ($data) {
-            return isset($data->partner) ? $data->partner->name . '-' . $data->partner->address : 'error';
+            return isset($data->partner) ? $data->partner->name . ' - ' . $data->partner->address : 'error';
         },
         'group' => true,
         'subGroupOf' => 1,
@@ -101,10 +101,10 @@ $columns = [
         'groupEvenCssClass' => 'child',
         'groupFooter' => function ($data, $key, $index, $widget) {
             return [
-                'mergeColumns' => [[3, 8]],
+                'mergeColumns' => [[3, 7]],
                 'content' => [
                     3 => 'Итого по ' . $data->partner->name,
-                    9 => GridView::F_SUM,
+                    8 => GridView::F_SUM,
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
@@ -193,7 +193,7 @@ $columns = [
 ];
 
 if ($searchModel->service_type != Service::TYPE_WASH) {
-    unset($columns[10], $columns[11]);
+    unset($columns[10]);
     unset($headerColumns[7], $headerColumns[8]);
 }
 if ($searchModel->service_type == Service::TYPE_DISINFECT) {
