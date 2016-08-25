@@ -212,7 +212,7 @@ if ($role != User::ROLE_ADMIN) {
         unset($headerColumns[6]);
     }
 } else {
-    unset($columns[11]);
+    unset($columns[10]);
 }
 
 
