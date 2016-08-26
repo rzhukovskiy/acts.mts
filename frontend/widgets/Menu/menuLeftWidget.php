@@ -8,7 +8,9 @@
 
 namespace frontend\widgets\Menu;
 
+use common\models\Act;
 use common\models\Company;
+use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
 use Yii;
@@ -35,6 +37,8 @@ class menuLeftWidget extends Widget
     {
         if (!empty($this->items))
             return $this->items;
+
+        $errorsCount = (new ActSearch(['scenario' => Act::SCENARIO_ERROR]))->search([])->getCount();
 
         $items = [];
         // Admin links
@@ -141,7 +145,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'act',
                 ],
                 [
-                    'label' => 'Ошибочные акты',
+                    'label' => 'Ошибочные акты ' . ($errorsCount ? '<span class="label label-danger">' . $errorsCount . '</span>' : ''),
                     'url' => ['/error/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'error',
                 ],

@@ -91,47 +91,6 @@ class ErrorController extends Controller
 
         return $this->render('view', [
             'model' => $model,
-            'company' => $company,
-        ]);
-    }
-
-    /**
-     * Signs Act model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionSign($id)
-    {
-        $model = $this->findModel($id);
-
-        if (isset($_POST['name'])) {
-            $data = explode('base64,', $_POST['name']);
-
-            $str = base64_decode($data[1]);
-            $image = imagecreatefromstring($str);
-
-            imagealphablending($image, false);
-            imagesavealpha($image, true);
-            $dir = 'files/signs/';
-            imagepng($image, $dir . $id . '-name.png');
-            return Json::encode(['file' => $id]);
-        }
-
-        if (isset($_POST['sign'])) {
-            $data = explode('base64,', $_POST['sign']);
-
-            $str = base64_decode($data[1]);
-            $image = imagecreatefromstring($str);
-
-            imagealphablending($image, false);
-            imagesavealpha($image, true);
-            $dir = 'files/signs/';
-            imagepng($image, $dir . $id . '-sign.png');
-            return Json::encode(['file' => $id]);
-        }
-
-        return $this->render('sign', [
-            'model' => $model,
         ]);
     }
 

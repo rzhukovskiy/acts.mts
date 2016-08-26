@@ -14,6 +14,7 @@
     use yii\widgets\Menu;
 
     echo Menu::widget( [
+        'encodeLabels' => false,
         'items' => $items,
         'options' => ['class' => 'list-group menu-left'],
         'itemOptions' => ['class' => 'list-group-item'],
