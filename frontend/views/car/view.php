@@ -147,7 +147,7 @@ echo GridView::widget([
             'template' => '{view}',
             'buttons' => [
                 'view' => function ($url, $data, $key) {
-                    if (in_array($data->service_type, [Service::TYPE_WASH], Service::TYPE_DISINFECT)) {
+                    if (in_array($data->service_type, [Service::TYPE_WASH, Service::TYPE_DISINFECT])) {
                         return '';
                     }
                     return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['act-view', 'id' => $data->id]);
