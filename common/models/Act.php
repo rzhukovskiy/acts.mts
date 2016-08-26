@@ -250,6 +250,18 @@ class Act extends ActiveRecord
         }
 
         if ($insert) {
+            //преобразуем Герину поебень в нормальный массив
+            if (!empty($this->serviceList[0]) && count(explode('+', $this->serviceList[0]['service_id'])) > 1) {
+                $serviceList = [];
+                foreach (explode('+', $this->serviceList[0]['service_id']) as $serviceId) {
+                    $serviceList[] = [
+                        'service_id' => $serviceId,
+                        'price' => $this->serviceList[0]['price'],
+                        'amount' => $this->serviceList[0]['amount'],
+                    ];
+                }
+                $this->serviceList = $serviceList;
+            }
             /**
              * суммируем все указанные услуги и считаем доход, расход и прибыль\
              */

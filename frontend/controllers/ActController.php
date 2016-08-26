@@ -2,16 +2,14 @@
 
 namespace frontend\controllers;
 
-use common\models\ActScope;
+use common\models\Act;
 use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
 use Yii;
-use common\models\Act;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\Controller;
-use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
@@ -51,7 +49,7 @@ class ActController extends Controller
         ];
     }
 
-    public function actionList( $type, $company = false )
+    public function actionList($type, $company = false)
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
         if (!empty(Yii::$app->user->identity->company_id)) {
@@ -62,7 +60,7 @@ class ActController extends Controller
             }
         }
         $searchModel->service_type = $type;
-        
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('list', [
@@ -79,7 +77,7 @@ class ActController extends Controller
      * @param integer $type
      * @return mixed
      */
-    public function actionCreate( $type )
+    public function actionCreate($type)
     {
         $model = new Act();
         $model->service_type = $type;
@@ -110,7 +108,7 @@ class ActController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate( $id )
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
         $model->time_str = date('d-m-Y', $model->served_at);
@@ -137,7 +135,7 @@ class ActController extends Controller
      * @param bool $company
      * @return mixed
      */
-    public function actionView( $id, $company = false )
+    public function actionView($id, $company = false)
     {
         $model = $this->findModel($id);
 
@@ -152,7 +150,7 @@ class ActController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionSign( $id )
+    public function actionSign($id)
     {
         $model = $this->findModel($id);
 

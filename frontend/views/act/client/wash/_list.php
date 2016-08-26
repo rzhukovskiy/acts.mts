@@ -170,13 +170,8 @@ $columns = [
     [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
-        'template' => $role == User::ROLE_ADMIN ? '{update}{delete}{view}' : '{view}',
+        'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 100px'],
-        'buttons' => [
-            'view' => function ($url, $data, $key) {
-                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id, 'company' => 1]);
-            },
-        ],
     ],
 ];
 

@@ -5,14 +5,15 @@
  * @var $serviceList array
  */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use common\components\ArrayHelper;
+use common\models\Car;
+use common\models\Card;
 use common\models\Mark;
 use common\models\Type;
-use common\models\Card;
-use common\models\Car;
+use kartik\date\DatePicker;
 use kartik\select2\Select2;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 use yii\jui\AutoComplete;
 
 ?>
@@ -58,8 +59,8 @@ use yii\jui\AutoComplete;
                         'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
                         'clientOptions' => [
                             'source' => Car::find()->select('number as value')->asArray()->all(),
-                            'minLength'=>'2',
-                            'autoFill'=>true,
+                            'minLength' => '2',
+                            'autoFill' => true,
                         ],
                     ])->error(false) ?>
                 </td>
@@ -69,15 +70,9 @@ use yii\jui\AutoComplete;
                 <td>
                     <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
-                </td>
-                <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
-                </td>
             </tr>
             <tr>
-                <td colspan="7">
+                <td colspan="3">
                     <div class="form-group row" style="height: 5px;">
                         <div class="col-xs-12">
                             <label class="control-label">Услуга</label>
@@ -85,19 +80,20 @@ use yii\jui\AutoComplete;
                     </div>
 
                     <div class="form-group" style="height: 25px;">
-                        <div class="col-xs-6">
-                            <?php if (!empty($serviceList)) { ?>
-                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
-                            <?php } else { ?>
-                                <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
-                            <?php } ?>
-                        </div>
-                        <div class="col-xs-1">
-                            <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                            <?= Html::hiddenInput("Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                            <button type="button" class="btn btn-primary input-sm addButton"><i class="glyphicon glyphicon-plus"></i></button>
-                        </div>
+                        <?php if (!empty($serviceList)) { ?>
+                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'prompt' => 'выберите услугу']) ?>
+                        <?php } else { ?>
+                            <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
+                        <?php } ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                     </div>
+                </td>
+                <td>
+                    <?= $form->field($model, 'check')->error(false) ?>
+                </td>
+                <td>
+                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
                 </td>
             </tr>
             <tr>
