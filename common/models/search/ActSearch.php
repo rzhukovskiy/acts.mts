@@ -42,6 +42,7 @@ class ActSearch extends Act
             self::SCENARIO_CAR => ['card_id', 'number', 'dateFrom', 'dateTo'],
             self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
             self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_ERROR => ['client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
             self::SCENARIO_HISTORY => ['number', 'dateFrom', 'dateTo'],
         ];
     }
@@ -73,6 +74,24 @@ class ActSearch extends Act
         }
 
         switch ($this->scenario) {
+            case self::SCENARIO_ERROR:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'client as client',
+                    'partner as partner',
+                    'car',
+                ]);
+
+                $query->orFilterWhere(['income' => 0]);
+                $query->orFilterWhere(['expense' => 0]);
+                $query->orFilterWhere(['client_id' => 0]);
+                $query->orFilterWhere(['partner_id' => 0]);
+                
+                $query->orderBy('partner_id, served_at');
+                break;
+
             case self::SCENARIO_CLIENT:
                 $query->joinWith([
                     'type',

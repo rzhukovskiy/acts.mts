@@ -13,7 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
-class ActController extends Controller
+class ErrorController extends Controller
 {
     /**
      * @inheritdoc
@@ -34,31 +34,14 @@ class ActController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
-                    [
-                        'actions' => ['list', 'view'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_CLIENT],
-                    ],
-                    [
-                        'actions' => ['list', 'view', 'create', 'sign'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_PARTNER],
-                    ],
                 ],
             ],
         ];
     }
 
-    public function actionList($type, $company = false)
+    public function actionList($type)
     {
-        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
-        if (!empty(Yii::$app->user->identity->company_id)) {
-            if ($company) {
-                $searchModel->client_id = Yii::$app->user->identity->company->id;
-            } else {
-                $searchModel->partner_id = Yii::$app->user->identity->company->id;
-            }
-        }
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -67,39 +50,7 @@ class ActController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
-            'company' => $company,
             'role' => Yii::$app->user->identity->role,
-        ]);
-    }
-
-    /**
-     * Creates Act model.
-     * @param integer $type
-     * @return mixed
-     */
-    public function actionCreate($type)
-    {
-        $model = new Act();
-        $model->service_type = $type;
-        $model->partner_id = Yii::$app->user->identity->company_id;
-
-        $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
-
-        if ($model->load(Yii::$app->request->post())) {
-            $model->image = UploadedFile::getInstance($model, 'image');
-            if ($model->save()) {
-                if (Yii::$app->user->identity->company->is_sign) {
-                    return $this->redirect(['act/sign', 'id' => $model->id]);
-                }
-                return $this->redirect(Yii::$app->request->referrer);
-            }
-        }
-
-        return $this->render('create', [
-            'type' => $type,
-            'serviceList' => $serviceList,
-            'role' => Yii::$app->user->identity->role,
-            'model' => $model,
         ]);
     }
 
@@ -132,10 +83,9 @@ class ActController extends Controller
     /**
      * Shows Act model.
      * @param integer $id
-     * @param bool $company
      * @return mixed
      */
-    public function actionView($id, $company = false)
+    public function actionView($id)
     {
         $model = $this->findModel($id);
 

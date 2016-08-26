@@ -53,6 +53,7 @@ class Act extends ActiveRecord
     const STATUS_CLOSED = 1;
     const STATUS_FIXED = 2;
 
+    const SCENARIO_ERROR = 'error';
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';

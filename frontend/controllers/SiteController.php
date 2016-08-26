@@ -2,14 +2,14 @@
 namespace frontend\controllers;
 
 use common\models\Company;
+use common\models\LoginForm;
 use common\models\User;
 use frontend\models\SignupForm;
 use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
-use common\models\LoginForm;
 use yii\base\Exception;
 use yii\base\UserException;
+use yii\filters\AccessControl;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -60,7 +60,7 @@ class SiteController extends Controller
         if ($exception instanceof Exception) {
             $name = $exception->getName();
         } else {
-            $name = $this->defaultName ?: Yii::t('yii', 'Error');
+            $name = 'default_name' ?: Yii::t('yii', 'Error');
         }
         if ($code) {
             $name .= " (#$code)";
@@ -69,12 +69,12 @@ class SiteController extends Controller
         if ($exception instanceof UserException) {
             $message = $exception->getMessage();
         } else {
-            $message = $this->defaultMessage ?: Yii::t('yii', 'An internal server error occurred.');
+            $message = 'default_message' ?: Yii::t('yii', 'An internal server error occurred.');
         }
 
         if (Yii::$app->getRequest()->getIsAjax()) {
             return "$name: $message";
-        } elseif($message == 'Page not found.' || $code == 403 || $code == 404) {
+        } elseif ($message == 'Page not found.' || $code == 403 || $code == 404) {
             $exception->statusCode = 302;
             return $this->goHome();
         } else {
