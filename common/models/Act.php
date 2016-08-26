@@ -277,9 +277,9 @@ class Act extends ActiveRecord
                         $totalIncome += 1.2 * $serviceData['price'] * $serviceData['amount'];
                     }
 
-                    $companyService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-                    if (!empty($clientService) && $clientService->service->is_fixed) {
-                        $totalExpense += $companyService->price * $serviceData['amount'];
+                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                    if (!empty($partnerService) && $partnerService->service->is_fixed) {
+                        $totalExpense += $partnerService->price * $serviceData['amount'];
                     } else {
                         $totalExpense += $serviceData['price'] * $serviceData['amount'];
                     }
@@ -402,8 +402,7 @@ class Act extends ActiveRecord
                     if (!empty($serviceData['service_id'])) {
                         $partnerScope->service_id = $serviceData['service_id'];
                         $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-
-                        if (!empty($clientService) && $partnerService->service->is_fixed) {
+                        if (!empty($partnerService) && $partnerService->service->is_fixed) {
                             $partnerScope->price = $partnerService->price;
                             $partnerScope->description = $partnerService->service->description;
                         } else {

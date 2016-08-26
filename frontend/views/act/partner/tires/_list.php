@@ -156,7 +156,7 @@ $columns = [
         'contentOptions' => ['style' => 'min-width: 100px'],
         'buttons' => [
             'view' => function ($url, $data, $key) {
-                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id, 'company' => 1]);
+                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id]);
             },
         ],
     ],
