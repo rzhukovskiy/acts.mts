@@ -33,6 +33,8 @@ $headerColumns = [
                 'changeYear' => true,
                 'showButtonPanel' => true,
                 'format' => 'm-yyyy',
+                'maxViewMode' => 2,
+                'minViewMode' => 1,
             ],
             'options' => [
                 'class' => 'form-control',
