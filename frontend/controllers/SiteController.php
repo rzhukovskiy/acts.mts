@@ -9,6 +9,7 @@ use yii\helpers\Url;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use yii\web\ErrorAction;
 
 /**
  * Site controller
@@ -42,16 +43,10 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function actions()
+    public function actionError()
     {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-        ];
+        $this->layout = 'main';
+        return $this->render('error');
     }
 
     /**
