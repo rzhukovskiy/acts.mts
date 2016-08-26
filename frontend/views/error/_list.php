@@ -47,6 +47,9 @@ $columns = [
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
         },
+        'contentOptions' => function($data) {
+            if($data->hasError('card')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'mark_id',
@@ -55,7 +58,12 @@ $columns = [
             return isset($data->mark) ? $data->mark->name : 'error';
         },
     ],
-    'number',
+    [
+        'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
+    ],
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
@@ -64,23 +72,18 @@ $columns = [
         },
     ],
     [
-        'header' => 'Услуга',
-        'value' => function ($data) {
-            if($data->service_type == Service::TYPE_WASH) {
-                /** @var \common\models\ActScope $scope */
-                $services = [];
-                foreach ($data->clientScopes as $scope) {
-                    $services[] = $scope->description;
-                }
-                return implode('+', $services);
-            }
-            return Service::$listType[$data->service_type]['ru'];
-        }
-    ],
-    [
         'attribute' => 'expense',
         'pageSummary' => true,
-        'pageSummaryFunc' => GridView::F_SUM,
+        'contentOptions' => function($data) {
+            if($data->hasError('expense')) return ['class' => 'text-danger'];
+        },
+    ],
+    [
+        'attribute' => 'income',
+        'pageSummary' => true,
+        'contentOptions' => function($data) {
+            if($data->hasError('income')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'check',
@@ -92,6 +95,9 @@ $columns = [
             return 'error';
         },
         'format' => 'raw',
+        'contentOptions' => function($data) {
+            if($data->hasError('check')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'header' => '',
@@ -111,7 +117,7 @@ echo GridView::widget([
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Услуги',
+        'heading' => 'Ошибочные акты',
         'before' => false,
         'footer' => false,
         'after' => false,

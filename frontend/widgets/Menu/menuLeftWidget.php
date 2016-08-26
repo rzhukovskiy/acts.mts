@@ -143,7 +143,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Ошибочные акты',
                     'url' => ['/error/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'archive',
+                    'active' => Yii::$app->controller->id == 'error',
                 ],
             ];
         } // Partner links

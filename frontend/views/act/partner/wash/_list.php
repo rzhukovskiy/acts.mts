@@ -122,6 +122,10 @@ $columns = [
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
         },
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            return ['style' => 'min-width:80px'];
+        },
     ],
     [
         'attribute' => 'mark_id',
@@ -130,7 +134,12 @@ $columns = [
             return isset($data->mark) ? $data->mark->name : 'error';
         },
     ],
-    'number',
+    [
+        'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
+    ],
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
@@ -153,9 +162,12 @@ $columns = [
         }
     ],
     [
-        'attribute' => 'expense',
+        'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
+        'contentOptions' => function($data) {
+            if($data->hasError('income')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'check',
@@ -167,6 +179,9 @@ $columns = [
             return 'error';
         },
         'format' => 'raw',
+        'contentOptions' => function($data) {
+            if($data->hasError('check')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'header' => '',

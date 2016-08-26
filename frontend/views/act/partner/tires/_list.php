@@ -115,9 +115,7 @@ $columns = [
         'value' => function ($data) use($role) {
             return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
         },
-        'filterOptions' => ['style' => 'min-width:60px'],
         'contentOptions' => ['style' => 'min-width:60px'],
-        'options' => ['style' => 'min-width:60px'],
     ],
     [
         'attribute' => 'card_id',
@@ -125,9 +123,10 @@ $columns = [
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
         },
-        'filterOptions' => ['style' => 'min-width:80px'],
-        'contentOptions' => ['style' => 'min-width:80px'],
-        'options' => ['style' => 'min-width:80px'],
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            return ['style' => 'min-width:80px'];
+        },
     ],
     [
         'attribute' => 'mark_id',
@@ -136,7 +135,12 @@ $columns = [
             return isset($data->mark) ? $data->mark->name : 'error';
         },
     ],
-    'number',
+    [
+        'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
+    ],
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
@@ -145,9 +149,12 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'expense',
+        'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
+        'contentOptions' => function($data) {
+            if($data->hasError('income')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'header' => '',

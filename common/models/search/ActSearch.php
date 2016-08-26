@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\models\Service;
 use yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -78,16 +79,24 @@ class ActSearch extends Act
                 $query->joinWith([
                     'type',
                     'mark',
-                    'card',
+                    'card as card',
                     'client as client',
                     'partner as partner',
-                    'car',
+                    'car as car',
                 ]);
 
                 $query->orFilterWhere(['income' => 0]);
                 $query->orFilterWhere(['expense' => 0]);
                 $query->orFilterWhere(['client_id' => 0]);
                 $query->orFilterWhere(['partner_id' => 0]);
+                if ($this->service_type == Service::TYPE_WASH) {
+                    $query->orFilterWhere(['check' => null]);
+                }
+                if ($this->service_type != Service::TYPE_DISINFECT) {
+                    $query->orWhere('car.company_id != card.company_id');
+                }
+                $query->orFilterWhere(['car.company_id' => null]);
+                $query->andFilterWhere(['!=', 'act.status', Act::STATUS_FIXED]);
                 
                 $query->orderBy('partner_id, served_at');
                 break;

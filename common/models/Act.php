@@ -220,6 +220,34 @@ class Act extends ActiveRecord
         return false;
     }
 
+    public function hasError($error)
+    {
+        $hasError = false;
+        switch ($error) {
+            case 'expense':
+                $hasError = !$this->expense;
+                break;
+            case 'income':
+                $hasError = !$this->income;
+                break;
+            case 'check':
+                $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
+                break;
+            case 'card':
+                $hasError = $this->service_type != Service::TYPE_DISINFECT && $this->card->company_id != $this->car->company_id;
+                break;
+            case 'car':
+                $hasError = !isset($this->car->company_id);
+                break;
+            case 'truck':
+                $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
+                    (isset($this->client) && $this->client->is_split && $this->extra_number && !Car::model()->find('number = :number', [':number' => $this->extra_number]));
+                break;
+        }
+
+        return !$this->status != self::STATUS_FIXED && $hasError;
+    }
+
     public function beforeSave($insert)
     {
         if (!empty($this->time_str)) {

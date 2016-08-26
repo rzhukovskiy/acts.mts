@@ -125,9 +125,10 @@ $columns = [
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
         },
-        'filterOptions' => ['style' => 'min-width:80px'],
-        'contentOptions' => ['style' => 'min-width:80px'],
-        'options' => ['style' => 'min-width:80px'],
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            return ['style' => 'min-width:80px'];
+        },
     ],
     [
         'attribute' => 'mark_id',
@@ -136,7 +137,12 @@ $columns = [
             return isset($data->mark) ? $data->mark->name : 'error';
         },
     ],
-    'number',
+    [
+        'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
+    ],
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
@@ -148,6 +154,9 @@ $columns = [
         'attribute' => 'expense',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
+        'contentOptions' => function($data) {
+            if($data->hasError('expense')) return ['class' => 'text-danger'];
+        },
     ],
     'partner.address',
     [

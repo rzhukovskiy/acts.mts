@@ -121,7 +121,12 @@ $columns = [
             return isset($data->mark) ? $data->mark->name : 'error';
         },
     ],
-    'number',
+    [
+        'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
+    ],
     [
         'attribute' => 'type_id',
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
@@ -130,9 +135,12 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'expense',
+        'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
+        'contentOptions' => function($data) {
+            if($data->hasError('income')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'header' => '',
