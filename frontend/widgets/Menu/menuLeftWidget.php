@@ -37,9 +37,8 @@ class menuLeftWidget extends Widget
             return $this->items;
 
         $items = [];
-
         // Admin links
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $items = [
                 [
                     'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
@@ -147,10 +146,8 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'archive',
                 ],
             ];
-        }
-
-        // Partner links
-        if (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
+        } // Partner links
+        elseif (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
             /** @var Company $company */
             $company = Yii::$app->user->identity->company;
             $items = [
@@ -170,10 +167,8 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
                 ],
             ];
-        }
-
-        // Client links
-        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
+        } // Client links
+        elseif (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
             $items = [
                 [
                     'label' => 'Карты',
@@ -199,6 +194,13 @@ class menuLeftWidget extends Widget
                     'label' => 'Услуги',
                     'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',
+                ],
+            ];
+        } else {
+            $items = [
+                [
+                    'label' => 'Вход',
+                    'url' => ['/site/index'],
                 ],
             ];
         }
