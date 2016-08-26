@@ -32,14 +32,17 @@ use yii\helpers\ArrayHelper;
  * @property Card[] $cards
  * @property Cars[] $cars
  * @property Requisites[] $requisites
+ * @property CompanyServiceType[] $serviceTypes
  *
  * @property string $cardList
  * @property array $requisitesList
+ * @property array $serviceList
  */
 class Company extends ActiveRecord
 {
     public $cardList;
     public $requisitesList;
+    private $serviceList;
     
     const STATUS_DELETED = 0;
     const STATUS_NEW     = 1;
@@ -106,7 +109,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['parent_id', 'director', 'is_split', 'cardList', 'requisitesList'], 'safe'],
+            [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList', 'serviceList'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -125,6 +128,7 @@ class Company extends ActiveRecord
             'parent_id' => 'Родительская',
             'cardList' => 'Список карт',
             'is_split' => 'Разделять прицеп',
+            'is_sign' => 'Подпись',
             'director' => 'Директор',
         ];
     }
@@ -177,6 +181,14 @@ class Company extends ActiveRecord
         return $this->hasMany(Requisites::className(), ['company_id' => 'id']);
     }
 
+    /**
+     * @return ActiveQuery
+     */
+    public function getServiceTypes()
+    {
+        return $this->hasMany(CompanyServiceType::className(), ['company_id' => 'id']);
+    }
+
     public function getCarsCount()
     {
         return count($this->getCars()->where('type_id != 7')->all());
@@ -185,6 +197,19 @@ class Company extends ActiveRecord
     public function getTrucksCount()
     {
         return count($this->getCars()->where('type_id = 7')->all());
+    }
+
+    public function getServiceList()
+    {
+        if ($this->serviceTypes) {
+            return ArrayHelper::map($this->serviceTypes,'type', 'type');
+        }
+        return [];
+    }
+
+    public function setServiceList($value)
+    {
+        $this->serviceList = $value;
     }
 
     /**
@@ -235,6 +260,19 @@ class Company extends ActiveRecord
             $card->company_id = $this->id;
             $card->number = $this->cardList;
             $card->save();
+        }
+
+        /**
+         * смотрим есть ли сервисы и сохраняем
+         */
+        if (!empty($this->serviceList)) {
+            CompanyServiceType::deleteAll(['company_id' => $this->id]);
+            foreach ($this->serviceList as $serviceTypeId) {
+                $serviceType = new CompanyServiceType();
+                $serviceType->company_id = $this->id;
+                $serviceType->type = $serviceTypeId;
+                $serviceType->save();
+            }
         }
 
         /**

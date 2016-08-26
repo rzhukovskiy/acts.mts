@@ -36,11 +36,11 @@ class CarController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['list', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'view', 'create', 'update', 'delete', 'act-view'],
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'act-view'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ]
@@ -60,12 +60,15 @@ class CarController extends Controller
      */
     public function actionList()
     {
-        $searchModel = new CarSearch(['scenario' => Car::SCENARIO_HISTORY]);
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
-            $searchModel->company_id = Yii::$app->user->identity->company->id;
+            $searchModel->client_id = Yii::$app->user->identity->company->id;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query
+            ->select('client_id, number, mark_id, type_id, COUNT(mark_id) as actsCount')
+            ->groupBy('number');
 
         $companyDropDownData = Company::dataDropDownList();
 
@@ -90,6 +93,21 @@ class CarController extends Controller
             'searchModel' => $searchModel,
             'model' => $model,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    /**
+     * Shows Act model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionActView( $id )
+    {
+        $model = Act::findOne(['id' => $id]);
+
+        return $this->render('act/view', [
+            'model' => $model,
+            'company' => 1,
         ]);
     }
 

@@ -61,6 +61,7 @@ class UserController extends \yii\web\Controller
         $dataProvider->query
             ->joinWith('company')
             ->andWhere(['type' => $type]);
+        $dataProvider->pagination = false;
 
         $newUser = new userAddForm();
         $newUser->role = User::ROLE_PARTNER;
@@ -121,7 +122,7 @@ class UserController extends \yii\web\Controller
 
             $userModel->setAttributes($model->attributes);
             if (!empty($model->password))
-                $userModel->password_hash = $model->password;
+                $userModel->password_hash = md5($userModel->salt . $model->password);
 
             if ($userModel->save())
                 return $this->redirect(['list', 'type' => $type]);
@@ -129,6 +130,7 @@ class UserController extends \yii\web\Controller
 
         return $this->render('update', [
             'model' => $model,
+            'type' => $type,
             'companyDropDownData' => Company::dataDropDownList($type),
         ]);
     }
@@ -156,11 +158,22 @@ class UserController extends \yii\web\Controller
             'username' => $model->username,
         ]);
 
-        // TODO: редирект на основании роли пользователя.
-        // TODO: Например: клиента в расходы, партнера в раздел добавления машин
         if ($loginModel->virtualLogin()) {
-
-            return $this->goHome();
+            if (Yii::$app->user->can(User::ROLE_ADMIN)) {
+                return $this->redirect(['company/list', 'type' => Company::TYPE_OWNER]);
+            }
+            if (Yii::$app->user->can(User::ROLE_CLIENT)) {
+                return $this->redirect(['act/list', 'type' => Company::TYPE_WASH, 'company' => true]);
+            }
+            if (Yii::$app->user->can(User::ROLE_PARTNER)) {
+                /** @var Company $company */
+                $company = Yii::$app->user->identity->company;
+                if ($company->type == Company::TYPE_UNIVERSAL) {
+                    return $this->redirect(['act/create', 'type' => $company->serviceTypes[0]->type]);
+                } else {
+                    return $this->redirect(['act/create', 'type' => $company->type]);
+                }
+            }
         } else
             return $this->goBack(); // return to list action
     }

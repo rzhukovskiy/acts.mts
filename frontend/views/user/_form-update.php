@@ -24,9 +24,7 @@ use yii\helpers\Html;
         ],
     ]);
     echo $form->field($model, 'username')->textInput();
-    // ToDo: нужно вообще менять пароль именно тут? Или пользователи сами могут это сделать
     echo $form->field($model, 'newPassword')->passwordInput();
-    echo $form->field($model, 'email')->textInput();
     echo $form->field($model, 'company_id')
         ->dropDownList(
             $companyDropDownData,

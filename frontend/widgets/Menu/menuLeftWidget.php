@@ -37,9 +37,8 @@ class menuLeftWidget extends Widget
             return $this->items;
 
         $items = [];
-
         // Admin links
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $items = [
                 [
                     'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
@@ -122,56 +121,54 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
-                    'label' => 'Кол-во ТС',
+                    'label' => 'Количество ТС',
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    'url' => ['/statistic/list', 'type' => 2],
+                    'url' => ['/statistic/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'statistic',
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    'url' => ['/company-statistic/list', 'type' => 2],
+                    'url' => ['/company-statistic/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'company-statistic',
                 ],
                 [
                     'label' => 'Акты',
-                    'url' => ['/act/list', 'type' => 2],
+                    'url' => ['/act/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'act',
                 ],
                 [
                     'label' => 'Ошибочные акты',
-                    'url' => ['/archive/error', 'type' => 2],
+                    'url' => ['/error/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'archive',
                 ],
             ];
-        }
-
-        if (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
-            // Partner links
+        } // Partner links
+        elseif (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
+            /** @var Company $company */
+            $company = Yii::$app->user->identity->company;
             $items = [
-                [
-                    'label' => 'Доходы',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
-                ],
+//                [
+//                    'label' => 'Доходы',
+//                    'url' => ['/archive/error', 'type' => 2],
+//                    'active' => Yii::$app->controller->id == '',
+//                ],
                 [
                     'label' => 'Добавить машину',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
+                    'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'create',
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/archive/error', 'type' => 2],
-                    'active' => Yii::$app->controller->id == '',
+                    'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
                 ],
             ];
-        }
-
-        // Client links
-        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
+        } // Client links
+        elseif (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
             $items = [
                 [
                     'label' => 'Карты',
@@ -184,7 +181,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
-                    'label' => 'Кол-во ТС',
+                    'label' => 'Количество ТС',
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
@@ -195,8 +192,15 @@ class menuLeftWidget extends Widget
 //                ],
                 [
                     'label' => 'Услуги',
-                    'url' => ['/act/list', 'type' => Yii::$app->user->identity->company->type],
+                    'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',
+                ],
+            ];
+        } else {
+            $items = [
+                [
+                    'label' => 'Вход',
+                    'url' => ['/site/index'],
                 ],
             ];
         }

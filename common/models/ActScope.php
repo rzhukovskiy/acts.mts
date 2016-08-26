@@ -9,6 +9,7 @@
 namespace common\models;
 
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -17,14 +18,14 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $act_id
  * @property integer $company_id
- * @property integer $company_service_id
+ * @property integer $service_id
  * @property integer $price
  * @property integer $amount
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $description
  *
- * @property CompanyService $companyService
+ * @property Service $service
  * @property Company $company
  * @property Act $act
  */
@@ -49,15 +50,25 @@ class ActScope extends ActiveRecord
     }
 
     /**
-     * @return CompanyService
+     * @inheritdoc
      */
-    public function getCompanyService()
+    public function rules()
     {
-        return $this->hasOne(CompanyService::className(), ['id' => 'company_service_id']);
+        return [
+            ['price', 'default', 'value' => 0],
+        ];
     }
 
     /**
-     * @return Company
+     * @return ActiveQuery
+     */
+    public function getService()
+    {
+        return $this->hasOne(Service::className(), ['id' => 'service_id']);
+    }
+
+    /**
+     * @return ActiveQuery
      */
     public function getCompany()
     {
@@ -65,7 +76,7 @@ class ActScope extends ActiveRecord
     }
 
     /**
-     * @return CompanyService
+     * @return ActiveQuery
      */
     public function getAct()
     {

@@ -8,14 +8,16 @@ use yii\widgets\ActiveForm;
  * @var $model common\models\search\CarSearch
  * @var $form yii\widgets\ActiveForm
  * @var $companyDropDownData array
- * @var $type integer
+ * @var $type integer | null
  */
+
 ?>
 
 <div class="car-search">
 
     <?php $form = ActiveForm::begin([
         'method' => 'get',
+        'action' => ['car-count/list'],
         'id' => 'search-cars',
         'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
         'fieldConfig' => [
@@ -30,7 +32,6 @@ use yii\widgets\ActiveForm;
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">
             <?= Html::submitButton('Показать машины', ['class' => 'btn btn-primary btn-sm']) ?>
-            <?= Html::resetButton('Сбросить', ['class' => 'btn btn-default btn-sm']) ?>
         </div>
     </div>
 

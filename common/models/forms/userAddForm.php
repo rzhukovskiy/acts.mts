@@ -17,7 +17,7 @@ class userAddForm extends Model
     public function rules()
     {
         return [
-            [['username', 'password', 'email', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
+            [['username', 'password', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
             ['password', 'string', 'min' => 4, 'tooShort' => 'Длинна пароля должна быть более {min, number} символов'],
             ['password', 'string', 'max' => 24, 'tooLong' => 'Максимальная длинна пароля {max, number} символа.'],
             ['role', 'safe'],
@@ -39,9 +39,9 @@ class userAddForm extends Model
     public function save()
     {
         $values = $this->attributes;
-        $values['password'] = Yii::$app->security->generatePasswordHash($this->password);
         $model = new User($values);
         $model->auth_key = '';
+        $model->salt = Yii::$app->security->generateRandomString();
         $model->created_at = time();
         $model->updated_at = time();
         if ($model->save())

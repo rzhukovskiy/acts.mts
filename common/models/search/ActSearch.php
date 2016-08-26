@@ -14,6 +14,8 @@ use common\models\Act;
  */
 class ActSearch extends Act
 {
+    public $dateFrom;
+    public $dateTo;
     public $period;
     public $day;
 
@@ -37,9 +39,11 @@ class ActSearch extends Act
     {
         // bypass scenarios() implementation in the parent class
         return [
-            self::SCENARIO_CAR => ['day', 'period'],
+            self::SCENARIO_CAR => ['card_id', 'number', 'dateFrom', 'dateTo'],
             self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period']
+            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_ERROR => ['client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
+            self::SCENARIO_HISTORY => ['number', 'dateFrom', 'dateTo'],
         ];
     }
 
@@ -70,16 +74,70 @@ class ActSearch extends Act
         }
 
         switch ($this->scenario) {
+            case self::SCENARIO_ERROR:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'client as client',
+                    'partner as partner',
+                    'car',
+                ]);
+
+                $query->orFilterWhere(['income' => 0]);
+                $query->orFilterWhere(['expense' => 0]);
+                $query->orFilterWhere(['client_id' => 0]);
+                $query->orFilterWhere(['partner_id' => 0]);
+                
+                $query->orderBy('partner_id, served_at');
+                break;
+
             case self::SCENARIO_CLIENT:
                 $query->joinWith([
                     'type',
                     'mark',
                     'card',
                     'client',
+                    'clientScopes',
                 ]);
-
-                $query->orderBy('parent_id, client_id, served_at');
+                $query->orderBy('parent_id, act.client_id, served_at');
                 break;
+
+            case self::SCENARIO_PARTNER:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'card',
+                    'partner',
+                    'partnerScopes',
+                ]);
+                $query->orderBy('parent_id, act.partner_id, served_at');
+                break;
+
+            case self::SCENARIO_HISTORY:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'client',
+                ]);
+                if ($this->dateFrom) {
+                    $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
+                }
+                $query->orderBy('parent_id, client_id, actsCount DESC');
+                break;
+
+            case self::SCENARIO_CAR:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'client',
+                ]);
+                if ($this->dateFrom) {
+                    $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
+                }
+                $query->orderBy('parent_id, client_id, served_at DESC');
+                break;
+
             default:
                 $query->joinWith([
                     'type',
@@ -95,6 +153,7 @@ class ActSearch extends Act
         $query->alias('act');
         $query->andFilterWhere([
             'id' => $this->id,
+            'card_id' => $this->card_id,
             'client_id' => $this->client_id,
             'partner_id' => $this->partner_id,
             'act.number' => $this->number,

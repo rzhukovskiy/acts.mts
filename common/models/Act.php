@@ -7,10 +7,12 @@
  */
 
 namespace common\models;
+
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\web\UploadedFile;
 
 /**
  * Act model
@@ -35,6 +37,8 @@ use yii\db\Query;
  * @property string $extra_number
  *
  * @property array $serviceList
+ * @property array $clientServiceList
+ * @property array $partnerServiceList
  *
  * @property Company $client
  * @property Company $partner
@@ -42,7 +46,7 @@ use yii\db\Query;
  * @property Mark $mark
  * @property Card $card
  * @property Car $car
- * @property ActScope[] $scopes
+ * @property ActScope $scopes
  */
 class Act extends ActiveRecord
 {
@@ -50,12 +54,21 @@ class Act extends ActiveRecord
     const STATUS_CLOSED = 1;
     const STATUS_FIXED = 2;
 
+    const SCENARIO_ERROR = 'error';
     const SCENARIO_PARTNER = 'partner';
+    const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
     const SCENARIO_CAR = 'car';
-    
+
     public $serviceList;
+    public $clientServiceList;
+    public $partnerServiceList;
     public $time_str;
+    public $actsCount;
+    /**
+     * @var UploadedFile
+     */
+    public $image;
 
     public static $listStatus = [
         self::STATUS_NEW => [
@@ -71,7 +84,6 @@ class Act extends ActiveRecord
             'en' => 'fixed',
         ]
     ];
-
     /**
      * @inheritdoc
      */
@@ -97,7 +109,8 @@ class Act extends ActiveRecord
     {
         return [
             [['partner_id', 'card_id', 'mark_id', 'type_id', 'number'], 'required'],
-            [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str'], 'safe'],
+            [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
         ];
     }
@@ -122,6 +135,9 @@ class Act extends ActiveRecord
             'check' => 'Чек',
             'period' => 'Период',
             'day' => 'День',
+            'time_str' => 'Дата',
+            'image' => 'Загрузка чека',
+            'actsCount' => 'Обслуживания',
         ];
     }
 
@@ -152,6 +168,14 @@ class Act extends ActiveRecord
     /**
      * @return ActiveQuery
      */
+    public function getCar()
+    {
+        return $this->hasOne(Car::className(), ['number' => 'number']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
     public function getMark()
     {
         return $this->hasOne(Mark::className(), ['id' => 'mark_id']);
@@ -165,7 +189,6 @@ class Act extends ActiveRecord
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
 
-
     /**
      * @return ActiveQuery
      */
@@ -175,12 +198,19 @@ class Act extends ActiveRecord
     }
 
     /**
-     * @return string[]
+     * @return ActiveQuery
      */
-    public static function getPeriodList()
+    public function getPartnerScopes()
     {
-        $periods = (new Query())->select(['DISTINCT DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y") as periods'])->orderBy('served_at')->from(Act::tableName())->column();
-        return array_combine($periods, $periods);
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id', 'company_id' => 'partner_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getClientScopes()
+    {
+        return $this->hasMany(ActScope::className(), ['act_id' => 'id', 'company_id' => 'client_id']);
     }
 
     /**
@@ -191,47 +221,70 @@ class Act extends ActiveRecord
         return array_combine(range(1, 31), range(1, 31));
     }
 
+    /**
+     * @return bool|string
+     */
+    public function getImageLink()
+    {
+        if (file_exists('files/checks/' . $this->id . '.jpg')) {
+            return '/files/checks/' . $this->id . '.jpg';
+        }
+        if (file_exists('files/checks/' . $this->id . '.png')) {
+            return '/files/checks/' . $this->id . '.png';
+        }
+        return false;
+    }
+
     public function beforeSave($insert)
     {
         if (!empty($this->time_str)) {
             $this->served_at = \DateTime::createFromFormat('d-m-Y', $this->time_str)->getTimestamp();
         }
-        if ($insert) {
-            //определяем клиента по карте
+
+        //определяем клиента по карте
+        if (!empty($this->card)) {
+            $this->client_id = $this->card->company_id;
+        }
+
+        //номер в верхний регистр
+        $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
+        $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
+
+        //подставляем тип и марку из машины, если нашли по номеру
+        $car = Car::findOne(['number' => $this->number]);
+        if ($car) {
+            $this->mark_id = $car->mark_id;
+            $this->type_id = $car->type_id;
+
             if (empty($this->client_id)) {
-                $card = Card::findOne(['number' => $this->card_id]);
+                $this->client_id = $car->company_id;
+            }
+        }
 
-                if (empty($card)) {
-                    return false;
+        if (empty($this->client_id)) {
+            return false;
+        }
+
+        if ($insert) {
+            //преобразуем Герину поебень в нормальный массив
+            if (!empty($this->serviceList[0]) && count(explode('+', $this->serviceList[0]['service_id'])) > 1) {
+                $serviceList = [];
+                foreach (explode('+', $this->serviceList[0]['service_id']) as $serviceId) {
+                    $serviceList[] = [
+                        'service_id' => $serviceId,
+                        'price' => $this->serviceList[0]['price'],
+                        'amount' => $this->serviceList[0]['amount'],
+                    ];
                 }
-
-                $this->client_id = $card->company->id;
+                $this->serviceList = $serviceList;
             }
-
-            //номер в верхний регистр
-            $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
-            $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
-
-            //подставляем тип и марку из машины, если нашли по номеру и инкрементим количество обслуживаний
-            $car = Car::findOne(['number' => $this->number]);
-            if ($car) {
-                $this->mark_id = $car->mark_id;
-                $this->type_id = $car->type_id;
-                $car->updateAllCounters(['act_count' => 1]);
-            }
-            $car = Car::findOne(['number' => $this->extra_number]);
-            if ($car) {
-                $car->updateAllCounters(['act_count' => 1]);
-            }
-
             /**
              * суммируем все указанные услуги и считаем доход, расход и прибыль\
              */
             if (!empty($this->serviceList)) {
+                $totalExpense = 0;
+                $totalIncome = 0;
                 foreach ($this->serviceList as $serviceData) {
-                    $totalExpense = 0;
-                    $totalIncome = 0;
-
                     $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $totalIncome += $clientService->price * $serviceData['amount'];
@@ -241,7 +294,7 @@ class Act extends ActiveRecord
                     }
 
                     $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-                    if (!empty($clientService) && $clientService->service->is_fixed) {
+                    if (!empty($partnerService) && $partnerService->service->is_fixed) {
                         $totalExpense += $partnerService->price * $serviceData['amount'];
                     } else {
                         $totalExpense += $serviceData['price'] * $serviceData['amount'];
@@ -251,7 +304,74 @@ class Act extends ActiveRecord
                 $this->income = $totalIncome;
                 $this->expense = $totalExpense;
                 $this->profit = $this->income - $this->expense;
+            } else {
+                return false;
             }
+        } else {
+            $totalExpense = 0;
+            $totalIncome = 0;
+            ActScope::deleteAll(['act_id' => $this->id]);
+            if (!empty($this->partnerServiceList)) {
+                foreach ($this->partnerServiceList as $serviceData) {
+                    if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
+                        continue;
+                    }
+                    $scope = new ActScope();
+                    $scope->company_id = $this->partner_id;
+                    $scope->act_id = $this->id;
+                    if (!empty($serviceData['service_id'])) {
+                        $scope->service_id = $serviceData['service_id'];
+                        $companyService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+
+                        if (!empty($companyService) && $companyService->service->is_fixed) {
+                            $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
+                            $scope->description = $companyService->service->description;
+                        } else {
+                            $scope->price = $serviceData['price'];
+                            $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
+                    } else {
+                        $scope->price = $serviceData['price'];
+                        $scope->description = $serviceData['description'];
+                    }
+                    $scope->amount = $serviceData['amount'];
+                    $scope->save();
+                    $totalExpense += $scope->price * $scope->amount;
+                }
+            }
+
+            if (!empty($this->clientServiceList)) {
+                foreach ($this->clientServiceList as $serviceData) {
+                    if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
+                        continue;
+                    }
+                    $scope = new ActScope();
+                    $scope->company_id = $this->client_id;
+                    $scope->act_id = $this->id;
+                    if (!empty($serviceData['service_id'])) {
+                        $scope->service_id = $serviceData['service_id'];
+                        $companyService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+
+                        if (!empty($companyService) && $companyService->service->is_fixed) {
+                            $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
+                            $scope->description = $companyService->service->description;
+                        } else {
+                            $scope->price = $serviceData['price'];
+                            $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
+                    } else {
+                        $scope->price = $serviceData['price'];
+                        $scope->description = $serviceData['description'];
+                    }
+                    $scope->amount = $serviceData['amount'];
+                    $scope->save();
+                    $totalIncome += $scope->price * $scope->amount;
+                }
+            }
+
+            $this->income = $totalIncome;
+            $this->expense = $totalExpense;
+            $this->profit = $this->income - $this->expense;
         }
 
         return parent::beforeSave($insert);
@@ -263,17 +383,27 @@ class Act extends ActiveRecord
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
         if ($insert) {
+            //сохраняем картинку чека
+            if ($this->image) {
+                $this->image->saveAs('files/checks/' . $this->id . '.' . $this->image->extension);
+            }
+
             if (!empty($this->serviceList)) {
                 foreach ($this->serviceList as $serviceData) {
                     $clientScope = new ActScope();
                     $clientScope->company_id = $this->client_id;
                     $clientScope->act_id = $this->id;
-                    $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                    if (!empty($serviceData['service_id'])) {
+                        $clientScope->service_id = $serviceData['service_id'];
+                        $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
 
-                    if (!empty($clientService) && $clientService->service->is_fixed) {
-                        $clientScope->company_service_id = $clientService->id;
-                        $clientScope->price = $clientService->price;
-                        $clientScope->description = $clientService->service->description;
+                        if (!empty($clientService) && $clientService->service->is_fixed) {
+                            $clientScope->price = $clientService->price;
+                            $clientScope->description = $clientService->service->description;
+                        } else {
+                            $clientScope->price = 1.2 * $serviceData['price'];
+                            $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
                     } else {
                         //на 20% увеличиваем цену для клиента
                         $clientScope->price = 1.2 * $serviceData['price'];
@@ -285,37 +415,26 @@ class Act extends ActiveRecord
                     $partnerScope = new ActScope();
                     $partnerScope->company_id = $this->partner_id;
                     $partnerScope->act_id = $this->id;
-                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
-                    if (!empty($partnerService) && $partnerService->service->is_fixed) {
-                        $partnerScope->company_service_id = $partnerService->id;
-                        $partnerScope->price = $partnerService->price;
-                        $partnerScope->description = $partnerService->service->description;
+                    if (!empty($serviceData['service_id'])) {
+                        $partnerScope->service_id = $serviceData['service_id'];
+                        $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                        if (!empty($partnerService) && $partnerService->service->is_fixed) {
+                            $partnerScope->price = $partnerService->price;
+                            $partnerScope->description = $partnerService->service->description;
+                        } else {
+                            $partnerScope->price = $serviceData['price'];
+                            $partnerScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                        }
                     } else {
-                        $clientScope->price = $serviceData['price'];
+                        $partnerScope->price = $serviceData['price'];
                         $partnerScope->description = $serviceData['description'];
                     }
                     $partnerScope->amount = $serviceData['amount'];
                     $partnerScope->save();
                 }
-            }            
-        } else {
-            //TODO: act editing for admin and partner
+            }
         }
 
         parent::afterSave($insert, $changedAttributes);
-    }
-
-    public function afterDelete()
-    {
-        //декрементим количество обслуживаний
-        $car = Car::findOne(['number' => $this->number]);
-        if ($car) {
-            $car->updateAllCounters(['act_count' => -1]);
-        }
-
-        $car = Car::findOne(['number' => $this->extra_number]);
-        if ($car) {
-            $car->updateAllCounters(['act_count' => -1]);
-        }
     }
 }

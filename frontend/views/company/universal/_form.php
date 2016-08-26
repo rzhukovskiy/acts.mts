@@ -10,6 +10,7 @@ use yii\bootstrap\ActiveForm;
 use common\models\Company;
 use common\models\Service;
 use common\models\Requisites;
+use yii\helpers\ArrayHelper;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -33,6 +34,7 @@ use common\models\Requisites;
             ['prompt'=>'выберите компанию']
         ) ?>
         <?= $form->field($model, 'address') ?>
+        <?= $form->field($model, 'serviceList')->checkboxList(ArrayHelper::map(Service::$listType, 'id', function($typeData) {return $typeData['ru'];})) ?>
 
 
         <div class="form-group">

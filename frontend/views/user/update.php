@@ -1,15 +1,30 @@
 <?php
 use yii\bootstrap\Html;
+use yii\bootstrap\Tabs;
 
 /**
  * @var $this \yii\web\View
  */
 $this->title = 'Редактирование пользователя ' . Html::encode($model->username);
-$this->params['breadcrumbs'][] = $this->title;
 
+$items = [
+    [
+        'label' => 'Пользователи',
+        'url' => ['/user/list', 'type' => $type],
+    ],
+    [
+        'label' => 'Редактирование',
+        'url' => '#',
+        'active' => true,
+    ],
+];
+
+
+echo Tabs::widget( [
+    'items' => $items,
+] );
 ?>
 <div class="user-update">
-    <h1><?= Html::encode($this->title) ?></h1>
     <div class="panel panel-primary">
         <div class="panel-heading">Редактировать пользователя</div>
         <div class="panel-body">

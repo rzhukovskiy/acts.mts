@@ -27,7 +27,6 @@ body {
 .menu-left {
     font-weight: bold;
     position: fixed;
-    top: 10px;
     }
     .menu-left a {
         display: block;
@@ -84,7 +83,7 @@ body {
 .glyphicon-pencil, .glyphicon-trash, .glyphicon-eye-open {
     font-size: larger;
     font-weight: bold;
-    margin: 0 10px 0 0;
+    margin: 0 0 0 5px;
 }
 
 /* tables */
@@ -103,4 +102,67 @@ body {
 .kv-grid-group-row {
     color: #ffffff;
     background-color: #428bca;
+}
+.kv-table-float {
+    background-color: #eee;
+}
+.select2-container--krajee .select2-selection--single {
+    height: 40px;
+}
+.select2-container--krajee .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+.table-bordered>thead>tr.extend-header>th {
+    border-right: none;
+    border-left: none;
+}
+.table>tfoot>tr.warning>td {
+    background: none;
+}
+
+/* act-table */
+.panel.acts .panel-body {
+    padding: 20px;
+}
+.act {
+    border-collapse: collapse;
+    color: #000;
+    font-size: 14px;
+    width: 100%;
+    border: 1px solid black;
+}
+.act td {
+    border: 1px solid black;
+    padding: 10px 5px 0px 5px;
+}
+.act th {
+    border: 1px solid black;
+    color: #069;
+    font-size: 16px;
+    text-align: left;
+    text-transform: uppercase;
+    padding: 10px 5px 0 5px;
+}
+.act .strong {
+    font-weight: bold;
+}
+.act .header {
+    color: #069;
+    font-weight: bold;
+}
+
+span.sign {
+    font-size: 14px;
+    color: #069;
+}
+table.sign {
+    color: #000;
+    font-size: 14px;
+}
+
+.extra-number {
+    display: none;
+}
+.wPaint-menu {
+    display: none;
 }

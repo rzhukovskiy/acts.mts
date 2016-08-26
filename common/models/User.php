@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property string $username
+ * @property string $salt
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
@@ -61,6 +62,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'unique'],
             ['email', 'email'],
             [['role', 'company_id'], 'integer'],
+            ['email', 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
@@ -178,7 +180,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
+        return md5($this->salt . $password) == $this->password_hash;
     }
 
     /**
@@ -188,7 +190,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = md5($this->salt . $password);
     }
 
     /**

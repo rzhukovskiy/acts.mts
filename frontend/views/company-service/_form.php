@@ -34,7 +34,7 @@ use common\models\Company;
             <tbody>
             <tr>
                 <td>
-                    <?= Html::checkboxList('Price[type]', [], Type::find()->select(['name', 'id'])->indexBy('id')->column()) ?>
+                    <?= Html::checkboxList('Price[type]', [], Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column()) ?>
                 </td>
                 <td style="vertical-align: middle">
                     <?php foreach (Service::findAll(['type' => $type, 'is_fixed' => 1]) as $service) { ?>

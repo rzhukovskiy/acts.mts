@@ -85,7 +85,7 @@ class CarCountController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
             ->byType($type)
-            ->with(['mark', 'type']);
+            ->with(['mark', 'type', 'company']);
 
         if (!empty($company))
             $dataProvider->query
