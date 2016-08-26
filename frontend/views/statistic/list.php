@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\bootstrap\Html;
 use common\assets\CanvasJs\CanvasJsAsset;
+
 /**
  * @var $this yii\web\View
  * @var $type integer
@@ -12,6 +13,7 @@ use common\assets\CanvasJs\CanvasJsAsset;
  * @var $totalProfit float
  * @var $totalExpense float
  */
+
 CanvasJsAsset::register($this);
 
 echo $this->render('_tabs');

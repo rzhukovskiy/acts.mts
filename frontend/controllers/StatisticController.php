@@ -28,12 +28,19 @@ class StatisticController extends Controller
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_partner_filter';
         $dataProvider = $searchModel->searchByType(Yii::$app->request->queryParams);
+
+        // Уточнение для текущего набора данных
         $dataProvider->pagination = false;
-        $dataProvider->query->andWhere(['service_type' => $type]);
+        $dataProvider->query
+            ->andWhere(['service_type' => $type])
+            ->groupBy('partner_id');
+
+        // Установка заголовка страницы
         $this->view->title = Company::$listType[$type]['ru'] . '. Статистика';
 
         $models = $dataProvider->getModels();
 
+        // Данные для подвала таблицы
         $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
         $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
         $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
@@ -66,7 +73,9 @@ class StatisticController extends Controller
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_partner_filter';
         $dataProvider = $searchModel->searchTypeByMonth(Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere(['partner_id' => $id]);
+        $dataProvider->query
+            ->andWhere(['partner_id' => $id])
+            ->with(['partner']);
         $dataProvider->pagination = false;
 
         $models = $dataProvider->getModels();
@@ -100,6 +109,8 @@ class StatisticController extends Controller
         $dataProvider = $searchModel->searchByDays(Yii::$app->request->queryParams);
         $dataProvider->pagination = false;
         $dataProvider->query
+            ->addSelect('partner_id')
+            ->with(['partner'])
             ->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => date('m', strtotime($date))])
             ->andWhere(["YEAR(FROM_UNIXTIME(served_at))" => date('Y', strtotime($date))])
             ->andWhere(['partner_id' => $id]);
@@ -136,6 +147,8 @@ class StatisticController extends Controller
         $dataProvider = $searchModel->searchDayCars(Yii::$app->request->queryParams);
         $dataProvider->pagination = false;
         $dataProvider->query
+            ->addSelect('partner_id')
+            ->with('partner')
             ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date])
             ->andWhere(['partner_id' => $id]);
 
@@ -171,9 +184,12 @@ class StatisticController extends Controller
     {
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_partner_filter';
+
         $dataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
         $chartDataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
         $dataProvider->pagination = false;
+        $dataProvider->query
+            ->with(['partner']);
 
         $models = $dataProvider->getModels();
 
@@ -207,5 +223,4 @@ class StatisticController extends Controller
 
         return $companyModel;
     }
-
 }

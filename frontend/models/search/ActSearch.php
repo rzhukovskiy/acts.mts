@@ -34,6 +34,7 @@ class ActSearch extends Act
     {
         $scenarios = [
             'statistic_partner_filter' => ['dateFrom', 'dateTo'],
+            'statistic_client_filter' => ['dateFrom', 'dateTo'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);
@@ -54,8 +55,7 @@ class ActSearch extends Act
             ->addSelect('SUM(expense) as expense')
             ->addSelect('SUM(profit) as profit')
             ->addSelect('SUM(income) as income')
-            ->addSelect('partner_id')
-            ->groupBy('partner_id')
+            ->addSelect(['partner_id', 'client_id'])
             ->orderBy('profit DESC')
             ->with(['partner', 'client']);
 
@@ -77,10 +77,9 @@ class ActSearch extends Act
             ->addSelect('SUM(expense) as expense')
             ->addSelect('SUM(income) as income')
             ->addSelect('SUM(profit) as profit')
-            ->addSelect('partner_id')
+            ->addSelect(['partner_id', 'client_id'])
             ->groupBy(["MONTH(dateMonth)"])
-            ->orderBy('dateMonth ASC')
-            ->with(['partner']);
+            ->orderBy('dateMonth ASC');
 
         return $this->createProvider($params, $query);
     }
@@ -98,8 +97,6 @@ class ActSearch extends Act
             ->addSelect('SUM(expense) as expense')
             ->addSelect('SUM(income) as income')
             ->addSelect('SUM(profit) as profit')
-            ->addSelect('partner_id')
-            ->with(['partner'])
             ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
             ->orderBy('dateMonth ASC');
 
@@ -115,8 +112,8 @@ class ActSearch extends Act
         $query = static::find();
 
         $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect(['id', 'check', 'expense', 'income', 'profit', 'partner_id', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
-            ->with(['partner', 'type', 'mark', 'card'])
+            ->addSelect(['id', 'check', 'expense', 'income', 'profit', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+            ->with(['type', 'mark', 'card'])
             ->orderBy('dateMonth ASC');
 
         return $this->createProvider($params, $query);
@@ -139,7 +136,7 @@ class ActSearch extends Act
             ->addSelect('service_type')
             ->groupBy('service_type')
             ->orderBy('profit DESC')
-            ->with(['partner', 'client', 'type']);
+            ->with(['type']);
 
         return $this->createProvider($params, $query);
     }
