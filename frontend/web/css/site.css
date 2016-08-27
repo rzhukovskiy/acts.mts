@@ -131,6 +131,7 @@ body {
 .table>tfoot>tr.warning>td {
     background: none;
 }
+.period-select .form-control { display: inline; min-width: 0; width: auto; }
 
 /* act-table */
 .panel.acts .panel-body {

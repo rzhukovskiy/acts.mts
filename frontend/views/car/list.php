@@ -1,6 +1,5 @@
 <?php
 
-use kartik\date\DatePicker;
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
 
@@ -18,6 +17,67 @@ if ($admin) {
     echo $this->render('_tabs');
 }
 
+$halfs = [
+    '1е полугодие',
+    '2е полугодие'
+];
+$quarters = [
+    '1й квартал',
+    '2й квартал',
+    '3й квартал',
+    '4й квартал',
+];
+$months = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+];
+
+$ts1 = strtotime($searchModel->dateFrom);
+$ts2 = strtotime($searchModel->dateTo);
+
+$year1 = date('Y', $ts1);
+$year2 = date('Y', $ts2);
+
+$month1 = date('m', $ts1);
+$month2 = date('m', $ts2);
+
+$diff = (($year2 - $year1) * 12) + ($month2 - $month1);
+switch ($diff) {
+    case 1:
+        $period = 1;
+        break;
+    case 3:
+        $period = 2;
+        break;
+    case 6:
+        $period = 3;
+        break;
+    case 12:
+        $period = 4;
+        break;
+    default:
+        $period = 0;
+}
+
+$periodForm = '';
+$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' =>'select-period form-control', 'style' => 'margin-right: 10px;']);
+$periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);
+$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
+$periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
+$periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
+$periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
+$periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $admin ? $searchModel : null,
@@ -32,37 +92,18 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => 'Выбор даты:',
+                    'content' => 'Выбор периода:',
                     'options' => ['style' => 'vertical-align: middle'],
                 ],
                 [
-                    'content' => DatePicker::widget([
-                        'model' => $searchModel,
-                        'attribute' => 'dateFrom',
-                        'attribute2' => 'dateTo',
-                        'separator' => '-',
-                        'type' => DatePicker::TYPE_RANGE,
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                            'autoclose' => true,
-                            'changeMonth' => true,
-                            'changeYear' => true,
-                            'showButtonPanel' => true,
-                            'format' => 'dd-mm-yyyy',
-                        ],
-                        'options' => [
-                            'class' => 'form-control',
-                        ]
-                    ]),
-                    'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
+                    'content' => $periodForm,
+                    'options' => ['colspan' => 4, 'class' => 'kv-grid-group-filter period-select'],
                 ],
                 [
                     'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
                 ],
-                '',
-                '',
             ],
-            'options' => ['class' => 'filters extend-header', 'id' => 'w2-filters'],
+            'options' => ['class' => 'filters extend-header'],
         ],
         [
             'columns' => [

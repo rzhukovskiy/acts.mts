@@ -41,9 +41,9 @@ class ActSearch extends Act
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_CAR => ['card_id', 'number', 'dateFrom', 'dateTo'],
-            self::SCENARIO_CLIENT => ['client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_PARTNER => ['partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_ERROR => ['service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
+            self::SCENARIO_CLIENT => ['check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_PARTNER => ['check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_ERROR => ['check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
             self::SCENARIO_HISTORY => ['number', 'dateFrom', 'dateTo'],
         ];
     }
@@ -57,6 +57,14 @@ class ActSearch extends Act
      */
     public function search($params)
     {
+        if (!empty(Yii::$app->user->identity->company_id)) {
+            if (Yii::$app->user->identity->company->type) {
+                $this->client_id = Yii::$app->user->identity->company->id;
+            } else {
+                $this->partner_id = Yii::$app->user->identity->company->id;
+            }
+        }
+
         $query = Act::find();
 
         // add conditions that should always apply here

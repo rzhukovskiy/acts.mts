@@ -70,6 +70,11 @@ class Act extends ActiveRecord
     public $image;
 
     /**
+     * @var array
+     */
+    public static $periodList = array('все время', 'месяц', 'квартал', 'полгода', 'год');
+
+    /**
      * @inheritdoc
      */
     public static function tableName()

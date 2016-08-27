@@ -52,13 +52,6 @@ class ActController extends Controller
     public function actionList($type, $company = false)
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
-        if (!empty(Yii::$app->user->identity->company_id)) {
-            if ($company) {
-                $searchModel->client_id = Yii::$app->user->identity->company->id;
-            } else {
-                $searchModel->partner_id = Yii::$app->user->identity->company->id;
-            }
-        }
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
