@@ -57,7 +57,7 @@ class CarQuery extends \yii\db\ActiveQuery
             ->groupBy('car.type_id');
 
         if (!is_null($companyId))
-            $query->andWhere(['car.company_id' => $companyId]);
+            $query->andWhere(['car.company_id' => $companyId])->orWhere(['company.parent_id' => $companyId]);
 
         return $query;
     }

@@ -139,13 +139,16 @@ class ActSearch extends Act
                 $query->joinWith([
                     'type',
                     'mark',
-                    'client',
+                    'client client',
                 ]);
                 if ($this->dateFrom) {
                     $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
                 }
-                $query->andFilterWhere(['client_id' => $this->client_id,]);
-                $query->andFilterWhere(['partner_id' => $this->partner_id,]);
+                if (!empty($this->client->children)) {
+                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id,]);
+                } else {
+                    $query->andFilterWhere(['client_id' => $this->client_id,]);
+                }
                 $query->orderBy('parent_id, client_id, actsCount DESC');
                 break;
 
@@ -153,13 +156,16 @@ class ActSearch extends Act
                 $query->joinWith([
                     'type',
                     'mark',
-                    'client',
+                    'client client',
                 ]);
                 if ($this->dateFrom) {
                     $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
                 }
-                $query->andFilterWhere(['client_id' => $this->client_id,]);
-                $query->andFilterWhere(['partner_id' => $this->partner_id,]);
+                if (!empty($this->client->children)) {
+                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id,]);
+                } else {
+                    $query->andFilterWhere(['client_id' => $this->client_id,]);
+                }
                 $query->orderBy('parent_id, client_id, served_at DESC');
                 break;
 

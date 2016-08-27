@@ -212,7 +212,8 @@ class ActController extends Controller
                 Yii::$app->user->can(User::ROLE_ADMIN) ||
                 Yii::$app->user->can(User::ROLE_WATCHER) ||
                 Yii::$app->user->identity->company_id == $model->partner_id ||
-                Yii::$app->user->identity->company_id == $model->client_id
+                Yii::$app->user->identity->company_id == $model->client_id ||
+                Yii::$app->user->identity->company_id == $model->client->parent_id
             ) {
                 return $model;
             }

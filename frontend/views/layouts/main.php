@@ -44,7 +44,7 @@ AppAsset::register($this);
             <div class="col-sm-2">
                 <?= menuLeftWidget::widget() ?>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 content-main">
                 <?= Alert::widget() ?>
                 <?= $content ?>
             </div>

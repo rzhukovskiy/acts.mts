@@ -90,7 +90,7 @@ echo GridView::widget([
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-grid-group-row'],
+            'options' => ['class' => 'kv-group-header'],
         ],
     ],
     'hover' => false,

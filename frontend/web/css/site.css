@@ -16,6 +16,9 @@ body {
 #preview {
     z-index: 999;
 }
+.content-main {
+    padding-left: 200px;
+}
 
 /* login */
 .login-form {

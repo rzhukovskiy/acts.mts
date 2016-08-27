@@ -207,8 +207,8 @@ $columns = [
 
 if ($role != User::ROLE_ADMIN) {
     unset($columns[1], $columns[2], $columns[11]);
-    $headerColumns[6]['content'] = '';
     $headerColumns[7]['content'] = '';
+    $headerColumns[8]['content'] = '';
 }
 
 

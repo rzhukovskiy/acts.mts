@@ -8,6 +8,7 @@
 
 use common\models\Act;
 use common\models\Card;
+use common\models\Company;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
@@ -43,14 +44,21 @@ $headerColumns = [
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
     ],
     [
+        'content' => 'Выбор филиала:',
+        'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
+    ],
+    [
+        'content' => Html::activeDropDownList($searchModel, 'client_id', Company::find()
+            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control']),
+        'options' => ['colspan' => 2],
+    ],
+    [
         'options' => ['style' => 'display: none'],
     ],
     [
         'options' => ['style' => 'display: none'],
     ],
-    '',
-    '',
-    '',
     '',
     [
         'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
@@ -228,13 +236,18 @@ $columns = [
 ];
 
 if ($role != User::ROLE_ADMIN) {
-    if (!empty($searchModel->client->children)) {
+    if (!empty(Yii::$app->user->identity->company->children)) {
         unset($columns[1], $columns[12]);
     } else {
+        $headerColumns[2]['content'] = '';
+        $headerColumns[3]['content'] = '';
         unset($columns[1], $columns[2], $columns[12]);
     }
-    $headerColumns[6]['content'] = '';
     $headerColumns[7]['content'] = '';
+    $headerColumns[8]['content'] = '';
+} else {
+    $headerColumns[2]['content'] = '';
+    $headerColumns[3]['content'] = '';
 }
 
 

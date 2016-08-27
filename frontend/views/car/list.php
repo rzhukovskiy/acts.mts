@@ -20,7 +20,7 @@ if ($admin) {
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
+    'filterModel' => $admin ? $searchModel : null,
     'floatHeader' => $admin,
     'floatHeaderOptions' => ['top' => '0'],
     'hover' => false,
@@ -73,7 +73,7 @@ echo GridView::widget([
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-grid-group-row'],
+            'options' => ['class' => 'kv-group-header'],
         ],
     ],
     'panel' => [

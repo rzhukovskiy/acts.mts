@@ -7,7 +7,7 @@
  */
 
 use common\models\Act;
-use common\models\Card;
+use common\models\Company;
 use common\models\Mark;
 use common\models\Type;
 use common\models\User;
@@ -41,12 +41,14 @@ $headerColumns = [
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
     ],
     [
-        'options' => ['style' => 'display: none'],
+        'content' => 'Выбор филиала:',
+        'options' => ['style' => 'vertical-align: middle'],
     ],
     [
-        'options' => ['style' => 'display: none'],
+        'content' => Html::activeDropDownList($searchModel, 'client_id', Company::find()
+            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control']),
     ],
-    '',
     [
         'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
     ],
@@ -87,12 +89,9 @@ $columns = [
         },
         'groupHeader' => function ($data) {
             return [
-                'mergeColumns' => [[0, 11]],
+                'mergeColumns' => [[0, 8]],
                 'content' => [
                     0 => $data->client->parent->name,
-                ],
-                'contentOptions' => [
-                    12 => ['style' => 'display: none'],
                 ],
                 'options' => [
                     'class' => isset($data->client->parent) ? '' : 'hidden',
@@ -124,7 +123,7 @@ $columns = [
         },
         'groupHeader' => function ($data) {
             return [
-                'mergeColumns' => [[0, 11]],
+                'mergeColumns' => [[0, 8]],
                 'content' => [
                     0 => $data->client->name . ' - ' . $data->client->address,
                 ],
@@ -183,13 +182,18 @@ $columns = [
 ];
 
 if ($role != User::ROLE_ADMIN) {
-    if (!empty($searchModel->client->children)) {
+    if (!empty(Yii::$app->user->identity->company->children)) {
         unset($columns[1], $columns[8]);
     } else {
+        $headerColumns[2]['content'] = '';
+        $headerColumns[3]['content'] = '';
         unset($columns[1], $columns[2], $columns[8]);
     }
+    unset($headerColumns[4]);
     $headerColumns[5]['content'] = '';
-    $headerColumns[6]['content'] = '';
+} else {
+    $headerColumns[2]['content'] = '';
+    $headerColumns[3]['content'] = '';
 }
 
 
