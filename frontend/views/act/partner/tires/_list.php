@@ -9,13 +9,11 @@
 use common\models\Act;
 use common\models\Card;
 use common\models\Mark;
-use common\models\Service;
 use common\models\Type;
 use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
-
 $headerColumns = [
     [
         'content' => 'Период:',
@@ -42,7 +40,12 @@ $headerColumns = [
         ]),
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
     ],
-    '',
+    [
+        'options' => ['style' => 'display: none'],
+    ],
+    [
+        'options' => ['style' => 'display: none'],
+    ],
     '',
     '',
     [
@@ -50,7 +53,6 @@ $headerColumns = [
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
-        'options' => ['colspan' => 3],
     ],
 ];
 
@@ -67,19 +69,12 @@ $columns = [
             return isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов';
         },
         'group' => true,
-        'groupedRow' => true,
-        'groupOddCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->partner->parent) ? 'parent' : 'hidden';
-        },
-        'groupEvenCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->partner->parent) ? 'parent' : 'hidden';
-        },
-        'groupFooter' => function ($data, $key, $index, $widget) {
+        'groupFooter' => function ($data) {
             return [
-                'mergeColumns'=>[[0, 7]],
+                'mergeColumns' => [[0, 7]],
                 'content' => [
                     0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
-                    8 => GridView::F_COUNT,
+                    8 => GridView::F_SUM,
                 ],
                 'options' => [
                     'class' => isset($data->partner->parent) ? '' : 'hidden',
@@ -87,6 +82,7 @@ $columns = [
                 ]
             ];
         },
+        'hidden' => true,
     ],
     [
         'attribute' => 'partner_id',
@@ -95,19 +91,31 @@ $columns = [
         },
         'group' => true,
         'subGroupOf' => 1,
-        'groupedRow' => true,
         'groupOddCssClass' => 'child',
         'groupEvenCssClass' => 'child',
-        'groupFooter' => function ($data, $key, $index, $widget) {
+        'groupFooter' => function ($data) {
             return [
-                'mergeColumns'=>[[3, 7]],
+                'mergeColumns' => [[2, 5]],
                 'content' => [
-                    3 => 'Итого по ' . $data->partner->name,
+                    2 => 'Итого по ' . $data->partner->name,
                     8 => GridView::F_SUM,
+                ],
+                'contentOptions' => [      // content html attributes for each summary cell
+                    6 => ['style' => 'display: none'],
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
         },
+        'groupHeader' => function ($data) {
+            return [
+                'mergeColumns' => [[0, 11]],
+                'content' => [
+                    0 => $data->partner->name . ' - ' . $data->partner->address,
+                ],
+                'options' => ['style' => 'font-size: smaller; font-weight:bold;']
+            ];
+        },
+        'hidden' => true,
     ],
     [
         'attribute' => 'day',
@@ -171,8 +179,8 @@ $columns = [
 
 if ($role != User::ROLE_ADMIN) {
     unset($columns[1], $columns[2]);
-    $headerColumns[5]['content'] = '';
     $headerColumns[6]['content'] = '';
+    $headerColumns[7]['content'] = '';
 }
 
 
@@ -208,7 +216,7 @@ echo GridView::widget([
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-grid-group-row'],
+            'options' => ['class' => 'kv-group-header'],
         ],
     ],
     'columns' => $columns,

@@ -102,12 +102,15 @@ body {
 .kv-grid-group-row .parent {
     font-weight: bold;
 }
-.kv-grid-group-row {
+.kv-group-header {
     color: #ffffff;
     background-color: #428bca;
 }
 .kv-table-float {
     background-color: #eee;
+}
+.kv-page-summary {
+    border-top: 0;
 }
 .select2-container--krajee .select2-selection--single {
     height: 40px;
