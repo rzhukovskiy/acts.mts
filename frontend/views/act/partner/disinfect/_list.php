@@ -135,11 +135,11 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'income',
+        'attribute' => 'expense',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
         'contentOptions' => function($data) {
-            if($data->hasError('income')) return ['class' => 'text-danger'];
+            if($data->hasError('expense')) return ['class' => 'text-danger'];
         },
     ],
     [
