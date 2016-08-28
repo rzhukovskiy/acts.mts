@@ -198,7 +198,6 @@ class ActSearch extends Act
         $query->andFilterWhere([
             'id' => $this->id,
             'card_id' => $this->card_id,
-            'check' => $this->check,
             'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
@@ -207,6 +206,7 @@ class ActSearch extends Act
             'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
             'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
         ]);
+        $query->andFilterWhere(['like', 'check', $this->check]);
 
         return $dataProvider;
     }
