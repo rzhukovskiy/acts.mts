@@ -14,7 +14,7 @@ body {
     padding: 0 10px;
 }
 #preview {
-    z-index: 999;
+    z-index: 9999;
 }
 .content-main {
     padding-left: 200px;

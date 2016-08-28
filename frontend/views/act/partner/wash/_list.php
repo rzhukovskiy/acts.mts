@@ -19,7 +19,7 @@ use kartik\date\DatePicker;
 $headerColumns = [
     [
         'content' => 'Период:',
-        'options' => ['style' => 'vertical-align: middle'],
+        'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
     ],
     [
         'content' => DatePicker::widget([
@@ -64,9 +64,10 @@ $columns = [
     [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
-        'contentOptions' => ['style' => 'max-width: 40px'],
         'pageSummary' => 'Всего',
         'mergeHeader' => false,
+        'width' => '30px',
+        'vAlign' => GridView::ALIGN_TOP,
     ],
     [
         'attribute' => 'parent_id',
