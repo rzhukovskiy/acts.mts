@@ -69,7 +69,7 @@ class CarSearch extends Car
             'type_id' => $this->type_id,
             'is_infected' => $this->is_infected,
         ]);
-        $query->andFilterWhere(['company.parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id,]);
+        $query->andFilterWhere(['company.parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
 
         $query->andFilterWhere(['like', 'number', $this->number]);
 

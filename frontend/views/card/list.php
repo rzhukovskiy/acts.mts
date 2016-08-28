@@ -50,7 +50,7 @@ echo GridView::widget([
             'content' => function ($data) {
                 return $data->company->name;
             },
-            'visible' => $admin,
+            'visible' => $admin || !empty($searchModel->company->children),
         ],
         'number',
     ],
