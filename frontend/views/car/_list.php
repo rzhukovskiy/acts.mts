@@ -33,7 +33,13 @@ echo GridView::widget([
             },
             'filter' => false,
         ],
-
+        [
+            'attribute' => 'is_infected',
+            'content' => function ($data) {
+                return $data->is_infected ? 'да' : 'нет';
+            },
+            'filter' => false,
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{update} {delete}',
