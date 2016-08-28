@@ -72,7 +72,7 @@ echo GridView::widget([
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-grid-group-row'],
+            'options' => ['class' => 'kv-group-header'],
         ],
     ],
     'panel' => [
@@ -94,8 +94,8 @@ echo GridView::widget([
             },
             'group' => $admin,
             'groupedRow' => true,
-            'groupOddCssClass' => '',
-            'groupEvenCssClass' => '',
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
             'visible' => $admin,
         ],
         [
@@ -117,7 +117,7 @@ echo GridView::widget([
             'template' => '{view}',
             'buttons' => [
                 'view' => function ($url, $data, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id]);
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id]);
                 },
             ],
         ],
