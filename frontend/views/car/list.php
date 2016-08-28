@@ -80,6 +80,12 @@ $periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
 $periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary', 'style' => 'margin-left: 10px;']);
 
+$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
+    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+        ->where(['parent_id' => Yii::$app->user->identity->company_id])
+        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+$filters .= 'Выбор периода: ' . $periodForm;
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $admin ? $searchModel : null,
@@ -95,15 +101,8 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => $admin || empty(Yii::$app->user->identity->company->children) ? '' :
-                        'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
-                            ->where(['parent_id' => Yii::$app->user->identity->company_id])
-                            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px;']),
-                    'options' => ['colspan' => 3, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter ext-filter'],
-                ],
-                [
-                    'content' => 'Выбор периода: ' . $periodForm,
-                    'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter period-select'],
+                    'content' => $filters,
+                    'options' => ['colspan' => 6, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
                 ],
             ],
             'options' => ['class' => 'filters extend-header'],

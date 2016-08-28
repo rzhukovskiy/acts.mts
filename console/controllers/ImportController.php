@@ -360,7 +360,7 @@ class ImportController extends Controller
             'universal' => Company::TYPE_UNIVERSAL,
         ];
 
-        $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}act WHERE service = 'service' OR service = 'tires'")->queryAll();
+        $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}act")->queryAll();
         foreach ($rows as $rowData) {
             $now = time();
             if (in_array($listType[$rowData['service']], [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
