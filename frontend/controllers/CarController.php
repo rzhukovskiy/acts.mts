@@ -2,18 +2,23 @@
 
 namespace frontend\controllers;
 
+use common\components\ArrayHelper;
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
 use common\models\search\ActSearch;
 use common\models\Service;
+use common\models\Type;
+use frontend\models\forms\carUploadXlsForm;
 use frontend\models\search\CarSearch;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use common\models\User;
+use yii\web\UploadedFile;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -123,7 +128,7 @@ class CarController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionActView( $id )
+    public function actionActView($id)
     {
         $model = Act::findOne(['id' => $id]);
 
@@ -170,7 +175,31 @@ class CarController extends Controller
 
     public function actionUpload()
     {
-        return $this->render('upload');
+        $model = new CarUploadXlsForm();
+        $typeDropDownItems = ArrayHelper::map(Type::find()->all(), 'id', 'name');
+        $companyDropDownItems = ArrayHelper::map(Company::find()->all(), 'id', 'name');
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+
+            if ($model->save()) { // загрузка прошла успешно
+                $dataProvider = new ActiveDataProvider([
+                    'query' => Car::findAll([
+                        '>', 'id', $model->startId
+                    ]),
+                    'pagination' => [
+                        'pageSize' => 100
+                    ]
+                ]);
+                $this->render('upload/list', ['dataProvider' => $dataProvider]);
+            }
+        }
+
+        return $this->render('upload', [
+            'model' => $model,
+            'typeDropDownItems' => $typeDropDownItems,
+            'companyDropDownItems' => $companyDropDownItems,
+        ]);
     }
 
     /**
