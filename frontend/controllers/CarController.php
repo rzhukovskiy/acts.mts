@@ -6,7 +6,8 @@ use common\models\Act;
 use common\models\Car;
 use common\models\Company;
 use common\models\search\ActSearch;
-use common\models\search\CarSearch;
+use common\models\Service;
+use frontend\models\search\CarSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -36,7 +37,6 @@ class CarController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['list', 'view', 'create', 'update', 'delete', 'act-view'],
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
@@ -49,11 +49,6 @@ class CarController extends Controller
         ];
     }
 
-    public function actionDirty()
-    {
-        return $this->render('dirty');
-    }
-
     /**
      * Lists all Car models.
      * @return mixed
@@ -61,18 +56,45 @@ class CarController extends Controller
     public function actionList()
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
+
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $searchModel->client_id = Yii::$app->user->identity->company->id;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->select('client_id, number, mark_id, type_id, COUNT(mark_id) as actsCount')
+            ->addSelect('client_id, number, mark_id, type_id, COUNT(mark_id) as actsCount')
             ->groupBy('number');
 
         $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+            'companyDropDownData' => $companyDropDownData,
+        ]);
+    }
+
+    public function actionDirty()
+    {
+        $searchModel = new CarSearch();
+
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
+            $searchModel->client_id = Yii::$app->user->identity->company->id;
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query
+            ->with(['company', 'mark', 'type']);
+
+        $dataProvider->pagination = [
+            'pageSize' => 100,
+        ];
+
+        $companyDropDownData = Company::dataDropDownList();
+
+        return $this->render('dirty', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
