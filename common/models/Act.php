@@ -11,6 +11,7 @@ namespace common\models;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 use yii\web\UploadedFile;
 
 /**
@@ -69,6 +70,20 @@ class Act extends ActiveRecord
      */
     public $image;
 
+    public static $listStatus = [
+        self::STATUS_NEW => [
+            'ru' => 'Новый',
+            'en' => 'new',
+        ],
+        self::STATUS_CLOSED => [
+            'ru' => 'Закрыт',
+            'en' => 'closed',
+        ],
+        self::STATUS_FIXED => [
+            'ru' => 'Исправлен',
+            'en' => 'fixed',
+        ]
+    ];
     /**
      * @var array
      */

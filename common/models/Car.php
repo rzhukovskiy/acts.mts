@@ -70,8 +70,6 @@ class Car extends ActiveRecord
         return new CarQuery(get_called_class());
     }
 
-    // TODO: add relation for Company, Act
-
     public function getMark(  )
     {
         return $this->hasOne(Mark::className(), ['id' => 'mark_id']);

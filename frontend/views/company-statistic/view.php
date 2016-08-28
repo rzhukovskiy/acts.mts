@@ -1,43 +1,36 @@
 <?php
 
 use yii\grid\GridView;
-use yii\widgets\Pjax;
-use common\models\Service;
 use yii\bootstrap\Html;
+use common\components\DateHelper;
 use common\assets\CanvasJs\CanvasJsAsset;
 
 /**
- * @var $this yii\web\View
- * @var $type int
- * @var $searchModel \frontend\models\search\ActSearch
+ * @var $this \yii\web\View
+ * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
- * @var $chartData array
- * @var $totalProfit int
- * @var $totalServe int
- * @var $totalExpense int
+ * @var $searchModel \frontend\models\search\ActSearch
  */
 
 CanvasJsAsset::register($this);
 
-$this->title = 'Общая статистика';
-echo $this->render('_tabs');
-
 echo $this->render('_search', [
-    'type' => 'total',
+    'type' => null,
+    'companyId' => $model->id,
     'model' => $searchModel,
-]) ?>
+]);
+?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Общая статистика
+        <?= $this->title ?>
     </div>
     <div class="panel-body">
         <?php
-        Pjax::begin();
+
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => false,
-            'summary' => false,
-            'emptyCell' => '',
+            'layout' => '{items}',
+            'emptyText' => '',
             'showFooter' => true,
             'columns' => [
                 [
@@ -46,40 +39,47 @@ echo $this->render('_search', [
                     'footer' => 'Итого:',
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-                [
-                    'attribute' => 'service_type',
-                    'header' => 'Услуга',
-                    'content' => function ($data) {
-                        if (empty($data->service_type))
-                            $title = '—';
-                        else
-                            $title = Html::a(Service::$listType[$data->service_type]['ru'], ['/statistic/list', 'type' => $data->service_type]);
 
-                        return $title;
-                    },
+                // TODO: group by year maybe?
+                [
+                    'header' => 'Дата',
+                    'attribute' => 'dateMonth',
+                    'content' => function ($data) {
+                        $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
+                        return Html::a($date, ['/company-statistic/by-day', 'id' => $data->client->id, 'date' => $data->dateMonth]);
+                    }
                 ],
                 [
                     'attribute' => 'countServe',
                     'header' => 'Обслужено',
-                    'footer' => number_format($totalServe, 0, '', ' '),
+                    'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->expense, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->expense);
                     },
-                    'footer' => number_format($totalExpense, 2, ',', ' '),
+                    'footer' => $totalExpense,
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
+                    'attribute' => 'income',
+                    'header' => 'Доход',
+                    'content' => function ($data) {
+                        return Yii::$app->formatter->asCurrency($data->income);
+                    },
+                    'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asCurrency($data->profit);
                     },
-                    'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
@@ -88,16 +88,14 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/list', 'type' => $model->service_type]);
-                        },
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/company-statistic/by-day', 'id' => $model->client->id, 'date' => $model->dateMonth]);
+                        }
                     ]
                 ],
-            ],
+            ]
         ]);
-        Pjax::end();
         ?>
         <hr>
-
         <div class="col-sm-12">
             <div id="chart_div" style="width:100%;height:500px;"></div>
             <?php
@@ -160,7 +158,7 @@ echo $this->render('_search', [
                 ";
             $this->registerJs($js);
             ?>
-        </div>
 
+        </div>
     </div>
 </div>
