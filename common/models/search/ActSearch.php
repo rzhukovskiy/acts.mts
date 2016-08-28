@@ -193,6 +193,7 @@ class ActSearch extends Act
         $query->andFilterWhere([
             'id' => $this->id,
             'card_id' => $this->card_id,
+            'check' => $this->check,
             'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,

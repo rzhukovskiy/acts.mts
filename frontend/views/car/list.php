@@ -136,8 +136,8 @@ echo GridView::widget([
             },
             'group' => $admin,
             'groupedRow' => true,
-            'groupOddCssClass' => '',
-            'groupEvenCssClass' => '',
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
             'visible' => $admin,
         ],
         [
