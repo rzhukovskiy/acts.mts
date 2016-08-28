@@ -82,6 +82,18 @@ $columns = [
                 ]
             ];
         },
+        'groupHeader' => function ($data) {
+            return [
+                'mergeColumns' => [[0, 11]],
+                'content' => [
+                    0 => $data->partner->parent->name,
+                ],
+                'options' => [
+                    'class' => isset($data->client->parent) ? '' : 'hidden',
+                    'style' => 'font-weight:bold;'
+                ]
+            ];
+        },
         'hidden' => true,
     ],
     [

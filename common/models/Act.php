@@ -102,6 +102,7 @@ class Act extends ActiveRecord
             [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
+            ['status', 'default', 'value' => self::STATUS_NEW],
         ];
     }
 

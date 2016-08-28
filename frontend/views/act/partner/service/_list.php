@@ -88,7 +88,10 @@ $columns = [
                 'content' => [
                     0 => $data->partner->parent->name,
                 ],
-                'options' => ['style' => 'font-weight:bold;']
+                'options' => [
+                    'class' => isset($data->client->parent) ? '' : 'hidden',
+                    'style' => 'font-weight:bold;'
+                ]
             ];
         },
         'hidden' => true,

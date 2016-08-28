@@ -24,7 +24,7 @@ class m160815_162057_create_act_table extends Migration
             'income' => 'INT(10) NOT NULL DEFAULT \'0\'',
             'profit' => 'INT(10) NOT NULL DEFAULT \'0\'',
             'service_type' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
-            'status' => 'SMALLINT(6) NOT NULL DEFAULT \'10\'',
+            'status' => 'SMALLINT(6) NOT NULL DEFAULT \'0\'',
             'number' => 'VARCHAR(45) NOT NULL',
             'extra_number' => 'VARCHAR(45) NOT NULL',
             'check' => 'VARCHAR(45) NOT NULL',
