@@ -59,15 +59,9 @@ use yii\jui\AutoComplete;
                 <td>
                     <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
-                </td>
-                <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
-                </td>
             </tr>
             <tr>
-                <td colspan="6">
+                <td colspan="4">
                     <div class="form-group row" style="height: 5px;">
                         <div class="col-xs-12">
                             <label class="control-label">Услуга</label>
