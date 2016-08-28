@@ -198,7 +198,6 @@ class ActSearch extends Act
             'id' => $this->id,
             'card_id' => $this->card_id,
             'act.type_id' => $this->type_id,
-            'act.number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -207,8 +206,8 @@ class ActSearch extends Act
             'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
         ]);
 
-        $query->andFilterWhere(['like', 'number', $this->number])
-            ->andFilterWhere(['like', 'extra_number', $this->extra_number])
+        $query->andFilterWhere(['like', 'act.number', $this->number])
+            ->andFilterWhere(['like', 'act.extra_number', $this->extra_number])
             ->andFilterWhere(['like', 'check', $this->check]);
 
 
