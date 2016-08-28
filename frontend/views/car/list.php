@@ -72,9 +72,9 @@ switch ($diff) {
 $periodForm = '';
 $periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' =>'select-period form-control', 'style' => 'margin-right: 10px;']);
 $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);
-$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
+$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
 $periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
 $periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
 
@@ -93,11 +93,11 @@ echo GridView::widget([
             'columns' => [
                 [
                     'content' => 'Выбор периода:',
-                    'options' => ['style' => 'vertical-align: middle'],
+                    'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
                 ],
                 [
                     'content' => $periodForm,
-                    'options' => ['colspan' => 4, 'class' => 'kv-grid-group-filter period-select'],
+                    'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter period-select'],
                 ],
                 [
                     'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
