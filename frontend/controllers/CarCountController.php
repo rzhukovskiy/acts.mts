@@ -46,11 +46,6 @@ class CarCountController extends Controller
 
     public function actionList()
     {
-        $companyId = null;
-        if (!empty(Yii::$app->user->identity->company_id)) {
-            $companyId = Yii::$app->user->identity->company_id;
-        }
-
         $searchModel = new CarSearch();
         if (!empty(Yii::$app->user->identity->company_id)) {
             $searchModel->company_id = Yii::$app->user->identity->company->id;
@@ -58,17 +53,24 @@ class CarCountController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
             ->with(['type'])
-            ->carsCountByTypes($companyId);
+            ->carsCountByTypes($searchModel->company_id);
 
-        $companyModels = Company::find()
-            ->andWhere(['type' => Company::TYPE_OWNER])
-            ->all();
-        $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
+        if (Yii::$app->user->can(User::ROLE_ADMIN)) {
+            $companyModels = Company::find()
+                ->andWhere(['type' => Company::TYPE_OWNER])
+                ->all();
+            $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
+        } else {
+            $companyModels = Company::find()
+                ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+                ->all();
+            $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
+        }
 
         return $this->render('list', [
             'searchModel' => $searchModel,
             'carByTypes' => $dataProvider,
-            'companyId' => $companyId,
+            'companyId' => $searchModel->company_id,
             'companyDropDownData' => $companyDropDownData,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);

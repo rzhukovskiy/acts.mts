@@ -2,6 +2,7 @@
 
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
+use common\models\Company;
 
 /**
  * @var $this yii\web\View
@@ -77,6 +78,7 @@ $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 
 $periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
 $periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
 $periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary', 'style' => 'margin-left: 10px;']);
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -88,19 +90,19 @@ echo GridView::widget([
     'export' => false,
     'summary' => false,
     'emptyText' => '',
+    'filterSelector' => '.ext-filter',
     'beforeHeader' => [
         [
             'columns' => [
                 [
-                    'content' => 'Выбор периода:',
-                    'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
+                    'content' => 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+                            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+                            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px;']),
+                    'options' => ['colspan' => 3, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter ext-filter'],
                 ],
                 [
-                    'content' => $periodForm,
+                    'content' => 'Выбор периода: ' . $periodForm,
                     'options' => ['colspan' => 3, 'class' => 'kv-grid-group-filter period-select'],
-                ],
-                [
-                    'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
                 ],
             ],
             'options' => ['class' => 'filters extend-header'],
@@ -134,11 +136,11 @@ echo GridView::widget([
             'content' => function ($data) {
                 return $data->client->name;
             },
-            'group' => $admin,
+            'group' => true,
             'groupedRow' => true,
             'groupOddCssClass' => 'kv-group-header',
             'groupEvenCssClass' => 'kv-group-header',
-            'visible' => $admin,
+            'visible' => $admin || !empty(Yii::$app->user->identity->company->children),
         ],
         [
             'attribute' => 'mark_id',

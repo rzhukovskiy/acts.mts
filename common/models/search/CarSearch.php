@@ -53,6 +53,11 @@ class CarSearch extends Car
 
         $this->load($params);
 
+        //для не админа жестко задаем company_id
+        if (!empty(Yii::$app->user->identity->company_id) && !$this->company_id) {
+            $this->company_id = Yii::$app->user->identity->company->id;
+        }
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

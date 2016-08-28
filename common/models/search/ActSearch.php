@@ -45,7 +45,7 @@ class ActSearch extends Act
             self::SCENARIO_CLIENT => ['check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
             self::SCENARIO_PARTNER => ['check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
             self::SCENARIO_ERROR => ['check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
-            self::SCENARIO_HISTORY => ['number', 'dateFrom', 'dateTo'],
+            self::SCENARIO_HISTORY => ['client_id', 'number', 'dateFrom', 'dateTo'],
         ];
     }
 

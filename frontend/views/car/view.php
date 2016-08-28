@@ -105,6 +105,7 @@ echo GridView::widget([
         'footer' => false,
         'after' => false,
     ],
+    'filterSelector' => '.ext-filter',
     'beforeHeader' => [
         [
             'columns' => [
@@ -120,7 +121,7 @@ echo GridView::widget([
                     'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
                 ],
             ],
-            'options' => ['class' => 'filters extend-header', 'id' => 'w1-filters'],
+            'options' => ['class' => 'extend-header'],
         ],
         [
             'columns' => [

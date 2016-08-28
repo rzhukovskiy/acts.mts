@@ -35,7 +35,7 @@ $headerColumns = [
                 'minViewMode' => 1,
             ],
             'options' => [
-                'class' => 'form-control',
+                'class' => 'form-control ext-filter',
             ]
         ]),
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
@@ -187,10 +187,11 @@ echo GridView::widget([
     'striped' => false,
     'export' => false,
     'showPageSummary' => true,
+    'filterSelector' => 'ext-filter',
     'beforeHeader' => [
         [
             'columns' => $headerColumns,
-            'options' => ['class' => 'filters extend-header', 'id' => 'w1-filters'],
+            'options' => ['class' => 'extend-header'],
         ],
         [
             'columns' => [

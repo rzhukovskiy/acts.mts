@@ -38,7 +38,7 @@ $headerColumns = [
                 'minViewMode' => 1,
             ],
             'options' => [
-                'class' => 'form-control',
+                'class' => 'form-control ext-filter',
             ]
         ]),
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
@@ -50,7 +50,7 @@ $headerColumns = [
     [
         'content' => Html::activeDropDownList($searchModel, 'client_id', Company::find()
             ->where(['parent_id' => Yii::$app->user->identity->company_id])
-            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control']),
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']),
         'options' => ['colspan' => 2],
     ],
     [
@@ -270,10 +270,11 @@ echo GridView::widget([
     'striped' => false,
     'export' => false,
     'showPageSummary' => true,
+    'filterSelector' => '.ext-filter',
     'beforeHeader' => [
         [
             'columns' => $headerColumns,
-            'options' => ['class' => 'filters extend-header', 'id' => 'w1-filters'],
+            'options' => ['class' => 'extend-header'],
         ],
         [
             'columns' => [

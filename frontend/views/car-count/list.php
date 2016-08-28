@@ -14,7 +14,7 @@ $this->title = 'Список типов ТС';
 
 ?>
 <div class="car-count-index">
-    <?php if ($admin) { ?>
+    <?php if ($admin || !empty(Yii::$app->user->identity->company->children)) { ?>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 Поиск
