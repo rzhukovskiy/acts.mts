@@ -95,7 +95,8 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+                    'content' => $admin || empty(Yii::$app->user->identity->company->children) ? '' :
+                        'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
                             ->where(['parent_id' => Yii::$app->user->identity->company_id])
                             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px;']),
                     'options' => ['colspan' => 3, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter ext-filter'],
