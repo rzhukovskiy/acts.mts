@@ -22,6 +22,7 @@ return [
             'locale' => 'ru-RU',
             'timeZone' => 'Europe/Moscow',
             'defaultTimeZone' => 'UTC',
+            'currencyCode' => '',
         ],
     ],
 ];

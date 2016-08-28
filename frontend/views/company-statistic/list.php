@@ -90,7 +90,7 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/company-statistic/view', 'id' => $model->client->id]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/company-statistic/view', 'id' => $model->client->id]);
                         }
                     ]
                 ],

@@ -104,7 +104,7 @@ use common\components\DateHelper;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/company-statistic/view-act', 'id' => $model->id]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/company-statistic/view-act', 'id' => $model->id]);
                         }
                     ]
                 ],

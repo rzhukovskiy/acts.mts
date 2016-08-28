@@ -5,7 +5,6 @@ namespace common\models\search;
 use common\models\Company;
 use common\models\Service;
 use yii;
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Act;
 
@@ -207,7 +206,11 @@ class ActSearch extends Act
             'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
             'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
         ]);
-        $query->andFilterWhere(['like', 'check', $this->check]);
+
+        $query->andFilterWhere(['like', 'number', $this->number])
+            ->andFilterWhere(['like', 'extra_number', $this->extra_number])
+            ->andFilterWhere(['like', 'check', $this->check]);
+
 
         return $dataProvider;
     }

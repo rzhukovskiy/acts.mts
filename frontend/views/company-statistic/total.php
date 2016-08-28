@@ -88,7 +88,7 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['/statistic/list', 'type' => $model->service_type]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/list', 'type' => $model->service_type]);
                         },
                     ]
                 ],
