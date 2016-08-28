@@ -140,17 +140,6 @@ $columns = [
         'contentOptions' => ['style' => 'min-width:60px'],
     ],
     [
-        'attribute' => 'card_id',
-        'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-        'value' => function ($data) {
-            return isset($data->card) ? $data->card->number : 'error';
-        },
-        'contentOptions' => function($data) {
-            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
-            return ['style' => 'min-width:80px'];
-        },
-    ],
-    [
         'attribute' => 'mark_id',
         'filter' => Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
         'value' => function ($data) {
@@ -168,6 +157,17 @@ $columns = [
         'filter' => Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
+        },
+    ],
+    [
+        'attribute' => 'card_id',
+        'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
+        'value' => function ($data) {
+            return isset($data->card) ? $data->card->number : 'error';
+        },
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            return ['style' => 'min-width:80px'];
         },
     ],
     [
