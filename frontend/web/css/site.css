@@ -131,7 +131,8 @@ body {
 .table>tfoot>tr.warning>td {
     background: none;
 }
-.kv-grid-group-filter .form-control { display: inline; min-width: 0; width: auto; }
+.kv-grid-group-filter .form-control { display: inline; min-width: 0; width: auto; margin-right: 10px; }
+.kv-grid-group-filter .btn { margin-right: 10px; }
 
 /* act-table */
 .panel.acts .panel-body {

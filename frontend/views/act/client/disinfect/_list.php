@@ -15,46 +15,39 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
 
+$filters = 'Период: ' . DatePicker::widget([
+        'model' => $searchModel,
+        'attribute' => 'period',
+        'type' => DatePicker::TYPE_INPUT,
+        'language' => 'ru',
+        'pluginOptions' => [
+            'autoclose' => true,
+            'changeMonth' => true,
+            'changeYear' => true,
+            'showButtonPanel' => true,
+            'format' => 'm-yyyy',
+            'maxViewMode' => 2,
+            'minViewMode' => 1,
+        ],
+        'options' => [
+            'class' => 'form-control ext-filter',
+        ]
+    ]);
+
+if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
+    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
+}
+if ($role == User::ROLE_ADMIN) {
+    $filters .= Html::a('Выгрузить', '#', ['class' => 'pull-right btn btn-primary btn-sm']);
+    $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
+}
+
 $headerColumns = [
     [
-        'content' => 'Период:',
-        'options' => ['style' => 'vertical-align: middle'],
-    ],
-    [
-        'content' => DatePicker::widget([
-            'model' => $searchModel,
-            'attribute' => 'period',
-            'type' => DatePicker::TYPE_INPUT,
-            'language' => 'ru',
-            'pluginOptions' => [
-                'autoclose' => true,
-                'changeMonth' => true,
-                'changeYear' => true,
-                'showButtonPanel' => true,
-                'format' => 'm-yyyy',
-                'maxViewMode' => 2,
-                'minViewMode' => 1,
-            ],
-            'options' => [
-                'class' => 'form-control ext-filter',
-            ]
-        ]),
-        'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
-    ],
-    [
-        'content' => 'Выбор филиала:',
-        'options' => ['style' => 'vertical-align: middle'],
-    ],
-    [
-        'content' => Html::activeDropDownList($searchModel, 'client_id', Company::find()
-            ->where(['parent_id' => Yii::$app->user->identity->company_id])
-            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']),
-    ],
-    [
-        'content' => Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'btn btn-primary btn-sm']),
-    ],
-    [
-        'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
+        'content' => $filters,
+        'options' => ['style' => 'vertical-align: middle', 'colspan' => 8, 'class' => 'kv-grid-group-filter'],
     ],
 ];
 
@@ -138,7 +131,7 @@ $columns = [
     [
         'attribute' => 'day',
         'filter' => Act::getDayList(),
-        'value' => function ($data) use($role) {
+        'value' => function ($data) use ($role) {
             return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
         },
         'contentOptions' => ['style' => 'min-width:60px'],
@@ -152,8 +145,8 @@ $columns = [
     ],
     [
         'attribute' => 'number',
-        'contentOptions' => function($data) {
-            if($data->hasError('car')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('car')) return ['class' => 'text-danger'];
         },
     ],
     [
@@ -167,8 +160,8 @@ $columns = [
         'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
-        'contentOptions' => function($data) {
-            if($data->hasError('income')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('income')) return ['class' => 'text-danger'];
         },
     ],
     [
@@ -183,15 +176,8 @@ if ($role != User::ROLE_ADMIN) {
     if (!empty(Yii::$app->user->identity->company->children)) {
         unset($columns[1], $columns[8]);
     } else {
-        $headerColumns[2]['content'] = '';
-        $headerColumns[3]['content'] = '';
         unset($columns[1], $columns[2], $columns[8]);
     }
-    unset($headerColumns[4]);
-    $headerColumns[5]['content'] = '';
-} else {
-    $headerColumns[2]['content'] = '';
-    $headerColumns[3]['content'] = '';
 }
 
 
