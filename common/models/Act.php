@@ -342,7 +342,7 @@ class Act extends ActiveRecord
                 $this->partnerServiceList = $this->getPartnerScopes()->asArray()->all();
             }
             if (!empty($this->partnerServiceList)) {
-                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->client_id]);
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->partner_id]);
 
                 foreach ($this->partnerServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
@@ -383,7 +383,7 @@ class Act extends ActiveRecord
                 $this->clientServiceList = $this->getClientScopes()->asArray()->all();
             }
             if (!empty($this->clientServiceList)) {
-                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->partner_id]);
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->client_id]);
 
                 foreach ($this->clientServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {

@@ -1,7 +1,8 @@
 <?php
 
+use kartik\grid\GridView;
 use yii\bootstrap\Html;
-use yii\grid\GridView;
+use common\models\Company;
 
 /**
  * @var $this \yii\web\View
@@ -14,7 +15,7 @@ $this->title = 'Список типов ТС';
 
 ?>
 <div class="car-count-index">
-    <?php if ($admin || !empty(Yii::$app->user->identity->company->children)) { ?>
+    <?php if ($admin) { ?>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 Поиск
@@ -30,14 +31,18 @@ $this->title = 'Список типов ТС';
             <?php
             echo GridView::widget([
                 'dataProvider' => $carByTypes,
-                'id' => 'car-count-штвуч',
-                'layout' => "{summary}\n{items}\n{pager}",
-                'summary' => false,
+                'id' => 'car-count-index',
+                'layout' => "{items}",
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'showPageSummary' => true,
                 'emptyText' => '',
                 'columns' => [
                     [
                         'header' => '№',
-                        'class' => 'yii\grid\SerialColumn'
+                        'class' => 'kartik\grid\SerialColumn',
+                        'pageSummary' => 'Всего',
                     ],
                     [
                         'attribute' => 'type.name',
@@ -47,13 +52,16 @@ $this->title = 'Список типов ТС';
                     ],
                     [
                         'attribute' => 'carsCountByType',
-                        'label' => 'Кол-во'
+                        'label' => 'Кол-во',
+                        'pageSummary' => true,
+                        'pageSummaryFunc' => GridView::F_SUM,
                     ],
                     [
-                        'class' => 'yii\grid\ActionColumn',
+                        'header' => '',
+                        'class' => 'kartik\grid\ActionColumn',
                         'template' => '{view}',
                         'buttons' => [
-                            'view' => function ($url, $data, $key) use($searchModel) {
+                            'view' => function ($url, $data, $key) use ($searchModel) {
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'type' => $data->type->id, 'CarSearch[company_id]' => $searchModel->company_id]);
                             },
                         ],
