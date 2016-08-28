@@ -8,6 +8,7 @@
 
 use common\models\Act;
 use common\models\Card;
+use common\models\Company;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
@@ -42,15 +43,29 @@ $headerColumns = [
         ]),
         'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
     ],
-    '',
-    '',
+    [
+        'content' => 'Выбор филиала:',
+        'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
+    ],
+    [
+        'content' => Html::activeDropDownList($searchModel, 'client_id', Company::find()
+            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control']),
+        'options' => ['colspan' => 2],
+    ],
+    [
+        'options' => ['style' => 'display: none'],
+    ],
+    [
+        'options' => ['style' => 'display: none'],
+    ],
     '',
     [
-        'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+        'content' => Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'btn btn-primary btn-sm']),
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
-        'options' => ['colspan' => 3],
+        'options' => ['colspan' => 2],
     ],
 ];
 
@@ -58,8 +73,10 @@ $columns = [
     [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
-        'contentOptions' => ['style' => 'max-width: 40px'],
         'pageSummary' => 'Всего',
+        'mergeHeader' => false,
+        'width' => '30px',
+        'vAlign' => GridView::ALIGN_TOP,
     ],
     [
         'attribute' => 'parent_id',
@@ -67,19 +84,16 @@ $columns = [
             return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
         },
         'group' => true,
-        'groupedRow' => true,
-        'groupOddCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->client->parent) ? 'parent' : 'hidden';
-        },
-        'groupEvenCssClass' => function ($data, $key, $index, $widget) {
-            return isset($data->client->parent) ? 'parent' : 'hidden';
-        },
-        'groupFooter' => function ($data, $key, $index, $widget) {
+        'groupFooter' => function ($data) {
             return [
-                'mergeColumns'=>[[0,8]],
+                'mergeColumns' => [[0, 6]],
                 'content' => [
                     0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
                     9 => GridView::F_SUM,
+                ],
+                'contentOptions' => [
+                    7 => ['style' => 'display: none'],
+                    8 => ['style' => 'display: none'],
                 ],
                 'options' => [
                     'class' => isset($data->client->parent) ? '' : 'hidden',
@@ -87,6 +101,22 @@ $columns = [
                 ]
             ];
         },
+        'groupHeader' => function ($data) {
+            return [
+                'mergeColumns' => [[0, 11]],
+                'content' => [
+                    0 => $data->client->parent->name,
+                ],
+                'contentOptions' => [
+                    12 => ['style' => 'display: none'],
+                ],
+                'options' => [
+                    'class' => isset($data->client->parent) ? '' : 'hidden',
+                    'style' => 'font-weight:bold;'
+                ]
+            ];
+        },
+        'hidden' => true,
     ],
     [
         'attribute' => 'client_id',
@@ -95,24 +125,37 @@ $columns = [
         },
         'group' => true,
         'subGroupOf' => 1,
-        'groupedRow' => true,
-        'groupOddCssClass' => 'child',
-        'groupEvenCssClass' => 'child',
-        'groupFooter' => function ($data, $key, $index, $widget) {
+        'groupFooter' => function ($data) {
             return [
-                'mergeColumns'=>[[3,8]],
+                'mergeColumns' => [[2, 7]],
                 'content' => [
-                    3 => 'Итого по ' . $data->client->name,
+                    2 => 'Итого по ' . $data->client->name,
                     9 => GridView::F_SUM,
+                ],
+                'contentOptions' => [
+                    8 => ['style' => 'display: none'],
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
         },
+        'groupHeader' => function ($data) {
+            return [
+                'mergeColumns' => [[0, 11]],
+                'content' => [
+                    0 => $data->client->name . ' - ' . $data->client->address,
+                ],
+                'contentOptions' => [
+                    12 => ['style' => 'display: none'],
+                ],
+                'options' => ['style' => 'font-size: smaller; font-weight:bold;']
+            ];
+        },
+        'hidden' => true,
     ],
     [
         'attribute' => 'day',
         'filter' => Act::getDayList(),
-        'value' => function ($data) use($role) {
+        'value' => function ($data) use ($role) {
             return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
         },
     ],
@@ -121,6 +164,10 @@ $columns = [
         'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
+        },
+        'contentOptions' => function ($data) {
+            if ($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            return ['style' => 'min-width:80px'];
         },
     ],
     [
@@ -132,8 +179,8 @@ $columns = [
     ],
     [
         'attribute' => 'number',
-        'contentOptions' => function($data) {
-            if($data->hasError('car')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('car')) return ['class' => 'text-danger'];
         },
     ],
     [
@@ -146,7 +193,7 @@ $columns = [
     [
         'header' => 'Услуга',
         'value' => function ($data) {
-            if($data->service_type == Service::TYPE_WASH) {
+            if ($data->service_type == Service::TYPE_WASH) {
                 /** @var \common\models\ActScope $scope */
                 $services = [];
                 foreach ($data->clientScopes as $scope) {
@@ -158,11 +205,11 @@ $columns = [
         }
     ],
     [
-        'attribute' => 'expense',
+        'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
-        'contentOptions' => function($data) {
-            if($data->hasError('expense')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('income')) return ['class' => 'text-danger'];
         },
     ],
     'partner.address',
@@ -176,8 +223,8 @@ $columns = [
             return 'error';
         },
         'format' => 'raw',
-        'contentOptions' => function($data) {
-            if($data->hasError('check')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('check')) return ['class' => 'text-danger'];
         },
     ],
     [
@@ -185,15 +232,23 @@ $columns = [
         'class' => 'kartik\grid\ActionColumn',
         'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 100px'],
+        'mergeHeader' => false,
     ],
 ];
 
 if ($role != User::ROLE_ADMIN) {
-    unset($columns[1], $columns[2], $columns[12]);
-    $headerColumns[5]['content'] = '';
-    $headerColumns[6]['content'] = '';
+    if (!empty(Yii::$app->user->identity->company->children)) {
+        unset($columns[1], $columns[12]);
+    } else {
+        $headerColumns[2]['content'] = '';
+        $headerColumns[3]['content'] = '';
+        unset($columns[1], $columns[2], $columns[12]);
+    }
+    $headerColumns[7]['content'] = '';
+    $headerColumns[8]['content'] = '';
 } else {
-    unset($columns[10]);
+    $headerColumns[2]['content'] = '';
+    $headerColumns[3]['content'] = '';
 }
 
 
@@ -229,7 +284,7 @@ echo GridView::widget([
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-grid-group-row'],
+            'options' => ['class' => 'kv-group-header'],
         ],
     ],
     'columns' => $columns,

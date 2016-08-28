@@ -70,6 +70,11 @@ class Act extends ActiveRecord
     public $image;
 
     /**
+     * @var array
+     */
+    public static $periodList = array('все время', 'месяц', 'квартал', 'полгода', 'год');
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -97,6 +102,7 @@ class Act extends ActiveRecord
             [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
+            ['status', 'default', 'value' => self::STATUS_NEW],
         ];
     }
 
@@ -298,7 +304,11 @@ class Act extends ActiveRecord
                 $totalExpense = 0;
                 $totalIncome = 0;
                 foreach ($this->serviceList as $serviceData) {
-                    $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                    $clientService = CompanyService::findOne([
+                        'service_id' => $serviceData['service_id'],
+                        'company_id' => $this->client_id,
+                        'type_id' => $this->type_id,
+                    ]);
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $totalIncome += $clientService->price * $serviceData['amount'];
                     } else {
@@ -306,7 +316,11 @@ class Act extends ActiveRecord
                         $totalIncome += 1.2 * $serviceData['price'] * $serviceData['amount'];
                     }
 
-                    $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                    $partnerService = CompanyService::findOne([
+                        'service_id' => $serviceData['service_id'],
+                        'company_id' => $this->partner_id,
+                        'type_id' => $this->type_id,
+                    ]);
                     if (!empty($partnerService) && $partnerService->service->is_fixed) {
                         $totalExpense += $partnerService->price * $serviceData['amount'];
                     } else {
@@ -323,8 +337,13 @@ class Act extends ActiveRecord
         } else {
             $totalExpense = 0;
             $totalIncome = 0;
-            ActScope::deleteAll(['act_id' => $this->id]);
+
+            if (empty($this->partnerServiceList) && $this->status == self::STATUS_NEW) {
+                $this->partnerServiceList = $this->getPartnerScopes()->asArray()->all();
+            }
             if (!empty($this->partnerServiceList)) {
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->client_id]);
+
                 foreach ($this->partnerServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -334,7 +353,11 @@ class Act extends ActiveRecord
                     $scope->act_id = $this->id;
                     if (!empty($serviceData['service_id'])) {
                         $scope->service_id = $serviceData['service_id'];
-                        $companyService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                        $companyService = CompanyService::findOne([
+                            'service_id' => $serviceData['service_id'],
+                            'company_id' => $this->partner_id,
+                            'type_id' => $this->type_id,
+                        ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
                             $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
@@ -351,9 +374,17 @@ class Act extends ActiveRecord
                     $scope->save();
                     $totalExpense += $scope->price * $scope->amount;
                 }
+
+                $this->expense = $totalExpense;
             }
 
+
+            if (empty($this->clientServiceList) && $this->status == self::STATUS_NEW) {
+                $this->clientServiceList = $this->getClientScopes()->asArray()->all();
+            }
             if (!empty($this->clientServiceList)) {
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->partner_id]);
+
                 foreach ($this->clientServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -363,7 +394,11 @@ class Act extends ActiveRecord
                     $scope->act_id = $this->id;
                     if (!empty($serviceData['service_id'])) {
                         $scope->service_id = $serviceData['service_id'];
-                        $companyService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                        $companyService = CompanyService::findOne([
+                            'service_id' => $serviceData['service_id'],
+                            'company_id' => $this->client_id,
+                            'type_id' => $this->type_id,
+                        ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
                             $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
@@ -380,10 +415,10 @@ class Act extends ActiveRecord
                     $scope->save();
                     $totalIncome += $scope->price * $scope->amount;
                 }
+
+                $this->income = $totalIncome;
             }
 
-            $this->income = $totalIncome;
-            $this->expense = $totalExpense;
             $this->profit = $this->income - $this->expense;
         }
 
@@ -408,7 +443,11 @@ class Act extends ActiveRecord
                     $clientScope->act_id = $this->id;
                     if (!empty($serviceData['service_id'])) {
                         $clientScope->service_id = $serviceData['service_id'];
-                        $clientService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->client_id]);
+                        $clientService = CompanyService::findOne([
+                            'service_id' => $serviceData['service_id'],
+                            'company_id' => $this->client_id,
+                            'type_id' => $this->type_id,
+                        ]);
 
                         if (!empty($clientService) && $clientService->service->is_fixed) {
                             $clientScope->price = $clientService->price;
@@ -430,7 +469,11 @@ class Act extends ActiveRecord
                     $partnerScope->act_id = $this->id;
                     if (!empty($serviceData['service_id'])) {
                         $partnerScope->service_id = $serviceData['service_id'];
-                        $partnerService = CompanyService::findOne(['service_id' => $serviceData['service_id'], 'company_id' => $this->partner_id]);
+                        $partnerService = CompanyService::findOne([
+                            'service_id' => $serviceData['service_id'],
+                            'company_id' => $this->partner_id,
+                            'type_id' => $this->type_id,
+                        ]);
                         if (!empty($partnerService) && $partnerService->service->is_fixed) {
                             $partnerScope->price = $partnerService->price;
                             $partnerScope->description = $partnerService->service->description;

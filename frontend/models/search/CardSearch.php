@@ -61,12 +61,12 @@ class CardSearch extends CommonCardSearch
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'company_id' => $this->company_id,
             'number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+        $query->andFilterWhere(['company.parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
 
         return $dataProvider;
     }

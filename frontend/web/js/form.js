@@ -27,6 +27,38 @@ $(document).ready(function() {
     });
 
     imagePreview();
+
+    $('body').on('change','.select-period', function(e) {
+        console.log($(this).val());
+        switch ($(this).val()) {
+            case '1':
+                $('#year').fadeIn();
+                $('#month').fadeIn();
+                $('#half').fadeOut();
+                $('#quarter').fadeOut();
+                break;
+            case '2':
+                $('#year').fadeIn();
+                $('#quarter').fadeIn();
+                $('#month').fadeOut();
+                $('#half').fadeOut();
+                break;
+            case '3':
+                $('#year').fadeIn();
+                $('#half').fadeIn();
+                $('#month').fadeOut();
+                $('#quarter').fadeOut();
+                break;
+            case '4':
+                $('#year').fadeIn();
+                $('#month').fadeOut();
+                $('#quarter').fadeOut();
+                $('#half').fadeOut();
+                break;
+            default:
+                $('.autoinput').not('.select-period').fadeOut();
+        }
+    });
 });
 
 

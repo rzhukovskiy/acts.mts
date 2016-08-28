@@ -25,12 +25,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'fix'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -52,13 +52,6 @@ class ActController extends Controller
     public function actionList($type, $company = false)
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
-        if (!empty(Yii::$app->user->identity->company_id)) {
-            if ($company) {
-                $searchModel->client_id = Yii::$app->user->identity->company->id;
-            } else {
-                $searchModel->partner_id = Yii::$app->user->identity->company->id;
-            }
-        }
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -70,6 +63,18 @@ class ActController extends Controller
             'company' => $company,
             'role' => Yii::$app->user->identity->role,
         ]);
+    }
+
+    public function actionFix($type, $company = false)
+    {
+        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
+        $searchModel->service_type = $type;
+
+        foreach ($searchModel->search(Yii::$app->request->queryParams)->getModels() as $act) {
+            $act->save();
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**
@@ -212,7 +217,8 @@ class ActController extends Controller
                 Yii::$app->user->can(User::ROLE_ADMIN) ||
                 Yii::$app->user->can(User::ROLE_WATCHER) ||
                 Yii::$app->user->identity->company_id == $model->partner_id ||
-                Yii::$app->user->identity->company_id == $model->client_id
+                Yii::$app->user->identity->company_id == $model->client_id ||
+                Yii::$app->user->identity->company_id == $model->client->parent_id
             ) {
                 return $model;
             }

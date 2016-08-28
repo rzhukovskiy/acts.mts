@@ -13,6 +13,15 @@ body {
     border-bottom: dashed 1px #069;
     padding: 0 10px;
 }
+#preview {
+    z-index: 9999;
+}
+.content-main {
+    padding-left: 200px;
+}
+.content-menu {
+   z-index: 10;
+}
 
 /* login */
 .login-form {
@@ -80,7 +89,7 @@ body {
 }
 
 /* buttons */
-.glyphicon-pencil, .glyphicon-trash, .glyphicon-eye-open {
+.glyphicon-pencil, .glyphicon-trash, .glyphicon-search {
     font-size: larger;
     font-weight: bold;
     margin: 0 0 0 5px;
@@ -99,12 +108,15 @@ body {
 .kv-grid-group-row .parent {
     font-weight: bold;
 }
-.kv-grid-group-row {
+.kv-group-header {
     color: #ffffff;
     background-color: #428bca;
 }
 .kv-table-float {
     background-color: #eee;
+}
+.kv-page-summary {
+    border-top: 0;
 }
 .select2-container--krajee .select2-selection--single {
     height: 40px;
@@ -119,6 +131,7 @@ body {
 .table>tfoot>tr.warning>td {
     background: none;
 }
+.period-select .form-control { display: inline; min-width: 0; width: auto; }
 
 /* act-table */
 .panel.acts .panel-body {

@@ -41,10 +41,10 @@ AppAsset::register($this);
             </div>
         <?php } ?>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-2 content-menu">
                 <?= menuLeftWidget::widget() ?>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 content-main">
                 <?= Alert::widget() ?>
                 <?= $content ?>
             </div>
