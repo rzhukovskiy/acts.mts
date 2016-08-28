@@ -14,6 +14,7 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
+
 $headerColumns = [
     [
         'content' => 'Период:',
@@ -50,7 +51,7 @@ $headerColumns = [
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control']),
     ],
     [
-        'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+        'content' => Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'btn btn-primary btn-sm']),
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),

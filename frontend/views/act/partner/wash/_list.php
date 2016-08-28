@@ -52,7 +52,7 @@ $headerColumns = [
     '',
     '',
     [
-        'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+        'content' => Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'btn btn-primary btn-sm']),
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),

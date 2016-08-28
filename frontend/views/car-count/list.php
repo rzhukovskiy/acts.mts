@@ -54,7 +54,7 @@ $this->title = 'Список типов ТС';
                         'template' => '{view}',
                         'buttons' => [
                             'view' => function ($url, $data, $key) use($searchModel) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'type' => $data->type->id, 'CarSearch[company_id]' => $searchModel->company_id]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'type' => $data->type->id, 'CarSearch[company_id]' => $searchModel->company_id]);
                             },
                         ],
                     ],

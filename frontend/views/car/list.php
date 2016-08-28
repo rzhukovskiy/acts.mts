@@ -164,7 +164,7 @@ echo GridView::widget([
             'template' => '{view}',
             'buttons' => [
                 'view' => function ($url, $data, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->car->id]);
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car->id]);
                 },
             ],
         ],

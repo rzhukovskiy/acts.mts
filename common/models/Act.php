@@ -336,8 +336,13 @@ class Act extends ActiveRecord
         } else {
             $totalExpense = 0;
             $totalIncome = 0;
-            ActScope::deleteAll(['act_id' => $this->id]);
+
+            if (empty($this->partnerServiceList) && $this->status == self::STATUS_NEW) {
+                $this->partnerServiceList = $this->getPartnerScopes()->asArray()->all();
+            }
             if (!empty($this->partnerServiceList)) {
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->client_id]);
+
                 foreach ($this->partnerServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -368,9 +373,17 @@ class Act extends ActiveRecord
                     $scope->save();
                     $totalExpense += $scope->price * $scope->amount;
                 }
+
+                $this->expense = $totalExpense;
             }
 
+
+            if (empty($this->clientServiceList) && $this->status == self::STATUS_NEW) {
+                $this->clientServiceList = $this->getClientScopes()->asArray()->all();
+            }
             if (!empty($this->clientServiceList)) {
+                ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->partner_id]);
+
                 foreach ($this->clientServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -401,10 +414,10 @@ class Act extends ActiveRecord
                     $scope->save();
                     $totalIncome += $scope->price * $scope->amount;
                 }
+
+                $this->income = $totalIncome;
             }
 
-            $this->income = $totalIncome;
-            $this->expense = $totalExpense;
             $this->profit = $this->income - $this->expense;
         }
 

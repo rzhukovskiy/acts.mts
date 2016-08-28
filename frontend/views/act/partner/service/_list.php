@@ -49,7 +49,7 @@ $headerColumns = [
     '',
     '',
     [
-        'content' => Html::a('Пересчитать', '#', ['class' => 'btn btn-primary btn-sm']),
+        'content' => Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'btn btn-primary btn-sm']),
     ],
     [
         'content' => Html::a('Выгрузить', '#', ['class' => 'btn btn-primary btn-sm']),
@@ -180,7 +180,7 @@ $columns = [
         'contentOptions' => ['style' => 'min-width: 100px'],
         'buttons' => [
             'view' => function ($url, $data, $key) {
-                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $data->id]);
+                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id]);
             },
         ],
     ],

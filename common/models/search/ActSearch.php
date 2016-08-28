@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\models\Company;
 use common\models\Service;
 use yii;
 use yii\base\Model;
@@ -19,7 +20,7 @@ class ActSearch extends Act
     public $dateTo;
     public $period;
     public $day;
-    
+
     /**
      * @inheritdoc
      */
@@ -57,14 +58,6 @@ class ActSearch extends Act
      */
     public function search($params)
     {
-        if (!empty(Yii::$app->user->identity->company_id)) {
-            if (Yii::$app->user->identity->company->type) {
-                $this->client_id = Yii::$app->user->identity->company->id;
-            } else {
-                $this->partner_id = Yii::$app->user->identity->company->id;
-            }
-        }
-
         $query = Act::find();
 
         // add conditions that should always apply here
@@ -75,6 +68,15 @@ class ActSearch extends Act
         ]);
 
         $this->load($params);
+
+        //для не админа жестко задаем company_id
+        if (!empty(Yii::$app->user->identity->company_id) && !$this->client_id && Yii::$app->user->identity->company->type == Company::TYPE_OWNER) {
+            $this->client_id = Yii::$app->user->identity->company->id;
+        }
+        if (!empty(Yii::$app->user->identity->company_id) && !$this->partner_id && Yii::$app->user->identity->company->type != Company::TYPE_OWNER) {
+            $this->partner_id = Yii::$app->user->identity->company->id;
+        }
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -87,6 +89,7 @@ class ActSearch extends Act
                 $query->joinWith([
                     'type',
                     'mark',
+                    'car',
                     'card as card',
                     'client as client',
                     'partner as partner',
@@ -107,7 +110,7 @@ class ActSearch extends Act
                 $query->andFilterWhere(['!=', 'act.status', Act::STATUS_FIXED]);
                 $query->andFilterWhere(['client_id' => $this->client_id,]);
                 $query->andFilterWhere(['partner_id' => $this->partner_id,]);
-                
+
                 $query->orderBy('partner_id, served_at');
                 break;
 
@@ -116,6 +119,8 @@ class ActSearch extends Act
                     'type',
                     'mark',
                     'card',
+                    'car',
+                    'partner partner',
                     'client client',
                     'clientScopes',
                 ]);
@@ -124,7 +129,7 @@ class ActSearch extends Act
                 } else {
                     $query->andFilterWhere(['client_id' => $this->client_id,]);
                 }
-                $query->orderBy('parent_id, act.client_id, served_at');
+                $query->orderBy('client.parent_id, act.client_id, served_at');
                 break;
 
             case self::SCENARIO_PARTNER:
@@ -132,6 +137,7 @@ class ActSearch extends Act
                     'type',
                     'mark',
                     'card',
+                    'car',
                     'partner partner',
                     'partnerScopes',
                 ]);
@@ -140,7 +146,6 @@ class ActSearch extends Act
                 } else {
                     $query->andFilterWhere(['partner_id' => $this->partner_id,]);
                 }
-                $query->orderBy('parent_id, act.partner_id, served_at');
                 break;
 
             case self::SCENARIO_HISTORY:
@@ -187,7 +192,7 @@ class ActSearch extends Act
 
                 $query->orderBy('parent_id, partner_id, served_at');
         }
-        
+
         // grid filtering conditions
         $query->alias('act');
         $query->andFilterWhere([

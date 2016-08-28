@@ -25,12 +25,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'fix'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -63,6 +63,18 @@ class ActController extends Controller
             'company' => $company,
             'role' => Yii::$app->user->identity->role,
         ]);
+    }
+
+    public function actionFix($type, $company = false)
+    {
+        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
+        $searchModel->service_type = $type;
+
+        foreach ($searchModel->search(Yii::$app->request->queryParams)->getModels() as $act) {
+            $act->save();
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**
