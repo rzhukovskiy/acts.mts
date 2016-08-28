@@ -35,7 +35,7 @@ AppAsset::register($this);
                         ['class' => 'btn btn-primary btn-sm pull-right']
                     ) ?>
                     <?php if(Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
-                        <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-default btn-sm pull-right']) ?>
+                        <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
                 </div>
             </div>
