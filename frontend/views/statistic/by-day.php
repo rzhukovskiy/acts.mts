@@ -82,7 +82,7 @@ CanvasJsAsset::register($this);
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/by-hours', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/by-hours', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
                         }
                     ]
                 ],

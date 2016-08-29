@@ -28,7 +28,7 @@ return [
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
             'schemaCache' => 'cache',
-            
+
         ],
     ],
 ];
