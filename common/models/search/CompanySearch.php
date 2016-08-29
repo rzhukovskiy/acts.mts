@@ -40,7 +40,7 @@ class CompanySearch extends Company
      */
     public function search($params)
     {
-        $query = Company::find();
+        $query = Company::find()->active();
 
         // add conditions that should always apply here
 

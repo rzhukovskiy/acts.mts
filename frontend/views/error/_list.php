@@ -95,6 +95,7 @@ $columns = [
             return 'error';
         },
         'format' => 'raw',
+        'visible' => $searchModel->service_type == Service::TYPE_WASH,
         'contentOptions' => function($data) {
             if($data->hasError('check')) return ['class' => 'text-danger'];
         },

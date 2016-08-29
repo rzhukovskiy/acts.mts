@@ -106,9 +106,9 @@ class ActSearch extends Act
                     $query->orWhere('car.company_id != card.company_id');
                 }
                 $query->orFilterWhere(['car.company_id' => null]);
-                $query->andFilterWhere(['!=', 'act.status', Act::STATUS_FIXED]);
                 $query->andFilterWhere(['client_id' => $this->client_id,]);
                 $query->andFilterWhere(['partner_id' => $this->partner_id,]);
+                $query->andFilterWhere(['!=', 'act.status', Act::STATUS_FIXED]);
 
                 $query->orderBy('partner_id, served_at');
                 break;

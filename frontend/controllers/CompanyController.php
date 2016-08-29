@@ -118,9 +118,11 @@ class CompanyController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $type = $model->type;
+        $model->delete();
 
-        return $this->redirect(['list']);
+        return $this->redirect(['list', ['type' => $type]]);
     }
 
     public function actionAddPrice($id)
