@@ -61,25 +61,25 @@ echo $this->render('_search', [
                 [
                     'attribute' => 'countServe',
                     'header' => 'Обслужено',
-                    'footer' => number_format($totalServe, 0, '', ' '),
+                    'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->expense, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
-                    'footer' => number_format($totalExpense, 2, ',', ' '),
+                    'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
-                    'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 

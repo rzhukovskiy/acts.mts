@@ -53,9 +53,9 @@ class StatisticController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'totalServe' => number_format($totalServe, 0, '', ' '),
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
 
@@ -64,7 +64,7 @@ class StatisticController extends Controller
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView($id, $type)
     {
         $companyModel = $this->findCompanyModel($id);
 
@@ -74,7 +74,10 @@ class StatisticController extends Controller
         $searchModel->scenario = 'statistic_partner_filter';
         $dataProvider = $searchModel->searchTypeByMonth(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->andWhere(['partner_id' => $id])
+            ->andFilterWhere([
+                'partner_id' => $id,
+                'service_type' => $type,
+            ])
             ->with(['partner']);
         $dataProvider->pagination = false;
 
@@ -93,13 +96,13 @@ class StatisticController extends Controller
             'dataProvider' => $dataProvider,
             'chartData' => $this->chartByMonth($models),
             'totalServe' => $totalServe,
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
 
-    public function actionByDay($id, $date)
+    public function actionByDay($id, $date, $type)
     {
         $companyModel = $this->findCompanyModel($id);
         $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
@@ -111,9 +114,12 @@ class StatisticController extends Controller
         $dataProvider->query
             ->addSelect('partner_id')
             ->with(['partner'])
-            ->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => date('m', strtotime($date))])
-            ->andWhere(["YEAR(FROM_UNIXTIME(served_at))" => date('Y', strtotime($date))])
-            ->andWhere(['partner_id' => $id]);
+            ->andWhere([
+                "MONTH(FROM_UNIXTIME(served_at))" => date('m', strtotime($date)),
+                "YEAR(FROM_UNIXTIME(served_at))" => date('Y', strtotime($date)),
+                'partner_id' => $id,
+                'service_type' => $type,
+            ]);
 
         $models = $dataProvider->getModels();
         $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
@@ -130,13 +136,13 @@ class StatisticController extends Controller
             'chartData' => $this->chartDataByDay($models, $date),
             'chartTitle' => DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date)),
             'totalServe' => $totalServe,
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
 
-    public function actionByHours($id, $date)
+    public function actionByHours($id, $date, $type)
     {
         $companyModel = $this->findCompanyModel($id);
 
@@ -148,9 +154,12 @@ class StatisticController extends Controller
         $dataProvider->pagination = false;
         $dataProvider->query
             ->addSelect('partner_id')
-            ->with('partner')
-            ->andWhere(["DATE(FROM_UNIXTIME(served_at))" => $date])
-            ->andWhere(['partner_id' => $id]);
+            ->andWhere([
+                "DATE(FROM_UNIXTIME(served_at))" => $date,
+                'service_type' => $type,
+                'partner_id' => $id,
+            ])
+            ->with('partner');
 
         $models = $dataProvider->getModels();
 
@@ -164,9 +173,9 @@ class StatisticController extends Controller
             'model' => $companyModel,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
         ]);
     }
 
@@ -205,9 +214,9 @@ class StatisticController extends Controller
             'dataProvider' => $dataProvider,
             'chartData' => $this->chartTotal($chartDataProvider),
             'totalServe' => $totalServe,
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
 

@@ -9,9 +9,10 @@ use common\components\DateHelper;
  * @var $dataProvider \yii\data\ActiveDataProvider
  *
  * @var $chartData array
- * @var $totalProfit float
- * @var $totalExpense float
- * @var $totalIncome float
+ * @var $totalProfit int
+ * @var $totalExpense int
+ * @var $totalIncome int
+ * @var $totalServe int
  */
 ?>
 <div class="panel panel-primary">
@@ -41,7 +42,9 @@ use common\components\DateHelper;
                         $date = date('d', $unixDate) . ' ' . DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', $unixDate);
 
                         return $date;
-                    }
+                    },
+                    'footer' => $totalServe,
+                    'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'header' => 'Карта',
@@ -67,7 +70,7 @@ use common\components\DateHelper;
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->expense);
+                        return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -76,7 +79,7 @@ use common\components\DateHelper;
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->income);
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -85,7 +88,7 @@ use common\components\DateHelper;
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->profit);
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],

@@ -59,17 +59,17 @@ $formatter = Yii::$app->formatter;
                             [
                                 'label' => 'Потрачено',
                                 'attribute' => 'expense',
-                                'value' => $formatter->asCurrency($model->expense),
+                                'value' => $formatter->asDecimal($model->expense, 0),
                             ],
                             [
                                 'label' => 'Приход',
                                 'attribute' => 'income',
-                                'value' => $formatter->asCurrency($model->income),
+                                'value' => $formatter->asDecimal($model->income, 0),
                             ],
                             [
                                 'label' => 'Прибыль',
                                 'attribute' => 'profit',
-                                'value' => $formatter->asCurrency($model->profit),
+                                'value' => $formatter->asDecimal($model->profit, 0),
                             ],
                             [
                                 'label' => 'Услуга',
