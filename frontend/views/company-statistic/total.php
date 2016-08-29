@@ -68,7 +68,7 @@ echo $this->render('_search', [
                     'attribute' => 'income',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return number_format($data->income, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -77,7 +77,7 @@ echo $this->render('_search', [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],

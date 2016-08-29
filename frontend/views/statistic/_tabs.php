@@ -1,4 +1,5 @@
 <?php
+
 use yii\bootstrap\Tabs;
 use common\models\Company;
 
@@ -38,4 +39,4 @@ $items = [
 
 echo Tabs::widget([
     'items' => $items,
-]) ?>
+]);

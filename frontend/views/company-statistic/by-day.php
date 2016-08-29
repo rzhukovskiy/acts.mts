@@ -41,7 +41,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/company-statistic/by-hours', 'id' => $data->client->id, 'date' => $data->dateMonth]);
+                        return Html::a($date, ['/company-statistic/by-hours', 'id' => $data->client->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
                     }
                 ],
                 [
@@ -54,7 +54,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->expense);
+                        return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -63,7 +63,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->income);
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -72,10 +72,20 @@ CanvasJsAsset::register($this);
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->profit);
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/company-statistic/by-hours', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                        }
+                    ]
                 ],
             ]
         ])

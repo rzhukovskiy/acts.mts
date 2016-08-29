@@ -46,7 +46,7 @@ echo $this->render('_search', [
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id, 'date' => $data->dateMonth]);
+                        return Html::a($date, ['/statistic/by-day', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
                     }
                 ],
                 [
@@ -59,7 +59,7 @@ echo $this->render('_search', [
                     'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->expense);
+                        return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -68,7 +68,7 @@ echo $this->render('_search', [
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->income);
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -77,7 +77,7 @@ echo $this->render('_search', [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asCurrency($data->profit);
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
@@ -88,7 +88,7 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/by-day', 'id' => $model->partner->id, 'date' => $model->dateMonth]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/by-day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
                         }
                     ]
                 ],

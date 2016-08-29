@@ -47,7 +47,7 @@ echo $this->render('_search', [
                     'attribute' => 'client_id',
                     'header' => 'Компания',
                     'content' => function ($data) {
-                        return !empty($data->client->name) ? Html::a($data->client->name, ['/company-statistic/view', 'id' => $data->client->id]) : '—';
+                        return !empty($data->client->name) ? Html::a($data->client->name, ['/company-statistic/view', 'id' => $data->client->id, 'type' => $data->service_type]) : '—';
                     },
                     'contentOptions' => ['class' => 'value_0'],
                 ],
@@ -68,7 +68,7 @@ echo $this->render('_search', [
                     'attribute' => 'income',
                     'header' => 'Доход',
                     'content' => function ($data) {
-                        return number_format($data->income, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
                     'contentOptions' => ['class' => 'value_1'],
                     'footer' => $totalIncome,
@@ -78,7 +78,7 @@ echo $this->render('_search', [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return number_format($data->profit, 2, ',', ' ');
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
                     },
                     'contentOptions' => ['class' => 'value_2'],
                     'footer' => $totalProfit,
@@ -90,7 +90,7 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/company-statistic/view', 'id' => $model->client->id]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/company-statistic/view', 'id' => $model->client->id, 'type' => $model->service_type]);
                         }
                     ]
                 ],

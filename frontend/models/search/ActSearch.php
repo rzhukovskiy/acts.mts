@@ -24,7 +24,7 @@ class ActSearch extends Act
     public function rules()
     {
         $rules = [
-            [['dateFrom', 'dateTo'], 'safe'],
+            [['dateFrom', 'dateTo', 'service_type'], 'safe'],
         ];
 
         return array_merge(parent::rules(), $rules);
@@ -33,8 +33,8 @@ class ActSearch extends Act
     public function scenarios()
     {
         $scenarios = [
-            'statistic_partner_filter' => ['dateFrom', 'dateTo'],
-            'statistic_client_filter' => ['dateFrom', 'dateTo'],
+            'statistic_partner_filter' => ['dateFrom', 'dateTo', 'service_type'],
+            'statistic_client_filter' => ['dateFrom', 'dateTo', 'service_type'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);
@@ -50,12 +50,16 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        $query->addSelect('served_at')
-            ->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
-            ->addSelect('SUM(expense) as expense')
-            ->addSelect('SUM(profit) as profit')
-            ->addSelect('SUM(income) as income')
-            ->addSelect(['partner_id', 'client_id'])
+        $query->addSelect([
+            'served_at',
+            'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'service_type',
+            'SUM(expense) as expense',
+            'SUM(profit) as profit',
+            'SUM(income) as income',
+            'partner_id',
+            'client_id',
+        ])
             ->orderBy('profit DESC')
             ->with(['partner', 'client']);
 
@@ -72,12 +76,16 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
-            ->addSelect('SUM(expense) as expense')
-            ->addSelect('SUM(income) as income')
-            ->addSelect('SUM(profit) as profit')
-            ->addSelect(['partner_id', 'client_id'])
+        $query->addSelect([
+            "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
+            'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'service_type',
+            'SUM(expense) as expense',
+            'SUM(income) as income',
+            'SUM(profit) as profit',
+            'partner_id',
+            'client_id',
+        ])
             ->groupBy(["MONTH(dateMonth)"])
             ->orderBy('dateMonth ASC');
 
@@ -92,11 +100,14 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect('COUNT({{%act}}.id) AS countServe')
-            ->addSelect('SUM(expense) as expense')
-            ->addSelect('SUM(income) as income')
-            ->addSelect('SUM(profit) as profit')
+        $query->addSelect([
+            "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
+            'COUNT({{%act}}.id) AS countServe',
+            'service_type',
+            'SUM(expense) as expense',
+            'SUM(income) as income',
+            'SUM(profit) as profit',
+        ])
             ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
             ->orderBy('dateMonth ASC');
 
@@ -111,8 +122,19 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        $query->addSelect("DATE(FROM_UNIXTIME(served_at)) as dateMonth")
-            ->addSelect(['id', 'check', 'expense', 'income', 'profit', 'type_id', 'mark_id', 'card_id', 'service_type', 'number'])
+        $query->addSelect([
+            "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
+            'id',
+            'check',
+            'expense',
+            'income',
+            'profit',
+            'type_id',
+            'mark_id',
+            'card_id',
+            'service_type',
+            'number'
+        ])
             ->with(['type', 'mark', 'card'])
             ->orderBy('dateMonth ASC');
 
@@ -129,14 +151,16 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        $query->addSelect('COUNT(' . Act::tableName() . '.id) AS countServe')
-            ->addSelect('SUM(expense) as expense')
-            ->addSelect('SUM(profit) as profit')
-            ->addSelect('SUM(income) as income')
-            ->addSelect('service_type')
+        $query->addSelect([
+            'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'SUM(expense) as expense',
+            'SUM(profit) as profit',
+            'SUM(income) as income',
+            'service_type',
+        ])
+            ->with(['type'])
             ->groupBy('service_type')
-            ->orderBy('profit DESC')
-            ->with(['type']);
+            ->orderBy('profit DESC');
 
         return $this->createProvider($params, $query);
     }
