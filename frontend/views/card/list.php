@@ -3,6 +3,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use common\models\User;
 
 /**
  * @var $this yii\web\View
@@ -52,7 +53,16 @@ echo GridView::widget([
             },
             'visible' => $admin || !empty($searchModel->company->children),
         ],
-        'number',
+        [
+            'attribute' => 'number',
+            'content' => function ($data) {
+                if (!Yii::$app->user->can(User::ROLE_ADMIN) && !Yii::$app->user->can(User::ROLE_WATCHER)) {
+                    return count($data->company->cards) . ' (' . $data->company->cardsAsString . ')';
+                } else {
+                    return $data->number;
+                }
+            }
+        ],
     ],
 ]);
 Pjax::end();

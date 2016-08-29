@@ -4,8 +4,8 @@ namespace frontend\controllers;
 
 use common\models\User;
 use common\models\Company;
-use Yii;
 use common\models\Card;
+use Yii;
 use frontend\models\search\CardSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -57,7 +57,9 @@ class CardController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->joinWith(['company']);
+        if (!Yii::$app->user->can(User::ROLE_ADMIN) && !Yii::$app->user->can(User::ROLE_WATCHER)) {
+            $dataProvider->query->groupBy(['company_id']);
+        }
         $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [
