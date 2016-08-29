@@ -205,9 +205,9 @@ class StatisticController extends Controller
             'dataProvider' => $dataProvider,
             'chartData' => $this->chartTotal($chartDataProvider),
             'totalServe' => $totalServe,
-            'totalProfit' => $formatter->asCurrency($totalProfit),
-            'totalIncome' => $formatter->asCurrency($totalIncome),
-            'totalExpense' => $formatter->asCurrency($totalExpense),
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
 

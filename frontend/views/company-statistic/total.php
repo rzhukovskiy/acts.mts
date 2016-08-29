@@ -61,7 +61,7 @@ echo $this->render('_search', [
                 [
                     'attribute' => 'countServe',
                     'header' => 'Обслужено',
-                    'footer' => number_format($totalServe, 0, '', ' '),
+                    'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
@@ -70,7 +70,7 @@ echo $this->render('_search', [
                     'content' => function ($data) {
                         return number_format($data->income, 2, ',', ' ');
                     },
-                    'footer' => number_format($totalIncome, 2, ',', ' '),
+                    'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
@@ -79,7 +79,7 @@ echo $this->render('_search', [
                     'content' => function ($data) {
                         return number_format($data->profit, 2, ',', ' ');
                     },
-                    'footer' => number_format($totalProfit, 2, ',', ' '),
+                    'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
