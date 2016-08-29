@@ -45,6 +45,10 @@ class ActExporter
             case Service::TYPE_WASH:
                 $this->generateWashAct($searchModel);
                 break;
+            case Service::TYPE_TIRES:
+            case Service::TYPE_SERVICE:
+                $this->generateServiceAct($searchModel);
+                break;
         }
 
         if ($zip) $zip->close();
