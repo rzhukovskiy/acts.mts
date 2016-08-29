@@ -85,7 +85,7 @@ use yii\jui\AutoComplete;
             </tr>
             <tr>
                 <td colspan="4">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         Услуги партнера
                         <?php foreach ($partnerScopes as $scope) { ?>
                             <div class="form-group">
@@ -134,7 +134,7 @@ use yii\jui\AutoComplete;
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         Услуги клиента
                         <?php foreach ($clientScopes as $scope) { ?>
                             <div class="form-group">
