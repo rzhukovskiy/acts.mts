@@ -11,6 +11,7 @@ namespace common\components;
 
 use common\models\Company;
 use common\models\search\ActSearch;
+use common\models\Service;
 use PHPExcel;
 use ZipArchive;
 
@@ -20,7 +21,7 @@ class ActExporter
     public $objPHPExcel = null;
     private $headersSent = false;
     private $company = false;
-    private $companyType = Company::TYPE_WASH;
+    private $serviceType = Company::TYPE_WASH;
     private $time = null;
 
     /**
@@ -31,28 +32,29 @@ class ActExporter
     {
         $this->time = strtotime($searchModel->period . '-01 00:00:00');
         $this->company = $company;
-        $this->companyType = $searchModel->service_type;
+        $this->serviceType = $searchModel->service_type;
 
         $zip = new ZipArchive();
-        $filename = "files/acts/" . date('m-Y', $this->time) . "/$this->companyType.zip";
+        $filename = "files/acts/" . date('m-Y', $this->time) . "/$this->serviceType.zip";
 
         if ($zip->open($filename, ZipArchive::OVERWRITE) !== TRUE) {
             $zip = null;
         }
 
-        if ($this->company) {
-            foreach($searchModel->getClientsByType($this->companyType) as $actClient) {
-                $searchModel->client_id = $actClient->client_id;
-                $this->fillAct($searchModel, $actClient->client, $zip);
-            }
-        } else {
-            foreach($searchModel->getPartnersByType($this->companyType) as $actPartner) {
-                $searchModel->partner_id = $actPartner->partner_id;
-                $this->fillAct($searchModel, $actPartner->partner, $zip);
-            }
+        switch ($this->serviceType) {
+            case Service::TYPE_WASH:
+                $this->generateWashAct($searchModel);
+                break;
         }
 
         if ($zip) $zip->close();
+    }
+
+    /**
+     * @param ActSearch $searchModel
+     */
+    private function generateWashAct($searchModel) {
+
     }
 
     /**
@@ -67,7 +69,7 @@ class ActExporter
             return;
         }
 
-        switch ($this->companyType) {
+        switch ($this->serviceType) {
             case Company::SERVICE_TYPE:
                 foreach ($dataList as $data) {
                     $this->generateAct($company, array($data), $zip);
@@ -195,7 +197,7 @@ class ActExporter
         date_add($date, date_interval_create_from_date_string("1 month"));
         $currentMonthName = StringNum::getMonthName($date->getTimestamp());
 
-        if ($this->companyType == Company::DISINFECTION_TYPE) {
+        if ($this->serviceType == Company::DISINFECTION_TYPE) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -205,7 +207,7 @@ class ActExporter
             $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:F3');
-            $text = "по договору на оказание услуг " . $company->getRequisites($this->companyType, 'contract');
+            $text = "по договору на оказание услуг " . $company->getRequisites($this->serviceType, 'contract');
             $companyWorkSheet->setCellValue('B3', $text);
             $companyWorkSheet->mergeCells('B4:F4');
             $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
@@ -240,7 +242,7 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->companyType, 'header'));
+            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->serviceType, 'header'));
         } else {
             $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -254,7 +256,7 @@ class ActExporter
             $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:I3');
-            $text = "по договору на оказание услуг " . $company->getRequisites($this->companyType, 'contract');
+            $text = "по договору на оказание услуг " . $company->getRequisites($this->serviceType, 'contract');
             $companyWorkSheet->setCellValue('B3', $text);
             $companyWorkSheet->mergeCells('B4:I4');
             $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
@@ -270,7 +272,7 @@ class ActExporter
             if($company->is_split) {
                 $companyWorkSheet->mergeCells('H5:J5');
             }
-            if ($this->company || $this->companyType == Company::TIRES_TYPE) {
+            if ($this->company || $this->serviceType == Company::TIRES_TYPE) {
                 $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
@@ -293,7 +295,7 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->companyType, 'header'));
+            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->serviceType, 'header'));
         }
 
 
@@ -302,7 +304,7 @@ class ActExporter
         $num = 0;
         $total = 0;
         $count = 0;
-        switch($this->companyType) {
+        switch($this->serviceType) {
             case Company::SERVICE_TYPE:
                 $first = $dataList[0];
                 $companyWorkSheet->setCellValue('H5', date("d ", strtotime($first->service_date)) . $monthName[1] . date(' Y', $this->time));
@@ -646,7 +648,7 @@ class ActExporter
         }
 
         //footer
-        if ($this->companyType == Company::DISINFECTION_TYPE) {
+        if ($this->serviceType == Company::DISINFECTION_TYPE) {
             $row++;
             $companyWorkSheet->setCellValue("F$row", "$total");
 
@@ -685,7 +687,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("E$row", "М.П.");
         } else {
             $row++;
-            if ($this->companyType == Company::CARWASH_TYPE) {
+            if ($this->serviceType == Company::CARWASH_TYPE) {
                 if($company->is_split) {
                     $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                     $companyWorkSheet->setCellValue("I$row", "$total");
@@ -776,7 +778,7 @@ class ActExporter
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
-        if ($this->companyType == Company::SERVICE_TYPE) {
+        if ($this->serviceType == Company::SERVICE_TYPE) {
             $first = $dataList[0];
             $filename = "Акт $company->name - $first->number от " . date('d-m-Y', strtotime($first->service_date)) . ".xls";
         } else {
@@ -971,7 +973,7 @@ class ActExporter
                 )
             )
         );
-        if ($this->companyType != Company::CARWASH_TYPE) {
+        if ($this->serviceType != Company::CARWASH_TYPE) {
             $first = $dataList[0];
             $text = "СЧЕТ б/н от " . date("d ", strtotime($first->service_date)) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
@@ -1014,7 +1016,7 @@ class ActExporter
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
-        if ($this->companyType == Company::SERVICE_TYPE) {
+        if ($this->serviceType == Company::SERVICE_TYPE) {
             $first = $dataList[0];
             $filename = "Счет $company->name - $first->number от " . date('d-m-Y', strtotime($first->service_date)) . ".xls";
         } else {
