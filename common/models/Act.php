@@ -255,10 +255,10 @@ class Act extends ActiveRecord
                 $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
                 break;
             case 'card':
-                $hasError = $this->service_type != Service::TYPE_DISINFECT && $this->card->company_id != $this->car->company_id;
+                $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id);
                 break;
             case 'car':
-                $hasError = !isset($this->car->company_id);
+                $hasError = !isset($this->car->company_id) || $this->car->company_id != $this->client_id;
                 break;
             case 'truck':
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
@@ -266,7 +266,7 @@ class Act extends ActiveRecord
                 break;
         }
 
-        return !$this->status != self::STATUS_FIXED && $hasError;
+        return $this->status != self::STATUS_FIXED && $hasError;
     }
 
     public function beforeSave($insert)

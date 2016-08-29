@@ -122,7 +122,7 @@ class CompanyController extends Controller
         $type = $model->type;
         $model->delete();
 
-        return $this->redirect(['list', ['type' => $type]]);
+        return $this->redirect(['list', 'type' => $type]);
     }
 
     public function actionAddPrice($id)
