@@ -68,8 +68,8 @@ class CarController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->addSelect('client_id, number, mark_id, type_id, COUNT(mark_id) as actsCount')
-            ->groupBy('number');
+            ->addSelect('client_id, act.number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
+            ->groupBy('act.number');
 
         $companyDropDownData = Company::dataDropDownList();
 

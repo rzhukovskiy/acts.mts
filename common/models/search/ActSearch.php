@@ -88,7 +88,7 @@ class ActSearch extends Act
                 $query->joinWith([
                     'type',
                     'mark',
-                    'car',
+                    'car car',
                     'card as card',
                     'client as client',
                     'partner as partner',
@@ -145,6 +145,7 @@ class ActSearch extends Act
                 } else {
                     $query->andFilterWhere(['partner_id' => $this->partner_id,]);
                 }
+                $query->orderBy('partner.parent_id, act.partner_id, served_at');
                 break;
 
             case self::SCENARIO_HISTORY:
@@ -152,6 +153,7 @@ class ActSearch extends Act
                     'type',
                     'mark',
                     'client client',
+                    'car car',
                 ]);
                 if ($this->dateFrom) {
                     $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);

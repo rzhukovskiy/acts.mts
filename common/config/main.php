@@ -24,5 +24,10 @@ return [
             'defaultTimeZone' => 'UTC',
             'currencyCode' => '',
         ],
+        'db' => [
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => 3600,
+            'schemaCache' => 'cache',
+        ],
     ],
 ];
