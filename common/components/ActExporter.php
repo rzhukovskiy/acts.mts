@@ -878,7 +878,7 @@ class ActExporter
                         mkdir($path, 0755, 1);
                     }
 
-                    $filename = "Акт $company->name от " . date('d-m-Y', $act->served_at) . ".xlsx";
+                    $filename = "Акт $company->name от " . date('m-Y', $this->time) . ".xlsx";
                     $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
                     $objWriter->save($fullFilename);
                     if ($zip) $zip->addFile($fullFilename, $filename);
