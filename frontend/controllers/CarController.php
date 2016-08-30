@@ -173,6 +173,11 @@ class CarController extends Controller
         }
     }
 
+    /**
+     * Upload xlsx file and parse it
+     *
+     * @return string
+     */
     public function actionUpload()
     {
         $model = new CarUploadXlsForm();
@@ -182,16 +187,8 @@ class CarController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
 
-            if ($model->save()) { // загрузка прошла успешно
-                $dataProvider = new ActiveDataProvider([
-                    'query' => Car::findAll([
-                        '>', 'id', $model->startId
-                    ]),
-                    'pagination' => [
-                        'pageSize' => 100
-                    ]
-                ]);
-                $this->render('upload/list', ['dataProvider' => $dataProvider]);
+            if ($model->save()) {  // загрузка прошла успешно
+                return $this->redirect(['/car/uploaded-list', 'startId' => $model->startId, 'endId' => $model->endId, 'updated' => $model->updatedCounter]);
             }
         }
 
@@ -200,6 +197,25 @@ class CarController extends Controller
             'typeDropDownItems' => $typeDropDownItems,
             'companyDropDownItems' => $companyDropDownItems,
         ]);
+    }
+
+    public function actionUploadedList($startId, $endId, $updated)
+    {
+        $query = Car::find()
+            ->andWhere(['between', 'id', $startId, $endId]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->view->params['emptyText'] = '';
+        if ($startId == $endId)
+            $this->view->params['emptyText'] = "Ничего не добавлено.";
+
+        if (!empty($updated))
+            $this->view->params['emptyText'] .= " Обновлено: " . $updated;
+
+        return $this->render('upload/list', ['dataProvider' => $dataProvider]);
     }
 
     /**

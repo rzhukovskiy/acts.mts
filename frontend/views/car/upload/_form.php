@@ -25,9 +25,9 @@ $form = ActiveForm::begin([
     ]
 ]);
 
-echo $form->field($model, 'company')
+echo $form->field($model, 'company_id')
     ->dropDownList($companyDropDownItems, ['prompt' => 'Выберете компанию']);
-echo $form->field($model, 'type')
+echo $form->field($model, 'type_id')
     ->dropDownList($typeDropDownItems, ['prompt' => 'Выберете тип ТС']);
 echo $form->field($model, 'file')
     ->fileInput(['class' => '']);
