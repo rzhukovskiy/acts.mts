@@ -113,7 +113,7 @@ class Act extends ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'card_id', 'mark_id', 'type_id', 'number'], 'required'],
+            [['partner_id', 'mark_id', 'type_id', 'number'], 'required'],
             [['check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
