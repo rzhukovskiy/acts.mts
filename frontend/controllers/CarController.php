@@ -67,6 +67,7 @@ class CarController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
         $dataProvider->query
             ->addSelect('client_id, act.number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
             ->groupBy('act.number');
@@ -114,6 +115,7 @@ class CarController extends Controller
         $searchModel->number = $model->number;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
 
         return $this->render('view', [
             'dataProvider' => $dataProvider,
