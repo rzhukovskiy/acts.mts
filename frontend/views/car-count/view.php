@@ -17,7 +17,7 @@ $this->title = 'ТС типа «' . Html::encode($typeModel->name) . '»';
 
 ?>
 <div class="car-count-view">
-    <?php if ($admin) { ?>
+    <?php if ($admin || !empty(Yii::$app->user->identity->company->children)) { ?>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 Поиск
