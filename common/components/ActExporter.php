@@ -1349,6 +1349,27 @@ class ActExporter
         $worksheet->mergeCells("B$row:E$row");
         $worksheet->setCellValue("B$row", 'Мосесян Г.А.');
 
+        //подпись
+        $signImage = imagecreatefromjpeg('images/sign.jpg');
+        $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+        $objDrawing->setName('Sample image');
+        $objDrawing->setDescription('Sample image');
+        $objDrawing->setImageResource($signImage);
+        $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+        $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+        $objDrawing->setCoordinates("C$row");
+        $objDrawing->setWorksheet($worksheet);
+        //печать
+        $gdImage = imagecreatefromjpeg('images/post.jpg');
+        $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+        $objDrawing->setName('Sample image');
+        $objDrawing->setDescription('Sample image');
+        $objDrawing->setImageResource($gdImage);
+        $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+        $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+        $objDrawing->setCoordinates("C$row");
+        $objDrawing->setWorksheet($worksheet);
+
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];
         $path = "files/acts/$type/" . date('m-Y', $this->time);
