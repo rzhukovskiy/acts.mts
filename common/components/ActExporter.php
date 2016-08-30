@@ -32,13 +32,13 @@ class ActExporter
     {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $this->time = \DateTime::createFromFormat('m-Y-d', $searchModel->period . '-01')->getTimestamp();
+        $this->time = \DateTime::createFromFormat('m-Y-d H:i:s', $searchModel->period . '-01 00:00:00')->getTimestamp();
         $this->company = $company;
         $this->serviceType = $searchModel->service_type;
 
         $zip = new ZipArchive();
         $type = Service::$listType[$this->serviceType]['en'];
-        $filename = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time) . "/all.zip";
+        $filename = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time) . "/all.zip";
 
         if ($zip->open($filename, ZipArchive::OVERWRITE) !== TRUE) {
             $zip = null;
@@ -227,7 +227,7 @@ class ActExporter
 
                     //saving document
                     $type = Service::$listType[$this->serviceType]['en'];
-                    $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
+                    $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -273,9 +273,6 @@ class ActExporter
 
                 //headers;
                 $monthName = DateHelper::getMonthName($this->time);
-                $date = date_create(date('Y-m-d', $this->time));
-                date_add($date, date_interval_create_from_date_string("1 month"));
-                $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
 
                 $worksheet->getStyle('B2:I4')->applyFromArray(array(
                     'alignment' => array(
@@ -305,7 +302,7 @@ class ActExporter
                 if($company->is_split) {
                     $worksheet->mergeCells('H5:J5');
                 }
-                $worksheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+                $worksheet->setCellValue('H5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
 
                 $worksheet->mergeCells('B8:I8');
                 $worksheet->mergeCells('B7:I7');
@@ -436,8 +433,6 @@ class ActExporter
 
             //headers;
             $monthName = DateHelper::getMonthName($this->time);
-            $date = date_create(date('Y-m-d', $this->time));
-            date_add($date, date_interval_create_from_date_string("1 month"));
 
             $worksheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -726,7 +721,7 @@ class ActExporter
 
             //saving document
             $type = Service::$listType[$this->serviceType]['en'];
-            $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
+            $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
             if (!is_dir($path)) {
                 mkdir($path, 0755, 1);
             }
@@ -873,7 +868,7 @@ class ActExporter
 
                     //saving document
                     $type = Service::$listType[$this->serviceType]['en'];
-                    $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
+                    $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -922,8 +917,6 @@ class ActExporter
 
                 //headers;
                 $monthName = DateHelper::getMonthName($this->time);
-                $date = date_create(date('Y-m-d', $this->time));
-                date_add($date, date_interval_create_from_date_string("1 month"));
 
                 $worksheet->getStyle('B2:I4')->applyFromArray(array(
                     'alignment' => array(
@@ -1156,8 +1149,6 @@ class ActExporter
 
         //headers
         $monthName = DateHelper::getMonthName($this->time);
-        $date = date_create(date('Y-m-d', $this->time));
-        date_add($date, date_interval_create_from_date_string("1 month"));
 
         $worksheet->mergeCells('B2:E2');
         $worksheet->setCellValue('B2', "ООО «Международный Транспортный Сервис»");
@@ -1312,10 +1303,10 @@ class ActExporter
                 )
             )
         );
-        if ($this->serviceType != Company::TYPE_WASH) {
+        if ($this->serviceType == Company::TYPE_SERVICE) {
             $text = "СЧЕТ б/н от " . date("d ", $act->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
-            $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+            $text = "СЧЕТ б/н от " . date("t ", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
         }
         $worksheet->setCellValue("B$row", $text);
 
@@ -1372,7 +1363,7 @@ class ActExporter
 
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];
-        $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
+        $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
