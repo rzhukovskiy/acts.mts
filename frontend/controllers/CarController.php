@@ -177,7 +177,7 @@ class CarController extends Controller
     {
         $model = new CarUploadXlsForm();
         $typeDropDownItems = ArrayHelper::map(Type::find()->all(), 'id', 'name');
-        $companyDropDownItems = ArrayHelper::map(Company::find()->all(), 'id', 'name');
+        $companyDropDownItems = ArrayHelper::map(Company::find()->active()->active()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');

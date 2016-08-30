@@ -37,7 +37,7 @@ $filters = 'Период: ' . DatePicker::widget([
     ]);
 
 if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
-    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
             ->where(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
@@ -177,15 +177,12 @@ $columns = [
     [
         'header' => 'Услуга',
         'value' => function ($data) {
-            if ($data->service_type == Service::TYPE_WASH) {
-                /** @var \common\models\ActScope $scope */
-                $services = [];
-                foreach ($data->clientScopes as $scope) {
-                    $services[] = $scope->description;
-                }
-                return implode('+', $services);
+            /** @var \common\models\ActScope $scope */
+            $services = [];
+            foreach ($data->clientScopes as $scope) {
+                $services[] = $scope->description;
             }
-            return Service::$listType[$data->service_type]['ru'];
+            return implode('+', $services);
         }
     ],
     [

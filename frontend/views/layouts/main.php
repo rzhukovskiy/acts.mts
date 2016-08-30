@@ -30,7 +30,7 @@ AppAsset::register($this);
             <div class="row top">
                 <div class="col-sm-12">
                     <?= Html::a(
-                        'Выход (' . Yii::$app->user->identity->username . ')',
+                        Yii::$app->user->identity->username,
                         '/site/logout',
                         ['class' => 'btn btn-primary btn-sm pull-right']
                     ) ?>

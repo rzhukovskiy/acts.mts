@@ -35,7 +35,7 @@ $filters = 'Период: ' . DatePicker::widget([
     ]);
 
 if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
-    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
+    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()->active()
             ->where(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
@@ -47,7 +47,7 @@ if ($role == User::ROLE_ADMIN) {
 $headerColumns = [
     [
         'content' => $filters,
-        'options' => ['style' => 'vertical-align: middle', 'colspan' => 8, 'class' => 'kv-grid-group-filter'],
+        'options' => ['style' => 'vertical-align: middle', 'colspan' => 9, 'class' => 'kv-grid-group-filter'],
     ],
 ];
 
@@ -85,7 +85,7 @@ $columns = [
         },
         'groupHeader' => function ($data) {
             return [
-                'mergeColumns' => [[0, 8]],
+                'mergeColumns' => [[0, 9]],
                 'content' => [
                     0 => $data->client->parent->name,
                 ],
@@ -119,7 +119,7 @@ $columns = [
         },
         'groupHeader' => function ($data) {
             return [
-                'mergeColumns' => [[0, 8]],
+                'mergeColumns' => [[0, 9]],
                 'content' => [
                     0 => $data->client->name . ' - ' . $data->client->address,
                 ],
@@ -157,6 +157,17 @@ $columns = [
         },
     ],
     [
+        'header' => 'Услуга',
+        'value' => function ($data) {
+            /** @var \common\models\ActScope $scope */
+            $services = [];
+            foreach ($data->clientScopes as $scope) {
+                $services[] = $scope->description;
+            }
+            return implode('+', $services);
+        }
+    ],
+    [
         'attribute' => 'income',
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
@@ -174,9 +185,9 @@ $columns = [
 
 if ($role != User::ROLE_ADMIN) {
     if (!empty(Yii::$app->user->identity->company->children)) {
-        unset($columns[1], $columns[8]);
+        unset($columns[1], $columns[9]);
     } else {
-        unset($columns[1], $columns[2], $columns[8]);
+        unset($columns[1], $columns[2], $columns[9]);
     }
 }
 

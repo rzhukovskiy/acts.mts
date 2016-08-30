@@ -173,7 +173,7 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'partner.address',
-            'filter' => Company::find()->select(['name', 'id'])->indexBy('id')->column(),
+            'filter' => Company::find()->active()->select(['name', 'id'])->indexBy('id')->column(),
             'value' => function ($data) {
                 return isset($data->partner) ? $data->partner->address : 'error';
             },
