@@ -38,7 +38,7 @@ class ActExporter
 
         $zip = new ZipArchive();
         $type = Service::$listType[$this->serviceType]['en'];
-        $filename = "files/acts/$type/" . date('m-Y', $this->time) . "/all.zip";
+        $filename = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time) . "/all.zip";
 
         if ($zip->open($filename, ZipArchive::OVERWRITE) !== TRUE) {
             $zip = null;
@@ -227,7 +227,7 @@ class ActExporter
 
                     //saving document
                     $type = Service::$listType[$this->serviceType]['en'];
-                    $path = "files/acts/$type/" . date('m-Y', $this->time);
+                    $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -726,7 +726,7 @@ class ActExporter
 
             //saving document
             $type = Service::$listType[$this->serviceType]['en'];
-            $path = "files/acts/$type/" . date('m-Y', $this->time);
+            $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
             if (!is_dir($path)) {
                 mkdir($path, 0755, 1);
             }
@@ -873,7 +873,7 @@ class ActExporter
 
                     //saving document
                     $type = Service::$listType[$this->serviceType]['en'];
-                    $path = "files/acts/$type/" . date('m-Y', $this->time);
+                    $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -1372,7 +1372,7 @@ class ActExporter
 
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];
-        $path = "files/acts/$type/" . date('m-Y', $this->time);
+        $path = "files/acts/' . ($this->company ? 'client' : 'partner') . '/$type/" . date('m-Y', $this->time);
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
