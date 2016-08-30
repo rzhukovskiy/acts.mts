@@ -19,7 +19,7 @@ use yii\web\View;
 
 if (!empty($serviceList)) {
     $fixedList = json_encode(Service::find()
-        ->where(['type' => $model->service_type])
+        ->andWhere(['type' => $model->service_type])
         ->select('is_fixed')->indexBy('id')->column());
     
     $script = <<< JS

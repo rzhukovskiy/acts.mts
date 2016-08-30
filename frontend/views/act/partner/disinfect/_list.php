@@ -35,7 +35,7 @@ $filters = 'Период: ' . DatePicker::widget([
 
 if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
     $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'partner_id', Company::find()->active()
-            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN) {
