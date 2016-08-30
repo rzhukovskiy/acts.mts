@@ -38,7 +38,7 @@ class ActExporter
 
         $zip = new ZipArchive();
         $type = Service::$listType[$this->serviceType]['en'];
-        $filename = "files/acts/" . date('m-Y', $this->time) . "/$type.zip";
+        $filename = "files/acts/$type/" . date('m-Y', $this->time) . "/all.zip";
 
         if ($zip->open($filename, ZipArchive::OVERWRITE) !== TRUE) {
             $zip = null;
@@ -226,7 +226,8 @@ class ActExporter
                     $worksheet->setCellValue("G$row", "М.П.");
 
                     //saving document
-                    $path = "files/acts/" . date('m-Y', $this->time);
+                    $type = Service::$listType[$this->serviceType]['en'];
+                    $path = "files/acts/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -724,7 +725,8 @@ class ActExporter
             $worksheet->setCellValue("G$row", "М.П.");
 
             //saving document
-            $path = "files/acts/" . date('m-Y', $this->time);
+            $type = Service::$listType[$this->serviceType]['en'];
+            $path = "files/acts/$type/" . date('m-Y', $this->time);
             if (!is_dir($path)) {
                 mkdir($path, 0755, 1);
             }
@@ -870,7 +872,8 @@ class ActExporter
                     $worksheet->setCellValue("G$row", "М.П.");
 
                     //saving document
-                    $path = "files/acts/" . date('m-Y', $this->time);
+                    $type = Service::$listType[$this->serviceType]['en'];
+                    $path = "files/acts/$type/" . date('m-Y', $this->time);
                     if (!is_dir($path)) {
                         mkdir($path, 0755, 1);
                     }
@@ -1347,7 +1350,8 @@ class ActExporter
         $worksheet->setCellValue("B$row", 'Мосесян Г.А.');
 
         //saving document
-        $path = "files/acts/" . date('m-Y', $this->time);
+        $type = Service::$listType[$this->serviceType]['en'];
+        $path = "files/acts/$type/" . date('m-Y', $this->time);
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }

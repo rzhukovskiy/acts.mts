@@ -76,7 +76,7 @@ class ActController extends Controller
         $exporter = new ActExporter();
         $exporter->exportCSV($searchModel, $company);
 
-        return $this->render('list', [
+        return $this->render('export', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
