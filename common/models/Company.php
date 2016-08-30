@@ -207,6 +207,9 @@ class Company extends ActiveRecord
             }
         }
 
+        if ($service_type != Service::TYPE_WASH) {
+            return $this->getRequisitesByType(Service::TYPE_WASH, $field);
+        }
         return false;
     }
 
