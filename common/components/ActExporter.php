@@ -1367,7 +1367,7 @@ class ActExporter
         $objDrawing->setImageResource($gdImage);
         $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
         $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-        $objDrawing->setCoordinates("C$row");
+        $objDrawing->setCoordinates("D$row");
         $objDrawing->setWorksheet($worksheet);
 
         //saving document
