@@ -47,7 +47,8 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'partner_id')->dropDownList(Company::find()->active()->andWhere(['type' => $model->service_type])->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <label class="control-label" for="act-time_str">Партнер</label>
+                    <?= Html::textInput('partner', $model->partner->name, ['class' => 'form-control', 'disabled' => 'disabled']) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>
@@ -88,8 +89,8 @@ use yii\jui\AutoComplete;
                     <div class="col-sm-12">
                         Услуги партнера
                         <?php foreach ($partnerScopes as $scope) { ?>
-                            <div class="form-group">
-                                <div class="col-xs-6">
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
                                     <?php if (!empty($serviceList)) { ?>
                                         <?= Html::dropDownList("Act[partnerServiceList][$scope->id][service_id]", $scope->service_id,
                                             $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
@@ -97,7 +98,7 @@ use yii\jui\AutoComplete;
                                         <?= Html::textInput("Act[partnerServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <?= Html::input('number', "Act[partnerServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-2">
@@ -111,8 +112,8 @@ use yii\jui\AutoComplete;
                             </div>
                         <?php } ?>
 
-                        <div class="form-group">
-                            <div class="col-xs-6">
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-8">
                                 <?php if (!empty($serviceList)) { ?>
                                     <?= Html::dropDownList("Act[partnerServiceList][0][service_id]", '',
                                         $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
@@ -120,7 +121,7 @@ use yii\jui\AutoComplete;
                                     <?= Html::textInput("Act[partnerServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
                                 <?= Html::input('number', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                             </div>
                             <div class="col-xs-2">
@@ -137,8 +138,8 @@ use yii\jui\AutoComplete;
                     <div class="col-sm-12">
                         Услуги клиента
                         <?php foreach ($clientScopes as $scope) { ?>
-                            <div class="form-group">
-                                <div class="col-xs-6">
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
                                     <?php if (!empty($serviceList)) { ?>
                                         <?= Html::dropDownList("Act[clientServiceList][$scope->id][service_id]", $scope->service_id,
                                             $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
@@ -146,7 +147,7 @@ use yii\jui\AutoComplete;
                                         <?= Html::textInput("Act[clientServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <?= Html::input('number', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-2">
@@ -160,15 +161,15 @@ use yii\jui\AutoComplete;
                             </div>
                         <?php } ?>
 
-                        <div class="form-group">
-                            <div class="col-xs-6">
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-8">
                                 <?php if (!empty($serviceList)) { ?>
                                     <?= Html::dropDownList("Act[clientServiceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm', 'prompt' => 'выберите услугу']) ?>
                                 <?php } else { ?>
                                     <?= Html::textInput("Act[clientServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
                                 <?= Html::input('number', "Act[clientServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                             </div>
                             <div class="col-xs-2">
