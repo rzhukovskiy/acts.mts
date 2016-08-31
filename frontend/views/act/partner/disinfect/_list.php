@@ -67,7 +67,7 @@ $columns = [
         'group' => true,
         'groupFooter' => function ($data) {
             return [
-                'mergeColumns' => [[0, 7]],
+                'mergeColumns' => [[0, 8]],
                 'content' => [
                     0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
                     8 => GridView::F_SUM,
@@ -91,13 +91,13 @@ $columns = [
         'groupEvenCssClass' => 'child',
         'groupFooter' => function ($data) {
             return [
-                'mergeColumns' => [[2, 5]],
+                'mergeColumns' => [[2, 6]],
                 'content' => [
                     2 => 'Итого по ' . $data->partner->name,
                     8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [      // content html attributes for each summary cell
-                    6 => ['style' => 'display: none'],
+                    7 => ['style' => 'display: none'],
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
@@ -191,7 +191,7 @@ echo GridView::widget([
     'striped' => false,
     'export' => false,
     'showPageSummary' => true,
-    'filterSelector' => 'ext-filter',
+    'filterSelector' => '.ext-filter',
     'beforeHeader' =>  !empty($hideFilter) ? null : [
         [
             'columns' => $headerColumns,

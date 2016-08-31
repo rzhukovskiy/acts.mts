@@ -272,6 +272,8 @@ class Act extends ActiveRecord
 
     public function beforeSave($insert)
     {
+        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+
         if (!empty($this->time_str)) {
             $this->served_at = \DateTime::createFromFormat('d-m-Y', $this->time_str)->getTimestamp();
         }
@@ -329,7 +331,7 @@ class Act extends ActiveRecord
                         $totalIncome += $clientService->price * $serviceData['amount'];
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $totalIncome += 1.2 * $serviceData['price'] * $serviceData['amount'];
+                        $totalIncome += $kpd * $serviceData['price'] * $serviceData['amount'];
                     }
 
                     $partnerService = CompanyService::findOne([
@@ -443,6 +445,7 @@ class Act extends ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
         /**
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
@@ -469,12 +472,12 @@ class Act extends ActiveRecord
                             $clientScope->price = $clientService->price;
                             $clientScope->description = $clientService->service->description;
                         } else {
-                            $clientScope->price = 1.2 * $serviceData['price'];
+                            $clientScope->price = $kpd * $serviceData['price'];
                             $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $clientScope->price = 1.2 * $serviceData['price'];
+                        $clientScope->price = $kpd * $serviceData['price'];
                         $clientScope->description = $serviceData['description'];
                     }
                     $clientScope->amount = $serviceData['amount'];

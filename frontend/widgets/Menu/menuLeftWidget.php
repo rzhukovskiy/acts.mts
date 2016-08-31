@@ -38,7 +38,12 @@ class menuLeftWidget extends Widget
         if (!empty($this->items))
             return $this->items;
 
-        $errorsCount = (new ActSearch(['scenario' => Act::SCENARIO_ERROR]))->search([])->getCount();
+        $errorsCount = 0;
+        foreach (Service::$listType as $type) {
+            $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
+            $searchModel->service_type = $type;
+            $errorsCount += $searchModel->search([])->getCount();
+        }
 
         $items = [];
         // Admin links

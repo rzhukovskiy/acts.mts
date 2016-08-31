@@ -47,7 +47,8 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'partner_id')->dropDownList(Company::find()->active()->active()->andWhere(['type' => $model->service_type])->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <label class="control-label" for="act-time_str">Партнер</label>
+                    <?= Html::textInput('partner', $model->partner->name, ['class' => 'form-control', 'disabled' => 'disabled']) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>
