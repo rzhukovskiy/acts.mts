@@ -275,7 +275,7 @@ class Act extends ActiveRecord
         $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
 
         if (!empty($this->time_str)) {
-            $this->served_at = \DateTime::createFromFormat('d-m-Y', $this->time_str)->getTimestamp();
+            $this->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . '12:00:00')->getTimestamp();
         }
 
         //определяем клиента по карте
