@@ -255,7 +255,7 @@ class Act extends ActiveRecord
                 $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
                 break;
             case 'card':
-                $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id);
+                $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
                 break;
             case 'car':
                 $hasError = !isset($this->car->company_id) || $this->car->company_id != $this->client_id;

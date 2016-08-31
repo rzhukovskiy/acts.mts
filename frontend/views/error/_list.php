@@ -50,6 +50,7 @@ $columns = [
         'contentOptions' => function($data) {
             if($data->hasError('card')) return ['class' => 'text-danger'];
         },
+        'visible' => $searchModel->service_type != Service::TYPE_DISINFECT,
     ],
     [
         'attribute' => 'mark_id',
@@ -72,6 +73,7 @@ $columns = [
         },
     ],
     [
+        'header' => 'Расход',
         'attribute' => 'expense',
         'pageSummary' => true,
         'contentOptions' => function($data) {
@@ -79,6 +81,7 @@ $columns = [
         },
     ],
     [
+        'header' => 'Приход',
         'attribute' => 'income',
         'pageSummary' => true,
         'contentOptions' => function($data) {
@@ -99,6 +102,7 @@ $columns = [
         'contentOptions' => function($data) {
             if($data->hasError('check')) return ['class' => 'text-danger'];
         },
+        'visible' => $searchModel->service_type == Service::TYPE_WASH,
     ],
     [
         'header' => '',

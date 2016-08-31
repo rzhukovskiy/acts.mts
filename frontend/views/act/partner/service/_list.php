@@ -161,7 +161,7 @@ $columns = [
             return isset($data->card) ? $data->card->number : 'error';
         },
         'contentOptions' => function($data) {
-            if($data->hasError('car')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
+            if($data->hasError('card')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
             return ['style' => 'min-width:80px'];
         },
     ],

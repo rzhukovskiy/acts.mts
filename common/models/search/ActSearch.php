@@ -104,6 +104,7 @@ class ActSearch extends Act
                 }
                 if ($this->service_type != Service::TYPE_DISINFECT) {
                     $query->orWhere('car.company_id != card.company_id');
+                    $query->orWhere(['card.company_id' => null]);
                 }
                 $query->orFilterWhere(['car.company_id' => null]);
                 $query->andFilterWhere(['client_id' => $this->client_id,]);
