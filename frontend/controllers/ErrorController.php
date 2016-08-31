@@ -8,10 +8,8 @@ use common\models\Service;
 use common\models\User;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
 
 class ErrorController extends Controller
 {

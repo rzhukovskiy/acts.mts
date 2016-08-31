@@ -39,10 +39,10 @@ class menuLeftWidget extends Widget
             return $this->items;
 
         $errorsCount = 0;
-        foreach (Service::$listType as $type) {
+        foreach (Service::$listType as $type_id => $typeData) {
             $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
-            $searchModel->service_type = $type;
-            $errorsCount += $searchModel->search([])->getCount();
+            $searchModel->service_type = $type_id;
+            $errorsCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
         }
 
         $items = [];
