@@ -169,7 +169,7 @@ $columns = [
 ];
 
 if ($role != User::ROLE_ADMIN) {
-    unset($columns[1], $columns[2], $columns[8]);
+    unset($columns[1], $columns[2], $columns[9]);
 }
 
 

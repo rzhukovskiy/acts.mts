@@ -178,7 +178,7 @@ $columns = [
     [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
-        'template' => $role == '{update}{delete}',
+        'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 100px'],
     ],
 ];
