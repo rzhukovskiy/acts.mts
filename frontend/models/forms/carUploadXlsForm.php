@@ -8,23 +8,49 @@
 
 namespace frontend\models\forms;
 
+use common\models\Car;
+use common\models\Company;
+use common\models\Mark;
+use common\models\Type;
 use Yii;
 use yii\base\Model;
+use yii\bootstrap\Html;
+use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use \PHPExcel_IOFactory;
 
 class CarUploadXlsForm extends Model
 {
 
-    public $company;
-    public $type;
+    public $company_id;
+    public $type_id;
     /** @var  UploadedFile */
     public $file;
 
+    // range of inserted id's
     public $startId;
+    public $endId;
+
+    // count updated models
+    public $updatedCounter;
 
     // folder for store data files
     protected $folder = 'data';
+
+    protected static $rules = array(
+        'Y' => 'У',
+        'E' => 'Е',
+        'X' => 'Х',
+        'A' => 'А',
+        'O' => 'О',
+        'T' => 'Т',
+        'C' => 'С',
+        'B' => 'В',
+        'P' => 'Р',
+        'M' => 'М',
+        'H' => 'Н',
+        'K' => 'К',
+    );
 
     /**
      * @inheritDoc
@@ -32,7 +58,7 @@ class CarUploadXlsForm extends Model
     public function rules()
     {
         return [
-            [['company', 'type'], 'safe'],
+            [['company_id', 'type_id'], 'safe'],
             ['file', 'file', 'skipOnEmpty' => false, 'extensions' => 'xls, xlsx'],
         ];
     }
@@ -43,15 +69,15 @@ class CarUploadXlsForm extends Model
     public function attributeLabels()
     {
         return [
-            'company' => 'Компания',
-            'type' => 'Тип ТС',
+            'company_id' => 'Компания',
+            'type_id' => 'Тип ТС',
             'file' => 'Файл',
         ];
     }
 
     public function save($validate = true)
     {
-        if ($validate && $this->validate($this->attributes)) {
+        if (!($validate && $this->validate())) {
             Yii::info('Model not inserted due to validation error.', __METHOD__);
 
             return false;
@@ -88,7 +114,16 @@ class CarUploadXlsForm extends Model
             . $this->folder . DIRECTORY_SEPARATOR
             . $newName;
 
-        return $this->file->saveAs($file);
+        // @see \yii\web\UploadedFile::saveAs
+        // Если изагрузили, то временный файл уже не существует.
+        // Добавим имя уже загруженного файла
+        if ($this->file->saveAs($file)) {
+            $this->file = $newName;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -98,11 +133,19 @@ class CarUploadXlsForm extends Model
      */
     public function saveFromExternal()
     {
+        // с какого id начали инсертить
+        $this->startId = count(Car::find()->all());
 
-        $res = [];
+        $file = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR
+            . $this->folder . DIRECTORY_SEPARATOR
+            . $this->file;
 
-        $obj = \PHPExcel_IOFactory::load($this->file);
-        $objPHPExcel = PHPExcel_IOFactory::load($this->external->getTempName());
+        $this->updatedCounter = 0;
+
+        $objPHPExcel = \PHPExcel_IOFactory::load($file);
+
+        $markArray = ArrayHelper::map(Mark::find()->all(), 'id', 'name');
+        $typeArray = ArrayHelper::map(Type::find()->all(), 'id', 'name');
 
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $highestRow = $worksheet->getHighestRow(); // e.g. 10
@@ -111,49 +154,65 @@ class CarUploadXlsForm extends Model
                 $name = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
                 $number = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
                 $type = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+                $is_infected = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
 
                 if (
-                    PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($name) == PHPExcel_Cell_DataType::TYPE_STRING
-                    && PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($number) == PHPExcel_Cell_DataType::TYPE_NULL
-                    && PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($type) == PHPExcel_Cell_DataType::TYPE_NULL
+                    \PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($name) == \PHPExcel_Cell_DataType::TYPE_STRING
+                    && \PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($number) == \PHPExcel_Cell_DataType::TYPE_NULL
+                    && \PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($type) == \PHPExcel_Cell_DataType::TYPE_NULL
                 ) {
-                    if ($newCompany = Company::model()->find('name = :name', [':name' => $name])) {
+                    if ($newCompany = Company::findOne(['name' => $name]))
                         $this->company_id = $newCompany->id;
-                    }
+
                     continue;
                 }
 
-                $car = new Car();
-
                 $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
-                $number = strtr($number, Translit::$rules);
-                if ($existed = Car::model()->find('number = :number', [':number' => $number])) {
+                $number = strtr($number, static::$rules);
+                if ($existed = Car::findOne(['number' => $number]))
                     $car = $existed;
-                }
+                else
+                    $car = new Car();
 
                 $car->attributes = $this->attributes;
                 $car->number = $number;
 
-                if ($type = Type::model()->find('name = :name', [':name' => $type])) {
-                    $car->type_id = $type->id;
-                }
+                // ToDo: бывает ситуация, когда ошибка в типе, тогда что присваивать?
+                // ToDo: ввести ошибочный тип?
+                if ($typeKey = array_search($type, $typeArray))
+                    $car->type_id = $typeKey;
 
                 $name = explode('-', explode(' ', $name)[0])[0];
-                if ($mark = Mark::model()->find('name = :name', [':name' => $name])) {
-                    $car->mark_id = $mark->id;
-                } else {
-                    $mark = new Mark();
-                    $mark->name = $name;
-                    if ($mark->save()) {
-                        $car->mark_id = $mark->id;
-                    }
-                }
+                if ($markKey = array_search($name, $markArray))
+                    $car->mark_id = $markKey;
+                else
+                    if ($newMarkModel = $this->createMark($name))
+                        $car->mark_id = $newMarkModel->id;
+
+                if (\PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($is_infected) == \PHPExcel_Cell_DataType::TYPE_STRING)
+                    $car->is_infected = $is_infected;
 
                 $car->save();
-                $res[] = $car;
+                if (!$car->isNewRecord)
+                    $this->updatedCounter++;
             }
-        }
 
-        return $res;
+        }
+        $this->endId = count(Car::find()->all());
+
+        return true;
+    }
+
+    /**
+     * @param $name
+     * @return Mark|null
+     */
+    private function createMark($name)
+    {
+        $model = new Mark(['name' => $name]);
+        if ($model->save())
+            return $model;
+
+        return null;
     }
 }

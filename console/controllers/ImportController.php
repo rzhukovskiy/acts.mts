@@ -57,6 +57,16 @@ class ImportController extends Controller
         $this->importUsers();
     }
 
+    public function actionCompany()
+    {
+        $this->importCompanies();
+    }
+
+    public function actionCar()
+    {
+        $this->importCars();
+    }
+
     public function actionBaseData()
     {
         $this->importCompanies();
