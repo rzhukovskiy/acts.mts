@@ -1918,6 +1918,32 @@ class ActExporter
             );
             $worksheet->getRowDimension($row)->setRowHeight(-1);
 
+            if ($cnt == 2) {
+                $row++;
+                $worksheet->getStyle("A$row:K$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'top' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+                $borderStart = $startRow - 7;
+                $borderEnd = $borderStart + 50;
+                $worksheet->getStyle("E$borderStart:E$borderEnd")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'right' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+            }
+
             $cnt++;
             if ($cnt == 5) {
                 $cnt = 0;
