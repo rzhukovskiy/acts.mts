@@ -1921,7 +1921,7 @@ class ActExporter
             $cnt++;
             if ($cnt == 5) {
                 $cnt = 0;
-                $startRow += mb_strlen($company->name) > 30 ? 27 : 28;
+                $startRow += mb_strlen($company->name) > 30 ? 26 : 28;
             }
         }
     }
