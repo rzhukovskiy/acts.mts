@@ -4,9 +4,9 @@ return [
     'language' => 'ru',
     'timeZone' => 'Europe/Moscow',
     'components' => [
-//        'cache' => [
-//            'class' => 'yii\caching\FileCache',
-//        ],
+        'cache' => [
+            'class' => 'yii\caching\FileCache',
+        ],
         'authManager' => [
             'class' => 'yii\rbac\PhpManager','defaultRoles' => [
                 \common\models\User::ROLE_ADMIN,
