@@ -2,6 +2,7 @@
 
 namespace frontend\models\search;
 
+use common\models\Company;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -58,7 +59,7 @@ class CardSearch extends CommonCardSearch
             return $dataProvider;
         }
 
-        $query->joinWith(['company']);
+        $query->joinWith(['company company']);
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -67,6 +68,7 @@ class CardSearch extends CommonCardSearch
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+        $query->andFilterWhere(['company.status' => Company::STATUS_ACTIVE]);
         $query->andFilterWhere(['parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
 
         return $dataProvider;

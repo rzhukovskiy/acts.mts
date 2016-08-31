@@ -1,7 +1,8 @@
 <?php
 
+use common\models\Company;
+use kartik\grid\GridView;
 use yii\bootstrap\Html;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /**
@@ -15,18 +16,12 @@ use yii\widgets\Pjax;
 
 $this->title = 'ТС типа «' . Html::encode($typeModel->name) . '»';
 
+$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
+    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'company_id', Company::find()->active()
+        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']);
 ?>
 <div class="car-count-view">
-    <?php if ($admin || !empty(Yii::$app->user->identity->company->children)) { ?>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                Поиск
-            </div>
-            <div class="panel-body">
-                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => $typeModel->id]); ?>
-            </div>
-        </div>
-    <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading"><?= $this->title ?></div>
         <div class="panel-body">
@@ -35,9 +30,36 @@ $this->title = 'ТС типа «' . Html::encode($typeModel->name) . '»';
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'id' => 'car-count-view',
-                'layout' => "{summary}\n{items}\n{pager}",
+                'layout' => "{items}",
                 'summary' => false,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
                 'emptyText' => '',
+                'filterUrl' => 'list',
+                'filterSelector' => '.ext-filter',
+                'beforeHeader' => [
+                    [
+                        'columns' => [
+                            [
+                                'content' => $filters,
+                                'options' => ['colspan' => 4, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                            ],
+                        ],
+                        'options' => ['class' => 'filters extend-header'],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'content' => '&nbsp',
+                                'options' => [
+                                    'colspan' => 4,
+                                ]
+                            ]
+                        ],
+                        'options' => ['class' => 'kv-group-header'],
+                    ],
+                ],
                 'columns' => [
                     [
                         'header' => '№',
