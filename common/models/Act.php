@@ -259,7 +259,9 @@ class Act extends ActiveRecord
                 $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
                 break;
             case 'car':
-                $hasError = !isset($this->car->company_id) || $this->car->company_id != $this->client_id;
+                $hasError = !isset($this->car->company_id) ||
+                    ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id) ||
+                    $this->car->company_id != $this->client_id;
                 break;
             case 'truck':
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
