@@ -59,6 +59,7 @@ class Act extends ActiveRecord
     const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
     const SCENARIO_CAR = 'car';
+    const SCENARIO_CREATE = 'create';
 
     public $serviceList;
     public $clientServiceList;

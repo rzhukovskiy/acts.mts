@@ -120,7 +120,17 @@ class ActController extends Controller
             }
         }
 
+        $searchModel = new ActSearch();
+        $searchModel->partner_id = Yii::$app->user->identity->company_id;
+        $searchModel->service_type = $type;
+        $searchModel->createDay = date('Y-m-d');
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
         return $this->render('create', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
             'type' => $type,
             'serviceList' => $serviceList,
             'role' => Yii::$app->user->identity->role,

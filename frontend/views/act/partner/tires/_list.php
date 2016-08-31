@@ -210,7 +210,7 @@ echo GridView::widget([
     'export' => false,
     'showPageSummary' => true,
     'filterSelector' => '.ext-filter',
-    'beforeHeader' => [
+    'beforeHeader' =>  !empty($hideFilter) ? null : [
         [
             'columns' => $headerColumns,
             'options' => ['class' => 'extend-header'],

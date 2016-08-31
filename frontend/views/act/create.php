@@ -8,6 +8,8 @@ use common\models\User;
  * @var $model \common\models\Act
  * @var $serviceList array
  * @var $role string
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel \common\models\search\ActSearch
  */
 
 $this->title = 'Добавить машину';
@@ -25,4 +27,11 @@ if ($role == User::ROLE_PARTNER) {
         'role' => $role,
     ]);
 }
+
+echo $this->render('partner/' . Service::$listType[$type]['en'] . '/_list', [
+    'dataProvider' => $dataProvider,
+    'searchModel' => $searchModel,
+    'role' => $role,
+    'hideFilter' => true,
+]);
 

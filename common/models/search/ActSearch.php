@@ -18,6 +18,7 @@ class ActSearch extends Act
     public $dateFrom;
     public $dateTo;
     public $period;
+    public $createDay;
     public $day;
 
     /**
@@ -45,6 +46,7 @@ class ActSearch extends Act
             self::SCENARIO_PARTNER => ['check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
             self::SCENARIO_ERROR => ['check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
             self::SCENARIO_HISTORY => ['client_id', 'number', 'dateFrom', 'dateTo'],
+            'default' => [],
         ];
     }
 
@@ -207,6 +209,7 @@ class ActSearch extends Act
             'service_type' => $this->service_type,
             'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
             'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
+            'DATE_FORMAT(FROM_UNIXTIME(`act`.`created_at`), "%Y-%m-%d")' => $this->createDay,
         ]);
 
         $query->andFilterWhere(['like', 'act.number', $this->number])

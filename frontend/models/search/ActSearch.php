@@ -17,6 +17,8 @@ class ActSearch extends Act
 
     public $dateFrom;
     public $dateTo;
+    public $createDay;
+    public $period;
 
     /**
      * @inheritdoc
