@@ -1,8 +1,8 @@
 <?php
 
+use common\models\Company;
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
-use common\models\Company;
 
 /**
  * @var $this \yii\web\View
@@ -13,18 +13,12 @@ use common\models\Company;
 
 $this->title = 'Список типов ТС';
 
+$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
+    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'company_id', Company::find()->active()
+        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']);
 ?>
 <div class="car-count-index">
-    <?php if ($admin) { ?>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                Поиск
-            </div>
-            <div class="panel-body">
-                <?php echo $this->render('_search', ['model' => $searchModel, 'companyDropDownData' => $companyDropDownData, 'type' => null]); ?>
-            </div>
-        </div>
-    <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading"><?= $this->title ?></div>
         <div class="panel-body">
@@ -38,6 +32,29 @@ $this->title = 'Список типов ТС';
                 'export' => false,
                 'showPageSummary' => true,
                 'emptyText' => '',
+                'filterSelector' => '.ext-filter',
+                'beforeHeader' => [
+                    [
+                        'columns' => [
+                            [
+                                'content' => $filters,
+                                'options' => ['colspan' => 4, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                            ],
+                        ],
+                        'options' => ['class' => 'filters extend-header'],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'content' => '&nbsp',
+                                'options' => [
+                                    'colspan' => 4,
+                                ]
+                            ]
+                        ],
+                        'options' => ['class' => 'kv-group-header'],
+                    ],
+                ],
                 'columns' => [
                     [
                         'header' => '№',

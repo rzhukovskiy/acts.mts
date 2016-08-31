@@ -47,7 +47,7 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'partner_id')->dropDownList(Company::find()->where(['type' => $model->service_type])->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'partner_id')->dropDownList(Company::find()->active()->andWhere(['type' => $model->service_type])->select(['name', 'id'])->indexBy('id')->column())->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'check')->error(false) ?>

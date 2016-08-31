@@ -199,6 +199,20 @@ class Company extends ActiveRecord
         return count($this->getCars()->where('type_id = 7')->all());
     }
 
+    public function getRequisitesByType($service_type, $field)
+    {
+        foreach ($this->requisites as $requisites) {
+            if ($requisites->type == $service_type && isset($requisites->$field)) {
+                return $requisites->$field;
+            }
+        }
+
+        if ($service_type != Service::TYPE_WASH) {
+            return $this->getRequisitesByType(Service::TYPE_WASH, $field);
+        }
+        return false;
+    }
+
     public function getServiceList()
     {
         if ($this->serviceTypes) {

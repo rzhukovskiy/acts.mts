@@ -34,19 +34,19 @@ $filters = 'Период: ' . DatePicker::widget([
     ]);
 
 if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
-    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'partner_id', Company::find()
-            ->where(['parent_id' => Yii::$app->user->identity->company_id])
+    $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'partner_id', Company::find()->active()
+            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN) {
-    $filters .= Html::a('Выгрузить', '#', ['class' => 'pull-right btn btn-primary btn-sm']);
+    $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
 }
 
 $headerColumns = [
     [
         'content' => $filters,
-        'options' => ['style' => 'vertical-align: middle', 'colspan' => 8, 'class' => 'kv-grid-group-filter'],
+        'options' => ['style' => 'vertical-align: middle', 'colspan' => 9, 'class' => 'kv-grid-group-filter'],
     ],
 ];
 
@@ -104,7 +104,7 @@ $columns = [
         },
         'groupHeader' => function ($data) {
             return [
-                'mergeColumns' => [[0, 11]],
+                'mergeColumns' => [[0, 12]],
                 'content' => [
                     0 => $data->partner->name . ' - ' . $data->partner->address,
                 ],
@@ -140,6 +140,17 @@ $columns = [
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
         },
+    ],
+    [
+        'header' => 'Услуга',
+        'value' => function ($data) {
+            /** @var \common\models\ActScope $scope */
+            $services = [];
+            foreach ($data->clientScopes as $scope) {
+                $services[] = $scope->description;
+            }
+            return implode('+', $services);
+        }
     ],
     [
         'attribute' => 'expense',

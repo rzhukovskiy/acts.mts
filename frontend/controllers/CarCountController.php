@@ -56,14 +56,14 @@ class CarCountController extends Controller
             ->carsCountByTypes($searchModel->company_id);
 
         if (Yii::$app->user->can(User::ROLE_ADMIN)) {
-            $companyModels = Company::find()
+            $companyModels = Company::find()->active()
                 ->andWhere(['type' => Company::TYPE_OWNER])
-                ->all();
+                ->active()->all();
             $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
         } else {
-            $companyModels = Company::find()
+            $companyModels = Company::find()->active()
                 ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
-                ->all();
+                ->active()->all();
             $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
         }
 
@@ -95,9 +95,9 @@ class CarCountController extends Controller
 
         $dataProvider->pagination = false;
 
-        $companyModels = Company::find()
+        $companyModels = Company::find()->active()
             ->andWhere(['type' => Company::TYPE_OWNER])
-            ->all();
+            ->active()->all();
         $companyDropDownData = ArrayHelper::map($companyModels, 'id', 'name');
 
         return $this->render('view', [

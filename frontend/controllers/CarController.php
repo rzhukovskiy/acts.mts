@@ -67,6 +67,7 @@ class CarController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
         $dataProvider->query
             ->addSelect('client_id, act.number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
             ->groupBy('act.number');
@@ -114,6 +115,7 @@ class CarController extends Controller
         $searchModel->number = $model->number;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
 
         return $this->render('view', [
             'dataProvider' => $dataProvider,
@@ -182,7 +184,7 @@ class CarController extends Controller
     {
         $model = new CarUploadXlsForm();
         $typeDropDownItems = ArrayHelper::map(Type::find()->all(), 'id', 'name');
-        $companyDropDownItems = ArrayHelper::map(Company::find()->all(), 'id', 'name');
+        $companyDropDownItems = ArrayHelper::map(Company::find()->active()->active()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');

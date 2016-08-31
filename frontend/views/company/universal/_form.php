@@ -30,7 +30,7 @@ use yii\helpers\ArrayHelper;
         ]) ?>
         <?= $form->field($model, 'name') ?>
         <?= $form->field($model, 'parent_id')->dropdownList(
-            Company::find()->byType(Company::TYPE_OWNER)->active()->select(['name', 'id'])->indexBy('id')->column(),
+            Company::find()->active()->byType(Company::TYPE_OWNER)->active()->select(['name', 'id'])->indexBy('id')->column(),
             ['prompt'=>'выберите компанию']
         ) ?>
         <?= $form->field($model, 'address') ?>

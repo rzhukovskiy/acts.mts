@@ -81,8 +81,8 @@ $periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary', 'style' => 'margin-left: 10px;']);
 
 $filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
-    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()
-        ->where(['parent_id' => Yii::$app->user->identity->company_id])
+    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
         ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 $filters .= 'Выбор периода: ' . $periodForm;
 

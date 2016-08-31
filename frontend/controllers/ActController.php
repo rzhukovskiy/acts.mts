@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\ActExporter;
 use common\models\Act;
 use common\models\search\ActSearch;
 use common\models\Service;
@@ -25,12 +26,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix'],
+                        'actions' => ['list', 'view', 'fix', 'export'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -57,6 +58,25 @@ class ActController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'company' => $company,
+            'role' => Yii::$app->user->identity->role,
+        ]);
+    }
+
+    public function actionExport($type, $company = false)
+    {
+        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
+        $searchModel->service_type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $exporter = new ActExporter();
+        $exporter->exportCSV($searchModel, $company);
+
+        return $this->render('export', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,

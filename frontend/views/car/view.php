@@ -6,9 +6,9 @@
  * @var $model common\models\Car
  */
 
+use common\components\DateHelper;
 use common\models\Company;
 use common\models\Service;
-use kartik\date\DatePicker;
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
 use yii\bootstrap\Tabs;
@@ -70,7 +70,7 @@ switch ($diff) {
 }
 
 $periodForm = '';
-$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' =>'select-period form-control', 'style' => 'margin-right: 10px;']);
+$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' => 'select-period form-control', 'style' => 'margin-right: 10px;']);
 $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
@@ -148,7 +148,7 @@ echo GridView::widget([
         [
             'attribute' => 'served_at',
             'value' => function ($data) {
-                return date('d-m-Y', $data->served_at);
+                return date('d ', $data->served_at) . DateHelper::getMonthName($data->served_at)[1] . date(' Y', $data->served_at);
             },
         ],
         [
@@ -173,7 +173,7 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'partner.address',
-            'filter' => Company::find()->select(['name', 'id'])->indexBy('id')->column(),
+            'filter' => Company::find()->active()->select(['name', 'id'])->indexBy('id')->column(),
             'value' => function ($data) {
                 return isset($data->partner) ? $data->partner->address : 'error';
             },
