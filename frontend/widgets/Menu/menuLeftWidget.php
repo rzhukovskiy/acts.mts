@@ -131,12 +131,12 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    'url' => ['/statistic/list', 'type' => Company::TYPE_WASH],
+                    'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'partner'],
                     'active' => Yii::$app->controller->id == 'statistic',
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    'url' => ['/company-statistic/list', 'type' => Company::TYPE_WASH],
+                    'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'company'],
                     'active' => Yii::$app->controller->id == 'company-statistic',
                 ],
                 [
@@ -155,11 +155,11 @@ class menuLeftWidget extends Widget
             /** @var Company $company */
             $company = Yii::$app->user->identity->company;
             $items = [
-//                [
-//                    'label' => 'Доходы',
-//                    'url' => ['/archive/error', 'type' => 2],
-//                    'active' => Yii::$app->controller->id == '',
-//                ],
+                [
+                    'label' => 'Доходы',
+                    'url' => ['/stat/view', 'id' => Yii::$app->user->identity->company_id],
+                    'active' => Yii::$app->controller->id == '',
+                ],
                 [
                     'label' => 'Добавить машину',
                     'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
@@ -189,11 +189,11 @@ class menuLeftWidget extends Widget
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
-//                [
-//                    'label' => 'Расходы',
-//                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
-//                    'active' => Yii::$app->controller->id == 'archive',
-//                ],
+                [
+                    'label' => 'Расходы',
+                    'url' => ['/stat/view', 'id' => Yii::$app->user->identity->company_id],
+                    'active' => Yii::$app->controller->id == 'archive',
+                ],
                 [
                     'label' => 'Услуги',
                     'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
