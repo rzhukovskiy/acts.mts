@@ -68,14 +68,29 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [
-                        'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
-                        'clientOptions' => [
-                            'source' => Car::find()->select('number as value')->asArray()->all(),
-                            'minLength'=>'3',
-                            'autoFill'=>true,
-                        ],
-                    ])->error(false) ?>
+                    <label class="control-label" for="act-card_id">Номер и номер прицепа</label>
+                    <div class="input-group">
+                        <?= AutoComplete::widget([
+                            'model' => $model,
+                            'attribute' => 'number',
+                            'options' => ['class' => 'form-control', 'autocomplete' => 'on', 'style' => 'width: 50%'],
+                            'clientOptions' => [
+                                'source' => Car::find()->where(['!=', 'type_id', 7])->select('number as value')->asArray()->all(),
+                                'minLength' => '2',
+                                'autoFill' => true,
+                            ]
+                        ]) ?>
+                        <?= AutoComplete::widget([
+                            'model' => $model,
+                            'attribute' => 'extra_number',
+                            'options' => ['class' => 'form-control input-group-addon', 'autocomplete' => 'on', 'style' => 'width: 50%'],
+                            'clientOptions' => [
+                                'source' => Car::find()->where(['type_id' => 7])->select('number as value')->asArray()->all(),
+                                'minLength' => '2',
+                                'autoFill' => true,
+                            ]
+                        ]) ?>
+                    </div>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>

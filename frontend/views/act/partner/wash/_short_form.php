@@ -31,7 +31,7 @@ use yii\jui\AutoComplete;
         <table class="table table-bordered">
             <tbody>
             <tr>
-                <td>
+                <td style="width: 100px">
                     <?= $form->field($model, 'time_str')->widget(DatePicker::classname(), [
                         'type' => DatePicker::TYPE_INPUT,
                         'language' => 'ru',
@@ -44,7 +44,7 @@ use yii\jui\AutoComplete;
                         ]
                     ])->error(false) ?>
                 </td>
-                <td style="min-width: 100px">
+                <td style="width: 100px">
                     <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
                         'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
                         'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
@@ -54,15 +54,30 @@ use yii\jui\AutoComplete;
                         ],
                     ])->error(false) ?>
                 </td>
-                <td>
-                    <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [
-                        'options' => ['class' => 'form-control', 'autocomplete' => 'on'],
-                        'clientOptions' => [
-                            'source' => Car::find()->select('number as value')->asArray()->all(),
-                            'minLength' => '2',
-                            'autoFill' => true,
-                        ],
-                    ])->error(false) ?>
+                <td class="complex-number">
+                    <label class="control-label" for="act-card_id">Номер <span class="extra-number" style="display:none">и номер прицепа</span></label>
+                    <div class="input-group">
+                        <?= AutoComplete::widget([
+                            'model' => $model,
+                            'attribute' => 'number',
+                            'options' => ['class' => 'form-control main-number', 'autocomplete' => 'on', 'style' => 'width: 50%'],
+                            'clientOptions' => [
+                                'source' => Car::find()->where(['!=', 'type_id', 7])->select('number as value')->asArray()->all(),
+                                'minLength' => '2',
+                                'autoFill' => true,
+                            ]
+                        ]) ?>
+                        <?= AutoComplete::widget([
+                            'model' => $model,
+                            'attribute' => 'extra_number',
+                            'options' => ['class' => 'form-control input-group-addon extra-number', 'autocomplete' => 'on', 'style' => 'display:none; width: 50%'],
+                            'clientOptions' => [
+                                'source' => Car::find()->where(['type_id' => 7])->select('number as value')->asArray()->all(),
+                                'minLength' => '2',
+                                'autoFill' => true,
+                            ]
+                        ]) ?>
+                    </div>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>

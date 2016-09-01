@@ -74,9 +74,10 @@ $periodForm .= Html::dropDownList('period', $period, \common\models\Act::$period
 $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
-$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
+$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);;
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
 echo Tabs::widget([
     'items' => [
@@ -110,15 +111,8 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => 'Выбор периода:',
-                    'options' => ['colspan' => 2, 'style' => 'vertical-align: middle'],
-                ],
-                [
-                    'content' => $periodForm,
-                    'options' => ['colspan' => 4, 'class' => 'kv-grid-group-filter period-select'],
-                ],
-                [
-                    'content' => Html::submitButton('Показать', ['class' => 'btn btn-primary']),
+                    'content' => 'Выбор периода: ' . $periodForm,
+                    'options' => ['colspan' => 7, 'class' => 'kv-grid-group-filter period-select'],
                 ],
             ],
             'options' => ['class' => 'extend-header'],

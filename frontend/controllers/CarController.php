@@ -14,6 +14,7 @@ use frontend\models\search\CarSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -48,6 +49,11 @@ class CarController extends Controller
                         'actions' => ['list', 'view', 'act-view'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
+                    ],
+                    [
+                        'actions' => ['check-extra'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_PARTNER],
                     ]
                 ]
             ]
@@ -231,6 +237,16 @@ class CarController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(Yii::$app->getRequest()->referrer);
+    }
+
+    public function actionCheckExtra($number)
+    {
+        $car = Car::findOne(['number' => $number]);
+        if (!empty($car->company) && $car->company->is_split) {
+            echo Json::encode(['res' => 1]);
+        } else {
+            echo Json::encode(['res' => 0]);
+        }
     }
 
     /**

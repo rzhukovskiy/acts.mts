@@ -152,6 +152,9 @@ $columns = [
     ],
     [
         'attribute' => 'number',
+        'value' =>  function ($data) {
+            return $data->number . ($data->client->is_split ? " ($data->extra_number)" : '');
+        },
         'contentOptions' => function ($data) {
             if ($data->hasError('car')) return ['class' => 'text-danger'];
         },

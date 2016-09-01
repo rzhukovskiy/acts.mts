@@ -76,9 +76,9 @@ $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class
 $periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
-$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary', 'style' => 'margin-left: 10px;']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
 $filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
     'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
