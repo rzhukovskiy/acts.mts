@@ -31,10 +31,12 @@ class StatController extends Controller
                         'roles' => [User::ROLE_ADMIN]
                     ],
                     [
+                        'actions' => ['view', 'month', 'day'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
+                        'actions' => ['view', 'month', 'day', 'total'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT]
                     ]
