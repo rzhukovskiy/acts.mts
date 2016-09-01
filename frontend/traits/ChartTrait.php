@@ -18,25 +18,26 @@ trait ChartTrait
      * @param $models
      * @return string
      */
-    private function chartByMonth(array $models)
+    private function chartByMonth(array $models, $field = 'profit')
     {
         $data = $this->fillWithMonth();
 
         foreach ($models as $model) {
-            $month = (int) date('m',strtotime($model->dateMonth));
-            $data[$month]['y'] = $model->profit;
+            if ( date('Y', strtotime($model->dateMonth)) == date('Y')) {
+                $month = (int) date('m', strtotime($model->dateMonth));
+                $data[$month-1]['y'] = $model->$field; // нумерация отстает от месяца на 1
+            }
         }
 
         return json_encode($data);
     }
-
 
     /**
      * @param $models
      * @param $date
      * @return string
      */
-    private function chartDataByDay(array $models, $date)
+    private function chartDataByDay(array $models, $date, $field = 'profit')
     {
         $daysCount = date('t', strtotime($date));
         $data = [];
@@ -50,12 +51,18 @@ trait ChartTrait
 
         foreach ($models as $model) {
             $day = (int) date('d',strtotime($model->dateMonth));
-            $data[$day-1]['y'] = $model->profit;
+            $data[$day-1]['y'] = $model->$field; // нумерация отстает от месяца на 1
         }
 
         return json_encode($data);
     }
 
+    /**
+     *
+     *
+     * @param ActiveDataProvider $dataProvider
+     * @return string
+     */
     private function chartTotal(ActiveDataProvider $dataProvider)
     {
         $dataProvider->query
@@ -70,7 +77,7 @@ trait ChartTrait
 
         foreach ($models as $model) {
             $month = (int) date('m',strtotime($model->dateMonth));
-            $data[$month-1]['y'] = $model->profit;
+            $data[$month-1]['y'] = $model->profit; // нумерация отстает от месяца на 1
         }
 
         return json_encode($data);
@@ -92,6 +99,7 @@ trait ChartTrait
                 'label' => $month[0],
             ];
         }
+
         return $data;
     }
 }
