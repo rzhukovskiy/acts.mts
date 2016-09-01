@@ -69,7 +69,7 @@ CanvasJsAsset::register($this);
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Расход',
+                    'header' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
@@ -77,87 +77,17 @@ CanvasJsAsset::register($this);
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{view}',
-                    'buttons' => [
-                        'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
-                        }
-                    ]
-                ],
+//                [
+//                    'class' => 'yii\grid\ActionColumn',
+//                    'template' => '{view}',
+//                    'buttons' => [
+//                        'view' => function ($url, $model, $key) {
+//                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
+//                        }
+//                    ]
+//                ],
             ]
         ])
         ?>
-        <hr>
-        <div class="col-sm-12">
-            <div id="chart_div" style="width:100%;height:500px;"></div>
-            <?php
-            $js = '
-                var it = 1;
-                var dataTable = '.$chartData.';
-                CanvasJS.addColorSet("blue",["#428bca"]);
-
-                var options = {
-                    colorSet: "blue",
-                    title: {
-                        text: "'.$chartTitle.'",
-                        fontColor: "#069",
-                        fontSize: 22
-                    },
-                    dataPointMaxWidth: 30,
-                    subtitles:[
-                        {
-                            text: "Прибыль",
-                            horizontalAlign: "left",
-                            fontSize: 14,
-                            fontColor: "#069",
-                            margin: 20
-                        }
-                    ],
-                    data: [
-                        {
-                            type: "column",
-                            dataPoints: dataTable
-                        }
-                    ],
-                    axisX:{
-                        title: "Дни месяца",
-                        titleFontSize: 14,
-                        titleFontColor: "#069",
-                        titleFontWeight: "bold",
-                        labelFontColor: "#069",
-                        labelFontWeight: "bold",
-                        interval: 1,
-                        lineThickness: 1,
-                        labelFontSize: 14,
-                        lineColor: "black",
-                        margin: 20
-                    },
-
-                    axisY:{
-                        labelFontColor: "#069",
-                        labelFontWeight: "bold",
-                        tickThickness: 1,
-                        gridThickness: 1,
-                        lineThickness: 1,
-                        labelFontSize: 14,
-                        lineColor: "black",
-                        valueFormatString: "### ### ###",
-                        stripLines:[
-                            {
-                                thickness: 1,
-                                value:0,
-                                color:"#000"
-                            }
-                        ]
-                    }
-                };
-
-                $("#chart_div").CanvasJSChart(options);';
-
-            $this->registerJs($js);
-            ?>
-        </div>
     </div>
 </div>

@@ -41,7 +41,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/stat/day', 'id' => $data->client->id, 'date' => $data->dateMonth]);
+                        return Html::a($date, ['/stat/day', 'date' => $data->dateMonth]);
                     }
                 ],
                 [
@@ -65,7 +65,7 @@ CanvasJsAsset::register($this);
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth]);
                         }
                     ]
                 ],

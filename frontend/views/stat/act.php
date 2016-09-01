@@ -4,10 +4,12 @@ use yii\bootstrap\Html;
 use yii\widgets\DetailView;
 use frontend\models\Act;
 use common\models\Service;
+use common\models\User;
 
 /**
  * @var $this \yii\web\View
  * @var $model \common\models\Act
+ * @var $role string
  */
 $this->title = 'Акт';
 $formatter = Yii::$app->formatter;
@@ -19,7 +21,11 @@ $formatter = Yii::$app->formatter;
     </div>
     <div class="panel-body">
         <div class="text-center" style="padding: 10px">
-            <?php echo Html::a('Редактировать акт', ['/act/update', 'id' => $model->id], ['class' => 'btn btn-primary']); ?>
+            <?php
+            if ($role == User::ROLE_ADMIN) :
+                echo Html::a('Редактировать акт', ['/act/update', 'id' => $model->id], ['class' => 'btn btn-primary']);
+            endif;
+            ?>
         </div>
         <div class="row">
             <div class="col-sm-8 col-sm-offset-2">
@@ -32,10 +38,12 @@ $formatter = Yii::$app->formatter;
                                 'attribute' => 'client_id',
                                 'label' => 'Клиент',
                                 'value' => $model->client->name,
+                                'visible' => $role == User::ROLE_CLIENT,
                             ],
                             [
                                 'attribute' => 'partner_id',
                                 'value' => $model->partner->name,
+                                'visible' => $role == User::ROLE_PARTNER,
                             ],
                             [
                                 'attribute' => 'type_id',
@@ -57,19 +65,22 @@ $formatter = Yii::$app->formatter;
                                 'format' => 'TEXT',
                             ],
                             [
-                                'label' => 'Потрачено',
+                                'label' => ($role == User::ROLE_ADMIN) ? 'Потрачено' : 'Сумма',
                                 'attribute' => 'expense',
                                 'value' => $formatter->asDecimal($model->expense, 0),
+                                'visible' => $role == User::ROLE_PARTNER || $role == User::ROLE_ADMIN,
                             ],
                             [
-                                'label' => 'Приход',
+                                'label' => ($role == User::ROLE_ADMIN) ? 'Приход' : 'Сумма',
                                 'attribute' => 'income',
                                 'value' => $formatter->asDecimal($model->income, 0),
+                                'visible' => $role == User::ROLE_CLIENT || $role == User::ROLE_ADMIN,
                             ],
                             [
                                 'label' => 'Прибыль',
                                 'attribute' => 'profit',
                                 'value' => $formatter->asDecimal($model->profit, 0),
+                                'visible' => $role == User::ROLE_ADMIN,
                             ],
                             [
                                 'label' => 'Услуга',
@@ -90,6 +101,7 @@ $formatter = Yii::$app->formatter;
                                 'label' => 'Редектирован',
                                 'attribute' => 'updated_at',
                                 'value' => $formatter->asDate($model->updated_at, 'long'),
+                                'visible' => $role == User::ROLE_ADMIN,
                             ],
                             [
                                 'attribute' => 'check',

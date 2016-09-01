@@ -5,29 +5,29 @@ use common\models\Company;
 
 /**
  * @var $this \yii\web\View
- * @var $action string
+ * @var $model \frontend\models\Act
  */
 
 $request = Yii::$app->request;
 $items = [
     [
         'label' => 'Мойка',
-        'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => $action],
+        'url' => ['/stat/view', 'type' => Company::TYPE_WASH],
         'active' => $request->get('type') == Company::TYPE_WASH,
     ],
     [
         'label' => 'Сервис',
-        'url' => ['/stat/list', 'type' => Company::TYPE_SERVICE, 'group' => $action],
+        'url' => ['/stat/view', 'type' => Company::TYPE_SERVICE],
         'active' => $request->get('type') == Company::TYPE_SERVICE,
     ],
     [
         'label' => 'Шиномонтаж',
-        'url' => ['/stat/list', 'type' => Company::TYPE_TIRES, 'group' => $action],
+        'url' => ['/stat/view', 'type' => Company::TYPE_TIRES],
         'active' => $request->get('type') == Company::TYPE_TIRES,
     ],
     [
         'label' => 'Дезинфекция',
-        'url' => ['/stat/list', 'type' => Company::TYPE_DISINFECT, 'group' => $action],
+        'url' => ['/stat/view', 'type' => Company::TYPE_DISINFECT],
         'active' => $request->get('type') == Company::TYPE_DISINFECT,
     ],
     [

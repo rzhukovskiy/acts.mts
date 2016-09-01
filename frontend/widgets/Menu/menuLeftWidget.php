@@ -160,11 +160,11 @@ class menuLeftWidget extends Widget
             /** @var Company $company */
             $company = Yii::$app->user->identity->company;
             $items = [
-//                [
-//                    'label' => 'Доходы',
-//                    'url' => ['/stat/view'],
-//                    'active' => Yii::$app->controller->id == 'stat',
-//                ],
+                [
+                    'label' => 'Доходы',
+                    'url' => ['/stat/view'],
+                    'active' => Yii::$app->controller->id == 'stat',
+                ],
                 [
                     'label' => 'Добавить машину',
                     'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
@@ -194,11 +194,11 @@ class menuLeftWidget extends Widget
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
-//                [
-//                    'label' => 'Расходы',
-//                    'url' => ['/stat/view'],
-//                    'active' => Yii::$app->controller->id == 'stat',
-//                ],
+                [
+                    'label' => 'Расходы',
+                    'url' => ['/stat/view'],
+                    'active' => Yii::$app->controller->id == 'stat',
+                ],
                 [
                     'label' => 'Услуги',
                     'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],

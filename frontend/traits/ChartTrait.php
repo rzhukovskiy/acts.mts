@@ -2,6 +2,8 @@
 
 namespace frontend\traits;
 
+use common\models\User;
+use Yii;
 use common\components\DateHelper;
 use yii\data\ActiveDataProvider;
 
@@ -14,6 +16,33 @@ use yii\data\ActiveDataProvider;
 
 trait ChartTrait
 {
+    /**
+     * Switch data by roles
+     *
+     * @param array $models
+     * @return array|string
+     */
+    private function chartByMonthRoles(array $models)
+    {
+        /** @var User $model */
+        $model = Yii::$app->user->identity;
+        switch ($model->role) {
+            case User::ROLE_CLIENT :
+                $chartData = $this->chartByMonth($models, 'income');
+                break;
+            case User::ROLE_PARTNER :
+                $chartData = $this->chartByMonth($models, 'expense');
+                break;
+            case User::ROLE_ADMIN :
+                $chartData = $this->chartByMonth($models);
+                break;
+            default:
+                $chartData = [];
+        }
+
+        return $chartData;
+    }
+
     /**
      * @param $models
      * @return string
@@ -30,6 +59,35 @@ trait ChartTrait
         }
 
         return json_encode($data);
+    }
+
+    /**
+     * Switch data by roles
+     *
+     * @param array $models
+     * @param $date
+     * @param string $field
+     * @return array|string
+     */
+    private function chartDataByDayRoles(array $models, $date, $field = 'profit')
+    {
+        /** @var User $model */
+        $model = Yii::$app->user->identity;
+        switch ($model->role) {
+            case User::ROLE_CLIENT :
+                $chartData = $this->chartDataByDay($models, $date, 'income');
+                break;
+            case User::ROLE_PARTNER :
+                $chartData = $this->chartDataByDay($models, $date, 'expense');
+                break;
+            case User::ROLE_ADMIN :
+                $chartData = $this->chartDataByDay($models, $date);
+                break;
+            default:
+                $chartData = [];
+        }
+
+        return $chartData;
     }
 
     /**
