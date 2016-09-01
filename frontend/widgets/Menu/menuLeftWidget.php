@@ -160,20 +160,20 @@ class menuLeftWidget extends Widget
             /** @var Company $company */
             $company = Yii::$app->user->identity->company;
             $items = [
-//                [
-//                    'label' => 'Доходы',
-//                    'url' => ['/archive/error', 'type' => 2],
-//                    'active' => Yii::$app->controller->id == '',
-//                ],
+                [
+                    'label' => 'Доходы',
+                    'url' => ['/statistic/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                    'active' => Yii::$app->controller->id == 'statistic',
+                ],
                 [
                     'label' => 'Добавить машину',
                     'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'create',
+                    'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
                 ],
                 [
                     'label' => 'Архив',
                     'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
                 ],
             ];
         } // Client links
@@ -194,11 +194,11 @@ class menuLeftWidget extends Widget
                     'url' => ['/car-count/list'],
                     'active' => Yii::$app->controller->id == 'car-count',
                 ],
-//                [
-//                    'label' => 'Расходы',
-//                    'url' => ['/company-statistic/list', 'type' => Yii::$app->user->identity->company->type],
-//                    'active' => Yii::$app->controller->id == 'archive',
-//                ],
+                [
+                    'label' => 'Расходы',
+                    'url' => ['/company-statistic/list', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'company-statistic',
+                ],
                 [
                     'label' => 'Услуги',
                     'url' => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
@@ -217,16 +217,8 @@ class menuLeftWidget extends Widget
         return $items;
     }
 
-    public
-    function run()
+    public function run()
     {
         return $this->render('menu_left', ['items' => $this->getItems()]);
-    }
-
-
-    private
-    function getCountOfErrorActs()
-    {
-        return 5;
     }
 }

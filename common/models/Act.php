@@ -114,8 +114,8 @@ class Act extends ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'mark_id', 'type_id', 'number'], 'required'],
-            [['card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
+            [['partner_id', 'number'], 'required'],
+            [['card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList', 'mark_id', 'type_id'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
@@ -226,6 +226,25 @@ class Act extends ActiveRecord
     public static function getDayList()
     {
         return array_combine(range(1, 31), range(1, 31));
+    }
+
+    /**
+     * @param $car Car
+     * @param $serviceId int
+     */
+    public function disinfectCar($car, $serviceId)
+    {
+        $this->client_id = $car->company_id;
+        $this->number = $car->number;
+        $this->service_type = Service::TYPE_DISINFECT;
+
+        $this->serviceList = [
+            0 => [
+                'service_id' => $serviceId,
+                'amount' => 1,
+            ]
+        ];
+        $this->save();
     }
 
     /**

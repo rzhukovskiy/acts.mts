@@ -4,7 +4,10 @@ namespace frontend\controllers;
 
 use common\components\ActExporter;
 use common\models\Act;
+use common\models\Car;
+use common\models\Company;
 use common\models\search\ActSearch;
+use common\models\search\CarSearch;
 use common\models\Service;
 use common\models\User;
 use Yii;
@@ -41,7 +44,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'view', 'create', 'sign'],
+                        'actions' => ['list', 'view', 'create', 'sign', 'disinfect'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -81,6 +84,32 @@ class ActController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'company' => $company,
+            'role' => Yii::$app->user->identity->role,
+        ]);
+    }
+
+    public function actionDisinfect($serviceId = null)
+    {
+        $dataProvider = null;
+        $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
+        
+        if ($serviceId) {
+            $searchModel->is_infected = 1;
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            foreach ($dataProvider->getModels() as $car) {
+                $model = new Act();
+                $model->time_str = '01-' . $searchModel->period;
+                $model->partner_id = Yii::$app->user->identity->company_id;
+                $model->disinfectCar($car, $serviceId);
+            }
+        }
+
+        return $this->render('disinfect', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'serviceList' => Service::find()->where(['type' => Service::TYPE_DISINFECT])->select(['description', 'id'])->indexBy('id')->column(),
+            'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->column(),
             'role' => Yii::$app->user->identity->role,
         ]);
     }

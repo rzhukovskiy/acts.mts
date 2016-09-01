@@ -9,7 +9,7 @@ use yii\data\ActiveDataProvider;
 use common\models\Act;
 
 /**
- * CardSearch represents the model behind the search form about `common\models\Card`.
+ * ActSearch represents the model behind the search form about `common\models\Act`.
  * @property string $period
  * @property integer $day
  */

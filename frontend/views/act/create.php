@@ -14,11 +14,7 @@ use common\models\User;
 
 $this->title = 'Добавить машину';
 
-$request = Yii::$app->request;
-
-echo $this->render('_tabs', [
-    'role' => $role,
-]);
+echo $this->render('_create_tabs');
 
 if ($role == User::ROLE_PARTNER) {
     echo $this->render('partner/' . Service::$listType[$type]['en'] . '/_short_form', [
