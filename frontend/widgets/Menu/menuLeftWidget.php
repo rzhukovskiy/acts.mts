@@ -136,13 +136,13 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Статистика партнеров',
-                    'url' => ['/statistic/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'statistic',
+                    'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'partner'],
+                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'partner',
                 ],
                 [
                     'label' => 'Статистика компаний',
-                    'url' => ['/company-statistic/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'company-statistic',
+                    'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'company'],
+                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'company',
                 ],
                 [
                     'label' => 'Акты',
