@@ -71,10 +71,7 @@ class StatController extends Controller
         $models = $dataProvider->getModels();
 
         // Данные для подвала таблицы
-        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
-        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
-        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
-        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+        list($totalProfit, $totalServe, $totalExpense, $totalIncome) = $this->footerData($models);
 
         $formatter = Yii::$app->formatter;
 
@@ -125,19 +122,10 @@ class StatController extends Controller
         $models = $dataProvider->getModels();
 
         // ToDo: refactor this + formatter -> method footerData(Act $models):array
-        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
-        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
-        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
-        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+        list($totalProfit, $totalServe, $totalExpense, $totalIncome) = $this->footerData($models);
 
-        // ToDo: extract to method plz chartByMonthRoles(Act $models):array
         // Данные для графика генерим по ролям, целевое значение для ролей разное
-        if (Yii::$app->user->identity->role == User::ROLE_CLIENT)
-            $chartData = $this->chartByMonth($models, 'income');
-        if (Yii::$app->user->identity->role == User::ROLE_PARTNER)
-            $chartData = $this->chartByMonth($models, 'expense');
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN)
-            $chartData = $this->chartByMonth($models);
+        $chartData = $this->chartByMonthRoles($models);
 
         $formatter = Yii::$app->formatter;
 
@@ -193,18 +181,10 @@ class StatController extends Controller
         $dataProvider->pagination = false;
 
         $models = $dataProvider->getModels();
-        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
-        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
-        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
-        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+        list($totalProfit, $totalServe, $totalExpense, $totalIncome) = $this->footerData($models);
 
         // Данные для графика генерим по ролям, целевое значение для ролей разное
-        if (Yii::$app->user->identity->role == User::ROLE_CLIENT)
-            $chartData = $this->chartDataByDay($models, $date, 'income');
-        if (Yii::$app->user->identity->role == User::ROLE_PARTNER)
-            $chartData = $this->chartDataByDay($models, $date, 'expense');
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN)
-            $chartData = $this->chartDataByDay($models, $date);
+        $chartData = $this->chartDataByDayRoles($models, $date);
 
         $formatter = Yii::$app->formatter;
 
@@ -310,10 +290,7 @@ class StatController extends Controller
 
         $models = $dataProvider->getModels();
 
-        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
-        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
-        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
-        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+        list($totalProfit, $totalServe, $totalExpense, $totalIncome) = $this->footerData($models);
 
         $formatter = Yii::$app->formatter;
 
@@ -373,5 +350,21 @@ class StatController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
 
         return $model;
+    }
+
+    /**
+     * Collect footer data
+     *
+     * @param $models
+     * @return array
+     */
+    private function footerData($models)
+    {
+        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
+        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
+        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
+        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+
+        return [$totalProfit, $totalServe, $totalExpense, $totalIncome];
     }
 }
