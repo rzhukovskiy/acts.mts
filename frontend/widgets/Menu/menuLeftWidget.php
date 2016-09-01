@@ -132,12 +132,12 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Статистика партнеров',
                     'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'partner'],
-                    'active' => Yii::$app->controller->id == 'statistic',
+                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'partner',
                 ],
                 [
                     'label' => 'Статистика компаний',
                     'url' => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'company'],
-                    'active' => Yii::$app->controller->id == 'company-statistic',
+                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'company',
                 ],
                 [
                     'label' => 'Акты',
@@ -157,8 +157,8 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Доходы',
-                    'url' => ['/stat/view', 'id' => Yii::$app->user->identity->company_id],
-                    'active' => Yii::$app->controller->id == '',
+                    'url' => ['/stat/view'],
+                    'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [
                     'label' => 'Добавить машину',
@@ -191,8 +191,8 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Расходы',
-                    'url' => ['/stat/view', 'id' => Yii::$app->user->identity->company_id],
-                    'active' => Yii::$app->controller->id == 'archive',
+                    'url' => ['/stat/view'],
+                    'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [
                     'label' => 'Услуги',

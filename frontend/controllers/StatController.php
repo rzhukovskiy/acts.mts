@@ -6,6 +6,7 @@ use common\models\User;
 use frontend\traits\ChartTrait;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use frontend\models\search\ActSearch;
 use common\models\Company;
@@ -17,6 +18,30 @@ use yii\web\NotFoundHttpException;
 class StatController extends Controller
 {
     use ChartTrait;
+
+    // ToDo: plz setup rules, and close pages from users if
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN]
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_PARTNER]
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_CLIENT]
+                    ]
+                ]
+            ]
+        ];
+    }
 
     // Списки партнеров или компаний по типам
     // $group [company, partner]
@@ -33,10 +58,10 @@ class StatController extends Controller
 
         if ($group == 'company')
             $dataProvider->query->groupBy('client_id');
-            elseif($group == 'partner')
-                $dataProvider->query->groupBy('partner_id');
-            else
-                throw new InvalidParamException('Error, param not right.');
+        elseif ($group == 'partner')
+            $dataProvider->query->groupBy('partner_id');
+        else
+            throw new InvalidParamException('Error, param not right.');
 
         // Установка заголовка страницы
         $this->view->title = Company::$listType[$type]['ru'] . '. Статистика';
@@ -66,7 +91,7 @@ class StatController extends Controller
     // Акты компании с учетом типа или без
     // Выбор шаблона в зависимости от типа компании
     // $type - service_type
-    public function actionView($id, $type = null)
+    public function actionView($id = null, $type = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -79,17 +104,18 @@ class StatController extends Controller
         $searchModel->scenario = 'statistic_client_filter';
 
         $dataProvider = $searchModel->searchTypeByMonth(Yii::$app->request->queryParams);
+
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
-                ->andWhere(['client_id' => $id,])
+                ->andWhere(['client_id' => $companyModel->id,])
                 ->with('client');
         else
             $dataProvider->query
-                ->andWhere(['partner_id' => $id,])
+                ->andWhere(['partner_id' => $companyModel->id,])
                 ->with('partner');
 
         $dataProvider->pagination = false;
@@ -113,7 +139,7 @@ class StatController extends Controller
 
         $formatter = Yii::$app->formatter;
 
-        return $this->render('view/'.$viewName, [
+        return $this->render('view/' . $viewName, [
             'model' => $companyModel,
             'modelType' => ($companyModel->type == Company::TYPE_OWNER) ? 'client' : 'partner',
             'searchModel' => $searchModel,
@@ -127,7 +153,7 @@ class StatController extends Controller
     }
 
     // Акты компании за выбраный месяц
-    public function actionMonth($id, $date, $type = null)
+    public function actionMonth($date, $id = null, $type = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -144,6 +170,9 @@ class StatController extends Controller
                 "YEAR(FROM_UNIXTIME(served_at))" => date('Y', strtotime($date)),
             ]);
 
+        if (Yii::$app->user->identity->role == User::ROLE_PARTNER)
+            $type = Yii::$app->user->identity->company->type;
+
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
 
@@ -151,12 +180,12 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client_id' => $id,])
+                ->andWhere(['client_id' => $companyModel->id,])
                 ->with('client');
         else
             $dataProvider->query
                 ->addSelect('partner_id')
-                ->andWhere(['partner_id' => $id,])
+                ->andWhere(['partner_id' => $companyModel->id,])
                 ->with('partner');
 
         $dataProvider->pagination = false;
@@ -192,7 +221,7 @@ class StatController extends Controller
     }
 
     // Акты компании за день
-    public function actionDay($id, $date, $type = null)
+    public function actionDay($date, $id = null, $type = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -213,12 +242,12 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client_id' => $id,])
+                ->andWhere(['client_id' => $companyModel->id,])
                 ->with('client');
         else
             $dataProvider->query
                 ->addSelect('partner_id')
-                ->andWhere(['partner_id' => $id,])
+                ->andWhere(['partner_id' => $companyModel->id,])
                 ->with('partner');
 
         $dataProvider->pagination = false;
@@ -248,16 +277,53 @@ class StatController extends Controller
         if (($actModel = Act::findOne($id)) == null)
             throw new NotFoundHttpException('The requested page does not exist.');
 
+        $role = Yii::$app->user->identity->role;
+
         return $this->render('act', [
             'model' => $actModel,
+            'role' => $role,
         ]);
     }
 
     // Общая статистика
     // выбор шаблона в завиимости от типа компании
+    // Админу все показать
+    // Клиенту показать расход по машинам
+    // Партнеру показать доход по компаниям
     public function actionTotal()
     {
+        $viewName = $this->selectTemplate();
 
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'statistic_partner_filter';
+
+        $dataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
+        $chartDataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
+        $dataProvider->query->with(['client']);
+
+        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
+            $dataProvider->query->andWhere(['client_id' => Yii::$app->user->identity->company_id]);
+        }
+
+        $models = $dataProvider->getModels();
+
+        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
+        $totalServe = array_sum(ArrayHelper::getColumn($models, 'countServe'));
+        $totalExpense = array_sum(ArrayHelper::getColumn($models, 'expense'));
+        $totalIncome = array_sum(ArrayHelper::getColumn($models, 'income'));
+
+        $formatter = Yii::$app->formatter;
+
+        return $this->render('total/' . $viewName, [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'chartData' => $this->chartTotal($chartDataProvider),
+            'totalServe' => $totalServe,
+            'totalProfit' => $formatter->asDecimal($totalProfit, 0),
+            'totalIncome' => $formatter->asDecimal($totalIncome, 0),
+            'totalExpense' => $formatter->asDecimal($totalExpense, 0),
+        ]);
     }
 
     /**
@@ -290,13 +356,20 @@ class StatController extends Controller
      *
      * @param $id
      * @return null|static
+     * @throws InvalidParamException
      * @throws NotFoundHttpException
      */
     private function findCompanyModel($id)
     {
-        if (($companyModel = Company::findOne($id)) == null)
+        // для просмотра статистики клиента
+        // id компании не передаю, беру из модели авторизованного пользователя
+        if (is_null($id))
+            $id = Yii::$app->user->identity->company_id;
+
+
+        if (($model = Company::findOne($id)) == null)
             throw new NotFoundHttpException('The requested page does not exist.');
 
-        return $companyModel;
+        return $model;
     }
 }

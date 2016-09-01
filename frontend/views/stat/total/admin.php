@@ -1,37 +1,45 @@
 <?php
 
+var_dump('admin');
+
 use yii\grid\GridView;
+use yii\widgets\Pjax;
+use common\models\Service;
 use yii\bootstrap\Html;
-use common\components\DateHelper;
 use common\assets\CanvasJs\CanvasJsAsset;
 
 /**
- * @var $this \yii\web\View
- * @var $model \common\models\Company
- * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $this yii\web\View
+ * @var $type int
  * @var $searchModel \frontend\models\search\ActSearch
+ * @var $dataProvider \yii\data\ActiveDataProvider
+ * @var $chartData array
+ * @var $totalProfit int
+ * @var $totalServe int
+ * @var $totalExpense int
  */
 
 CanvasJsAsset::register($this);
-echo $this->render('_client_tabs', ['action' => 'total']);
+
+$this->title = 'Общая статистика';
+echo $this->render('../_tabs', ['action' => 'total']);
 
 echo $this->render('../_search', [
-    'type' => null,
-    'companyId' => $model->id,
+    'type' => 'total',
     'model' => $searchModel,
-]);
-?>
+]) ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= $this->title ?>
+        Общая статистика
     </div>
     <div class="panel-body">
         <?php
-
+        Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'layout' => '{items}',
-            'emptyText' => '',
+            'filterModel' => false,
+            'summary' => false,
+            'emptyCell' => '',
             'showFooter' => true,
             'columns' => [
                 [
@@ -40,14 +48,17 @@ echo $this->render('../_search', [
                     'footer' => 'Итого:',
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-
                 [
-                    'header' => 'Дата',
-                    'attribute' => 'dateMonth',
+                    'attribute' => 'service_type',
+                    'header' => 'Услуга',
                     'content' => function ($data) {
-                        $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/stat/month', 'date' => date('Y-m', strtotime($data->dateMonth))]);
-                    }
+                        if (empty($data->service_type))
+                            $title = '—';
+                        else
+                            $title = Html::a(Service::$listType[$data->service_type]['ru'], ['/statistic/list', 'type' => $data->service_type]);
+
+                        return $title;
+                    },
                 ],
                 [
                     'attribute' => 'countServe',
@@ -56,12 +67,21 @@ echo $this->render('../_search', [
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
-                    'attribute' => 'income',
+                    'attribute' => 'expense',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asDecimal($data->income, 0);
+                        return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
-                    'footer' => $totalIncome,
+                    'footer' => $totalExpense,
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                ],
+                [
+                    'attribute' => 'profit',
+                    'header' => 'Прибыль',
+                    'content' => function ($data) {
+                        return Yii::$app->formatter->asDecimal($data->profit, 0);
+                    },
+                    'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
 
@@ -70,14 +90,16 @@ echo $this->render('../_search', [
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'date' => date('Y-m', strtotime($model->dateMonth))]);
-                        }
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/list', 'type' => $model->service_type]);
+                        },
                     ]
                 ],
-            ]
+            ],
         ]);
+        Pjax::end();
         ?>
         <hr>
+
         <div class="col-sm-12">
             <div id="chart_div" style="width:100%;height:500px;"></div>
             <?php
@@ -140,7 +162,7 @@ echo $this->render('../_search', [
                 ";
             $this->registerJs($js);
             ?>
-
         </div>
+
     </div>
 </div>

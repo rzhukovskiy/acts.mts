@@ -41,7 +41,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/stat/day', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
+                        return Html::a($date, ['/stat/day', 'date' => $data->dateMonth]);
                     }
                 ],
                 [
@@ -52,7 +52,7 @@ CanvasJsAsset::register($this);
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Расход',
+                    'header' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
@@ -65,7 +65,7 @@ CanvasJsAsset::register($this);
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth]);
                         }
                     ]
                 ],

@@ -46,12 +46,12 @@ echo $this->render('../_search', [
                     'content' => ($modelType == 'client') ?
                         function ($data) {
                             $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/month', 'id' => $data->client->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
+                            return Html::a($date, ['/stat/month', 'id' => $data->client->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type]);
                         }
                         :
                         function ($data) {
                             $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/month', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
+                            return Html::a($date, ['/stat/month', 'id' => $data->partner->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type]);
                         }
                 ],
                 [
@@ -94,11 +94,11 @@ echo $this->render('../_search', [
                     'buttons' => [
                         'view' => ($modelType == 'client') ?
                             function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type]);
                             }
                             :
                             function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type]);
                             }
                     ]
                 ],

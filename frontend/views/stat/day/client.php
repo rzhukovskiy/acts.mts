@@ -68,7 +68,7 @@ use common\components\DateHelper;
                 ],
                 [
                     'attribute' => 'income',
-                    'header' => 'Доход',
+                    'header' => 'Расход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
@@ -77,15 +77,15 @@ use common\components\DateHelper;
                 ],
                 'check',
 
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{view}',
-                    'buttons' => [
-                        'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
-                        }
-                    ]
-                ],
+//                [
+//                    'class' => 'yii\grid\ActionColumn',
+//                    'template' => '{view}',
+//                    'buttons' => [
+//                        'view' => function ($url, $model, $key) {
+//                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
+//                        }
+//                    ]
+//                ],
             ]
         ])
         ?>
