@@ -114,8 +114,8 @@ class Act extends ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'mark_id', 'type_id', 'number'], 'required'],
-            [['card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList'], 'safe'],
+            [['partner_id', 'number'], 'required'],
+            [['card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList', 'mark_id', 'type_id'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
@@ -229,6 +229,25 @@ class Act extends ActiveRecord
     }
 
     /**
+     * @param $car Car
+     * @param $serviceId int
+     */
+    public function disinfectCar($car, $serviceId)
+    {
+        $this->client_id = $car->company_id;
+        $this->number = $car->number;
+        $this->service_type = Service::TYPE_DISINFECT;
+
+        $this->serviceList = [
+            0 => [
+                'service_id' => $serviceId,
+                'amount' => 1,
+            ]
+        ];
+        $this->save();
+    }
+
+    /**
      * @return bool|string
      */
     public function getImageLink()
@@ -259,7 +278,9 @@ class Act extends ActiveRecord
                 $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
                 break;
             case 'car':
-                $hasError = !isset($this->car->company_id) || $this->car->company_id != $this->client_id;
+                $hasError = !isset($this->car->company_id) ||
+                    ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id) ||
+                    $this->car->company_id != $this->client_id;
                 break;
             case 'truck':
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
@@ -272,8 +293,10 @@ class Act extends ActiveRecord
 
     public function beforeSave($insert)
     {
+        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+
         if (!empty($this->time_str)) {
-            $this->served_at = \DateTime::createFromFormat('d-m-Y', $this->time_str)->getTimestamp();
+            $this->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
         }
 
         //определяем клиента по карте
@@ -329,7 +352,7 @@ class Act extends ActiveRecord
                         $totalIncome += $clientService->price * $serviceData['amount'];
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $totalIncome += 1.2 * $serviceData['price'] * $serviceData['amount'];
+                        $totalIncome += $kpd * $serviceData['price'] * $serviceData['amount'];
                     }
 
                     $partnerService = CompanyService::findOne([
@@ -443,6 +466,7 @@ class Act extends ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
         /**
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
@@ -469,12 +493,12 @@ class Act extends ActiveRecord
                             $clientScope->price = $clientService->price;
                             $clientScope->description = $clientService->service->description;
                         } else {
-                            $clientScope->price = 1.2 * $serviceData['price'];
+                            $clientScope->price = $kpd * $serviceData['price'];
                             $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $clientScope->price = 1.2 * $serviceData['price'];
+                        $clientScope->price = $kpd * $serviceData['price'];
                         $clientScope->description = $serviceData['description'];
                     }
                     $clientScope->amount = $serviceData['amount'];

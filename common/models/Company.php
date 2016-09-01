@@ -345,27 +345,32 @@ class Company extends ActiveRecord
      */
     public function getPriceDataProvider($type)
     {
-        if($type == Company::TYPE_WASH) {
-            return new ActiveDataProvider([
-                'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`type_id`'),
-                'pagination' => false,
-                'sort' => [
-                    'defaultOrder' => [
-                        'type_id' => SORT_DESC,
-                    ]
-                ],
-            ]);
-        } else {
-            return new ActiveDataProvider([
-                'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
-                'pagination' => false,
-                'sort' => [
-                    'defaultOrder' => [
-                        'type_id' => SORT_DESC,
-                    ]
-                ],
-            ]);
-        }
+        return new ActiveDataProvider([
+            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'type_id' => SORT_DESC,
+                ]
+            ],
+        ]);
+    }
+
+    /**
+     * @param $type integer
+     * @return ActiveDataProvider
+     */
+    public function getMergedPriceDataProvider($type)
+    {
+        return new ActiveDataProvider([
+            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`type_id`'),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'type_id' => SORT_DESC,
+                ]
+            ],
+        ]);
     }
 
     /**

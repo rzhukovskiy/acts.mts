@@ -2,16 +2,19 @@
 
 namespace common\models\search;
 
+use common\models\Act;
+use common\models\Service;
 use Yii;
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Car;
 
 /**
  * CarSearch represents the model behind the search form about `common\models\Car`.
+ * @property string $period
  */
 class CarSearch extends Car
 {
+    public $period;
     /**
      * @inheritdoc
      */
@@ -19,7 +22,7 @@ class CarSearch extends Car
     {
         return [
             [['id', 'company_id', 'mark_id', 'type_id', 'is_infected'], 'integer'],
-            [['number'], 'safe'],
+            [['number', 'period'], 'safe'],
         ];
     }
 
@@ -30,6 +33,7 @@ class CarSearch extends Car
     {
         return [
             self::SCENARIO_DEFAULT => ['company_id', 'number'],
+            self::SCENARIO_INFECTED => ['company_id', 'period'],
         ];
     }
 
@@ -64,15 +68,22 @@ class CarSearch extends Car
             return $dataProvider;
         }
 
+        if ($this->scenario == self::SCENARIO_INFECTED) {
+            $query->andWhere('NOT EXISTS (SELECT * FROM ' . Act::tableName() . ' act WHERE service_type = ' . Service::TYPE_DISINFECT .
+                ' AND act.number = car.number AND date_format(served_at, "%Y-%m") = "' . $this->period . '")');
+        }
+
         // grid filtering conditions
         $query->joinWith([
             'company company',
         ]);
+        $query->alias('car');
         $query->andFilterWhere([
-            'id' => $this->id,
-            'mark_id' => $this->mark_id,
-            'type_id' => $this->type_id,
-            'is_infected' => $this->is_infected,
+            'car.id' => $this->id,
+            'car.mark_id' => $this->mark_id,
+            'car.type_id' => $this->type_id,
+            'car.is_infected' => $this->is_infected,
+            'car.company_id' => $this->company_id,
         ]);
         $query->andFilterWhere(['company.parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
 

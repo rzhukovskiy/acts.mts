@@ -19,12 +19,12 @@ switch ($role) {
         foreach (Service::$listType as $type_id => $typeData) {
             $items[] = [
                 'label' => $typeData['ru'],
-                'url' => [Yii::$app->controller->action->id, 'type' => $type_id],
+                'url' => ['list', 'type' => $type_id],
                 'active' => $request->get('type') == $type_id && !$request->get('company'),
             ];
             $items[] = [
                 'label' => 'Для компании',
-                'url' => [Yii::$app->controller->action->id, 'type' => $type_id, 'company' => true],
+                'url' => ['list', 'type' => $type_id, 'company' => true],
                 'active' => $request->get('type') == $type_id && $request->get('company'),
             ];
         }
@@ -34,7 +34,7 @@ switch ($role) {
         foreach (Service::$listType as $type_id => $typeData) {
             $items[] = [
                 'label' => $typeData['ru'],
-                'url' => [Yii::$app->controller->action->id, 'type' => $type_id, 'company' => true],
+                'url' => ['list', 'type' => $type_id, 'company' => true],
                 'active' => $request->get('type') == $type_id && $request->get('company'),
             ];
         }
@@ -47,7 +47,7 @@ switch ($role) {
             foreach ($company->serviceTypes as $serviceType) {
                 $items[] = [
                     'label' => Service::$listType[$serviceType->type]['ru'],
-                    'url' => [Yii::$app->controller->action->id, 'type' => $serviceType->type],
+                    'url' => ['list', 'type' => $serviceType->type],
                     'active' => $request->get('type') == $serviceType->type,
                 ];
             }

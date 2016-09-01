@@ -38,7 +38,12 @@ class menuLeftWidget extends Widget
         if (!empty($this->items))
             return $this->items;
 
-        $errorsCount = (new ActSearch(['scenario' => Act::SCENARIO_ERROR]))->search([])->getCount();
+        $errorsCount = 0;
+        foreach (Service::$listType as $type_id => $typeData) {
+            $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
+            $searchModel->service_type = $type_id;
+            $errorsCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+        }
 
         $items = [];
         // Admin links
@@ -163,12 +168,12 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Добавить машину',
                     'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'create',
+                    'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
                 ],
                 [
                     'label' => 'Архив',
                     'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create',
+                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
                 ],
             ];
         } // Client links
@@ -212,16 +217,8 @@ class menuLeftWidget extends Widget
         return $items;
     }
 
-    public
-    function run()
+    public function run()
     {
         return $this->render('menu_left', ['items' => $this->getItems()]);
-    }
-
-
-    private
-    function getCountOfErrorActs()
-    {
-        return 5;
     }
 }

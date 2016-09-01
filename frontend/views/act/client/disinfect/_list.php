@@ -71,7 +71,7 @@ $columns = [
                 'mergeColumns' => [[0, 4]],
                 'content' => [
                     0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
-                    7 => GridView::F_SUM,
+                    8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [
                     5 => ['style' => 'display: none'],
@@ -106,13 +106,13 @@ $columns = [
         'subGroupOf' => 1,
         'groupFooter' => function ($data) {
             return [
-                'mergeColumns' => [[2, 5]],
+                'mergeColumns' => [[2, 6]],
                 'content' => [
                     2 => 'Итого по ' . $data->client->name,
-                    7 => GridView::F_SUM,
+                    8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [
-                    6 => ['style' => 'display: none'],
+                    7 => ['style' => 'display: none'],
                 ],
                 'options' => ['style' => 'font-size: smaller; font-weight:bold;']
             ];
@@ -178,7 +178,7 @@ $columns = [
     [
         'header' => '',
         'class' => 'kartik\grid\ActionColumn',
-        'template' => $role == '{update}{delete}',
+        'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 100px'],
     ],
 ];

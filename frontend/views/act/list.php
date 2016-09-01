@@ -12,8 +12,6 @@ use common\models\Service;
 
 $this->title = 'Акты';
 
-$request = Yii::$app->request;
-
 echo $this->render('_tabs', [
     'role' => $role,
 ]);

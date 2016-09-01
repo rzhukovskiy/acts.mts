@@ -9,7 +9,7 @@ use yii\data\ActiveDataProvider;
 use common\models\Act;
 
 /**
- * CardSearch represents the model behind the search form about `common\models\Card`.
+ * ActSearch represents the model behind the search form about `common\models\Act`.
  * @property string $period
  * @property integer $day
  */
@@ -127,9 +127,9 @@ class ActSearch extends Act
                     'clientScopes',
                 ]);
                 if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
                 } else {
-                    $query->andFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
                 $query->orderBy('client.parent_id, act.client_id, served_at');
                 break;
@@ -144,9 +144,9 @@ class ActSearch extends Act
                     'partnerScopes',
                 ]);
                 if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['partner.parent_id' => $this->client_id])->orFilterWhere(['partner_id' => $this->partner_id,]);
+                    $query->andFilterWhere(['partner.parent_id' => $this->client_id])->orFilterWhere(['partner_id' => $this->partner_id]);
                 } else {
-                    $query->andFilterWhere(['partner_id' => $this->partner_id,]);
+                    $query->andFilterWhere(['partner_id' => $this->partner_id]);
                 }
                 $query->orderBy('partner.parent_id, act.partner_id, served_at');
                 break;
@@ -162,9 +162,9 @@ class ActSearch extends Act
                     $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
                 }
                 if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
                 } else {
-                    $query->andFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
                 $query->orderBy('parent_id, client_id, actsCount DESC');
                 break;
@@ -179,9 +179,9 @@ class ActSearch extends Act
                     $query->andFilterWhere(['between', 'served_at', strtotime($this->dateFrom), strtotime($this->dateTo)]);
                 }
                 if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
                 } else {
-                    $query->andFilterWhere(['client_id' => $this->client_id,]);
+                    $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
                 $query->orderBy('parent_id, client_id, served_at DESC');
                 break;
@@ -192,6 +192,10 @@ class ActSearch extends Act
                     'mark',
                     'card',
                     'partner',
+                ]);
+                $query->andFilterWhere([
+                    'client_id' => $this->client_id,
+                    'partner_id' => $this->partner_id,
                 ]);
 
                 $query->orderBy('parent_id, partner_id, served_at');

@@ -18,7 +18,7 @@ use common\models\Company;
     </div>
     <div class="panel-body">
         <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT]) ? $this->render('/company-service/merged/_list', [
-            'dataProvider' => $model->getPriceDataProvider($type),
+            'dataProvider' => $model->getMergedPriceDataProvider($type),
             'type' => $type,
         ]) : $this->render('/company-service/split/_list', [
             'dataProvider' => $model->getPriceDataProvider($type),
