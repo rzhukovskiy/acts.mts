@@ -10,6 +10,7 @@ use yii\base\Exception;
 use yii\base\UserException;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\HttpException;
 
 /**
  * Site controller
@@ -147,7 +148,7 @@ class SiteController extends Controller
             return $this->redirect('/site/index');
         }
         if (Yii::$app->user->can(User::ROLE_ADMIN)) {
-            return $this->redirect(['company/list', 'type' => Company::TYPE_OWNER]);
+            return $this->redirect(['department/index']);
         }
         if (Yii::$app->user->can(User::ROLE_CLIENT)) {
             return $this->redirect(['act/list', 'type' => Company::TYPE_WASH, 'company' => true]);

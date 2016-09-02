@@ -52,6 +52,22 @@ class menuLeftWidget extends Widget
                     'url' => ['/user/index', 'department' => 1],
                     'active' => Yii::$app->controller->id == 'user',
                 ],
+                [
+                    'label' => 'Заявки',
+                    'url' => '#',
+                ],
+                [
+                    'label' => 'Архив',
+                    'url' => '#',
+                ],
+                [
+                    'label' => 'Отказавшиеся',
+                    'url' => '#',
+                ],
+                [
+                    'label' => 'Сообщения',
+                    'url' => '#',
+                ],
             ];
         } // Partner links
         elseif (Yii::$app->user->identity->role == User::ROLE_WATCHER) {

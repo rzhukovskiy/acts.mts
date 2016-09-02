@@ -1,9 +1,10 @@
 <?php
-
 namespace common\models;
 
 use common\models\query\DepartmentQuery;
 use yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%department}}".
@@ -15,8 +16,15 @@ use yii;
  * @property integer $created_at
  * @property integer $updated_at
  */
-class Department extends \yii\db\ActiveRecord
+class Department extends ActiveRecord
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+
+    static $listRole = [
+        User::ROLE_WATCHER => 'Обычный',
+        User::ROLE_MANAGER => 'Менеджер',
+    ];
     /**
      * @inheritdoc
      */
@@ -28,12 +36,24 @@ class Department extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
-            [['name', 'role', 'created_at', 'updated_at'], 'required'],
+            [['name', 'role'], 'required'],
             [['role', 'status', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['role', 'default', 'value' => User::ROLE_WATCHER],
         ];
     }
 
@@ -44,17 +64,17 @@ class Department extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'role' => 'Role',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'name' => 'Название',
+            'role' => 'Роль',
+            'status' => 'Статус',
+            'created_at' => 'Создан',
+            'updated_at' => 'Редактирован',
         ];
     }
 
     /**
      * @inheritdoc
-     * @return \app\models\query\DepartmentQuery the active query used by this AR class.
+     * @return DepartmentQuery the active query used by this AR class.
      */
     public static function find()
     {
