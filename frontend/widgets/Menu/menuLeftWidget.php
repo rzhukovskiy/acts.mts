@@ -48,14 +48,17 @@ class menuLeftWidget extends Widget
         $items = [];
         // Admin links
         if (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            /** @var Company $company */
+            $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
+
             $items = [
                 [
                     'label' => Company::$listType[Company::TYPE_OWNER]['ru'],
                     'url' => ['/company/list?type=' . Company::TYPE_OWNER],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_OWNER ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_OWNER)
+                        (Yii::$app->request->get('type') == Company::TYPE_OWNER
+                            || ($company && $company->type == Company::TYPE_OWNER))
                     ),
                 ],
                 [
@@ -63,8 +66,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/list?type=' . Company::TYPE_WASH],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_WASH ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_WASH)
+                        (Yii::$app->request->get('type') == Company::TYPE_WASH
+                            || ($company && $company->type == Company::TYPE_WASH ))
                     ),
                 ],
                 [
@@ -72,8 +75,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/list?type=' . Company::TYPE_SERVICE],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_SERVICE ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_SERVICE)
+                        (Yii::$app->request->get('type') == Company::TYPE_SERVICE
+                            || ($company && $company->type == Company::TYPE_SERVICE))
                     ),
                 ],
                 [
@@ -81,8 +84,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/list?type=' . Company::TYPE_TIRES],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_TIRES ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_TIRES)
+                        (Yii::$app->request->get('type') == Company::TYPE_TIRES
+                            || ($company && $company->type == Company::TYPE_TIRES))
                     ),
                 ],
                 [
@@ -90,8 +93,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/list?type=' . Company::TYPE_DISINFECT],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_DISINFECT ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_DISINFECT)
+                        (Yii::$app->request->get('type') == Company::TYPE_DISINFECT
+                            || ($company && $company->type == Company::TYPE_DISINFECT))
                     ),
                 ],
                 [
@@ -99,8 +102,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
                     'active' => (
                         Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL ||
-                            Company::findOne(['id' => Yii::$app->request->get('id')])->type == Company::TYPE_UNIVERSAL)
+                        (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL
+                            || ($company && $company->type == Company::TYPE_UNIVERSAL))
                     ),
                 ],
 
