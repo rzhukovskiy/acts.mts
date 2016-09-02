@@ -18,10 +18,7 @@ $this->title = $name;
     </div>
 
     <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
+        Что-то пошло не так. Пишите Роману и не забудьте скинуть ему ссылку и рассказать под чьим логином появляется ошибка!
     </p>
 
 </div>

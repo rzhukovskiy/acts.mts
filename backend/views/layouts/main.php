@@ -3,12 +3,10 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use backend\assets\AppAsset;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
+use backend\assets\AppAsset;
 use common\widgets\Alert;
+use backend\widgets\Menu\menuLeftWidget;
 
 AppAsset::register($this);
 ?>
@@ -21,57 +19,42 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <link rel="shortcut icon" href="/favicon.png" >
 </head>
 <body>
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
-
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="container-fluid">
+        <?php if (!empty(Yii::$app->user->identity->username)) { ?>
+            <div class="row top">
+                <div class="col-sm-12">
+                    <?= Html::a(
+                        Yii::$app->user->identity->username,
+                        '/site/logout',
+                        ['class' => 'btn btn-primary btn-sm pull-right']
+                    ) ?>
+                    <?php if(Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
+                        <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php } ?>
+        <div class="row">
+            <div class="col-sm-2 content-menu">
+                <?= menuLeftWidget::widget() ?>
+            </div>
+            <div class="col-sm-12 content-main">
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
+        </div>
     </div>
 </div>
 
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
-</footer>
+<?= $this->render('parts/_footer') ?>
+
 
 <?php $this->endBody() ?>
 </body>

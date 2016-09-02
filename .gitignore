@@ -35,5 +35,5 @@ phpunit.phar
 .htaccess
 
 # winginx files
-acts.mts.wxproj
-acts.mts.wxtask
+*.mts.wxproj
+*.mts.wxtask
