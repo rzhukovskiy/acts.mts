@@ -16,10 +16,16 @@ use yii\widgets\Pjax;
 
 $this->title = 'ТС типа «' . Html::encode($typeModel->name) . '»';
 
-$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
-    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'company_id', Company::find()->active()
-        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
-        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']);
+$filters = null;
+if ($admin) {
+    $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'company_id', Company::find()->active()
+            ->andWhere(['type' => Company::TYPE_OWNER])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']);
+} elseif (!empty(Yii::$app->user->identity->company->children)) {
+    $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'company_id', Company::find()->active()
+            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter']);
+}
 ?>
 <div class="car-count-view">
     <div class="panel panel-primary">
@@ -38,7 +44,7 @@ $filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
                 'emptyText' => '',
                 'filterUrl' => 'list',
                 'filterSelector' => '.ext-filter',
-                'beforeHeader' => [
+                'beforeHeader' => $filters ? [
                     [
                         'columns' => [
                             [
@@ -59,7 +65,7 @@ $filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
                         ],
                         'options' => ['class' => 'kv-group-header'],
                     ],
-                ],
+                ] : null,
                 'columns' => [
                     [
                         'header' => '№',

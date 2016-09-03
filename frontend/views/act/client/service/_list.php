@@ -71,7 +71,7 @@ $columns = [
             return [
                 'mergeColumns' => [[0, 5]],
                 'content' => [
-                    0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
+                    0 => 'Итого ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
                     8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [
@@ -109,7 +109,7 @@ $columns = [
             return [
                 'mergeColumns' => [[2, 5]],
                 'content' => [
-                    2 => 'Итого по ' . $data->client->name,
+                    2 => 'Итого ' . $data->client->name,
                     8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [

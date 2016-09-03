@@ -80,10 +80,16 @@ $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
-$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
-    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
-        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
-        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+if ($admin) {
+    $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+            ->andWhere(['type' => Company::TYPE_OWNER])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+} elseif (!empty(Yii::$app->user->identity->company->children)) {
+    $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+}
+
 $filters .= 'Выбор периода: ' . $periodForm;
 
 echo GridView::widget([
@@ -154,6 +160,13 @@ echo GridView::widget([
             'content' => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : '';
             },
+        ],
+        [
+            'attribute' => 'car.is_infected',
+            'content' => function ($data) {
+                return $data->car->is_infected ? 'да' : 'нет';
+            },
+            'visible' => $admin,
         ],
         [
             'attribute' => 'actsCount',
