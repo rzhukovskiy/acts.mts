@@ -82,7 +82,7 @@ echo $this->render('../_search', [
                     'attribute' => 'profit',
                     'header' => 'Прибыль',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asDecimal($data->profit, 0);
+                        return Html::tag('strong', Yii::$app->formatter->asDecimal($data->profit, 0));
                     },
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
