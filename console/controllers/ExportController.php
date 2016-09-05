@@ -287,7 +287,7 @@ class ExportController extends Controller
                 continue;
             }
 
-            if (in_array($rowData['type'], [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
+            if (in_array($rowData['service_type'], [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
             } else {
                 $clientScopes = $this->new_db
                     ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['client_id']}")
@@ -308,6 +308,14 @@ class ExportController extends Controller
                     $clientService = 0;
                 } elseif (count($listService) == 1 && in_array('внутри', $listService)) {
                     $clientService = 1;
+                } elseif (count($listService) == 1 && in_array('дезинфекция', $listService)) {
+                    $clientService = 5;
+                } elseif (count($listService) == 1 && in_array('Дезинфекция', $listService)) {
+                    $clientService = 5;
+                } elseif (count($listService) == 1 && in_array('Дополнительная дезинфекция', $listService)) {
+                    $clientService = 9;
+                } elseif (count($listService) == 1 && in_array('дополнительная дезинфекция', $listService)) {
+                    $clientService = 9;
                 }
 
                 $partnerScopes = $this->new_db
@@ -330,6 +338,14 @@ class ExportController extends Controller
                     $partnerService = 0;
                 } elseif (count($listService) == 1 && in_array('внутри', $listService)) {
                     $partnerService = 1;
+                } elseif (count($listService) == 1 && in_array('дезинфекция', $listService)) {
+                    $partnerService = 5;
+                } elseif (count($listService) == 1 && in_array('Дезинфекция', $listService)) {
+                    $partnerService = 5;
+                } elseif (count($listService) == 1 && in_array('Дополнительная дезинфекция', $listService)) {
+                    $partnerService = 9;
+                } elseif (count($listService) == 1 && in_array('дополнительная дезинфекция', $listService)) {
+                    $partnerService = 9;
                 }
 
                 if ($clientService == 'NULL' || $partnerService == 'NULL') {
