@@ -241,7 +241,7 @@ class ExportController extends Controller
             if ($serviceData['description'] == 'Дополнительная дезинфекция') {
                 $existed = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price WHERE company_id = {$rowData['company_id']} AND type_id = {$rowData['type_id']}")->queryOne();
                 if (!empty($existed)) {
-                    $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET additional = {$serviceData['price']} WHERE id = {$existed['id']}")->execute();
+                    $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET additional = {$rowData['price']} WHERE id = {$existed['id']}")->execute();
                 } else {
                     $this->old_db->createCommand("INSERT INTO {$this->old_db->tablePrefix}price(type_id, company_id, additional) VALUES({$rowData['type_id']}, {$rowData['company_id']}, {$rowData['price']})")->execute();
                 }
