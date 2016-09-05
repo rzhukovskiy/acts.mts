@@ -76,14 +76,20 @@ $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class
 $periodForm .= Html::dropDownList('half', '', $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('quarter', '', $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
 $periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateFrom');
-$periodForm .= Html::activeHiddenInput($searchModel, 'dateTo');
-$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary', 'style' => 'margin-left: 10px;']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
-$filters = $admin || empty(Yii::$app->user->identity->company->children) ? '' :
-    'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
-        ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
-        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+if ($admin) {
+    $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+            ->andWhere(['type' => Company::TYPE_OWNER])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+} elseif (!empty(Yii::$app->user->identity->company->children)) {
+    $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+}
+
 $filters .= 'Выбор периода: ' . $periodForm;
 
 echo GridView::widget([
@@ -154,6 +160,13 @@ echo GridView::widget([
             'content' => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : '';
             },
+        ],
+        [
+            'attribute' => 'car.is_infected',
+            'content' => function ($data) {
+                return $data->car->is_infected ? 'да' : 'нет';
+            },
+            'visible' => $admin,
         ],
         [
             'attribute' => 'actsCount',

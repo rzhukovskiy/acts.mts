@@ -72,7 +72,7 @@ $columns = [
             return [
                 'mergeColumns' => [[0, 6]],
                 'content' => [
-                    0 => 'Итого по ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
+                    0 => 'Итого ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
                     9 => GridView::F_SUM,
                 ],
                 'contentOptions' => [
@@ -113,7 +113,7 @@ $columns = [
             return [
                 'mergeColumns' => [[2, 7]],
                 'content' => [
-                    2 => 'Итого по ' . $data->client->name,
+                    2 => 'Итого ' . $data->client->name,
                     9 => GridView::F_SUM,
                 ],
                 'contentOptions' => [
@@ -152,6 +152,9 @@ $columns = [
     ],
     [
         'attribute' => 'number',
+        'value' =>  function ($data) {
+            return $data->number . ($data->client->is_split ? " ($data->extra_number)" : '');
+        },
         'contentOptions' => function ($data) {
             if ($data->hasError('car')) return ['class' => 'text-danger'];
         },

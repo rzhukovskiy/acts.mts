@@ -69,7 +69,7 @@ $columns = [
             return [
                 'mergeColumns' => [[0, 8]],
                 'content' => [
-                    0 => 'Итого по ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
+                    0 => 'Итого ' . (isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов'),
                     8 => GridView::F_SUM,
                 ],
                 'options' => [
@@ -93,7 +93,7 @@ $columns = [
             return [
                 'mergeColumns' => [[2, 6]],
                 'content' => [
-                    2 => 'Итого по ' . $data->partner->name,
+                    2 => 'Итого ' . $data->partner->name,
                     8 => GridView::F_SUM,
                 ],
                 'contentOptions' => [      // content html attributes for each summary cell

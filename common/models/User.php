@@ -35,6 +35,7 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_CLIENT   = 1;
     const ROLE_PARTNER  = 2;
     const ROLE_WATCHER  = 3;
+    const ROLE_MANAGER  = 4;
     /**
      * @inheritdoc
      */

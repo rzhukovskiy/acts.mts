@@ -115,7 +115,7 @@ class Act extends ActiveRecord
     {
         return [
             [['partner_id', 'number'], 'required'],
-            [['card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList', 'mark_id', 'type_id'], 'safe'],
+            [['extra_number', 'card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList', 'mark_id', 'type_id'], 'safe'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],

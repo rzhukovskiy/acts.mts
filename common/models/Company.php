@@ -30,7 +30,7 @@ use yii\helpers\ArrayHelper;
  * @property Company $parent
  * @property Company[] $children
  * @property Card[] $cards
- * @property Cars[] $cars
+ * @property Car[] $cars
  * @property Requisites[] $requisites
  * @property CompanyServiceType[] $serviceTypes
  *
@@ -130,6 +130,7 @@ class Company extends ActiveRecord
             'is_split' => 'Разделять прицеп',
             'is_sign' => 'Подпись',
             'director' => 'Директор',
+            'serviceList' => 'Сервисы',
         ];
     }
 
