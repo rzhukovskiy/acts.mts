@@ -274,7 +274,7 @@ class ExportController extends Controller
         ];
         $listType = array_flip($listType);
 
-        $rows = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act WHERE id > 3789")->queryAll();
+        $rows = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act WHERE id > 3787")->queryAll();
         foreach ($rows as $rowData) {
             $service = $listType[$rowData['service_type']];
             $isFixed = $rowData['status'] ==  Act::STATUS_FIXED ? 1 : 0;
@@ -390,7 +390,7 @@ class ExportController extends Controller
                     $partnerService = 9;
                 }
 
-                if ($clientService == 'NULL' || $partnerService == 'NULL') {
+                if ($clientService === 'NULL' || $partnerService === 'NULL') {
                     continue;
                 }
 
