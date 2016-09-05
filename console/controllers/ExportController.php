@@ -317,7 +317,7 @@ class ExportController extends Controller
                     ->queryAll();
                 foreach ($clientScopes as $scopeData) {
                     $partnerScope = $this->new_db
-                        ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['partner_id']} AND service_id = {$scopeData['service_id']}")
+                        ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['partner_id']} AND description = '{$scopeData['description']}'")
                         ->queryOne();
 
                     $insert = "(NULL,
