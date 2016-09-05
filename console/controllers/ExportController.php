@@ -274,20 +274,61 @@ class ExportController extends Controller
         ];
         $listType = array_flip($listType);
 
-        $rows = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act")->queryAll();
+        $rows = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act WHERE id > 3510")->queryAll();
         foreach ($rows as $rowData) {
             $service = $listType[$rowData['service_type']];
             $isFixed = $rowData['status'] ==  Act::STATUS_FIXED ? 1 : 0;
             $isClosed = ($rowData['status'] ==  Act::STATUS_CLOSED || $rowData['status'] ==  Act::STATUS_FIXED) ? 1 : 0;
             $serviceDate = date('Y-m-d H:i:s', $rowData['served_at']);
             $createDate = date('Y-m-d H:i:s', $rowData['created_at']);
-            $servedAt = date('Y-m-d', $rowData['served_at']);
-            $existed = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}act WHERE number = '{$rowData['number']}' AND service = '$service' AND DATE_FORMAT(service_date,'%Y-%m-%d') = '$servedAt'")->queryAll();
-            if (!empty($existed)) {
-                continue;
-            }
 
             if (in_array($rowData['service_type'], [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
+                $partnerService = $rowData['service_type'] == Company::TYPE_SERVICE ? 3 : 4;
+
+                $rowData['extra_number'] = $rowData['extra_number'] ? "'{$rowData['extra_number']}'" : 'NULL';
+                $rowData['card_id'] = $rowData['card_id'] ? $rowData['card_id'] : 0;
+                $insert = "(NULL,
+                        {$rowData['partner_id']},
+                        {$rowData['client_id']},
+                        {$rowData['type_id']},
+                        {$rowData['card_id']},
+                        '{$rowData['number']}',
+                        {$rowData['extra_number']},
+                        {$rowData['mark_id']},
+                        '$serviceDate',
+                        $isClosed,
+                        $partnerService,
+                        $partnerService,
+                        '{$rowData['check']}',
+                        '{$rowData['id']}.jpg',
+                        {$rowData['income']},
+                        {$rowData['expense']},
+                        {$rowData['profit']},
+                        '$createDate',
+                        $isFixed,
+                        '$service',
+                        NULL)";
+
+                $this->old_db->createCommand("INSERT into {$this->old_db->tablePrefix}act VALUES $insert")->execute();
+
+                $actId = $this->old_db->getLastInsertID();
+                $clientScopes = $this->new_db
+                    ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['client_id']}")
+                    ->queryAll();
+                foreach ($clientScopes as $scopeData) {
+                    $partnerScope = $this->new_db
+                        ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['partner_id']} AND service_id = {$scopeData['service_id']}")
+                        ->queryOne();
+
+                    $insert = "(NULL,
+                        $actId,
+                        '{$scopeData['description']}',
+                        {$partnerScope['price']},
+                        {$scopeData['price']},
+                        {$scopeData['amount']})";
+
+                    $this->old_db->createCommand("INSERT into {$this->old_db->tablePrefix}act_scope VALUES $insert")->execute();
+                }
             } else {
                 $clientScopes = $this->new_db
                     ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act_scope WHERE act_id = {$rowData['id']} AND company_id = {$rowData['client_id']}")
