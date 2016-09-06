@@ -165,7 +165,7 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Доходы',
-                    'url' => ['/stat/view'],
+                    'url' => $company->type == Company::TYPE_UNIVERSAL ? ['/stat/view', 'type' => 2] : ['/stat/view'],
                     'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [

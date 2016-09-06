@@ -31,7 +31,7 @@ class StatController extends Controller
                         'roles' => [User::ROLE_ADMIN]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day'],
+                        'actions' => ['view', 'month', 'day', 'total'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER]
                     ],
@@ -90,7 +90,7 @@ class StatController extends Controller
     // Акты компании с учетом типа или без
     // Выбор шаблона в зависимости от типа компании
     // $type - service_type
-    public function actionView($id = null, $type = null, $group)
+    public function actionView($id = null, $type = null, $group = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -121,7 +121,6 @@ class StatController extends Controller
 
         $models = $dataProvider->getModels();
 
-        // ToDo: refactor this + formatter -> method footerData(Act $models):array
         list($totalProfit, $totalServe, $totalExpense, $totalIncome) = $this->footerData($models);
 
         // Данные для графика генерим по ролям, целевое значение для ролей разное
@@ -144,7 +143,7 @@ class StatController extends Controller
     }
 
     // Акты компании за выбраный месяц
-    public function actionMonth($date, $id = null, $type = null, $group)
+    public function actionMonth($date, $id = null, $type = null, $group = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -274,7 +273,7 @@ class StatController extends Controller
     // Админу все показать
     // Клиенту показать расход по машинам
     // Партнеру показать доход по компаниям
-    public function actionTotal($group)
+    public function actionTotal($group = null)
     {
         $viewName = $this->selectTemplate();
 
@@ -286,8 +285,15 @@ class StatController extends Controller
         $dataProvider->pagination = false;
         $dataProvider->query->with(['client']);
 
-        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
-            $dataProvider->query->andWhere(['client_id' => Yii::$app->user->identity->company_id]);
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        if ($identity->role == User::ROLE_CLIENT) {
+            $dataProvider->query->andWhere(['client_id' => $identity->company_id]);
+            $chartDataProvider->query->andWhere(['client_id' => $identity->company_id]);
+        }
+        if ($identity->role == User::ROLE_PARTNER) {
+            $dataProvider->query->andWhere(['partner_id' => $identity->company_id]);
+            $chartDataProvider->query->andWhere(['partner_id' => $identity->company_id]);
         }
 
         $models = $dataProvider->getModels();
@@ -312,6 +318,7 @@ class StatController extends Controller
      * Select template file by user role
      *
      * @throws InvalidParamException
+     * @throws NotFoundHttpException
      * @return string
      */
     private function selectTemplate()
@@ -320,15 +327,22 @@ class StatController extends Controller
         $userIdentity = Yii::$app->user->getIdentity();
         $userRole = $userIdentity->role;
 
-        if ($userRole == User::ROLE_CLIENT)
-            $view = 'client';
-        if ($userRole == User::ROLE_PARTNER)
-            $view = 'partner';
-        if ($userRole == User::ROLE_ADMIN)
-            $view = 'admin';
-
-        if (empty($view))
-            throw new InvalidParamException('Error, identity error. ' . __CLASS__);
+        switch ($userRole) {
+            case User::ROLE_ADMIN :
+                $view = 'admin';
+                break;
+            case User::ROLE_CLIENT:
+                $view = 'client';
+                break;
+            case User::ROLE_PARTNER:
+                if ($userIdentity->company->type == Company::TYPE_UNIVERSAL)
+                    $view = 'universal';
+                else
+                    $view = 'partner';
+                break;
+            default:
+                throw new NotFoundHttpException('Не могу выбрать способ отображения данных.');
+        }
 
         return $view;
     }
