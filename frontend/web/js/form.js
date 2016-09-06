@@ -154,3 +154,63 @@ this.imagePreview = function() {
             .css("left", "10px");
     });
 };
+
+this.addHeaders = function(options) {
+    var tableSelector = options.tableSelector;
+    var defaultHeaderClass = 'kv-group-header';
+    var defaultFooterClass = 'kv-group-footer';
+    var defaultGroupClass = '.grouped';
+
+    var total = [];
+    var trs = $(tableSelector).find('tbody tr').not('.' + defaultHeaderClass).not('.' + defaultFooterClass);
+    trs.each(function(tr_id, row) {
+        var previous = trs.eq(tr_id - 1);
+        var next = trs.eq(tr_id + 1);
+        
+        $(row).find(defaultGroupClass).each(function(td_id, td) {
+            var col = $(td).attr('data-col-seq');
+            var pos = $(row).find('td:visible').index($(row).find('.sum'));
+            var tag = 'td[data-col-seq=' + col + ']';
+
+            var currentValue = $(td).text();
+            var nextValue = next.find(tag).text();
+            var previousValue = previous.find(tag).text();
+
+            if (!total[col]) {
+                total[col] = 0;
+            }
+            total[col] += parseInt($(row).find('.sum').text());
+            if (currentValue != nextValue) {
+                var footerTr = $('<tr>').addClass(defaultFooterClass);
+                if ($(td).attr('data-parent')) {
+                    footerTr.addClass('child');
+                }
+                for (var i = 0; i < $(row).find('td:visible').length; i++) {
+                    if (i == pos) {
+                        var footerTd = $('<td>').text(total[col]);
+                        footerTr.append(footerTd);
+                    } else if (i == 0) {
+                        var footerTd = $('<td>').text($(td).attr('data-footer')).attr("colspan", pos);
+                        footerTr.append(footerTd);
+                    } else if (i > pos) {
+                        var footerTd = $('<td>');
+                        footerTr.append(footerTd);
+                    }
+                }
+
+                $(row).after(footerTr);
+
+                total[col] = 0;
+            }
+
+            if (tr_id == 0 || previousValue != currentValue) {
+                var headerTd = $('<td>').text($(td).attr('data-header')).attr("colspan", $(row).find('td').length);
+                var headerTr = $('<tr>').addClass(defaultHeaderClass).append(headerTd);
+                if ($(td).attr('data-parent')) {
+                    headerTr.addClass('child');
+                }
+                $(row).before(headerTr);
+            }
+        });
+    });
+};
