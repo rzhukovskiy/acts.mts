@@ -32,7 +32,7 @@ $items = [
     ],
     [
         'label' => 'Общая',
-        'url' => '/stat/total',
+        'url' => ['/stat/total', 'group' => $action ],
         'active' => Yii::$app->controller->action->id == 'total',
     ],
 ];

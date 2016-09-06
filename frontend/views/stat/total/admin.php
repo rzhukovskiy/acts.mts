@@ -1,7 +1,5 @@
 <?php
 
-var_dump('admin');
-
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Service;
@@ -22,7 +20,7 @@ use common\assets\CanvasJs\CanvasJsAsset;
 CanvasJsAsset::register($this);
 
 $this->title = 'Общая статистика';
-echo $this->render('../_tabs', ['action' => 'total']);
+echo $this->render('../_tabs', ['action' => $group]);
 
 echo $this->render('../_search', [
     'type' => 'total',
@@ -37,7 +35,6 @@ echo $this->render('../_search', [
         Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => false,
             'summary' => false,
             'emptyCell' => '',
             'showFooter' => true,
@@ -51,11 +48,11 @@ echo $this->render('../_search', [
                 [
                     'attribute' => 'service_type',
                     'header' => 'Услуга',
-                    'content' => function ($data) {
+                    'content' => function ($data) use ($group) {
                         if (empty($data->service_type))
                             $title = '—';
                         else
-                            $title = Html::a(Service::$listType[$data->service_type]['ru'], ['/statistic/list', 'type' => $data->service_type]);
+                            $title = Html::a(Service::$listType[$data->service_type]['ru'], ['/stat/list', 'type' => $data->service_type, 'group' => $group]);
 
                         return $title;
                     },
@@ -89,8 +86,8 @@ echo $this->render('../_search', [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
                     'buttons' => [
-                        'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/statistic/list', 'type' => $model->service_type]);
+                        'view' => function ($url, $model, $key) use ($group) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/list', 'type' => $model->service_type, 'group' => $group]);
                         },
                     ]
                 ],

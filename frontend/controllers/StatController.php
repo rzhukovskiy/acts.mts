@@ -272,7 +272,7 @@ class StatController extends Controller
     // Админу все показать
     // Клиенту показать расход по машинам
     // Партнеру показать доход по компаниям
-    public function actionTotal()
+    public function actionTotal($group)
     {
         $viewName = $this->selectTemplate();
 
@@ -295,6 +295,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('total/' . $viewName, [
+            'group' => $group,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'chartData' => $this->chartTotal($chartDataProvider),
