@@ -220,14 +220,8 @@ echo GridView::widget([
 ]);
 
 $script = <<< JS
-    function createHeaders() {
-        addHeaders({
-            tableSelector: "#act-grid"
-        });
-    }
-
-    $(document).ready(function() {
-        createHeaders();
+    addHeaders({
+        tableSelector: "#act-grid"
     });
 JS;
-$this->registerJs($script, View::POS_READY);
+$this->registerJs($script, View::POS_END);
