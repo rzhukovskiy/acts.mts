@@ -90,7 +90,7 @@ class StatController extends Controller
     // Акты компании с учетом типа или без
     // Выбор шаблона в зависимости от типа компании
     // $type - service_type
-    public function actionView($id = null, $type = null)
+    public function actionView($id = null, $type = null, $group)
     {
         $viewName = $this->selectTemplate();
 
@@ -130,6 +130,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('view/' . $viewName, [
+            'group' => $group,
             'model' => $companyModel,
             'modelType' => ($companyModel->type == Company::TYPE_OWNER) ? 'client' : 'partner',
             'searchModel' => $searchModel,
@@ -143,7 +144,7 @@ class StatController extends Controller
     }
 
     // Акты компании за выбраный месяц
-    public function actionMonth($date, $id = null, $type = null)
+    public function actionMonth($date, $id = null, $type = null, $group)
     {
         $viewName = $this->selectTemplate();
 
@@ -189,6 +190,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('month/' . $viewName, [
+            'group' => $group,
             'model' => $companyModel,
             'modelType' => ($companyModel->type == Company::TYPE_OWNER) ? 'client' : 'partner',
             'searchModel' => $searchModel,

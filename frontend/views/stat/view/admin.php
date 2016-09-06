@@ -7,6 +7,7 @@ use common\assets\CanvasJs\CanvasJsAsset;
 
 /**
  * @var $this \yii\web\View
+ * @var $group string
  * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $searchModel \frontend\models\search\ActSearch
@@ -43,16 +44,13 @@ echo $this->render('../_search', [
                 [
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
-                    'content' => ($modelType == 'client') ?
-                        function ($data) {
-                            $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/month', 'id' => $data->client->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type]);
-                        }
-                        :
-                        function ($data) {
-                            $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/month', 'id' => $data->partner->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type]);
-                        }
+                    'content' => function ($data) use ($modelType, $group) {
+                        $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
+                        if ($modelType == 'client')
+                            return Html::a($date, ['/stat/month', 'id' => $data->client->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type, 'group' => $group]);
+
+                        return Html::a($date, ['/stat/month', 'id' => $data->partner->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type, 'group' => $group]);
+                    }
                 ],
                 [
                     'attribute' => 'countServe',
@@ -92,14 +90,12 @@ echo $this->render('../_search', [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
                     'buttons' => [
-                        'view' => ($modelType == 'client') ?
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type]);
-                            }
-                            :
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type]);
-                            }
+                        'view' => function ($url, $model, $key) use ($group, $modelType) {
+                            if ($modelType == 'client')
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
+
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
+                        }
                     ]
                 ],
             ]

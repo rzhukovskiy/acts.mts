@@ -43,24 +43,17 @@ echo $this->render('_search', [
                     'footer' => 'Итого:',
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-                ($group == 'partner') ?
-                    [
-                        'attribute' => 'partner_id',
-                        'header' => 'Партнер',
-                        'content' => function ($data) {
-                            return !empty($data->partner->name) ? Html::a($data->partner->name, ['/stat/view', 'id' => $data->partner->id, 'type' => $data->service_type]) : '—';
+
+                [
+                    'attribute' => 'partner_id',
+                    'header' => 'Партнер',
+                    'content' => function ($data) use ($group) {
+                        if ($group == 'partner')
+                            return !empty($data->partner->name) ? Html::a($data->partner->name, ['/stat/view', 'id' => $data->partner->id, 'type' => $data->service_type, 'group' => $group]) : '—';
+                        return !empty($data->client->name) ? Html::a($data->client->name, ['/stat/view', 'id' => $data->client->id, 'type' => $data->service_type, 'group' => $group]) : '—';
                         },
-                        'contentOptions' => ['class' => 'value_0'],
-                    ]
-                    :
-                    [
-                        'attribute' => 'company_id',
-                        'header' => 'Компания',
-                        'content' => function ($data) {
-                            return !empty($data->client->name) ? Html::a($data->client->name, ['/stat/view', 'id' => $data->client->id, 'type' => $data->service_type]) : '—';
-                        },
-                        'contentOptions' => ['class' => 'value_0'],
-                    ],
+                    'contentOptions' => ['class' => 'value_0'],
+                ],
                 [
                     'header' => 'Город',
                     'attribute' => 'company_id',
@@ -112,14 +105,12 @@ echo $this->render('_search', [
                     'template' => '{view}',
                     'buttons' => [
 
-                        'view' => ($group == 'partner') ?
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type]);
-                            }
-                        :
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client->id, 'type' => $model->service_type]);
-                            }
+                        'view' => function ($url, $model, $key) use ($group) {
+                            if ($group == 'partner')
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group]);
+
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client->id, 'type' => $model->service_type, 'group' => $group]);
+                        }
                     ]
                 ],
             ],

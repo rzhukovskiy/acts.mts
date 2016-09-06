@@ -7,6 +7,7 @@ use common\assets\CanvasJs\CanvasJsAsset;
 
 /**
  * @var $this \yii\web\View
+ * @var $group string
  * @var $model \common\models\Company
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $searchModel \frontend\models\search\ActSearch
@@ -39,15 +40,12 @@ CanvasJsAsset::register($this);
                 [
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
-                    'content' => ($modelType == 'client') ?
-                        function ($data) {
+                    'content' => function ($data) use ($modelType, $group) {
                             $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/day', 'id' => $data->client->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
-                        }
-                        :
-                        function ($data) {
-                            $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                            return Html::a($date, ['/stat/day', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type]);
+                            if ($modelType == 'client')
+                                return Html::a($date, ['/stat/day', 'id' => $data->client->id, 'date' => $data->dateMonth, 'type' => $data->service_type, 'group' => $group]);
+
+                            return Html::a($date, ['/stat/day', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type, 'group' => $group]);
                         }
                 ],
                 [
@@ -88,13 +86,11 @@ CanvasJsAsset::register($this);
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
                     'buttons' => [
-                        'view' => ($modelType == 'client') ?
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
-                            }
-                            :
-                            function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                        'view' => function ($url, $model, $key) use ($modelType, $group){
+                                if ($modelType == 'client')
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
+
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
                             }
                     ]
                 ],
