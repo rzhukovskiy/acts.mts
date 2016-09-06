@@ -222,29 +222,7 @@ echo GridView::widget([
 $script = <<< JS
     function createHeaders() {
         addHeaders({
-            tableSelector: "#act-grid",
-            footers: [
-                {
-                    className: '.parent',
-                    title: 'Всего',
-                    rowClass: 'main total'
-                },
-                {
-                    className: '.client',
-                    title: 'Итого',
-                    rowClass: 'total'
-                },
-            ],
-            headers: [
-                {
-                    className: '.parent',
-                    rowClass: 'main header'
-                },
-                {
-                    className: '.client',
-                    rowClass: 'header'
-                }
-            ]
+            tableSelector: "#act-grid"
         });
     }
 

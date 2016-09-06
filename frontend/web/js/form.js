@@ -203,7 +203,7 @@ this.addHeaders = function(options) {
                 total[col] = 0;
             }
 
-            if (previousValue != currentValue) {
+            if (tr_id == 0 || previousValue != currentValue) {
                 var headerTd = $('<td>').text($(td).attr('data-header')).attr("colspan", $(row).find('td').length);
                 var headerTr = $('<tr>').addClass(defaultHeaderClass).append(headerTd);
                 if ($(td).attr('data-parent')) {
