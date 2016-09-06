@@ -277,8 +277,8 @@ class ExportController extends Controller
         $rows = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}act WHERE id > 3787")->queryAll();
         foreach ($rows as $rowData) {
             $service = $listType[$rowData['service_type']];
-            $isFixed = $rowData['status'] ==  Act::STATUS_FIXED ? 1 : 0;
-            $isClosed = ($rowData['status'] ==  Act::STATUS_CLOSED || $rowData['status'] ==  Act::STATUS_FIXED) ? 1 : 0;
+            $isFixed = $rowData['status'] == Act::STATUS_FIXED ? 1 : 0;
+            $isClosed = ($rowData['status'] == Act::STATUS_CLOSED || $rowData['status'] == Act::STATUS_FIXED) ? 1 : 0;
             $serviceDate = date('Y-m-d H:i:s', $rowData['served_at']);
             $createDate = date('Y-m-d H:i:s', $rowData['created_at']);
 
@@ -346,7 +346,7 @@ class ExportController extends Controller
                     $clientService = 6;
                 } elseif (count($listService) == 2 && in_array('внутри', $listService) && in_array('двигатель', $listService)) {
                     $clientService = 7;
-                }elseif (count($listService) == 1 && in_array('снаружи', $listService)) {
+                } elseif (count($listService) == 1 && in_array('снаружи', $listService)) {
                     $clientService = 0;
                 } elseif (count($listService) == 1 && in_array('внутри', $listService)) {
                     $clientService = 1;
@@ -376,7 +376,7 @@ class ExportController extends Controller
                     $partnerService = 6;
                 } elseif (count($listService) == 2 && in_array('внутри', $listService) && in_array('двигатель', $listService)) {
                     $partnerService = 7;
-                }elseif (count($listService) == 1 && in_array('снаружи', $listService)) {
+                } elseif (count($listService) == 1 && in_array('снаружи', $listService)) {
                     $partnerService = 0;
                 } elseif (count($listService) == 1 && in_array('внутри', $listService)) {
                     $partnerService = 1;

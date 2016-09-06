@@ -112,11 +112,17 @@ body {
     color: #ffffff;
     background-color: #428bca;
 }
+.kv-group-footer {
+    font-weight: bold;
+}
 .kv-table-float {
     background-color: #eee;
 }
 .kv-page-summary {
     border-top: 0;
+}
+.child {
+    font-size: smaller;
 }
 .select2-container--krajee .select2-selection--single {
     height: 40px;

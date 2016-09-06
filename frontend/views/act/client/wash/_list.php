@@ -10,12 +10,12 @@ use common\models\Act;
 use common\models\Card;
 use common\models\Company;
 use common\models\Mark;
-use common\models\Service;
 use common\models\Type;
 use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
+use yii\web\View;
 
 $filters = 'Период: ' . DatePicker::widget([
         'model' => $searchModel,
@@ -46,13 +46,6 @@ if ($role == User::ROLE_ADMIN) {
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
 }
 
-$headerColumns = [
-    [
-        'content' => $filters,
-        'options' => ['style' => 'vertical-align: middle', 'colspan' => 11, 'class' => 'kv-grid-group-filter'],
-    ],
-];
-
 $columns = [
     [
         'header' => '№',
@@ -67,74 +60,29 @@ $columns = [
         'value' => function ($data) {
             return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
         },
-        'group' => true,
-        'groupFooter' => function ($data) {
-            return [
-                'mergeColumns' => [[0, 6]],
-                'content' => [
-                    0 => 'Итого ' . (isset($data->client->parent) ? $data->client->parent->name : 'без филиалов'),
-                    9 => GridView::F_SUM,
-                ],
-                'contentOptions' => [
-                    7 => ['style' => 'display: none'],
-                    8 => ['style' => 'display: none'],
-                ],
-                'options' => [
-                    'class' => isset($data->client->parent) ? '' : 'hidden',
-                    'style' => 'font-weight:bold;'
-                ]
-            ];
-        },
-        'groupHeader' => function ($data) {
-            return [
-                'mergeColumns' => [[0, 11]],
-                'content' => [
-                    0 => $data->client->parent->name,
-                ],
-                'contentOptions' => [
-                    12 => ['style' => 'display: none'],
-                ],
-                'options' => [
-                    'class' => isset($data->client->parent) ? '' : 'hidden',
-                    'style' => 'font-weight:bold;'
-                ]
-            ];
-        },
         'hidden' => true,
+        'contentOptions' => function ($data) {
+            return isset($data->client->parent) ? [
+                'class' => 'grouped',
+                'data-header' => $data->client->parent->name,
+                'data-footer' => 'Итого ' . $data->client->parent->name . ':',
+            ] : [];
+        },
     ],
     [
         'attribute' => 'client_id',
         'value' => function ($data) {
             return isset($data->client) ? $data->client->name . ' - ' . $data->client->address : 'error';
         },
-        'group' => true,
-        'subGroupOf' => 1,
-        'groupFooter' => function ($data) {
-            return [
-                'mergeColumns' => [[2, 7]],
-                'content' => [
-                    2 => 'Итого ' . $data->client->name,
-                    9 => GridView::F_SUM,
-                ],
-                'contentOptions' => [
-                    8 => ['style' => 'display: none'],
-                ],
-                'options' => ['style' => 'font-size: smaller; font-weight:bold;']
-            ];
-        },
-        'groupHeader' => function ($data) {
-            return [
-                'mergeColumns' => [[0, 11]],
-                'content' => [
-                    0 => $data->client->name . ' - ' . $data->client->address,
-                ],
-                'contentOptions' => [
-                    12 => ['style' => 'display: none'],
-                ],
-                'options' => ['style' => 'font-size: smaller; font-weight:bold;']
-            ];
-        },
         'hidden' => true,
+        'contentOptions' => function ($data) {
+            return isset($data->client) ? [
+                'class' => 'grouped',
+                'data-header' => $data->client->name . ' - ' . $data->partner->address,
+                'data-footer' => 'Итого ' . $data->client->name . ':',
+                'data-parent' => 1,
+            ] : [];
+        },
     ],
     [
         'attribute' => 'day',
@@ -193,7 +141,9 @@ $columns = [
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
         'contentOptions' => function ($data) {
-            if ($data->hasError('income')) return ['class' => 'text-danger'];
+            $options['class'] = 'sum';
+            if ($data->hasError('income')) $options['class'] .= ' text-danger';
+            return $options;
         },
     ],
     'partner.address',
@@ -220,18 +170,10 @@ $columns = [
     ],
 ];
 
-if ($role != User::ROLE_ADMIN) {
-    if (!empty(Yii::$app->user->identity->company->children)) {
-        unset($columns[1], $columns[12]);
-    } else {
-        unset($columns[1], $columns[2], $columns[12]);
-    }
-}
-
-
 echo GridView::widget([
+    'id' => 'act-grid',
     'dataProvider' => $dataProvider,
-    'filterModel' => $role == User::ROLE_ADMIN ? $searchModel : null,
+    'filterModel' => $searchModel,
     'summary' => false,
     'emptyText' => '',
     'floatHeader' => true,
@@ -250,7 +192,16 @@ echo GridView::widget([
     'filterSelector' => '.ext-filter',
     'beforeHeader' => [
         [
-            'columns' => $headerColumns,
+            'columns' => [
+                [
+                    'content' => $filters,
+                    'options' => [
+                        'style' => 'vertical-align: middle',
+                        'colspan' => count($columns),
+                        'class' => 'kv-grid-group-filter',
+                    ],
+                ]
+            ],
             'options' => ['class' => 'extend-header'],
         ],
         [
@@ -267,3 +218,38 @@ echo GridView::widget([
     ],
     'columns' => $columns,
 ]);
+
+$script = <<< JS
+    function createHeaders() {
+        addHeaders({
+            tableSelector: "#act-grid",
+            footers: [
+                {
+                    className: '.parent',
+                    title: 'Всего',
+                    rowClass: 'main total'
+                },
+                {
+                    className: '.client',
+                    title: 'Итого',
+                    rowClass: 'total'
+                },
+            ],
+            headers: [
+                {
+                    className: '.parent',
+                    rowClass: 'main header'
+                },
+                {
+                    className: '.client',
+                    rowClass: 'header'
+                }
+            ]
+        });
+    }
+
+    $(document).ready(function() {
+        createHeaders();
+    });
+JS;
+$this->registerJs($script, View::POS_READY);

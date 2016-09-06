@@ -199,7 +199,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Расходы',
-                    'url' => ['/stat/view'],
+                    'url' => ['/stat/view', 'type' => Service::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [
