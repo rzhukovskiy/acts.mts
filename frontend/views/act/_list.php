@@ -91,10 +91,3 @@ echo GridView::widget([
     ],
     'columns' => $columns,
 ]);
-
-$script = <<< JS
-    addHeaders({
-        tableSelector: "#act-grid"
-    });
-JS;
-$this->registerJs($script, View::POS_END);

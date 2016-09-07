@@ -11,6 +11,7 @@ namespace common\components;
 
 use common\models\Act;
 use common\models\Card;
+use common\models\Company;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
@@ -68,7 +69,7 @@ class ActHelper
                 'value' => function ($data) {
                     return isset($data->client) ? $data->client->name . ' - ' . $data->client->address : 'error';
                 },
-                'hidden' => true,
+                'filter' => Company::find()->active()->select(['name', 'id'])->indexBy('id')->column(),
                 'contentOptions' => function ($data) {
                     return isset($data->client) ? [
                         'class' => 'grouped',
@@ -79,11 +80,10 @@ class ActHelper
                 },
             ],
             'partner' => [
-                'attribute' => 'client_id',
+                'attribute' => 'partner_id',
                 'value' => function ($data) {
                     return isset($data->partner) ? $data->partner->name . ' - ' . $data->partner->address : 'error';
                 },
-                'hidden' => true,
                 'contentOptions' => function ($data) {
                     return isset($data->client) ? [
                         'class' => 'grouped',
