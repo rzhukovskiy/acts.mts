@@ -32,8 +32,14 @@ class ExportController extends Controller
         $this->stdout("\n");
         $this->stdout("Export controller \n");
         $this->stdout("\nActions: \n");
-        $this->stdout('   export/all' . " — import all tables.\n");
+        $this->stdout('   export/prices' . " — export prices tables.\n");
+        $this->stdout('   export/all' . " — export all tables.\n");
         $this->stdout("\n");
+    }
+
+    public function actionPrices()
+    {
+        $this->exportPrices();
     }
 
     public function actionAll()
@@ -244,6 +250,30 @@ class ExportController extends Controller
                     $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET additional = {$rowData['price']} WHERE id = {$existed['id']}")->execute();
                 } else {
                     $this->old_db->createCommand("INSERT INTO {$this->old_db->tablePrefix}price(type_id, company_id, additional) VALUES({$rowData['type_id']}, {$rowData['company_id']}, {$rowData['price']})")->execute();
+                }
+            }
+            if ($serviceData['description'] == 'снаружи') {
+                $existed = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price WHERE company_id = {$rowData['company_id']} AND type_id = {$rowData['type_id']}")->queryOne();
+                if (!empty($existed)) {
+                    $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET outside = {$rowData['price']} WHERE id = {$existed['id']}")->execute();
+                } else {
+                    $this->old_db->createCommand("INSERT INTO {$this->old_db->tablePrefix}price(type_id, company_id, outside) VALUES({$rowData['type_id']}, {$rowData['company_id']}, {$rowData['price']})")->execute();
+                }
+            }
+            if ($serviceData['description'] == 'внутри') {
+                $existed = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price WHERE company_id = {$rowData['company_id']} AND type_id = {$rowData['type_id']}")->queryOne();
+                if (!empty($existed)) {
+                    $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET inside = {$rowData['price']} WHERE id = {$existed['id']}")->execute();
+                } else {
+                    $this->old_db->createCommand("INSERT INTO {$this->old_db->tablePrefix}price(type_id, company_id, inside) VALUES({$rowData['type_id']}, {$rowData['company_id']}, {$rowData['price']})")->execute();
+                }
+            }
+            if ($serviceData['description'] == 'Дезинфекция') {
+                $existed = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}price WHERE company_id = {$rowData['company_id']} AND type_id = {$rowData['type_id']}")->queryOne();
+                if (!empty($existed)) {
+                    $this->old_db->createCommand("UPDATE {$this->old_db->tablePrefix}price SET disinfection = {$rowData['price']} WHERE id = {$existed['id']}")->execute();
+                } else {
+                    $this->old_db->createCommand("INSERT INTO {$this->old_db->tablePrefix}price(type_id, company_id, disinfection) VALUES({$rowData['type_id']}, {$rowData['company_id']}, {$rowData['price']})")->execute();
                 }
             }
             if ($serviceData['type'] == Service::TYPE_TIRES) {
