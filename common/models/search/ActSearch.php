@@ -141,6 +141,7 @@ class ActSearch extends Act
                     'card',
                     'car',
                     'partner partner',
+                    'client client',
                     'partnerScopes',
                 ]);
                 if (!empty($this->client->children)) {

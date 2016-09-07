@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    addHeaders({
+        tableSelector: "#act-grid"
+    });
+
     scopeIndex = 0;
     $('#act-form').on('click', '.addButton', function(e)
     {
