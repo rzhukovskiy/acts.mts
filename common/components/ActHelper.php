@@ -85,7 +85,7 @@ class ActHelper
                     return isset($data->partner) ? $data->partner->name . ' - ' . $data->partner->address : 'error';
                 },
                 'contentOptions' => function ($data) {
-                    return isset($data->client) ? [
+                    return isset($data->partner) ? [
                         'class' => 'grouped',
                         'data-header' => $data->partner->name . ' - ' . $data->partner->address,
                         'data-footer' => 'Итого ' . $data->partner->name . ':',
@@ -134,12 +134,23 @@ class ActHelper
                     return ['style' => 'min-width:80px'];
                 },
             ],
-            'service' => [
+            'clientService' => [
                 'header' => 'Услуга',
                 'value' => function ($data) {
                     /** @var \common\models\ActScope $scope */
                     $services = [];
                     foreach ($data->clientScopes as $scope) {
+                        $services[] = $scope->description;
+                    }
+                    return implode('+', $services);
+                }
+            ],
+            'partnerService' => [
+                'header' => 'Услуга',
+                'value' => function ($data) {
+                    /** @var \common\models\ActScope $scope */
+                    $services = [];
+                    foreach ($data->partnerScopes as $scope) {
                         $services[] = $scope->description;
                     }
                     return implode('+', $services);
@@ -204,13 +215,13 @@ class ActHelper
         $assets = [
             User::ROLE_ADMIN => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'service', 'expense', 'check', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check', 'updateButtons'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense', 'updateButtons'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'service', 'income', 'city', 'check', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
                     Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income', 'updateButtons'],
@@ -218,13 +229,13 @@ class ActHelper
             ],
             User::ROLE_WATCHER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'service', 'expense', 'check'],
+                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'service', 'income', 'check'],
+                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'income', 'check'],
                     Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income'],
@@ -232,7 +243,7 @@ class ActHelper
             ],
             User::ROLE_PARTNER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'service', 'expense', 'check'],
+                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense'],
@@ -241,7 +252,7 @@ class ActHelper
             User::ROLE_CLIENT => [
                 [],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'service', 'income', 'city', 'check'],
+                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check'],
                     Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income', 'buttons'],
