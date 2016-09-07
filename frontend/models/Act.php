@@ -31,5 +31,4 @@ class Act extends CommonAct
 
         return array_merge($labels, parent::attributeLabels());
     }
-
 }

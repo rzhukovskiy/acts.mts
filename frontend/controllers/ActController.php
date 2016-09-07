@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ActExporter;
+use common\components\ActHelper;
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
@@ -53,19 +54,21 @@ class ActController extends Controller
         ];
     }
 
-    public function actionList($type, $company = false)
+    public function actionList($type, $company = 0)
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $role = Yii::$app->user->identity->role;
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
             'company' => $company,
-            'role' => Yii::$app->user->identity->role,
+            'role' => $role,
+            'columns' => ActHelper::getColumnsByType($type, $role, $company),
         ]);
     }
 
@@ -155,15 +158,16 @@ class ActController extends Controller
         $searchModel->createDay = date('Y-m-d');
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $role = Yii::$app->user->identity->role;
 
         return $this->render('create', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
             'serviceList' => $serviceList,
-            'role' => Yii::$app->user->identity->role,
+            'role' => $role,
             'model' => $model,
+            'columns' => ActHelper::getColumnsByType($type, $role, 0),
         ]);
     }
 

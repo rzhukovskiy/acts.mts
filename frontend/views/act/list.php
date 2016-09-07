@@ -6,9 +6,8 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\ActSearch
  * @var $role string
+ * @var $columns array
  */
-
-use common\models\Service;
 
 $this->title = 'Акты';
 
@@ -16,9 +15,10 @@ echo $this->render('_tabs', [
     'role' => $role,
 ]);
 
-echo $this->render($company ? 'client/' . Service::$listType[$type]['en'] . '/_list' : 'partner/' . Service::$listType[$type]['en'] . '/_list', [
+echo $this->render('_list', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'role' => $role,
+    'columns' => $columns,
 ]);
 
