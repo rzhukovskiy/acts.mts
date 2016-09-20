@@ -12,7 +12,6 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
-use yii\web\View;
 
 $filters = 'Период: ' . DatePicker::widget([
         'model' => $searchModel,
@@ -49,8 +48,6 @@ echo GridView::widget([
     'filterModel' => $searchModel,
     'summary' => false,
     'emptyText' => '',
-    'floatHeader' => true,
-    'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
         'heading' => 'Услуги',

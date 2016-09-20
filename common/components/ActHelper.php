@@ -25,6 +25,7 @@ class ActHelper
      * @param $type int
      * @param $role string
      * @param $company bool
+     * @return array
      */
     public static function getColumnsByType($type, $role, $company) {
         $columns = [
@@ -41,13 +42,16 @@ class ActHelper
                 'value' => function ($data) {
                     return isset($data->client->parent) ? $data->client->parent->name : 'без филиалов';
                 },
-                'hidden' => true,
+                'headerOptions' => ['class' => 'hidden'],
+                'filterOptions' => ['class' => 'hidden'],
+                'footerOptions' => ['class' => 'hidden'],
+                'pageSummaryOptions' => ['class' => 'hidden'],
                 'contentOptions' => function ($data) {
                     return isset($data->client->parent) ? [
-                        'class' => 'grouped',
+                        'class' => 'grouped hidden',
                         'data-header' => $data->client->parent->name,
                         'data-footer' => 'Итого ' . $data->client->parent->name . ':',
-                    ] : [];
+                    ] : ['class' => 'hidden'];
                 },
             ],
             'partnerParent' => [
@@ -55,13 +59,16 @@ class ActHelper
                 'value' => function ($data) {
                     return isset($data->partner->parent) ? $data->partner->parent->name : 'без филиалов';
                 },
-                'hidden' => true,
+                'headerOptions' => ['class' => 'hidden'],
+                'filterOptions' => ['class' => 'hidden'],
+                'footerOptions' => ['class' => 'hidden'],
+                'pageSummaryOptions' => ['class' => 'hidden'],
                 'contentOptions' => function ($data) {
                     return isset($data->partner->parent) ? [
-                        'class' => 'grouped',
+                        'class' => 'grouped hidden',
                         'data-header' => $data->partner->parent->name,
                         'data-footer' => 'Итого ' . $data->partner->parent->name . ':',
-                    ] : [];
+                    ] : ['class' => 'hidden'];
                 },
             ],
             'client' => [
@@ -69,14 +76,17 @@ class ActHelper
                 'value' => function ($data) {
                     return isset($data->client) ? $data->client->name . ' - ' . $data->client->address : 'error';
                 },
-                'filter' => Company::find()->active()->select(['name', 'id'])->indexBy('id')->column(),
+                'headerOptions' => ['class' => 'hidden'],
+                'filterOptions' => ['class' => 'hidden'],
+                'footerOptions' => ['class' => 'hidden'],
+                'pageSummaryOptions' => ['class' => 'hidden'],
                 'contentOptions' => function ($data) {
                     return isset($data->client) ? [
-                        'class' => 'grouped',
+                        'class' => 'grouped hidden',
                         'data-header' => $data->client->name . ' - ' . $data->client->address,
                         'data-footer' => 'Итого ' . $data->client->name . ':',
                         'data-parent' => 1,
-                    ] : [];
+                    ] : ['class' => 'hidden'];
                 },
             ],
             'partner' => [
@@ -84,13 +94,17 @@ class ActHelper
                 'value' => function ($data) {
                     return isset($data->partner) ? $data->partner->name . ' - ' . $data->partner->address : 'error';
                 },
+                'headerOptions' => ['class' => 'hidden'],
+                'filterOptions' => ['class' => 'hidden'],
+                'footerOptions' => ['class' => 'hidden'],
+                'pageSummaryOptions' => ['class' => 'hidden'],
                 'contentOptions' => function ($data) {
                     return isset($data->partner) ? [
-                        'class' => 'grouped',
+                        'class' => 'grouped hidden',
                         'data-header' => $data->partner->name . ' - ' . $data->partner->address,
                         'data-footer' => 'Итого ' . $data->partner->name . ':',
                         'data-parent' => 1,
-                    ] : [];
+                    ] : ['class' => 'hidden'];
                 },
             ],
             'day' => [
