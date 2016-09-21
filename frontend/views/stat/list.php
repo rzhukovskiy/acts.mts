@@ -3,6 +3,7 @@
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
 use common\assets\CanvasJs\CanvasJsAsset;
+use common\models\Company;
 
 /**
  * @var $this yii\web\View

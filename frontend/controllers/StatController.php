@@ -76,6 +76,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('list', [
+            'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
             'group' => $group,
             'type' => $type,
             'searchModel' => $searchModel,
@@ -129,6 +130,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('view/' . $viewName, [
+            'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
             'group' => $group,
             'model' => $companyModel,
             'modelType' => ($companyModel->type == Company::TYPE_OWNER) ? 'client' : 'partner',
@@ -303,6 +305,7 @@ class StatController extends Controller
         $formatter = Yii::$app->formatter;
 
         return $this->render('total/' . $viewName, [
+            'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
             'group' => $group,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

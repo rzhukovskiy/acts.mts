@@ -88,6 +88,7 @@ $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
+$filters = '';
 if ($admin) {
     $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
             ->andWhere(['type' => Company::TYPE_OWNER])

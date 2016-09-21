@@ -5,6 +5,7 @@ use yii\widgets\Pjax;
 use common\models\Service;
 use yii\bootstrap\Html;
 use common\assets\CanvasJs\CanvasJsAsset;
+use common\models\Company;
 
 /**
  * @var $this yii\web\View
