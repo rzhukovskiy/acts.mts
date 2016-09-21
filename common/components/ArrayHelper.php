@@ -27,7 +27,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
                 }
             }
 
-            if (count($values[$i]['values'])) {
+            if ($i && count($values[$i]['values'])) {
                 $res[implode('+', $values[$i]['keys'])] = implode('+', $values[$i]['values']);
             }
         }
