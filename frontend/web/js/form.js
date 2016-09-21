@@ -170,10 +170,10 @@ this.addHeaders = function(options) {
     trs.each(function(tr_id, row) {
         var previous = trs.eq(tr_id - 1);
         var next = trs.eq(tr_id + 1);
-        
-        $(row).find(defaultGroupClass).each(function(td_id, td) {
+
+        $(row).find('td' + defaultGroupClass).each(function(td_id, td) {
             var col = $(td).attr('data-col-seq');
-            var pos = $(row).find('td:visible').index($(row).find('.sum'));
+            var pos = $(row).find('td').not('.hidden').index($(row).find('td.sum'));
             var tag = 'td[data-col-seq=' + col + ']';
 
             var currentValue = $(td).text();
@@ -183,13 +183,13 @@ this.addHeaders = function(options) {
             if (!total[col]) {
                 total[col] = 0;
             }
-            total[col] += parseInt($(row).find('.sum').text());
+            total[col] += parseInt($(row).find('td.sum').text());
             if (currentValue != nextValue) {
                 var footerTr = $('<tr>').addClass(defaultFooterClass);
                 if ($(td).attr('data-parent')) {
                     footerTr.addClass('child');
                 }
-                for (var i = 0; i < $(row).find('td:visible').length; i++) {
+                for (var i = 0; i < $(row).find('td').not('.hidden').length; i++) {
                     if (i == pos) {
                         var footerTd = $('<td>').text(total[col]);
                         footerTr.append(footerTd);
