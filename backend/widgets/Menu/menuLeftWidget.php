@@ -10,6 +10,7 @@ namespace backend\widgets\Menu;
 
 use common\models\Act;
 use common\models\Company;
+use common\models\Department;
 use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
@@ -49,7 +50,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Сотрудники',
-                    'url' => ['/user/index', 'department' => 1],
+                    'url' => ['/user/list', 'department' => Department::getFirstId()],
                     'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
@@ -69,25 +70,13 @@ class menuLeftWidget extends Widget
                     'url' => '#',
                 ],
             ];
-        } // Partner links
-        elseif (Yii::$app->user->identity->role == User::ROLE_WATCHER) {
-            /** @var Company $company */
-            $company = Yii::$app->user->identity->company;
+        } // Account manager links
+        elseif (Yii::$app->user->identity->role == User::ROLE_ACCOUNT) {
             $items = [
                 [
-                    'label' => 'Доходы',
-                    'url' => ['/stat/view'],
-                    'active' => Yii::$app->controller->id == 'stat',
-                ],
-                [
-                    'label' => 'Добавить машину',
-                    'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
-                ],
-                [
-                    'label' => 'Архив',
-                    'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
+                    'label' => 'Мойки',
+                    'url' => ['/wash/list'],
+                    'active' => Yii::$app->controller->id == 'wash',
                 ],
             ];
         } else {

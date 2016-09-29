@@ -24,6 +24,7 @@ class Department extends ActiveRecord
     static $listRole = [
         User::ROLE_WATCHER => 'Обычный',
         User::ROLE_MANAGER => 'Менеджер',
+        User::ROLE_ACCOUNT => 'Работа с клиентами',
     ];
     /**
      * @inheritdoc
@@ -79,5 +80,24 @@ class Department extends ActiveRecord
     public static function find()
     {
         return new DepartmentQuery(get_called_class());
+    }
+
+    public function getUsers()
+    {
+        return $this->hasMany(User::className(), ['id' => 'user_id'])
+            ->viaTable('{{%department_user}}', ['department_id' => 'id']);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getFirstId()
+    {
+        $firstDepartment = self::find()->orderBy('id ASC')->one();
+        if ($firstDepartment) {
+            return $firstDepartment->id;
+        }
+
+        return 0;
     }
 }

@@ -21,7 +21,6 @@ $this->title = 'Пользователи';
         <div class="panel-body">
             <?= $this->render('_form', [
                 'model' => $newUser,
-                'companyDropDownData' => $companyDropDownData,
             ]) ?>
         </div>
     </div>
@@ -48,21 +47,6 @@ $this->title = 'Пользователи';
                         }
                     ],
                     [
-                        'attribute' => 'company_id',
-                        'content' => function ($data) {
-                            return $data->company->name;
-                        },
-                        'filter' => Html::activeDropDownList(
-                            $searchModel,
-                            'company_id',
-                            $companyDropDownData,
-                            [
-                                'class' => 'form-control',
-                                'prompt' => 'Все компании'
-                            ]
-                        ),
-                    ],
-                    [
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{login}',
                         'buttons' => [
@@ -72,6 +56,7 @@ $this->title = 'Пользователи';
                             },
                         ]
                     ],
+
                     [
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{update}{delete}',

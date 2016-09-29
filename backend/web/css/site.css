@@ -32,7 +32,7 @@ body {
         width: 300px;
         }
 
-/* left menu */Е
+/* left menu */
 .menu-left {
     font-weight: bold;
     position: fixed;
@@ -179,4 +179,13 @@ table.sign {
 }
 .wPaint-menu {
     display: none;
+}
+
+/* schedule */
+.free-time {
+    color: red;
+    font-size: 30px;
+    font-weight: bold;
+    height: 200px;
+    text-align: center;
 }

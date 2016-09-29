@@ -23,6 +23,10 @@ class UserRoleRule extends Rule
                 return $role == User::ROLE_ADMIN || $role == User::ROLE_PARTNER;
             } elseif ($item->name === User::ROLE_CLIENT) {
                 return $role == User::ROLE_ADMIN || $role == User::ROLE_CLIENT;
+            } elseif ($item->name === User::ROLE_ACCOUNT) {
+                return $role == User::ROLE_ADMIN || $role == User::ROLE_ACCOUNT;
+            } elseif ($item->name === User::ROLE_MANAGER) {
+                return $role == User::ROLE_ADMIN || $role == User::ROLE_MANAGER;
             }
         }
         return false;

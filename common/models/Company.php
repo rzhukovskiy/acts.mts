@@ -24,6 +24,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $is_infected
  * @property integer $is_main
  * @property integer $is_sign
+ * @property integer $schedule
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -109,7 +110,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList', 'serviceList'], 'safe'],
+            [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList', 'serviceList', 'schedule'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -125,9 +126,11 @@ class Company extends ActiveRecord
             'id' => 'ID',
             'name' => 'Название',
             'address' => 'Город',
+            'phone' => 'Телефон',
             'parent_id' => 'Родительская',
             'cardList' => 'Список карт',
             'is_split' => 'Разделять прицеп',
+            'schedule' => 'По записи',
             'is_sign' => 'Подпись',
             'director' => 'Директор',
             'serviceList' => 'Сервисы',
@@ -140,6 +143,15 @@ class Company extends ActiveRecord
     public static function find()
     {
         return new CompanyQuery(get_called_class());
+    }
+
+    /**
+     * @param $type_id integer
+     * @return ActiveQuery
+     */
+    public function getDurationByType($type_id)
+    {
+        return $this->hasMany(CompanyDuration::className(), ['company_id' => 'id'])->where(['type_id' => $type_id]);
     }
 
     /**

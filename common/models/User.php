@@ -36,6 +36,7 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_PARTNER  = 2;
     const ROLE_WATCHER  = 3;
     const ROLE_MANAGER  = 4;
+    const ROLE_ACCOUNT  = 5;
     /**
      * @inheritdoc
      */
@@ -86,6 +87,10 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function getDepartments() {
+        return $this->hasMany(Department::className(), ['id' => 'department_id'])
+            ->viaTable('{{%department_user}}', ['user_id' => 'id']);
+    }
 
     /**
      * @inheritdoc

@@ -1,22 +1,24 @@
 <?php
 
 namespace common\models\query;
+use common\models\Department;
+use yii\db\ActiveQuery;
 
 /**
  * This is the ActiveQuery class for [[\app\models\Department]].
  *
  * @see \app\models\Department
  */
-class DepartmentQuery extends \yii\db\ActiveQuery
+class DepartmentQuery extends ActiveQuery
 {
-    /*public function active()
+    public function active()
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this->andWhere(['status' => Department::STATUS_ACTIVE]);
+    }
 
     /**
      * @inheritdoc
-     * @return \app\models\Department[]|array
+     * @return \common\models\Department[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +27,7 @@ class DepartmentQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \app\models\Department|array|null
+     * @return \common\models\Department|array|null
      */
     public function one($db = null)
     {

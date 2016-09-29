@@ -7,8 +7,10 @@ use common\components\ActHelper;
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
+use common\models\Entry;
 use common\models\search\ActSearch;
 use common\models\search\CarSearch;
+use common\models\search\EntrySearch;
 use common\models\Service;
 use common\models\User;
 use Yii;
@@ -45,7 +47,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'view', 'create', 'sign', 'disinfect'],
+                        'actions' => ['list', 'view', 'create', 'sign', 'disinfect', 'create-entry'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -152,6 +154,10 @@ class ActController extends Controller
             }
         }
 
+        if (!empty(Yii::$app->user->identity->company->schedule)) {
+            return $this->redirect(['act/create-entry', 'type' => $type]);
+        }
+
         $searchModel = new ActSearch();
         $searchModel->partner_id = Yii::$app->user->identity->company_id;
         $searchModel->service_type = $type;
@@ -163,6 +169,62 @@ class ActController extends Controller
         return $this->render('create', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'type' => $type,
+            'serviceList' => $serviceList,
+            'role' => $role,
+            'model' => $model,
+            'columns' => ActHelper::getColumnsByType($type, $role, 0),
+        ]);
+    }
+
+    /**
+     * Creates Entry model.
+     * @param integer $type
+     * @return mixed
+     */
+    public function actionCreateEntry($type)
+    {
+        $model = new Entry();
+        $model->service_type = $type;
+        $model->company_id = Yii::$app->user->identity->company_id;
+        $model->day = date('d-m-Y');
+
+        $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $modelAct = new Act();
+            $modelAct->load(Yii::$app->request->post());
+            $modelAct->attributes = $model->attributes;
+            $modelAct->partner_id = $model->company_id;
+            $modelAct->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $model->day . ' ' . $model->start_str . ':00')->getTimestamp();;
+
+            if ($modelAct->save()) {
+                $model->act_id = $modelAct->id;
+                if ($model->save()) {
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
+            }
+        }
+
+        $searchModel = new ActSearch();
+        $searchModel->partner_id = Yii::$app->user->identity->company_id;
+        $searchModel->service_type = $type;
+        $searchModel->createDay = date('Y-m-d');
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $entrySearchModel = new EntrySearch();
+        $entrySearchModel->load(Yii::$app->request->queryParams);
+        $entrySearchModel->company_id = $model->company_id;
+        if (empty($entrySearchModel->day)) {
+            $entrySearchModel->day = date('d-m-Y');
+        }
+        $role = Yii::$app->user->identity->role;
+
+        return $this->render('create-entry', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'entrySearchModel' => $entrySearchModel,
             'type' => $type,
             'serviceList' => $serviceList,
             'role' => $role,

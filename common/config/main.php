@@ -13,6 +13,8 @@ return [
                 \common\models\User::ROLE_CLIENT,
                 \common\models\User::ROLE_PARTNER,
                 \common\models\User::ROLE_WATCHER,
+                \common\models\User::ROLE_MANAGER,
+                \common\models\User::ROLE_ACCOUNT,
             ],
             'itemFile' => '@common/components/rbac/items.php',
             'assignmentFile' => '@common/components/rbac/assignments.php',

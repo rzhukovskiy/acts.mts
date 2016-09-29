@@ -1,0 +1,70 @@
+[26-Aug-2016 14:41:38 Europe/Moscow] An Error occurred while handling another error:
+exception 'yii\base\UnknownPropertyException' with message 'Getting unknown property: frontend\controllers\SiteController::controller' in C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Component.php:143
+Stack trace:
+#0 C:\Winginx\home\acts.mts\docs\frontend\controllers\SiteController.php(78): yii\base\Component->__get('controller')
+#1 [internal function]: frontend\controllers\SiteController->actionError()
+#2 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\InlineAction.php(55): call_user_func_array(Array, Array)
+#3 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Controller.php(154): yii\base\InlineAction->runWithParams(Array)
+#4 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('error', Array)
+#5 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\web\ErrorHandler.php(93): yii\base\Module->runAction('site/error')
+#6 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\ErrorHandler.php(109): yii\web\ErrorHandler->renderException(Object(yii\web\NotFoundHttpException))
+#7 [internal function]: yii\base\ErrorHandler->handleException(Object(yii\web\NotFoundHttpException))
+#8 {main}
+Previous exception:
+exception 'yii\base\InvalidRouteException' with message 'Unable to resolve the request: user/df' in C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Controller.php:125
+Stack trace:
+#0 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('df', Array)
+#1 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\web\Application.php(87): yii\base\Module->runAction('user/df', Array)
+#2 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#3 C:\Winginx\home\acts.mts\docs\frontend\web\index.php(18): yii\base\Application->run()
+#4 {main}
+
+Next exception 'yii\web\NotFoundHttpException' with message 'Page not found.' in C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\web\Application.php:99
+Stack trace:
+#0 C:\Winginx\home\acts.mts\docs\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#1 C:\Winginx\home\acts.mts\docs\frontend\web\index.php(18): yii\base\Application->run()
+#2 {main}
+$_SERVER = [
+    'Path' => 'C:\\Winginx/;C:\\Winginx/var/',
+    'PHP_FCGI_CHILDREN' => '5',
+    'PHP_FCGI_MAX_REQUESTS' => '0',
+    'SystemDrive' => 'C:',
+    'SystemRoot' => 'C:\\WINDOWS',
+    'TEMP' => 'C:\\Winginx/temp/php',
+    'TMP' => 'C:\\Winginx/temp/php',
+    'windir' => 'C:\\WINDOWS',
+    'HTTP_X_COMPRESS' => 'null',
+    'HTTP_COOKIE' => '_csrf-frontend=7e303a79157e21862b73fe395f9f03b147fe00da7a7db171c1b6a72e7c308bf9a%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22y1HT8o_vQwGvFqtl3rS6obVDdJYQhLWa%22%3B%7D; isAdmin=7e5cbb81e8db3b848b8fc86c14157b2a664c73f2ef8c6562a41327c9f9a5ac8ea%3A2%3A%7Bi%3A0%3Bs%3A7%3A%22isAdmin%22%3Bi%3A1%3Bs%3A1%3A%221%22%3B%7D; advanced-frontend=de5951dd235f8a289ea1f945c71af75d; _identity-frontend=f0c8f72ae0c1cd87e0e1796b432890f28685cbc8f29e03dfddf0a336db5bb9a4a%3A2%3A%7Bi%3A0%3Bs%3A18%3A%22_identity-frontend%22%3Bi%3A1%3Bs%3A14%3A%22%5B1%2C%22%22%2C2592000%5D%22%3B%7D',
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.8,ru;q=0.6',
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch',
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+    'HTTP_CACHE_CONTROL' => 'max-age=0',
+    'HTTP_CONNECTION' => 'keep-alive',
+    'HTTP_HOST' => 'acts.mts',
+    'REDIRECT_STATUS' => '200',
+    'SERVER_NAME' => 'acts.mts',
+    'SERVER_PORT' => '80',
+    'SERVER_ADDR' => '127.0.0.1',
+    'REMOTE_PORT' => '59486',
+    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_SOFTWARE' => 'nginx/1.4.5',
+    'GATEWAY_INTERFACE' => 'CGI/1.1',
+    'SERVER_PROTOCOL' => 'HTTP/1.1',
+    'DOCUMENT_ROOT' => 'C:\\Winginx/home/acts.mts/docs/frontend/web',
+    'DOCUMENT_URI' => '/index.php',
+    'REQUEST_URI' => '/user/df',
+    'SCRIPT_NAME' => '/index.php',
+    'CONTENT_LENGTH' => '',
+    'CONTENT_TYPE' => '',
+    'REQUEST_METHOD' => 'GET',
+    'QUERY_STRING' => '',
+    'SCRIPT_FILENAME' => 'C:\\Winginx/home/acts.mts/docs/frontend/web//index.php',
+    'FCGI_ROLE' => 'RESPONDER',
+    'PHP_SELF' => '/index.php',
+    'REQUEST_TIME_FLOAT' => 1472208098.6402380466461181640625,
+    'REQUEST_TIME' => 1472208098,
+    'argv' => [],
+    'argc' => 0,
+]

@@ -2,6 +2,7 @@
 
 namespace common\models\forms;
 
+use common\models\Department;
 use Yii;
 use common\models\User;
 use yii\base\Model;
@@ -46,6 +47,28 @@ class userAddForm extends Model
         $model->updated_at = time();
         if ($model->save())
             return true;
+
+        return false;
+    }
+
+    public function saveToDepartment($department_id)
+    {
+        $values = $this->attributes;
+        $model = new User($values);
+        $model->auth_key = '';
+        $model->salt = Yii::$app->security->generateRandomString();
+        $model->created_at = time();
+        $model->updated_at = time();
+        $department = Department::findOne(['id' => $department_id]);
+        if ($department) {
+            $model->role = $department->role;
+        }
+        if ($model->save()) {
+            if ($department) {
+                $model->link('departments', $department);
+            }
+            return true;
+        }
 
         return false;
     }

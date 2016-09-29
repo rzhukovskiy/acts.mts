@@ -10,6 +10,8 @@ use yii\base\Exception;
 use yii\base\UserException;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\Cookie;
+use yii\web\HttpException;
 
 /**
  * Site controller
@@ -95,6 +97,14 @@ class SiteController extends Controller
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
+        }
+
+
+        if (!isset(Yii::$app->request->cookies['test'])) {
+            Yii::$app->response->cookies->add(new Cookie([
+                'name' => 'test',
+                'value' => 'testValue'
+            ]));
         }
 
         $model = new LoginForm();

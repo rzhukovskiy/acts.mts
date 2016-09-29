@@ -1,5 +1,15 @@
 <?php
 return [
+    5 => [
+        'type' => 1,
+        'description' => 'Поддержка',
+        'ruleName' => 'userRole',
+    ],
+    4 => [
+        'type' => 1,
+        'description' => 'Менеджер',
+        'ruleName' => 'userRole',
+    ],
     3 => [
         'type' => 1,
         'description' => 'Наблюдатель',
@@ -7,17 +17,21 @@ return [
     ],
     1 => [
         'type' => 1,
-        'description' => 'Партнер',
+        'description' => 'Клиент',
         'ruleName' => 'userRole',
     ],
     2 => [
         'type' => 1,
+        'description' => 'Партнер',
+        'ruleName' => 'userRole',
     ],
     0 => [
         'type' => 1,
         'description' => 'Администратор',
         'ruleName' => 'userRole',
         'children' => [
+            5,
+            4,
             3,
             1,
             2,

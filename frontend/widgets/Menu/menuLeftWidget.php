@@ -162,23 +162,50 @@ class menuLeftWidget extends Widget
         elseif (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
             /** @var Company $company */
             $company = Yii::$app->user->identity->company;
-            $items = [
-                [
-                    'label' => 'Доходы',
-                    'url' => $company->type == Company::TYPE_UNIVERSAL ? ['/stat/view', 'type' => 2] : ['/stat/view'],
-                    'active' => Yii::$app->controller->id == 'stat',
-                ],
-                [
-                    'label' => 'Добавить машину',
-                    'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
-                ],
-                [
-                    'label' => 'Архив',
-                    'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                    'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
-                ],
-            ];
+            if (!empty($company->schedule)) {
+                $items = [
+                    [
+                        'label' => 'Доходы',
+                        'url' => ['/stat/view'],
+                        'active' => Yii::$app->controller->id == 'stat',
+                    ],
+                    [
+                        'label' => 'Добавить машину',
+                        'url' => ['/act/create-entry', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'act' && (
+                                Yii::$app->controller->action->id == 'create' ||
+                                Yii::$app->controller->action->id == 'disinfect' ||
+                                Yii::$app->controller->action->id == 'create-entry'
+                            ),
+                    ],
+                    [
+                        'label' => 'Архив',
+                        'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'act' &&
+                            Yii::$app->controller->action->id != 'create' &&
+                            Yii::$app->controller->action->id != 'disinfect' &&
+                            Yii::$app->controller->action->id != 'create-entry',
+                    ],
+                ];
+            } else {
+                $items = [
+                    [
+                        'label' => 'Доходы',
+                        'url' => ['/stat/view'],
+                        'active' => Yii::$app->controller->id == 'stat',
+                    ],
+                    [
+                        'label' => 'Добавить машину',
+                        'url' => ['/act/create', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
+                    ],
+                    [
+                        'label' => 'Архив',
+                        'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
+                    ],
+                ];
+            }
         } // Client links
         elseif (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
             $items = [
