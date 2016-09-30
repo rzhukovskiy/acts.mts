@@ -99,8 +99,8 @@ use yii\jui\AutoComplete;
                         <?php } else { ?>
                             <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
                         <?php } ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][amount]", 1) ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][price]", 0) ?>
                     </div>
                 </td>
                 <td style="width: 150px">

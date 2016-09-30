@@ -2,6 +2,7 @@
 /**
  * @var $model \common\models\Company
  * @var $modelEntry \common\models\Entry
+ * @var $searchModel \common\models\search\EntrySearch
  */
 use common\models\Car;
 use common\models\Card;
@@ -22,27 +23,47 @@ use yii\jui\AutoComplete;
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([
-            'id' => 'wash-form',
-            'method' => 'get',
-            'options' => ['class' => 'form-horizontal col-sm-12', 'style' => 'margin-top: 20px;'],
-            'fieldConfig' => [
-                'template' => '{label}<div class="col-sm-8">{input}</div>',
-                'labelOptions' => ['class' => 'col-sm-4 control-label'],
-                'inputOptions' => ['class' => 'form-control input-sm'],
-            ],
-        ]) ?>
-        <?= $form->field($model, 'address')->textInput(['readonly' => true]); ?>
-        <?= $form->field($model, 'director')->textInput(['readonly' => true]); ?>
-        <?= $form->field($model, 'phone')->textInput(['readonly' => true]); ?>
-        <?php ActiveForm::end() ?>
-
-        <?php
-        $form = ActiveForm::begin([
             'action' => ['entry/create'],
             'id' => 'act-form',
         ]) ?>
         <table class="table table-bordered">
             <tbody>
+            <tr>
+                <td colspan="6">
+                    Тут будут адрес и телефон. Подключу потом.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    Свободное время:
+                    <div class="free-time">
+                        <?php
+                        $step = 0;
+                        $listEntry = $searchModel->search([])->getModels();
+                        foreach ($listEntry as $entry) {
+                            if (!$step) {
+                                if (date('H:i', $entry->start_at) != '08:00') {
+                                    echo '<div class="col-sm-3">08:00 - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-3">';
+                                } else {
+                                    echo '<div class="col-sm-3">';
+                                }
+                            } else {
+                                echo date('H:i', $entry->start_at) . '</div><div class="col-sm-3">';
+                            }
+                            $step++;
+                            if ($step == count($listEntry)) {
+                                if (date('H:i', $entry->end_at) != '20:00') {
+                                    echo date('H:i', $entry->end_at) . ' - 20:00</div>';
+                                } else {
+                                    echo '</div>';
+                                }
+                            } else {
+                                echo date('H:i', $entry->end_at) . ' - ';
+                            }
+                        } ?>
+                    </div>
+                </td>
+            </tr>
             <tr>
                 <td style="width: 150px">
                     <?= $form->field($modelEntry, 'start_str')->widget(TimePicker::classname(), [
@@ -67,7 +88,9 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td class="complex-number">
-                    <label class="control-label" for="act-card_id">Номер <span class="extra-number" style="display:none">и номер прицепа</span></label>
+                    <label class="control-label" for="act-card_id">Номер <span class="extra-number"
+                                                                               style="display:none">и номер прицепа</span></label>
+
                     <div class="input-group" style="width: 100%;">
                         <?= AutoComplete::widget([
                             'model' => $modelEntry,

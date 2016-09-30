@@ -52,22 +52,18 @@ use yii\helpers\Html;
                 [
                     'header' => 'Услуга',
                     'value' => function ($model, $key, $index, $column) use ($serviceList) {
-                        return $model->number
-                            ? Html::dropDownList('service', [], ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'prompt' => 'выберите услугу'])
-                            : '';
+                        $fields = Html::beginForm(['act/create', 'type' => $model->service_type]) .
+                            Html::hiddenInput("Act[serviceList][0][amount]", 1) .
+                            Html::hiddenInput("Act[serviceList][0][price]", 0) .
+                            Html::hiddenInput("entry_id", $model->id) .
+                            '<div class="input-group" style="width: 100%;">' .
+                            Html::dropDownList('Act[serviceList][0][service_id]', [], ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'style' => 'width: 60%', 'prompt' => 'выберите услугу']) .
+                            Html::submitButton('Оформить', ['class' => 'form-control btn btn-primary', 'style' => 'width: 40%']) .
+                            '</div>' .
+                            Html::endForm();
+                        return $model->number ? $fields : '';
                     },
                     'format' => 'raw',
-                ],
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{login}',
-                    'buttons' => [
-                        'login' => function ($url, $model, $key) {
-                            return $model->number
-                                ? Html::a('Оформить', ['/act/create', 'entry_id' => $model->id], ['class' => 'btn btn-primary'])
-                                : '';
-                        },
-                    ]
                 ],
             ],
         ]);

@@ -16,7 +16,7 @@ use yii\bootstrap\Html;
             <div class="col-sm-12" style="margin-top: 15px;">
                 Тут некий адрес. Но адресов-то пока нет. Поэтому бла-бла-бла.
             </div>
-            <div class="free-time">
+            <div class="free-time" style ="height: 220px;">
                 <?php
                 $step = 0;
                 $listEntry = $entrySearchModel->search(['EntrySearch' => [

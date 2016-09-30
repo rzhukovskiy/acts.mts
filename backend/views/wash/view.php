@@ -26,6 +26,7 @@ $items = [
 echo $this->render('_full_view', [
     'model' => $model,
     'modelEntry' => $modelEntry,
+    'searchModel' => $searchModel,
 ]);
 
 echo $this->render('_entry_list', [

@@ -145,12 +145,28 @@ class ActController extends Controller
         $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->image = UploadedFile::getInstance($model, 'image');
-            if ($model->save()) {
-                if (Yii::$app->user->identity->company->is_sign) {
-                    return $this->redirect(['act/sign', 'id' => $model->id]);
+            $entryId = Yii::$app->request->post('entry_id', false);
+            if ($entryId) {
+                $modelEntry = Entry::findOne($entryId);
+                $model->attributes = $modelEntry->attributes;
+                $model->partner_id = $modelEntry->company_id;
+                $model->served_at = $modelEntry->end_at;
+
+                if ($model->save()) {
+                    $modelEntry->act_id = $model->id;
+                    if ($modelEntry->save()) {
+                        return $this->redirect(['act/create-entry', 'type' => $type]);
+                    }
                 }
                 return $this->redirect(Yii::$app->request->referrer);
+            } else {
+                $model->image = UploadedFile::getInstance($model, 'image');
+                if ($model->save()) {
+                    if (Yii::$app->user->identity->company->is_sign) {
+                        return $this->redirect(['act/sign', 'id' => $model->id]);
+                    }
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
             }
         }
 
@@ -196,7 +212,7 @@ class ActController extends Controller
             $modelAct->load(Yii::$app->request->post());
             $modelAct->attributes = $model->attributes;
             $modelAct->partner_id = $model->company_id;
-            $modelAct->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $model->day . ' ' . $model->start_str . ':00')->getTimestamp();;
+            $modelAct->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $model->day . ' ' . $model->start_str . ':00')->getTimestamp();
 
             if ($modelAct->save()) {
                 $model->act_id = $modelAct->id;

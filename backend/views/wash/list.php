@@ -16,7 +16,9 @@ echo $this->render('_search', [
     'entrySearchModel' => $entrySearchModel,
     'listCity' => $listCity,
 ]);
-
+?>
+<div class="row">
+<?php
 echo ListView::widget([
     'dataProvider' => $dataProvider,
     'viewParams' => [
@@ -25,3 +27,5 @@ echo ListView::widget([
     'itemView' => '_short_view',
     'layout' => '{items}',
 ]);
+?>
+</div>

@@ -36,19 +36,19 @@ use yii\helpers\Html;
                         foreach ($listEntry as $entry) {
                             if (!$step) {
                                 if (date('H:i', $entry->start_at) != '08:00') {
-                                    echo ' 08:00 - ' . date('H:i', $entry->start_at) . ' ';
+                                    echo '<div class="col-sm-4">08:00 - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
                                 } else {
-                                    echo ' ';
+                                    echo '<div class="col-sm-4">';
                                 }
                             } else {
-                                echo date('H:i', $entry->start_at) . ' ';
+                                echo date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
                             }
                             $step++;
                             if ($step == count($listEntry)) {
                                 if (date('H:i', $entry->end_at) != '20:00') {
-                                    echo date('H:i', $entry->end_at) . ' - 20:00';
+                                    echo date('H:i', $entry->end_at) . ' - 20:00</div>';
                                 } else {
-                                    echo '';
+                                    echo '</div>';
                                 }
                             } else {
                                 echo date('H:i', $entry->end_at) . ' - ';
@@ -88,7 +88,7 @@ use yii\helpers\Html;
                     <?= Html::activeHiddenInput($model, 'day') ?>
                     <?= Html::activeHiddenInput($model, 'company_id') ?>
                     <?= Html::activeHiddenInput($model, 'service_type') ?>
-                </td style="width: 150px">
+                </td>
             </tr>
             </tbody>
         </table>
