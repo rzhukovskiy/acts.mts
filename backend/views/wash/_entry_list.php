@@ -8,7 +8,7 @@ use yii\grid\GridView;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Записи от Международного Транспортного Сервиса
+        Запись ТС на мойку
     </div>
     <div class="panel-body">
         <?=

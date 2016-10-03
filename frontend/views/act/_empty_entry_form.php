@@ -6,7 +6,6 @@
  * @var $serviceList array
  */
 
-use common\models\search\EntrySearch;
 use kartik\time\TimePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -28,7 +27,7 @@ use yii\helpers\Html;
             <tbody>
             <tr>
                 <td colspan="3">
-                    Свободное время:
+                    <label class="control-label">Свободное время:</label>
                     <div class="free-time">
                         <?php
                         $step = 0;
@@ -60,8 +59,11 @@ use yii\helpers\Html;
             <tr>
                 <td>
                     <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
+                        'addonOptions' => [
+                            'style' => 'width: 100px',
+                        ],
                         'pluginOptions' => [
-                            'minuteStep' => '30',
+                            'minuteStep' => '15',
                             'defaultTime' => '8:00',
                             'showMeridian' => false,
                         ],
@@ -72,8 +74,11 @@ use yii\helpers\Html;
                 </td>
                 <td>
                     <?= $form->field($model, 'end_str')->widget(TimePicker::classname(), [
+                        'addonOptions' => [
+                            'style' => 'width: 100px',
+                        ],
                         'pluginOptions' => [
-                            'minuteStep' => '30',
+                            'minuteStep' => '15',
                             'defaultTime' => '9:00',
                             'showMeridian' => false,
                         ],

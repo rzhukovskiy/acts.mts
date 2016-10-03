@@ -59,7 +59,9 @@ use yii\jui\AutoComplete;
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
                 </td>
                 <td class="complex-number">
-                    <label class="control-label" for="act-card_id">Госномер <span class="extra-number" style="display:none">и номер прицепа</span></label>
+                    <label class="control-label" for="act-card_id">Госномер <span class="extra-number"
+                                                                                  style="display:none">и номер прицепа</span></label>
+
                     <div class="input-group" style="width: 100%;">
                         <?= AutoComplete::widget([
                             'model' => $model,
@@ -83,10 +85,19 @@ use yii\jui\AutoComplete;
                         ]) ?>
                     </div>
                 </td>
-                <td style="width: 200px">
+                <td style="width: 150px">
+                    <label class="control-label">Действие</label>
+                    <?= Html::submitButton('Записать', ['class' => 'btn btn-primary']) ?>
+                    <?= Html::activeHiddenInput($model, 'day') ?>
+                    <?= Html::activeHiddenInput($model, 'company_id') ?>
+                    <?= Html::activeHiddenInput($model, 'service_type') ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
                     <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
                 </td>
-                <td>
+                <td colspan="2">
                     <div class="form-group row" style="height: 5px;">
                         <div class="col-xs-12">
                             <label class="control-label">Услуга</label>
@@ -95,20 +106,13 @@ use yii\jui\AutoComplete;
 
                     <div class="form-group" style="height: 25px;">
                         <?php if (!empty($serviceList)) { ?>
-                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'prompt' => 'выберите услугу']) ?>
+                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control']) ?>
                         <?php } else { ?>
                             <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
                         <?php } ?>
                         <?= Html::hiddenInput("Act[serviceList][0][amount]", 1) ?>
                         <?= Html::hiddenInput("Act[serviceList][0][price]", 0) ?>
                     </div>
-                </td>
-                <td style="width: 150px">
-                    <label class="control-label">Действие</label>
-                    <?= Html::submitButton('Записать', ['class' => 'btn btn-primary']) ?>
-                    <?= Html::activeHiddenInput($model, 'day') ?>
-                    <?= Html::activeHiddenInput($model, 'company_id') ?>
-                    <?= Html::activeHiddenInput($model, 'service_type') ?>
                 </td>
             </tr>
             </tbody>

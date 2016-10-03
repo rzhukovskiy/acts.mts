@@ -13,9 +13,11 @@ use yii\helpers\Html;
         Записи от Международного Транспортного Сервиса
     </div>
     <div class="panel-body">
-        <?=
-        GridView::widget([
-            'dataProvider' => $searchModel->search([]),
+        <?php
+        $dataProvider = $searchModel->search([]);
+        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['>', 'end_at', time()]);
+        echo GridView::widget([
+            'dataProvider' => $dataProvider,
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'emptyText' => '',
@@ -28,12 +30,6 @@ use yii\helpers\Html;
                     'attribute' => 'start_at',
                     'value' => function ($model) {
                         return date('H:i', $model->start_at);
-                    },
-                ],
-                [
-                    'attribute' => 'end_at',
-                    'value' => function ($model) {
-                        return date('H:i', $model->end_at);
                     },
                 ],
                 [

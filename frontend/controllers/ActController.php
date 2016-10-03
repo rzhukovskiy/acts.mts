@@ -214,11 +214,12 @@ class ActController extends Controller
             $modelAct->partner_id = $model->company_id;
             $modelAct->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $model->day . ' ' . $model->start_str . ':00')->getTimestamp();
 
-            if ($modelAct->save()) {
+            if (!empty($modelAct->serviceList) && $modelAct->save()) {
                 $model->act_id = $modelAct->id;
-                if ($model->save()) {
-                    return $this->redirect(Yii::$app->request->referrer);
-                }
+            }
+
+            if ($model->save()) {
+                return $this->redirect(Yii::$app->request->referrer);
             }
         }
 

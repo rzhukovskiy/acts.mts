@@ -42,25 +42,21 @@ class EntryController extends Controller
     {
         $model = new Entry();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect([
-                'wash/list',
-                'CompanySearch[address]' => $model->company->address,
-                'CompanySearch[day]' => $model->day,
-            ]);
-        } else {
-            $message = '';
-            foreach ($model->getFirstErrors() as $error) {
-                $message .= ' ' . $error[0];
+        if ($model->load(Yii::$app->request->post())) {
+            if (!$model->save()) {
+                $message = '';
+                foreach ($model->getFirstErrors() as $error) {
+                    $message .= ' ' . $error[0];
+                }
+                Yii::$app->session->setFlash('error', 'Ошибка: ' . $message);
             }
-            Yii::$app->session->setFlash('error', 'Ошибка: ' . $message);
-
-            return $this->redirect([
-                'wash/view',
-                'id' => $model->company->id,
-                'Entry[day]' => $model->day,
-            ]);
         }
+
+        return $this->redirect([
+            'wash/view',
+            'id' => $model->company->id,
+            'Entry[day]' => $model->day,
+        ]);
     }
 
     /**
