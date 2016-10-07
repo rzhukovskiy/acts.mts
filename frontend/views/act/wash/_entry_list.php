@@ -33,14 +33,23 @@ use yii\helpers\Html;
                     },
                 ],
                 [
-                    'attribute' => 'mark_id',
+                    'header' => 'Карта',
+                    'attribute' => 'card.number',
+                    'value' => function ($model) {
+                        return $model->card->number;
+                    },
+                ],
+                [
+                    'header' => 'Марка ТС',
+                    'attribute' => 'mark.name',
                     'value' => function ($model) {
                         return $model->mark->name;
                     },
                 ],
                 'number',
                 [
-                    'attribute' => 'type_id',
+                    'header' => 'Тип ТС',
+                    'attribute' => 'type.name',
                     'value' => function ($model) {
                         return $model->type->name;
                     },

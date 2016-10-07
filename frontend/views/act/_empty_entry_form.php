@@ -63,7 +63,6 @@ use yii\helpers\Html;
                             'style' => 'width: 100px',
                         ],
                         'pluginOptions' => [
-                            'minuteStep' => '15',
                             'defaultTime' => '8:00',
                             'showMeridian' => false,
                         ],
@@ -78,7 +77,6 @@ use yii\helpers\Html;
                             'style' => 'width: 100px',
                         ],
                         'pluginOptions' => [
-                            'minuteStep' => '15',
                             'defaultTime' => '9:00',
                             'showMeridian' => false,
                         ],

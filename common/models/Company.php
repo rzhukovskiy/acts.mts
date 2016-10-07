@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  *
+ * @property Act[] $acts
  * @property Company $parent
  * @property Company[] $children
  * @property Card[] $cards
@@ -184,6 +185,18 @@ class Company extends ActiveRecord
     public function getCars()
     {
         return $this->hasMany(Car::className(), ['company_id' => 'id'])->orderBy('number');
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getActs()
+    {
+        if ($this->type == self::TYPE_OWNER) {
+            return $this->hasMany(Act::className(), ['client_id' => 'id']);
+        } else {
+            return $this->hasMany(Act::className(), ['partner_id' => 'id']);
+        }
     }
 
     /**

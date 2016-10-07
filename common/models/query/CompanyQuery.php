@@ -18,7 +18,7 @@ class CompanyQuery extends ActiveQuery
      */
     public function active()
     {
-        return $this->andWhere(['status' => Company::STATUS_ACTIVE]);
+        return $this->alias('company')->andWhere(['company.status' => Company::STATUS_ACTIVE]);
     }
 
     /**

@@ -51,6 +51,7 @@ class WashController extends Controller
         $searchModel = new CompanySearch();
         $searchModel->type = Company::TYPE_WASH;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->joinWith('acts');
         $dataProvider->sort = [
             'defaultOrder' => [
                 'created_at' => SORT_DESC,

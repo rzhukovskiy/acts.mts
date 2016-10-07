@@ -104,7 +104,7 @@ class Entry extends ActiveRecord
      */
     public function getCard()
     {
-        return $this->hasOne(Company::className(), ['id' => 'card_id']);
+        return $this->hasOne(Card::className(), ['id' => 'card_id']);
     }
 
     /**

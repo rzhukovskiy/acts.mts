@@ -35,7 +35,6 @@ use yii\jui\AutoComplete;
                 <td style="width: 150px">
                     <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
                         'pluginOptions' => [
-                            'minuteStep' => '30',
                             'defaultTime' => '8:00',
                             'showMeridian' => false,
                         ],
