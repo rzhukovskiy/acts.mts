@@ -6,6 +6,7 @@ use common\components\ActExporter;
 use common\components\ActHelper;
 use common\models\Act;
 use common\models\Car;
+use common\models\Card;
 use common\models\Company;
 use common\models\Entry;
 use common\models\search\ActSearch;
@@ -208,6 +209,7 @@ class ActController extends Controller
         $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
 
         if ($model->load(Yii::$app->request->post())) {
+            $model->card_id = Card::findOne($model->card_id)->id;
             $modelAct = new Act();
             $modelAct->load(Yii::$app->request->post());
             $modelAct->attributes = $model->attributes;

@@ -45,14 +45,7 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td style="width: 100px">
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                            'initValueText' => 'asdasd',
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($model, 'card_id')->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
