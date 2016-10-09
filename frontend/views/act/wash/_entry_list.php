@@ -15,7 +15,7 @@ use yii\helpers\Html;
     <div class="panel-body">
         <?php
         $dataProvider = $searchModel->search([]);
-        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['>', 'end_at', time()]);
+        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['is not', 'card_id', null])->andWhere(['>', 'end_at', time()]);
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'tableOptions' => ['class' => 'table table-bordered'],
