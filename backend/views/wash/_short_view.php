@@ -14,7 +14,7 @@ use yii\bootstrap\Html;
         </div>
         <div class="panel-body">
             <div class="col-sm-12" style="margin-top: 15px;">
-                Тут некий адрес. Но адресов-то пока нет. Поэтому бла-бла-бла.
+                <?= $model->info->address ?>
             </div>
             <div class="free-time" style ="height: 220px;">
                 <?php

@@ -16,7 +16,6 @@ use yii\helpers\ArrayHelper;
  * @property integer $parent_id
  * @property string $name
  * @property string $address
- * @property string $phone
  * @property string $director
  * @property integer $type
  * @property integer $status
@@ -28,6 +27,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  *
+ * @property CompanyInfo $info
  * @property Act[] $acts
  * @property Company $parent
  * @property Company[] $children
@@ -127,7 +127,6 @@ class Company extends ActiveRecord
             'id' => 'ID',
             'name' => 'Название',
             'address' => 'Город',
-            'phone' => 'Телефон',
             'parent_id' => 'Родительская',
             'cardList' => 'Список карт',
             'is_split' => 'Разделять прицеп',
@@ -144,6 +143,14 @@ class Company extends ActiveRecord
     public static function find()
     {
         return new CompanyQuery(get_called_class());
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getInfo()
+    {
+        return $this->hasOne(CompanyInfo::className(), ['company_id' => 'id']);
     }
 
     /**

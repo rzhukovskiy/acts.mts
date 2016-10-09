@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Card;
 use common\models\User;
 use Yii;
 use common\models\Entry;
@@ -43,6 +44,7 @@ class EntryController extends Controller
         $model = new Entry();
 
         if ($model->load(Yii::$app->request->post())) {
+            $model->card_id = Card::findOne($model->card_id)->id;
             if (!$model->save()) {
                 $message = '';
                 foreach ($model->getFirstErrors() as $error) {

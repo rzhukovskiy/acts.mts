@@ -30,12 +30,17 @@ use yii\jui\AutoComplete;
             <tbody>
             <tr>
                 <td colspan="6">
-                    Тут будут адрес и телефон. Подключу потом.
+                    <label class="control-label">Адрес:</label> <?= $model->info->address ?>
                 </td>
             </tr>
             <tr>
                 <td colspan="6">
-                    Свободное время:
+                    <label class="control-label">Телефон:</label> <?= $model->info->phone ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <label class="control-label">Свободное время:</label>
                     <div class="free-time">
                         <?php
                         $step = 0;
@@ -77,14 +82,7 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td style="width: 100px">
-                    <?= $form->field($modelEntry, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                            'initValueText' => 'asdasd',
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($modelEntry, 'card_id')->textInput(); ?>
                 </td>
                 <td class="complex-number">
                     <label class="control-label" for="act-card_id">Номер <span class="extra-number"

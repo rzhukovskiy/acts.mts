@@ -42,6 +42,7 @@ class menuLeftWidget extends Widget
         $items = [];
         // Admin links
         if (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
                     'label' => 'Отделы',
@@ -59,11 +60,18 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => '#',
+                    'url' => ['/company/archive?type=' . Company::TYPE_WASH],
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
+                    ),
                 ],
                 [
-                    'label' => 'Отказавшиеся',
-                    'url' => '#',
+                    'label' => 'Отказ',
+                    'url' => ['/company/refuse?type=' . Company::TYPE_WASH],
+                    'active' => (
+                        Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse'
+                    ),
                 ],
                 [
                     'label' => 'Сообщения',
