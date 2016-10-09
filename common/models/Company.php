@@ -35,6 +35,7 @@ use yii\helpers\ArrayHelper;
  * @property Car[] $cars
  * @property Requisites[] $requisites
  * @property CompanyServiceType[] $serviceTypes
+ * @property Entry[] $entries
  *
  * @property string $cardList
  * @property array $requisitesList
@@ -179,6 +180,15 @@ class Company extends ActiveRecord
     }
 
     /**
+     * @param string $day
+     * @return ActiveQuery
+     */
+    public function getEntries($day)
+    {
+        return $this->hasMany(Entry::className(), ['company_id' => 'id'])->where(['DAY(FROM_UNIXTIME(`start_at`))' => $day])->orderBy('start_at');
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getCards()
@@ -291,6 +301,26 @@ class Company extends ActiveRecord
         }
 
         return $range;
+    }
+
+    /**
+     * @param $day
+     * @return Entry[]
+     */
+    public function getFreeTimeArray($day)
+    {
+        $res = [];
+        /** @var Entry $entry */
+        foreach($this->getEntries($day)->all() as $entry) {
+            $previous = !empty($res[count($res) - 1]) ? $res[count($res) - 1] : false;
+            if (!$previous || $previous->end_at < $entry->start_at) {
+                $res[] = $entry;
+            } else {
+                $res[count($res) - 1]->end_at = $entry->end_at;
+            }
+        }
+
+        return $res;
     }
 
     /**

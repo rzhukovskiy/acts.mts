@@ -31,11 +31,13 @@ use yii\helpers\Html;
                     <div class="free-time">
                         <?php
                         $step = 0;
-                        $listEntry = $searchModel->search([])->getModels();
+                        $listEntry = $model->company->getFreeTimeArray(date('d-m-Y'));
+                        $timeStart = gmdate('H:i', $model->company->info->start_at);
+                        $timeEnd = gmdate('H:i', $model->company->info->end_at);
                         foreach ($listEntry as $entry) {
                             if (!$step) {
-                                if (date('H:i', $entry->start_at) != '08:00') {
-                                    echo '<div class="col-sm-4">08:00 - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
+                                if (date('H:i', $entry->start_at) != $timeStart) {
+                                    echo '<div class="col-sm-4">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
                                 } else {
                                     echo '<div class="col-sm-4">';
                                 }
@@ -44,8 +46,8 @@ use yii\helpers\Html;
                             }
                             $step++;
                             if ($step == count($listEntry)) {
-                                if (date('H:i', $entry->end_at) != '20:00') {
-                                    echo date('H:i', $entry->end_at) . ' - 20:00</div>';
+                                if (date('H:i', $entry->end_at) != $timeEnd) {
+                                    echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
                                 } else {
                                     echo '</div>';
                                 }
@@ -63,7 +65,7 @@ use yii\helpers\Html;
                             'style' => 'width: 100px',
                         ],
                         'pluginOptions' => [
-                            'defaultTime' => '8:00',
+                            'defaultTime' => gmdate('H:i', $model->company->info->start_at),
                             'showMeridian' => false,
                         ],
                         'options' => [
@@ -77,7 +79,7 @@ use yii\helpers\Html;
                             'style' => 'width: 100px',
                         ],
                         'pluginOptions' => [
-                            'defaultTime' => '9:00',
+                            'defaultTime' => gmdate('H:i', $model->company->info->end_at),
                             'showMeridian' => false,
                         ],
                         'options' => [

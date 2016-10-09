@@ -19,13 +19,13 @@ use yii\bootstrap\Html;
             <div class="free-time" style ="height: 220px;">
                 <?php
                 $step = 0;
-                $listEntry = $entrySearchModel->search(['EntrySearch' => [
-                    'company_id' => $model->id
-                ]])->getModels();
+                $listEntry = $model->getFreeTimeArray(date('d-m-Y'));
+                $timeStart = gmdate('H:i', $model->info->start_at);
+                $timeEnd = gmdate('H:i', $model->info->end_at);
                 foreach ($listEntry as $entry) {
                     if (!$step) {
-                        if (date('H:i', $entry->start_at) != '08:00') {
-                            echo '<div class="col-sm-12">08:00 - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-12">';
+                        if (date('H:i', $entry->start_at) != $timeStart) {
+                            echo '<div class="col-sm-12">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-12">';
                         } else {
                             echo '<div class="col-sm-12">';
                         }
@@ -34,8 +34,8 @@ use yii\bootstrap\Html;
                     }
                     $step++;
                     if ($step == count($listEntry)) {
-                        if (date('H:i', $entry->end_at) != '20:00') {
-                            echo date('H:i', $entry->end_at) . ' - 20:00</div>';
+                        if (date('H:i', $entry->end_at) != $timeEnd) {
+                            echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
                         } else {
                             echo '</div>';
                         }

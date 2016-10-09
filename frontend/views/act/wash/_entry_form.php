@@ -35,7 +35,7 @@ use yii\jui\AutoComplete;
                 <td style="width: 150px">
                     <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
                         'pluginOptions' => [
-                            'defaultTime' => '8:00',
+                            'defaultTime' => gmdate('H:i', $model->company->info->start_at),
                             'showMeridian' => false,
                         ],
                         'options' => [
