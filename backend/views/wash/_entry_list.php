@@ -5,6 +5,8 @@
  * @var $serviceList array
  */
 use yii\grid\GridView;
+use yii\helpers\Html;
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -13,7 +15,7 @@ use yii\grid\GridView;
     <div class="panel-body">
         <?php
         $dataProvider = $searchModel->search([]);
-        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['is not', 'number', null]);
+        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['is not', 'type_id', null]);
 
         echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -57,6 +59,14 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
+                    'buttons' => [
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/entry/update', 'id' => $model->id]);
+                        },
+                        'delete' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/entry/delete', 'id' => $model->id]);
+                        },
+                    ]
                 ],
             ],
         ]);

@@ -6,13 +6,14 @@
  */
 
 use yii\bootstrap\Html;
+use yii\bootstrap\Tabs;
 
-$this->title = 'Запись на мойку ' . Html::encode($model->name);
+$this->title = 'Редактирование записи на мойку ' . Html::encode($model->company->name);
 
 $items = [
     [
         'label' => 'Мойка',
-        'url' => ['wash/view', 'id' => $model->company_id],
+        'url' => ['wash/view', 'id' => $model->company_id, 'Entry[day]' => date('d-m-Y', $model->start_at)],
     ],
     [
         'label' => 'Запись',
@@ -20,11 +21,15 @@ $items = [
         'active' => true,
     ],
 ];
+
+echo Tabs::widget( [
+    'items' => $items,
+] );
 ?>
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Редактирпование записи на мойку <?= $model->name ?>
+        Редактирование записи на мойку <?= $model->company->name ?>
     </div>
     <div class="panel-body">
         <?= $this->render('_form', [

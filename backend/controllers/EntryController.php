@@ -71,8 +71,10 @@ class EntryController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/wash/view', 'id' => $model->company_id]);
+            return $this->redirect(['/wash/view', 'id' => $model->company_id, 'Entry[day]' => date('d-m-Y', $model->start_at)]);
         } else {
+            print_r($model->getErrors());
+            die;
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -89,7 +91,7 @@ class EntryController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['wash/list']);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**

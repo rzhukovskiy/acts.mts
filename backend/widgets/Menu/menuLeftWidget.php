@@ -84,7 +84,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Мойки',
                     'url' => ['/wash/list'],
-                    'active' => Yii::$app->controller->id == 'wash',
+                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
                 ],
             ];
         } else {

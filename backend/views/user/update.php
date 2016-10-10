@@ -19,7 +19,6 @@ $items = [
     ],
 ];
 
-
 echo Tabs::widget( [
     'items' => $items,
 ] );

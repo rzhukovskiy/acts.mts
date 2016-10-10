@@ -11,13 +11,11 @@ namespace backend\controllers;
 
 use common\models\Company;
 use common\models\CompanyInfo;
-use common\models\CompanyService;
 use common\models\search\CompanySearch;
 use common\models\User;
 use yii;
-use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\filters\AccessControl;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class CompanyController extends Controller

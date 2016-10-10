@@ -8,6 +8,7 @@
  */
 
 use yii\bootstrap\Html;
+use yii\bootstrap\Tabs;
 
 $this->title = 'Запись на мойку ' . Html::encode($model->name);
 
@@ -22,6 +23,10 @@ $items = [
         'active' => true,
     ],
 ];
+
+echo Tabs::widget( [
+    'items' => $items,
+] );
 
 echo $this->render('_full_view', [
     'model' => $model,

@@ -40,7 +40,7 @@ class UserController extends Controller
                     [
                         'actions' => ['login'],
                         'allow' => true,
-                        'roles' => ['*'],
+                        'roles' => [User::ROLE_ACCOUNT, User::ROLE_WATCHER],
                     ]
                 ]
             ]
@@ -146,10 +146,11 @@ class UserController extends Controller
             'value' => '1'
         ]);
 
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN)
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             Yii::$app->response->cookies->add($cookieAdmin);
-        elseif ($model->role == User::ROLE_ADMIN)
+        } else {
             Yii::$app->response->cookies->remove($cookieAdmin);
+        }
 
         $loginModel = new LoginForm([
             'username' => $model->username,

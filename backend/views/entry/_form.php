@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 use kartik\time\TimePicker;
 
 $form = ActiveForm::begin([
-    'action' => ['entry/create'],
+    'action' => $model->isNewRecord ? ['entry/create'] : ['entry/update', 'id' => $model->id],
     'id' => 'act-form',
 ]) ?>
 <table class="table table-bordered">
@@ -21,7 +21,7 @@ $form = ActiveForm::begin([
         <td style="width: 150px">
             <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
-                    'defaultTime' => '8:00',
+                    'defaultTime' => $model->isNewRecord ? '8:00' : date('H:i', $model->start_at),
                     'showMeridian' => false,
                 ],
                 'options' => [
@@ -67,7 +67,7 @@ $form = ActiveForm::begin([
         </td>
         <td style="width: 150px">
             <label class="control-label">Действие</label>
-            <?= Html::submitButton('Записать', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton($model->isNewRecord ? 'Записать' : 'Изменить', ['class' => 'btn btn-primary']) ?>
             <?= Html::activeHiddenInput($model, 'day') ?>
             <?= Html::activeHiddenInput($model, 'company_id') ?>
             <?= Html::activeHiddenInput($model, 'service_type') ?>

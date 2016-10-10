@@ -39,10 +39,11 @@ use yii\db\ActiveRecord;
 class Entry extends ActiveRecord
 {
     public $day;
-    public $card_number;
     public $start_str;
     public $end_str;
     public $defaultDuration = 3600;
+
+    private $card_number;
     /**
      * @inheritdoc
      */
@@ -67,9 +68,9 @@ class Entry extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'type_id', 'card_id', 'mark_id', 'service_type', 'status', 'created_at', 'updated_at', 'start_at', 'end_at'], 'integer'],
+            [['company_id', 'type_id', 'card_id', 'mark_id', 'service_type', 'status', 'created_at', 'updated_at', 'start_at', 'end_at', 'card_number'], 'integer'],
             [['company_id'], 'required'],
-            [['number', 'extra_number', 'start_str', 'end_str', 'day', 'card_number'], 'string', 'max' => 45],
+            [['number', 'extra_number', 'start_str', 'end_str', 'day'], 'string', 'max' => 45],
         ];
     }
 
@@ -126,6 +127,17 @@ class Entry extends ActiveRecord
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
 
+    public function setCard_number($value)
+    {
+        $this->card_number = $value;
+    }
+
+    public function getCard_number()
+    {
+        $card = Card::findOne($this->card_id);
+        return $card ? $card->number : $this->card_id;
+    }
+
     /**
      * @inheritdoc
      * @return \common\models\query\EntryQuery the active query used by this AR class.
@@ -140,6 +152,10 @@ class Entry extends ActiveRecord
         if (!empty($this->card_number)) {
             $card = Card::findOne(['number' => $this->card_number]);
             $this->card_id = $card ? $card->id : $this->card_number;
+        }
+
+        if (!empty($this->start_at)) {
+            $this->day = date('d-m-Y', $this->start_at);
         }
         
         if (!empty($this->start_str)) {
@@ -170,13 +186,13 @@ class Entry extends ActiveRecord
         }
 
         //проверяем чтобы не пересеклось с существующими записями
-        $existed = self::find()->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->start_at + 600])->andWhere(['>', 'end_at', $this->start_at + 600])->all();
-        if (!empty($existed)) {
+        $existed = self::find()->andWhere(['!=', 'id', $this->id])->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->start_at + 600])->andWhere(['>', 'end_at', $this->start_at + 600])->all();
+        if (!empty($existed) && $existed->id != $this->id) {
             $this->addError('start_at', ['Время начала совпадает с существующей записью']);
             return false;
         }
-        $existed = self::find()->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->end_at - 600])->andWhere(['>', 'end_at', $this->end_at - 600])->all();
-        if (!empty($existed)) {
+        $existed = self::find()->andWhere(['!=', 'id', $this->id])->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->end_at - 600])->andWhere(['>', 'end_at', $this->end_at - 600])->all();
+        if (!empty($existed) && $existed->id != $this->id) {
             $this->addError('end_at', ['Время окончания совпадает с существующей записью']);
             return false;
         }

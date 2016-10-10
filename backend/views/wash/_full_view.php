@@ -58,7 +58,7 @@
             </tbody>
         </table>
 
-        <?= $this->render('_form', [
+        <?= $this->render('/entry/_form', [
             'model' => $modelEntry,
         ]); ?>
     </div>
