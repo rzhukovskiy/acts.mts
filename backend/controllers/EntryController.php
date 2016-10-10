@@ -25,7 +25,7 @@ class EntryController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['create', 'delete'],
+                        'actions' => ['create', 'delete', 'update'],
                         'allow' => true,
                         'roles' => [User::ROLE_ACCOUNT],
                     ],
