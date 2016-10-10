@@ -82,6 +82,7 @@ class Entry extends ActiveRecord
             'id' => 'ID',
             'company_id' => 'Мойка',
             'card_id' => 'Карта',
+            'card_number' => 'Карта',
             'number' => 'Госномер',
             'extra_number' => 'п/п',
             'mark_id' => 'Марка ТС',
