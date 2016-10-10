@@ -11,9 +11,12 @@ use yii\grid\GridView;
         Запись ТС на мойку
     </div>
     <div class="panel-body">
-        <?=
-        GridView::widget([
-            'dataProvider' => $searchModel->search([]),
+        <?php
+        $dataProvider = $searchModel->search([]);
+        $dataProvider->query->andWhere(['act_id' => null])->andWhere(['is not', 'card_id', null])->andWhere(['>', 'end_at', time()]);
+
+        echo GridView::widget([
+            'dataProvider' => $dataProvider,
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'emptyText' => '',
@@ -26,19 +29,6 @@ use yii\grid\GridView;
                     'attribute' => 'start_at',
                     'value' => function ($model) {
                         return date('H:i', $model->start_at);
-                    },
-                ],
-                [
-                    'attribute' => 'end_at',
-                    'value' => function ($model) {
-                        return date('H:i', $model->end_at);
-                    },
-                ],
-                [
-                    'header' => 'Карта',
-                    'attribute' => 'card.number',
-                    'value' => function ($model) {
-                        return $model->card->number;
                     },
                 ],
                 [
@@ -55,6 +45,18 @@ use yii\grid\GridView;
                     'value' => function ($model) {
                         return $model->type->name;
                     },
+                ],
+                [
+                    'header' => 'Карта',
+                    'attribute' => 'card.number',
+                    'value' => function ($model) {
+                        return $model->card->number;
+                    },
+                ],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{update} {delete}',
+                    'contentOptions' => ['style' => 'min-width: 80px'],
                 ],
             ],
         ]);

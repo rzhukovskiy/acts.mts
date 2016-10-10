@@ -29,6 +29,7 @@ use yii\db\ActiveRecord;
  * @property string $start_str
  * @property string $end_str
  * @property string $day
+ * @property string $card_number
  *
  * @property Company $company
  * @property Card $card
@@ -38,6 +39,7 @@ use yii\db\ActiveRecord;
 class Entry extends ActiveRecord
 {
     public $day;
+    public $card_number;
     public $start_str;
     public $end_str;
     public $defaultDuration = 3600;
@@ -67,7 +69,7 @@ class Entry extends ActiveRecord
         return [
             [['company_id', 'type_id', 'card_id', 'mark_id', 'service_type', 'status', 'created_at', 'updated_at', 'start_at', 'end_at'], 'integer'],
             [['company_id'], 'required'],
-            [['number', 'extra_number', 'start_str', 'end_str', 'day'], 'string', 'max' => 45],
+            [['number', 'extra_number', 'start_str', 'end_str', 'day', 'card_number'], 'string', 'max' => 45],
         ];
     }
 
@@ -134,6 +136,11 @@ class Entry extends ActiveRecord
 
     public function beforeSave($insert)
     {
+        if (!empty($this->card_number)) {
+            $card = Card::findOne(['number' => $this->card_number]);
+            $this->card_id = $card ? $card->id : $this->card_number;
+        }
+        
         if (!empty($this->start_str)) {
             $this->start_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->day . ' ' . $this->start_str . ':00')->getTimestamp();
             if (!empty($this->end_str)) {

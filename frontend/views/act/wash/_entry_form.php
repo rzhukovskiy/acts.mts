@@ -45,7 +45,7 @@ use yii\jui\AutoComplete;
                     ])->error(false) ?>
                 </td>
                 <td style="width: 100px">
-                    <?= $form->field($model, 'card_id')->error(false) ?>
+                    <?= $form->field($model, 'card_number')->error(false) ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>

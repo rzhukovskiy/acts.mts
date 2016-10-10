@@ -209,7 +209,6 @@ class ActController extends Controller
         $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->card_id = Card::findOne($model->card_id)->id;
             $modelAct = new Act();
             $modelAct->load(Yii::$app->request->post());
             $modelAct->attributes = $model->attributes;
