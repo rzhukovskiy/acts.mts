@@ -62,7 +62,7 @@ use yii\helpers\Html;
                             Html::hiddenInput("Act[serviceList][0][price]", 0) .
                             Html::hiddenInput("entry_id", $model->id) .
                             '<div class="input-group" style="width: 100%;">' .
-                            Html::dropDownList('Act[serviceList][0][service_id]', [], ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'style' => 'width: 60%', 'prompt' => 'выберите услугу']) .
+                            Html::dropDownList('Act[serviceList][0][service_id]', [], ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'style' => 'width: 60%']) .
                             Html::submitButton('Оформить', ['class' => 'form-control btn btn-primary', 'style' => 'width: 40%']) .
                             '</div>' .
                             Html::endForm();
