@@ -73,8 +73,6 @@ class EntryController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['/wash/view', 'id' => $model->company_id, 'Entry[day]' => date('d-m-Y', $model->start_at)]);
         } else {
-            print_r($model->getErrors());
-            die;
             return $this->render('update', [
                 'model' => $model,
             ]);
