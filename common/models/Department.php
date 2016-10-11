@@ -88,6 +88,15 @@ class Department extends ActiveRecord
             ->viaTable('{{%department_user}}', ['department_id' => 'id']);
     }
 
+    public function can($companyType, $companyStatus)
+    {
+        return count(DepartmentCompanyType::findAll([
+            'department_id'  => $this->id,
+            'company_type'   => $companyType,
+            'company_status' => $companyStatus,
+        ]));
+    }
+
     /**
      * @return int
      */

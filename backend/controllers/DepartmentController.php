@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\DepartmentCompanyType;
+use common\models\query\DepartmentCompanyTypeQuery;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -57,8 +59,16 @@ class DepartmentController extends Controller
     public function actionCreate()
     {
         $model = new Department();
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            foreach (Yii::$app->request->post('CompanyType') as $companyStatus => $companyTypeData) {
+                foreach ($companyTypeData as $companyType => $value) {
+                    $modelDepartmentCompanyType = new DepartmentCompanyType();
+                    $modelDepartmentCompanyType->department_id = $model->id;
+                    $modelDepartmentCompanyType->company_type = $companyType;
+                    $modelDepartmentCompanyType->company_status = $companyStatus;
+                    $modelDepartmentCompanyType->save();
+                }
+            }
             return $this->redirect(['index']);
         } else {
             return $this->redirect(['index']);
@@ -76,6 +86,16 @@ class DepartmentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            DepartmentCompanyType::deleteAll(['department_id' => $model->id]);
+            foreach (Yii::$app->request->post('CompanyType') as $companyStatus => $companyTypeData) {
+                foreach ($companyTypeData as $companyType => $value) {
+                    $modelDepartmentCompanyType = new DepartmentCompanyType();
+                    $modelDepartmentCompanyType->department_id = $model->id;
+                    $modelDepartmentCompanyType->company_type = $companyType;
+                    $modelDepartmentCompanyType->company_status = $companyStatus;
+                    $modelDepartmentCompanyType->save();
+                }
+            }
             return $this->redirect(['index']);
         } else {
             return $this->render('update', [
