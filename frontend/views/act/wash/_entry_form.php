@@ -6,11 +6,9 @@
  */
 
 use common\models\Car;
-use common\models\Card;
 use common\models\Mark;
 use common\models\Type;
-use kartik\time\TimePicker;
-use kartik\select2\Select2;
+use kartik\datetime\DateTimePicker;
 use yii\bootstrap\ActiveForm;
 use common\components\ArrayHelper;
 use yii\helpers\Html;
@@ -33,14 +31,17 @@ use yii\jui\AutoComplete;
             <tbody>
             <tr>
                 <td style="width: 150px">
-                    <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
+                    <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
+                        'removeButton' => false,
                         'pluginOptions' => [
-                            'defaultTime' => gmdate('H:i', $model->company->info->start_at),
+                            'startView' => 1,
                             'showMeridian' => false,
+                            'autoclose' => true,
+                            'format' => 'hh:ii'
                         ],
                         'options' => [
+                            'id' => 'mts_start_str',
                             'class' => 'form-control',
-                            'id' => 'start'
                         ]
                     ])->error(false) ?>
                 </td>

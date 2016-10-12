@@ -206,7 +206,7 @@ class ActController extends Controller
         $model->service_type = $type;
         $model->company_id = Yii::$app->user->identity->company_id;
         if (!$day) {
-            $model->day = date('d-m-Y');            
+            $model->day = date('d-m-Y');
         } else {
             $model->day = $day;
         }
@@ -239,7 +239,7 @@ class ActController extends Controller
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->load(Yii::$app->request->queryParams);
         $entrySearchModel->company_id = $model->company_id;
-        $model->day = $day;
+        $searchModel->day = $model->day;
         $role = Yii::$app->user->identity->role;
 
         return $this->render('create-entry', [

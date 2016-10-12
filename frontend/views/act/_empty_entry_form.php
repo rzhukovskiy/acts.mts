@@ -64,6 +64,8 @@ use yii\helpers\Html;
                         'pluginOptions' => [
                             'startView' => 1,
                             'showMeridian' => false,
+                            'autoclose' => true,
+                            'format' => 'hh:ii'
                         ],
                         'options' => [
                             'class' => 'form-control',
@@ -75,6 +77,8 @@ use yii\helpers\Html;
                         'pluginOptions' => [
                             'startView' => 1,
                             'showMeridian' => false,
+                            'autoclose' => true,
+                            'format' => 'hh:ii'
                         ],
                         'options' => [
                             'class' => 'form-control',
