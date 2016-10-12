@@ -31,7 +31,7 @@ use yii\helpers\Html;
                     <div class="free-time" style="column-count: 3">
                         <?php
                         $step = 0;
-                        $listEntry = $model->company->getFreeTimeArray(date('d-m-Y'));
+                        $listEntry = $model->company->getFreeTimeArray($model->day);
                         $timeStart = gmdate('H:i', $model->company->info->start_at);
                         $timeEnd = gmdate('H:i', $model->company->info->end_at);
                         foreach ($listEntry as $entry) {
