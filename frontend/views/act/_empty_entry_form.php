@@ -6,7 +6,7 @@
  * @var $serviceList array
  */
 
-use kartik\time\TimePicker;
+use kartik\datetime\DateTimePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
@@ -60,12 +60,9 @@ use yii\helpers\Html;
             </tr>
             <tr>
                 <td>
-                    <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
-                        'addonOptions' => [
-                            'style' => 'width: 100px',
-                        ],
+                    <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
                         'pluginOptions' => [
-                            'defaultTime' => gmdate('H:i', $model->company->info->start_at),
+                            'startView' => 1,
                             'showMeridian' => false,
                         ],
                         'options' => [
@@ -74,12 +71,9 @@ use yii\helpers\Html;
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'end_str')->widget(TimePicker::classname(), [
-                        'addonOptions' => [
-                            'style' => 'width: 100px',
-                        ],
+                    <?= $form->field($model, 'end_str')->widget(DateTimePicker::classname(), [
                         'pluginOptions' => [
-                            'defaultTime' => gmdate('H:i', $model->company->info->end_at),
+                            'startView' => 1,
                             'showMeridian' => false,
                         ],
                         'options' => [
