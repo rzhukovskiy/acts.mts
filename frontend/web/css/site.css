@@ -203,3 +203,6 @@ table.sign {
 .form-control.datepicker[readonly] {
     background: #fff;
 }
+.datetimepicker-hours {
+    font-size: large;
+}
