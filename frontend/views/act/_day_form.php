@@ -27,7 +27,7 @@ use yii\helpers\Html;
             <tr>
             <tr>
                 <td>
-                    <div class="free-time"><?= $model->day ?></div>
+                    <div class="free-time" style="min-width: 180px"><?= $model->day ?></div>
                 </td>
                 <td>
                     <?= DatePicker::widget([
@@ -43,7 +43,6 @@ use yii\helpers\Html;
                         'options' => [
                             'class' => 'form-control datepicker',
                             'readonly' =>'true',
-                            'style' => 'max-width: 200px'
                         ]
                     ]) ?>
                 </td>
