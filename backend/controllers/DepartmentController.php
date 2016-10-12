@@ -60,7 +60,7 @@ class DepartmentController extends Controller
     {
         $model = new Department();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            foreach (Yii::$app->request->post('CompanyType') as $companyStatus => $companyTypeData) {
+            foreach (Yii::$app->request->post('CompanyType', []) as $companyStatus => $companyTypeData) {
                 foreach ($companyTypeData as $companyType => $value) {
                     $modelDepartmentCompanyType = new DepartmentCompanyType();
                     $modelDepartmentCompanyType->department_id = $model->id;
@@ -87,7 +87,7 @@ class DepartmentController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             DepartmentCompanyType::deleteAll(['department_id' => $model->id]);
-            foreach (Yii::$app->request->post('CompanyType') as $companyStatus => $companyTypeData) {
+            foreach (Yii::$app->request->post('CompanyType', []) as $companyStatus => $companyTypeData) {
                 foreach ($companyTypeData as $companyType => $value) {
                     $modelDepartmentCompanyType = new DepartmentCompanyType();
                     $modelDepartmentCompanyType->department_id = $model->id;
