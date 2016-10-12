@@ -31,6 +31,8 @@ use yii\helpers\Html;
                 </td>
                 <td>
                     <?= DatePicker::widget([
+                        'size' => 'lg',
+                        'removeButton' => false,
                         'name' => 'day',
                         'value' => $model->day,
                         'language' => 'ru',

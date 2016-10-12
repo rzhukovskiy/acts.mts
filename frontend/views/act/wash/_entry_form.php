@@ -32,6 +32,7 @@ use yii\jui\AutoComplete;
             <tr>
                 <td style="width: 150px">
                     <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
+                        'size' => 'lg',
                         'removeButton' => false,
                         'pluginOptions' => [
                             'startView' => 1,

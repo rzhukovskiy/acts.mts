@@ -203,6 +203,20 @@ table.sign {
 .form-control.datepicker[readonly] {
     background: #fff;
 }
-.datetimepicker-hours {
-    font-size: large;
+.datetimepicker {
+    font-size:150%;
+}
+.datetimepicker .datetimepicker-hours span {
+    height: 30px;
+    line-height: 30px;
+}
+.datetimepicker .minutes span {
+    height: 30px;
+    line-height: 30px;
+}
+.table-condensed thead {
+    visibility: hidden;
+}
+.table-condensed thead th.prev {
+    display: none;
 }

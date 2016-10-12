@@ -60,6 +60,7 @@ use yii\helpers\Html;
                 <td>
                     <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
                         'size' => 'lg',
+                        'removeButton' => false,
                         'pluginOptions' => [
                             'startView' => 1,
                             'showMeridian' => false,
@@ -75,6 +76,7 @@ use yii\helpers\Html;
                 <td>
                     <?= $form->field($model, 'end_str')->widget(DateTimePicker::classname(), [
                         'size' => 'lg',
+                        'removeButton' => false,
                         'pluginOptions' => [
                             'startView' => 1,
                             'showMeridian' => false,
