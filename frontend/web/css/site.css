@@ -214,9 +214,6 @@ table.sign {
     height: 30px;
     line-height: 30px;
 }
-.table-condensed thead {
+.datetimepicker .table-condensed thead {
     visibility: hidden;
-}
-.table-condensed thead th.prev {
-    display: none;
 }
