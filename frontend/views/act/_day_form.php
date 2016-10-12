@@ -41,7 +41,9 @@ use yii\helpers\Html;
                             'format' => 'dd-mm-yyyy',
                         ],
                         'options' => [
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
+                            'style' => 'max-width: 200px'
                         ]
                     ]) ?>
                 </td>

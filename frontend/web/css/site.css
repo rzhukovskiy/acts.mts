@@ -193,3 +193,8 @@ table.sign {
     font-size: 30px;
     font-weight: bold;
 }
+
+/* forms */
+.form-control.datepicker[readonly] {
+    background: #fff;
+}

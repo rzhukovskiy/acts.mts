@@ -66,7 +66,8 @@ use yii\helpers\Html;
                             'format' => 'hh:ii'
                         ],
                         'options' => [
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
                         ]
                     ])->error(false) ?>
                 </td>
@@ -79,7 +80,8 @@ use yii\helpers\Html;
                             'format' => 'hh:ii'
                         ],
                         'options' => [
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
                         ]
                     ])->error(false) ?>
                 </td>

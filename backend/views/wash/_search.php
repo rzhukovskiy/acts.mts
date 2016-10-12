@@ -37,7 +37,8 @@ use yii\bootstrap\ActiveForm;
                 'format' => 'dd-mm-yyyy'
             ],
             'options' => [
-                'class' => 'form-control input-sm',
+                'class' => 'form-control input-sm datepicker',
+                'readonly' =>'true',
             ]
         ])->error(false); ?>
         <?= Html::submitButton('Показать', ['class' => 'btn btn-primary btn-sm']) ?>

@@ -239,7 +239,7 @@ class ActController extends Controller
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->load(Yii::$app->request->queryParams);
         $entrySearchModel->company_id = $model->company_id;
-        $searchModel->day = $model->day;
+        $entrySearchModel->day = $model->day;
         $role = Yii::$app->user->identity->role;
 
         return $this->render('create-entry', [

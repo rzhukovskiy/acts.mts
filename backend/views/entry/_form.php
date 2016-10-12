@@ -6,10 +6,10 @@
 use common\models\Car;
 use common\models\Mark;
 use common\models\Type;
+use kartik\datetime\DateTimePicker;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
 use yii\widgets\ActiveForm;
-use kartik\time\TimePicker;
 
 $form = ActiveForm::begin([
     'action' => $model->isNewRecord ? ['entry/create'] : ['entry/update', 'id' => $model->id],
@@ -19,13 +19,16 @@ $form = ActiveForm::begin([
     <tbody>
     <tr>
         <td style="width: 150px">
-            <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
+            <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
                 'pluginOptions' => [
-                    'defaultTime' => $model->isNewRecord ? '8:00' : date('H:i', $model->start_at),
+                    'startView' => 1,
                     'showMeridian' => false,
+                    'autoclose' => true,
+                    'format' => 'hh:ii'
                 ],
                 'options' => [
-                    'class' => 'form-control',
+                    'class' => 'form-control datepicker',
+                    'readonly' =>'true',
                 ]
             ])->error(false) ?>
         </td>

@@ -41,7 +41,8 @@ use yii\jui\AutoComplete;
                         ],
                         'options' => [
                             'id' => 'mts_start_str',
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
                         ]
                     ])->error(false) ?>
                 </td>
