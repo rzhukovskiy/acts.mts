@@ -28,7 +28,7 @@ use yii\helpers\Html;
             <tr>
                 <td colspan="3">
                     <label class="control-label">Свободное время:</label>
-                    <div class="free-time">
+                    <div class="free-time" style="column-count: 3">
                         <?php
                         $step = 0;
                         $listEntry = $model->company->getFreeTimeArray(date('d-m-Y'));
@@ -37,19 +37,17 @@ use yii\helpers\Html;
                         foreach ($listEntry as $entry) {
                             if (!$step) {
                                 if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo '<div class="col-sm-4">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
-                                } else {
-                                    echo '<div class="col-sm-4">';
+                                    echo $timeStart . '&nbsp;-&nbsp;' . date('H:i', $entry->start_at) . '<br />';
                                 }
                             } else {
-                                echo date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
+                                echo date('H:i', $entry->start_at) . '<br />';
                             }
                             $step++;
                             if ($step == count($listEntry)) {
                                 if (date('H:i', $entry->end_at) != $timeEnd) {
-                                    echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
+                                    echo date('H:i', $entry->end_at) . '&nbsp;-&nbsp' . $timeEnd . '<br />';
                                 } else {
-                                    echo '</div>';
+                                    echo '<br />';
                                 }
                             } else {
                                 echo date('H:i', $entry->end_at) . ' - ';

@@ -27,7 +27,7 @@ use yii\helpers\Html;
             <tr>
             <tr>
                 <td>
-                    <div class="free-time">Текущий <?= $model->day ?></div>
+                    <div class="free-time"><?= $model->day ?></div>
                 </td>
                 <td>
                     <?= DatePicker::widget([

@@ -24,8 +24,13 @@
             </tr>
             <tr>
                 <td>
+                    <label class="control-label">Время работы:</label> <?= date('H:i', $model->info->start_at) ?> - <?= date('H:i', $model->info->end_at) ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <label class="control-label">Свободное время:</label>
-                    <div class="free-time">
+                    <div class="free-time"  style="column-count: 3">
                         <?php
                         $step = 0;
                         $listEntry = $model->getFreeTimeArray(date('d-m-Y'));
@@ -34,19 +39,17 @@
                         foreach ($listEntry as $entry) {
                             if (!$step) {
                                 if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo '<div class="col-sm-3">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-3">';
-                                } else {
-                                    echo '<div class="col-sm-3">';
+                                    echo $timeStart . '&nbsp;-&nbsp;' . date('H:i', $entry->start_at) . '<br />';
                                 }
                             } else {
-                                echo date('H:i', $entry->start_at) . '</div><div class="col-sm-3">';
+                                echo date('H:i', $entry->start_at) . '<br />';
                             }
                             $step++;
                             if ($step == count($listEntry)) {
                                 if (date('H:i', $entry->end_at) != $timeEnd) {
-                                    echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
+                                    echo date('H:i', $entry->end_at) . '&nbsp;-&nbsp' . $timeEnd . '<br />';
                                 } else {
-                                    echo '</div>';
+                                    echo '<br />';
                                 }
                             } else {
                                 echo date('H:i', $entry->end_at) . ' - ';
