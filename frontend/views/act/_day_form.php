@@ -27,7 +27,7 @@ use yii\helpers\Html;
             <tr>
             <tr>
                 <td>
-                    <div class="free-time" style="min-width: 180px"><?= $model->day ?></div>
+                    <div class="current-time" style="min-width: 180px"><?= $model->day ?></div>
                 </td>
                 <td>
                     <?= DatePicker::widget([
