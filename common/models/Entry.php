@@ -88,9 +88,9 @@ class Entry extends ActiveRecord
             'extra_number' => 'п/п',
             'mark_id' => 'Марка ТС',
             'type_id' => 'Тип ТС',
-            'start_at' => 'Начало',
+            'start_at' => 'Время',
             'end_at' => 'Окончание',
-            'start_str' => 'Начало',
+            'start_str' => 'Время',
             'end_str' => 'Окончание',
         ];
     }

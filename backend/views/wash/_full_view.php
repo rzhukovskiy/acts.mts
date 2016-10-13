@@ -7,16 +7,11 @@
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Запись на мойку <?= $model->name ?>
+        <?= $model->name ?>  <?= $model->info->address ?>
     </div>
     <div class="panel-body">
         <table class="table table-bordered">
             <tbody>
-            <tr>
-                <td>
-                    <label class="control-label">Адрес:</label> <?= $model->info->address ?>
-                </td>
-            </tr>
             <tr>
                 <td>
                     <label class="control-label">Телефон:</label> <?= $model->info->phone ?>
@@ -25,6 +20,7 @@
             <tr>
                 <td>
                     <label class="control-label">Свободное время:</label>
+
                     <div class="free-time">
                         <?php
                         $step = 0;
@@ -34,7 +30,12 @@
                         foreach ($listEntry as $entry) {
                             if (!$step) {
                                 if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo '<div class="col-sm-3">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-3">';
+                                    echo
+                                        '<div class="col-sm-3">' .
+                                        $timeStart .
+                                        ' - ' .
+                                        date('H:i', $entry->start_at) .
+                                        '</div><div class="col-sm-3">';
                                 } else {
                                     echo '<div class="col-sm-3">';
                                 }
@@ -58,7 +59,8 @@
             </tbody>
         </table>
 
-        <?= $this->render('/entry/_form', [
+        <?= $this->render('/entry/_form',
+        [
             'model' => $modelEntry,
         ]); ?>
     </div>

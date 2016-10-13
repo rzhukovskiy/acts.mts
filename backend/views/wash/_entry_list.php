@@ -10,7 +10,7 @@ use yii\helpers\Html;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Запись ТС на мойку
+        Записанные ТС на мойку
     </div>
     <div class="panel-body">
         <?php
@@ -20,51 +20,53 @@ use yii\helpers\Html;
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'tableOptions' => ['class' => 'table table-bordered'],
-            'layout' => '{items}',
-            'emptyText' => '',
-            'columns' => [
+            'layout'       => '{items}',
+            'emptyText'    => '',
+            'columns'      => [
                 [
                     'header' => '№',
-                    'class' => 'yii\grid\SerialColumn'
+                    'class'  => 'yii\grid\SerialColumn'
                 ],
                 [
                     'attribute' => 'start_at',
-                    'value' => function ($model) {
+                    'value'     => function ($model) {
                         return date('H:i', $model->start_at);
                     },
                 ],
                 [
-                    'header' => 'Марка ТС',
+                    'header'    => 'Марка ТС',
                     'attribute' => 'mark.name',
-                    'value' => function ($model) {
+                    'value'     => function ($model) {
                         return $model->mark->name;
                     },
                 ],
                 'number',
                 [
-                    'header' => 'Тип ТС',
+                    'header'    => 'Тип ТС',
                     'attribute' => 'type.name',
-                    'value' => function ($model) {
+                    'value'     => function ($model) {
                         return $model->type->name;
                     },
                 ],
                 [
-                    'header' => 'Карта',
+                    'header'    => 'Карта',
                     'attribute' => 'card.number',
-                    'value' => function ($model) {
+                    'value'     => function ($model) {
                         return $model->card->number;
                     },
                 ],
                 [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update} {delete}',
+                    'class'          => 'yii\grid\ActionColumn',
+                    'template'       => '{update} {delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
-                    'buttons' => [
+                    'buttons'        => [
                         'update' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/entry/update', 'id' => $model->id]);
+                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>',
+                                ['/entry/update', 'id' => $model->id]);
                         },
                         'delete' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/entry/delete', 'id' => $model->id]);
+                            return Html::a('<span class="glyphicon glyphicon-trash"></span>',
+                                ['/entry/delete', 'id' => $model->id]);
                         },
                     ]
                 ],
