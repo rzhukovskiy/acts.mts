@@ -60,6 +60,9 @@ class Act extends ActiveRecord
     const SCENARIO_CAR = 'car';
     const SCENARIO_CREATE = 'create';
 
+    const ACT_WIDTH=1024;
+    const ACT_HEIGHT=768;
+
     public $serviceList;
     public $clientServiceList;
     public $partnerServiceList;
@@ -87,7 +90,7 @@ class Act extends ActiveRecord
     /**
      * @var array
      */
-    public static $periodList = array('все время', 'месяц', 'квартал', 'полгода', 'год');
+    public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год'];
 
     /**
      * @inheritdoc
@@ -471,9 +474,7 @@ class Act extends ActiveRecord
          */
         if ($insert) {
             //сохраняем картинку чека
-            if ($this->image) {
-                $this->image->saveAs('files/checks/' . $this->id . '.' . $this->image->extension);
-            }
+            $this->uploadImage();
 
             if (!empty($this->serviceList)) {
                 foreach ($this->serviceList as $serviceData) {
@@ -531,5 +532,20 @@ class Act extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    /**
+     * @throws \yii\base\ErrorException
+     */
+    private function uploadImage(){
+        if ($this->image) {
+            $image=\Yii::$app->image->load($this->image->tempName);
+            /**
+             * @var $image \yii\image\drivers\Image
+             */
+            $imagePath=\Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
+            return $image->resize(self::ACT_WIDTH,self::ACT_HEIGHT)->save($imagePath);
+        }
+        return false;
     }
 }
