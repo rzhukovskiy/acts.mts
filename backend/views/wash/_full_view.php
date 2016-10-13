@@ -7,16 +7,11 @@
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Запись на мойку <?= $model->name ?>
+        <?= $model->name ?>  <?= $model->info->address ?>
     </div>
     <div class="panel-body">
         <table class="table table-bordered">
             <tbody>
-            <tr>
-                <td>
-                    <label class="control-label">Адрес:</label> <?= $model->info->address ?>
-                </td>
-            </tr>
             <tr>
                 <td>
                     <label class="control-label">Телефон:</label> <?= $model->info->phone ?>

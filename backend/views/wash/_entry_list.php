@@ -10,7 +10,7 @@ use yii\helpers\Html;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Запись ТС на мойку
+        Записанные ТС на мойку
     </div>
     <div class="panel-body">
         <?php
