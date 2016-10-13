@@ -46,7 +46,7 @@ class Company extends ActiveRecord
     public $cardList;
     public $requisitesList;
     private $serviceList;
-    
+
     const STATUS_DELETED = 0;
     const STATUS_NEW     = 1;
     const STATUS_ARCHIVE = 2;
@@ -232,6 +232,14 @@ class Company extends ActiveRecord
         return $this->hasMany(CompanyServiceType::className(), ['company_id' => 'id']);
     }
 
+    /**
+     * @return ActiveQuery
+     */
+    public function getCompanyExclude()
+    {
+        return $this->hasMany(CompanyExclude::className(), ['company_id' => 'id']);
+    }
+
     public function getCarsCount()
     {
         return count($this->getCars()->where('type_id != 7')->all());
@@ -321,6 +329,43 @@ class Company extends ActiveRecord
         }
 
         return $res;
+    }
+
+    /**
+     * Все картнеры клиента определенного типа и города
+     * @param $type
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getCompanyPartner($type)
+    {
+        $partner = Company::find()->select(['id', 'name'])->byType($type)->byAddress($this->address)->all();;
+        $partner = ArrayHelper::map($partner, 'id', 'name');
+
+        return $partner;
+    }
+
+    /**
+     * Исключаемые партнеры
+     * @return array
+     */
+    public function getExcludedIds()
+    {
+        $ids = PartnerExclude::find()->select(['partner_id'])->column();
+
+        return $ids;
+    }
+
+    /**
+     * Инвертирование исключаемых партнеров
+     * @param $type
+     * @param $excludeIds
+     * @return array
+     */
+    public function getInvertIds($type, $excludeIds)
+    {
+        $ids = array_keys($this->getCompanyPartner($type));
+
+        return array_diff($ids, $excludeIds);
     }
 
     /**

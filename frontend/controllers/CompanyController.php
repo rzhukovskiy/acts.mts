@@ -10,8 +10,11 @@ namespace frontend\controllers;
 
 
 use common\models\Company;
+use common\models\CompanyExclude;
 use common\models\CompanyService;
+use common\models\PartnerExclude;
 use common\models\search\CompanySearch;
+use common\models\Service;
 use common\models\User;
 use yii;
 use yii\data\ActiveDataProvider;
@@ -31,7 +34,7 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -146,6 +149,35 @@ class CompanyController extends Controller
         return $this->redirect(['update', 'id' => $model->id]);
     }
 
+    /**
+     * @param $id
+     * @return yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdatePartnerExclude($id)
+    {
+        $model = $this->findModel($id);
+
+        $partnerId = Yii::$app->request->post('partner');
+
+        if (is_array($partnerId)) {
+            PartnerExclude::deleteAll('client_id=:client_id', [':client_id' => $id]);
+
+            foreach ($partnerId as $key => $partner) {
+                $allExcludeId = $model->getInvertIds($key, $partner);
+                if ($allExcludeId) {
+                    foreach ($allExcludeId as $excludeId) {
+                        $partnerExclude = new PartnerExclude();
+                        $partnerExclude->client_id = $id;
+                        $partnerExclude->partner_id = $excludeId;
+                        $partnerExclude->save();
+                    }
+                }
+            }
+        }
+
+        return $this->redirect(['update', 'id' => $model->id]);
+    }
     /**
      * Finds the Company model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

@@ -31,6 +31,14 @@ class CompanyQuery extends ActiveQuery
     }
 
     /**
+     * @param $address
+     * @return $this
+     */
+    public function byAddress($address)
+    {
+        return $this->andWhere(['address' => $address]);
+    }
+    /**
      * @return ActiveQuery
      */
     public function created()

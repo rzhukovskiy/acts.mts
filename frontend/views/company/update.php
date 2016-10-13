@@ -38,3 +38,10 @@ if ($model->type == Company::TYPE_OWNER) {
         'companyModel' => $model,
     ]);
 }
+
+if (($model->type == Company::TYPE_OWNER)) {
+    echo $this->render('partner-exclude/_form',
+    [
+        'model' => $model,
+    ]);
+}
