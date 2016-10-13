@@ -16,14 +16,12 @@
                 <td>
                     <label class="control-label">Телефон:</label> <?= $model->info->phone ?>
                 </td>
-            </tr>
-            <tr>
                 <td>
                     <label class="control-label">Время работы:</label> <?= date('H:i', $model->info->start_at) ?> - <?= date('H:i', $model->info->end_at) ?>
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <label class="control-label">Свободное время:</label>
                     <div class="free-time"  style="column-count: 3">
                         <?php
