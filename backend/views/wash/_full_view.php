@@ -33,7 +33,7 @@
                     <div class="free-time"  style="column-count: 3">
                         <?php
                         $step = 0;
-                        $listEntry = $model->getFreeTimeArray(date('d-m-Y'));
+                        $listEntry = $model->getFreeTimeArray($modelEntry->day);
                         $timeStart = gmdate('H:i', $model->info->start_at);
                         $timeEnd = gmdate('H:i', $model->info->end_at);
                         foreach ($listEntry as $entry) {
