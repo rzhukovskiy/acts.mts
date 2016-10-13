@@ -63,6 +63,18 @@ echo GridView::widget([
                 }
             }
         ],
+        [
+            'attribute' => 'car_number',
+            'header'    => 'Номер авто'
+        ],
+        [
+            'attribute' => 'car_mark',
+            'header'    => 'Марка'
+        ],
+        [
+            'attribute' => 'car_type',
+            'header'    => 'Тип'
+        ],
     ],
 ]);
 Pjax::end();

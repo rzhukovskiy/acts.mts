@@ -8,6 +8,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Card;
 use common\models\search\CardSearch as CommonCardSearch;
+use yii\helpers\ArrayHelper;
 
 /**
  * CardSearch represents the model behind the search form about `common\models\Card`.
@@ -70,6 +71,33 @@ class CardSearch extends CommonCardSearch
         ]);
         $query->andFilterWhere(['company.status' => Company::STATUS_ACTIVE]);
         $query->andFilterWhere(['parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
+
+        return $dataProvider;
+    }
+
+
+    /**
+     * Подмешиваем данные о машинах в датпровайдер карт
+     * @param $dataProvider
+     * @return mixed
+     */
+    public static function addCarToSearch($dataProvider)
+    {
+        $car = Yii::$app->db->createCommand('SELECT card_id, act.number, mark.name as mark,type.name as type
+FROM (
+    SELECT card_id, number, count(number) as cn FROM `act` GROUP BY number,card_id ORDER BY card_id,cn DESC
+) as act
+LEFT JOIN car ON car.number=act.number
+LEFT JOIN type ON car.type_id=type.id
+LEFT JOIN mark ON car.mark_id=mark.id
+GROUP BY card_id
+        ')->queryAll();
+        $car = ArrayHelper::index($car, 'card_id');
+        foreach ($dataProvider->models as &$model) {
+            $model->car_number = $car[$model->id]['number'];
+            $model->car_type = $car[$model->id]['type'];
+            $model->car_mark = $car[$model->id]['mark'];
+        }
 
         return $dataProvider;
     }

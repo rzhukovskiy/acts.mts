@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use common\components\ArrayHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -15,6 +16,10 @@ use yii\db\ActiveRecord;
  * @property integer $created_at
  * @property integer $updated_at
  *
+ * @property string $car_number
+ * @property string $car_type
+ * @property string $car_mark
+ *
  * @property Company $company
  */
 class Card extends ActiveRecord
@@ -22,6 +27,10 @@ class Card extends ActiveRecord
 
     const STATUS_NOT_ACTIVE = 0;
     const STATUS_ACTIVE = 1;
+
+    public $car_number;
+    public $car_type;
+    public $car_mark;
 
     public $cardStatus = [
         'Активна',
