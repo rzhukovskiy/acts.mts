@@ -16,6 +16,9 @@ use yii\bootstrap\Html;
             <div class="col-sm-12" style="margin-top: 15px;">
                 <?= $model->info->address ?>
             </div>
+            <div class="col-sm-12" style="margin-top: 15px;">
+                <?= date('H:i', $model->info->start_at) ?> - <?= date('H:i', $model->info->end_at) ?>
+            </div>
             <div class="free-time" style ="height: 220px;">
                 <?php
                 $step = 0;

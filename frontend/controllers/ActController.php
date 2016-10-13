@@ -197,14 +197,19 @@ class ActController extends Controller
     /**
      * Creates Entry model.
      * @param integer $type
+     * @param string $day
      * @return mixed
      */
-    public function actionCreateEntry($type)
+    public function actionCreateEntry($type, $day = null)
     {
         $model = new Entry();
         $model->service_type = $type;
         $model->company_id = Yii::$app->user->identity->company_id;
-        $model->day = date('d-m-Y');
+        if (!$day) {
+            $model->day = date('d-m-Y');
+        } else {
+            $model->day = $day;
+        }
 
         $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
 
@@ -234,9 +239,7 @@ class ActController extends Controller
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->load(Yii::$app->request->queryParams);
         $entrySearchModel->company_id = $model->company_id;
-        if (empty($entrySearchModel->day)) {
-            $entrySearchModel->day = date('d-m-Y');
-        }
+        $entrySearchModel->day = $model->day;
         $role = Yii::$app->user->identity->role;
 
         return $this->render('create-entry', [

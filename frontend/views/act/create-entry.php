@@ -17,6 +17,10 @@ $this->title = 'Добавить машину';
 
 echo $this->render('_create_tabs');
 
+echo $this->render('_day_form', [
+    'model' => $model,
+]);
+
 echo $this->render('_empty_entry_form', [
     'model' => $model,
     'searchModel' => $entrySearchModel,

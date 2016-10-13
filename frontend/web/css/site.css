@@ -22,7 +22,9 @@ body {
 .content-menu {
    z-index: 10;
 }
-
+.glyphicon {
+    color: #069;
+}
 /* login */
 .login-form {
     margin-top: 200px;
@@ -192,4 +194,31 @@ table.sign {
     color: red;
     font-size: 30px;
     font-weight: bold;
+}
+.current-time {
+    color: #069;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* forms */
+.form-control.datepicker[readonly] {
+    background: #fff;
+}
+.datetimepicker {
+    font-size:150%;
+}
+.datetimepicker .datetimepicker-hours span {
+    height: 30px;
+    line-height: 30px;
+}
+.datetimepicker .minutes span {
+    height: 30px;
+    line-height: 30px;
+}
+.datetimepicker .table-condensed {
+    width: 300px;
+}
+.datetimepicker .table-condensed thead {
+    display: none;
 }

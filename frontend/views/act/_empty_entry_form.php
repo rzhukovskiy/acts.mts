@@ -6,7 +6,7 @@
  * @var $serviceList array
  */
 
-use kartik\time\TimePicker;
+use kartik\datetime\DateTimePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
@@ -28,28 +28,26 @@ use yii\helpers\Html;
             <tr>
                 <td colspan="3">
                     <label class="control-label">Свободное время:</label>
-                    <div class="free-time">
+                    <div class="free-time" style="column-count: 3">
                         <?php
                         $step = 0;
-                        $listEntry = $model->company->getFreeTimeArray(date('d-m-Y'));
+                        $listEntry = $model->company->getFreeTimeArray($model->day);
                         $timeStart = gmdate('H:i', $model->company->info->start_at);
                         $timeEnd = gmdate('H:i', $model->company->info->end_at);
                         foreach ($listEntry as $entry) {
                             if (!$step) {
                                 if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo '<div class="col-sm-4">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
-                                } else {
-                                    echo '<div class="col-sm-4">';
+                                    echo $timeStart . '&nbsp;-&nbsp;' . date('H:i', $entry->start_at) . '<br />';
                                 }
                             } else {
-                                echo date('H:i', $entry->start_at) . '</div><div class="col-sm-4">';
+                                echo date('H:i', $entry->start_at) . '<br />';
                             }
                             $step++;
                             if ($step == count($listEntry)) {
                                 if (date('H:i', $entry->end_at) != $timeEnd) {
-                                    echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
+                                    echo date('H:i', $entry->end_at) . '&nbsp;-&nbsp' . $timeEnd . '<br />';
                                 } else {
-                                    echo '</div>';
+                                    echo '<br />';
                                 }
                             } else {
                                 echo date('H:i', $entry->end_at) . ' - ';
@@ -60,30 +58,34 @@ use yii\helpers\Html;
             </tr>
             <tr>
                 <td>
-                    <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
-                        'addonOptions' => [
-                            'style' => 'width: 100px',
-                        ],
+                    <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
+                        'size' => 'lg',
+                        'removeButton' => false,
                         'pluginOptions' => [
-                            'defaultTime' => gmdate('H:i', $model->company->info->start_at),
+                            'startView' => 1,
                             'showMeridian' => false,
+                            'autoclose' => true,
+                            'format' => 'hh:ii'
                         ],
                         'options' => [
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
                         ]
                     ])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'end_str')->widget(TimePicker::classname(), [
-                        'addonOptions' => [
-                            'style' => 'width: 100px',
-                        ],
+                    <?= $form->field($model, 'end_str')->widget(DateTimePicker::classname(), [
+                        'size' => 'lg',
+                        'removeButton' => false,
                         'pluginOptions' => [
-                            'defaultTime' => gmdate('H:i', $model->company->info->end_at),
+                            'startView' => 1,
                             'showMeridian' => false,
+                            'autoclose' => true,
+                            'format' => 'hh:ii'
                         ],
                         'options' => [
-                            'class' => 'form-control',
+                            'class' => 'form-control datepicker',
+                            'readonly' =>'true',
                         ]
                     ])->error(false) ?>
                 </td>

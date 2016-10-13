@@ -30,6 +30,8 @@ use yii\bootstrap\ActiveForm;
         ]) ?>
         <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['prompt' => 'выберите город']); ?>
         <?= $form->field($entrySearchModel, 'day')->widget(DatePicker::classname(), [
+            'size' => 'lg',
+            'removeButton' => false,
             'type' => DatePicker::TYPE_INPUT,
             'language' => 'ru',
             'pluginOptions' => [
@@ -37,7 +39,8 @@ use yii\bootstrap\ActiveForm;
                 'format' => 'dd-mm-yyyy'
             ],
             'options' => [
-                'class' => 'form-control input-sm',
+                'class' => 'form-control input-sm datepicker',
+                'readonly' =>'true',
             ]
         ])->error(false); ?>
         <?= Html::submitButton('Показать', ['class' => 'btn btn-primary btn-sm']) ?>

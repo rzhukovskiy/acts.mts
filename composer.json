@@ -21,6 +21,7 @@
         "c006/yii2-migration-utility": "dev-master",
         "2amigos/yii2-chartjs-widget": "~2.0",
         "kartik-v/yii2-grid": "@dev",
+        "kartik-v/yii2-widget-datetimepicker": "*",
         "kartik-v/yii2-widget-datepicker": "^1.4",
         "kartik-v/yii2-widget-timepicker": "*",
         "kartik-v/yii2-field-range": "^1.3",

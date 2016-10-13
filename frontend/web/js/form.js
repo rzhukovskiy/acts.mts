@@ -127,7 +127,6 @@ $(document).ready(function() {
     });
 });
 
-
 this.imagePreview = function() {
     /* CONFIG */
     xOffset = 400;

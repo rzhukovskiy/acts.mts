@@ -28,6 +28,10 @@ echo Tabs::widget( [
     'items' => $items,
 ] );
 
+echo $this->render('_day_form', [
+    'model' => $modelEntry,
+]);
+
 echo $this->render('_full_view', [
     'model' => $model,
     'modelEntry' => $modelEntry,
