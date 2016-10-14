@@ -317,15 +317,65 @@ class Company extends ActiveRecord
      */
     public function getFreeTimeArray($day)
     {
-        $res = [];
+        if (!count($this->getEntries($day)->all())) {
+            return [];
+        }
+        $workStart = $this->info->start_at ? date('H:i', $this->info->start_at) : '00:00';
+        $workEnd = $this->info->end_at ? date('H:i', $this->info->end_at) : '23:00';
+
+
+        $points[] = [
+            'value' => '00:00',
+            'type' => 's',
+        ];
+        $points[] = [
+            'value' => $workStart,
+            'type' => 'e',
+        ];
+        $points[] = [
+            'value' => $workEnd,
+            'type' => 's',
+        ];
+        $points[] = [
+            'value' => '23:00',
+            'type' => 'e',
+        ];
         /** @var Entry $entry */
         foreach($this->getEntries($day)->all() as $entry) {
-            $previous = !empty($res[count($res) - 1]) ? $res[count($res) - 1] : false;
-            if (!$previous || $previous->end_at < $entry->start_at) {
-                $res[] = $entry;
+            $points[] = [
+                'value' => date('H:i', $entry->start_at),
+                'type' => 's',
+            ];
+            $points[] = [
+                'value' => date('H:i', $entry->end_at),
+                'type' => 'e',
+            ];
+        }
+
+        usort($points, function($first, $second) {
+            if ($first['value'] == $second['value']) {
+                return $first['type'] < $second['type'];
             } else {
-                $res[count($res) - 1]->end_at = $entry->end_at;
+                return $first['value'] > $second['value'];
             }
+        });
+
+        $res = [];
+        $i = 0;
+        $j = 0;
+        foreach ($points as $point) {
+            if ($point['type'] == 'e' && $j < count($points) - 1) {
+                $res[$i]['start'] = $point['value'];
+            }
+            if ($point['type'] == 's' && !empty($res[$i]['start'])) {
+                if ($res[$i]['start'] == $point['value']) {
+                    unset($res[$i]['start']);
+                } else {
+                    $res[$i]['end'] = $point['value'];
+                    $i++;
+                }
+            }
+            $j++;
         }
 
         return $res;

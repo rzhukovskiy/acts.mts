@@ -10,47 +10,35 @@
         <?= $model->name ?>  <?= $model->info->address ?>
     </div>
     <div class="panel-body">
-        <table class="table table-bordered">
+        <table class="table table-bordered" style="margin: 0;">
             <tbody>
             <tr>
-                <td>
+                <td colspan="2">
                     <label class="control-label">Телефон:</label> <?= $model->info->phone ?>
                 </td>
-                <td>
-                    <label class="control-label">Время работы:</label> <?= date('H:i', $model->info->start_at) ?> - <?= date('H:i', $model->info->end_at) ?>
-                </td>
-            </tr>
-            <tr>
                 <td colspan="2">
-                    <label class="control-label">Свободное время:</label>
-                    <div class="free-time"  style="column-count: 3">
-                        <?php
-                        $step = 0;
-                        $listEntry = $model->getFreeTimeArray($modelEntry->day);
-                        $timeStart = gmdate('H:i', $model->info->start_at);
-                        $timeEnd = gmdate('H:i', $model->info->end_at);
-                        foreach ($listEntry as $entry) {
-                            if (!$step) {
-                                if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo $timeStart . '&nbsp;-&nbsp;' . date('H:i', $entry->start_at) . '<br />';
-                                }
-                            } else {
-                                echo date('H:i', $entry->start_at) . '<br />';
-                            }
-                            $step++;
-                            if ($step == count($listEntry)) {
-                                if (date('H:i', $entry->end_at) != $timeEnd) {
-                                    echo date('H:i', $entry->end_at) . '&nbsp;-&nbsp' . $timeEnd . '<br />';
-                                } else {
-                                    echo '<br />';
-                                }
-                            } else {
-                                echo date('H:i', $entry->end_at) . ' - ';
-                            }
-                        } ?>
-                    </div>
+                    <label class="control-label">Время работы:</label>
+                    <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '23:00' ?>
                 </td>
             </tr>
+            <?php
+            $arrayFreeTime = $model->getFreeTimeArray($modelEntry->day);
+            $i = 0;
+            foreach ($arrayFreeTime as $freeTime) {
+                if (!$i || !($i % 4)) {
+                    echo '<tr class="free-time">';
+                }
+                echo '<td style="width:25%">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</td>';
+                if ($i + 1 == count($arrayFreeTime)) {
+                    for ($j = 0; $j < 4 - count($arrayFreeTime) % 4; $j++) {
+                        echo '<td style="width:25%"></td>';
+                    }
+                }
+                if ($i + 1 == count($arrayFreeTime) || !(($i + 1) % 4)) {
+                    echo '</tr>';
+                }
+                $i++;
+            } ?>
             </tbody>
         </table>
 

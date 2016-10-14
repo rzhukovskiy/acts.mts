@@ -3,7 +3,7 @@
  * @var $model \common\models\Company
  * @var $entrySearchModel \common\models\search\EntrySearch
  */
-use yii\bootstrap\ActiveForm;
+
 use yii\bootstrap\Html;
 
 ?>
@@ -13,38 +13,17 @@ use yii\bootstrap\Html;
             <?= $model->name ?>
         </div>
         <div class="panel-body">
-            <div class="col-sm-12" style="margin-top: 15px;">
+            <div class="col-sm-6" style="margin-top: 15px;">
                 <?= $model->info->address ?>
             </div>
-            <div class="col-sm-12" style="margin-top: 15px;">
-                <?= date('H:i', $model->info->start_at) ?> - <?= date('H:i', $model->info->end_at) ?>
+            <div class="col-sm-6" style="margin-top: 15px;">
+                <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '23:00' ?>
             </div>
-            <div class="free-time" style ="height: 220px;">
+            <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
-                $step = 0;
-                $listEntry = $model->getFreeTimeArray(date('d-m-Y'));
-                $timeStart = gmdate('H:i', $model->info->start_at);
-                $timeEnd = gmdate('H:i', $model->info->end_at);
-                foreach ($listEntry as $entry) {
-                    if (!$step) {
-                        if (date('H:i', $entry->start_at) != $timeStart) {
-                            echo '<div class="col-sm-12">' . $timeStart . ' - ' . date('H:i', $entry->start_at) . '</div><div class="col-sm-12">';
-                        } else {
-                            echo '<div class="col-sm-12">';
-                        }
-                    } else {
-                        echo date('H:i', $entry->start_at) . '</div><div class="col-sm-12">';
-                    }
-                    $step++;
-                    if ($step == count($listEntry)) {
-                        if (date('H:i', $entry->end_at) != $timeEnd) {
-                            echo date('H:i', $entry->end_at) . ' - ' . $timeEnd . '</div>';
-                        } else {
-                            echo '</div>';
-                        }
-                    } else {
-                        echo date('H:i', $entry->end_at) . ' - ';
-                    }
+                $arrayFreeTime = $model->getFreeTimeArray($entrySearchModel->day);
+                foreach ($arrayFreeTime as $freeTime) {
+                    echo '<div class="col-sm-12">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</div>';
                 } ?>
             </div>
             <div class="col-sm-12 text-center">

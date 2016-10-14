@@ -25,37 +25,24 @@ use yii\helpers\Html;
         ]) ?>
         <table class="table table-bordered">
             <tbody>
-            <tr>
-                <td colspan="3">
-                    <label class="control-label">Свободное время:</label>
-                    <div class="free-time" style="column-count: 3">
-                        <?php
-                        $step = 0;
-                        $listEntry = $model->company->getFreeTimeArray($model->day);
-                        $timeStart = gmdate('H:i', $model->company->info->start_at);
-                        $timeEnd = gmdate('H:i', $model->company->info->end_at);
-                        foreach ($listEntry as $entry) {
-                            if (!$step) {
-                                if (date('H:i', $entry->start_at) != $timeStart) {
-                                    echo $timeStart . '&nbsp;-&nbsp;' . date('H:i', $entry->start_at) . '<br />';
-                                }
-                            } else {
-                                echo date('H:i', $entry->start_at) . '<br />';
-                            }
-                            $step++;
-                            if ($step == count($listEntry)) {
-                                if (date('H:i', $entry->end_at) != $timeEnd) {
-                                    echo date('H:i', $entry->end_at) . '&nbsp;-&nbsp' . $timeEnd . '<br />';
-                                } else {
-                                    echo '<br />';
-                                }
-                            } else {
-                                echo date('H:i', $entry->end_at) . ' - ';
-                            }
-                        } ?>
-                    </div>
-                </td>
-            </tr>
+            <?php
+            $arrayFreeTime = $model->company->getFreeTimeArray($model->day);
+            $i = 0;
+            foreach ($arrayFreeTime as $freeTime) {
+                if (!$i || !($i % 3)) {
+                    echo '<tr class="free-time">';
+                }
+                echo '<td style="width:33%">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</td>';
+                if ($i + 1 == count($arrayFreeTime) && count($arrayFreeTime) % 3) {
+                    for ($j = 0; $j < 3 - count($arrayFreeTime) % 3; $j++) {
+                        echo '<td style="width:25%"></td>';
+                    }
+                }
+                if ($i + 1 == count($arrayFreeTime) || !(($i + 1) % 3)) {
+                    echo '</tr>';
+                }
+                $i++;
+            } ?>
             <tr>
                 <td>
                     <?= $form->field($model, 'start_str')->widget(DateTimePicker::classname(), [
@@ -90,7 +77,7 @@ use yii\helpers\Html;
                     ])->error(false) ?>
                 </td>
                 <td style="width: 150px">
-                    <label class="control-label">Действие</label>
+                    <label class="control-label">Действие</label><br />
                     <?= Html::submitButton('Записать', ['class' => 'btn btn-primary']) ?>
                     <?= Html::activeHiddenInput($model, 'day') ?>
                     <?= Html::activeHiddenInput($model, 'company_id') ?>
