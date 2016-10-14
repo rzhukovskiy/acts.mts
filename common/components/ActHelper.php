@@ -276,4 +276,14 @@ class ActHelper
 
         return array_intersect_key($columns, array_flip($assets[$role][$company][$type]));
     }
+
+    /**
+     * @param $act \common\models\Act
+     * @return bool
+     */
+    public static function isNoCheck($act){
+        return $act->service_type == Service::TYPE_WASH && !$act->getImageLink();
+    }
+
+
 }

@@ -37,9 +37,22 @@ class CarQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
+    /**
+     * @param $id
+     * @return $this
+     */
     public function byType($id)
     {
         return $this->andWhere(['type_id' => $id]);
+    }
+
+    /**
+     * @param $number
+     * @return $this
+     */
+    public function byNumber($number)
+    {
+        return $this->andWhere(['number' => $number]);
     }
 
     /**

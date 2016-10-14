@@ -25,6 +25,11 @@ use yii\jui\AutoComplete;
         Редактировать акт
     </div>
     <div class="panel-body">
+        <?= $this->render('_message',
+        [
+            'allMessage' => $model->errorMessage(),
+        ]);
+        ?>
         <?php
         $form = ActiveForm::begin([
             'action' => ['act/update', 'id' => $model->id],

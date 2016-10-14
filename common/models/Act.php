@@ -68,6 +68,7 @@ class Act extends ActiveRecord
     public $partnerServiceList;
     public $time_str;
     public $actsCount;
+    public $errorMessage=[];
     /**
      * @var UploadedFile
      */
@@ -281,16 +282,48 @@ class Act extends ActiveRecord
                 break;
             case 'car':
                 $hasError = !isset($this->car->company_id) ||
-                    ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id) ||
-                    $this->car->company_id != $this->client_id;
+                    ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id);
                 break;
             case 'truck':
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
-                    (isset($this->client) && $this->client->is_split && $this->extra_number && !Car::model()->find('number = :number', [':number' => $this->extra_number]));
+                    (isset($this->client) && $this->client->is_split && $this->extra_number && !Car::find()->byNumber($this->extra_number)->exists());
                 break;
         }
 
         return $this->status != self::STATUS_FIXED && $hasError;
+    }
+
+    /**
+     * @return array
+     */
+    public function errorMessage()
+    {
+        $errorMessage = [];
+        $errorArr = [
+            'expense' => 'Не задан расход',
+            'income'  => 'Не задан приход',
+            'check'   => 'Отсутствует чек',
+            'card'    => (!$this->card->company_id) ? 'Карта не привязана ни к какой компании' :
+                'Хозяин карты (' .
+                $this->card->company->name .
+                ') не совпадает с хозяином ТС (' .
+                (isset($this->car->company->name) ? $this->car->company->name : 'не указан') .
+                ')',
+            'car'     => (!isset($this->car->company_id)) ? 'Ошибочный номер ТС' :
+                'Владелец ТС (' .
+                $this->car->company->name .
+                ') не совпадает с клиентом, указанным в акте (' .
+                $this->client->name .
+                ')',
+            'truck'   => 'Неверный дополнительный номер',
+        ];
+        foreach ($errorArr as $key => $err) {
+            if ($this->hasError($key)) {
+                $errorMessage[] = $err;
+            }
+        }
+
+        return $errorMessage;
     }
 
     public function beforeSave($insert)
