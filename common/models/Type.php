@@ -13,6 +13,7 @@
      * @property integer $id
      * @property string $name
      * @property string $image
+     * @property integer $time
      */
     class Type extends ActiveRecord
     {
@@ -35,10 +36,11 @@
         public function rules()
         {
             return [
-                [ [ 'name' ], 'required' ],
-                [ [ 'name' ], 'string', 'max' => 255 ],
-                [ [ 'name' ], 'unique' ],
-                [ [ 'imageFile' ], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg' ],
+                [['name', 'time'], 'required'],
+                [['name'], 'string', 'max' => 255],
+                [['time'], 'integer'],
+                [['name'], 'unique'],
+                [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg'],
             ];
         }
 
@@ -52,6 +54,7 @@
                 'name' => 'Название',
                 'image' => 'Изображение',
                 'imageFile' => 'Изображение',
+                'time'=> 'Время мойки'
             ];
         }
 

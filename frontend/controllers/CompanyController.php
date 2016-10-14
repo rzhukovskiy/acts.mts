@@ -10,14 +10,13 @@ namespace frontend\controllers;
 
 
 use common\models\Company;
-use common\models\CompanyExclude;
+use common\models\CompanyDuration;
 use common\models\CompanyService;
 use common\models\PartnerExclude;
 use common\models\search\CompanySearch;
-use common\models\Service;
+use common\models\Type;
 use common\models\User;
 use yii;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
@@ -34,7 +33,7 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -143,6 +142,35 @@ class CompanyController extends Controller
 
                     $companyService->save();
                 }
+            }
+        }
+
+        return $this->redirect(['update', 'id' => $model->id]);
+    }
+
+    /**
+     * @param $id
+     * @return yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionAddDuration($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($durationData = Yii::$app->request->post('Duration')) {
+            foreach ($durationData['type'] as $type_id) {
+
+                $companyDuration = new CompanyDuration();
+                $companyDuration->company_id = $model->id;
+                $companyDuration->type_id = $type_id;
+                $companyDuration->duration = $durationData['duration'];
+                if (!$companyDuration->duration) {
+                    $type = Type::findOne($type_id);
+                    if ($type) {
+                        $companyDuration->duration = $type->time;
+                    }
+                }
+                $companyDuration->save();
             }
         }
 

@@ -21,6 +21,7 @@ use yii\helpers\Html;
         ],
     ]);
     echo $form->field($model, 'name')->textInput(['maxlength' => true]);
+    echo $form->field($model, 'time')->textInput(['maxlength' => true]);
     ?>
     <div class="form-group">
         <div class="col-sm-6 col-sm-offset-2">

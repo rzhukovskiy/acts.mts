@@ -31,7 +31,13 @@ foreach (Service::$listType as $type_id => $type) {
         ]);
     }
 }
-
+if ($model->type == Company::TYPE_WASH) {
+    echo $this->render('/company-duration/_form',
+    [
+        'model' => $model,
+        'type'  => Company::TYPE_WASH,
+    ]);
+}
 if ($model->type == Company::TYPE_OWNER) {
     echo $this->render('/car/_form', [
         'model' => new Car(),

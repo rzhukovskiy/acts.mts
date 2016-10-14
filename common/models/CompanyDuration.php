@@ -43,8 +43,8 @@ class CompanyDuration extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'type_id', 'created_at', 'updated_at'], 'required'],
-            [['company_id', 'type_id', 'duration', 'created_at', 'updated_at'], 'integer'],
+            [['company_id', 'type_id'], 'required'],
+            [['company_id', 'type_id', 'duration'], 'integer'],
         ];
     }
 
@@ -54,13 +54,21 @@ class CompanyDuration extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'         => 'ID',
             'company_id' => 'Company ID',
-            'type_id' => 'Type ID',
-            'duration' => 'Duration',
+            'type_id'    => 'Тип ТС',
+            'duration'   => 'Длительность мойки',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * @return Type
+     */
+    public function getType()
+    {
+        return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
 
     /**

@@ -71,7 +71,8 @@
 
             if ( $model->load( Yii::$app->request->post() ) ) {
                 $model->imageFile = UploadedFile::getInstance( $model, 'imageFile' );
-                $model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
+                //Нет свойства image была ошибка сохранения
+                //$model->image = $model->imageFile->baseName . '.' . $model->imageFile->extension;
                 if($model->save()) {
                     $model->upload();
 

@@ -32,5 +32,9 @@ return [
             'schemaCache' => 'cache',
 
         ],
+        'image'      => [
+            'class'  => 'yii\image\ImageDriver',
+            'driver' => 'GD',  //GD or Imagick
+        ],
     ],
 ];

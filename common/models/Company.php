@@ -465,6 +465,22 @@ class Company extends ActiveRecord
     }
 
     /**
+     * @return ActiveDataProvider
+     */
+    public function getDurationDataProvider()
+    {
+        return new ActiveDataProvider([
+            'query'      => CompanyDuration::find()->where(['company_id' => $this->id]),
+            'pagination' => false,
+            'sort'       => [
+                'defaultOrder' => [
+                    'type_id' => SORT_DESC,
+                ]
+            ],
+        ]);
+    }
+
+    /**
      * @param $type integer
      * @return ActiveDataProvider
      */
