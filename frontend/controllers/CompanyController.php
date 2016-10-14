@@ -14,6 +14,7 @@ use common\models\CompanyDuration;
 use common\models\CompanyService;
 use common\models\PartnerExclude;
 use common\models\search\CompanySearch;
+use common\models\Service;
 use common\models\Type;
 use common\models\User;
 use yii;
@@ -188,11 +189,12 @@ class CompanyController extends Controller
 
         $partnerId = Yii::$app->request->post('partner');
 
-        if (is_array($partnerId)) {
+        if (isset($partnerId)) {
             PartnerExclude::deleteAll('client_id=:client_id', [':client_id' => $id]);
-
-            foreach ($partnerId as $key => $partner) {
-                $allExcludeId = $model->getInvertIds($key, $partner);
+            //Прообегаем все типы, ищем и инвертируем исключаемые компании по всем типам
+            foreach (Service::$listType as $type_id => $type) {
+                $partner = yii\helpers\ArrayHelper::getValue($partnerId, $type_id, []);
+                $allExcludeId = $model->getInvertIds($type_id, $partner);
                 if ($allExcludeId) {
                     foreach ($allExcludeId as $excludeId) {
                         $partnerExclude = new PartnerExclude();
@@ -202,6 +204,7 @@ class CompanyController extends Controller
                     }
                 }
             }
+
         }
 
         return $this->redirect(['update', 'id' => $model->id]);
