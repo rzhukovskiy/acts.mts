@@ -88,7 +88,7 @@ class ActSearch extends Act
             'partner_id',
             'client_id',
         ])
-            ->groupBy(["MONTH(dateMonth)"])
+            ->groupBy(['DATE_FORMAT(dateMonth, "%Y-%m")'])
             ->orderBy('dateMonth ASC');
 
         return $this->createProvider($params, $query);
@@ -110,7 +110,7 @@ class ActSearch extends Act
             'SUM(income) as income',
             'SUM(profit) as profit',
         ])
-            ->groupBy(["DAY(FROM_UNIXTIME(served_at))"])
+            ->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])
             ->orderBy('dateMonth ASC');
 
         return $this->createProvider($params, $query);

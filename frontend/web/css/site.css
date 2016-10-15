@@ -181,6 +181,9 @@ table.sign {
     color: #000;
     font-size: 14px;
 }
+.wPaint-canvas {
+    border-bottom: 1px solid black;
+}
 
 .extra-number {
     display: none;

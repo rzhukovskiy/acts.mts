@@ -275,7 +275,7 @@ class ActHelper
             ],
         ];
 
-        if (!$hasChildren) {
+        if (!$hasChildren && $assets[$role][$company][$type][1] == 'clientPartner') {
             unset($assets[$role][$company][$type][1]);
         }
         return array_intersect_key($columns, array_flip($assets[$role][$company][$type]));
