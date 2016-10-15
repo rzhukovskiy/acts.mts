@@ -179,7 +179,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'date' => date('Y-m', strtotime($model->dateMonth))]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type]);
                         }
                     ]
                 ],

@@ -407,11 +407,11 @@ class ImportController extends Controller
 
                 if (!YII_ENV_DEV) {
                     if ($rowData['sign']) {
-                        $file = "http://docs.mtransservice.ru/files/signs/{$rowData['sign']}-sign.png";
+                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['sign']}-sign.png";
                         $newfile = "frontend/web/files/checks/$act_id-sign.png";
                         copy($file, $newfile);
 
-                        $file = "http://docs.mtransservice.ru/files/signs/{$rowData['sign']}-name.png";
+                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['sign']}-name.png";
                         $newfile = "frontend/web/files/checks/$act_id-name.png";
                         copy($file, $newfile);
                     }

@@ -65,7 +65,7 @@ CanvasJsAsset::register($this);
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth, 'type' => $model->service_type]);
                         }
                     ]
                 ],

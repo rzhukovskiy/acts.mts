@@ -67,9 +67,9 @@
                     </td>
 
                     <td colspan="2">
-                        <?php if (file_exists('files/signs/' . $model->id . '-name.png')) { ?><img
+                        <?php if (file_exists('files/checks/' . $model->id . '-name.png')) { ?><img
                             style="width:250px; border-bottom: 1px solid black;"
-                            src="<?= '/files/signs/' . $model->id . '-name.png' ?>"/><?php } ?>
+                            src="<?= '/files/checks/' . $model->id . '-name.png' ?>"/><?php } ?>
                     </td>
                     <td>
                         &nbsp; &nbsp; &nbsp;
@@ -79,9 +79,9 @@
                     </td>
 
                     <td colspan="2">
-                        <?php if (file_exists('files/signs/' . $model->id . '-sign.png')) { ?><img
+                        <?php if (file_exists('files/checks/' . $model->id . '-sign.png')) { ?><img
                             style="width:250px; border-bottom: 1px solid black;"
-                            src="<?= '/files/signs/' . $model->id . '-sign.png' ?>"/><?php } ?>
+                            src="<?= '/files/checks/' . $model->id . '-sign.png' ?>"/><?php } ?>
                     </td>
                 </tr>
             </table>

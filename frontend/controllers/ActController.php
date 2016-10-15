@@ -71,7 +71,7 @@ class ActController extends Controller
             'type' => $type,
             'company' => $company,
             'role' => $role,
-            'columns' => ActHelper::getColumnsByType($type, $role, $company),
+            'columns' => ActHelper::getColumnsByType($type, $role, $company, !empty(Yii::$app->user->identity->company->children)),
         ]);
     }
 
@@ -190,7 +190,7 @@ class ActController extends Controller
             'serviceList' => $serviceList,
             'role' => $role,
             'model' => $model,
-            'columns' => ActHelper::getColumnsByType($type, $role, 0),
+            'columns' => ActHelper::getColumnsByType($type, $role, 0, !empty(Yii::$app->user->identity->company->children)),
         ]);
     }
 
@@ -313,7 +313,7 @@ class ActController extends Controller
 
             imagealphablending($image, false);
             imagesavealpha($image, true);
-            $dir = 'files/signs/';
+            $dir = 'files/checks/';
             imagepng($image, $dir . $id . '-name.png');
             return Json::encode(['file' => $id]);
         }
@@ -326,7 +326,7 @@ class ActController extends Controller
 
             imagealphablending($image, false);
             imagesavealpha($image, true);
-            $dir = 'files/signs/';
+            $dir = 'files/checks/';
             imagepng($image, $dir . $id . '-sign.png');
             return Json::encode(['file' => $id]);
         }

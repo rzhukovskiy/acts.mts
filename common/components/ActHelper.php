@@ -25,9 +25,10 @@ class ActHelper
      * @param $type int
      * @param $role string
      * @param $company bool
+     * @param $hasChildren bool
      * @return array
      */
-    public static function getColumnsByType($type, $role, $company) {
+    public static function getColumnsByType($type, $role, $company = false, $hasChildren = false) {
         $columns = [
             'row' => [
                 'header' => '№',
@@ -274,6 +275,9 @@ class ActHelper
             ],
         ];
 
+        if (!$hasChildren) {
+            unset($assets[$role][$company][$type][1]);
+        }
         return array_intersect_key($columns, array_flip($assets[$role][$company][$type]));
     }
 
