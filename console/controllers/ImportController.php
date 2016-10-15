@@ -99,7 +99,6 @@ class ImportController extends Controller
                     {$rowData['parent_id']},
                     '{$rowData['name']}',
                     '{$rowData['address']}',
-                    '{$rowData['phone']}',
                     '{$rowData['contact']}',
                     $type,
                     {$rowData['is_split']},
@@ -108,7 +107,8 @@ class ImportController extends Controller
                     {$rowData['is_sign']},
                     $status,
                     $now,
-                    $now)";
+                    $now,
+                    0)";
 
             $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
 
@@ -160,7 +160,8 @@ class ImportController extends Controller
         $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}type")->queryAll();
         foreach ($rows as $rowData) {
             $insert = "({$rowData['id']},
-                '{$rowData['name']}')";
+                '{$rowData['name']}',
+                60)";
 
             $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}type VALUES $insert")->execute();
         }
@@ -249,7 +250,8 @@ class ImportController extends Controller
         $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}service VALUES (NULL, 1, " . Company::TYPE_WASH . ", 'снаружи', $now, $now),
                   (NULL, 1, " . Company::TYPE_WASH . ", 'внутри', $now, $now),
                   (NULL, 1, " . Company::TYPE_WASH . ", 'двигатель', $now, $now),
-                  (NULL, 1, " . Company::TYPE_DISINFECT . ", 'дезинфекция', $now, $now)
+                  (NULL, 1, " . Company::TYPE_DISINFECT . ", 'дезинфекция', $now, $now),
+                  (NULL, 1, " . Company::TYPE_DISINFECT . ", 'доп. дезинфекция', $now, $now)
                 ")->execute();
 
         foreach ($rows as $rowData) {
@@ -377,6 +379,10 @@ class ImportController extends Controller
                 $type = $listType[$rowData['service']];
                 $status = $rowData['is_fixed'] ? Act::STATUS_FIXED : ($rowData['is_closed'] ? Act::STATUS_CLOSED : Act::STATUS_NEW);
                 $served_at = strtotime($rowData['service_date']);
+                if (!$served_at) {
+                    continue;
+                }
+
                 $insert = "(NULL,
                         {$rowData['partner_id']},
                         {$rowData['client_id']},
@@ -473,6 +479,10 @@ class ImportController extends Controller
                 $type = $listType[$rowData['service']];
                 $status = $rowData['is_fixed'] ? Act::STATUS_FIXED : ($rowData['is_closed'] ? Act::STATUS_CLOSED : Act::STATUS_NEW);
                 $served_at = strtotime($rowData['service_date']);
+                if (!$served_at) {
+                    continue;
+                }
+
                 $insert = "(NULL,
                         {$rowData['partner_id']},
                         {$rowData['client_id']},
@@ -495,7 +505,7 @@ class ImportController extends Controller
 
                 $act_id = $this->new_db->lastInsertID;
 
-                if (!YII_ENV_DEV) {
+                if (!YII_ENV_DEV && $served_at > time() - 3600 * 24 * 75) {
                     if ($rowData['check_image']) {
                         $file = "http://docs.mtransservice.ru/files/checks/{$rowData['check_image']}";
                         $newfile = "frontend/web/files/checks/$act_id.jpg";
@@ -671,8 +681,8 @@ class ImportController extends Controller
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}act_scope VALUES $insert")->execute();
                 }
 
-                if (in_array($rowData['client_service'], [5])) {
-                    $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}service WHERE description LIKE 'дезинфекция'")->queryOne();
+                if (in_array($rowData['client_service'], [9])) {
+                    $serviceData = $this->new_db->createCommand("SELECT * FROM {$this->new_db->tablePrefix}service WHERE description LIKE 'доп. дезинфекция'")->queryOne();
                     $companyServiceData = $this->new_db
                         ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}company_service WHERE type_id = {$rowData['type_id']} AND company_id = {$rowData['client_id']} AND service_id = {$serviceData['id']}")
                         ->queryOne();
