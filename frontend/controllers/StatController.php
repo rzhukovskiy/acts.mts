@@ -113,7 +113,7 @@ class StatController extends Controller
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
-                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
                 ->joinWith('client client');
         }
         else {
@@ -178,7 +178,7 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
                 ->joinWith('client client');
         }
         else {
@@ -238,7 +238,7 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
                 ->joinWith('client client');
         else
             $dataProvider->query

@@ -62,9 +62,15 @@ use common\components\DateHelper;
                 [
                     'header' => 'Услуга',
                     'attribute' => 'service_type',
-                    'content' => function ($data) {
-                        return \common\models\Service::$listType[$data->service_type]['ru'];
-                    }
+                    'value' => function ($data) {
+                        /** @var \common\models\ActScope $scope */
+                        $services = [];
+                        foreach ($data->clientScopes as $scope) {
+                            $services[] = $scope->description;
+                        }
+                        return implode('+', $services);
+                    },
+                    'visible' => in_array($searchModel->service_type, [Service::TYPE_WASH, Service::TYPE_DISINFECT]),
                 ],
                 [
                     'attribute' => 'income',

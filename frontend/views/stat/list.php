@@ -233,7 +233,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
             $('.table tbody tr').each(function (id, value) {
                 dataTable.push({
                     label: $(this).find('.value_0').text(),
-                    y: parseInt($(this).find('.value_1').text().replace(',', '')),
+                    y: parseInt($(this).find('.value_2').text().replace(' ', '').replace(',', '')),
                 });
             });
             console.log(dataTable);

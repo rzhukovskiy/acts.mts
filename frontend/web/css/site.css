@@ -181,6 +181,9 @@ table.sign {
     color: #000;
     font-size: 14px;
 }
+.sign td {
+    vertical-align: bottom;
+}
 .wPaint-canvas {
     border-bottom: 1px solid black;
 }
