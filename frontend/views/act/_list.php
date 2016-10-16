@@ -55,6 +55,7 @@ echo GridView::widget([
         'footer' => false,
         'after' => false,
     ],
+    'resizableColumns' => false,
     'hover' => false,
     'striped' => false,
     'export' => false,

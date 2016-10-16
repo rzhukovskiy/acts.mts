@@ -65,15 +65,18 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'car_number',
-            'header'    => 'Номер авто'
+            'header'    => 'Номер авто',
+            'visible'   => $admin,
         ],
         [
             'attribute' => 'car_mark',
-            'header'    => 'Марка'
+            'header'    => 'Марка',
+            'visible'   => $admin,
         ],
         [
             'attribute' => 'car_type',
-            'header'    => 'Тип'
+            'header'    => 'Тип',
+            'visible'   => $admin,
         ],
     ],
 ]);

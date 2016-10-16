@@ -89,6 +89,7 @@ class ActHelper
                         'data-parent' => 1,
                     ] : ['class' => 'hidden'];
                 },
+                'filter' => false,
             ],
             'partner' => [
                 'attribute' => 'partner_id',
@@ -107,6 +108,7 @@ class ActHelper
                         'data-parent' => 1,
                     ] : ['class' => 'hidden'];
                 },
+                'filter' => false,
             ],
             'day' => [
                 'attribute' => 'day',
@@ -148,6 +150,7 @@ class ActHelper
                     if ($data->hasError('card')) return ['style' => 'min-width:80px', 'class' => 'text-danger'];
                     return ['style' => 'min-width:80px'];
                 },
+                'width' => '80px',
             ],
             'clientService' => [
                 'header' => 'Услуга',
@@ -169,7 +172,8 @@ class ActHelper
                         $services[] = $scope->description;
                     }
                     return implode('+', $services);
-                }
+                },
+                'width' => '160px',
             ],
             'income' => [
                 'attribute' => 'income',
@@ -205,6 +209,7 @@ class ActHelper
                 'contentOptions' => function ($data) {
                     if ($data->hasError('check')) return ['class' => 'text-danger'];
                 },
+                'width' => '60px',
             ],
             'updateButtons' => [
                 'header' => '',

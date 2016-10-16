@@ -95,13 +95,15 @@ class StatController extends Controller
     {
         $viewName = $this->selectTemplate();
 
+        $searchModel = new ActSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'statistic_client_filter';
+
         /** @var Company $companyModel */
+        $id = $id ? $id : $searchModel->client_id;
         $companyModel = $this->findCompanyModel($id);
 
         $this->view->title = 'Статистика "' . $companyModel->name;
-
-        $searchModel = new ActSearch();
-        $searchModel->scenario = 'statistic_client_filter';
 
         $dataProvider = $searchModel->searchTypeByMonth(Yii::$app->request->queryParams);
 
@@ -109,14 +111,16 @@ class StatController extends Controller
             $dataProvider->query->andWhere(['service_type' => $type]);
 
         // Акты разные для партнера и клиента, уточняем что выбирать
-        if ($companyModel->type == Company::TYPE_OWNER)
+        if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
-                ->andWhere(['client_id' => $companyModel->id,])
-                ->with('client');
-        else
+                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->joinWith('client client');
+        }
+        else {
             $dataProvider->query
                 ->andWhere(['partner_id' => $companyModel->id,])
                 ->with('partner');
+        }
 
         $dataProvider->pagination = false;
 
@@ -149,11 +153,8 @@ class StatController extends Controller
     {
         $viewName = $this->selectTemplate();
 
-        /** @var Company $companyModel */
-        $companyModel = $this->findCompanyModel($id);
-        $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
-
         $searchModel = new ActSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
         $searchModel->scenario = 'statistic_partner_filter';
         $dataProvider = $searchModel->searchByDays(Yii::$app->request->queryParams);
         $dataProvider->query
@@ -162,6 +163,11 @@ class StatController extends Controller
                 "YEAR(FROM_UNIXTIME(served_at))" => date('Y', strtotime($date)),
             ]);
 
+        /** @var Company $companyModel */
+        $id = $id ? $id : $searchModel->client_id;
+        $companyModel = $this->findCompanyModel($id);
+        $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
+
         if (Yii::$app->user->identity->role == User::ROLE_PARTNER)
             $type = Yii::$app->user->identity->company->type;
 
@@ -169,16 +175,18 @@ class StatController extends Controller
             $dataProvider->query->andWhere(['service_type' => $type]);
 
         // Акты разные для партнера и клиента, уточняем что выбирать
-        if ($companyModel->type == Company::TYPE_OWNER)
+        if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client_id' => $companyModel->id,])
-                ->with('client');
-        else
+                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->joinWith('client client');
+        }
+        else {
             $dataProvider->query
                 ->addSelect('partner_id')
                 ->andWhere(['partner_id' => $companyModel->id,])
                 ->with('partner');
+        }
 
         $dataProvider->pagination = false;
 
@@ -210,11 +218,13 @@ class StatController extends Controller
     {
         $viewName = $this->selectTemplate();
 
+        $searchModel = new ActSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'statistic_partner_filter';
+
+        $id = $id ? $id : $searchModel->client_id;
         $companyModel = $this->findCompanyModel($id);
         $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . date('d', strtotime($date)) . ' ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
-
-        $searchModel = new ActSearch();
-        $searchModel->scenario = 'statistic_partner_filter';
 
         $dataProvider = $searchModel->searchDayCars(Yii::$app->request->queryParams);
         $dataProvider->query
@@ -227,8 +237,8 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
                 ->addSelect('client_id')
-                ->andWhere(['client_id' => $companyModel->id,])
-                ->with('client');
+                ->andWhere(['client.parent_id' => $companyModel->id])->orWhere(['client_id' => $companyModel->id])
+                ->joinWith('client client');
         else
             $dataProvider->query
                 ->addSelect('partner_id')

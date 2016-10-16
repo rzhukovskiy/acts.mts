@@ -18,7 +18,7 @@ if (!empty($companyId))
     $action = ['/statistic/view', 'id' => $companyId];
 ?>
 <div class="panel panel-primary">
-    <div class="panel-heading">Выбор переода</div>
+    <div class="panel-heading">Выбор периода</div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([

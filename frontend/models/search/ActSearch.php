@@ -26,7 +26,7 @@ class ActSearch extends Act
     public function rules()
     {
         $rules = [
-            [['dateFrom', 'dateTo', 'service_type'], 'safe'],
+            [['dateFrom', 'dateTo', 'service_type', 'client_id'], 'safe'],
         ];
 
         return array_merge(parent::rules(), $rules);
@@ -126,7 +126,7 @@ class ActSearch extends Act
 
         $query->addSelect([
             "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
-            'id',
+            'act.id',
             'check',
             'expense',
             'income',
@@ -138,7 +138,8 @@ class ActSearch extends Act
             'number'
         ])
             ->with(['type', 'mark', 'card'])
-            ->orderBy('dateMonth ASC');
+            ->orderBy('dateMonth ASC')
+            ->alias('act');
 
         return $this->createProvider($params, $query);
     }
