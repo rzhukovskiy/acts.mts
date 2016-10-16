@@ -116,6 +116,7 @@ class ActHelper
                 'value' => function ($data) use ($role) {
                     return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
                 },
+                'width' => $role == User::ROLE_ADMIN ? '20px' : '100px',
             ],
             'mark' => [
                 'attribute' => 'mark_id',
@@ -161,7 +162,8 @@ class ActHelper
                         $services[] = $scope->description;
                     }
                     return implode('+', $services);
-                }
+                },
+                'width' => '140px',
             ],
             'partnerService' => [
                 'header' => 'Услуга',
@@ -173,7 +175,7 @@ class ActHelper
                     }
                     return implode('+', $services);
                 },
-                'width' => '160px',
+                'width' => '140px',
             ],
             'income' => [
                 'attribute' => 'income',
