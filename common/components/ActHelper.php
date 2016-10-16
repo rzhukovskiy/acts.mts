@@ -218,7 +218,7 @@ class ActHelper
                 'mergeHeader' => false,
                 'class' => 'kartik\grid\ActionColumn',
                 'template' => '{update}{delete}',
-                'width' => '60px',
+                'width' => '70px',
             ],
             'viewButtons' => [
                 'header' => '',
