@@ -1,4 +1,5 @@
 <?php
+use common\models\Service;
 use yii\grid\GridView;
 use yii\bootstrap\Html;
 use common\components\DateHelper;
@@ -91,14 +92,16 @@ use common\components\DateHelper;
                     'footer' => $totalProfit,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-                'check',
-
+                [
+                    'attribute' => 'check',
+                    'visible' => $searchModel->service_type == Service::TYPE_WASH,
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
                     'buttons' => [
-                        'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
+                        'view' => function ($url, $model, $key) use($searchModel) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id, 'type' => $searchModel->service_type]);
                         }
                     ]
                 ],

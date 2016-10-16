@@ -31,12 +31,12 @@ class StatController extends Controller
                         'roles' => [User::ROLE_ADMIN]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total'],
+                        'actions' => ['view', 'month', 'day', 'total', 'act'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total'],
+                        'actions' => ['view', 'month', 'day', 'total', 'act'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT]
                     ]
@@ -220,6 +220,7 @@ class StatController extends Controller
 
         $searchModel = new ActSearch();
         $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->service_type = $type;
         $searchModel->scenario = 'statistic_partner_filter';
 
         $id = $id ? $id : $searchModel->client_id;
@@ -267,16 +268,14 @@ class StatController extends Controller
     }
 
     // Акт
-    public function actionAct($id)
+    public function actionAct($id, $group = null)
     {
         if (($actModel = Act::findOne($id)) == null)
             throw new NotFoundHttpException('The requested page does not exist.');
 
-        $role = Yii::$app->user->identity->role;
-
         return $this->render('act', [
             'model' => $actModel,
-            'role' => $role,
+            'group' => $group,
         ]);
     }
 

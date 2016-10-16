@@ -1,4 +1,5 @@
 <?php
+use common\models\Service;
 use yii\grid\GridView;
 use yii\bootstrap\Html;
 use common\components\DateHelper;
@@ -14,7 +15,6 @@ use common\components\DateHelper;
  * @var $totalExpense float
  * @var $totalIncome float
  */
-
 
 ?>
 <div class="panel panel-primary">
@@ -75,17 +75,20 @@ use common\components\DateHelper;
                     'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-                'check',
-
-//                [
-//                    'class' => 'yii\grid\ActionColumn',
-//                    'template' => '{view}',
-//                    'buttons' => [
-//                        'view' => function ($url, $model, $key) {
-//                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
-//                        }
-//                    ]
-//                ],
+                [
+                    'attribute' => 'check',
+                    'visible' => $searchModel->service_type == Service::TYPE_WASH,
+                ],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function ($url, $model, $key) use($searchModel) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id, 'type' => $searchModel->service_type]);
+                        }
+                    ],
+                    'visible' => in_array($searchModel->service_type, [Service::TYPE_SERVICE, Service::TYPE_TIRES]),
+                ],
             ]
         ])
         ?>

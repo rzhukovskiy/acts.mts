@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Service;
 use yii\bootstrap\Html;
 use yii\grid\GridView;
 use common\components\DateHelper;
@@ -76,16 +77,20 @@ CanvasJsAsset::register($this);
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-
-//                [
-//                    'class' => 'yii\grid\ActionColumn',
-//                    'template' => '{view}',
-//                    'buttons' => [
-//                        'view' => function ($url, $model, $key) {
-//                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id]);
-//                        }
-//                    ]
-//                ],
+                [
+                    'attribute' => 'check',
+                    'visible' => $searchModel->service_type == Service::TYPE_WASH,
+                ],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function ($url, $model, $key) use($searchModel) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id, 'type' => $searchModel->service_type]);
+                        }
+                    ],
+                    'visible' => in_array($searchModel->service_type, [Service::TYPE_SERVICE, Service::TYPE_TIRES]),
+                ],
             ]
         ])
         ?>
