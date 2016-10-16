@@ -83,7 +83,6 @@ class CarSearch extends Car
             'car.mark_id' => $this->mark_id,
             'car.type_id' => $this->type_id,
             'car.is_infected' => $this->is_infected,
-            'car.company_id' => $this->company_id,
         ]);
         $query->andFilterWhere(['company.parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
 

@@ -152,10 +152,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'attribute' => 'dateMonth',
                     'content' => function ($data) use ($modelType, $group) {
                         $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                        if ($modelType == 'client')
-                            return Html::a($date, ['/stat/month', 'id' => $data->client->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type, 'group' => $group]);
-
-                        return Html::a($date, ['/stat/month', 'id' => $data->partner->id, 'date' => date('Y-m', strtotime($data->dateMonth)), 'type' => $data->service_type, 'group' => $group]);
+                        return $date;
                     }
                 ],
                 [

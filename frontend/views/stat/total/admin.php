@@ -16,6 +16,8 @@ use common\models\Company;
  * @var $totalProfit int
  * @var $totalServe int
  * @var $totalExpense int
+ * @var $totalIncome int
+ * @var $group string
  */
 
 CanvasJsAsset::register($this);
@@ -182,6 +184,17 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
+                    'visible' => $group == 'partner',
+                ],
+                [
+                    'attribute' => 'income',
+                    'header' => 'Доход',
+                    'content' => function ($data) {
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
+                    },
+                    'footer' => $totalIncome,
+                    'footerOptions' => ['style' => 'font-weight: bold'],
+                    'visible' => $group == 'company',
                 ],
                 [
                     'attribute' => 'profit',

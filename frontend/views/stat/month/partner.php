@@ -41,7 +41,7 @@ CanvasJsAsset::register($this);
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/stat/day', 'date' => $data->dateMonth]);
+                        return $date;
                     }
                 ],
                 [

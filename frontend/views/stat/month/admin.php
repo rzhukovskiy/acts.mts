@@ -41,12 +41,9 @@ CanvasJsAsset::register($this);
                     'header' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) use ($modelType, $group) {
-                            $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
-                            if ($modelType == 'client')
-                                return Html::a($date, ['/stat/day', 'id' => $data->client->id, 'date' => $data->dateMonth, 'type' => $data->service_type, 'group' => $group]);
-
-                            return Html::a($date, ['/stat/day', 'id' => $data->partner->id, 'date' => $data->dateMonth, 'type' => $data->service_type, 'group' => $group]);
-                        }
+                        $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
+                        return $date;
+                    }
                 ],
                 [
                     'attribute' => 'countServe',
@@ -86,12 +83,12 @@ CanvasJsAsset::register($this);
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
                     'buttons' => [
-                        'view' => function ($url, $model, $key) use ($modelType, $group){
-                                if ($modelType == 'client')
-                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
+                        'view' => function ($url, $model, $key) use ($modelType, $group) {
+                            if ($modelType == 'client')
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->client->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
 
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
-                            }
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'id' => $model->partner->id, 'date' => $model->dateMonth, 'type' => $model->service_type, 'group' => $group]);
+                        }
                     ]
                 ],
             ]
@@ -103,13 +100,13 @@ CanvasJsAsset::register($this);
             <?php
             $js = '
                 var it = 1;
-                var dataTable = '.$chartData.';
+                var dataTable = ' . $chartData . ';
                 CanvasJS.addColorSet("blue",["#428bca"]);
 
                 var options = {
                     colorSet: "blue",
                     title: {
-                        text: "'.$chartTitle.'",
+                        text: "' . $chartTitle . '",
                         fontColor: "#069",
                         fontSize: 22
                     },

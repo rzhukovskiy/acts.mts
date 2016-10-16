@@ -154,7 +154,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
-                        return Html::a($date, ['/stat/month', 'date' => date('Y-m', strtotime($data->dateMonth))]);
+                        return $date;
                     }
                 ],
                 [

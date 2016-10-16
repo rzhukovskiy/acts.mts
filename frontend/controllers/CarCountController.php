@@ -89,10 +89,6 @@ class CarCountController extends Controller
             ->byType($type)
             ->with(['mark', 'type', 'company']);
 
-        if (!empty($company))
-            $dataProvider->query
-                ->andWhere(['company_id' => $company]);
-
         $dataProvider->pagination = false;
 
         $companyModels = Company::find()->active()
