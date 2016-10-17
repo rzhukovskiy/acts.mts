@@ -321,7 +321,7 @@ class Company extends ActiveRecord
             return [];
         }
         $workStart = $this->info->start_at ? date('H:i', $this->info->start_at) : '00:00';
-        $workEnd = $this->info->end_at ? date('H:i', $this->info->end_at) : '23:00';
+        $workEnd = $this->info->end_at ? date('H:i', $this->info->end_at) : '24:00';
 
 
         $points[] = [
@@ -337,7 +337,7 @@ class Company extends ActiveRecord
             'type' => 's',
         ];
         $points[] = [
-            'value' => '23:00',
+            'value' => '24:00',
             'type' => 'e',
         ];
         /** @var Entry $entry */
