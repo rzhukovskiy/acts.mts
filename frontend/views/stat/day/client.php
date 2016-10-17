@@ -90,7 +90,7 @@ use common\components\DateHelper;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) use($searchModel) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id, 'type' => $searchModel->service_type]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/act', 'id' => $model->id, 'type' => $searchModel->service_type, 'group' => 'company']);
                         }
                     ],
                     'visible' => in_array($searchModel->service_type, [Service::TYPE_SERVICE, Service::TYPE_TIRES]),
