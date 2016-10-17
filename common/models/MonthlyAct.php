@@ -15,6 +15,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $payment_status
  * @property integer $payment_date
  * @property integer $act_status
+ * @property string $act_date
  * @property string $img
  * @property integer $created_at
  * @property integer $updated_at
@@ -81,7 +82,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['client_id', 'type_id'], 'required'],
+            [['client_id', 'type_id', 'act_date'], 'required'],
             [
                 [
                     'client_id',
@@ -95,7 +96,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 ],
                 'integer'
             ],
-            [['img'], 'string'],
+            [['img', 'act_date'], 'string'],
             [
                 ['client_id'],
                 'exist',
@@ -113,13 +114,14 @@ class MonthlyAct extends \yii\db\ActiveRecord
     {
         return [
             'id'             => 'ID',
-            'client_id'      => 'Client ID',
-            'type_id'        => 'Type ID',
-            'profit'         => 'Profit',
-            'payment_status' => 'Payment Status',
-            'payment_date'   => 'Payment Date',
-            'act_status'     => 'Act Status',
-            'img'            => 'Img',
+            'client_id'      => 'Клиент',
+            'type_id'        => 'Тип',
+            'profit'         => 'Доход',
+            'payment_status' => 'Статус оплаты',
+            'payment_date'   => 'Дата оплаты',
+            'act_status'     => 'Статус акта',
+            'act_date'       => 'Дата акта',
+            'img'            => 'Изображения',
             'created_at'     => 'Created At',
             'updated_at'     => 'Updated At',
         ];

@@ -15,6 +15,7 @@ class m161017_075431_create_table_monthly_act extends Migration
                 'payment_status' => $this->smallInteger(),
                 'payment_date'   => $this->integer(),
                 'act_status'     => $this->smallInteger(),
+                'act_date'       => $this->date(),
                 'img'            => $this->text(),
                 'created_at'     => $this->integer(),
                 'updated_at'     => $this->integer(),

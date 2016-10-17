@@ -8,11 +8,8 @@
 
 namespace backend\widgets\Menu;
 
-use common\models\Act;
 use common\models\Company;
 use common\models\Department;
-use common\models\search\ActSearch;
-use common\models\Service;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
@@ -36,8 +33,9 @@ class menuLeftWidget extends Widget
     //инициализация пунктов меню
     protected function getItems()
     {
-        if (!empty($this->items))
+        if (!empty($this->items)) {
             return $this->items;
+        }
 
         $items = [];
         // Admin links
@@ -45,45 +43,49 @@ class menuLeftWidget extends Widget
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
-                    'label' => 'Отделы',
-                    'url' => ['/department/index'],
+                    'label'  => 'Отделы',
+                    'url'    => ['/department/index'],
                     'active' => Yii::$app->controller->id == 'department',
                 ],
                 [
-                    'label' => 'Сотрудники',
-                    'url' => ['/user/list', 'department' => Department::getFirstId()],
+                    'label'  => 'Сотрудники',
+                    'url'    => ['/user/list', 'department' => Department::getFirstId()],
                     'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
                     'label' => 'Заявки',
-                    'url' => '#',
+                    'url'   => '#',
                 ],
                 [
-                    'label' => 'Архив',
-                    'url' => ['/company/archive?type=' . Company::TYPE_WASH],
-                    'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
-                    ),
+                    'label'  => 'Архив',
+                    'url'    => ['/company/archive?type=' . Company::TYPE_WASH],
+                    'active' => ((Yii::$app->controller->id == 'company' &&
+                            Yii::$app->controller->action->id == 'archive') ||
+                        ($company &&
+                            Yii::$app->controller->id == 'company' &&
+                            $company->status == Company::STATUS_ACTIVE)),
                 ],
                 [
-                    'label' => 'Отказ',
-                    'url' => ['/company/refuse?type=' . Company::TYPE_WASH],
-                    'active' => (
-                        Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse'
-                    ),
+                    'label'  => 'Отказ',
+                    'url'    => ['/company/refuse?type=' . Company::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'company' &&
+                        Yii::$app->controller->action->id == 'refuse'),
                 ],
                 [
                     'label' => 'Сообщения',
-                    'url' => '#',
+                    'url'   => '#',
+                ],
+                [
+                    'label' => 'Акты и оплата',
+                    'url'   => ['/monthly-act/list?type=' . Company::TYPE_WASH],
                 ],
             ];
         } // Account manager links
         elseif (Yii::$app->user->identity->role == User::ROLE_ACCOUNT) {
             $items = [
                 [
-                    'label' => 'Мойки',
-                    'url' => ['/wash/list'],
+                    'label'  => 'Мойки',
+                    'url'    => ['/wash/list'],
                     'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
                 ],
             ];
@@ -91,7 +93,7 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Вход',
-                    'url' => ['/site/index'],
+                    'url'   => ['/site/index'],
                 ],
             ];
         }
