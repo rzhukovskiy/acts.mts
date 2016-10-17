@@ -113,7 +113,7 @@ class StatController extends Controller
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
-                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
+                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
                 ->joinWith('client client');
         }
         else {
@@ -178,7 +178,7 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER) {
             $dataProvider->query
                 ->addSelect('client_id')
-                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
+                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
                 ->joinWith('client client');
         }
         else {
@@ -238,7 +238,7 @@ class StatController extends Controller
         if ($companyModel->type == Company::TYPE_OWNER)
             $dataProvider->query
                 ->addSelect('client_id')
-                ->orWhere(['or', ['client.parent_id' => $companyModel->id,'client_id' => $companyModel->id]])
+                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
                 ->joinWith('client client');
         else
             $dataProvider->query
@@ -294,13 +294,16 @@ class StatController extends Controller
         $dataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
         $chartDataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
         $dataProvider->pagination = false;
-        $dataProvider->query->with(['client']);
+        $dataProvider->query->joinWith(['client client']);
+        $chartDataProvider->query->joinWith(['client client']);
 
         /** @var User $identity */
         $identity = Yii::$app->user->identity;
         if ($identity->role == User::ROLE_CLIENT) {
-            $dataProvider->query->andWhere(['client_id' => $identity->company_id]);
-            $chartDataProvider->query->andWhere(['client_id' => $identity->company_id]);
+            $dataProvider->query
+                ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
+            $chartDataProvider->query
+                ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
         }
         if ($identity->role == User::ROLE_PARTNER) {
             $dataProvider->query->andWhere(['partner_id' => $identity->company_id]);
