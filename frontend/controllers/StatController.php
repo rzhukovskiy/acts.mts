@@ -100,7 +100,7 @@ class StatController extends Controller
         $searchModel->scenario = 'statistic_client_filter';
 
         /** @var Company $companyModel */
-        $id = $id ? $id : $searchModel->client_id;
+        $id = $id ? $id : ($searchModel->client_id ? $searchModel->client_id : null);
         $companyModel = $this->findCompanyModel($id);
 
         $this->view->title = 'Статистика "' . $companyModel->name;
@@ -164,7 +164,7 @@ class StatController extends Controller
             ]);
 
         /** @var Company $companyModel */
-        $id = $id ? $id : $searchModel->client_id;
+        $id = $id ? $id : ($searchModel->client_id ? $searchModel->client_id : null);
         $companyModel = $this->findCompanyModel($id);
         $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
 
@@ -223,7 +223,7 @@ class StatController extends Controller
         $searchModel->service_type = $type;
         $searchModel->scenario = 'statistic_partner_filter';
 
-        $id = $id ? $id : $searchModel->client_id;
+        $id = $id ? $id : ($searchModel->client_id ? $searchModel->client_id : null);
         $companyModel = $this->findCompanyModel($id);
         $this->view->title = 'Статистика "' . $companyModel->name . '" за ' . date('d', strtotime($date)) . ' ' . DateHelper::getMonthName($date, 0) . ' ' . date('Y', strtotime($date));
 
