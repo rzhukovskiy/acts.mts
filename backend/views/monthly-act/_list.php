@@ -2,12 +2,12 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $searchModel \common\models\search\CompanySearch
+ * @var $searchModel \common\models\search\MonthlyActSearch
  */
 use common\models\MonthlyAct;
 use kartik\date\DatePicker;
 use kartik\grid\GridView;
-
+use yii\helpers\Html;
 
 $filters = 'Период: ' . DatePicker::widget([
         'model'         => $searchModel,
@@ -93,7 +93,7 @@ $filters = 'Период: ' . DatePicker::widget([
                 'payment_status' => [
                     'attribute' => 'payment_status',
                     'value'     => function ($data) {
-                        return MonthlyAct::$paymentStatus[$data->payment_status]['ru'];
+                        return MonthlyAct::$paymentStatus[$data->payment_status];
                     },
                     'filter'    => false,
                 ],
@@ -101,14 +101,33 @@ $filters = 'Период: ' . DatePicker::widget([
                 'act_status'     => [
                     'attribute' => 'act_status',
                     'value'     => function ($data) {
-                        return MonthlyAct::$actStatus[$data->act_status]['ru'];
+                        return MonthlyAct::$actStatus[$data->act_status];
                     },
                     'filter'    => false,
                 ],
                 [
                     'class'          => 'yii\grid\ActionColumn',
-                    'template'       => '{update} {delete}',
+                    'template'       => '{update}{info}{delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
+                    'buttons'        => [
+                        'info' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-zoom-in"></span>',
+                                ['/monthly-act/detail', 'id' => $model->id],
+                                ['title' => "Детализация", 'aria-label' => "Детализация", 'data-pjax' => "0"]);
+                        },
+                        /*
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
+                        },
+                        'delete' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/car/delete', 'id' => $model->id], [
+                                'data-confirm' => "Are you sure you want to delete this item?",
+                                'data-method' => "post",
+                                'data-pjax' => "0",
+                            ]);
+                        },
+                        */
+                    ]
                 ],
             ],
         ]);

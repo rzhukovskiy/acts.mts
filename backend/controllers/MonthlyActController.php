@@ -28,7 +28,7 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['archive', 'refuse', 'create', 'update', 'delete'],
+                        'actions' => ['update', 'detail', 'delete'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
@@ -43,11 +43,71 @@ class MonthlyActController extends Controller
     }
 
 
+    public function actionList($type, $company = 0)
+    {
+        $searchModel = new MonthlyActSearch();
+        $searchModel->type_id = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $role = Yii::$app->user->identity->role;
+
+        return $this->render('list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'company'      => $company,
+                'role'         => $role,
+            ]);
+    }
+
+    /**
+     * Updates an existing Company model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(Yii::$app->request->post('__returnUrl'));
+        } else {
+            return $this->render('update',
+                [
+                    'model' => $this->findModel($id)
+                ]);
+        }
+    }
+
+    /**
+     * Updates an existing Company model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDetail($id)
+    {
+        $model = $this->findModel($id);
+        $model->scenario = 'detail';
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(Yii::$app->request->post('__returnUrl'));
+        } else {
+            return $this->render('detail',
+                [
+                    'model' => $this->findModel($id)
+                ]);
+        }
+    }
+
+
     /**
      * Finds the Company model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Company the loaded model
+     * @return MonthlyAct the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -59,21 +119,4 @@ class MonthlyActController extends Controller
         }
     }
 
-    public function actionList($type, $company = 0)
-    {
-        $searchModel = new MonthlyActSearch();
-        $searchModel->type_id = $type;
-
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $role = Yii::$app->user->identity->role;
-
-        return $this->render('list',
-        [
-            'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
-            'type'         => $type,
-            'company'      => $company,
-            'role'         => $role,
-        ]);
-    }
 }

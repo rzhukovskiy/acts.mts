@@ -9,7 +9,7 @@ class MonthlyActController extends Controller
 {
     public function actionInit()
     {
-        $shift = '-2 month';
+        $shift = '-1 month';
         $actDate = date('Y-m-d', strtotime($shift));
 
         $isHasAct = MonthlyAct::find()->where(['act_date' => $actDate])->exists();
