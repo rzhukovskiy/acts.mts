@@ -45,7 +45,7 @@ if ($role == User::ROLE_ADMIN) {
 echo GridView::widget([
     'id' => 'act-grid',
     'dataProvider' => $dataProvider,
-    'filterModel' => $hideFilter ? null : $searchModel,
+    'filterModel' => ($hideFilter || $role != User::ROLE_ADMIN) ? null : $searchModel,
     'summary' => false,
     'emptyText' => '',
     'panel' => [
