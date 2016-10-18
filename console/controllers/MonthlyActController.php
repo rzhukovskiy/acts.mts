@@ -4,13 +4,13 @@ namespace console\controllers;
 use common\models\MonthlyAct;
 use Yii;
 use yii\console\Controller;
+use yii\db\Expression;
 
 class MonthlyActController extends Controller
 {
-    public function actionInit()
+    public function actionCreate($allDate = false)
     {
-        $shift = '-1 month';
-        $actDate = date('Y-m-d', strtotime($shift));
+        $actDate = date('Y-m-d', strtotime('-1 month'));
 
         $isHasAct = MonthlyAct::find()->where(['act_date' => $actDate])->exists();
         if ($isHasAct) {
@@ -18,12 +18,25 @@ class MonthlyActController extends Controller
 
             return 0;
         }
-        $allAct =
-            (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
-                ->from('act')
-                ->where(["date_format(FROM_UNIXTIME(created_at), '%Y%m')" => date('Ym', strtotime($shift))])
-                ->groupBy('client_id,type_id')
-                ->all();
+        //Создаем за 1 месяц
+        if (!$allDate) {
+            $allAct =
+                (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
+                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(created_at), "%Y-%m-00") as date'))
+                    ->from('act')
+                    ->where(["date_format(FROM_UNIXTIME(created_at), '%Y%m')" => date('Ym', strtotime('-1 month'))])
+                    ->groupBy('client_id,type_id,date')
+                    ->all();
+        } else {//Создаем за все месяцы
+            $allAct =
+                (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
+                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(created_at), "%Y-%m-00") as date'))
+                    ->where(["<=", "date_format(FROM_UNIXTIME(created_at), '%Y%m')", date('Ym', strtotime('-1 month'))])
+                    ->from('act')
+                    ->groupBy('client_id,type_id,date')
+                    ->all();
+        }
+
         if (!$allAct) {
             echo "Monthly Acts not created!\n";
 
@@ -34,8 +47,7 @@ class MonthlyActController extends Controller
             $MonthlyAct->client_id = $act['client_id'];
             $MonthlyAct->type_id = $act['type_id'];
             $MonthlyAct->profit = $act['profit'];
-            $MonthlyAct->profit = $act['profit'];
-            $MonthlyAct->act_date = $actDate;
+            $MonthlyAct->act_date = $act['date'];
             $MonthlyAct->save();
         }
         echo "Monthly Acts successfully created!\n";
