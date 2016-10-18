@@ -31,6 +31,9 @@ use yii\helpers\Html;
             ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
         <?= $form->field($model->client, 'address')
             ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
+
+        <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+
         <?= $form->field($model, 'profit')->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
         <?= $form->field($model, 'payment_status')
             ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control']) ?>

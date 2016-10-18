@@ -6,18 +6,20 @@
  * @var $model common\models\Company
  * @var $searchModel \common\models\search\CompanySearch
  * @var $type integer
+ * @var $admin boolean
  */
 $this->title = \common\models\Company::$listType[$type]['ru'];
 
 echo $this->render('_tabs',
-[
-    'type' => $type,
-]);
+    [
+        'type' => $type,
+    ]);
 
 
 echo $this->render('_list',
-[
-    'dataProvider' => $dataProvider,
-    'searchModel'  => $searchModel,
-    'type'         => $type,
-]);
+    [
+        'dataProvider' => $dataProvider,
+        'searchModel'  => $searchModel,
+        'type'         => $type,
+        'admin'        => $admin
+    ]);

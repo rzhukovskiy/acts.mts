@@ -3,6 +3,7 @@
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\MonthlyActSearch
+ * @var $admin boolean
  */
 use common\models\MonthlyAct;
 use kartik\date\DatePicker;
@@ -29,6 +30,54 @@ $filters = 'Период: ' . DatePicker::widget([
         ]
     ]);
 
+if ($admin) {
+    $visibleButton = [];
+} else {
+    $visibleButton = [
+        'update' => function ($model, $key, $index) {
+            return $model->act_status != MonthlyAct::ACT_STATUS_DONE;
+        },
+        'detail' => function ($model, $key, $index) {
+            return $model->act_status != MonthlyAct::ACT_STATUS_DONE;
+        },
+        'delete' => function ($model, $key, $index) {
+            return false;
+        },
+    ];
+}
+
+echo newerton\fancybox\FancyBox::widget([
+    'target'  => 'a[rel=fancybox]',
+    'helpers' => true,
+    'mouse'   => true,
+    'config'  => [
+        'maxWidth'    => '90%',
+        'maxHeight'   => '90%',
+        'playSpeed'   => 7000,
+        'padding'     => 0,
+        'fitToView'   => false,
+        'width'       => '70%',
+        'height'      => '70%',
+        'autoSize'    => false,
+        'closeClick'  => false,
+        'openEffect'  => 'elastic',
+        'closeEffect' => 'elastic',
+        'prevEffect'  => 'elastic',
+        'nextEffect'  => 'elastic',
+        'closeBtn'    => false,
+        'openOpacity' => true,
+        'helpers'     => [
+            'title'   => ['type' => 'float'],
+            'buttons' => [],
+            'thumbs'  => ['width' => 68, 'height' => 50],
+            'overlay' => [
+                'css' => [
+                    'background' => 'rgba(0, 0, 0, 0.8)'
+                ]
+            ]
+        ],
+    ]
+]);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -105,29 +154,47 @@ $filters = 'Период: ' . DatePicker::widget([
                     },
                     'filter'    => false,
                 ],
+                'img'            => [
+                    'attribute' => 'img',
+                    'value'     => function ($data) {
+                        $allImg = [];
+                        if (!$data->img) {
+                            return false;
+                        }
+                        foreach ($data->img as $img) {
+                            $imgName = explode("/", $img);
+                            $imgName = array_pop($imgName);
+                            $a = Html::tag('a', $imgName, ['rel' => 'fancybox', 'href' => $img]);
+                            $a .= Html::tag('a',
+                                '',
+                                [
+                                    'class' => 'glyphicon glyphicon-remove',
+                                    'href'  => \yii\helpers\Url::to([
+                                            'monthly-act/delete-image',
+                                            'id'  => $data->id,
+                                            'url' => $img
+                                        ])
+                                ]);
+                            $allImg[] = Html::tag('p', $a);
+                        }
+
+                        return implode('', $allImg);
+                    },
+                    'filter'    => false,
+                    'format'    => 'raw'
+                ],
                 [
                     'class'          => 'yii\grid\ActionColumn',
-                    'template'       => '{update}{info}{delete}',
+                    'template'       => '{update}{detail}{delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
                     'buttons'        => [
-                        'info' => function ($url, $model, $key) {
+                        'detail' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-zoom-in"></span>',
                                 ['/monthly-act/detail', 'id' => $model->id],
                                 ['title' => "Детализация", 'aria-label' => "Детализация", 'data-pjax' => "0"]);
                         },
-                        /*
-                        'update' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
-                        },
-                        'delete' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/car/delete', 'id' => $model->id], [
-                                'data-confirm' => "Are you sure you want to delete this item?",
-                                'data-method' => "post",
-                                'data-pjax' => "0",
-                            ]);
-                        },
-                        */
-                    ]
+                    ],
+                    'visibleButtons' => $visibleButton
                 ],
             ],
         ]);

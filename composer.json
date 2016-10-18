@@ -1,7 +1,12 @@
 {
     "name": "yiisoft/yii2-app-advanced",
     "description": "Yii 2 Advanced Project Template",
-    "keywords": ["yii2", "framework", "advanced", "project template"],
+    "keywords": [
+        "yii2",
+        "framework",
+        "advanced",
+        "project template"
+    ],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-3-Clause",
@@ -29,7 +34,8 @@
         "yiisoft/yii2-jui": "~2.0.0",
         "websanova/wPaint": "2.*",
         "phpoffice/phpexcel": "^1.8",
-        "yurkinx/yii2-image": "dev-master"
+        "yurkinx/yii2-image": "dev-master",
+        "newerton/yii2-fancybox": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -51,14 +57,14 @@
     },
     "repositories": [
         {
-            "type":"package",
-            "package":{
-                "name":"websanova/wPaint",
-                "version":"2.5.0",
-                "source":{
-                    "type":"git",
-                    "url":"https://github.com/websanova/wPaint",
-                    "reference":"master"
+            "type": "package",
+            "package": {
+                "name": "websanova/wPaint",
+                "version": "2.5.0",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/websanova/wPaint",
+                    "reference": "master"
                 }
             }
         }

@@ -28,12 +28,12 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['update', 'detail', 'delete'],
+                        'actions' => ['delete', 'delete-image'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['update', 'detail', 'list'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER],
                     ],
@@ -49,7 +49,7 @@ class MonthlyActController extends Controller
         $searchModel->type_id = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $role = Yii::$app->user->identity->role;
+
 
         return $this->render('list',
             [
@@ -57,7 +57,7 @@ class MonthlyActController extends Controller
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'company'      => $company,
-                'role'         => $role,
+                'admin'        => Yii::$app->user->can(User::ROLE_ADMIN),
             ]);
     }
 
@@ -70,9 +70,14 @@ class MonthlyActController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->post('__returnUrl'));
+        if ($model->load(Yii::$app->request->post())) {
+            $model->image = yii\web\UploadedFile::getInstance($model, 'image');
+            $model->uploadImage();
+            if ($model->save()) {
+                return $this->redirect(Yii::$app->request->post('__returnUrl'));
+            } else {
+                //Удаляем акт
+            }
         } else {
             return $this->render('update',
                 [
@@ -102,6 +107,28 @@ class MonthlyActController extends Controller
         }
     }
 
+
+    /**
+     * Deletes an existing Act model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionDeleteImage($id, $url)
+    {
+        $model = $this->findModel($id);
+        $model->deleteImage($url);
+        $model->save();
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
 
     /**
      * Finds the Company model based on its primary key value.

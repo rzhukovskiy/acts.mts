@@ -2,8 +2,10 @@
 
 namespace common\models;
 
+use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "monthly_act".
@@ -16,7 +18,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $payment_date
  * @property integer $act_status
  * @property string $act_date
- * @property string $img
+ * @property array $img
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -31,6 +33,8 @@ use yii\behaviors\TimestampBehavior;
  */
 class MonthlyAct extends \yii\db\ActiveRecord
 {
+    use JsonTrait;
+
     const PAYMENT_STATUS_NOT_DONE = 0;
     const PAYMENT_STATUS_DONE = 1;
 
@@ -39,6 +43,9 @@ class MonthlyAct extends \yii\db\ActiveRecord
     const ACT_STATUS_SEND_ORIGIN = 2;
     const ACT_STATUS_SIGNED_SCAN = 3;
     const ACT_STATUS_DONE = 4;
+
+    const ACT_WIDTH = 1024;
+    const ACT_HEIGHT = 768;
 
 
     public static $paymentStatus = [
@@ -53,6 +60,11 @@ class MonthlyAct extends \yii\db\ActiveRecord
         self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
         self::ACT_STATUS_DONE        => 'Исполнен'
     ];
+
+    /**
+     * @var UploadedFile
+     */
+    public $image;
 
     /**
      * @inheritdoc
@@ -81,7 +93,8 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 ],
                 'integer'
             ],
-            [['img', 'act_date', 'payment_date'], 'string'],
+            [['img', 'act_date', 'payment_date'], 'string', 'on' => 'default'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'on' => 'default'],
             [
                 [
                     'act_comment',
@@ -118,7 +131,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'payment_date'          => 'Дата оплаты',
             'act_status'            => 'Статус акта',
             'act_date'              => 'Дата акта',
-            'img'                   => 'Изображения',
+            'img'                   => 'Сканы акта',
             'act_comment'           => 'Комментарии к акту',
             'act_send_date'         => 'Дата отправления акта по почте',
             'act_client_get_date'   => 'Предполагаемая дата получения клиентом',
@@ -186,7 +199,23 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $this->timestampToDate('act_we_get_date');
         $this->timestampToDate('payment_estimate_date');
 
+        $this->decodeJsonFields([
+            'img',
+        ]);
+
         parent::afterFind();
+    }
+
+    /**
+     * @return bool
+     */
+    public function beforeValidate()
+    {
+        $this->encodeJsonFields([
+            'img',
+        ]);
+
+        return parent::beforeValidate();
     }
 
     public function beforeSave($insert)
@@ -208,6 +237,56 @@ class MonthlyAct extends \yii\db\ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * @throws \yii\base\ErrorException
+     */
+    public function uploadImage()
+    {
+        if ($this->image) {
+            $image = \Yii::$app->image->load($this->image->tempName);
+            /**
+             * @var $image \yii\image\drivers\Image
+             */
+            $img = (!$this->img) ? [] : $this->img;
+            $count = count($this->img);
+            $imageDir = '/files/monthly-check/' . $this->act_date . '/';
+            $imageName = $imageDir . $this->id . '_' . ($count + 1) . '.' . $this->image->extension;
+            $imageDir = \Yii::getAlias('@webroot' . $imageDir);
+            if (!is_dir($imageDir)) {
+                mkdir($imageDir, '0777', true);
+            }
+            $imagePath = \Yii::getAlias('@webroot' . $imageName);
+            if ($image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath)) {
+                $img[] = $imageName;
+                $this->img = $img;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $deleteImage
+     */
+    public function deleteImage($deleteImage)
+    {
+        $tmpImg = [];
+        if ($this->img && is_array($this->img)) {
+            foreach ($this->img as $img) {
+                if ($img == $deleteImage) {
+                    $imagePath = \Yii::getAlias('@webroot' . $img);
+                    if (is_file($imagePath)) {
+                        unlink($imagePath);
+                    }
+                } else {
+                    $tmpImg[] = $img;
+                }
+            }
+            $this->img = $tmpImg;
+        }
+
     }
 
 }
