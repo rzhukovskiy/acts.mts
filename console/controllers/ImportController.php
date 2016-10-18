@@ -407,11 +407,11 @@ class ImportController extends Controller
 
                 if (!YII_ENV_DEV) {
                     if ($rowData['sign']) {
-                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['sign']}-sign.png";
+                        $file = "http://acts.mtransservice.ru/files/signs/{$rowData['sign']}-sign.png";
                         $newfile = "frontend/web/files/checks/$act_id-sign.png";
                         copy($file, $newfile);
 
-                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['sign']}-name.png";
+                        $file = "http://acts.mtransservice.ru/files/signs/{$rowData['sign']}-name.png";
                         $newfile = "frontend/web/files/checks/$act_id-name.png";
                         copy($file, $newfile);
                     }
@@ -507,7 +507,7 @@ class ImportController extends Controller
 
                 if (!YII_ENV_DEV && $served_at > time() - 3600 * 24 * 75) {
                     if ($rowData['check_image']) {
-                        $file = "http://docs.mtransservice.ru/files/checks/{$rowData['check_image']}";
+                        $file = "http://acts.mtransservice.ru/files/checks/{$rowData['check_image']}";
                         $newfile = "frontend/web/files/checks/$act_id.jpg";
                         copy($file, $newfile);
                     }

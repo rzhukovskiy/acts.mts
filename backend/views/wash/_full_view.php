@@ -7,18 +7,18 @@
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= $model->name ?>  <?= $model->info->address ?>
+        <?= $model->name ?>  <span class="work-time"><?= $model->info->address ?></span>
     </div>
     <div class="panel-body">
         <table class="table table-bordered" style="margin: 0;">
             <tbody>
-            <tr>
+            <tr style="font-size: larger">
                 <td colspan="2">
                     <label class="control-label">Телефон:</label> <?= $model->info->phone ?>
                 </td>
                 <td colspan="2">
                     <label class="control-label">Время работы:</label>
-                    <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '23:00' ?>
+                    <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '24:00' ?>
                 </td>
             </tr>
             <?php
@@ -29,7 +29,7 @@
                     echo '<tr class="free-time">';
                 }
                 echo '<td style="width:25%">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</td>';
-                if ($i + 1 == count($arrayFreeTime)) {
+                if ($i + 1 == count($arrayFreeTime) && count($arrayFreeTime) % 4) {
                     for ($j = 0; $j < 4 - count($arrayFreeTime) % 4; $j++) {
                         echo '<td style="width:25%"></td>';
                     }

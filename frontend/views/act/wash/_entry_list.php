@@ -31,6 +31,9 @@ use yii\helpers\Html;
                     'value' => function ($model) {
                         return date('H:i', $model->start_at);
                     },
+                    'contentOptions' => [
+                        'class' => 'entry-time',
+                    ]
                 ],
                 [
                     'header' => 'Карта',

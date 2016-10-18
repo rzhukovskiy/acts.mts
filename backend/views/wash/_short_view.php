@@ -11,13 +11,11 @@ use yii\bootstrap\Html;
     <div class="panel panel-primary">
         <div class="panel-heading">
             <?= $model->name ?>
+            <span class="work-time"><?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '24:00' ?></span>
         </div>
         <div class="panel-body">
-            <div class="col-sm-6" style="margin-top: 15px;">
+            <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
                 <?= $model->info->address ?>
-            </div>
-            <div class="col-sm-6" style="margin-top: 15px;">
-                <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '23:00' ?>
             </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php

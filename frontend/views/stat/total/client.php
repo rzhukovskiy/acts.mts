@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Company;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Service;
@@ -14,7 +15,7 @@ use common\assets\CanvasJs\CanvasJsAsset;
  * @var $chartData array
  * @var $totalProfit int
  * @var $totalServe int
- * @var $totalExpense int
+ * @var $totalIncome int
  */
 
 CanvasJsAsset::register($this);
@@ -173,24 +174,14 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
-                    'attribute' => 'expense',
+                    'attribute' => 'income',
                     'header' => 'Расход',
                     'content' => function ($data) {
-                        return Yii::$app->formatter->asDecimal($data->expense, 0);
+                        return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
-                    'footer' => $totalExpense,
+                    'footer' => $totalIncome,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-                [
-                    'attribute' => 'profit',
-                    'header' => 'Прибыль',
-                    'content' => function ($data) {
-                        return Yii::$app->formatter->asDecimal($data->profit, 0);
-                    },
-                    'footer' => $totalProfit,
-                    'footerOptions' => ['style' => 'font-weight: bold'],
-                ],
-
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',

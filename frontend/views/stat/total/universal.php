@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Company;
 use kartik\grid\GridView;
 use yii\bootstrap\Html;
 use common\assets\CanvasJs\CanvasJsAsset;

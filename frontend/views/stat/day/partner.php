@@ -85,6 +85,14 @@ CanvasJsAsset::register($this);
                 ],
                 [
                     'attribute' => 'check',
+                    'value' => function ($data) {
+                        $imageLink = $data->getImageLink();
+                        if ($imageLink) {
+                            return Html::a($data->check, $imageLink, ['class' => 'preview']);
+                        }
+                        return 'error';
+                    },
+                    'format' => 'raw',
                     'visible' => $searchModel->service_type == Service::TYPE_WASH,
                 ],
                 [

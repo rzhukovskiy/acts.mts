@@ -185,6 +185,14 @@ table.sign {
 }
 
 /* schedule */
+.work-time {
+    padding-left: 20px;
+    color: #f0ad4e;
+}
+.entry-time {
+    font-weight: bold;
+    color: #f0ad4e;
+}
 .free-time {
     color: red;
     font-size: 30px;
