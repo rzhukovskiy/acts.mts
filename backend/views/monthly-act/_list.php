@@ -6,10 +6,12 @@
  * @var $admin boolean
  */
 use common\models\MonthlyAct;
+use common\models\User;
 use kartik\date\DatePicker;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
+//Настройки фильтров
 $filters = 'Период: ' . DatePicker::widget([
         'model'         => $searchModel,
         'attribute'     => 'act_date',
@@ -29,8 +31,8 @@ $filters = 'Период: ' . DatePicker::widget([
             'class' => 'form-control ext-filter',
         ]
     ]);
-
-if ($admin) {
+//Настройки кнопок
+if (Yii::$app->user->can(User::ROLE_ADMIN)) {
     $visibleButton = [];
 } else {
     $visibleButton = [
@@ -45,9 +47,9 @@ if ($admin) {
         },
     ];
 }
-
+//Настройки галереи
 echo newerton\fancybox\FancyBox::widget([
-    'target'  => 'a[rel=fancybox]',
+    'target'  => 'a.fancybox',
     'helpers' => true,
     'mouse'   => true,
     'config'  => [
@@ -80,9 +82,6 @@ echo newerton\fancybox\FancyBox::widget([
 ]);
 ?>
 <div class="panel panel-primary">
-    <div class="panel-heading">
-        Список моек
-    </div>
     <div class="panel-body">
         <?=
         GridView::widget([
@@ -93,7 +92,7 @@ echo newerton\fancybox\FancyBox::widget([
             'emptyText'        => '',
             'panel'            => [
                 'type'    => 'primary',
-                'heading' => 'Услуги',
+                'heading' => 'Сводные акты по ' . \common\models\Service::$listType[$type]['ru'],
                 'before'  => false,
                 'footer'  => false,
                 'after'   => false,
@@ -110,7 +109,7 @@ echo newerton\fancybox\FancyBox::widget([
                             'content' => $filters,
                             'options' => [
                                 'style'   => 'vertical-align: middle',
-                                'colspan' => 8,
+                                'colspan' => 9,
                                 'class'   => 'kv-grid-group-filter',
                             ],
                         ]
@@ -148,37 +147,19 @@ echo newerton\fancybox\FancyBox::widget([
                 ],
                 'payment_date',
                 'act_status'     => [
-                    'attribute' => 'act_status',
-                    'value'     => function ($data) {
+                    'attribute'      => 'act_status',
+                    'value'          => function ($data) {
                         return MonthlyAct::$actStatus[$data->act_status];
                     },
-                    'filter'    => false,
+                    'contentOptions' => function ($model) {
+                        return ['class' => MonthlyAct::colorForStatus($model->act_status)];
+                    },
+                    'filter'         => false,
                 ],
                 'img'            => [
                     'attribute' => 'img',
                     'value'     => function ($data) {
-                        $allImg = [];
-                        if (!$data->img) {
-                            return false;
-                        }
-                        foreach ($data->img as $img) {
-                            $imgName = explode("/", $img);
-                            $imgName = array_pop($imgName);
-                            $a = Html::tag('a', $imgName, ['rel' => 'fancybox', 'href' => $img]);
-                            $a .= Html::tag('a',
-                                '',
-                                [
-                                    'class' => 'glyphicon glyphicon-remove',
-                                    'href'  => \yii\helpers\Url::to([
-                                            'monthly-act/delete-image',
-                                            'id'  => $data->id,
-                                            'url' => $img
-                                        ])
-                                ]);
-                            $allImg[] = Html::tag('p', $a);
-                        }
-
-                        return implode('', $allImg);
+                        return $data->getImageList();
                     },
                     'filter'    => false,
                     'format'    => 'raw'

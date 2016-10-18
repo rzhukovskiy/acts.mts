@@ -5,6 +5,7 @@ namespace common\models;
 use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\Html;
 use yii\web\UploadedFile;
 
 /**
@@ -169,7 +170,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
      */
     public function dateToTimestamp($attr)
     {
-        if (isset($this->$attr)) {
+        if (!empty($this->$attr)) {
             $this->$attr = \DateTime::createFromFormat('d-m-Y H:i:s', $this->$attr . ' 12:00:00')->getTimestamp();
         }
     }
@@ -191,6 +192,9 @@ class MonthlyAct extends \yii\db\ActiveRecord
         return new \common\models\query\MonthlyActQuery(get_called_class());
     }
 
+    /**
+     *
+     */
     public function afterFind()
     {
         $this->timestampToDate('payment_date');
@@ -218,6 +222,10 @@ class MonthlyAct extends \yii\db\ActiveRecord
         return parent::beforeValidate();
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
 
@@ -287,6 +295,57 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $this->img = $tmpImg;
         }
 
+    }
+
+    /**
+     * Список изображений для галереи
+     * @return string
+     */
+    public function getImageList()
+    {
+        $allImg = [];
+        if (!$this->img) {
+            return false;
+        }
+        foreach ($this->img as $img) {
+            $imgName = explode("/", $img);
+            $imgName = array_pop($imgName);
+            $a = Html::tag('a', $imgName, ['class' => 'fancybox', 'rel' => 'fancybox-' . $this->id, 'href' => $img]);
+            if (Yii::$app->user->can(User::ROLE_ADMIN)) {
+                $a .= Html::tag('a',
+                    '',
+                    [
+                        'class' => 'glyphicon glyphicon-remove',
+                        'href'  => \yii\helpers\Url::to([
+                            'monthly-act/delete-image',
+                            'id'  => $this->id,
+                            'url' => $img
+                        ])
+                    ]);
+            }
+
+            $allImg[] = Html::tag('p', $a);
+        }
+
+        return implode('', $allImg);
+    }
+
+    /**
+     * Список классов для статуса
+     * @param $status
+     * @return mixed
+     */
+    static function colorForStatus($status)
+    {
+        $actStatus = [
+            self::ACT_STATUS_NOT_SIGNED  => 'bg-danger',
+            self::ACT_STATUS_SEND_SCAN   => 'bg-warning',
+            self::ACT_STATUS_SEND_ORIGIN => 'bg-warning',
+            self::ACT_STATUS_SIGNED_SCAN => 'bg-warning',
+            self::ACT_STATUS_DONE        => 'bg-success'
+        ];
+
+        return $actStatus[$status];
     }
 
 }

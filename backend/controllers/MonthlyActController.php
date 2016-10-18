@@ -35,7 +35,7 @@ class MonthlyActController extends Controller
                     [
                         'actions' => ['update', 'detail', 'list'],
                         'allow'   => true,
-                        'roles'   => [User::ROLE_WATCHER],
+                        'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
                 ],
             ],
@@ -57,7 +57,6 @@ class MonthlyActController extends Controller
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'company'      => $company,
-                'admin'        => Yii::$app->user->can(User::ROLE_ADMIN),
             ]);
     }
 
@@ -75,8 +74,6 @@ class MonthlyActController extends Controller
             $model->uploadImage();
             if ($model->save()) {
                 return $this->redirect(Yii::$app->request->post('__returnUrl'));
-            } else {
-                //Удаляем акт
             }
         } else {
             return $this->render('update',
