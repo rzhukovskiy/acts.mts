@@ -48,7 +48,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'view', 'create', 'sign', 'disinfect', 'create-entry'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],

@@ -220,6 +220,13 @@ class ActHelper
                 'template' => '{update}{delete}',
                 'width' => '70px',
             ],
+            'partnerButtons' => [
+                'header' => '',
+                'mergeHeader' => false,
+                'class' => 'kartik\grid\ActionColumn',
+                'template' => '{update}',
+                'width' => '40px',
+            ],
             'viewButtons' => [
                 'header' => '',
                 'mergeHeader' => false,
@@ -265,7 +272,7 @@ class ActHelper
             ],
             User::ROLE_PARTNER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check'],
+                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check', 'partnerButtons'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense'],
