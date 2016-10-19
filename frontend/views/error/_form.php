@@ -10,6 +10,7 @@
 use common\models\Card;
 use common\models\Company;
 use common\models\Mark;
+use common\models\Service;
 use common\models\Type;
 use common\models\Car;
 use kartik\date\DatePicker;
@@ -56,10 +57,10 @@ use yii\jui\AutoComplete;
                     <?= Html::textInput('partner', $model->partner->name, ['class' => 'form-control', 'disabled' => 'disabled']) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
+                    <?= $model->service_type == Service::TYPE_WASH ? $form->field($model, 'check')->error(false) : '' ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+                    <?= $model->service_type == Service::TYPE_WASH ? $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) : '' ?>
                 </td>
             </tr>
             <tr>
