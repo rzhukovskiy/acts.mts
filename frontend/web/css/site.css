@@ -25,6 +25,12 @@ body {
 .glyphicon {
     color: #069;
 }
+.glyphicon-plus {
+    color: #fff;
+}
+.glyphicon-minus {
+    color: #fff;
+}
 /* login */
 .login-form {
     margin-top: 200px;
