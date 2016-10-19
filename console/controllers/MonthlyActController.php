@@ -4,7 +4,6 @@ namespace console\controllers;
 use common\models\MonthlyAct;
 use Yii;
 use yii\console\Controller;
-use yii\db\Expression;
 
 class MonthlyActController extends Controller
 {
@@ -22,25 +21,12 @@ class MonthlyActController extends Controller
 
             return 0;
         }
-        //Создаем за 1 месяц
-        if (!$allDate) {
-            $allAct =
-                (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
-                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                    ->from('act')
-                    ->where(["date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym', strtotime('-1 month'))])
-                    ->groupBy('client_id,type_id,date')
-                    ->all();
-        } else {//Создаем за все месяцы
-            $allAct =
-                (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
-                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                    ->where(["<=", "date_format(FROM_UNIXTIME(served_at), '%Y%m')", date('Ym', strtotime('-1 month'))])
-                    ->from('act')
-                    ->groupBy('client_id,type_id,date')
-                    ->all();
-        }
 
+        $partnerAct = MonthlyAct::getPartnerAct($allDate);
+
+        $clientAct = MonthlyAct::getClientAct($allDate);
+
+        $allAct = array_merge($partnerAct, $clientAct);
         if (!$allAct) {
             echo "Monthly Acts not created!\n";
 
@@ -48,9 +34,10 @@ class MonthlyActController extends Controller
         }
         foreach ($allAct as $act) {
             $MonthlyAct = new MonthlyAct();
-            $MonthlyAct->client_id = $act['client_id'];
-            $MonthlyAct->type_id = $act['type_id'];
+            $MonthlyAct->client_id = $act['company_id'];
+            $MonthlyAct->type_id = $act['service_type'];
             $MonthlyAct->profit = $act['profit'];
+            $MonthlyAct->is_partner = $act['is_partner'];
             $MonthlyAct->act_date = $act['date'];
             $MonthlyAct->save();
         }

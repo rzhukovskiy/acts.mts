@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\components\ArrayHelper;
 use common\models\MonthlyAct;
 use yii;
 use yii\data\ActiveDataProvider;
@@ -51,7 +52,8 @@ class MonthlyActSearch extends MonthlyAct
         ]);
 
         $this->load($params);
-
+        $company = ArrayHelper::getValue($params, 'company', 0);
+        $this->is_partner = ($company == 0) ? 1 : 0;
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -66,6 +68,7 @@ class MonthlyActSearch extends MonthlyAct
             'client_id'                        => $this->client_id,
             'type_id'                          => $this->type_id,
             'DATE_FORMAT(`act_date`, "%c-%Y")' => $this->act_date,
+            'is_partner'                       => $this->is_partner,
             'created_at'                       => $this->created_at,
             'updated_at'                       => $this->updated_at,
 

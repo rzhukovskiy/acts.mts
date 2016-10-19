@@ -5,6 +5,7 @@ namespace common\models;
 use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 use yii\helpers\Html;
 use yii\web\UploadedFile;
 
@@ -20,6 +21,7 @@ use yii\web\UploadedFile;
  * @property integer $act_status
  * @property string $act_date
  * @property array $img
+ * @property boolean $is_partner
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -89,6 +91,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     'profit',
                     'payment_status',
                     'act_status',
+                    'is_partner',
                     'created_at',
                     'updated_at'
                 ],
@@ -245,6 +248,67 @@ class MonthlyAct extends \yii\db\ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * @param bool $allDate
+     * @param bool $idCompany
+     * @return array
+     */
+    static public function getPartnerAct($allDate = false, $idCompany = false)
+    {
+        $partnerAct =
+            Act::find()
+                ->select('partner_id as company_id,service_type,SUM(expense) as profit')
+                ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
+                ->addSelect(new Expression('1 as is_partner'))
+                ->from('act');
+        if (!$allDate) {
+            $partnerAct = $partnerAct->where([
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
+                    strtotime('-1 month'))
+            ]);
+        } else {
+            $partnerAct = $partnerAct->where([
+                "<=",
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
+                date('Ym', strtotime('-1 month'))
+            ]);
+        }
+        $partnerAct = $partnerAct->groupBy('partner_id,service_type,date')->asArray()->all();
+
+        return $partnerAct;
+    }
+
+    /**
+     * @param bool $allDate
+     * @param bool $idCompany
+     * @return array
+     */
+    static public function getClientAct($allDate = false, $idCompany = false)
+    {
+        $clientAct =
+            Act::find()
+                ->select('client_id as company_id,service_type,SUM(income) as profit')
+                ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
+                ->addSelect(new Expression('0 as is_partner'))
+                ->from('act');
+        if (!$allDate) {
+            $clientAct = $clientAct->where([
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
+                    strtotime('-1 month'))
+            ]);
+        } else {
+            $clientAct = $clientAct->where([
+                "<=",
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
+                date('Ym', strtotime('-1 month'))
+            ]);
+        }
+
+        $clientAct = $clientAct->groupBy('client_id,service_type,date')->asArray()->all();
+
+        return $clientAct;
     }
 
     /**
