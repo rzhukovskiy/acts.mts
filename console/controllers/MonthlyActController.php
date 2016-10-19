@@ -26,16 +26,16 @@ class MonthlyActController extends Controller
         if (!$allDate) {
             $allAct =
                 (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
-                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(created_at), "%Y-%m-00") as date'))
+                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                     ->from('act')
-                    ->where(["date_format(FROM_UNIXTIME(created_at), '%Y%m')" => date('Ym', strtotime('-1 month'))])
+                    ->where(["date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym', strtotime('-1 month'))])
                     ->groupBy('client_id,type_id,date')
                     ->all();
         } else {//Создаем за все месяцы
             $allAct =
                 (new \yii\db\Query())->select('client_id,type_id,SUM(profit) as profit')
-                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(created_at), "%Y-%m-00") as date'))
-                    ->where(["<=", "date_format(FROM_UNIXTIME(created_at), '%Y%m')", date('Ym', strtotime('-1 month'))])
+                    ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
+                    ->where(["<=", "date_format(FROM_UNIXTIME(served_at), '%Y%m')", date('Ym', strtotime('-1 month'))])
                     ->from('act')
                     ->groupBy('client_id,type_id,date')
                     ->all();
