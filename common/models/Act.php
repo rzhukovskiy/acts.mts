@@ -60,22 +60,22 @@ class Act extends ActiveRecord
     const SCENARIO_CAR = 'car';
     const SCENARIO_CREATE = 'create';
 
-    const ACT_WIDTH=1024;
-    const ACT_HEIGHT=768;
+    const ACT_WIDTH = 1024;
+    const ACT_HEIGHT = 768;
 
     public $serviceList;
     public $clientServiceList;
     public $partnerServiceList;
     public $time_str;
     public $actsCount;
-    public $errorMessage=[];
+    public $errorMessage = [];
     /**
      * @var UploadedFile
      */
     public $image;
 
     public static $listStatus = [
-        self::STATUS_NEW => [
+        self::STATUS_NEW    => [
             'ru' => 'Новый',
             'en' => 'new',
         ],
@@ -83,7 +83,7 @@ class Act extends ActiveRecord
             'ru' => 'Закрыт',
             'en' => 'closed',
         ],
-        self::STATUS_FIXED => [
+        self::STATUS_FIXED  => [
             'ru' => 'Исправлен',
             'en' => 'fixed',
         ]
@@ -121,7 +121,24 @@ class Act extends ActiveRecord
             ['check', 'filter', 'filter' => 'trim'],
             ['check', 'default'],
             ['check', 'unique'],
-            [['extra_number', 'card_id', 'check', 'expense', 'income', 'profit', 'service_type', 'serviceList', 'time_str', 'partnerServiceList', 'clientServiceList', 'mark_id', 'type_id'], 'safe'],
+            [
+                [
+                    'extra_number',
+                    'card_id',
+                    'check',
+                    'expense',
+                    'income',
+                    'profit',
+                    'service_type',
+                    'serviceList',
+                    'time_str',
+                    'partnerServiceList',
+                    'clientServiceList',
+                    'mark_id',
+                    'type_id'
+                ],
+                'safe'
+            ],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
@@ -135,23 +152,23 @@ class Act extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'served_at' => 'Дата',
-            'partner_id' => 'Партнер',
-            'client_id' => 'Клиент',
-            'card_id' => 'Карта',
-            'number' => 'Номер',
+            'id'           => 'ID',
+            'served_at'    => 'Дата',
+            'partner_id'   => 'Партнер',
+            'client_id'    => 'Клиент',
+            'card_id'      => 'Карта',
+            'number'       => 'Номер',
             'extra_number' => 'п/п',
-            'mark_id' => 'Марка',
-            'type_id' => 'Тип',
-            'income' => 'Сумма',
-            'expense' => 'Сумма',
-            'check' => 'Чек',
-            'period' => 'Период',
-            'day' => 'День',
-            'time_str' => 'Дата',
-            'image' => 'Загрузка чека',
-            'actsCount' => 'Обслуживания',
+            'mark_id'      => 'Марка',
+            'type_id'      => 'Тип',
+            'income'       => 'Сумма',
+            'expense'      => 'Сумма',
+            'check'        => 'Чек',
+            'period'       => 'Период',
+            'day'          => 'День',
+            'time_str'     => 'Дата',
+            'image'        => 'Загрузка чека',
+            'actsCount'    => 'Обслуживания',
         ];
     }
 
@@ -248,7 +265,7 @@ class Act extends ActiveRecord
         $this->serviceList = [
             0 => [
                 'service_id' => $serviceId,
-                'amount' => 1,
+                'amount'     => 1,
             ]
         ];
         $this->save();
@@ -265,6 +282,7 @@ class Act extends ActiveRecord
         if (file_exists('files/checks/' . $this->id . '.png')) {
             return '/files/checks/' . $this->id . '.png';
         }
+
         return false;
     }
 
@@ -282,15 +300,22 @@ class Act extends ActiveRecord
                 $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
                 break;
             case 'card':
-                $hasError = ($this->service_type != Service::TYPE_DISINFECT) && ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
+                $hasError =
+                    ($this->service_type != Service::TYPE_DISINFECT) &&
+                    ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
                 break;
             case 'car':
-                $hasError = !isset($this->car->company_id) ||
+                $hasError =
+                    !isset($this->car->company_id) ||
                     ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id);
                 break;
             case 'truck':
-                $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
-                    (isset($this->client) && $this->client->is_split && $this->extra_number && !Car::find()->byNumber($this->extra_number)->exists());
+                $hasError =
+                    (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
+                    (isset($this->client) &&
+                        $this->client->is_split &&
+                        $this->extra_number &&
+                        !Car::find()->byNumber($this->extra_number)->exists());
                 break;
         }
 
@@ -304,21 +329,16 @@ class Act extends ActiveRecord
     {
         $errorMessage = [];
         $errorArr = [
-            'expense' => 'Не задан расход',
-            'income'  => 'Не задан приход',
-            'check'   => 'Отсутствует чек',
-            'card'    => (!$this->card->company_id) ? 'Карта не привязана ни к какой компании' :
-                'Хозяин карты (' .
+            'expense' => 'Не указан расход',
+            'income'  => 'Не указан приход',
+            'check'   => 'Чек не загружен',
+            'card'    => (!$this->card->company_id) ? 'Не существует такой номер карты' :
+                'Не совпадает номер карты с номером ТС. Карта - ' .
                 $this->card->company->name .
-                ') не совпадает с хозяином ТС (' .
+                ' ТС - ' .
                 (isset($this->car->company->name) ? $this->car->company->name : 'не указан') .
                 ')',
-            'car'     => (!isset($this->car->company_id)) ? 'Ошибочный номер ТС' :
-                'Владелец ТС (' .
-                $this->car->company->name .
-                ') не совпадает с клиентом, указанным в акте (' .
-                $this->client->name .
-                ')',
+            'car'     => 'Некорректный номер ТС',
             'truck'   => 'Неверный дополнительный номер',
         ];
         foreach ($errorArr as $key => $err) {
@@ -335,7 +355,8 @@ class Act extends ActiveRecord
         $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
 
         if (!empty($this->time_str)) {
-            $this->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
+            $this->served_at =
+                \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
         }
 
         //определяем клиента по карте
@@ -369,8 +390,8 @@ class Act extends ActiveRecord
                 foreach (explode('+', $this->serviceList[0]['service_id']) as $serviceId) {
                     $serviceList[] = [
                         'service_id' => $serviceId,
-                        'price' => $this->serviceList[0]['price'],
-                        'amount' => $this->serviceList[0]['amount'],
+                        'price'      => $this->serviceList[0]['price'],
+                        'amount'     => $this->serviceList[0]['amount'],
                     ];
                 }
                 $this->serviceList = $serviceList;
@@ -385,7 +406,7 @@ class Act extends ActiveRecord
                     $clientService = CompanyService::findOne([
                         'service_id' => $serviceData['service_id'],
                         'company_id' => $this->client_id,
-                        'type_id' => $this->type_id,
+                        'type_id'    => $this->type_id,
                     ]);
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $totalIncome += $clientService->price * $serviceData['amount'];
@@ -397,7 +418,7 @@ class Act extends ActiveRecord
                     $partnerService = CompanyService::findOne([
                         'service_id' => $serviceData['service_id'],
                         'company_id' => $this->partner_id,
-                        'type_id' => $this->type_id,
+                        'type_id'    => $this->type_id,
                     ]);
                     if (!empty($partnerService) && $partnerService->service->is_fixed) {
                         $totalExpense += $partnerService->price * $serviceData['amount'];
@@ -434,7 +455,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->partner_id,
-                            'type_id' => $this->type_id,
+                            'type_id'    => $this->type_id,
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
@@ -475,7 +496,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->client_id,
-                            'type_id' => $this->type_id,
+                            'type_id'    => $this->type_id,
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
@@ -523,7 +544,7 @@ class Act extends ActiveRecord
                         $clientService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->client_id,
-                            'type_id' => $this->type_id,
+                            'type_id'    => $this->type_id,
                         ]);
 
                         if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -531,7 +552,8 @@ class Act extends ActiveRecord
                             $clientScope->description = $clientService->service->description;
                         } else {
                             $clientScope->price = $kpd * $serviceData['price'];
-                            $clientScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                            $clientScope->description =
+                                Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
                         //на 20% увеличиваем цену для клиента
@@ -549,14 +571,15 @@ class Act extends ActiveRecord
                         $partnerService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->partner_id,
-                            'type_id' => $this->type_id,
+                            'type_id'    => $this->type_id,
                         ]);
                         if (!empty($partnerService) && $partnerService->service->is_fixed) {
                             $partnerScope->price = $partnerService->price;
                             $partnerScope->description = $partnerService->service->description;
                         } else {
                             $partnerScope->price = $serviceData['price'];
-                            $partnerScope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
+                            $partnerScope->description =
+                                Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
                         $partnerScope->price = $serviceData['price'];
@@ -574,15 +597,18 @@ class Act extends ActiveRecord
     /**
      * @throws \yii\base\ErrorException
      */
-    private function uploadImage(){
+    private function uploadImage()
+    {
         if ($this->image) {
-            $image=\Yii::$app->image->load($this->image->tempName);
+            $image = \Yii::$app->image->load($this->image->tempName);
             /**
              * @var $image \yii\image\drivers\Image
              */
-            $imagePath=\Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
-            return $image->resize(self::ACT_WIDTH,self::ACT_HEIGHT)->save($imagePath);
+            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
+
+            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
         }
+
         return false;
     }
 }

@@ -1,83 +1,100 @@
 body {
     background-color: #dededc;
     color: #069;
-    font-family: Helvetica,sans-serif;
+    font-family: Helvetica, sans-serif;
     font-size: 12px;
-    }
+}
+
 .top {
     margin: 10px 0;
-    }
+}
+
 .pseudo {
     color: #069;
     cursor: pointer;
     border-bottom: dashed 1px #069;
     padding: 0 10px;
 }
+
 #preview {
     z-index: 9999;
 }
+
 .content-main {
     padding-left: 200px;
 }
+
 .content-menu {
-   z-index: 10;
+    z-index: 10;
 }
+
 .glyphicon {
     color: #069;
 }
+
 .glyphicon-plus {
     color: #fff;
 }
+
 .glyphicon-minus {
     color: #fff;
 }
+
 /* login */
 .login-form {
     margin-top: 200px;
     width: 300px;
-    }
-    .login-form button {
-        width: 300px;
-        }
+}
+
+.login-form button {
+    width: 300px;
+}
 
 /* left menu */
 .menu-left {
     font-weight: bold;
     position: fixed;
-    }
-    .menu-left a {
-        display: block;
-        padding: 7px 15px;
-        }
-    .menu-left .list-group-item {
-        padding: 0;
-        }
-    .list-group-item:hover {
-        background: #eee;
-        }
-    .menu-left .list-group-item.active a {
-        color: white;
-        }
+}
+
+.menu-left a {
+    display: block;
+    padding: 7px 15px;
+}
+
+.menu-left .list-group-item {
+    padding: 0;
+}
+
+.list-group-item:hover {
+    background: #eee;
+}
+
+.menu-left .list-group-item.active a {
+    color: white;
+}
 
 /* panels */
 .panel-body {
     padding: 0;
-    }
+}
+
 .panel-heading {
     font-size: 16px;
     text-shadow: 1px 1px #222;
     text-transform: uppercase;
-    }
+}
+
 .price-from label {
     display: block;
-    }
+}
 
 /* tabs */
-.nav>li>a {
+.nav > li > a {
     background-color: #eee;
     font-size: larger;
 }
-.nav>li>a:hover {
+
+.nav > li > a:hover {
     background-color: #ddd;
 }
 
@@ -85,6 +102,7 @@ body {
 .footer {
     text-align: center;
 }
+
 .footer a {
     background: url('../images/logo.png') 40px 0 no-repeat;
     display: inline-block;
@@ -107,51 +125,73 @@ body {
 .grid-view {
     font-size: 14px;
 }
+
 .grid-view thead {
     background: #eee;
 }
+
 .form-control {
     padding: 2px;
 }
+
 .kv-grid-group-row .parent {
     font-weight: bold;
 }
+
 .kv-group-header {
     color: #ffffff;
     background-color: #428bca;
 }
+
 .kv-group-footer {
     font-weight: bold;
 }
+
 .kv-table-float {
     background-color: #eee;
 }
+
 .kv-page-summary {
     border-top: 0;
 }
+
 .child {
     font-size: smaller;
 }
+
 .select2-container--krajee .select2-selection--single {
     height: 40px;
 }
+
 .select2-container--krajee .select2-selection--single .select2-selection__arrow {
     height: 38px;
 }
-.table-bordered>thead>tr.extend-header>th {
+
+.table-bordered > thead > tr.extend-header > th {
     border-right: none;
     border-left: none;
 }
-.table>tfoot>tr.warning>td {
+
+.table > tfoot > tr.warning > td {
     background: none;
 }
-.kv-grid-group-filter .form-control { display: inline; min-width: 0; width: auto; margin-right: 10px; }
-.kv-grid-group-filter .btn { margin-right: 10px; }
+
+.kv-grid-group-filter .form-control {
+    display: inline;
+    min-width: 0;
+    width: auto;
+    margin-right: 10px;
+}
+
+.kv-grid-group-filter .btn {
+    margin-right: 10px;
+}
 
 /* act-table */
 .panel.acts .panel-body {
     padding: 20px;
 }
+
 .act {
     border-collapse: collapse;
     color: #000;
@@ -159,10 +199,12 @@ body {
     width: 100%;
     border: 1px solid black;
 }
+
 .act td {
     border: 1px solid black;
     padding: 10px 5px 0px 5px;
 }
+
 .act th {
     border: 1px solid black;
     color: #069;
@@ -171,25 +213,38 @@ body {
     text-transform: uppercase;
     padding: 10px 5px 0 5px;
 }
+
 .act .strong {
     font-weight: bold;
 }
+
 .act .header {
     color: #069;
     font-weight: bold;
+}
+
+.act-error-message {
+    margin: 0 5px 5px;
+    font-size: 1.4em;
+    float: left;
+    width: 100%;
+    white-space: normal;
 }
 
 span.sign {
     font-size: 14px;
     color: #069;
 }
+
 table.sign {
     color: #000;
     font-size: 14px;
 }
+
 .sign td {
     vertical-align: bottom;
 }
+
 .wPaint-canvas {
     border-bottom: 1px solid black;
 }
@@ -197,6 +252,7 @@ table.sign {
 .extra-number {
     display: none;
 }
+
 .wPaint-menu {
     display: none;
 }
@@ -206,11 +262,13 @@ table.sign {
     font-weight: bold;
     color: #f0ad4e;
 }
+
 .free-time {
     color: red;
     font-size: 30px;
     font-weight: bold;
 }
+
 .current-time {
     color: #069;
     font-size: 30px;
@@ -221,20 +279,25 @@ table.sign {
 .form-control.datepicker[readonly] {
     background: #fff;
 }
+
 .datetimepicker {
-    font-size:150%;
+    font-size: 150%;
 }
+
 .datetimepicker .datetimepicker-hours span {
     height: 30px;
     line-height: 30px;
 }
+
 .datetimepicker .minutes span {
     height: 30px;
     line-height: 30px;
 }
+
 .datetimepicker .table-condensed {
     width: 300px;
 }
+
 .datetimepicker .table-condensed thead {
     display: none;
 }

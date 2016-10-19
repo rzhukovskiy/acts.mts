@@ -130,7 +130,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'id'                    => 'ID',
             'client_id'             => 'Клиент',
             'type_id'               => 'Тип',
-            'profit'                => 'Доход',
+            'profit'                => 'Сумма',
             'payment_status'        => 'Статус оплаты',
             'payment_date'          => 'Дата оплаты',
             'act_status'            => 'Статус акта',
