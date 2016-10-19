@@ -103,6 +103,7 @@ class ActSearch extends Act
                 $query->orFilterWhere(['partner_id' => 0]);
                 if ($this->service_type == Service::TYPE_WASH) {
                     $query->orFilterWhere(['check' => null]);
+                    $query->orFilterWhere(['check' => '']);
                 }
                 if ($this->service_type != Service::TYPE_DISINFECT) {
                     $query->orWhere('car.company_id != card.company_id');
