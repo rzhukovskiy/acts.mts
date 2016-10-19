@@ -8,6 +8,10 @@ use yii\db\Expression;
 
 class MonthlyActController extends Controller
 {
+    /**
+     * @param bool $allDate
+     * @return int
+     */
     public function actionCreate($allDate = false)
     {
         $actDate = date('Y-m-d', strtotime('-1 month'));
@@ -53,5 +57,14 @@ class MonthlyActController extends Controller
         echo "Monthly Acts successfully created!\n";
 
         return 0;
+    }
+
+    /**
+     *
+     */
+    public function actionClearAndCreateAll()
+    {
+        MonthlyAct::deleteAll();
+        $this->actionCreate(true);
     }
 }
