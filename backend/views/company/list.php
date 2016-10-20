@@ -7,9 +7,6 @@
  * @var $searchModel \common\models\search\CompanySearch
  * @var $type integer
  */
-use common\models\Company;
-
-$this->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
 echo $this->render('_tabs', [
     'model' => $model,

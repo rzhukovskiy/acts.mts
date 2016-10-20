@@ -30,18 +30,54 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['archive', 'refuse', 'create', 'update', 'delete'],
+                        'actions' => ['archive', 'refuse', 'create', 'update', 'delete', 'new'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['archive', 'refuse', 'create', 'update', 'new'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_MANAGER],
+                    ],
+                    [
+                        'actions' => ['archive', 'refuse', 'update', 'new'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Lists all Company models.
+     * @param integer $type
+     * @return mixed
+     */
+    public function actionNew($type)
+    {
+        $searchModel = new CompanySearch();
+        $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_NEW;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'created_at' => SORT_DESC,
+            ]
+        ];
+
+        $model = new Company();
+        $model->type = $type;
+
+        $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -63,6 +99,8 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
+
+        $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
@@ -92,6 +130,8 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
+
+        $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,

@@ -12,7 +12,7 @@ class m161019_184832_add_is_partner_column_to_monthly_act_table extends Migratio
      */
     public function up()
     {
-        $this->addColumn('monthly_act', 'is_partner', $this->boolean()->notNull());
+        $this->addColumn('{{%monthly_act}}', 'is_partner', $this->boolean()->notNull());
     }
 
     /**
@@ -20,6 +20,6 @@ class m161019_184832_add_is_partner_column_to_monthly_act_table extends Migratio
      */
     public function down()
     {
-        $this->dropColumn('monthly_act', 'is_partner');
+        $this->dropColumn('{{%monthly_act}}', 'is_partner');
     }
 }
