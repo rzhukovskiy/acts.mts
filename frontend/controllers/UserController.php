@@ -142,6 +142,8 @@ class UserController extends \yii\web\Controller
      */
     public function actionLogin($id)
     {
+        $this->enableCsrfValidation = false;
+
         $model = $this->findModel($id);
 
         $cookieAdmin = new Cookie([

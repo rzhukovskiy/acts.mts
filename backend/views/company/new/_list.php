@@ -10,7 +10,7 @@ use yii\grid\GridView;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Список компаний
+        Список моек
     </div>
     <div class="panel-body">
         <?=
@@ -19,35 +19,15 @@ use yii\grid\GridView;
             'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
-            'tableOptions' => ['class' => 'table table-bordered'],
             'emptyText' => '',
             'columns' => [
                 [
                     'header' => '№',
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'name',
                 'address',
-                [
-                    'label' => 'Количество карт',
-                    'contentOptions' => ['style' => 'max-width:200px'],
-                    'options' => ['style' => 'max-width:200px'],
-                    'value' => function ($data) {
-                        return count($data->cards) . ' (' . $data->cardsAsString . ')';
-                    },
-                ],
-                [
-                    'label' => 'Машин',
-                    'value' => function ($data) {
-                        return $data->carsCount;
-                    },
-                ],
-                [
-                    'label' => 'Прицепов',
-                    'value' => function ($data) {
-                        return $data->trucksCount;
-                    },
-                ],
+                'name',
+                'info.address',
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',

@@ -2,6 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel \common\models\search\CompanySearch
  */
 
 use yii\grid\GridView;
@@ -9,7 +10,7 @@ use yii\grid\GridView;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Список шиномонтажей
+        Список моек
     </div>
     <div class="panel-body">
         <?=

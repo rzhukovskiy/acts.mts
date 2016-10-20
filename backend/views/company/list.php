@@ -8,11 +8,12 @@
  * @var $type integer
  */
 
+$action = Yii::$app->controller->action->id;
 echo $this->render('_tabs', [
     'model' => $model,
 ]);
 
-echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_list', [
+echo $this->render($action . '/_list', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'type' => $type,

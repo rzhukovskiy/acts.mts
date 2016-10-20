@@ -14,8 +14,8 @@ $items = [];
 foreach (Company::$listType as $type_id => $typeData) {
     $items[] = [
         'label' => $typeData['ru'],
-        'url' => ['/company/archive', 'type' => $type_id],
-        'active' => $action == 'archive' && Yii::$app->controller->id == 'company' && $requestType == $type_id,
+        'url' => ["/company/$action", 'type' => $type_id],
+        'active' => Yii::$app->controller->id == 'company' && $requestType == $type_id,
     ];
 }
 

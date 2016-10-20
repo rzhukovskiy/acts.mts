@@ -56,7 +56,11 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Заявки',
-                    'url' => '#',
+                    'url' => ['/company/new?type=' . Company::TYPE_WASH],
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'new') ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW)
+                    ),
                 ],
                 [
                     'label' => 'Архив',
@@ -70,7 +74,8 @@ class menuLeftWidget extends Widget
                     'label' => 'Отказ',
                     'url' => ['/company/refuse?type=' . Company::TYPE_WASH],
                     'active' => (
-                        Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse'
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse') ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
                     ),
                 ],
                 [
