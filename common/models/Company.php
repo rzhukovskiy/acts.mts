@@ -28,6 +28,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $updated_at
  *
  * @property CompanyInfo $info
+ * @property CompanyOffer $offer
  * @property Act[] $acts
  * @property Company $parent
  * @property Company[] $children
@@ -152,6 +153,14 @@ class Company extends ActiveRecord
     public function getInfo()
     {
         return $this->hasOne(CompanyInfo::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOffer()
+    {
+        return $this->hasOne(CompanyOffer::className(), ['company_id' => 'id']);
     }
 
     /**
