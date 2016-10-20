@@ -77,6 +77,11 @@ class menuLeftWidget extends Widget
                     'label' => 'Сообщения',
                     'url' => '#',
                 ],
+                [
+                    'label'  => 'Акты и оплата',
+                    'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'monthly-act'),
+                ],
             ];
         } // Account manager links
         elseif (Yii::$app->user->identity->role == User::ROLE_ACCOUNT) {
@@ -85,6 +90,11 @@ class menuLeftWidget extends Widget
                     'label' => 'Мойки',
                     'url' => ['/wash/list'],
                     'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label'  => 'Акты и оплата',
+                    'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
             ];
         } else {
