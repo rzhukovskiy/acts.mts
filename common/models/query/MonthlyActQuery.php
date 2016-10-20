@@ -2,6 +2,8 @@
 
 namespace common\models\query;
 
+use common\models\MonthlyAct;
+
 /**
  * This is the ActiveQuery class for [[\common\models\MonthlyAct]].
  *
@@ -30,5 +32,31 @@ class MonthlyActQuery extends \yii\db\ActiveQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+
+    /**
+     * @param $clientId
+     * @param $servedTime
+     * @return $this
+     */
+    public function byClient($clientId, $servedTime)
+    {
+        $this->andWhere(['client_id' => $clientId, 'is_partner' => MonthlyAct::NOT_PARTNER]);
+        $this->andWhere(['act_date' => date('Y-m-00', $servedTime)]);
+
+        return $this;
+    }
+
+    /**
+     * @param $partnerId
+     * @param $servedTime
+     * @return $this
+     */
+    public function byPartner($partnerId, $servedTime)
+    {
+        $this->andWhere(['client_id' => $partnerId, 'is_partner' => MonthlyAct::PARTNER]);
+        $this->andWhere(['act_date' => date('Y-m-00', $servedTime)]);
+
+        return $this;
     }
 }

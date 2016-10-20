@@ -173,6 +173,15 @@ class Act extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     * @return \common\models\query\ActQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \common\models\query\ActQuery(get_called_class());
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getClient()
@@ -590,6 +599,8 @@ class Act extends ActiveRecord
                 }
             }
         }
+        //Пересчитываем месячный акт
+        MonthlyAct::redoMonthlyAct($this);
 
         parent::afterSave($insert, $changedAttributes);
     }

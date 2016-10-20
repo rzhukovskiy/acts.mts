@@ -47,6 +47,9 @@ class MonthlyAct extends \yii\db\ActiveRecord
     const ACT_STATUS_SIGNED_SCAN = 3;
     const ACT_STATUS_DONE = 4;
 
+    const NOT_PARTNER = 0;
+    const PARTNER = 1;
+
     const ACT_WIDTH = 1024;
     const ACT_HEIGHT = 768;
 
@@ -251,29 +254,52 @@ class MonthlyAct extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param bool $allDate
+     * @param $act \common\models\Act
+     */
+    public static function redoMonthlyAct($act)
+    {
+        $clientId = $act->client_id;
+        $partnerId = $act->partner_id;
+        $time = $act->served_at;
+
+        MonthlyAct::find()->byPartner($partnerId, $time)->one()->delete();
+        MonthlyAct::find()->byClient($clientId, $time)->one()->delete();
+
+        $partnerAct = MonthlyAct::getPartnerAct($time, $partnerId);
+        $clientAct = MonthlyAct::getClientAct($time, $clientId);
+
+        $allAct = array_merge($partnerAct, $clientAct);
+        if ($allAct) {
+            foreach ($allAct as $act) {
+                $MonthlyAct = new MonthlyAct();
+                $MonthlyAct->client_id = $act['company_id'];
+                $MonthlyAct->type_id = $act['service_type'];
+                $MonthlyAct->profit = $act['profit'];
+                $MonthlyAct->is_partner = $act['is_partner'];
+                $MonthlyAct->act_date = $act['date'];
+                $MonthlyAct->save();
+            }
+        }
+
+    }
+
+    /**
+     * @param  $date
      * @param bool $idCompany
      * @return array
      */
-    static public function getPartnerAct($allDate = false, $idCompany = false)
+    static public function getPartnerAct($date = false, $idCompany = false)
     {
         $partnerAct =
             Act::find()
                 ->select('partner_id as company_id,service_type,SUM(expense) as profit')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                 ->addSelect(new Expression('1 as is_partner'))
-                ->from('act');
-        if (!$allDate) {
-            $partnerAct = $partnerAct->where([
-                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
-                    strtotime('-1 month'))
-            ]);
-        } else {
-            $partnerAct = $partnerAct->where([
-                "<=",
-                "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
-                date('Ym', strtotime('-1 month'))
-            ]);
+                ->from('act')
+                ->byMonthlyDate($date);
+
+        if ($idCompany) {
+            $partnerAct = $partnerAct->andWhere(['partner_id' => $idCompany]);
         }
         $partnerAct = $partnerAct->groupBy('partner_id,service_type,date')->asArray()->all();
 
@@ -281,29 +307,22 @@ class MonthlyAct extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param bool $allDate
+     * @param $date
      * @param bool $idCompany
      * @return array
      */
-    static public function getClientAct($allDate = false, $idCompany = false)
+    static public function getClientAct($date = false, $idCompany = false)
     {
         $clientAct =
             Act::find()
                 ->select('client_id as company_id,service_type,SUM(income) as profit')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                 ->addSelect(new Expression('0 as is_partner'))
-                ->from('act');
-        if (!$allDate) {
-            $clientAct = $clientAct->where([
-                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
-                    strtotime('-1 month'))
-            ]);
-        } else {
-            $clientAct = $clientAct->where([
-                "<=",
-                "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
-                date('Ym', strtotime('-1 month'))
-            ]);
+                ->from('act')
+                ->byMonthlyDate($date);
+
+        if ($idCompany) {
+            $clientAct = $clientAct->andWhere(['client_id' => $idCompany]);
         }
 
         $clientAct = $clientAct->groupBy('client_id,service_type,date')->asArray()->all();

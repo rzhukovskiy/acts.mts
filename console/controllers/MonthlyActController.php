@@ -52,6 +52,6 @@ class MonthlyActController extends Controller
     public function actionClearAndCreateAll()
     {
         MonthlyAct::deleteAll();
-        $this->actionCreate(true);
+        $this->actionCreate('all');
     }
 }

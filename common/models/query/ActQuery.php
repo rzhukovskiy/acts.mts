@@ -34,4 +34,30 @@ class ActQuery extends ActiveQuery
     {
         return $this->addSelect('COUNT({{%act}}.id) AS countServe');
     }
+
+    /**
+     * @param $date
+     * @return $this
+     */
+    public function byMonthlyDate($date)
+    {
+        if (!$date) {
+            $this->andWhere([
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
+                    strtotime('-1 month'))
+            ]);
+        } elseif ($date == 'all') {
+            $this->andWhere([
+                "<=",
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
+                date('Ym', strtotime('-1 month'))
+            ]);
+        } else {
+            $this->andWhere([
+                "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym', $date)
+            ]);
+        }
+
+        return $this;
+    }
 }

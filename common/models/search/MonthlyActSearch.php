@@ -73,6 +73,7 @@ class MonthlyActSearch extends MonthlyAct
             'updated_at'                       => $this->updated_at,
 
         ]);
+        $query->orderBy('client_id');
 
         return $dataProvider;
     }
