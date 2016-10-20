@@ -262,11 +262,18 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $partnerId = $act->partner_id;
         $time = $act->served_at;
 
-        MonthlyAct::find()->byPartner($partnerId, $time)->one()->delete();
-        MonthlyAct::find()->byClient($clientId, $time)->one()->delete();
+        $partnerAct = $clientAct = [];
 
-        $partnerAct = MonthlyAct::getPartnerAct($time, $partnerId);
-        $clientAct = MonthlyAct::getClientAct($time, $clientId);
+        $partnerMonthlyAct = MonthlyAct::find()->byPartner($partnerId, $time)->one();
+        if ($partnerMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
+            $partnerMonthlyAct->delete();
+            $partnerAct = MonthlyAct::getPartnerAct($time, $partnerId);
+        }
+        $clientMonthlyAct = MonthlyAct::find()->byClient($clientId, $time)->one();
+        if ($clientMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
+            $clientMonthlyAct->delete();
+            $clientAct = MonthlyAct::getClientAct($time, $clientId);
+        }
 
         $allAct = array_merge($partnerAct, $clientAct);
         if ($allAct) {
