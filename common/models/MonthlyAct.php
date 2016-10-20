@@ -302,7 +302,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 ->select('partner_id as company_id,service_type,SUM(expense) as profit')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                 ->addSelect(new Expression('1 as is_partner'))
-                ->from('act')
                 ->byMonthlyDate($date);
 
         if ($idCompany) {
@@ -325,7 +324,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 ->select('client_id as company_id,service_type,SUM(income) as profit')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                 ->addSelect(new Expression('0 as is_partner'))
-                ->from('act')
                 ->byMonthlyDate($date);
 
         if ($idCompany) {
