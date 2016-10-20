@@ -351,7 +351,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $imageName = $imageDir . $this->id . '_' . ($count + 1) . '.' . $this->image->extension;
             $imageDir = \Yii::getAlias('@webroot' . $imageDir);
             if (!is_dir($imageDir)) {
-                mkdir($imageDir, '0777', true);
+                mkdir($imageDir, 0775, true);
             }
             $imagePath = \Yii::getAlias('@webroot' . $imageName);
             if ($image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath)) {
