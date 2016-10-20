@@ -225,3 +225,12 @@ table.sign {
 .datetimepicker .table-condensed thead {
     display: none;
 }
+
+#act-grid .detail {
+    background: url("../images/icons/glass.png") no-repeat;
+    display: inline-block;
+    height: 16px;
+    margin-left: 5px;
+    margin-right: 0;
+    width: 16px;
+}

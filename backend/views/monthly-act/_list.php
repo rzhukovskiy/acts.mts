@@ -170,7 +170,7 @@ GridView::widget([
             'contentOptions' => ['style' => 'min-width: 80px'],
             'buttons'        => [
                 'detail' => function ($url, $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-zoom-in"></span>',
+                    return Html::a('<span class="glyphicon detail"></span>',
                         ['/monthly-act/detail', 'id' => $model->id],
                         ['title' => "Детализация", 'aria-label' => "Детализация", 'data-pjax' => "0"]);
                 },

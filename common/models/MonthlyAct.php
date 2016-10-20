@@ -77,7 +77,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'monthly_act';
+        return '{{%monthly_act}}';
     }
 
     /**
