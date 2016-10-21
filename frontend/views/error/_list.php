@@ -19,7 +19,6 @@ $columns = [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
         'contentOptions' => ['style' => 'max-width: 40px'],
-        'pageSummary' => 'Всего',
     ],
     [
         'attribute' => 'day',
@@ -160,6 +159,5 @@ echo GridView::widget([
     'hover' => false,
     'striped' => false,
     'export' => false,
-    'showPageSummary' => true,
     'columns' => $columns,
 ]);
