@@ -200,7 +200,22 @@ class CarController extends Controller
             $model->file = UploadedFile::getInstance($model, 'file');
 
             if ($model->save()) {  // загрузка прошла успешно
-                return $this->redirect(['/car/uploaded-list', 'startId' => $model->startId, 'endId' => $model->endId, 'updated' => $model->updatedCounter]);
+                $query = Car::find()
+                    ->andWhere(['in', 'id', $model->updatedIds]);
+
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $query,
+                ]);
+                $dataProvider->pagination = false;
+
+                $this->view->params['emptyText'] = '';
+                if (!count($model->updatedIds))
+                    $this->view->params['emptyText'] = "Ничего не добавлено.";
+
+                if (!empty($updated))
+                    $this->view->params['emptyText'] .= " Обновлено: " . $updated;
+
+                return $this->render('upload/list', ['dataProvider' => $dataProvider]);
             }
         }
 
@@ -209,25 +224,6 @@ class CarController extends Controller
             'typeDropDownItems' => $typeDropDownItems,
             'companyDropDownItems' => $companyDropDownItems,
         ]);
-    }
-
-    public function actionUploadedList($startId, $endId, $updated)
-    {
-        $query = Car::find()
-            ->andWhere(['between', 'id', $startId, $endId]);
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->view->params['emptyText'] = '';
-        if ($startId == $endId)
-            $this->view->params['emptyText'] = "Ничего не добавлено.";
-
-        if (!empty($updated))
-            $this->view->params['emptyText'] .= " Обновлено: " . $updated;
-
-        return $this->render('upload/list', ['dataProvider' => $dataProvider]);
     }
 
     /**

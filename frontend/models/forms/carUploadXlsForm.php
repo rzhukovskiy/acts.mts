@@ -8,13 +8,13 @@
 
 namespace frontend\models\forms;
 
+use common\components\Translit;
 use common\models\Car;
 use common\models\Company;
 use common\models\Mark;
 use common\models\Type;
 use Yii;
 use yii\base\Model;
-use yii\bootstrap\Html;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use \PHPExcel_IOFactory;
@@ -28,29 +28,13 @@ class CarUploadXlsForm extends Model
     public $file;
 
     // range of inserted id's
-    public $startId;
-    public $endId;
+    public $updatedIds;
 
     // count updated models
     public $updatedCounter;
 
     // folder for store data files
-    protected $folder = 'data';
-
-    protected static $rules = array(
-        'Y' => 'У',
-        'E' => 'Е',
-        'X' => 'Х',
-        'A' => 'А',
-        'O' => 'О',
-        'T' => 'Т',
-        'C' => 'С',
-        'B' => 'В',
-        'P' => 'Р',
-        'M' => 'М',
-        'H' => 'Н',
-        'K' => 'К',
-    );
+    protected $folder = 'files/cars';
 
     /**
      * @inheritDoc
@@ -59,7 +43,7 @@ class CarUploadXlsForm extends Model
     {
         return [
             [['company_id', 'type_id'], 'safe'],
-            ['file', 'file', 'skipOnEmpty' => false, 'extensions' => 'xls, xlsx'],
+            ['file', 'file', 'skipOnEmpty' => false, 'extensions' => ['xls', 'xlsx'], 'checkExtensionByMimeType' => false],
         ];
     }
 
@@ -106,12 +90,16 @@ class CarUploadXlsForm extends Model
      */
     public function saveFile()
     {
-        $date = date('Y_m_d__H_i_s');
+        $date = date('Y_m_d_H_i_s');
         $extension = $this->file->extension;
         $baseName = $this->file->baseName;
         $newName = $date . '_' . $baseName . '.' . $extension;
-        $file = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR
-            . $this->folder . DIRECTORY_SEPARATOR
+        $dir = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR
+            . $this->folder;
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+        $file = $dir . DIRECTORY_SEPARATOR
             . $newName;
 
         // @see \yii\web\UploadedFile::saveAs
@@ -133,9 +121,6 @@ class CarUploadXlsForm extends Model
      */
     public function saveFromExternal()
     {
-        // с какого id начали инсертить
-        $this->startId = count(Car::find()->all());
-
         $file = Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR
             . $this->folder . DIRECTORY_SEPARATOR
             . $this->file;
@@ -168,7 +153,8 @@ class CarUploadXlsForm extends Model
                 }
 
                 $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
-                $number = strtr($number, static::$rules);
+                $number = strtr($number, Translit::$rules);
+
                 if ($existed = Car::findOne(['number' => $number]))
                     $car = $existed;
                 else
@@ -192,13 +178,12 @@ class CarUploadXlsForm extends Model
                 if (\PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($is_infected) == \PHPExcel_Cell_DataType::TYPE_STRING)
                     $car->is_infected = $is_infected;
 
-                $car->save();
-                if (!$car->isNewRecord)
+                if ($car->save()) {
                     $this->updatedCounter++;
+                    $this->updatedIds[] = $car->id;
+                }
             }
-
         }
-        $this->endId = count(Car::find()->all());
 
         return true;
     }

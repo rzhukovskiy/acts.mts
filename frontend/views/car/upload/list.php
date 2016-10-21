@@ -33,7 +33,7 @@ echo GridView::widget([
         [
             'attribute' => 'company_id',
             'content' => function ($data) {
-                return $data->client->name;
+                return $data->company->name;
             },
             'group' => true,
             'groupedRow' => true,
@@ -52,23 +52,6 @@ echo GridView::widget([
             'content' => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : '';
             },
-        ],
-        [
-            'attribute' => 'actsCount',
-            'content' => function ($data) {
-                return $data->actsCount;
-            },
-        ],
-        [
-            'class' => 'yii\grid\ActionColumn',
-            'template' => '{view}',
-            'buttons' => [
-                'view' => function ($url, $data, $key) {
-                    if (!is_null($data->car)) // появился акт для машины призрака
-                        return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car->id]);
-                    return Html::tag('span', 'Нет машины', ['class' => 'label label-danger']);
-                },
-            ],
         ],
     ],
 ]);
