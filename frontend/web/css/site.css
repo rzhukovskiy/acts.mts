@@ -115,7 +115,7 @@ body {
 }
 
 /* buttons */
-.glyphicon-pencil, .glyphicon-trash, .glyphicon-search {
+.glyphicon-pencil, .glyphicon-trash, .glyphicon-search, .glyphicon-ok {
     font-size: larger;
     font-weight: bold;
     margin: 0 0 0 5px;

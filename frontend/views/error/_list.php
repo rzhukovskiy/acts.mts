@@ -108,6 +108,14 @@ $columns = [
         'template'       => '{update}{delete}{add-car}',
         'contentOptions' => ['style' => 'min-width: 100px'],
         'buttons'        => [
+            'delete' => function ($url, $data, $key) {
+                return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
+                    'delete',
+                    'id' => $data->id,
+                ], [
+                    'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
+                ]);
+            },
             'add-car' => function ($url, $model, $key) {
                 if (isset($model->car->company_id)) {
                     return false;
@@ -120,7 +128,7 @@ $columns = [
                     'Car[type_id]'    => $model->type_id
                 ]);
 
-                return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                return Html::a('<span class="glyphicon glyphicon-ok"></span>',
                     '#',
                     [
                         'title'      => "Добавить номер",

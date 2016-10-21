@@ -219,6 +219,16 @@ class ActHelper
                 'class' => 'kartik\grid\ActionColumn',
                 'template' => '{update}{delete}',
                 'width' => '70px',
+                'buttons' => [
+                    'delete' => function ($url, $data, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
+                            'delete',
+                            'id' => $data->id,
+                        ], [
+                            'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
+                        ]);
+                    },
+                ],
             ],
             'partnerButtons' => [
                 'header' => '',
