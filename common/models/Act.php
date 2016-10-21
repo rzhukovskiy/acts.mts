@@ -8,6 +8,7 @@
 
 namespace common\models;
 
+use common\models\query\ActQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -38,6 +39,7 @@ use yii\web\UploadedFile;
  * @property array $serviceList
  * @property array $clientServiceList
  * @property array $partnerServiceList
+ * @property string $card_number
  *
  * @property Company $client
  * @property Company $partner
@@ -80,6 +82,8 @@ class Act extends ActiveRecord
      * @var UploadedFile
      */
     public $image;
+
+    private $card_number;
 
     public static $listStatus = [
         self::STATUS_NEW    => [
@@ -142,7 +146,8 @@ class Act extends ActiveRecord
                     'partnerServiceList',
                     'clientServiceList',
                     'mark_id',
-                    'type_id'
+                    'type_id', 
+                    'card_number'
                 ],
                 'safe'
             ],
@@ -164,6 +169,7 @@ class Act extends ActiveRecord
             'partner_id'   => 'Партнер',
             'client_id'    => 'Клиент',
             'card_id'      => 'Карта',
+            'card_number'  => 'Карта',
             'number'       => 'Номер',
             'extra_number' => 'п/п',
             'mark_id'      => 'Марка',
@@ -185,7 +191,7 @@ class Act extends ActiveRecord
      */
     public static function find()
     {
-        return new \common\models\query\ActQuery(get_called_class());
+        return new ActQuery(get_called_class());
     }
 
     /**
@@ -366,9 +372,25 @@ class Act extends ActiveRecord
         return $errorMessage;
     }
 
+    public function setCard_number($value)
+    {
+        $this->card_number = $value;
+    }
+
+    public function getCard_number()
+    {
+        $card = Card::findOne($this->card_id);
+        return $card ? $card->number : $this->card_id;
+    }
+
     public function beforeSave($insert)
     {
         $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+        
+        if (!empty($this->card_number)) {
+            $card = Card::findOne(['number' => $this->card_number]);
+            $this->card_id = $card ? $card->id : $this->card_number;
+        }
 
         if (!empty($this->time_str)) {
             $this->served_at =
@@ -543,12 +565,12 @@ class Act extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+        //сохраняем картинку чека
+        $this->uploadImage();
         /**
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
         if ($insert) {
-            //сохраняем картинку чека
-            $this->uploadImage();
 
             if (!empty($this->serviceList)) {
                 foreach ($this->serviceList as $serviceData) {

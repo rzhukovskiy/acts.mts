@@ -7,16 +7,13 @@
  * @var $partnerScopes \common\models\ActScope[]
  */
 
-use common\models\Card;
-use common\models\Company;
+use common\models\Car;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
-use common\models\Car;
 use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use kartik\select2\Select2;
 use yii\jui\AutoComplete;
 
 ?>
@@ -60,13 +57,7 @@ use yii\jui\AutoComplete;
             </tr>
             <tr>
                 <td>
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
                 <td>
                     <label class="control-label" for="act-card_id">Номер и номер прицепа</label>

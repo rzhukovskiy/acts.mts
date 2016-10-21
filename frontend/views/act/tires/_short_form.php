@@ -67,13 +67,7 @@ JS;
                     ])->error(false) ?>
                 </td>
                 <td style="min-width: 100px">
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [

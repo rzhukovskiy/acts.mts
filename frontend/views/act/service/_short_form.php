@@ -6,12 +6,10 @@
  */
 
 use common\models\Car;
-use common\models\Card;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
 use kartik\date\DatePicker;
-use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
@@ -67,13 +65,7 @@ JS;
                     ])->error(false) ?>
                 </td>
                 <td style="min-width: 100px">
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px', 'placeholder' => ''],
-                        'language' => 'ru',
-                        'pluginOptions' => [
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [

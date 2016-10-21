@@ -61,7 +61,7 @@ class CardController extends Controller
         if (!Yii::$app->user->can(User::ROLE_ADMIN) && !Yii::$app->user->can(User::ROLE_WATCHER)) {
             $dataProvider->query->groupBy(['company_id']);
         }
-        $dataProvider=CardSearch::addCarToSearch($dataProvider);
+        $dataProvider = CardSearch::addCarToSearch($dataProvider);
         $companyDropDownData = Company::dataDropDownList();
 
         return $this->render('list', [

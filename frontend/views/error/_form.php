@@ -65,13 +65,7 @@ use yii\jui\AutoComplete;
             </tr>
             <tr>
                 <td>
-                    <?= $form->field($model, 'card_id')->widget(Select2::classname(), [
-                        'data' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
-                        'options' => ['class' => 'form-control', 'style' => 'min-width: 60px'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ])->error(false) ?>
+                    <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
                 <td>
                     <?= $form->field($model, 'number')->widget(AutoComplete::classname(), [

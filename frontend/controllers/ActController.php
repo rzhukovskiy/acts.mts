@@ -264,20 +264,22 @@ class ActController extends Controller
         $model = $this->findModel($id);
         $model->time_str = date('d-m-Y', $model->served_at);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->post('__returnUrl'));
-        } else {
-            $clientScopes = $model->getClientScopes()->all();
-            $partnerScopes = $model->getPartnerScopes()->all();
-
-            $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
-            return $this->render('update', [
-                'model' => $model,
-                'serviceList' => $serviceList,
-                'clientScopes' => $clientScopes,
-                'partnerScopes' => $partnerScopes,
-            ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->image = UploadedFile::getInstance($model, 'image');
+            if ($model->save()) {
+                return $this->redirect(Yii::$app->request->post('__returnUrl'));
+            }
         }
+        $clientScopes = $model->getClientScopes()->all();
+        $partnerScopes = $model->getPartnerScopes()->all();
+
+        $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
+        return $this->render('update', [
+            'model' => $model,
+            'serviceList' => $serviceList,
+            'clientScopes' => $clientScopes,
+            'partnerScopes' => $partnerScopes,
+        ]);
     }
 
     /**
