@@ -105,10 +105,10 @@ use yii\jui\AutoComplete;
                                         <?= Html::textInput("Act[partnerServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-1">
+                                <div class="col-xs-2">
                                     <?= Html::input('number', "Act[partnerServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <?= Html::textInput("Act[partnerServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
@@ -128,10 +128,10 @@ use yii\jui\AutoComplete;
                                     <?= Html::textInput("Act[partnerServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
                             </div>
-                            <div class="col-xs-1">
+                            <div class="col-xs-2">
                                 <?= Html::input('number', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
                                 <?= Html::textInput("Act[partnerServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                             </div>
                             <div class="col-xs-1">
@@ -154,10 +154,10 @@ use yii\jui\AutoComplete;
                                         <?= Html::textInput("Act[clientServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-1">
+                                <div class="col-xs-2>
                                     <?= Html::input('number', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <?= Html::textInput("Act[clientServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
@@ -176,10 +176,10 @@ use yii\jui\AutoComplete;
                                     <?= Html::textInput("Act[clientServiceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
                             </div>
-                            <div class="col-xs-1">
+                            <div class="col-xs-2">
                                 <?= Html::input('number', "Act[clientServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
                                 <?= Html::textInput("Act[clientServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
                             </div>
                             <div class="col-xs-1">

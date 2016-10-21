@@ -69,6 +69,7 @@ $columns = [
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
         },
+        'contentOptions' => ['style' => 'width: 100px;'],
     ],
     [
         'header' => 'Расход',
@@ -106,7 +107,7 @@ $columns = [
         'header'         => '',
         'class'          => 'kartik\grid\ActionColumn',
         'template'       => '{update}{delete}{add-car}',
-        'contentOptions' => ['style' => 'min-width: 100px'],
+        'contentOptions' => ['style' => 'min-width: 85px'],
         'buttons'        => [
             'delete' => function ($url, $data, $key) {
                 return Html::a('<span class="glyphicon glyphicon-trash"></span>', [

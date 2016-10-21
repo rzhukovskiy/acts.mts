@@ -92,13 +92,13 @@ JS;
                         <div class="col-xs-6">
                             <label class="control-label">Услуга</label>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                             <label class="control-label">Количество</label>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                             <label class="control-label">Цена</label>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                         </div>
                     </div>
 
@@ -110,13 +110,13 @@ JS;
                                 <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                             <?php } ?>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                             <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                             <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-xs-2">
                             <button type="button" class="btn btn-primary input-sm addButton"><i
                                     class="glyphicon glyphicon-plus"></i></button>
                         </div>
