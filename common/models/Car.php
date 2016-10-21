@@ -44,6 +44,7 @@ class Car extends ActiveRecord
         return [
             [['company_id', 'number'], 'required'],
             [['company_id', 'mark_id', 'type_id', 'is_infected'], 'integer'],
+            [['number'], 'unique'],
             [['number'], 'string', 'max' => 45],
         ];
     }

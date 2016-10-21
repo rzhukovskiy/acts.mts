@@ -60,6 +60,13 @@ class Act extends ActiveRecord
     const SCENARIO_CAR = 'car';
     const SCENARIO_CREATE = 'create';
 
+    const ERROR_EXPENSE='expense';
+    const ERROR_INCOME='income';
+    const ERROR_CHECK='check';
+    const ERROR_CARD='card';
+    const ERROR_CAR='car';
+    const ERROR_TRUCK='track';
+
     const ACT_WIDTH = 1024;
     const ACT_HEIGHT = 768;
 
@@ -299,26 +306,26 @@ class Act extends ActiveRecord
     {
         $hasError = false;
         switch ($error) {
-            case 'expense':
+            case self::ERROR_EXPENSE:
                 $hasError = !$this->expense;
                 break;
-            case 'income':
+            case self::ERROR_INCOME:
                 $hasError = !$this->income;
                 break;
-            case 'check':
+            case self::ERROR_CHECK:
                 $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
                 break;
-            case 'card':
+            case self::ERROR_CARD:
                 $hasError =
                     ($this->service_type != Service::TYPE_DISINFECT) &&
                     ($this->card->company_id != $this->car->company_id || empty($this->card->company_id));
                 break;
-            case 'car':
+            case self::ERROR_CAR:
                 $hasError =
                     !isset($this->car->company_id) ||
                     ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id);
                 break;
-            case 'truck':
+            case self::ERROR_TRUCK:
                 $hasError =
                     (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
                     (isset($this->client) &&
@@ -338,17 +345,17 @@ class Act extends ActiveRecord
     {
         $errorMessage = [];
         $errorArr = [
-            'expense' => 'Не указан расход',
-            'income'  => 'Не указан приход',
-            'check'   => 'Чек не загружен',
-            'card'    => (!$this->card->company_id) ? 'Не существует такой номер карты' :
+            self::ERROR_EXPENSE => 'Не указан расход',
+            self::ERROR_INCOME  => 'Не указан приход',
+            self::ERROR_CHECK   => 'Чек не загружен',
+            self::ERROR_CARD    => (!$this->card->company_id) ? 'Не существует такой номер карты' :
                 'Не совпадает номер карты с номером ТС. Карта - ' .
                 $this->card->company->name .
                 ' ТС - ' .
                 (isset($this->car->company->name) ? $this->car->company->name : 'не указан') .
                 ')',
-            'car'     => 'Некорректный номер ТС',
-            'truck'   => 'Неверный дополнительный номер',
+            self::ERROR_CAR     => 'Некорректный номер ТС',
+            self::ERROR_TRUCK   => 'Неверный дополнительный номер',
         ];
         foreach ($errorArr as $key => $err) {
             if ($this->hasError($key)) {
