@@ -31,7 +31,7 @@ class m161017_075431_create_table_monthly_act extends Migration
         $this->addForeignKey('monthly_act_client_id',
             '{{%monthly_act}}',
             'client_id',
-            'company',
+            '{{%company}}',
             'id',
             'CASCADE');
     }

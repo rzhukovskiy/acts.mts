@@ -477,18 +477,25 @@ class Company extends ActiveRecord
      * Набор данных для выпадайки
      *
      * @param null|integer $type
+     * @param boolean $useUniversal
      * @return array
      */
-    public static function dataDropDownList($type = null)
+    public static function dataDropDownList($type = null, $useUniversal = false)
     {
         $query = static::find();
 
-        if (!is_null($type))
-            $query = $query->andWhere(['type' => $type]);
+        if (!is_null($type)) {
+            $query = $query->andWhere(['{{%company}}.type' => $type]);
+            //Если успользуем универсальные компании, то проверяем их на подходящий тип и подмешиваем
+            if ($useUniversal) {
+                $query = $query->joinWith([
+                    'serviceTypes service_type',
+                ]);
+                $query = $query->orWhere(['service_type.type' => $type]);
+            }
+        }
 
-        $query = $query
-            ->asArray()
-            ->all();
+        $query = $query->asArray()->all();
 
         return ArrayHelper::map($query, 'id', 'name');
     }

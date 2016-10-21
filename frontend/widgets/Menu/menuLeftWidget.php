@@ -118,6 +118,11 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
+                    'label' => 'Контакты',
+                    'url' => ['/contact/list', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'user',
+                ],
+                [
                     'label' => 'Карты',
                     'url' => ['/card/list'],
                     'active' => Yii::$app->controller->id == 'card',
@@ -179,6 +184,11 @@ class menuLeftWidget extends Widget
                             ),
                     ],
                     [
+                        'label' => 'Контакты',
+                        'url' => ['/contact/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'user',
+                    ],
+                    [
                         'label' => 'Архив',
                         'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
                         'active' => Yii::$app->controller->id == 'act' &&
@@ -200,6 +210,11 @@ class menuLeftWidget extends Widget
                         'active' => Yii::$app->controller->id == 'act' && (Yii::$app->controller->action->id == 'create' || Yii::$app->controller->action->id == 'disinfect'),
                     ],
                     [
+                        'label' => 'Контакты',
+                        'url' => ['/contact/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
+                        'active' => Yii::$app->controller->id == 'user',
+                    ],
+                    [
                         'label' => 'Архив',
                         'url' => ['/act/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
                         'active' => Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id != 'create' && Yii::$app->controller->action->id != 'disinfect',
@@ -218,6 +233,11 @@ class menuLeftWidget extends Widget
                     'label' => 'Список ТС и история',
                     'url' => ['/car/list'],
                     'active' => Yii::$app->controller->id == 'car',
+                ],
+                [
+                    'label' => 'Контакты',
+                    'url' => ['/contact/list', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
                     'label' => 'Количество ТС',

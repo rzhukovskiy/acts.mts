@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = Html::encode($model->name);
 $this->params['breadcrumbs'][] = ['label' => 'Марки', 'url' => ['/mark/list']];
-$this->params['breadcrumbs'][] = 'Редатировать: ' . $model->name;
+$this->params['breadcrumbs'][] = 'Редактировать: ' . $model->name;
 ?>
 <div class="mark-update">
     <div class="panel panel-primary">
