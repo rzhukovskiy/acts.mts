@@ -154,7 +154,6 @@ class Act extends ActiveRecord
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
-            ['time_str', 'default', 'value' => date('d-m-Y')],
             ['check', 'default', 'value' => null],
         ];
     }
@@ -355,13 +354,14 @@ class Act extends ActiveRecord
             self::ERROR_EXPENSE => 'Не указан расход',
             self::ERROR_INCOME  => 'Не указан приход',
             self::ERROR_CHECK   => 'Чек не загружен',
-            self::ERROR_CARD    => (!$this->card->company_id) ? 'Не существует такой номер карты' :
+            self::ERROR_CARD    => (!$this->card->company_id) ? 'Не существует такой номер карты' : (
+            (!$this->car->company_id) ? false :
                 'Не совпадает номер карты с номером ТС.<br>
                 Карта - ' .
                 $this->card->company->name .
-                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
-                ' ТС - ' .
-                (isset($this->car->company->name) ? $this->car->company->name : 'не указан'),
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
+                ' ТС - ' . $this->car->company->name
+            ),
             self::ERROR_CAR     => (!$this->car->company_id) ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
         ];
