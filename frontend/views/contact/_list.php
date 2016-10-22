@@ -57,6 +57,7 @@ echo GridView::widget([
             'header' => '№',
             'class'  => 'yii\grid\SerialColumn'
         ],
+        /*
         'company' => [
             'attribute' => 'company_id',
             'value'     => function ($data) {
@@ -64,6 +65,7 @@ echo GridView::widget([
             },
             'filter'    => false,
         ],
+        */
         'name',
         'description',
         [

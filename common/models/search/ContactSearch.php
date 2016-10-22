@@ -12,7 +12,6 @@ use yii\data\ActiveDataProvider;
  */
 class ContactSearch extends Contact
 {
-    public $type;
 
     /**
      * @inheritdoc
@@ -20,7 +19,8 @@ class ContactSearch extends Contact
     public function rules()
     {
         return [
-            [['id', 'company_id'], 'integer'],
+            //[['id', 'company_id'], 'integer'],
+            [['id'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -46,9 +46,11 @@ class ContactSearch extends Contact
         $this->load($params);
 
         $query->andFilterWhere([
-            'id'         => $this->id,
-            'company_id' => $this->company_id,
+            'id'   => $this->id,
+            'type' => $this->type,
+            //'company_id' => $this->company_id,
         ]);
+        /*
         $query->joinWith([
             'company company',
             'company.serviceTypes service_type',
@@ -58,6 +60,7 @@ class ContactSearch extends Contact
             ->orFilterWhere(['company_id' => $this->company_id]);
         $query->andFilterWhere(['company.type' => $this->type]);
         $query->orFilterWhere(['service_type.type' => $this->type]);
+        */
 
         $query->andFilterWhere(['like', 'name', $this->name]);
 

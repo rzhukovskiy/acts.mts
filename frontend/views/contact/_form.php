@@ -26,9 +26,10 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
 
-        <?= $form->field($model, 'company_id')->dropdownList(\common\models\Company::dataDropDownList($type, true),
-            ['prompt' => 'выберите компанию']) ?>
-
+        <? //$form->field($model, 'company_id')->dropdownList(\common\models\Company::dataDropDownList($type, true),
+        // ['prompt' => 'выберите компанию'])
+        ?>
+        <?= Html::activeHiddenInput($model, 'type', ['value' => $type]) ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>

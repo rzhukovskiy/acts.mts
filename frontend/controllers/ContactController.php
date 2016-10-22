@@ -31,7 +31,7 @@ class ContactController extends Controller
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list','view'],
+                        'actions' => ['list', 'view'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_PARTNER, User::ROLE_CLIENT],
                     ],
@@ -55,12 +55,12 @@ class ContactController extends Controller
         $model = new Contact();
 
         return $this->render('list',
-        [
-            'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
-            'type'         => $type,
-            'model'        => $model,
-        ]);
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'model'        => $model,
+            ]);
     }
 
     /**
@@ -71,15 +71,14 @@ class ContactController extends Controller
     public function actionView($id)
     {
         return $this->render('view',
-        [
-            'model' => $this->findModel($id),
-        ]);
+            [
+                'model' => $this->findModel($id),
+            ]);
     }
 
     /**
-     * Creates a new Contact model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @param $type
+     * @return \yii\web\Response
      */
     public function actionCreate($type)
     {
@@ -106,9 +105,9 @@ class ContactController extends Controller
             return $this->redirect(['list', 'type' => $model->type]);
         } else {
             return $this->render('update',
-            [
-                'model' => $this->findModel($id),
-            ]);
+                [
+                    'model' => $this->findModel($id),
+                ]);
         }
     }
 
