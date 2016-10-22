@@ -355,12 +355,13 @@ class Act extends ActiveRecord
             self::ERROR_INCOME  => 'Не указан приход',
             self::ERROR_CHECK   => 'Чек не загружен',
             self::ERROR_CARD    => (!$this->card->company_id) ? 'Не существует такой номер карты' :
-                'Не совпадает номер карты с номером ТС. Карта - ' .
+                'Не совпадает номер карты с номером ТС.<br>
+                Карта - ' .
                 $this->card->company->name .
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
                 ' ТС - ' .
-                (isset($this->car->company->name) ? $this->car->company->name : 'не указан') .
-                ')',
-            self::ERROR_CAR     => 'Некорректный номер ТС',
+                (isset($this->car->company->name) ? $this->car->company->name : 'не указан'),
+            self::ERROR_CAR     => (!$this->car->company_id) ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
         ];
         foreach ($errorArr as $key => $err) {
