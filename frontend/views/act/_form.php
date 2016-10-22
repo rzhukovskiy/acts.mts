@@ -41,6 +41,7 @@ use yii\jui\AutoComplete;
                         ],
                         'options' => [
                             'class' => 'form-control',
+                            'value' => date('d-m-Y'),
                         ]
                     ])->error(false) ?>
                 </td>

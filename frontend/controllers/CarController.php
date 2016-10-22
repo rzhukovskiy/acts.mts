@@ -161,7 +161,7 @@ class CarController extends Controller
             }
         } else {
             if (!Yii::$app->request->isAjax) {
-                return $this->goBack();
+                return $this->redirect(Yii::$app->getRequest()->referrer);
             }
         }
     }

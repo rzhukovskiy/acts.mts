@@ -65,19 +65,26 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'car_number',
-            'header'    => 'Номер авто',
-            'visible'   => $admin,
+            'header' => 'Номер авто',
+            'visible' => $admin,
         ],
         [
             'attribute' => 'car_mark',
-            'header'    => 'Марка',
-            'visible'   => $admin,
+            'header' => 'Марка',
+            'visible' => $admin,
         ],
         [
             'attribute' => 'car_type',
-            'header'    => 'Тип',
-            'visible'   => $admin,
+            'header' => 'Тип',
+            'visible' => $admin,
         ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{update} {delete}',
+            'options' => [
+                'style' => 'width: 70px',
+            ]
+        ]
     ],
 ]);
 Pjax::end();

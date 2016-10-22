@@ -7,11 +7,9 @@
 
 use common\components\ArrayHelper;
 use common\models\Car;
-use common\models\Card;
 use common\models\Mark;
 use common\models\Type;
 use kartik\date\DatePicker;
-use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
@@ -41,6 +39,7 @@ use yii\jui\AutoComplete;
                         ],
                         'options' => [
                             'class' => 'form-control',
+                            'value' => date('d-m-Y'),
                         ]
                     ])->error(false) ?>
                 </td>

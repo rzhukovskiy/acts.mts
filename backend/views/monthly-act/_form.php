@@ -47,6 +47,7 @@ use yii\helpers\Html;
                 ],
                 'options'       => [
                     'class' => 'form-control',
+                    'value' => date('d-m-Y'),
                 ]
             ])->error(false) ?>
         <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>

@@ -154,6 +154,7 @@ class Act extends ActiveRecord
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
+            ['time_str', 'default', 'value' => date('d-m-Y')],
             ['check', 'default', 'value' => null],
         ];
     }

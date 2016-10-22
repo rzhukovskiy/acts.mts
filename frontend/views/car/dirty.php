@@ -52,6 +52,7 @@ echo GridView::widget([
                         ],
                         'options' => [
                             'class' => 'form-control',
+                            'value' => date('d-m-Y'),
                         ]
                     ]),
                     'options' => ['colspan' => 2, 'class' => 'kv-grid-group-filter'],
