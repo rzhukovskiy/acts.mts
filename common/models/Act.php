@@ -151,7 +151,7 @@ class Act extends ActiveRecord
                 ],
                 'safe'
             ],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxFiles' => 10],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             ['service_type', 'default', 'value' => Service::TYPE_WASH],
             ['status', 'default', 'value' => self::STATUS_NEW],
             ['check', 'default', 'value' => null],
