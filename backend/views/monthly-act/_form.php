@@ -32,7 +32,7 @@ use yii\helpers\Html;
         <?= $form->field($model->client, 'address')
             ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
 
-        <?= $form->field($model, 'image')->fileInput([
+        <?= $form->field($model, 'image[]')->fileInput([
                 'multiple' => true,
                 'accept'   => 'image/*',
                 'class'    => 'form-control'
