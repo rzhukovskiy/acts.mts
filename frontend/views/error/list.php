@@ -12,13 +12,18 @@ $this->title = 'Акты';
 
 $request = Yii::$app->request;
 
-echo $this->render('_tabs', [
+echo $this->render('_tabs',
+[
     'role' => $role,
 ]);
 
-echo $this->render('_list', [
+echo $this->render('_list',
+[
     'dataProvider' => $dataProvider,
-    'searchModel' => $searchModel,
-    'role' => $role,
+    'searchModel'  => $searchModel,
+    'role'         => $role,
 ]);
+
+echo $this->render('_add_car', []);
+
 

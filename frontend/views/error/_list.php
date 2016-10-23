@@ -121,13 +121,6 @@ $columns = [
                 if (isset($model->car->company_id)) {
                     return false;
                 }
-                $url = \yii\helpers\Url::to(['/car/create']);
-                $data = http_build_query([
-                    'Car[company_id]' => $model->client_id,
-                    'Car[number]'     => $model->number,
-                    'Car[mark_id]'    => $model->mark_id,
-                    'Car[type_id]'    => $model->type_id
-                ]);
 
                 return Html::a('<span class="glyphicon glyphicon-ok"></span>',
                     '#',
@@ -136,12 +129,10 @@ $columns = [
                         'aria-label' => "Добавить номер",
                         'data-pjax'  => "0",
                         'onclick'    => "
-                            $.ajax('$url', {
-                                type: 'POST',
-                                data:'$data',
-                            }).done(function(data) {
-                                window.location.reload();
-                            });
+                            $('#add-car-modal').modal('show');
+                            $('#car-number').val(" . $model->number . ");
+                            $('#car-mark_id').val(" . $model->mark_id . ");
+                            $('#car-type_id').val(" . $model->type_id . ");
                         return false;
                         ",
                     ]);
