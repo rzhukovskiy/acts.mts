@@ -70,7 +70,7 @@ class MonthlyActController extends Controller
     {
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
-            $model->image = yii\web\UploadedFile::getInstance($model, 'image');
+            $model->image = yii\web\UploadedFile::getInstances($model, 'image');
             $model->uploadImage();
             if ($model->save()) {
                 return $this->redirect(Yii::$app->request->post('__returnUrl'));

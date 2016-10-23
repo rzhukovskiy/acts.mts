@@ -265,7 +265,7 @@ class ActController extends Controller
         $model->time_str = date('d-m-Y', $model->served_at);
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->image = UploadedFile::getInstance($model, 'image');
+            $model->image = UploadedFile::getInstances($model, 'image');
             if ($model->save()) {
                 return $this->redirect(Yii::$app->request->post('__returnUrl'));
             }

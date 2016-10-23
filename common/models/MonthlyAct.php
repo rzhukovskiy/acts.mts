@@ -101,7 +101,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 'integer'
             ],
             [['img', 'act_date', 'payment_date'], 'string', 'on' => 'default'],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'on' => 'default'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxFiles' => 10, 'on' => 'default'],
             [
                 [
                     'act_comment',
@@ -265,12 +265,12 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $partnerAct = $clientAct = [];
 
         $partnerMonthlyAct = MonthlyAct::find()->byPartner($partnerId, $time)->one();
-        if (isset($partnerMonthlyAct)&&$partnerMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
+        if (isset($partnerMonthlyAct) && $partnerMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
             $partnerMonthlyAct->delete();
             $partnerAct = MonthlyAct::getPartnerAct($time, $partnerId);
         }
         $clientMonthlyAct = MonthlyAct::find()->byClient($clientId, $time)->one();
-        if (isset($partnerMonthlyAct)&&$clientMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
+        if (isset($partnerMonthlyAct) && $clientMonthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
             $clientMonthlyAct->delete();
             $clientAct = MonthlyAct::getClientAct($time, $clientId);
         }
@@ -340,15 +340,16 @@ class MonthlyAct extends \yii\db\ActiveRecord
      */
     public function uploadImage()
     {
-        if ($this->image) {
-            $image = \Yii::$app->image->load($this->image->tempName);
+        foreach ($this->image as $uploadImage) {
+
+            $image = \Yii::$app->image->load($uploadImage->tempName);
             /**
              * @var $image \yii\image\drivers\Image
              */
             $img = (!$this->img) ? [] : $this->img;
             $count = count($this->img);
             $imageDir = '/files/monthly-check/' . $this->act_date . '/';
-            $imageName = $imageDir . $this->id . '_' . ($count + 1) . '.' . $this->image->extension;
+            $imageName = $imageDir . $this->id . '_' . ($count + 1) . '.' . $uploadImage->extension;
             $imageDir = \Yii::getAlias('@webroot' . $imageDir);
             if (!is_dir($imageDir)) {
                 mkdir($imageDir, 0775, true);
@@ -359,6 +360,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 $this->img = $img;
             }
         }
+
 
         return false;
     }

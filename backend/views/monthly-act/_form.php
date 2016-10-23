@@ -32,7 +32,11 @@ use yii\helpers\Html;
         <?= $form->field($model->client, 'address')
             ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
 
-        <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+        <?= $form->field($model, 'image')->fileInput([
+                'multiple' => true,
+                'accept'   => 'image/*',
+                'class'    => 'form-control'
+            ])->error(false) ?>
 
         <?= $form->field($model, 'profit')->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
         <?= $form->field($model, 'payment_status')
