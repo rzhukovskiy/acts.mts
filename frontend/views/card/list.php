@@ -83,7 +83,8 @@ echo GridView::widget([
             'template' => '{update} {delete}',
             'options' => [
                 'style' => 'width: 70px',
-            ]
+            ],
+            'visible' => $admin,
         ]
     ],
 ]);
