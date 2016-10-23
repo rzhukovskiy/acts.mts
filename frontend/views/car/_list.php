@@ -6,10 +6,12 @@ use yii\grid\GridView;
 /**
  * @var $this yii\web\View
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel common\models\search\CarSearch
  */
-
+\yii\widgets\Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'layout' => '{items}',
     'emptyText' => '',
     'columns' => [
@@ -20,18 +22,20 @@ echo GridView::widget([
 
         'number',
         [
-            'attribute' => 'mark_id',
-            'content' => function ($data) {
-                return !empty($data->mark->name) ? Html::encode($data->mark->name) : 'error';
-            },
-            'filter' => false,
-        ],
-        [
-            'attribute' => 'type_id',
-            'content' => function ($data) {
+            'attribute'          => 'type_id',
+            'content'            => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : 'error';
             },
-            'filter' => false,
+            'filter'             => \common\models\Type::getTypeList(),
+            'filterInputOptions' => ['prompt' => 'выберите тип ТС', 'class' => 'form-control']
+        ],
+        [
+            'attribute'          => 'mark_id',
+            'content'            => function ($data) {
+                return !empty($data->mark->name) ? Html::encode($data->mark->name) : 'error';
+            },
+            'filter'             => \common\models\Mark::getMarkList(),
+            'filterInputOptions' => ['prompt' => 'выберите марку ТС', 'class' => 'form-control']
         ],
         [
             'attribute' => 'is_infected',
@@ -58,3 +62,5 @@ echo GridView::widget([
         ],
     ],
 ]);
+
+\yii\widgets\Pjax::end();

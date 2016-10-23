@@ -52,4 +52,12 @@ class Mark extends \yii\db\ActiveRecord
     {
         return new MarkQuery(get_called_class());
     }
+
+    /**
+     * @return array
+     */
+    public static function getMarkList()
+    {
+        return self::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+    }
 }

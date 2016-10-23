@@ -2,6 +2,7 @@
 namespace common\models;
 
 use common\models\query\CompanyQuery;
+use common\models\search\CarSearch;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
@@ -568,14 +569,25 @@ class Company extends ActiveRecord
      */
     public function getCarDataProvider()
     {
-        return new ActiveDataProvider([
-            'query' => Car::find()->where(['company_id' => $this->id]),
-            'pagination' => false,
-            'sort' => [
-                'defaultOrder' => [
-                    'number' => SORT_DESC,
-                ]
-            ],
-        ]);
+        $dataProvider = $this->getCarSearchModel()->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'number' => SORT_DESC,
+            ]
+        ];
+
+        return $dataProvider;
+    }
+
+    /**
+     * @return \common\models\search\CarSearch
+     */
+    public function getCarSearchModel()
+    {
+        $searchModel = new CarSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->company_id = $this->id;
+
+        return $searchModel;
     }
 }

@@ -100,4 +100,12 @@
 
             return unlink( $path . $imageName . '.jpg' );
         }
+
+        /**
+         * @return array
+         */
+        public static function getTypeList()
+        {
+            return self::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+        }
     }

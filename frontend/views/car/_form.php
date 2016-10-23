@@ -50,8 +50,10 @@ use common\models\Type;
             </div>
             <?php ActiveForm::end() ?>
 
-            <?= $model->isNewRecord ? $this->render('/car/_list', [
+            <?= $model->isNewRecord ? $this->render('/car/_list',
+            [
                 'dataProvider' => $companyModel->getCarDataProvider(),
+                'searchModel'  => $companyModel->getCarSearchModel(),
             ]) : '' ?>
         </div>
     </div>
