@@ -19,7 +19,14 @@ echo GridView::widget([
             'header' => '№',
             'class' => 'yii\grid\SerialColumn'
         ],
-
+        [
+            'attribute'          => 'mark_id',
+            'content'            => function ($data) {
+                return !empty($data->mark->name) ? Html::encode($data->mark->name) : 'error';
+            },
+            'filter'             => \common\models\Mark::getMarkList(),
+            'filterInputOptions' => ['prompt' => 'выберите марку ТС', 'class' => 'form-control']
+        ],
         'number',
         [
             'attribute'          => 'type_id',
@@ -28,14 +35,6 @@ echo GridView::widget([
             },
             'filter'             => \common\models\Type::getTypeList(),
             'filterInputOptions' => ['prompt' => 'выберите тип ТС', 'class' => 'form-control']
-        ],
-        [
-            'attribute'          => 'mark_id',
-            'content'            => function ($data) {
-                return !empty($data->mark->name) ? Html::encode($data->mark->name) : 'error';
-            },
-            'filter'             => \common\models\Mark::getMarkList(),
-            'filterInputOptions' => ['prompt' => 'выберите марку ТС', 'class' => 'form-control']
         ],
         [
             'attribute' => 'is_infected',
