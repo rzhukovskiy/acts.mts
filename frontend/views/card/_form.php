@@ -3,9 +3,14 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Card */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $this yii\web\View
+ * @var $model common\models\Card
+ * @var $form yii\widgets\ActiveForm
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $admin null|bool
+ * @var $searchModel common\models\search\CardSearch
+ * @var $companyDropDownData array
+ */
 ?>
 
 <div class="panel panel-primary">
@@ -13,7 +18,6 @@ use yii\widgets\ActiveForm;
         <?= $model->isNewRecord ? 'Добавление карты' : 'Редактирование карты ' . $model->number ?>
     </div>
     <div class="panel-body">
-
         <?php
         $form = ActiveForm::begin([
             'action' => $model->isNewRecord ? ['card/create'] : ['card/update', 'id' => $model->id],

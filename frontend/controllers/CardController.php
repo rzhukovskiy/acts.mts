@@ -101,7 +101,7 @@ class CardController extends Controller
         $companyDropDownData = Company::dataDropDownList();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['list']);
+            return $this->goBack();
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -120,7 +120,7 @@ class CardController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['list']);
+        return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
     /**

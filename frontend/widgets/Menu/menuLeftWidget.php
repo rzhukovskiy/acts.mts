@@ -120,7 +120,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Контакты',
                     'url' => ['/contact/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'user',
+                    'active' => Yii::$app->controller->id == 'contact',
                 ],
                 [
                     'label' => 'Карты',
@@ -212,7 +212,7 @@ class menuLeftWidget extends Widget
                     [
                         'label' => 'Контакты',
                         'url' => ['/contact/list', 'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type : $company->type],
-                        'active' => Yii::$app->controller->id == 'user',
+                        'active' => Yii::$app->controller->id == 'contact',
                     ],
                     [
                         'label' => 'Архив',
