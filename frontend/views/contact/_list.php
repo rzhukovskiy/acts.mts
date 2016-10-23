@@ -67,7 +67,9 @@ echo GridView::widget([
         ],
         */
         'name',
-        'description',
+        'position',
+        'phone',
+        'email',
         [
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{update}{delete}',

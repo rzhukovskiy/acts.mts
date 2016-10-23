@@ -10,6 +10,9 @@ use Yii;
  * @property integer $id
  * @property integer $company_id
  * @property string $name
+ * @property string $phone
+ * @property string $email
+ * @property string $position
  * @property string $description
  * @property integer $type
  *
@@ -36,8 +39,8 @@ class Contact extends \yii\db\ActiveRecord
             //[['company_id'], 'unique'],
             [['type', 'name'], 'required'],
             [['type'], 'integer'],
-            [['name'], 'string', 'max' => 255],
-            [['description'], 'string', 'max' => 1000],
+            [['name', 'phone', 'position'], 'string', 'max' => 255],
+            [['email'], 'email'],
             /*
             [
                 ['company_id'],
@@ -56,11 +59,13 @@ class Contact extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'          => 'ID',
+            'id'       => 'ID',
             //'company_id'  => 'Компания',
-            'name'        => 'Имя',
-            'description' => 'Описание',
-            'type'        => 'Тип',
+            'name'     => 'Имя',
+            'phone'    => 'Телефон',
+            'email'    => 'Электронная почта',
+            'position' => 'Должность',
+            'type'     => 'Тип',
         ];
     }
 

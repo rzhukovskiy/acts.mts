@@ -31,8 +31,11 @@ use yii\widgets\ActiveForm;
         ?>
         <?= Html::activeHiddenInput($model, 'type', ['value' => $type]) ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'position')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
+
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
