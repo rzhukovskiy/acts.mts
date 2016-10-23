@@ -590,4 +590,20 @@ class Company extends ActiveRecord
 
         return $searchModel;
     }
+
+    /**
+     * @return ActiveDataProvider
+     */
+    public function getCardDataProvider()
+    {
+        return new ActiveDataProvider([
+            'query' => Card::find()->where(['company_id' => $this->id]),
+            'pagination' => false,
+            'sort' => [
+                'defaultOrder' => [
+                    'number' => SORT_DESC,
+                ]
+            ],
+        ]);
+    }
 }

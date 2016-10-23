@@ -33,21 +33,24 @@ foreach (Service::$listType as $type_id => $type) {
 }
 if ($model->type == Company::TYPE_WASH) {
     echo $this->render('/company-duration/_form',
-    [
-        'model' => $model,
-        'type'  => Company::TYPE_WASH,
-    ]);
+        [
+            'model' => $model,
+            'type' => Company::TYPE_WASH,
+        ]);
 }
+
 if ($model->type == Company::TYPE_OWNER) {
     echo $this->render('/car/_form', [
         'model' => new Car(),
         'companyModel' => $model,
     ]);
-}
 
-if (($model->type == Company::TYPE_OWNER)) {
-    echo $this->render('partner-exclude/_form',
-    [
-        'model' => $model,
+    echo $this->render('/card/_list', [
+        'dataProvider' => $model->getCardDataProvider(),
     ]);
+
+    echo $this->render('partner-exclude/_form',
+        [
+            'model' => $model,
+        ]);
 }

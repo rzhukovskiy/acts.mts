@@ -8,11 +8,8 @@
 
 namespace backend\widgets\Menu;
 
-use common\models\Act;
 use common\models\Company;
 use common\models\Department;
-use common\models\search\ActSearch;
-use common\models\Service;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
