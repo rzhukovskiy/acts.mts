@@ -25,6 +25,7 @@ use yii\web\IdentityInterface;
  * @property string $password write-only password
  *
  * @property Company $company
+ * @property Department $department
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -228,6 +229,12 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
+    public function getDepartment()
+    {
+        return $this->hasOne(Department::className(), ['id' => 'department_id'])
+            ->viaTable('{{%department_user}}', ['user_id' => 'id']);
+    }
+
     public static function getRoleName($role)
     {
         switch ($role) {
@@ -243,5 +250,32 @@ class User extends ActiveRecord implements IdentityInterface
             default :
                 return 'God';
         }
+    }
+
+    public function getFirstCompanyType()
+    {
+        if (!empty($this->department)) {
+            foreach (Company::$listType as $companyType => $serviceData) {
+                if ($this->department->can($companyType, Company::STATUS_NEW)) {
+                    return $companyType;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    public function getAllCompanyType($status)
+    {
+        $res = [];
+        if (!empty($this->department)) {
+            foreach (Company::$listType as $companyType => $serviceData) {
+                if ($this->department->can($companyType, $status)) {
+                    $res[$companyType] = $companyType;
+                }
+            }
+        }
+
+        return $res;
     }
 }

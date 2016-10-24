@@ -12,7 +12,8 @@ use yii\db\ActiveRecord;
  * This is the model class for table "{{%company_offer}}".
  *
  * @property integer $id
- * @property string $company_id
+ * @property integer $company_id
+ * @property integer $user_id
  * @property string $process
  * @property string $mail_number
  * @property integer $communication_at

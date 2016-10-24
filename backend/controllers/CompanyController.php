@@ -12,6 +12,7 @@ namespace backend\controllers;
 use common\models\Company;
 use common\models\CompanyInfo;
 use common\models\search\CompanySearch;
+use common\models\Service;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -69,6 +70,12 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
+        
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
+        }
 
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
@@ -77,6 +84,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 
