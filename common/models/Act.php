@@ -480,6 +480,7 @@ class Act extends ActiveRecord
             if (empty($this->partnerServiceList) && $this->status == self::STATUS_NEW) {
                 $this->partnerServiceList = $this->getPartnerScopes()->asArray()->all();
             }
+
             if (!empty($this->partnerServiceList)) {
                 ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->partner_id]);
 
@@ -497,9 +498,8 @@ class Act extends ActiveRecord
                             'company_id' => $this->partner_id,
                             'type_id'    => $this->type_id,
                         ]);
-
                         if (!empty($companyService) && $companyService->service->is_fixed) {
-                            $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
+                            $scope->price = $companyService->price;
                             $scope->description = $companyService->service->description;
                         } else {
                             $scope->price = $serviceData['price'];
@@ -516,7 +516,6 @@ class Act extends ActiveRecord
 
                 $this->expense = $totalExpense;
             }
-
 
             if (empty($this->clientServiceList) && $this->status == self::STATUS_NEW) {
                 $this->clientServiceList = $this->getClientScopes()->asArray()->all();
@@ -540,7 +539,7 @@ class Act extends ActiveRecord
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
-                            $scope->price = $serviceData['price'] ? $serviceData['price'] : $companyService->price;
+                            $scope->price = $companyService->price;
                             $scope->description = $companyService->service->description;
                         } else {
                             $scope->price = $serviceData['price'];

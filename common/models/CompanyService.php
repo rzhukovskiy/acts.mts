@@ -104,14 +104,18 @@ class CompanyService extends ActiveRecord
 
     public function beforeSave($insert)
     {
-        $existed = CompanyService::findOne([
-            'company_id' => $this->company_id,
-            'type_id' => $this->type_id,
-            'service_id' => $this->service_id,
-        ]);
+        if ($insert) {
+            $existed = CompanyService::findAll([
+                'company_id' => $this->company_id,
+                'type_id' => $this->type_id,
+                'service_id' => $this->service_id,
+            ]);
 
-        if ($existed) {
-            $existed->delete();
+            if ($existed) {
+                foreach ($existed as $model) {
+                    $model->delete();
+                }
+            }
         }
 
         return parent::beforeSave($insert);
