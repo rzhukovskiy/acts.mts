@@ -46,6 +46,9 @@ echo GridView::widget([
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{update} {delete}',
+            'options' => [
+                'style' => 'width: 70px',
+            ],
             'buttons' => [
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
