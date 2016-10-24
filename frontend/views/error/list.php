@@ -24,6 +24,4 @@ echo $this->render('_list',
     'role'         => $role,
 ]);
 
-echo $this->render('_add_car', []);
-
 

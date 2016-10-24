@@ -98,10 +98,11 @@ $columns = [
         },
         'format' => 'raw',
         'visible' => $searchModel->service_type == Service::TYPE_WASH,
-        'contentOptions' => function($data) {
-            if($data->hasError('check')) return ['class' => 'text-danger'];
+        'contentOptions' => function ($data) {
+            if ($data->hasError('check')) {
+                return ['class' => 'text-danger'];
+            }
         },
-        'visible' => $searchModel->service_type == Service::TYPE_WASH,
     ],
     [
         'header'         => '',
@@ -117,26 +118,7 @@ $columns = [
                     'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
                 ]);
             },
-            'add-car' => function ($url, $model, $key) {
-                if (isset($model->car->company_id)) {
-                    return false;
-                }
 
-                return Html::a('<span class="glyphicon glyphicon-ok"></span>',
-                    '#',
-                    [
-                        'title'      => "Добавить номер",
-                        'aria-label' => "Добавить номер",
-                        'data-pjax'  => "0",
-                        'onclick'    => "
-                            $('#add-car-modal').modal('show');
-                            $('#car-number').val(" . $model->number . ");
-                            $('#car-mark_id').val(" . $model->mark_id . ");
-                            $('#car-type_id').val(" . $model->type_id . ");
-                        return false;
-                        ",
-                    ]);
-            },
         ],
     ],
 ];

@@ -28,7 +28,7 @@ use yii\jui\AutoComplete;
     <div class="panel-body">
         <?= $this->render('_message',
         [
-            'allMessage' => $model->errorMessage(),
+            'model' =>$model,
         ]);
         ?>
         <?php
