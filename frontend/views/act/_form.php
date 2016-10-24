@@ -155,7 +155,7 @@ use yii\jui\AutoComplete;
                                         <?= Html::textInput("Act[clientServiceList][$scope->id][description]", $scope->description, ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-2>
+                                <div class="col-xs-2">
                                     <?= Html::input('number', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-1">

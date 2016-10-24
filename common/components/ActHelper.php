@@ -249,8 +249,12 @@ class ActHelper
                 'template' => '{view}',
                 'width' => '40px',
                 'buttons' => [
-                    'view' => function ($url, $data, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id, 'company' => 1]);
+                    'view' => function ($url, $data, $key) use ($company){
+                        if ($company) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id, 'company' => $company]);
+                        } else {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id]);
+                        }
                     },
                 ],
             ],
