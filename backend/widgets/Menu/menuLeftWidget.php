@@ -53,7 +53,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Заявки',
-                    'url' => ['/company/new?type=' . Company::TYPE_WASH],
+                    'url' => ['/company/new', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'new') ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW)
@@ -61,7 +61,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/company/archive?type=' . Company::TYPE_WASH],
+                    'url' => ['/company/active', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
@@ -69,7 +69,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Отказ',
-                    'url' => ['/company/refuse?type=' . Company::TYPE_WASH],
+                    'url' => ['/company/refuse', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse') ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
@@ -104,25 +104,25 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label' => 'Заявки',
-                    'url' => ['/company/new?type=' . Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'new') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW)
                     ),
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/company/archive?type=' . Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ACTIVE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id ==  Company::$listStatus[Company::STATUS_ACTIVE]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
                     ),
                 ],
                 [
                     'label' => 'Отказ',
-                    'url' => ['/company/refuse?type=' . Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
                     ),
                 ],

@@ -2,17 +2,18 @@
 
 namespace backend\controllers;
 
+use common\models\User;
 use Yii;
-use common\models\CompanyInfo;
-use common\models\search\CompanyInfoSearch;
+use common\models\CompanyOffer;
+use common\models\search\CompanyOfferSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CompanyInfoController implements the CRUD actions for CompanyInfo model.
+ * CompanyOfferController implements the CRUD actions for CompanyOffer model.
  */
-class CompanyInfoController extends Controller
+class CompanyOfferController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,12 +31,12 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Lists all CompanyInfo models.
+     * Lists all CompanyOffer models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CompanyInfoSearch();
+        $searchModel = new CompanyOfferSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +46,7 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Displays a single CompanyInfo model.
+     * Displays a single CompanyOffer model.
      * @param integer $id
      * @return mixed
      */
@@ -57,13 +58,17 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Creates a new CompanyInfo model.
+     * Creates a new CompanyOffer model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new CompanyInfo();
+        $model = new CompanyOffer();
+
+        if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+            $model->user_id = Yii::$app->user->identity->id;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(Yii::$app->request->referrer);
@@ -75,7 +80,7 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Updates an existing CompanyInfo model.
+     * Updates an existing CompanyOffer model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +99,7 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Deletes an existing CompanyInfo model.
+     * Deletes an existing CompanyOffer model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -107,15 +112,15 @@ class CompanyInfoController extends Controller
     }
 
     /**
-     * Finds the CompanyInfo model based on its primary key value.
+     * Finds the CompanyOffer model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return CompanyInfo the loaded model
+     * @return CompanyOffer the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CompanyInfo::findOne($id)) !== null) {
+        if (($model = CompanyOffer::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -153,5 +153,8 @@ class SiteController extends Controller
         if (Yii::$app->user->can(User::ROLE_ACCOUNT)) {
             return $this->redirect(['wash/list']);
         }
+        if (Yii::$app->user->can(User::ROLE_WATCHER)) {
+            return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
+        }
     }
 }

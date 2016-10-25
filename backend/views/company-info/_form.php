@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
             'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
                 'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
-                'labelOptions' => ['class' => 'col-sm-2 control-label'],
+                'labelOptions' => ['class' => 'col-sm-3 control-label'],
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]); ?>
@@ -28,7 +28,13 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'index')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'city')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'street')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'house')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'address_mail')->textInput(['maxlength' => true]) ?>
 
@@ -61,8 +67,8 @@ use yii\widgets\ActiveForm;
         ])->error(false) ?>
 
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-6">
-                <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+            <div class="col-sm-offset-3 col-sm-6">
+                <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
             </div>
         </div>
 

@@ -60,7 +60,10 @@ class CompanyInfo extends ActiveRecord
         return [
             'id' => 'ID',
             'phone' => 'Телефон',
-            'address' => 'Адрес',
+            'index' => 'Индекс',
+            'city' => 'Город',
+            'street' => 'Улица',
+            'house' => 'Строение',
             'address_mail' => 'Почтовый адрес',
             'email' => 'Имейл',
             'start_at' => 'Начало работы',

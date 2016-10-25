@@ -91,6 +91,25 @@ class Company extends ActiveRecord
         ],
     ];
 
+    static $listStatus = [
+        self::STATUS_NEW => [
+            'en' => 'new',
+            'ru' => 'Заявки',
+        ],
+        self::STATUS_ACTIVE => [
+            'en' => 'active',
+            'ru' => 'Архив',
+        ],
+        self::STATUS_REFUSE => [
+            'en' => 'refuse',
+            'ru' => 'Отказавшиеся',
+        ],
+        self::STATUS_DELETED => [
+            'en' => 'deleted',
+            'ru' => 'Удаленные',
+        ],
+    ];
+
     /**
      * @inheritdoc
      */
@@ -119,7 +138,6 @@ class Company extends ActiveRecord
             [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList', 'serviceList', 'schedule'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
     }
 
