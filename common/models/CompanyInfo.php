@@ -13,7 +13,10 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $company_id
  * @property string $phone
- * @property string $address
+ * @property string $index
+ * @property string $city
+ * @property string $street
+ * @property string $house
  * @property string $address_mail
  * @property string $email
  * @property integer $start_at
@@ -45,7 +48,7 @@ class CompanyInfo extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'start_at', 'end_at'], 'integer'],
-            [['phone', 'address', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],
+            [['phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],
         ];
     }
 

@@ -108,6 +108,12 @@ class CompanyController extends Controller
         $model = new Company();
         $model->type = $type;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -115,6 +121,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 
@@ -139,6 +146,12 @@ class CompanyController extends Controller
         $model = new Company();
         $model->type = $type;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
+        }
+
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -146,6 +159,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 

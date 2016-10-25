@@ -112,7 +112,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив',
-                    'url' => ['/company/archive?type=' . Company::TYPE_WASH],
+                    'url' => ['/company/archive?type=' . Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
@@ -120,7 +120,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Отказ',
-                    'url' => ['/company/refuse?type=' . Company::TYPE_WASH],
+                    'url' => ['/company/refuse?type=' . Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse') ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
