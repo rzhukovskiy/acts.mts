@@ -11,7 +11,9 @@ namespace backend\controllers;
 
 use common\models\Company;
 use common\models\CompanyInfo;
+use common\models\CompanyOffer;
 use common\models\search\CompanySearch;
+use common\models\Service;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -30,17 +32,17 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['archive', 'refuse', 'create', 'update', 'delete', 'new'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['archive', 'refuse', 'create', 'update', 'new'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['archive', 'refuse', 'update', 'new'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -69,6 +71,12 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
+        
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
+        }
 
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
@@ -77,6 +85,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 
@@ -85,7 +94,7 @@ class CompanyController extends Controller
      * @param integer $type
      * @return mixed
      */
-    public function actionArchive($type)
+    public function actionActive($type)
     {
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
@@ -100,6 +109,12 @@ class CompanyController extends Controller
         $model = new Company();
         $model->type = $type;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -107,6 +122,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 
@@ -131,6 +147,12 @@ class CompanyController extends Controller
         $model = new Company();
         $model->type = $type;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
+        }
+
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -138,6 +160,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'listType' => $listType,
         ]);
     }
 
@@ -150,10 +173,13 @@ class CompanyController extends Controller
     {
         $model = new Company();
         $model->type = $type;
+        $model->status = Company::STATUS_NEW;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['company/list', 'type' => $type]);
+            return $this->redirect(['company/new', 'type' => $type]);
         } else {
+            print_r($model->getErrors());
+            die;
             return $this->goBack();
         }
     }
@@ -167,16 +193,29 @@ class CompanyController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $modelCompanyOffer = $model->offer ? $model->offer : new CompanyOffer();
+        $modelCompanyOffer->company_id = $model->id;
+
+        return $this->render('offer', [
+            'model' => $modelCompanyOffer,
+        ]);
+    }
+
+    /**
+     * Updates an existing Company model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionInfo($id)
+    {
+        $model = $this->findModel($id);
         $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
         $modelCompanyInfo->company_id = $model->id;
 
-        if ($modelCompanyInfo->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['update', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $modelCompanyInfo,
-            ]);
-        }
+        return $this->render('info', [
+            'model' => $modelCompanyInfo,
+        ]);
     }
 
     /**

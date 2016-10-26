@@ -11,6 +11,7 @@
 $action = Yii::$app->controller->action->id;
 echo $this->render('_tabs', [
     'model' => $model,
+    'listType' => $listType,
 ]);
 
 echo $this->render($action . '/_list', [

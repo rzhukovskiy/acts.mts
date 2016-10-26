@@ -25,19 +25,12 @@ use yii\grid\GridView;
                     'header' => '№',
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'address',
                 'name',
-                'info.address',
-                [
-                    'attribute' => 'offer.communication_at',
-                    'value' => function($model) {
-                        return !empty($model->offer->communication_at) ? date('d-m-Y H:i', $model->offer->communication_at) : 'Не указана';
-                    },
-                ],
+                'fullAddress',
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update}{delete}',
-                    'contentOptions' => ['style' => 'min-width: 70px'],
+                    'template' => '{view}',
+                    'contentOptions' => ['style' => 'min-width: 60px'],
                 ],
             ],
         ]);

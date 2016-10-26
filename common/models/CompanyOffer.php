@@ -12,7 +12,8 @@ use yii\db\ActiveRecord;
  * This is the model class for table "{{%company_offer}}".
  *
  * @property integer $id
- * @property string $company_id
+ * @property integer $company_id
+ * @property integer $user_id
  * @property string $process
  * @property string $mail_number
  * @property integer $communication_at
@@ -21,11 +22,11 @@ use yii\db\ActiveRecord;
  *
  * @property Company $company
  *
- * @property string $communicate_str
+ * @property string $communication_str
  */
 class CompanyOffer extends ActiveRecord
 {
-    public $communication_str;
+    private $communication_str;
     /**
      * @inheritdoc
      */
@@ -50,9 +51,9 @@ class CompanyOffer extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'created_at', 'updated_at'], 'required'],
+            [['company_id'], 'required'],
             [['company_id', 'communication_at', 'created_at', 'updated_at'], 'integer'],
-            [['process'], 'string', 'max' => 1000],
+            [['process', 'communication_str'], 'string', 'max' => 1000],
             [['mail_number'], 'string', 'max' => 255],
         ];
     }
@@ -64,10 +65,11 @@ class CompanyOffer extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'company_id' => 'Company ID',
-            'process' => 'Process',
-            'mail_number' => 'Mail Number',
+            'company_id' => 'Компания',
+            'process' => 'Комментарии',
+            'mail_number' => 'Номер почтового отправления',
             'communication_at' => 'Дата следующей связи',
+            'communication_str' => 'Дата следующей связи',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -90,10 +92,20 @@ class CompanyOffer extends ActiveRecord
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
+    public function getCommunication_str()
+    {
+        return $this->communication_at ? date('d-m-Y H:i', $this->communication_at) : '';
+    }
+
+    public function setCommunication_str($value)
+    {
+        $this->communication_str = $value;
+    }
+
     public function beforeSave($insert)
     {
-        if (!empty($this->communicate_str)) {
-            $this->communication_at = \DateTime::createFromFormat('d-m-Y H:i', $this->communicate_str)->getTimestamp();
+        if (!empty($this->communication_str)) {
+            $this->communication_at = \DateTime::createFromFormat('d-m-Y H:i', $this->communication_str)->getTimestamp();
         }
 
         return parent::beforeSave($insert);

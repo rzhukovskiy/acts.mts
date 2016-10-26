@@ -222,7 +222,10 @@ table.sign {
 .datetimepicker .table-condensed {
     width: 300px;
 }
-.datetimepicker .table-condensed thead {
+.datetimepicker-hours .table-condensed thead {
+    display: none;
+}
+.datetimepicker-minutes .table-condensed thead {
     display: none;
 }
 

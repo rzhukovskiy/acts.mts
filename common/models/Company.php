@@ -47,7 +47,9 @@ class Company extends ActiveRecord
 {
     public $cardList;
     public $requisitesList;
+
     private $serviceList;
+    private $fullAddress;
 
     const STATUS_DELETED = 0;
     const STATUS_NEW = 1;
@@ -86,6 +88,25 @@ class Company extends ActiveRecord
         self::TYPE_UNIVERSAL => [
             'en' => 'universal',
             'ru' => 'Универсальная',
+        ],
+    ];
+
+    static $listStatus = [
+        self::STATUS_NEW => [
+            'en' => 'new',
+            'ru' => 'Заявки',
+        ],
+        self::STATUS_ACTIVE => [
+            'en' => 'active',
+            'ru' => 'Архив',
+        ],
+        self::STATUS_REFUSE => [
+            'en' => 'refuse',
+            'ru' => 'Отказавшиеся',
+        ],
+        self::STATUS_DELETED => [
+            'en' => 'deleted',
+            'ru' => 'Удаленные',
         ],
     ];
 
@@ -150,6 +171,7 @@ class Company extends ActiveRecord
             'is_sign'     => 'Подпись',
             'director'    => 'Директор',
             'serviceList' => 'Сервисы',
+            'fullAddress' => 'Адрес',
         ];
     }
 
@@ -159,6 +181,24 @@ class Company extends ActiveRecord
     public static function find()
     {
         return new CompanyQuery(get_called_class());
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullAddress()
+    {
+        if (!$this->fullAddress) {
+            $this->fullAddress = $this->info ?
+                implode(', ', [
+                    $this->info->index,
+                    $this->info->city,
+                    $this->info->street,
+                    $this->info->house,
+                ]) : 'не задан';
+        }
+
+        return $this->fullAddress;
     }
 
     /**

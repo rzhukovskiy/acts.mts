@@ -1,6 +1,7 @@
 <?php
     namespace console\controllers;
 
+    use common\models\CompanyService;
     use common\models\User;
     use yii\console\Controller;
 
@@ -22,6 +23,13 @@
             $this->generateUsers();
             $this->stdout("\n");
 
+        }
+
+        public function actionFixDuplicatePrices()
+        {
+            foreach (CompanyService::find()->orderBy('id ASC')->all() as $companyService) {
+                $companyService->save();
+            }
         }
 
         private function generateUsers()

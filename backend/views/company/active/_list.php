@@ -26,11 +26,11 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 'name',
-                'address',
+                'fullAddress',
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update} {delete}',
-                    'contentOptions' => ['style' => 'min-width: 80px'],
+                    'template' => '{view}',
+                    'contentOptions' => ['style' => 'min-width: 60px'],
                 ],
             ],
         ]);
