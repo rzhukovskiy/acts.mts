@@ -2,6 +2,8 @@
 
 namespace common\models\search;
 
+use common\models\CompanyOffer;
+use common\models\User;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -29,7 +31,10 @@ class CompanySearch extends Company
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return [
+            self::SCENARIO_OFFER => [],
+            'default' => [],
+        ];
     }
 
     /**
@@ -60,6 +65,18 @@ class CompanySearch extends Company
 
         // grid filtering conditions
         $query->alias('company');
+
+        switch ($this->scenario) {
+            case self::SCENARIO_OFFER:
+                /** @var User $currentUser */
+                $query->joinWith(['info info', 'offer offer']);
+                $currentUser = Yii::$app->user->identity;
+                if ($currentUser->role != User::ROLE_ADMIN) {
+                    $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
+                }
+                break;
+        }
+        
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,

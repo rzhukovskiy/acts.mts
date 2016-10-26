@@ -56,6 +56,8 @@ class Company extends ActiveRecord
     const STATUS_ARCHIVE = 2;
     const STATUS_REFUSE  = 3;
     const STATUS_ACTIVE  = 10;
+    
+    const SCENARIO_OFFER = 'offer';
 
     const TYPE_OWNER     = 1;
     const TYPE_WASH      = 2;
