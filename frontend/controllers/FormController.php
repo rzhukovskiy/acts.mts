@@ -4,10 +4,6 @@ namespace frontend\controllers;
 
 
 use common\models\Company;
-use common\models\CompanyAttributes;
-use common\models\CompanyClient;
-use common\models\CompanyInfo;
-use common\models\CompanyMember;
 use frontend\models\forms\OwnerForm;
 use frontend\models\forms\ServiceForm;
 use frontend\models\forms\TiresForm;
@@ -17,6 +13,15 @@ use yii\web\Controller;
 
 class FormController extends Controller
 {
+    public function beforeAction($action)
+    {
+
+        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
+        $this->layout = 'system';
+
+        return parent::beforeAction($action);
+    }
+
     /**
      * @inheritdoc
      */
@@ -37,9 +42,6 @@ class FormController extends Controller
 
     public function actionOwner()
     {
-        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
-
-        $this->layout = 'system';
         $model = new OwnerForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
@@ -52,23 +54,11 @@ class FormController extends Controller
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
                 //Сохраняем адрес
-                $companyInfo = new CompanyInfo();
-                $companyInfo->company_id = $company->id;
-                $companyInfo->phone = $model->phone;
-                $companyInfo->email = $model->email;
-                $companyInfo->save();
+                $model->saveCompanyInfo($company->id);
                 //сохраняем машины
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_OWNER_CAR;
-                $companyAttribute->value = $model->getCarComplexField();
-                $companyAttribute->save();
+                $model->saveCarAttribute($company->id);
                 //сохраняем города
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_OWNER_CITY;
-                $companyAttribute->value = $model->getPreparedCity();
-                $companyAttribute->save();
+                $model->saveTownAttribute($company->id);
             }
 
         }
@@ -96,37 +86,13 @@ class FormController extends Controller
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
                 //Сохраняем адрес
-                $companyInfo = new CompanyInfo();
-                $companyInfo->company_id = $company->id;
-                $companyInfo->phone = $model->phone;
-                $companyInfo->address_mail = $model->getAddressMail();
-                $companyInfo->start_at = $model->work_from;
-                $companyInfo->end_at = $model->work_to;
-                $companyInfo->save();
+                $model->saveCompanyInfo($company->id);
                 //сохраняем директора
-                $director = new CompanyMember();
-                $director->company_id = $company->id;
-                $director->position = 'Директор';
-                $director->phone = $model->director_phone;
-                $director->email = $model->director_email;
-                $director->save();
+                $model->saveDirector($company->id);
                 //сохраняем ответственного
-                $responsible = new CompanyMember();
-                $responsible->company_id = $company->id;
-                $responsible->position = 'Ответственный за договорную работу';
-                $responsible->phone = $model->manager_phone;
-                $responsible->email = $model->manager_email;
-                $responsible->save();
+                $model->saveResponsible($company->id);
                 //Сохраняем клиентов компании
-                foreach ($model->organisation_name as $key => $organisation_name) {
-                    if (!empty($organisation_name)) {
-                        $companyClient = new CompanyClient();
-                        $companyClient->company_id = $company->id;
-                        $companyClient->name = $organisation_name;
-                        $companyClient->phone = $model->organisation_phone[$key];
-                        $companyClient->save();
-                    }
-                }
+                $model->saveClients($company->id);
             }
         }
 
@@ -153,49 +119,17 @@ class FormController extends Controller
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
                 //Сохраняем адрес
-                $companyInfo = new CompanyInfo();
-                $companyInfo->company_id = $company->id;
-                $companyInfo->phone = $model->phone;
-                $companyInfo->address_mail = $model->getAddressMail();
-                $companyInfo->start_at = $model->work_from;
-                $companyInfo->end_at = $model->work_to;
-                $companyInfo->save();
+                $model->saveCompanyInfo($company->id);
                 //сохраняем директора
-                $director = new CompanyMember();
-                $director->company_id = $company->id;
-                $director->position = 'Директор';
-                $director->phone = $model->director_phone;
-                $director->email = $model->director_email;
-                $director->save();
+                $model->saveDirector($company->id);
                 //сохраняем ответственного
-                $responsible = new CompanyMember();
-                $responsible->company_id = $company->id;
-                $responsible->position = 'Ответственный за договорную работу';
-                $responsible->phone = $model->manager_phone;
-                $responsible->email = $model->manager_email;
-                $responsible->save();
+                $model->saveResponsible($company->id);
                 //Сохраняем клиентов компании
-                foreach ($model->organisation_name as $key => $organisation_name) {
-                    if (!empty($organisation_name)) {
-                        $companyClient = new CompanyClient();
-                        $companyClient->company_id = $company->id;
-                        $companyClient->name = $organisation_name;
-                        $companyClient->phone = $model->organisation_phone[$key];
-                        $companyClient->save();
-                    }
-                }
+                $model->saveClients($company->id);
                 //сохраняем дилеров
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_SERVICE_MARK;
-                $companyAttribute->value = $model->getDealerMark();
-                $companyAttribute->save();
+                $model->saveDealerMark($company->id);
                 //сохраняем нормочасы
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_SERVICE_TYPE;
-                $companyAttribute->value = $model->getNormHour();
-                $companyAttribute->save();
+                $model->saveNormHour($company->id);
             }
         }
 
@@ -222,55 +156,19 @@ class FormController extends Controller
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
                 //Сохраняем адрес
-                $companyInfo = new CompanyInfo();
-                $companyInfo->company_id = $company->id;
-                $companyInfo->phone = $model->phone;
-                $companyInfo->address_mail = $model->getAddressMail();
-                $companyInfo->start_at = $model->work_from;
-                $companyInfo->end_at = $model->work_to;
-                $companyInfo->save();
+                $model->saveCompanyInfo($company->id);
                 //сохраняем директора
-                $director = new CompanyMember();
-                $director->company_id = $company->id;
-                $director->position = 'Директор';
-                $director->phone = $model->director_phone;
-                $director->email = $model->director_email;
-                $director->save();
+                $model->saveDirector($company->id);
                 //сохраняем ответственного
-                $responsible = new CompanyMember();
-                $responsible->company_id = $company->id;
-                $responsible->position = 'Ответственный за договорную работу';
-                $responsible->phone = $model->manager_phone;
-                $responsible->email = $model->manager_email;
-                $responsible->save();
+                $model->saveResponsible($company->id);
                 //Сохраняем клиентов компании
-                foreach ($model->organisation_name as $key => $organisation_name) {
-                    if (!empty($organisation_name)) {
-                        $companyClient = new CompanyClient();
-                        $companyClient->company_id = $company->id;
-                        $companyClient->name = $organisation_name;
-                        $companyClient->phone = $model->organisation_phone[$key];
-                        $companyClient->save();
-                    }
-                }
+                $model->saveClients($company->id);
                 //сохраняем услуги
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_TIRE_SERVICE;
-                $companyAttribute->value = $model->type_service;
-                $companyAttribute->save();
+                $model->saveTypeService($company->id);
                 //сохраняем типы ТС для шиномонтажа
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_TYPE_CAR_CHANGE_TIRES;
-                $companyAttribute->value = $model->type_car_change_tires;
-                $companyAttribute->save();
+                $model->saveTypeCarChangeTires($company->id);
                 //сохраняем типы ТС для продажи шин и дисков
-                $companyAttribute = new CompanyAttributes();
-                $companyAttribute->company_id = $company->id;
-                $companyAttribute->type = CompanyAttributes::TYPE_TYPE_CAR_SELL_TIRES;
-                $companyAttribute->value = $model->type_car_sell_tires;
-                $companyAttribute->save();
+                $model->saveTypeCarSellTires($company->id);
             }
         }
 
