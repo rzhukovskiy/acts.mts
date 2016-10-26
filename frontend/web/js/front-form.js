@@ -102,7 +102,10 @@ $(document).ready(function () {
     var setActiveValue = function (event) {
         event.preventDefault();
         var activeBut = $(this).find('h6').text();
-        $(".active").parent().parent().find("input").val(activeBut);
+        var carId = $(this).find('h6').data('id');
+        var input = $(".active").parent().parent().parent().find("input");
+        input.eq(0).val(carId);
+        input.eq(1).val(activeBut);
         $('.close').click();
     };
 
@@ -110,5 +113,8 @@ $(document).ready(function () {
     $(document).on('click', '.btn-number', addCount);
     $(document).on('click', '.btn-add', addFormGroup);
     $(document).on('click', '.btn-remove', removeFormGroup);
+    $(document).on('click', '.btn-ts-modal', setActive);
+    $(document).on('click', '.close', resetActive);
+    $(document).on('click', '.btn-ts-select', setActiveValue);
 });
 

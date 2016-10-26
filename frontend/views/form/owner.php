@@ -14,7 +14,7 @@ $request = Yii::$app->request;
 ?>
     <div class="page-header">
         <h1 class="text-center hidden">ЗАЯВКА НА МОЙКУ</h1>
-        <img class="small" src="./img/mts_zayavka_shapka.png" alt="заявка на мойку">
+        <img class="small" src="/img/mts_zayavka_shapka.png" alt="заявка на мойку">
     </div>
 <?php
 $form = ActiveForm::begin([
@@ -33,14 +33,14 @@ $form = ActiveForm::begin([
                         display: none
                     }</style>
                 <div class="easyhtml5video" style="position:relative;max-width:1280px;">
-                    <video controls="controls" poster="img/video1.jpg" style="width:100%" title="video">
-                        <source src="files/video1.m4v" type="video/mp4"/>
-                        <source src="files/video1.webm" type="video/webm"/>
-                        <source src="files/video1.ogv" type="video/ogg"/>
-                        <source src="files/video1.mp4"/>
+                    <video controls="controls" poster="/img/video1.jpg" style="width:100%" title="video">
+                        <source src="/files/video1.m4v" type="video/mp4"/>
+                        <source src="/files/video1.webm" type="video/webm"/>
+                        <source src="/files/video1.ogv" type="video/ogg"/>
+                        <source src="/files/video1.mp4"/>
                         <object type="application/x-shockwave-flash" data="eh5v.files/html5video/flashfox.swf"
                                 width="1280" height="768" style="position:relative;">
-                            <param name="movie" value="files/flashfox.swf"/>
+                            <param name="movie" value="/files/flashfox.swf"/>
                             <param name="allowFullScreen" value="true"/>
                             <param name="flashVars"
                                    value="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=img/video1.jpg&amp;src=video1.m4v"/>
@@ -48,7 +48,7 @@ $form = ActiveForm::begin([
                                    flashVars="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=eh5v.files/html5video/video1.jpg&amp;src=video1.m4v"
                                    allowFullScreen="true" wmode="transparent" type="application/x-shockwave-flash"
                                    pluginspage="http://www.adobe.com/go/getflashplayer_en"/>
-                            <img alt="video" src="files/video1.jpg" style="position:absolute;left:0;" width="100%"
+                            <img alt="video" src="/files/video1.jpg" style="position:absolute;left:0;" width="100%"
                                  title="Video playback is not supported by your browser"/>
                         </object>
                     </video>
@@ -112,3 +112,5 @@ $form = ActiveForm::begin([
         </div>
     </div>
 <?php ActiveForm::end() ?>
+<?= $this->render('_owner_ts_modal',
+    []); ?>

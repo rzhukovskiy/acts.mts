@@ -8,7 +8,10 @@
     <div class="col-md-4">
         <div class="form-group">
             <label>Марка ТС</label>
-            <input class="form-control input-one" name="OwnerForm[car_mark][]" type="text">
+            <?= \yii\helpers\Html::dropDownList('OwnerForm[car_mark][]',
+                null,
+                \common\models\Mark::getMarkList(),
+                ['class' => 'form-control']) ?>
         </div>
     </div>
     <div class="col-md-5">
@@ -17,7 +20,10 @@
 
             <div class="">
                 <div class="input-group">
-                    <input class="form-control" value="" name="OwnerForm[car_type][]" type="text">
+                    <input class="form-control" value="" name="OwnerForm[car_type][]" type="hidden">
+                    <input class="form-control btn-ts-modal" value="" name="OwnerForm[car_name][]" type="text"
+                           data-toggle="modal"
+                           data-target="#ts_modal">
                     <span class="input-group-btn">
                         <button class="btn btn-primary btn-ts-modal btn-edit" data-toggle="modal"
                                 data-target="#ts_modal">
@@ -36,7 +42,7 @@
                 <div class="input-group">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-primary btn-number btn-first"
-                                            disabled="disabled" data-type="minus" data-field="Request[amount][]">
+                                            disabled="disabled" data-type="minus" data-field="OwnerForm[car_count][]">
                                         <span class="glyphicon glyphicon-minus"></span>
                                     </button>
                                 </span>
@@ -44,7 +50,7 @@
                            max="10000" type="text">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-primary btn-number btn-last" data-type="plus"
-                                            data-field="Request[amount][]">
+                                            data-field="OwnerForm[car_count][]">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </button>
                                 </span>
