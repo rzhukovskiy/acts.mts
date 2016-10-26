@@ -52,5 +52,39 @@
                 <td><?= $total ?></td>
             </tr>
         </table>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <span class="sign">
+                    По качеству работы претензий не имею.
+            </span>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <table class="sign">
+                <tr>
+                    <td>
+                        ФИО водителя
+                    </td>
+
+                    <td colspan="2">
+                        <?php if (file_exists('files/checks/' . $model->id . '-name.png')) { ?><img
+                            style="width:250px; border-bottom: 1px solid black;"
+                            src="<?= '/files/checks/' . $model->id . '-name.png' ?>"/><?php } ?>
+                    </td>
+                    <td>
+                        &nbsp; &nbsp; &nbsp;
+                    </td>
+                    <td>
+                        Подпись водителя
+                    </td>
+
+                    <td colspan="2">
+                        <?php if (file_exists('files/checks/' . $model->id . '-sign.png')) { ?><img
+                            style="width:250px; border-bottom: 1px solid black;"
+                            src="<?= '/files/checks/' . $model->id . '-sign.png' ?>"/><?php } ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
