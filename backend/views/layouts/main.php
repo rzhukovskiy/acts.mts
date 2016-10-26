@@ -58,6 +58,7 @@ AppAsset::register($this);
 </div>
 
 <?php
+//ацкий костыль по выводу алертов. не смог придумать более адекватный способ
 $action = Yii::$app->controller->action->id;
 if (!in_array($action, [
     'update',
@@ -71,6 +72,7 @@ if (!in_array($action, [
         'options' => [],
     ]);
     $this->registerJs("$(document).ready(function() {checkAlerts();});", View::POS_END);
+    echo '<audio id="bflat" src="/js/bflat.mp3"></audio>';
 }
 ?>
 

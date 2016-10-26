@@ -31,6 +31,6 @@ use yii\widgets\ActiveForm;
     ]
 ])->error(false) ?>
 
-<?= $form->field($model, 'process')->textarea(['rows' => 10]) ?>
+<?= $form->field($model, 'process')->textarea(['rows' => 5]) ?>
 
 <?php ActiveForm::end(); ?>
