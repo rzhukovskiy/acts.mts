@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Company;
 use common\models\CompanyOffer;
 use common\models\search\CompanyOfferSearch;
 use common\models\User;
@@ -122,6 +123,7 @@ class CompanyOfferController extends Controller
         $currentUser = Yii::$app->user->identity;
         $modelCompanyOffer = CompanyOffer::find()->where([
             'user_id' => $currentUser->id,
+            'status' => Company::STATUS_NEW,
             ['>', 'communication_at', time() - 300],
         ])->one();
 
