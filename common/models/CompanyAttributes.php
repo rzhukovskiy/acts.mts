@@ -24,12 +24,18 @@ class CompanyAttributes extends \yii\db\ActiveRecord
     const TYPE_OWNER_CAR = 2;
     const TYPE_SERVICE_MARK = 3;
     const TYPE_SERVICE_TYPE = 4;
+    const TYPE_TIRE_SERVICE = 5;
+    const TYPE_TYPE_CAR_CHANGE_TIRES = 6;
+    const TYPE_TYPE_CAR_SELL_TIRES = 7;
 
     static $listName = [
-        self::TYPE_OWNER_CITY   => 'Города компании',
-        self::TYPE_OWNER_CAR    => 'Машины компании',
-        self::TYPE_SERVICE_MARK => 'Марки ТС обслуживаемых сервисом',
-        self::TYPE_SERVICE_TYPE => 'Услуги сервиса',
+        self::TYPE_OWNER_CITY            => 'Города компании',
+        self::TYPE_OWNER_CAR             => 'Машины компании',
+        self::TYPE_SERVICE_MARK          => 'Марки ТС обслуживаемых сервисом',
+        self::TYPE_SERVICE_TYPE          => 'Услуги сервиса',
+        self::TYPE_TIRE_SERVICE          => 'Услуги шиномонтажа',
+        self::TYPE_TYPE_CAR_CHANGE_TIRES => 'Типы ТС для шиномонтажа',
+        self::TYPE_TYPE_CAR_SELL_TIRES   => 'Типы ТС для продажи шин',
     ];
 
     /**

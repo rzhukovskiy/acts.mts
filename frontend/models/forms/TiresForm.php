@@ -79,6 +79,16 @@ class TiresForm extends Model
                 ],
                 'required'
             ],
+            [
+                [
+                    'organisation_name',
+                    'organisation_phone',
+                    'type_service',
+                    'type_car_change_tires',
+                    'type_car_sell_tires',
+                ],
+                'safe'
+            ],
         ];
     }
 
@@ -108,5 +118,12 @@ class TiresForm extends Model
         ];
     }
 
+    /**
+     * @return string
+     */
+    public function getAddressMail()
+    {
+        return $this->index . ', ' . $this->city . ', ' . $this->street . ', ' . $this->building;
+    }
 
 }

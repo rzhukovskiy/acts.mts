@@ -149,7 +149,7 @@ class FormController extends Controller
             $company->name = $model->name;
             $company->address = $model->city;
             $company->director = $model->director_fio;
-            $company->type = Company::TYPE_WASH;
+            $company->type = Company::TYPE_SERVICE;
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
                 //Сохраняем адрес
@@ -213,7 +213,65 @@ class FormController extends Controller
         $model = new TiresForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-
+            //Сохраняем компанию
+            $company = new Company();
+            $company->name = $model->name;
+            $company->address = $model->city;
+            $company->director = $model->director_fio;
+            $company->type = Company::TYPE_TIRES;
+            $company->status = Company::STATUS_NEW;
+            if ($company->save()) {
+                //Сохраняем адрес
+                $companyInfo = new CompanyInfo();
+                $companyInfo->company_id = $company->id;
+                $companyInfo->phone = $model->phone;
+                $companyInfo->address_mail = $model->getAddressMail();
+                $companyInfo->start_at = $model->work_from;
+                $companyInfo->end_at = $model->work_to;
+                $companyInfo->save();
+                //сохраняем директора
+                $director = new CompanyMember();
+                $director->company_id = $company->id;
+                $director->position = 'Директор';
+                $director->phone = $model->director_phone;
+                $director->email = $model->director_email;
+                $director->save();
+                //сохраняем ответственного
+                $responsible = new CompanyMember();
+                $responsible->company_id = $company->id;
+                $responsible->position = 'Ответственный за договорную работу';
+                $responsible->phone = $model->manager_phone;
+                $responsible->email = $model->manager_email;
+                $responsible->save();
+                //Сохраняем клиентов компании
+                foreach ($model->organisation_name as $key => $organisation_name) {
+                    if (!empty($organisation_name)) {
+                        $companyClient = new CompanyClient();
+                        $companyClient->company_id = $company->id;
+                        $companyClient->name = $organisation_name;
+                        $companyClient->phone = $model->organisation_phone[$key];
+                        $companyClient->save();
+                    }
+                }
+                //сохраняем услуги
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_TIRE_SERVICE;
+                $companyAttribute->value = $model->type_service;
+                $companyAttribute->save();
+                //сохраняем типы ТС для шиномонтажа
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_TYPE_CAR_CHANGE_TIRES;
+                $companyAttribute->value = $model->type_car_change_tires;
+                $companyAttribute->save();
+                //сохраняем типы ТС для продажи шин и дисков
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_TYPE_CAR_SELL_TIRES;
+                $companyAttribute->value = $model->type_car_sell_tires;
+                $companyAttribute->save();
+            }
         }
 
         return $this->render('tires',
