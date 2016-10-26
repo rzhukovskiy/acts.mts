@@ -3,10 +3,15 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use kartik\datetime\DateTimePicker;
+use kartik\datetime\DateTimePickerAsset;
+use kartik\dialog\Dialog;
+use kartik\dialog\DialogAsset;
 use yii\helpers\Html;
 use backend\assets\AppAsset;
 use common\widgets\Alert;
 use backend\widgets\Menu\menuLeftWidget;
+use yii\web\View;
 
 AppAsset::register($this);
 ?>
@@ -19,7 +24,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="shortcut icon" href="/favicon.png" >
+    <link rel="shortcut icon" href="/favicon.png">
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -34,7 +39,7 @@ AppAsset::register($this);
                         '/site/logout',
                         ['class' => 'btn btn-primary btn-sm pull-right']
                     ) ?>
-                    <?php if(Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
+                    <?php if (Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
                         <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
                 </div>
@@ -52,6 +57,22 @@ AppAsset::register($this);
     </div>
 </div>
 
+<?php
+$action = Yii::$app->controller->action->id;
+if (!in_array($action, [
+    'update',
+    'info',
+    'member',
+])
+) {
+    DialogAsset::register($this);
+    DateTimePicker::widget(['name' => 'asset']);
+    Dialog::widget([
+        'options' => [],
+    ]);
+    $this->registerJs("$(document).ready(function() {checkAlerts();});", View::POS_END);
+}
+?>
 
 <?= $this->render('parts/_footer') ?>
 

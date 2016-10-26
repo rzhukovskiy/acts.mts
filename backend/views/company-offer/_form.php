@@ -1,7 +1,6 @@
 <?php
 
 use kartik\datetime\DateTimePicker;
-use kartik\time\TimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 

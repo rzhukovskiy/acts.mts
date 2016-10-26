@@ -74,6 +74,7 @@ class CompanySearch extends Company
                 if ($currentUser->role != User::ROLE_ADMIN) {
                     $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
                 }
+                $query->orderBy('communication_at DESC');
                 break;
         }
         
