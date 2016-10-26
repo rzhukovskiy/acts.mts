@@ -13,7 +13,6 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $company_id
  * @property string $phone
- * @property string $address
  * @property string $address_mail
  * @property string $email
  * @property integer $start_at
@@ -45,7 +44,7 @@ class CompanyInfo extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'start_at', 'end_at'], 'integer'],
-            [['phone', 'address', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],
+            [['phone', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],
         ];
     }
 
@@ -55,15 +54,14 @@ class CompanyInfo extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'phone' => 'Телефон',
-            'address' => 'Адрес',
+            'id'           => 'ID',
+            'phone'        => 'Телефон',
             'address_mail' => 'Почтовый адрес',
-            'email' => 'Имейл',
-            'start_at' => 'Начало работы',
-            'end_at' => 'Окончание работы',
-            'start_str' => 'Начало работы',
-            'end_str' => 'Окончание работы',
+            'email'        => 'Имейл',
+            'start_at'     => 'Начало работы',
+            'end_at'       => 'Окончание работы',
+            'start_str'    => 'Начало работы',
+            'end_str'      => 'Окончание работы',
         ];
     }
 

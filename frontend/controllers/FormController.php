@@ -5,6 +5,9 @@ namespace frontend\controllers;
 
 use common\models\Company;
 use common\models\CompanyAttributes;
+use common\models\CompanyClient;
+use common\models\CompanyInfo;
+use common\models\CompanyMember;
 use frontend\models\forms\OwnerForm;
 use frontend\models\forms\ServiceForm;
 use frontend\models\forms\TiresForm;
@@ -48,6 +51,12 @@ class FormController extends Controller
             $company->type = Company::TYPE_OWNER;
             $company->status = Company::STATUS_NEW;
             if ($company->save()) {
+                //Сохраняем адрес
+                $companyInfo = new CompanyInfo();
+                $companyInfo->company_id = $company->id;
+                $companyInfo->phone = $model->phone;
+                $companyInfo->email = $model->email;
+                $companyInfo->save();
                 //сохраняем машины
                 $companyAttribute = new CompanyAttributes();
                 $companyAttribute->company_id = $company->id;
@@ -78,7 +87,47 @@ class FormController extends Controller
         $model = new WashForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-
+            //Сохраняем компанию
+            $company = new Company();
+            $company->name = $model->name;
+            $company->address = $model->city;
+            $company->director = $model->director_fio;
+            $company->type = Company::TYPE_WASH;
+            $company->status = Company::STATUS_NEW;
+            if ($company->save()) {
+                //Сохраняем адрес
+                $companyInfo = new CompanyInfo();
+                $companyInfo->company_id = $company->id;
+                $companyInfo->phone = $model->phone;
+                $companyInfo->address_mail = $model->getAddressMail();
+                $companyInfo->start_at = $model->work_from;
+                $companyInfo->end_at = $model->work_to;
+                $companyInfo->save();
+                //сохраняем директора
+                $director = new CompanyMember();
+                $director->company_id = $company->id;
+                $director->position = 'Директор';
+                $director->phone = $model->director_phone;
+                $director->email = $model->director_email;
+                $director->save();
+                //сохраняем ответственного
+                $responsible = new CompanyMember();
+                $responsible->company_id = $company->id;
+                $responsible->position = 'Ответственный за договорную работу';
+                $responsible->phone = $model->manager_phone;
+                $responsible->email = $model->manager_email;
+                $responsible->save();
+                //Сохраняем компании
+                foreach ($model->organisation_name as $key => $organisation_name) {
+                    if (!empty($organisation_name)) {
+                        $companyClient = new CompanyClient();
+                        $companyClient->company_id = $company->id;
+                        $companyClient->name = $organisation_name;
+                        $companyClient->phone = $model->organisation_phone[$key];
+                        $companyClient->save();
+                    }
+                }
+            }
         }
 
         return $this->render('wash',

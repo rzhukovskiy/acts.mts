@@ -56,6 +56,13 @@ class WashForm extends Model
                 ],
                 'required'
             ],
+            [
+                [
+                    'organisation_name',
+                    'organisation_phone',
+                ],
+                'safe'
+            ],
         ];
     }
 
@@ -82,5 +89,12 @@ class WashForm extends Model
         ];
     }
 
+    /**
+     * @return string
+     */
+    public function getAddressMail()
+    {
+        return $this->index . ', ' . $this->city . ', ' . $this->street . ', ' . $this->building;
+    }
 
 }
