@@ -39,6 +39,7 @@ class OwnerForm extends Model
                 ],
                 'required'
             ],
+            [['car_mark', 'car_type', 'car_count',], 'safe'],
         ];
     }
 
@@ -57,6 +58,34 @@ class OwnerForm extends Model
             'car_type'  => 'Вид ТС',
             'car_count' => 'Количество'
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPreparedCity()
+    {
+        return explode(",", $this->town);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCarComplexField()
+    {
+        $complexField = [];
+        foreach ($this->car_type as $key => $car_type) {
+            if (!empty($car_type)) {
+                $complexField[] =
+                    [
+                        'car_mark'  => $this->car_mark[$key],
+                        'car_type'  => $car_type,
+                        'car_count' => $this->car_count[$key]
+                    ];
+            }
+        }
+
+        return $complexField;
     }
 
 

@@ -35,9 +35,9 @@ $form = ActiveForm::begin([
                 <div class="easyhtml5video" style="position:relative;max-width:1280px;">
                     <video controls="controls" poster="/img/video1.jpg" style="width:100%" title="video">
                         <source src="/files/video1.m4v" type="video/mp4"/>
-                        <source src="/files/video1.webm" type="video/webm"/>
+                        <!--<source src="/files/video1.webm" type="video/webm"/>
                         <source src="/files/video1.ogv" type="video/ogg"/>
-                        <source src="/files/video1.mp4"/>
+                        <source src="/files/video1.mp4"/>-->
                         <object type="application/x-shockwave-flash" data="eh5v.files/html5video/flashfox.swf"
                                 width="1280" height="768" style="position:relative;">
                             <param name="movie" value="/files/flashfox.swf"/>

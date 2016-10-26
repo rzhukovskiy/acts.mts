@@ -23,6 +23,11 @@ class CompanyAttributes extends \yii\db\ActiveRecord
     const TYPE_OWNER_CITY = 1;
     const TYPE_OWNER_CAR = 2;
 
+    static $listName = [
+        self::TYPE_OWNER_CITY => 'Города компании',
+        self::TYPE_OWNER_CAR  => 'Машины компании',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -37,7 +42,7 @@ class CompanyAttributes extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id'], 'required'],
+            [['company_id', 'type'], 'required'],
             [['company_id', 'type'], 'integer'],
             [['value'], 'string'],
             [['name'], 'string', 'max' => 255],
@@ -95,5 +100,14 @@ class CompanyAttributes extends \yii\db\ActiveRecord
         ]);
 
         return parent::beforeValidate();
+    }
+
+    public function beforeSave($insert)
+    {
+        if (!$this->name) {
+            $this->name = self::$listName[$this->type];
+        }
+
+        return parent::beforeSave($insert);
     }
 }

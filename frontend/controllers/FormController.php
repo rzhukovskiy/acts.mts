@@ -3,6 +3,8 @@
 namespace frontend\controllers;
 
 
+use common\models\Company;
+use common\models\CompanyAttributes;
 use frontend\models\forms\OwnerForm;
 use frontend\models\forms\ServiceForm;
 use frontend\models\forms\TiresForm;
@@ -38,6 +40,27 @@ class FormController extends Controller
         $model = new OwnerForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            //Сохраняем компанию
+            $company = new Company();
+            $company->name = $model->company;
+            $company->address = $model->town;
+            $company->director = $model->name;
+            $company->type = Company::TYPE_OWNER;
+            $company->status = Company::STATUS_NEW;
+            if ($company->save()) {
+                //сохраняем машины
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_OWNER_CAR;
+                $companyAttribute->value = $model->getCarComplexField();
+                $companyAttribute->save();
+                //сохраняем города
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_OWNER_CITY;
+                $companyAttribute->value = $model->getPreparedCity();
+                $companyAttribute->save();
+            }
 
         }
 

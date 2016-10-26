@@ -50,32 +50,32 @@ class Company extends ActiveRecord
     private $serviceList;
 
     const STATUS_DELETED = 0;
-    const STATUS_NEW     = 1;
+    const STATUS_NEW = 1;
     const STATUS_ARCHIVE = 2;
-    const STATUS_REFUSE  = 3;
-    const STATUS_ACTIVE  = 10;
+    const STATUS_REFUSE = 3;
+    const STATUS_ACTIVE = 10;
 
-    const TYPE_OWNER     = 1;
-    const TYPE_WASH      = 2;
-    const TYPE_SERVICE   = 3;
-    const TYPE_TIRES     = 4;
+    const TYPE_OWNER = 1;
+    const TYPE_WASH = 2;
+    const TYPE_SERVICE = 3;
+    const TYPE_TIRES = 4;
     const TYPE_DISINFECT = 5;
     const TYPE_UNIVERSAL = 6;
 
     static $listType = [
-        self::TYPE_OWNER => [
+        self::TYPE_OWNER     => [
             'en' => 'owner',
             'ru' => 'Компания',
         ],
-        self::TYPE_WASH => [
+        self::TYPE_WASH      => [
             'en' => 'wash',
             'ru' => 'Мойка',
         ],
-        self::TYPE_SERVICE => [
+        self::TYPE_SERVICE   => [
             'en' => 'service',
             'ru' => 'Сервис',
         ],
-        self::TYPE_TIRES => [
+        self::TYPE_TIRES     => [
             'en' => 'tires',
             'ru' => 'Шиномонтаж',
         ],
@@ -114,10 +114,23 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['parent_id', 'director', 'is_split', 'is_sign', 'cardList', 'requisitesList', 'serviceList', 'schedule'], 'safe'],
+            [['name'], 'unique'],
+            [
+                [
+                    'parent_id',
+                    'director',
+                    'is_split',
+                    'is_sign',
+                    'cardList',
+                    'requisitesList',
+                    'serviceList',
+                    'schedule'
+                ],
+                'safe'
+            ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }
 
@@ -127,15 +140,15 @@ class Company extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Название',
-            'address' => 'Город',
-            'parent_id' => 'Родительская',
-            'cardList' => 'Список карт',
-            'is_split' => 'Разделять прицеп',
-            'schedule' => 'По записи',
-            'is_sign' => 'Подпись',
-            'director' => 'Директор',
+            'id'          => 'ID',
+            'name'        => 'Название',
+            'address'     => 'Город',
+            'parent_id'   => 'Родительская',
+            'cardList'    => 'Список карт',
+            'is_split'    => 'Разделять прицеп',
+            'schedule'    => 'По записи',
+            'is_sign'     => 'Подпись',
+            'director'    => 'Директор',
             'serviceList' => 'Сервисы',
         ];
     }
@@ -195,7 +208,9 @@ class Company extends ActiveRecord
      */
     public function getEntries($day)
     {
-        return $this->hasMany(Entry::className(), ['company_id' => 'id'])->where(['DAY(FROM_UNIXTIME(`start_at`))' => $day])->orderBy('start_at');
+        return $this->hasMany(Entry::className(), ['company_id' => 'id'])
+            ->where(['DAY(FROM_UNIXTIME(`start_at`))' => $day])
+            ->orderBy('start_at');
     }
 
     /**
@@ -271,14 +286,16 @@ class Company extends ActiveRecord
         if ($service_type != Service::TYPE_WASH) {
             return $this->getRequisitesByType(Service::TYPE_WASH, $field);
         }
+
         return false;
     }
 
     public function getServiceList()
     {
         if ($this->serviceTypes) {
-            return ArrayHelper::map($this->serviceTypes,'type', 'type');
+            return ArrayHelper::map($this->serviceTypes, 'type', 'type');
         }
+
         return [];
     }
 
@@ -336,33 +353,34 @@ class Company extends ActiveRecord
 
         $points[] = [
             'value' => '00:00',
-            'type' => 's',
+            'type'  => 's',
         ];
         $points[] = [
             'value' => $workStart,
-            'type' => 'e',
+            'type'  => 'e',
         ];
         $points[] = [
             'value' => $workEnd,
-            'type' => 's',
+            'type'  => 's',
         ];
         $points[] = [
             'value' => '24:00',
-            'type' => 'e',
+            'type'  => 'e',
         ];
         /** @var Entry $entry */
-        foreach($this->getEntries($day)->all() as $entry) {
+        foreach ($this->getEntries($day)->all() as $entry) {
             $points[] = [
                 'value' => date('H:i', $entry->start_at),
-                'type' => 's',
+                'type'  => 's',
             ];
             $points[] = [
                 'value' => date('H:i', $entry->end_at),
-                'type' => 'e',
+                'type'  => 'e',
             ];
         }
 
-        usort($points, function($first, $second) {
+        usort($points,
+        function ($first, $second) {
             if ($first['value'] == $second['value']) {
                 return $first['type'] < $second['type'];
             } else {
@@ -521,9 +539,12 @@ class Company extends ActiveRecord
     public function getPriceDataProvider($type)
     {
         return new ActiveDataProvider([
-            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`price` + `service_id`'),
+            'query'      => CompanyService::find()
+                ->joinWith('service')
+                ->where(['type' => $type, 'company_id' => $this->id])
+                ->groupBy('`price` + `service_id`'),
             'pagination' => false,
-            'sort' => [
+            'sort'       => [
                 'defaultOrder' => [
                     'type_id' => SORT_DESC,
                 ]
@@ -554,9 +575,12 @@ class Company extends ActiveRecord
     public function getMergedPriceDataProvider($type)
     {
         return new ActiveDataProvider([
-            'query' => CompanyService::find()->joinWith('service')->where(['type' => $type, 'company_id' => $this->id])->groupBy('`type_id`'),
+            'query'      => CompanyService::find()
+                ->joinWith('service')
+                ->where(['type' => $type, 'company_id' => $this->id])
+                ->groupBy('`type_id`'),
             'pagination' => false,
-            'sort' => [
+            'sort'       => [
                 'defaultOrder' => [
                     'type_id' => SORT_DESC,
                 ]
@@ -597,9 +621,9 @@ class Company extends ActiveRecord
     public function getCardDataProvider()
     {
         return new ActiveDataProvider([
-            'query' => Card::find()->where(['company_id' => $this->id]),
+            'query'      => Card::find()->where(['company_id' => $this->id]),
             'pagination' => false,
-            'sort' => [
+            'sort'       => [
                 'defaultOrder' => [
                     'number' => SORT_DESC,
                 ]
