@@ -117,7 +117,7 @@ class FormController extends Controller
                 $responsible->phone = $model->manager_phone;
                 $responsible->email = $model->manager_email;
                 $responsible->save();
-                //Сохраняем компании
+                //Сохраняем клиентов компании
                 foreach ($model->organisation_name as $key => $organisation_name) {
                     if (!empty($organisation_name)) {
                         $companyClient = new CompanyClient();
@@ -144,7 +144,59 @@ class FormController extends Controller
         $model = new ServiceForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-
+            //Сохраняем компанию
+            $company = new Company();
+            $company->name = $model->name;
+            $company->address = $model->city;
+            $company->director = $model->director_fio;
+            $company->type = Company::TYPE_WASH;
+            $company->status = Company::STATUS_NEW;
+            if ($company->save()) {
+                //Сохраняем адрес
+                $companyInfo = new CompanyInfo();
+                $companyInfo->company_id = $company->id;
+                $companyInfo->phone = $model->phone;
+                $companyInfo->address_mail = $model->getAddressMail();
+                $companyInfo->start_at = $model->work_from;
+                $companyInfo->end_at = $model->work_to;
+                $companyInfo->save();
+                //сохраняем директора
+                $director = new CompanyMember();
+                $director->company_id = $company->id;
+                $director->position = 'Директор';
+                $director->phone = $model->director_phone;
+                $director->email = $model->director_email;
+                $director->save();
+                //сохраняем ответственного
+                $responsible = new CompanyMember();
+                $responsible->company_id = $company->id;
+                $responsible->position = 'Ответственный за договорную работу';
+                $responsible->phone = $model->manager_phone;
+                $responsible->email = $model->manager_email;
+                $responsible->save();
+                //Сохраняем клиентов компании
+                foreach ($model->organisation_name as $key => $organisation_name) {
+                    if (!empty($organisation_name)) {
+                        $companyClient = new CompanyClient();
+                        $companyClient->company_id = $company->id;
+                        $companyClient->name = $organisation_name;
+                        $companyClient->phone = $model->organisation_phone[$key];
+                        $companyClient->save();
+                    }
+                }
+                //сохраняем дилеров
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_SERVICE_MARK;
+                $companyAttribute->value = $model->getDealerMark();
+                $companyAttribute->save();
+                //сохраняем нормочасы
+                $companyAttribute = new CompanyAttributes();
+                $companyAttribute->company_id = $company->id;
+                $companyAttribute->type = CompanyAttributes::TYPE_SERVICE_TYPE;
+                $companyAttribute->value = $model->getNormHour();
+                $companyAttribute->save();
+            }
         }
 
         return $this->render('service',

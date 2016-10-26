@@ -60,6 +60,17 @@ class ServiceForm extends Model
                 ],
                 'required'
             ],
+            [
+                [
+                    'official_dealer',
+                    'nonofficial_dealer',
+                    'organisation_name',
+                    'organisation_phone',
+                    'service_type',
+                    'service_hour_norm',
+                ],
+                'safe'
+            ],
         ];
     }
 
@@ -92,5 +103,36 @@ class ServiceForm extends Model
         ];
     }
 
+    public function getDealerMark()
+    {
+        $dealerMark = [
+            'official_dealer_mark'    => explode(',', $this->official_dealer),
+            'nonofficial_dealer_mark' => explode(',', $this->nonofficial_dealer),
+        ];
 
+        return $dealerMark;
+    }
+
+    public function getNormHour()
+    {
+        $normHour = [];
+        foreach ($this->service_type as $key => $service_type) {
+            if (!empty($service_type)) {
+                $normHour[] = [
+                    'service_type'      => $service_type,
+                    'service_hour_norm' => $this->service_hour_norm[$key],
+                ];
+            }
+        }
+
+        return $normHour;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddressMail()
+    {
+        return $this->index . ', ' . $this->city . ', ' . $this->street . ', ' . $this->building;
+    }
 }
