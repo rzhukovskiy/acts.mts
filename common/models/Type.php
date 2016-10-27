@@ -1,111 +1,126 @@
 <?php
 
-    namespace common\models;
+namespace common\models;
 
-    use common\models\query\TypeQuery;
-    use Yii;
-    use yii\db\ActiveRecord;
-    use yii\web\UploadedFile;
+use common\models\query\TypeQuery;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\web\UploadedFile;
+
+/**
+ * This is the model class for table "{{%type}}".
+ *
+ * @property integer $id
+ * @property string $name
+ * @property string $image
+ * @property integer $time
+ */
+class Type extends ActiveRecord
+{
+    /**
+     * @var UploadedFile
+     */
+    public $imageFile;
 
     /**
-     * This is the model class for table "{{%type}}".
-     *
-     * @property integer $id
-     * @property string $name
-     * @property string $image
-     * @property integer $time
+     * @inheritdoc
      */
-    class Type extends ActiveRecord
+    public static function tableName()
     {
-        /**
-         * @var UploadedFile
-         */
-        public $imageFile;
+        return '{{%type}}';
+    }
 
-        /**
-         * @inheritdoc
-         */
-        public static function tableName()
-        {
-            return '{{%type}}';
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['name', 'time'], 'required'],
+            [['name'], 'string', 'max' => 255],
+            [['time'], 'integer'],
+            [['name'], 'unique'],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id'        => 'ID',
+            'name'      => 'Название',
+            'image'     => 'Изображение',
+            'imageFile' => 'Изображение',
+            'time'      => 'Время мойки'
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return \common\models\query\TypeQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new TypeQuery(get_called_class());
+    }
+
+    /**
+     * Upload image file
+     *
+     * @return bool
+     */
+    public function upload()
+    {
+        if ($this->validate() && $this->imageFile) {
+            $path = Yii::getAlias('@webroot') . '/images/cars/';
+            $fileName = $this->id;
+            $this->imageFile->saveAs($path . $fileName . '.jpg');
+
+            return true;
         }
 
-        /**
-         * @inheritdoc
-         */
-        public function rules()
-        {
-            return [
-                [['name', 'time'], 'required'],
-                [['name'], 'string', 'max' => 255],
-                [['time'], 'integer'],
-                [['name'], 'unique'],
-                [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'jpg'],
-            ];
+        return false;
+    }
+
+    /**
+     * Remove linked file
+     *
+     * @param $imageName null|string
+     * @return bool
+     */
+    protected function deleteImage($imageName = null)
+    {
+        if (is_null($imageName)) {
+            $imageName = $this->id;
         }
 
-        /**
-         * @inheritdoc
-         */
-        public function attributeLabels()
-        {
-            return [
-                'id' => 'ID',
-                'name' => 'Название',
-                'image' => 'Изображение',
-                'imageFile' => 'Изображение',
-                'time'=> 'Время мойки'
-            ];
-        }
+        $path = Yii::getAlias('@webroot') . '/images/cars/';
 
-        /**
-         * @inheritdoc
-         * @return \common\models\query\TypeQuery the active query used by this AR class.
-         */
-        public static function find()
-        {
-            return new TypeQuery( get_called_class() );
-        }
+        return unlink($path . $imageName . '.jpg');
+    }
 
-        /**
-         * Upload image file
-         *
-         * @return bool
-         */
-        public function upload()
-        {
-            if ( $this->validate() && $this->imageFile ) {
-                $path = Yii::getAlias( '@webroot' ) . '/images/cars/';
-                $fileName = $this->id;
-                $this->imageFile->saveAs( $path . $fileName . '.jpg');
+    /**
+     * @return array
+     */
+    public static function getTypeList()
+    {
+        return self::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+    }
 
-                return true;
-            }
-
+    /**
+     * @return bool|string
+     */
+    public function getImage()
+    {
+        $path = Yii::getAlias('@webroot');
+        $image = '/images/cars/' . $this->id . '.jpg';
+        if (is_file($path . $image)) {
+            return Yii::getAlias('@web') . $image;
+        } else {
             return false;
         }
-
-        /**
-         * Remove linked file
-         *
-         * @param $imageName null|string
-         * @return bool
-         */
-        protected function deleteImage( $imageName = null )
-        {
-            if ( is_null( $imageName ) )
-                $imageName = $this->id;
-
-            $path = Yii::getAlias( '@webroot' ) . '/images/cars/';
-
-            return unlink( $path . $imageName . '.jpg' );
-        }
-
-        /**
-         * @return array
-         */
-        public static function getTypeList()
-        {
-            return self::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
-        }
     }
+}

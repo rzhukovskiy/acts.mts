@@ -34,3 +34,12 @@ use yii\widgets\ActiveForm;
 <?= $form->field($model, 'process')->textarea(['rows' => 5]) ?>
 
 <?php ActiveForm::end(); ?>
+
+<?php
+echo "<strong>Сотрудники: </strong><br/>";
+foreach ($model->company->members as $companyMember) {
+    echo "<strong>Должность: </strong> $companyMember[position]<br/>";
+    echo "<strong>ФИО: </strong> $companyMember[position]<br/>";
+    echo "<strong>Телефон: </strong> $companyMember->phone<br/>";
+    echo "<strong>Email: </strong> $companyMember->email<br/>";
+}

@@ -12,7 +12,8 @@ $this->title = \common\models\Company::$listType[$type]['ru'];
 
 echo $this->render('_tabs',
     [
-        'type' => $type,
+        'type'     => $type,
+        'listType' => $listType
     ]);
 
 

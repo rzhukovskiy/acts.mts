@@ -48,8 +48,7 @@ class CompanyInfo extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'start_at', 'end_at'], 'integer'],
-            [['phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],
-        ];
+            [['phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],        ];
     }
 
     /**

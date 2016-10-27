@@ -121,7 +121,7 @@ class CompanyOfferController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
-        $modelCompanyOffer = CompanyOffer::find()->where([
+        $modelCompanyOffer = CompanyOffer::find()->joinWith('company')->where([
             'user_id' => $currentUser->id,
             'status' => Company::STATUS_NEW,
         ])->where(['<', 'communication_at', time() - 300])->one();

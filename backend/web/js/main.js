@@ -20,10 +20,10 @@ var PageTitleNotification = {
 this.checkAlerts = function(options) {
     $.ajax({url: "/company-offer/get-alert"})
         .done(function(response) {
-            if(response) {
+            response = JSON.parse(response);
+            if(response.id) {
                 PageTitleNotification.On('Срочно! Надо звонить!');
                 document.getElementById('bflat').play();
-                response = JSON.parse(response);
                 BootstrapDialog.show({
                     draggable: true,
                     closable: false,
@@ -41,6 +41,7 @@ this.checkAlerts = function(options) {
                                         dialogRef.close();
                                     }
                                 });
+                            setTimeout(checkAlerts, 60000);
                         }
                     }, {
                         label: 'Сохранить',
@@ -49,6 +50,7 @@ this.checkAlerts = function(options) {
                             $.post($("#offer-form").attr('action'), $("#offer-form").serialize());
                             PageTitleNotification.Off();
                             dialogRef.close();
+                            setTimeout(checkAlerts, 60000);
                         }
                     }],
                     message: response.content,
@@ -61,7 +63,7 @@ this.checkAlerts = function(options) {
                     }
                 });
             } else {
-                setTimeout(checkAlerts, 10000);
+                setTimeout(checkAlerts, 60000);
             }
         });
     //setTimeout(checkAlerts, 10000);

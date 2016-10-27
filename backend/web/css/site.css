@@ -25,7 +25,12 @@ body {
 .glyphicon {
     color: #069;
 }
-
+.btn .glyphicon {
+    color: #fff;
+}
+.label {
+    margin-left: 10px;
+}
 /* login */
 .login-form {
     margin-top: 200px;
@@ -239,4 +244,68 @@ table.sign {
 }
 #act-grid .glyphicon-search:before{
     content: normal;
+}
+
+/*front-form*/
+.front-form .btn {
+    padding: 8px 12px 6px;
+}
+
+.remove-btn-wrap {
+    padding-left: 30px;
+}
+
+.page-header {
+    margin: 40px 0 20px;
+    padding-bottom: 9px;
+    text-align: center;
+}
+
+.page-header img {
+    margin: 0 auto;
+    width: 60%;
+}
+
+.page-header img.small {
+    margin: 0 auto;
+    width: 30%;
+}
+
+.front-form .checkbox, .front-form .checkbox label {
+    display: inline;
+}
+
+.front-form {
+    color: #444;
+    font-size: 14px;
+}
+
+.front-form strong {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.front-form label {
+    font-weight: normal;
+}
+
+.plain-field-value {
+    margin-bottom: 0;
+    padding-top: 9px;
+    font-weight: bold;
+}
+
+.monthly-act-warning {
+    background-color: #f0ad4e;
+    color: #ffffff;
+}
+
+.monthly-act-danger {
+    background-color: #d9534f;
+    color: #ffffff;
+}
+
+.monthly-act-success {
+    background-color: #3fad46;
+    color: #ffffff;
 }

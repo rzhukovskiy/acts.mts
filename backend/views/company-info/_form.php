@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= $model->isNewRecord ? 'Добавление информации' : 'Редактирование информации ' . $model->company->name ?>
+        <?=$model->company->name?> :: Инфо
     </div>
     <div class="panel-body">
         <?php $form = ActiveForm::begin([

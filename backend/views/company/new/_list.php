@@ -10,7 +10,7 @@ use yii\grid\GridView;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Список моек
+        Список
     </div>
     <div class="panel-body">
         <?=

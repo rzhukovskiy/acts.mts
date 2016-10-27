@@ -11,7 +11,9 @@ namespace backend\controllers;
 
 use common\models\Company;
 use common\models\CompanyInfo;
+use common\models\CompanyMember;
 use common\models\CompanyOffer;
+use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
 use common\models\Service;
 use common\models\User;
@@ -32,17 +34,17 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'delete'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -78,6 +80,13 @@ class CompanyController extends Controller
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
         }
 
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_NEW;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
+        }
+
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -98,10 +107,12 @@ class CompanyController extends Controller
     {
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_ACTIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -113,6 +124,13 @@ class CompanyController extends Controller
             $listType = Service::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_ACTIVE;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
         }
 
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
@@ -140,6 +158,7 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -151,6 +170,13 @@ class CompanyController extends Controller
             $listType = Service::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
+        }
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_REFUSE;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
         }
 
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
@@ -178,18 +204,10 @@ class CompanyController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['company/new', 'type' => $type]);
         } else {
-            print_r($model->getErrors());
-            die;
             return $this->goBack();
         }
     }
 
-    /**
-     * Updates an existing Company model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -201,12 +219,6 @@ class CompanyController extends Controller
         ]);
     }
 
-    /**
-     * Updates an existing Company model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionInfo($id)
     {
         $model = $this->findModel($id);
@@ -215,6 +227,24 @@ class CompanyController extends Controller
 
         return $this->render('info', [
             'model' => $modelCompanyInfo,
+        ]);
+    }
+
+    public function actionMember($id)
+    {
+        $model = $this->findModel($id);
+        $modelCompanyMember = new CompanyMember();
+        $modelCompanyMember->company_id = $model->id;
+        
+        $searchModel = new CompanyMemberSearch();
+        $searchModel->company_id = $model->id;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('member', [
+            'model' => $modelCompanyMember,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 

@@ -15,7 +15,7 @@ use yii\bootstrap\Html;
         </div>
         <div class="panel-body">
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
-                <?= $model->info->address ?>
+                <?= $model->fullAddress ?>
             </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php

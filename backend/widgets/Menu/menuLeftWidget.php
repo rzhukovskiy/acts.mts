@@ -10,6 +10,7 @@ namespace backend\widgets\Menu;
 
 use common\models\Company;
 use common\models\Department;
+use common\models\search\CompanySearch;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
@@ -35,6 +36,17 @@ class menuLeftWidget extends Widget
     {
         if (!empty($this->items))
             return $this->items;
+
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->status = Company::STATUS_NEW;
+        $countNew = $searchModel->search(Yii::$app->request->queryParams)->count;
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->status = Company::STATUS_ACTIVE;
+        $countActive = $searchModel->search(Yii::$app->request->queryParams)->count;
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->status = Company::STATUS_REFUSE;
+        $countRefuse = $searchModel->search(Yii::$app->request->queryParams)->count;
+
 
         $items = [];
         // Admin links
@@ -103,7 +115,7 @@ class menuLeftWidget extends Widget
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
-                    'label' => 'Заявки',
+                    'label' => 'Заявки'  . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW]['en']) ||
@@ -111,7 +123,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив',
+                    'label' => 'Архив'  . ($countNew ? '<span class="label label-success">' . $countActive . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_ACTIVE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id ==  Company::$listStatus[Company::STATUS_ACTIVE]['en']) ||
@@ -119,7 +131,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Отказ',
+                    'label' => 'Отказ'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||

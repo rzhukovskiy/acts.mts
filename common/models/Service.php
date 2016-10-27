@@ -17,23 +17,23 @@ use yii\db\ActiveRecord;
  */
 class Service extends ActiveRecord
 {
-    const TYPE_WASH      = Company::TYPE_WASH;
-    const TYPE_SERVICE   = Company::TYPE_SERVICE;
-    const TYPE_TIRES     = Company::TYPE_TIRES;
+    const TYPE_WASH = Company::TYPE_WASH;
+    const TYPE_SERVICE = Company::TYPE_SERVICE;
+    const TYPE_TIRES = Company::TYPE_TIRES;
     const TYPE_DISINFECT = Company::TYPE_DISINFECT;
 
     static $listType = [
-        self::TYPE_WASH => [
+        self::TYPE_WASH      => [
             'id' => self::TYPE_WASH,
             'en' => 'wash',
             'ru' => 'Мойка',
         ],
-        self::TYPE_SERVICE => [
+        self::TYPE_SERVICE   => [
             'id' => self::TYPE_SERVICE,
             'en' => 'service',
             'ru' => 'Сервис',
         ],
-        self::TYPE_TIRES => [
+        self::TYPE_TIRES     => [
             'id' => self::TYPE_TIRES,
             'en' => 'tires',
             'ru' => 'Шиномонтаж',
@@ -81,10 +81,24 @@ class Service extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id'          => 'ID',
             'description' => 'Услуга',
-            'type' => 'Тип услуги',
-            'is_fixed' => 'Цена фиксирована',
+            'type'        => 'Тип услуги',
+            'is_fixed'    => 'Цена фиксирована',
         ];
+    }
+
+    /**
+     * @param null $type
+     * @return array
+     */
+    public static function getServiceList($type = null)
+    {
+        $serviceList = self::find()->select(['description', 'id'])->orderBy('id ASC')->indexBy('id');
+        if ($type) {
+            $serviceList = $serviceList->where(['type' => $type]);
+        }
+
+        return $serviceList->column();
     }
 }

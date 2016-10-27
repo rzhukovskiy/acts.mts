@@ -124,18 +124,18 @@ GridView::widget([
             'header' => '№',
             'class'  => 'yii\grid\SerialColumn'
         ],
-        'city'           => [
-            'header' => 'Город',
-            'value'  => function ($data) {
-                return isset($data->client) ? $data->client->address : 'error';
-            },
-        ],
         'client'         => [
             'attribute' => 'client_id',
             'value'     => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
             'filter'    => false,
+        ],
+        'city'           => [
+            'header' => 'Город',
+            'value'  => function ($data) {
+                return isset($data->client) ? $data->client->address : 'error';
+            },
         ],
         'profit',
         'payment_status' => [
@@ -166,7 +166,7 @@ GridView::widget([
         ],
         [
             'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{update}{detail}{delete}',
+            'template'       => '{update}{detail}',
             'contentOptions' => ['style' => 'min-width: 80px'],
             'buttons'        => [
                 'detail' => function ($url, $model, $key) {
