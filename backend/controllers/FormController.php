@@ -75,9 +75,6 @@ class FormController extends Controller
 
     public function actionWash()
     {
-        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
-
-        $this->layout = 'system';
         $model = new WashForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
@@ -112,9 +109,6 @@ class FormController extends Controller
 
     public function actionService()
     {
-        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
-
-        $this->layout = 'system';
         $model = new ServiceForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
@@ -153,9 +147,6 @@ class FormController extends Controller
 
     public function actionTires()
     {
-        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
-
-        $this->layout = 'system';
         $model = new TiresForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
