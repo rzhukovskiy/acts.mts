@@ -311,9 +311,9 @@ class Company extends ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getCompanyExclude()
+    public function getPartnerExclude()
     {
-        return $this->hasMany(CompanyExclude::className(), ['company_id' => 'id']);
+        return $this->hasMany(PartnerExclude::className(), ['company_id' => 'id']);
     }
 
     public function getCarsCount()

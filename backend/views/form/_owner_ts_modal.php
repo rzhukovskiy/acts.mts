@@ -34,7 +34,7 @@ $carType = Type::find()->all();
                         echo '
                     <button class="btn text-center btn-ts-select">
                         ' . $img . '
-                        <h6 data-id="' . $type->id . '" style="width:150px">' . $type->name . '</h6>
+                        <h6 data-id="' . $type->id . '">' . $type->name . '</h6>
                     </button>
                     ';
                     }

@@ -271,3 +271,14 @@ table.sign {
 .front-form .checkbox, .front-form .checkbox label {
     display: inline;
 }
+.front-form{
+    color: #444;
+    font-size: 14px;
+}
+.front-form strong {
+    font-size: 18px;
+    font-weight: normal;
+}
+.front-form label {
+    font-weight: normal;
+}

@@ -4,10 +4,10 @@ namespace backend\controllers;
 
 
 use common\models\Company;
-use frontend\models\forms\OwnerForm;
-use frontend\models\forms\ServiceForm;
-use frontend\models\forms\TiresForm;
-use frontend\models\forms\WashForm;
+use backend\models\forms\OwnerForm;
+use backend\models\forms\ServiceForm;
+use backend\models\forms\TiresForm;
+use backend\models\forms\WashForm;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
@@ -62,7 +62,7 @@ class FormController extends Controller
 
                 return $this->render('_thanks');
             } else {
-                $model->addError('name', 'Организация с таким именем уже существует');
+                $model->addError('company', 'Организация с таким именем уже существует');
             }
 
         }

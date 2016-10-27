@@ -3,7 +3,7 @@ use yii\bootstrap\ActiveForm;
 
 /**
  * @var $this yii\web\View
- * @var $model \common\models\Act
+ * @var $model \backend\models\forms\ServiceForm
  * @var $company bool
  */
 
@@ -64,7 +64,7 @@ $form = ActiveForm::begin([
 
             <p class="">
                 Скачайте наш типовой договор
-                <a href="files/service.doc" target="_blank">
+                <a href="/files/service.doc" target="_blank">
                     <button type="button" class="btn btn-primary">Скачать договор</button>
                 </a>
                 Мы работаем по данному договору на всех станциях ТО, на которых получаем услуги автосервиса. При

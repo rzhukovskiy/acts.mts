@@ -3,7 +3,7 @@ use yii\bootstrap\ActiveForm;
 
 /**
  * @var $this yii\web\View
- * @var $model \common\models\Act
+ * @var $model \backend\models\forms\WashForm
  * @var $company bool
  */
 
@@ -82,7 +82,7 @@ $form = ActiveForm::begin([
 <div class="row">
     <div class="col-md-offset-1 col-md-5">
         <div class="items">
-            <div class="form-group row">
+            <div class="form-group">
                 <label>Организации, транспорт которых обслуживается у вас:</label>
             </div>
             <?= $this->render('_wash_organisation',

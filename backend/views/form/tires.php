@@ -3,7 +3,7 @@ use yii\bootstrap\ActiveForm;
 
 /**
  * @var $this yii\web\View
- * @var $model \common\models\Act
+ * @var $model \backend\models\forms\TiresForm
  * @var $company bool
  */
 
@@ -85,12 +85,12 @@ $form = ActiveForm::begin([
     <div class="row">
         <div class="col-md-offset-1 col-md-5">
             <?= $form->field($model, 'type_service')
-                ->checkboxList(\frontend\models\forms\TiresForm::$listService)
+                ->checkboxList(\backend\models\forms\TiresForm::$listService)
                 ->label('Услуги, которые вы оказываете:') ?>
         </div>
         <div class="col-md-5">
             <?= $form->field($model, 'type_car_change_tires')
-                ->checkboxList(\frontend\models\forms\TiresForm::$listCarType)
+                ->checkboxList(\backend\models\forms\TiresForm::$listCarType)
                 ->label('Для какого вида ТС Вы производите шиномонтаж:') ?>
         </div>
     </div>
@@ -126,7 +126,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-md-5">
             <?= $form->field($model, 'type_car_sell_tires')
-                ->checkboxList(\frontend\models\forms\TiresForm::$listCarType)
+                ->checkboxList(\backend\models\forms\TiresForm::$listCarType)
                 ->label('Для какого вида ТС у Вас имеются шины и диски:') ?>
         </div>
     </div>

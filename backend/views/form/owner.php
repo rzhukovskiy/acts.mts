@@ -3,7 +3,7 @@ use yii\bootstrap\ActiveForm;
 
 /**
  * @var $this yii\web\View
- * @var $model \common\models\Act
+ * @var $model \backend\models\forms\OwnerForm
  * @var $company bool
  */
 
@@ -36,7 +36,7 @@ $form = ActiveForm::begin([
                         display: none
                     }</style>
                 <div class="easyhtml5video" style="position:relative;max-width:1280px;">
-                    <video controls="controls" poster="/img/video1.jpg" style="width:100%" title="video">
+                    <video controls="controls" poster="/imgages/video1.jpg" style="width:100%" title="video">
                         <source src="/files/video1.m4v" type="video/mp4"/>
                         <source src="/files/video1.webm" type="video/webm"/>
                         <source src="/files/video1.ogv" type="video/ogg"/>
@@ -47,11 +47,11 @@ $form = ActiveForm::begin([
                             <param name="allowFullScreen" value="true"/>
                             <param name="flashVars"
                                    value="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=img/video1.jpg&amp;src=video1.m4v"/>
-                            <embed src="files/flashfox.swf" width="1280" height="768" style="position:relative;"
+                            <embed src="/files/flashfox.swf" width="1280" height="768" style="position:relative;"
                                    flashVars="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=eh5v.files/html5video/video1.jpg&amp;src=video1.m4v"
                                    allowFullScreen="true" wmode="transparent" type="application/x-shockwave-flash"
                                    pluginspage="http://www.adobe.com/go/getflashplayer_en"/>
-                            <img alt="video" src="/files/video1.jpg" style="position:absolute;left:0;" width="100%"
+                            <img alt="video" src="/images/video1.jpg" style="position:absolute;left:0;" width="100%"
                                  title="Video playback is not supported by your browser"/>
                         </object>
                     </video>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $model frontend\models\forms\ServiceForm
+ * @var $model backend\models\forms\ServiceForm
  */
 
 ?>
