@@ -3,11 +3,11 @@
 namespace backend\controllers;
 
 
-use common\models\Company;
 use backend\models\forms\OwnerForm;
 use backend\models\forms\ServiceForm;
 use backend\models\forms\TiresForm;
 use backend\models\forms\WashForm;
+use common\models\Company;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
@@ -48,7 +48,7 @@ class FormController extends Controller
             //Сохраняем компанию
             $company = new Company();
             $company->name = $model->company;
-            $company->address = $model->town;
+            $company->address = $model->city;
             $company->director = $model->name;
             $company->type = Company::TYPE_OWNER;
             $company->status = Company::STATUS_NEW;

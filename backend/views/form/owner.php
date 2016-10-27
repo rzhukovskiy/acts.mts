@@ -27,6 +27,7 @@ $form = ActiveForm::begin([
         <div class="col-md-offset-1 col-md-5">
             <?= $form->field($model, 'name')->textInput([]) ?>
             <?= $form->field($model, 'company')->textInput([]) ?>
+            <?= $form->field($model, 'city')->textInput([]) ?>
             <?= $form->field($model, 'email')->textInput([]) ?>
             <?= $form->field($model, 'phone')->textInput([]) ?>
             <?= $form->field($model, 'town')->textInput([]) ?>
@@ -36,7 +37,7 @@ $form = ActiveForm::begin([
                         display: none
                     }</style>
                 <div class="easyhtml5video" style="position:relative;max-width:1280px;">
-                    <video controls="controls" poster="/imgages/video1.jpg" style="width:100%" title="video">
+                    <video controls="controls" poster="/images/video1.jpg" style="width:100%" title="video">
                         <source src="/files/video1.m4v" type="video/mp4"/>
                         <source src="/files/video1.webm" type="video/webm"/>
                         <source src="/files/video1.ogv" type="video/ogg"/>

@@ -18,6 +18,7 @@ class OwnerForm extends Model
 
     public $name;
     public $company;
+    public $city;
     public $email;
     public $phone;
     public $town;
@@ -35,7 +36,7 @@ class OwnerForm extends Model
                 [
                     'company',
                     'phone',
-                    'town'
+                    'city'
                 ],
                 'required'
             ],
@@ -46,6 +47,7 @@ class OwnerForm extends Model
                     'email',
                     'phone',
                     'town',
+                    'city',
                 ],
                 'string'
             ],
@@ -63,6 +65,7 @@ class OwnerForm extends Model
             'company'   => 'Компания',
             'email'     => 'E-mail',
             'phone'     => 'Телефон',
+            'city'      => 'Ваш город',
             'town'      => 'Города',
             'car_mark'  => 'Марка ТС',
             'car_type'  => 'Вид ТС',
@@ -111,6 +114,7 @@ class OwnerForm extends Model
         $companyInfo->company_id = $idCompany;
         $companyInfo->phone = $this->phone;
         $companyInfo->email = $this->email;
+        $companyInfo->city = $this->city;
 
         return $companyInfo->save();
     }
