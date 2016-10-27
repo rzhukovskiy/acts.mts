@@ -8,8 +8,10 @@
 
 namespace backend\controllers;
 
+use common\models\Company;
 use common\models\MonthlyAct;
 use common\models\search\MonthlyActSearch;
+use common\models\Service;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -50,6 +52,11 @@ class MonthlyActController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Service::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
 
         return $this->render('list',
             [
@@ -57,6 +64,7 @@ class MonthlyActController extends Controller
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'company'      => $company,
+                'listType'     => $listType
             ]);
     }
 
