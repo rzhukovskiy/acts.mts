@@ -240,3 +240,32 @@ table.sign {
 #act-grid .glyphicon-search:before{
     content: normal;
 }
+
+/*front-form*/
+.front-form .btn {
+    padding: 8px 12px 6px;
+}
+
+.remove-btn-wrap {
+    padding-left: 30px;
+}
+
+.page-header {
+    margin: 40px 0 20px;
+    padding-bottom: 9px;
+    text-align: center;
+}
+
+.page-header img {
+    margin: 0 auto;
+    width: 60%;
+}
+
+.page-header img.small {
+    margin: 0 auto;
+    width: 30%;
+}
+
+.front-form .checkbox, .front-form .checkbox label {
+    display: inline;
+}

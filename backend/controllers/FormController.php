@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
 
 use common\models\Company;
@@ -16,7 +16,7 @@ class FormController extends Controller
     public function beforeAction($action)
     {
 
-        $this->view->registerAssetBundle('frontend\assets\FormAsset', \yii\web\View::POS_END);
+        $this->view->registerAssetBundle('backend\assets\FormAsset', \yii\web\View::POS_END);
         $this->layout = 'system';
 
         return parent::beforeAction($action);
