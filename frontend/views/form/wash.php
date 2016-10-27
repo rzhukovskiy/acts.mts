@@ -7,18 +7,21 @@ use yii\bootstrap\ActiveForm;
  * @var $company bool
  */
 
-$this->title = 'Редактирование акта';
+$this->title = 'Заявка для мойки';
 
 $request = Yii::$app->request;
 
 ?>
     <div class="page-header">
         <h1 class="text-center hidden">ЗАЯВКА ДЛЯ МОЙКИ</h1>
-        <img src="./img/top2.png" alt="заявка для мойки">
+        <img src="/images/wash-header-logo.png" alt="заявка для мойки">
     </div>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'act-form',
+    'id'      => 'act-form',
+    'options' => [
+        'class' => 'front-form'
+    ]
 ]) ?>
     <div class="row">
         <div class="col-md-offset-1 col-md-5">
@@ -28,15 +31,11 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'street')->textInput([]) ?>
             <?= $form->field($model, 'building')->textInput([]) ?>
             <?= $form->field($model, 'phone')->textInput([]) ?>
-            <div class="form-group">
-                <label>Часы работы</label>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'work_from')->textInput([])->label('От') ?>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'work_to')->textInput([])->label('До') ?>
-            </div>
+            <?= $this->render('_work_hours',
+                [
+                    'model' => $model,
+                    'form'  => $form,
+                ]); ?>
         </div>
         <div class="col-md-5">
             <p class=""><strong>Прочтите внимательно инструкцию!</strong></p>
@@ -63,7 +62,7 @@ $form = ActiveForm::begin([
 
             <p class="">
                 Скачайте наш типовой договор
-                <a href="files/wash.doc" target="_blank">
+                <a href="/files/wash.doc" target="_blank">
                     <button type="button" class="btn btn-primary">Скачать договор</button>
                 </a>
                 Он также единый. При возникновении вопросов - можете составить протокол разногласий или обсудить
@@ -108,6 +107,8 @@ $form = ActiveForm::begin([
                 <button type="button" class="btn btn-primary btn-add" title="Добавить организацию">+</button>
             </div>
         </div>
+        <br>
+
         <div class="row form-group">
             <div class="col-md-11">
                 <button type="submit" class="btn btn-primary">Отправить</button>
@@ -120,22 +121,22 @@ $form = ActiveForm::begin([
                 display: none
             }</style>
         <div class="easyhtml5video" style="position:relative;max-width:1280px;">
-            <video controls="controls" poster="./img/video.jpg" style="width:100%" title="video">
-                <source src="files/video.m4v" type="video/mp4"/>
-                <source src="files/video.webm" type="video/webm"/>
-                <source src="files/video.ogv" type="video/ogg"/>
-                <source src="files/video.mp4"/>
+            <video controls="controls" poster="/images/video.jpg" style="width:100%" title="video">
+                <source src="/files/video.m4v" type="video/mp4"/>
+                <source src="/files/video.webm" type="video/webm"/>
+                <source src="/files/video.ogv" type="video/ogg"/>
+                <source src="/files/video.mp4"/>
                 <object type="application/x-shockwave-flash" data="eh5v.files/html5video/flashfox.swf" width="1280"
                         height="768" style="position:relative;">
-                    <param name="movie" value="files/flashfox.swf"/>
+                    <param name="movie" value="/files/flashfox.swf"/>
                     <param name="allowFullScreen" value="true"/>
                     <param name="flashVars"
-                           value="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=img/video.jpg&amp;src=video.m4v"/>
-                    <embed src="files/flashfox.swf" width="1280" height="768" style="position:relative;"
+                           value="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=/imgages/video.jpg&amp;src=video.m4v"/>
+                    <embed src="/files/flashfox.swf" width="1280" height="768" style="position:relative;"
                            flashVars="autoplay=false&amp;controls=true&amp;fullScreenEnabled=true&amp;posterOnEnd=true&amp;loop=false&amp;poster=eh5v.files/html5video/video.jpg&amp;src=video.m4v"
                            allowFullScreen="true" wmode="transparent" type="application/x-shockwave-flash"
                            pluginspage="http://www.adobe.com/go/getflashplayer_en"/>
-                    <img alt="video" src="files/video.jpg" style="position:absolute;left:0;" width="100%"
+                    <img alt="video" src="/images/video1.jpg" style="position:absolute;left:0;" width="100%"
                          title="Video playback is not supported by your browser"/>
                 </object>
             </video>

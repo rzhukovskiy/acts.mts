@@ -7,18 +7,21 @@ use yii\bootstrap\ActiveForm;
  * @var $company bool
  */
 
-$this->title = 'Редактирование акта';
+$this->title = 'Заявка';
 
 $request = Yii::$app->request;
 
 ?>
     <div class="page-header">
         <h1 class="text-center hidden">ЗАЯВКА НА МОЙКУ</h1>
-        <img class="small" src="/img/mts_zayavka_shapka.png" alt="заявка на мойку">
+        <img class="small" src="/images/owner-header-logo.png" alt="заявка на мойку">
     </div>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'act-form',
+    'id'      => 'act-form',
+    'options' => [
+        'class' => 'front-form'
+    ]
 ]) ?>
     <div class="row">
         <div class="col-md-offset-1 col-md-5">
@@ -35,9 +38,9 @@ $form = ActiveForm::begin([
                 <div class="easyhtml5video" style="position:relative;max-width:1280px;">
                     <video controls="controls" poster="/img/video1.jpg" style="width:100%" title="video">
                         <source src="/files/video1.m4v" type="video/mp4"/>
-                        <!--<source src="/files/video1.webm" type="video/webm"/>
+                        <source src="/files/video1.webm" type="video/webm"/>
                         <source src="/files/video1.ogv" type="video/ogg"/>
-                        <source src="/files/video1.mp4"/>-->
+                        <source src="/files/video1.mp4"/>
                         <object type="application/x-shockwave-flash" data="eh5v.files/html5video/flashfox.swf"
                                 width="1280" height="768" style="position:relative;">
                             <param name="movie" value="/files/flashfox.swf"/>
@@ -99,15 +102,18 @@ $form = ActiveForm::begin([
 
 
         <div class="row">
-            <div class="col-md-11 col-md-offset-1">
+            <div class="col-md-11 col-md-offset-1 remove-btn-wrap">
                 <button type="button" class="btn btn-primary btn-remove" title="Убрать автомобиль">-</button>
                 <button type="button" class="btn btn-primary btn-add" title="Добавить автомобиль">+</button>
             </div>
         </div>
+        <br>
 
         <div class="row">
             <div class="col-md-11 col-md-offset-1">
-                <button type="submit" class="btn btn-primary">Отправить</button>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
             </div>
         </div>
     </div>

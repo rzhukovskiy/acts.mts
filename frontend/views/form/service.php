@@ -7,18 +7,21 @@ use yii\bootstrap\ActiveForm;
  * @var $company bool
  */
 
-$this->title = 'Редактирование акта';
+$this->title = 'Заявка для сервиса';
 
 $request = Yii::$app->request;
 
 ?>
     <div class="page-header">
         <h1 class="text-center hidden">ЗАЯВКА ДЛЯ СЕРВИСА</h1>
-        <img src="./img/top3.png" alt="заявка для сервиса">
+        <img src="/images/service-header-logo.png" alt="заявка для сервиса">
     </div>
 <?php
 $form = ActiveForm::begin([
-    'id' => 'act-form',
+    'id'      => 'act-form',
+    'options' => [
+        'class' => 'front-form'
+    ]
 ]) ?>
     <div class="row">
         <div class="col-md-offset-1 col-md-5">
@@ -28,15 +31,11 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'street')->textInput([]) ?>
             <?= $form->field($model, 'building')->textInput([]) ?>
             <?= $form->field($model, 'phone')->textInput([]) ?>
-            <div class="form-group">
-                <label>Часы работы</label>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'work_from')->textInput([])->label('От') ?>
-            </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'work_to')->textInput([])->label('До') ?>
-            </div>
+            <?= $this->render('_work_hours',
+                [
+                    'model' => $model,
+                    'form'  => $form,
+                ]); ?>
         </div>
         <div class="col-md-5">
             <p class=""><strong>Прочтите внимательно инструкцию!</strong></p>

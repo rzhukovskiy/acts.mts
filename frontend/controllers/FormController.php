@@ -59,6 +59,10 @@ class FormController extends Controller
                 $model->saveCarAttribute($company->id);
                 //сохраняем города
                 $model->saveTownAttribute($company->id);
+
+                return $this->render('_thanks');
+            } else {
+                $model->addError('name', 'Организация с таким именем уже существует');
             }
 
         }
@@ -93,6 +97,10 @@ class FormController extends Controller
                 $model->saveResponsible($company->id);
                 //Сохраняем клиентов компании
                 $model->saveClients($company->id);
+
+                return $this->render('_thanks');
+            } else {
+                $model->addError('name', 'Организация с таким именем уже существует');
             }
         }
 
@@ -130,6 +138,10 @@ class FormController extends Controller
                 $model->saveDealerMark($company->id);
                 //сохраняем нормочасы
                 $model->saveNormHour($company->id);
+
+                return $this->render('_thanks');
+            } else {
+                $model->addError('name', 'Организация с таким именем уже существует');
             }
         }
 
@@ -169,6 +181,10 @@ class FormController extends Controller
                 $model->saveTypeCarChangeTires($company->id);
                 //сохраняем типы ТС для продажи шин и дисков
                 $model->saveTypeCarSellTires($company->id);
+
+                return $this->render('_thanks');
+            } else {
+                $model->addError('name', 'Организация с таким именем уже существует');
             }
         }
 

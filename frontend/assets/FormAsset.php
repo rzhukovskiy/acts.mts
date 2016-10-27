@@ -12,7 +12,7 @@ class FormAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-
+        //'css/bootstrap-checkbox.css'
     ];
     public $js = [
         'js/front-form.js'

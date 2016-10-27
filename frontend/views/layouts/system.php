@@ -1,17 +1,17 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: ruslanzh
-     * Date: 09/08/16
-     * Time: 15:52
-     */
+/**
+ * Created by PhpStorm.
+ * User: ruslanzh
+ * Date: 09/08/16
+ * Time: 15:52
+ */
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use yii\helpers\Html;
-use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use frontend\assets\AppAsset;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 ?>
@@ -35,11 +35,7 @@ AppAsset::register($this);
     </div>
 </div>
 
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; Mtransservice <?= date('Y') ?></p>
-    </div>
-</footer>
+<?= $this->render('parts/_footer') ?>
 
 <?php $this->endBody() ?>
 </body>

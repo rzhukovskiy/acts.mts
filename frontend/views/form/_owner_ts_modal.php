@@ -1,7 +1,7 @@
 <?php
 use common\models\Type;
 
-$carType = Type::getTypeList();
+$carType = Type::find()->all();
 ?>
 <style>
     .btn-ts-select img {
@@ -18,7 +18,7 @@ $carType = Type::getTypeList();
     }
 </style>
 <div class="modal fade-in" id="ts_modal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="min-width: 1100px">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -27,13 +27,17 @@ $carType = Type::getTypeList();
             </div>
             <div class="modal-body">
                 <?php
-                foreach ($carType as $key => $type) {
-                    echo '
+                foreach ($carType as $type) {
+                    $img = $type->getImage();
+                    if ($img) {
+                        $img = \yii\bootstrap\Html::img($img);
+                        echo '
                     <button class="btn text-center btn-ts-select">
-                        <img src="/images/cars/' . $key . '.jpg">
-                        <h6 data-id="' . $key . '">' . $type . '</h6>
+                        ' . $img . '
+                        <h6 data-id="' . $type->id . '" style="width:150px">' . $type->name . '</h6>
                     </button>
                     ';
+                    }
                 }
                 ?>
             </div>

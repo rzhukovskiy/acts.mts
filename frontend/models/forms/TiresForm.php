@@ -140,9 +140,12 @@ class TiresForm extends Model
         $companyInfo = new CompanyInfo();
         $companyInfo->company_id = $idCompany;
         $companyInfo->phone = $this->phone;
-        $companyInfo->address_mail = $this->getAddressMail();
-        $companyInfo->start_at = $this->work_from;
-        $companyInfo->end_at = $this->work_to;
+        $companyInfo->index = $this->index;
+        $companyInfo->city = $this->city;
+        $companyInfo->street = $this->street;
+        $companyInfo->house = $this->building;
+        $companyInfo->start_str = $this->work_from;
+        $companyInfo->end_str = $this->work_to;
 
         return $companyInfo->save();
     }
