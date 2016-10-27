@@ -25,7 +25,9 @@ body {
 .glyphicon {
     color: #069;
 }
-
+.label {
+    margin-left: 10px;
+}
 /* login */
 .login-form {
     margin-top: 200px;

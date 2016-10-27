@@ -38,6 +38,7 @@ use yii\helpers\ArrayHelper;
  * @property Requisites[] $requisites
  * @property CompanyServiceType[] $serviceTypes
  * @property Entry[] $entries
+ * @property CompanyMember[] $members
  *
  * @property string $cardList
  * @property array $requisitesList
@@ -297,6 +298,14 @@ class Company extends ActiveRecord
     public function getServiceTypes()
     {
         return $this->hasMany(CompanyServiceType::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getMembers()
+    {
+        return $this->hasMany(CompanyMember::className(), ['company_id' => 'id']);
     }
 
     /**

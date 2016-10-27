@@ -20,7 +20,7 @@ echo $this->render($action . '/_list', [
     'type' => $type,
 ]);
 
-echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form', [
+echo $this->render('_form', [
     'model' => $model,
     'type' => $type,
 ]);

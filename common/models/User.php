@@ -271,7 +271,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (!empty($this->department)) {
             foreach (Company::$listType as $companyType => $serviceData) {
                 if ($this->department->can($companyType, $status)) {
-                    $res[$companyType] = $companyType;
+                    $res[$companyType] = Company::$listType[$companyType];
                 }
             }
         }

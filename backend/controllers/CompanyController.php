@@ -78,6 +78,13 @@ class CompanyController extends Controller
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
         }
 
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_NEW;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
+        }
+
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list', [
@@ -98,6 +105,7 @@ class CompanyController extends Controller
     {
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_ACTIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
@@ -113,6 +121,13 @@ class CompanyController extends Controller
             $listType = Service::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_ACTIVE;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
         }
 
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
@@ -151,6 +166,13 @@ class CompanyController extends Controller
             $listType = Service::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
+        }
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_REFUSE;
+            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
         }
 
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
