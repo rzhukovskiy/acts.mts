@@ -4,8 +4,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
  */
-
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 ?>
 <div class="panel panel-primary">
@@ -17,19 +16,30 @@ use yii\grid\GridView;
         GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
+            'hover' => false,
+            'striped' => false,
+            'export' => false,
+            'summary' => false,
+            'emptyText' => '',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
-            'emptyText' => '',
             'columns' => [
                 [
                     'header' => '№',
                     'class' => 'yii\grid\SerialColumn'
                 ],
+                [
+                    'attribute' => 'address',
+                    'group' => true,
+                    'groupedRow' => true,
+                    'groupOddCssClass' => 'kv-group-header',
+                    'groupEvenCssClass' => 'kv-group-header',
+                ],
                 'name',
                 'fullAddress',
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{view}',
+                    'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
                 ],
             ],
