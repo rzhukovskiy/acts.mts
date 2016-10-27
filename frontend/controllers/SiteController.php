@@ -31,12 +31,12 @@ class SiteController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'error', 'signup'],
+                        'actions' => ['index', 'error', 'signup', 'connect'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'error'],
+                        'actions' => ['logout', 'error', 'connect'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -150,6 +150,33 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionConnect()
+    {
+        $connectionData = Yii::$app->request->post('Connection', false);
+        if ($connectionData) {
+            foreach ($connectionData as $companyId => $oldId) {
+                $company = Company::findOne($companyId);
+                if ($company) {
+                    $company->old_id = $oldId;
+                    $company->save();
+                }
+            }
+        }
+
+        $this->layout = 'main';
+        $listCompany = Company::find()->where(['old_id' => null])->all();
+
+        /**
+         * @var \yii\db\Connection $old_db
+         */
+        $old_db = Yii::$app->db_old;
+        $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request ORDER BY name ASC")->queryAll();
+
+        return $this->render('connect', [
+            'listCompany' => $listCompany,
+            'rows' => $rows,
+        ]);
+    }
 
     public function goHome()
     {

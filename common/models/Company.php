@@ -27,6 +27,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $schedule
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $old_id
  *
  * @property CompanyInfo $info
  * @property CompanyOffer $offer
