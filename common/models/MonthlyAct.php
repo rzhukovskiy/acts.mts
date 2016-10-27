@@ -22,6 +22,7 @@ use yii\web\UploadedFile;
  * @property string $act_date
  * @property array $img
  * @property boolean $is_partner
+ * @property string $post_number
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -109,7 +110,8 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     'act_client_get_date',
                     'act_we_get_date',
                     'payment_comment',
-                    'payment_estimate_date'
+                    'payment_estimate_date',
+                    'post_number'
                 ],
                 'string',
                 'on' => 'detail'
@@ -139,12 +141,14 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'act_status'            => 'Статус акта',
             'act_date'              => 'Дата акта',
             'img'                   => 'Сканы акта',
+            'image'                 => 'Загрузить акт',
             'act_comment'           => 'Комментарии к акту',
             'act_send_date'         => 'Дата отправления акта по почте',
-            'act_client_get_date'   => 'Предполагаемая дата получения клиентом',
+            'act_client_get_date'   => 'Предполагаемая дата получения клиентом акта',
             'act_we_get_date'       => 'Предполагаемая дата получения акта нами',
             'payment_comment'       => 'Комментарии к оплате',
             'payment_estimate_date' => 'Дата предполагаемой оплаты',
+            'post_number'           => 'Номер почтового отправления',
             'created_at'            => 'Created At',
             'updated_at'            => 'Updated At',
         ];
@@ -428,11 +432,11 @@ class MonthlyAct extends \yii\db\ActiveRecord
     static function colorForStatus($status)
     {
         $actStatus = [
-            self::ACT_STATUS_NOT_SIGNED  => 'bg-danger',
-            self::ACT_STATUS_SEND_SCAN   => 'bg-warning',
-            self::ACT_STATUS_SEND_ORIGIN => 'bg-warning',
-            self::ACT_STATUS_SIGNED_SCAN => 'bg-warning',
-            self::ACT_STATUS_DONE        => 'bg-success'
+            self::ACT_STATUS_NOT_SIGNED  => 'monthly-act-danger',
+            self::ACT_STATUS_SEND_SCAN   => 'monthly-act-warning',
+            self::ACT_STATUS_SEND_ORIGIN => 'monthly-act-warning',
+            self::ACT_STATUS_SIGNED_SCAN => 'monthly-act-warning',
+            self::ACT_STATUS_DONE        => 'monthly-act-success'
         ];
 
         return $actStatus[$status];

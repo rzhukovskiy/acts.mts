@@ -52,6 +52,10 @@ use yii\helpers\Html;
                     'value' => date('d-m-Y'),
                 ]
             ])->error(false) ?>
+        <?= $form->field($model, 'post_number')
+            ->input('text', ['class' => 'form-control'])
+            ->label(Html::a('Номер почтового отправления', 'https://www.pochta.ru/', ['target' => 'blank'])) ?>
+
         <?= $form->field($model, 'act_we_get_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,

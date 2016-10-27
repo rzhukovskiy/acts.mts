@@ -27,18 +27,37 @@ use yii\helpers\Html;
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]) ?>
-        <?= $form->field($model->client, 'name')
-            ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
-        <?= $form->field($model->client, 'address')
-            ->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
+        <div class="form-group field-company-name required">
+            <?= Html::activeLabel($model->client, 'name', ['class' => 'col-sm-2 control-label']) ?>
+            <div class="col-sm-6 plain-field-value">
+                <?= Html::activeHiddenInput($model->client, 'name') ?>
+                <?= $model->client->name ?>
+            </div>
+        </div>
+
+        <div class="form-group field-company-address required">
+            <?= Html::activeLabel($model->client, 'address', ['class' => 'col-sm-2 control-label']) ?>
+            <div class="col-sm-6 plain-field-value">
+                <?= Html::activeHiddenInput($model->client, 'address') ?>
+                <?= $model->client->address ?>
+            </div>
+        </div>
 
         <?= $form->field($model, 'image[]')->fileInput([
-                'multiple' => true,
-                'accept'   => 'image/*',
-                'class'    => 'form-control'
-            ])->error(false) ?>
+            'multiple' => true,
+            'accept'   => 'image/*',
+            'class'    => 'form-control'
+        ])->error(false) ?>
 
-        <?= $form->field($model, 'profit')->input('text', ['class' => 'form-control', 'disabled' => 'disabled']) ?>
+        <div class="form-group field-monthlyact-profit required">
+            <?= Html::activeLabel($model, 'profit', ['class' => 'col-sm-2 control-label']) ?>
+            <div class="col-sm-6 plain-field-value">
+                <?= Html::activeHiddenInput($model, 'profit') ?>
+                <?= $model->profit ?>
+            </div>
+        </div>
+
+        <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>
         <?= $form->field($model, 'payment_status')
             ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control']) ?>
         <?= $form->field($model, 'payment_date')->widget(DatePicker::classname(),
@@ -54,7 +73,7 @@ use yii\helpers\Html;
                     'value' => date('d-m-Y'),
                 ]
             ])->error(false) ?>
-        <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>
+
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">

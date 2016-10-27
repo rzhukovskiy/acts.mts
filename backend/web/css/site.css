@@ -271,14 +271,38 @@ table.sign {
 .front-form .checkbox, .front-form .checkbox label {
     display: inline;
 }
-.front-form{
+
+.front-form {
     color: #444;
     font-size: 14px;
 }
+
 .front-form strong {
     font-size: 18px;
     font-weight: normal;
 }
+
 .front-form label {
     font-weight: normal;
+}
+
+.plain-field-value {
+    margin-bottom: 0;
+    padding-top: 9px;
+    font-weight: bold;
+}
+
+.monthly-act-warning {
+    background-color: #f0ad4e;
+    color: #ffffff;
+}
+
+.monthly-act-danger {
+    background-color: #d9534f;
+    color: #ffffff;
+}
+
+.monthly-act-success {
+    background-color: #3fad46;
+    color: #ffffff;
 }
