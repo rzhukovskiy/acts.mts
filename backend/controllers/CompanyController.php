@@ -58,7 +58,7 @@ class CompanyController extends Controller
      */
     public function actionNew($type)
     {
-        $searchModel = new CompanySearch();
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_NEW;
 
@@ -96,7 +96,7 @@ class CompanyController extends Controller
      */
     public function actionActive($type)
     {
-        $searchModel = new CompanySearch();
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -133,7 +133,7 @@ class CompanyController extends Controller
      */
     public function actionRefuse($type)
     {
-        $searchModel = new CompanySearch();
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_REFUSE;
 

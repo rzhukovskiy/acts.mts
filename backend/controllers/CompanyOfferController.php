@@ -2,13 +2,14 @@
 
 namespace backend\controllers;
 
-use common\models\User;
-use Yii;
+use common\models\Company;
 use common\models\CompanyOffer;
 use common\models\search\CompanyOfferSearch;
+use common\models\User;
+use Yii;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * CompanyOfferController implements the CRUD actions for CompanyOffer model.
@@ -20,14 +21,7 @@ class CompanyOfferController extends Controller
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
+        return [];
     }
 
     /**
@@ -98,6 +92,18 @@ class CompanyOfferController extends Controller
         }
     }
 
+    public function actionDelay($id)
+    {
+        $model = $this->findModel($id);
+        $model->communication_at = time() + 300;
+
+        if ($model->save()) {
+            return Json::encode(['code' => 1]);
+        } else {
+            return Json::encode(['code' => 0]);
+        }
+    }
+
     /**
      * Deletes an existing CompanyOffer model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -109,6 +115,28 @@ class CompanyOfferController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionGetAlert()
+    {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+        $modelCompanyOffer = CompanyOffer::find()->where([
+            'user_id' => $currentUser->id,
+            'status' => Company::STATUS_NEW,
+        ])->where(['<', 'communication_at', time() - 300])->one();
+
+        if($modelCompanyOffer) {
+            return Json::encode([
+                'id' => $modelCompanyOffer->id,
+                'title' => 'Запланированный звонок в ' . $modelCompanyOffer->company->name,
+                'content' => $this->renderPartial('_alert', [
+                    'model' => $modelCompanyOffer,
+                ]),
+            ]);
+        } else {
+            return Json::encode([]);
+        }
     }
 
     /**

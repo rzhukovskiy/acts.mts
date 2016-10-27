@@ -27,7 +27,7 @@ use yii\grid\GridView;
                 ],
                 'address',
                 'name',
-                'info.address',
+                'fullAddress',
                 [
                     'attribute' => 'offer.communication_at',
                     'value' => function($model) {
