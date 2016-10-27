@@ -7,7 +7,7 @@
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= $model->name ?>  <span class="work-time"><?= $model->info->address ?></span>
+        <?= $model->name ?>  <span class="work-time"><?= $model->fullAddress ?></span>
     </div>
     <div class="panel-body">
         <table class="table table-bordered" style="margin: 0;">

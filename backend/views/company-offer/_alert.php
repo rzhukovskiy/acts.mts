@@ -39,6 +39,7 @@ use yii\widgets\ActiveForm;
 echo "<strong>Сотрудники: </strong><br/>";
 foreach ($model->company->members as $companyMember) {
     echo "<strong>Должность: </strong> $companyMember[position]<br/>";
+    echo "<strong>ФИО: </strong> $companyMember[position]<br/>";
     echo "<strong>Телефон: </strong> $companyMember->phone<br/>";
     echo "<strong>Email: </strong> $companyMember->email<br/>";
 }

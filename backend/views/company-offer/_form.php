@@ -4,14 +4,15 @@ use kartik\datetime\DateTimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\CompanyOffer */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $this yii\web\View
+ * @var $model common\models\CompanyOffer
+ * @var $form yii\widgets\ActiveForm
+ */
 ?>
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Процесс работы
+        <?=$model->company->name?> :: Процесс
     </div>
     <div class="panel-body">
         <?php $form = ActiveForm::begin([
@@ -32,7 +33,7 @@ use yii\widgets\ActiveForm;
                 'class' => 'form-control',
             ],
             'pluginOptions' => [
-                'autoclose'=>true,
+                'autoclose' => true,
                 'format' => 'dd-mm-yyyy hh:ii'
             ]
         ])->error(false) ?>

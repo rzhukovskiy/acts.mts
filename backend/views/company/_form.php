@@ -13,7 +13,7 @@ use common\models\Requisites;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?=$model->isNewRecord ? 'Добавление мойки' : 'Редактирование мойки ' . $model->name?>
+        <?=$model->isNewRecord ? 'Добавить заявку' : 'Редактирование ' . $model->name?>
     </div>
     <div class="panel-body">
         <?php

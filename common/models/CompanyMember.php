@@ -2,18 +2,22 @@
 
 namespace common\models;
 
-use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%company_member}}".
  *
  * @property integer $id
- * @property string $company_id
+ * @property integer $company_id
+ * @property string $name
  * @property string $position
  * @property string $phone
  * @property string $email
+ * 
+ * @property Company $company
  */
-class CompanyMember extends \yii\db\ActiveRecord
+class CompanyMember extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -31,7 +35,7 @@ class CompanyMember extends \yii\db\ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id'], 'integer'],
-            [['position', 'phone', 'email'], 'string', 'max' => 255],
+            [['position', 'phone', 'email', 'name'], 'string', 'max' => 255],
         ];
     }
 
@@ -43,9 +47,18 @@ class CompanyMember extends \yii\db\ActiveRecord
         return [
             'id'         => 'ID',
             'company_id' => 'Company ID',
-            'position'   => 'Position',
-            'phone'      => 'Phone',
+            'name'       => 'Фио',
+            'position'   => 'Должность',
+            'phone'      => 'Телефон',
             'email'      => 'Email',
         ];
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 }
