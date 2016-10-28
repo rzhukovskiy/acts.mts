@@ -442,4 +442,19 @@ class MonthlyAct extends \yii\db\ActiveRecord
         return $actStatus[$status];
     }
 
+    /**
+     * @param $status
+     * @return mixed
+     */
+    static function colorForPaymentStatus($status)
+    {
+        $paymentStatus = [
+            self::PAYMENT_STATUS_DONE     => 'monthly-act-success',
+            self::PAYMENT_STATUS_NOT_DONE => 'monthly-act-danger',
+        ];
+
+        return $paymentStatus[$status];
+    }
+
+
 }

@@ -137,13 +137,22 @@ GridView::widget([
                 return isset($data->client) ? $data->client->address : 'error';
             },
         ],
-        'profit',
-        'payment_status' => [
-            'attribute' => 'payment_status',
+        'profit'         => [
+            'attribute' => 'profit',
             'value'     => function ($data) {
+                return Html::tag('strong', $data->profit);
+            },
+            'format'    => 'html',
+        ],
+        'payment_status' => [
+            'attribute'      => 'payment_status',
+            'value'          => function ($data) {
                 return MonthlyAct::$paymentStatus[$data->payment_status];
             },
-            'filter'    => false,
+            'filter'         => false,
+            'contentOptions' => function ($model) {
+                return ['class' => MonthlyAct::colorForPaymentStatus($model->payment_status)];
+            },
         ],
         'payment_date',
         'act_status'     => [
@@ -156,6 +165,7 @@ GridView::widget([
             },
             'filter'         => false,
         ],
+        /*
         'img'            => [
             'attribute' => 'img',
             'value'     => function ($data) {
@@ -164,6 +174,7 @@ GridView::widget([
             'filter'    => false,
             'format'    => 'raw'
         ],
+        */
         [
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{update}{detail}',

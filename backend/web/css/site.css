@@ -295,6 +295,7 @@ table.sign {
     font-weight: bold;
 }
 
+/*Monthly Act*/
 .monthly-act-warning {
     background-color: #f0ad4e;
     color: #ffffff;
@@ -308,4 +309,12 @@ table.sign {
 .monthly-act-success {
     background-color: #3fad46;
     color: #ffffff;
+}
+
+.field-disabled {
+    font-size: 1.2em;
+}
+
+.field-disabled .plain-field-value {
+    color: #3fad46;
 }
