@@ -18,7 +18,7 @@ use yii\helpers\Html;
         <?php
         $form = ActiveForm::begin([
             'action'      => ['monthly-act/detail', 'id' => $model->id],
-            'id'          => 'monthly-act-form',
+            'id'          => 'monthly-act-detail-form',
             'options'     => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
                 'template'     => '{label}<div class="col-sm-6">{input}{error}</div>',

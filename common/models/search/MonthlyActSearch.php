@@ -49,6 +49,9 @@ class MonthlyActSearch extends MonthlyAct
         $dataProvider = new ActiveDataProvider([
             'query'      => $query,
             'pagination' => false,
+            'sort'       => [
+                'defaultOrder' => ['client_id' => SORT_DESC],
+            ],
         ]);
 
         $this->load($params);
@@ -73,7 +76,6 @@ class MonthlyActSearch extends MonthlyAct
             'updated_at'                       => $this->updated_at,
 
         ]);
-        $query->orderBy('client_id');
 
         return $dataProvider;
     }

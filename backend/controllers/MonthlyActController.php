@@ -80,8 +80,8 @@ class MonthlyActController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->image = yii\web\UploadedFile::getInstances($model, 'image');
             $model->uploadImage();
-            if ($model->save() && empty($model->errors)) {
-                \Yii::$app->getSession()->setFlash('success', 'Акт успешно обновлен!');
+            if ($model->save()) {
+                return $this->redirect(['list', 'type' => $model->type_id, 'company' => !$model->is_partner]);
             }
         }
 
@@ -104,7 +104,7 @@ class MonthlyActController extends Controller
         $model->scenario = 'detail';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            \Yii::$app->getSession()->setFlash('success', 'Детализация акта успешно обновлена!');
+            return $this->redirect(['list', 'type' => $model->type_id, 'company' => !$model->is_partner]);
         }
 
         return $this->render('detail',

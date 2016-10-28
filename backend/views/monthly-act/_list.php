@@ -86,7 +86,6 @@ echo newerton\fancybox\FancyBox::widget([
 GridView::widget([
     'id'               => 'act-grid',
     'dataProvider'     => $dataProvider,
-    'filterModel'      => $searchModel,
     'showPageSummary'  => false,
     'summary'          => false,
     'emptyText'        => '',
@@ -151,7 +150,10 @@ GridView::widget([
             },
             'filter'         => false,
             'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForPaymentStatus($model->payment_status)];
+                return [
+                    'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
+                    'style' => 'min-width: 100px'
+                ];
             },
         ],
         'payment_date',
@@ -161,9 +163,10 @@ GridView::widget([
                 return MonthlyAct::$actStatus[$data->act_status];
             },
             'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForStatus($model->act_status)];
+                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 120px'];
             },
             'filter'         => false,
+
         ],
         /*
         'img'            => [

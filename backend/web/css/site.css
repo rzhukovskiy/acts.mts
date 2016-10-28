@@ -311,8 +311,11 @@ table.sign {
     color: #ffffff;
 }
 
-.field-disabled {
-    font-size: 1.2em;
+.field-disabled div{
+    font-size: 2em;
+}
+#monthly-act-detail-form label,#monthly-act-form label{
+    font-size: 2em;
 }
 
 .field-disabled .plain-field-value {
