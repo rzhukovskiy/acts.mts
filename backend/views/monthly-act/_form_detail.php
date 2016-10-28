@@ -14,6 +14,7 @@ use yii\helpers\Html;
         <?= 'Детализация акта ' . $model->id ?>
     </div>
     <div class="panel-body">
+        <?= \common\widgets\Alert::widget() ?>
         <?php
         $form = ActiveForm::begin([
             'action'      => ['monthly-act/detail', 'id' => $model->id],

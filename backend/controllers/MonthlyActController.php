@@ -80,15 +80,16 @@ class MonthlyActController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->image = yii\web\UploadedFile::getInstances($model, 'image');
             $model->uploadImage();
-            if ($model->save()) {
-                return $this->redirect(Yii::$app->request->post('__returnUrl'));
+            if ($model->save() && empty($model->errors)) {
+                \Yii::$app->getSession()->setFlash('success', 'Акт успешно обновлен!');
             }
-        } else {
-            return $this->render('update',
-                [
-                    'model' => $this->findModel($id)
-                ]);
         }
+
+        return $this->render('update',
+            [
+                'model' => $this->findModel($id)
+            ]);
+
     }
 
     /**
@@ -103,13 +104,14 @@ class MonthlyActController extends Controller
         $model->scenario = 'detail';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->post('__returnUrl'));
-        } else {
-            return $this->render('detail',
-                [
-                    'model' => $this->findModel($id)
-                ]);
+            \Yii::$app->getSession()->setFlash('success', 'Детализация акта успешно обновлена!');
         }
+
+        return $this->render('detail',
+            [
+                'model' => $this->findModel($id)
+            ]);
+
     }
 
 

@@ -16,6 +16,7 @@ use yii\helpers\Html;
         <?= 'Редактирование акта ' . $model->id ?>
     </div>
     <div class="panel-body">
+        <?= \common\widgets\Alert::widget() ?>
         <?php
         $form = ActiveForm::begin([
             'action'      => ['monthly-act/update', 'id' => $model->id],

@@ -15,7 +15,12 @@ echo Tabs::widget([
     'items' => [
         [
             'label'  => 'Акты',
-            'url'    => $request->referrer,
+            'url'    => ['list', 'type' => $model->type_id, 'company' => !$model->is_partner],
+            'active' => false,
+        ],
+        [
+            'label'  => 'Редактирование',
+            'url'    => ['update', 'id' => $model->id],
             'active' => false,
         ],
         [
