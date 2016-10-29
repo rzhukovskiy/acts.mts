@@ -62,10 +62,10 @@ class MonthlyAct extends \yii\db\ActiveRecord
 
     public static $actStatus = [
         self::ACT_STATUS_NOT_SIGNED  => 'Не подписан',
-        self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
-        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+        //self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
         self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
-        self::ACT_STATUS_DONE        => 'Исполнен'
+        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+        self::ACT_STATUS_DONE        => 'Подписан'
     ];
 
     /**
