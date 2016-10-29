@@ -19,10 +19,10 @@ use yii\helpers\Html;
         $form = ActiveForm::begin([
             'action'      => ['monthly-act/detail', 'id' => $model->id],
             'id'          => 'monthly-act-detail-form',
-            'options'     => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+            'options'     => ['class' => 'form-horizontal col-sm-12', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
                 'template'     => '{label}<div class="col-sm-6">{input}{error}</div>',
-                'labelOptions' => ['class' => 'col-sm-3 control-label'],
+                'labelOptions' => ['class' => 'col-sm-6 control-label'],
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]) ?>

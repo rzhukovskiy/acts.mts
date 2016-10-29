@@ -15,7 +15,11 @@ echo Tabs::widget([
     'items' => [
         [
             'label'  => 'Акты',
-            'url'    => $request->referrer,
+            'url'    => [
+                'monthly-act/list',
+                'type' => $model->type_id,
+                'MonthlyActSearch[act_date]' => date(strtotime('j-Y', $model->act_date)),
+            ],
             'active' => false,
         ],
         [

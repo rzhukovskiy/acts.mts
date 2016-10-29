@@ -3,6 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use common\models\User;
 use kartik\datetime\DateTimePicker;
 use kartik\datetime\DateTimePickerAsset;
 use kartik\dialog\Dialog;
@@ -60,7 +61,7 @@ AppAsset::register($this);
 <?php
 //ацкий костыль по выводу алертов. не смог придумать более адекватный способ
 $action = Yii::$app->controller->action->id;
-if (!in_array($action, [
+if (Yii::$app->user->identity->role != User::ROLE_ADMIN && !in_array($action, [
     'update',
     'info',
     'member',

@@ -163,7 +163,7 @@ GridView::widget([
                 return MonthlyAct::$actStatus[$data->act_status];
             },
             'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 120px'];
+                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 160px'];
             },
             'filter'         => false,
 
@@ -181,8 +181,13 @@ GridView::widget([
         [
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{update}',
-            'contentOptions' => ['style' => 'min-width: 80px'],
-            'visibleButtons' => $visibleButton
+            'contentOptions' => ['style' => 'min-width: 40px'],
+            'visibleButtons' => $visibleButton,
+            'buttons' => [
+                'update' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/monthly-act/update', 'id' => $model->id]);
+                },
+            ]
         ],
     ],
 ]);
