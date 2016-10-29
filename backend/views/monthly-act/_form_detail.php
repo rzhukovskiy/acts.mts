@@ -22,7 +22,7 @@ use yii\helpers\Html;
             'options'     => ['class' => 'form-horizontal col-sm-12', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
                 'template'     => '{label}<div class="col-sm-6">{input}{error}</div>',
-                'labelOptions' => ['class' => 'col-sm-6 control-label'],
+                'labelOptions' => ['class' => 'col-sm-4 control-label'],
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]) ?>
@@ -55,7 +55,7 @@ use yii\helpers\Html;
             ])->error(false) ?>
         <?= $form->field($model, 'post_number')->input('text', ['class' => 'form-control'])->label() ?>
         <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
+            <div class="col-sm-offset-4 col-sm-6">
                 <?= Html::a('Проверить почтовое отправление',
                     'https://www.pochta.ru/tracking#' . $model->post_number,
                     ['target' => 'blank', 'class' => 'btn btn-primary']) ?>
@@ -92,7 +92,7 @@ use yii\helpers\Html;
             ])->error(false) ?>
 
         <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
+            <div class="col-sm-offset-4 col-sm-6">
                 <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
                 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
             </div>

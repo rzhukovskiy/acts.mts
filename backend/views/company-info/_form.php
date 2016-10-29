@@ -1,5 +1,6 @@
 <?php
 
+use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -39,6 +40,21 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'address_mail')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'pay')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'contract')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'contract_date_str')->widget(DateTimePicker::classname(), [
+            'removeButton' => false,
+            'options' => [
+                'class' => 'form-control',
+            ],
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'dd-mm-yyyy hh:ii'
+            ]
+        ])->error(false) ?>
 
         <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
             'addonOptions' => [
