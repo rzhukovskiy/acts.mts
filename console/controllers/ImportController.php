@@ -67,6 +67,11 @@ class ImportController extends Controller
         $this->importCars();
     }
 
+    public function actionRequisites()
+    {
+        $this->importRequisites();
+    }
+
     public function actionBaseData()
     {
         $this->importCompanies();
@@ -223,12 +228,11 @@ class ImportController extends Controller
             $type = $listType[$rowData['service_type']];
             $insert = "(
                         NULL,
-                        {$rowData['id']},
+                        {$rowData['company_id']},
                         $type,
                         '{$rowData['contract']}',
                         '{$rowData['header']}'
                     )";
-
             $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
         }
 
