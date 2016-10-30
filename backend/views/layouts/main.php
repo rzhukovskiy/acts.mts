@@ -35,14 +35,17 @@ AppAsset::register($this);
         <?php if (!empty(Yii::$app->user->identity->username)) { ?>
             <div class="row top">
                 <div class="col-sm-12">
-                    <?= Html::a(
-                        Yii::$app->user->identity->username,
+                    <?= Html::a(Yii::$app->user->identity->username,
                         '/site/logout',
-                        ['class' => 'btn btn-primary btn-sm pull-right']
-                    ) ?>
+                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php if (Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
-                        <?= Html::a('Стать админом', ['/user/login', 'id' => 1], ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
+                        <?= Html::a('Стать админом',
+                            ['/user/login', 'id' => 1],
+                            ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
+                    <?= Html::a('Сменить кабинет',
+                        Yii::getAlias('@frontWeb'),
+                        ['class' => 'btn btn-primary btn-sm pull-right']) ?>
                 </div>
             </div>
         <?php } ?>

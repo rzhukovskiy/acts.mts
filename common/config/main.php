@@ -37,4 +37,8 @@ return [
             'driver' => 'GD',  //GD or Imagick
         ],
     ],
+    'aliases' => [
+        '@backWeb' => 'http://back.acts.mts/',
+        '@frontWeb' => 'http://front.acts.mts/',
+    ],
 ];
