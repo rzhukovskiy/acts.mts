@@ -129,9 +129,9 @@ class FormController extends Controller
                 //Сохраняем клиентов компании
                 $model->saveClients($company->id);
                 //сохраняем дилеров
-                $model->saveDealerMark($company->id);
+                $model->saveDealerMarkAttribute($company->id);
                 //сохраняем нормочасы
-                $model->saveNormHour($company->id);
+                $model->saveNormHourAttribute($company->id);
 
                 return $this->render('_thanks');
             } else {

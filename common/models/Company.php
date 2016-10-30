@@ -39,7 +39,9 @@ use yii\helpers\ArrayHelper;
  * @property Requisites[] $requisites
  * @property CompanyServiceType[] $serviceTypes
  * @property Entry[] $entries
+ * @property CompanyAttributes[] $companyAttribute
  * @property CompanyMember[] $members
+ * @property CompanyClient[] $companyClient
  *
  * @property string $cardList
  * @property array $requisitesList
@@ -56,8 +58,8 @@ class Company extends ActiveRecord
     const STATUS_DELETED = 0;
     const STATUS_NEW = 1;
     const STATUS_ARCHIVE = 2;
-    const STATUS_REFUSE  = 3;
-    const STATUS_ACTIVE  = 10;
+    const STATUS_REFUSE = 3;
+    const STATUS_ACTIVE = 10;
 
     const SCENARIO_OFFER = 'offer';
 
@@ -96,21 +98,44 @@ class Company extends ActiveRecord
     ];
 
     static $listStatus = [
-        self::STATUS_NEW => [
+        self::STATUS_NEW     => [
             'en' => 'new',
             'ru' => 'Заявки',
         ],
-        self::STATUS_ACTIVE => [
+        self::STATUS_ACTIVE  => [
             'en' => 'active',
             'ru' => 'Архив',
         ],
-        self::STATUS_REFUSE => [
+        self::STATUS_REFUSE  => [
             'en' => 'refuse',
             'ru' => 'Отказавшиеся',
         ],
         self::STATUS_DELETED => [
             'en' => 'deleted',
             'ru' => 'Удаленные',
+        ],
+    ];
+
+    //Связка у каких типов компаний какие атрибуты
+    static $listCompanyAttributes = [
+        self::TYPE_OWNER   => [
+            CompanyAttributes::TYPE_OWNER_CITY,
+            CompanyAttributes::TYPE_OWNER_CAR
+        ],
+        self::TYPE_WASH    => [
+            CompanyAttributes::TYPE_ORGANISATION
+        ],
+        self::TYPE_SERVICE => [
+            CompanyAttributes::TYPE_SERVICE_MARK,
+            CompanyAttributes::TYPE_SERVICE_TYPE,
+            CompanyAttributes::TYPE_ORGANISATION
+        ],
+        self::TYPE_TIRES   => [
+            CompanyAttributes::TYPE_TIRE_SERVICE,
+            CompanyAttributes::TYPE_TYPE_CAR_CHANGE_TIRES,
+            CompanyAttributes::TYPE_TYPE_CAR_SELL_TIRES,
+            CompanyAttributes::TYPE_ORGANISATION,
+
         ],
     ];
 
@@ -193,13 +218,13 @@ class Company extends ActiveRecord
     public function getFullAddress()
     {
         if (!$this->fullAddress) {
-            $this->fullAddress = $this->info ?
-                implode(', ', [
-                    $this->info->index,
-                    $this->info->city,
-                    $this->info->street,
-                    $this->info->house,
-                ]) : 'не задан';
+            $this->fullAddress = $this->info ? implode(', ',
+            [
+                $this->info->index,
+                $this->info->city,
+                $this->info->street,
+                $this->info->house,
+            ]) : 'не задан';
         }
 
         return $this->fullAddress;
@@ -307,6 +332,22 @@ class Company extends ActiveRecord
     public function getMembers()
     {
         return $this->hasMany(CompanyMember::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getCompanyAttribute()
+    {
+        return $this->hasMany(CompanyAttributes::className(), ['company_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getCompanyClient()
+    {
+        return $this->hasMany(CompanyClient::className(), ['company_id' => 'id']);
     }
 
     /**
@@ -432,13 +473,13 @@ class Company extends ActiveRecord
         }
 
         usort($points,
-        function ($first, $second) {
-            if ($first['value'] == $second['value']) {
-                return $first['type'] < $second['type'];
-            } else {
-                return $first['value'] > $second['value'];
-            }
-        });
+            function ($first, $second) {
+                if ($first['value'] == $second['value']) {
+                    return $first['type'] < $second['type'];
+                } else {
+                    return $first['value'] > $second['value'];
+                }
+            });
 
         $res = [];
         $i = 0;
@@ -582,6 +623,16 @@ class Company extends ActiveRecord
         $this->save();
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHaveAttribute()
+    {
+        $attribute = array_key_exists($this->type, self::$listCompanyAttributes);
+
+        return $attribute;
     }
 
     /**

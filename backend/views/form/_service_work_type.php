@@ -15,7 +15,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label>Норма часа</label>
-            <input class="form-control input-one" name="ServiceForm[service_hour][]" type="text">
+            <input class="form-control input-one" name="ServiceForm[service_hour_norm][]" type="text">
         </div>
     </div>
 </div>

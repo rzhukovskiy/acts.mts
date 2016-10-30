@@ -27,15 +27,18 @@ class CompanyAttributes extends \yii\db\ActiveRecord
     const TYPE_TIRE_SERVICE = 5;
     const TYPE_TYPE_CAR_CHANGE_TIRES = 6;
     const TYPE_TYPE_CAR_SELL_TIRES = 7;
+    //На самом деле, это не атрибут, а наличие записи в таблице CompanyClient
+    const TYPE_ORGANISATION = 8;
 
     static $listName = [
-        self::TYPE_OWNER_CITY            => 'Города компании',
-        self::TYPE_OWNER_CAR             => 'Машины компании',
-        self::TYPE_SERVICE_MARK          => 'Марки ТС обслуживаемых сервисом',
-        self::TYPE_SERVICE_TYPE          => 'Услуги сервиса',
-        self::TYPE_TIRE_SERVICE          => 'Услуги шиномонтажа',
-        self::TYPE_TYPE_CAR_CHANGE_TIRES => 'Типы ТС для шиномонтажа',
-        self::TYPE_TYPE_CAR_SELL_TIRES   => 'Типы ТС для продажи шин',
+        self::TYPE_OWNER_CITY            => ['ru' => 'Города компании', 'en' => 'owner_city'],
+        self::TYPE_OWNER_CAR             => ['ru' => 'Машины компании', 'en' => 'owner_car'],
+        self::TYPE_SERVICE_MARK          => ['ru' => 'Марки ТС обслуживаемых сервисом', 'en' => 'service_mark'],
+        self::TYPE_SERVICE_TYPE          => ['ru' => 'Услуги сервиса', 'en' => 'service_type'],
+        self::TYPE_TIRE_SERVICE          => ['ru' => 'Услуги шиномонтажа', 'en' => 'tire_service'],
+        self::TYPE_TYPE_CAR_CHANGE_TIRES => ['ru' => 'Типы ТС для шиномонтажа', 'en' => 'type_car_change_tires'],
+        self::TYPE_TYPE_CAR_SELL_TIRES   => ['ru' => 'Типы ТС для продажи шин', 'en' => 'type_car_sell_tires'],
+        self::TYPE_ORGANISATION          => ['ru' => 'Обслуживаемые организации', 'en' => 'type_organisation'],
     ];
 
     /**
@@ -112,12 +115,28 @@ class CompanyAttributes extends \yii\db\ActiveRecord
         return parent::beforeValidate();
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (!$this->name) {
-            $this->name = self::$listName[$this->type];
+            $this->name = self::$listName[$this->type]['ru'];
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function getTemplate()
+    {
+        $type = '_' . self::$listName[$this->type]['en'];
+        $template = '/company-attribute/' . $type;
+        $fullTemplate = Yii::getAlias('@backend') . '/views' . $template . '.php';
+        if (is_file($fullTemplate)) {
+            return $template;
+        }
+
+        return false;
     }
 }

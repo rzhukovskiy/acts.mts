@@ -325,3 +325,7 @@ table.sign {
 .field-disabled .plain-field-value {
     color: #3fad46;
 }
+/*company Attribute*/
+.company-attribute-line{
+    padding: 15px;
+}

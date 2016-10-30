@@ -229,7 +229,7 @@ class ServiceForm extends Model
      * @param $idCompany
      * @return bool
      */
-    public function saveDealerMark($idCompany)
+    public function saveDealerMarkAttribute($idCompany)
     {
         if (empty($this->official_dealer) && empty($this->nonofficial_dealer)) {
             return false;
@@ -246,7 +246,7 @@ class ServiceForm extends Model
      * @param $idCompany
      * @return bool
      */
-    public function saveNormHour($idCompany)
+    public function saveNormHourAttribute($idCompany)
     {
         if (empty($this->service_type) && empty($this->service_hour_norm)) {
             return false;

@@ -34,19 +34,29 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'delete'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_ADMIN],
+                        'actions' => [
+                            'active',
+                            'refuse',
+                            'new',
+                            'create',
+                            'update',
+                            'info',
+                            'member',
+                            'attribute',
+                            'delete'
+                        ],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
                         'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_MANAGER],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_MANAGER],
                     ],
                     [
                         'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_WATCHER],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_WATCHER],
                     ],
                 ],
             ],
@@ -73,7 +83,7 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
-        
+
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Service::$listType;
         } else {
@@ -89,12 +99,13 @@ class CompanyController extends Controller
 
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
-        return $this->render('list', [
+        return $this->render('list',
+        [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            'type' => $type,
-            'model' => $model,
-            'listType' => $listType,
+            'searchModel'  => $searchModel,
+            'type'         => $type,
+            'model'        => $model,
+            'listType'     => $listType,
         ]);
     }
 
@@ -112,7 +123,7 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address' => SORT_ASC,
+                'address'    => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -135,12 +146,13 @@ class CompanyController extends Controller
 
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
-        return $this->render('list', [
+        return $this->render('list',
+        [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            'type' => $type,
-            'model' => $model,
-            'listType' => $listType,
+            'searchModel'  => $searchModel,
+            'type'         => $type,
+            'model'        => $model,
+            'listType'     => $listType,
         ]);
     }
 
@@ -158,7 +170,7 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address' => SORT_ASC,
+                'address'    => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -181,12 +193,13 @@ class CompanyController extends Controller
 
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
 
-        return $this->render('list', [
+        return $this->render('list',
+        [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            'type' => $type,
-            'model' => $model,
-            'listType' => $listType,
+            'searchModel'  => $searchModel,
+            'type'         => $type,
+            'model'        => $model,
+            'listType'     => $listType,
         ]);
     }
 
@@ -214,7 +227,8 @@ class CompanyController extends Controller
         $modelCompanyOffer = $model->offer ? $model->offer : new CompanyOffer();
         $modelCompanyOffer->company_id = $model->id;
 
-        return $this->render('offer', [
+        return $this->render('offer',
+        [
             'model' => $modelCompanyOffer,
         ]);
     }
@@ -225,7 +239,8 @@ class CompanyController extends Controller
         $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
         $modelCompanyInfo->company_id = $model->id;
 
-        return $this->render('info', [
+        return $this->render('info',
+        [
             'model' => $modelCompanyInfo,
         ]);
     }
@@ -235,16 +250,32 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
         $modelCompanyMember = new CompanyMember();
         $modelCompanyMember->company_id = $model->id;
-        
+
         $searchModel = new CompanyMemberSearch();
         $searchModel->company_id = $model->id;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('member', [
-            'model' => $modelCompanyMember,
+        return $this->render('member',
+        [
+            'model'        => $modelCompanyMember,
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionAttribute($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('attribute',
+        [
+            'model' => $model,
         ]);
     }
 
