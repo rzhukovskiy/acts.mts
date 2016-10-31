@@ -65,10 +65,11 @@ AppAsset::register($this);
 //ацкий костыль по выводу алертов. не смог придумать более адекватный способ
 $action = Yii::$app->controller->action->id;
 if (Yii::$app->user->identity->role != User::ROLE_ADMIN && !in_array($action, [
-    'update',
-    'info',
-    'member',
-])
+        'update',
+        'info',
+        'member',
+        'driver',
+    ])
 ) {
     DialogAsset::register($this);
     DateTimePicker::widget(['name' => 'asset']);
