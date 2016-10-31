@@ -108,6 +108,13 @@ class CompanyOffer extends ActiveRecord
             $this->communication_at = \DateTime::createFromFormat('d-m-Y H:i', $this->communication_str)->getTimestamp();
         }
 
+        $newProcessLength = strlen(trim($this->process));
+        $oldProcessLength = strlen(trim($this->getOldAttribute('process')));
+        if ($this->process && ($newProcessLength > $oldProcessLength)) {
+            $this->process .= '
+' . (new \DateTime())->format('d-m-Y H:i');
+        }
+
         return parent::beforeSave($insert);
     }
 }
