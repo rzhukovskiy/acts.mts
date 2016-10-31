@@ -130,18 +130,6 @@ class ImportController extends Controller
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company_service_type VALUES $insert")->execute();
                 }
             }
-
-            if ($type != Company::TYPE_OWNER && !empty($rowData['contract'])) {
-                $insert = "(
-                        NULL,
-                        {$rowData['id']},
-                        $type,
-                        '{$rowData['contract']}',
-                        '{$rowData['act_header']}'
-                    )";
-
-                $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
-            }
         }
 
         $this->stdout("Companies done!\n");
@@ -233,6 +221,20 @@ class ImportController extends Controller
                         '{$rowData['contract']}',
                         '{$rowData['header']}'
                     )";
+            $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
+        }
+
+        $rows = $this->old_db->createCommand("SELECT * FROM {$this->old_db->tablePrefix}company WHERE type != 'company'")->queryAll();
+        foreach ($rows as $rowData) {
+            $type = $listType[$rowData['type']];
+            $insert = "(
+                        NULL,
+                        {$rowData['id']},
+                        $type,
+                        '{$rowData['contract']}',
+                        '{$rowData['act_header']}'
+                    )";
+
             $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}requisites VALUES $insert")->execute();
         }
 
