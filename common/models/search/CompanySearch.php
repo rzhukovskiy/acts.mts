@@ -8,6 +8,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Company;
+use yii\db\Expression;
 
 /**
  * CardSearch represents the model behind the search form about `common\models\Card`.
@@ -32,7 +33,9 @@ class CompanySearch extends Company
     {
         // bypass scenarios() implementation in the parent class
         return [
-            self::SCENARIO_OFFER => [],
+            self::SCENARIO_OFFER => [
+                'name', 'address','fullAddress'
+            ],
             'default' => [],
         ];
     }
@@ -44,7 +47,7 @@ class CompanySearch extends Company
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params=[])
     {
         $query = Company::find();
 
@@ -91,6 +94,12 @@ class CompanySearch extends Company
         ]);
         $query->andFilterWhere(['like', 'address', $this->address]);
         $query->andFilterWhere(['like', 'name', $this->name]);
+
+        switch ($this->scenario) {
+            case self::SCENARIO_OFFER:
+                $query->andFilterWhere(['like', 'CONCAT_WS(",",info.index,info.city,info.street,info.house)', $this->getFullAddress()]);
+                break;
+        }
 
         return $dataProvider;
     }

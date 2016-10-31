@@ -36,7 +36,12 @@ use kartik\grid\GridView;
                     'groupEvenCssClass' => 'kv-group-header',
                 ],
                 'name',
-                'fullAddress',
+                [
+                    'attribute' => 'fullAddress',
+                    'content'   => function ($data) {
+                        return ($data->fullAddress) ? $data->fullAddress : 'не задан';
+                    }
+                ],
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}',

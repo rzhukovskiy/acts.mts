@@ -37,7 +37,7 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -87,7 +87,7 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_NEW;
-            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
+            $typeData['badge'] = $badgeSearch->search()->count;
         }
 
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
@@ -134,7 +134,7 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_ACTIVE;
-            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
+            $typeData['badge'] = $badgeSearch->search()->count;
         }
 
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
@@ -181,7 +181,7 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_REFUSE;
-            $typeData['badge'] = $badgeSearch->search(Yii::$app->request->queryParams)->count;
+            $typeData['badge'] = $badgeSearch->search()->count;
         }
 
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];

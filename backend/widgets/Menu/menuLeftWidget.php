@@ -39,13 +39,13 @@ class menuLeftWidget extends Widget
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->status = Company::STATUS_NEW;
-        $countNew = $searchModel->search(Yii::$app->request->queryParams)->count;
+        $countNew = $searchModel->search()->count;
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->status = Company::STATUS_ACTIVE;
-        $countActive = $searchModel->search(Yii::$app->request->queryParams)->count;
+        $countActive = $searchModel->search()->count;
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->status = Company::STATUS_REFUSE;
-        $countRefuse = $searchModel->search(Yii::$app->request->queryParams)->count;
+        $countRefuse = $searchModel->search()->count;
 
 
         $items = [];

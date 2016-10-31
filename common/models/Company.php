@@ -219,15 +219,23 @@ class Company extends ActiveRecord
     {
         if (!$this->fullAddress) {
             $this->fullAddress = $this->info ? implode(', ',
-            [
-                $this->info->index,
-                $this->info->city,
-                $this->info->street,
-                $this->info->house,
-            ]) : 'не задан';
+                [
+                    $this->info->index,
+                    $this->info->city,
+                    $this->info->street,
+                    $this->info->house,
+                ]) : false;
         }
 
         return $this->fullAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function setFullAddress($value)
+    {
+        $this->fullAddress = $value;
     }
 
     /**
