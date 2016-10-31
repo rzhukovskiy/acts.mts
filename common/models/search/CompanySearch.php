@@ -73,8 +73,14 @@ class CompanySearch extends Company
                 $currentUser = Yii::$app->user->identity;
                 if ($currentUser->role != User::ROLE_ADMIN) {
                     $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
+                    $query->where(['in', 'type', array_keys($currentUser->getAllCompanyType($this->status))]);
                 }
-                $query->orderBy('communication_at DESC');
+                if ($this->status == Company::STATUS_NEW) {
+                    $query->orderBy('communication_at ASC');
+                } else {
+                    $query->orderBy('city ASC');
+                }
+
                 break;
         }
         

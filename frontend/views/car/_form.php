@@ -32,11 +32,11 @@ use common\models\Type;
                 ],
             ]) ?>
             <?= $form->field($model, 'number') ?>
-            <?= $form->field($model, 'mark_id')->dropdownList(
+            <?= $form->field($model, 'mark_id')->dropDownList(
                 Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
                 ['prompt' => 'выберите марку ТС']
             ) ?>
-            <?= $form->field($model, 'type_id')->dropdownList(
+            <?= $form->field($model, 'type_id')->dropDownList(
                 Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
                 ['prompt' => 'выберите тип ТС']
             ) ?>

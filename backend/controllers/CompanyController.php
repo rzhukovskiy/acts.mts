@@ -10,9 +10,11 @@ namespace backend\controllers;
 
 
 use common\models\Company;
+use common\models\CompanyDriver;
 use common\models\CompanyInfo;
 use common\models\CompanyMember;
 use common\models\CompanyOffer;
+use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
 use common\models\Service;
@@ -34,17 +36,17 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'delete'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -75,7 +77,7 @@ class CompanyController extends Controller
         $model->type = $type;
         
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Service::$listType;
+            $listType = Company::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
         }
@@ -121,7 +123,7 @@ class CompanyController extends Controller
         $model->type = $type;
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Service::$listType;
+            $listType = Company::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
         }
@@ -167,7 +169,7 @@ class CompanyController extends Controller
         $model->type = $type;
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Service::$listType;
+            $listType = Company::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
         }
@@ -242,6 +244,24 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('member', [
+            'model' => $modelCompanyMember,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDriver($id)
+    {
+        $model = $this->findModel($id);
+        $modelCompanyMember = new CompanyDriver();
+        $modelCompanyMember->company_id = $model->id;
+
+        $searchModel = new CompanyDriverSearch();
+        $searchModel->company_id = $model->id;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('driver', [
             'model' => $modelCompanyMember,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,

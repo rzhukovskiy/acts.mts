@@ -64,7 +64,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
-                    'label' => 'Заявки',
+                    'label' => 'Заявки'  . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/new', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'new') ||
@@ -72,7 +72,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив',
+                    'label' => 'Архив'  . ($countNew ? '<span class="label label-success">' . $countActive . '</span>' : ''),
                     'url' => ['/company/active', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archive') ||
@@ -80,7 +80,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Отказ',
+                    'label' => 'Отказ'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/refuse', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'refuse') ||

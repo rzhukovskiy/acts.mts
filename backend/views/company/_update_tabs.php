@@ -29,6 +29,13 @@ $items = [
         'active' => \Yii::$app->controller->action->id == 'member',
     ],
 ];
+if ($model->type == Company::TYPE_OWNER) {
+    $items[] = [
+        'label' => 'Водители',
+        'url' => ['company/driver', 'id' => $model->id],
+        'active' => \Yii::$app->controller->action->id == 'driver',
+    ];
+}
 
 echo Tabs::widget([
     'items' => $items,

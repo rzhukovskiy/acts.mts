@@ -2,6 +2,8 @@
 namespace console\controllers;
 
 use common\models\Company;
+use common\models\Mark;
+use common\models\Type;
 use Yii;
 use yii\base\Exception;
 use yii\console\Controller;
@@ -195,6 +197,26 @@ class ConnectController extends Controller
                 ];
                 $insert = "(" . implode(',', $requestData) . ")";
                 $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company_member VALUES $insert")->execute();
+            }
+
+            $drivers = $this->old_db
+                ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_company_driver WHERE request_ptr_id = {$rowData['id']}")
+                ->queryAll();
+            foreach ($drivers as $driverData) {
+                $mark_id = Mark::findOne(['name' => $rowData['model']]);
+                $mark_id = $mark_id ? $mark_id->id : 'NULL';
+                $type_id = Type::findOne(['name' => $rowData['type']]);
+                $type_id = $type_id ? $type_id->id : 'NULL';
+                $requestData = [
+                    'NULL',
+                    $company_id,
+                    '"' . addslashes(ArrayHelper::getValue($driverData, 'fio', '')) . '"',
+                    '"' . addslashes(ArrayHelper::getValue($driverData, 'phone', '')) . '"',
+                    $mark_id,
+                    $type_id,
+                ];
+                $insert = "(" . implode(',', $requestData) . ")";
+                $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company_driver VALUES $insert")->execute();
             }
         }
 
