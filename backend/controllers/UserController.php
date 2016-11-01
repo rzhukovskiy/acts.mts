@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\Company;
+use common\models\DepartmentUserCompanyType;
 use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
@@ -68,10 +69,12 @@ class UserController extends Controller
         $newUser->role = User::ROLE_WATCHER;
 
         if ($newUser->load(Yii::$app->request->post())) {
-            if ($newUser->saveToDepartment($department)) {
+            $user = $newUser->saveToDepartment($department);
+            if ($user) {
+                $newUser->getCompanyFromDepartment($department, $user);
+
                 return $this->redirect(['list', 'department' => $department]);
-            }
-            else {
+            } else {
                 Yii::$app->session->addFlash('add_user_form', 'Ошибка. Пользователь не сохранен.');
             }
         }
@@ -123,12 +126,24 @@ class UserController extends Controller
             }
 
             if ($userModel->save()) {
+                DepartmentUserCompanyType::deleteAll(['user_id' => $userModel->id]);
+                foreach (Yii::$app->request->post('CompanyType', []) as $companyStatus => $companyTypeData) {
+                    foreach ($companyTypeData as $companyType => $value) {
+                        $modelDepartmentCompanyType = new DepartmentUserCompanyType();
+                        $modelDepartmentCompanyType->user_id = $userModel->id;
+                        $modelDepartmentCompanyType->company_type = $companyType;
+                        $modelDepartmentCompanyType->company_status = $companyStatus;
+                        $modelDepartmentCompanyType->save();
+                    }
+                }
+
                 return $this->redirect(Yii::$app->getRequest()->referrer);
             }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'userModel'=>$userModel
         ]);
     }
 

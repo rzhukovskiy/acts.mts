@@ -4,6 +4,7 @@ use yii\bootstrap\Tabs;
 
 /**
  * @var $this \yii\web\View
+ * @var $userModel common\models\User
  */
 $this->title = 'Редактирование пользователя ' . Html::encode($model->username);
 
@@ -29,6 +30,7 @@ echo Tabs::widget( [
         <div class="panel-body">
             <?= $this->render('_form-update', [
                 'model' => $model,
+                'userModel'=>$userModel,
                 'companyDropDownData' => $companyDropDownData,
             ]) ?>
         </div>

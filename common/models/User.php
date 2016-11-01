@@ -253,11 +253,14 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * @return bool|int|string
+     */
     public function getFirstCompanyType()
     {
         if (!empty($this->department)) {
             foreach (Company::$listType as $companyType => $serviceData) {
-                if ($this->department->can($companyType, Company::STATUS_NEW)) {
+                if ($this->can($companyType, Company::STATUS_NEW)) {
                     return $companyType;
                 }
             }
@@ -266,17 +269,35 @@ class User extends ActiveRecord implements IdentityInterface
         return false;
     }
 
+    /**
+     * @param $status
+     * @return array
+     */
     public function getAllCompanyType($status)
     {
         $res = [];
         if (!empty($this->department)) {
             foreach (Company::$listType as $companyType => $serviceData) {
-                if ($this->department->can($companyType, $status)) {
+                if ($this->can($companyType, $status)) {
                     $res[$companyType] = Company::$listType[$companyType];
                 }
             }
         }
 
         return $res;
+    }
+
+    /**
+     * @param $companyType
+     * @param $companyStatus
+     * @return int
+     */
+    public function can($companyType, $companyStatus)
+    {
+        return count(DepartmentUserCompanyType::findAll([
+            'user_id'  => $this->id,
+            'company_type'   => $companyType,
+            'company_status' => $companyStatus,
+        ]));
     }
 }

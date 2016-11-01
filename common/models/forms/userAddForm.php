@@ -3,6 +3,8 @@
 namespace common\models\forms;
 
 use common\models\Department;
+use common\models\DepartmentCompanyType;
+use common\models\DepartmentUserCompanyType;
 use Yii;
 use common\models\User;
 use yii\base\Model;
@@ -51,6 +53,10 @@ class userAddForm extends Model
         return false;
     }
 
+    /**
+     * @param $department_id
+     * @return bool
+     */
     public function saveToDepartment($department_id)
     {
         $values = $this->attributes;
@@ -67,9 +73,26 @@ class userAddForm extends Model
             if ($department) {
                 $model->link('departments', $department);
             }
-            return true;
+            return $model;
         }
 
         return false;
+    }
+
+    /**
+     * @param $departmentId
+     * @param $user
+     */
+    public function getCompanyFromDepartment($departmentId,$user){
+        $departmentCompany = DepartmentCompanyType::findAll([
+            'department_id'  => $departmentId,
+        ]);
+        foreach ($departmentCompany as $company) {
+            $userCompany=new DepartmentUserCompanyType();
+            $userCompany->user_id=$user->id;
+            $userCompany->company_status=$company->company_status;
+            $userCompany->company_type=$company->company_type;
+            $userCompany->save();
+        }
     }
 }
