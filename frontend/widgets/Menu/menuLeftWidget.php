@@ -235,6 +235,11 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'car',
                 ],
                 [
+                    'label' => 'Список ТС',
+                    'url' => ['/car-count/list-full'],
+                    'active' => Yii::$app->controller->id == 'car-count'&&Yii::$app->controller->action->id=='list-full',
+                ],
+                [
                     'label' => 'Контакты',
                     'url' => ['/contact/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'user',
@@ -242,7 +247,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Количество ТС',
                     'url' => ['/car-count/list'],
-                    'active' => Yii::$app->controller->id == 'car-count',
+                    'active' => Yii::$app->controller->id == 'car-count'&&Yii::$app->controller->action->id!='list-full',
                 ],
                 [
                     'label' => 'Расходы',

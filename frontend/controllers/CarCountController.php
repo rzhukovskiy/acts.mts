@@ -35,7 +35,12 @@ class CarCountController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view','list-full'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_CLIENT, User::ROLE_WATCHER],
+                    ],
+                    [
+                        'actions' => ['list', 'view','list-full'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT, User::ROLE_WATCHER],
                     ]
@@ -73,6 +78,23 @@ class CarCountController extends Controller
             'companyId' => $searchModel->company_id,
             'companyDropDownData' => $companyDropDownData,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+
+    /**
+     * Lists all Car models.
+     * @return mixed
+     */
+    public function actionListFull()
+    {
+        $searchModel = new CarSearch();
+        $searchModel->company_id=Yii::$app->user->identity->company->id;
+
+        $dataProvider = $searchModel->search([]);
+        $dataProvider->query->orderBy(['type_id'=>SORT_ASC]);
+        return $this->render('list-full', [
+            'dataProvider' => $dataProvider,
         ]);
     }
 
