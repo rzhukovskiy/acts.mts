@@ -23,10 +23,10 @@ use yii\widgets\ActiveForm;
         ],
     ]) ?>
 
-    <?= $form->field($model, 'to')->dropDownList($listUser) ?>
+    <?= $form->field($model, 'user_to')->dropDownList($listUser) ?>
     <?= $form->field($model, 'topic_str')->textInput() ?>
     <?= $form->field($model, 'text')->textarea(['rows' => 6]) ?>
-    <?= $form->field($model, 'from')->hiddenInput()->label(false) ?>
+    <?= $form->field($model, 'user_from')->hiddenInput()->label(false) ?>
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">

@@ -58,7 +58,7 @@ class MessageController extends Controller
             ->column();
         
         $model = new Message();
-        $model->from = $currentUser->id;
+        $model->user_from = $currentUser->id;
 
         Url::remember();
 

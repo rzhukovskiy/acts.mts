@@ -25,6 +25,7 @@ body {
 }
 
 .content-menu {
+    margin-top: -40px;
     z-index: 10;
 }
 

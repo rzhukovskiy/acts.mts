@@ -111,6 +111,11 @@ class menuLeftWidget extends Widget
                     'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
+                [
+                    'label' => 'Сообщения',
+                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
+                    'active' => (Yii::$app->controller->id == 'message'),
+                ],
             ];
         } elseif (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_WATCHER) {
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
@@ -146,7 +151,8 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Сообщения',
-                    'url' => '#',
+                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
+                    'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
         } else {

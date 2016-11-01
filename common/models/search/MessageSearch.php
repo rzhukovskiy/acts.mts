@@ -22,7 +22,7 @@ class MessageSearch extends Message
     public function rules()
     {
         return [
-            [['id', 'from', 'to', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
+            [['id', 'user_from', 'user_to', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
             [['text'], 'safe'],
         ];
     }
@@ -94,12 +94,12 @@ class MessageSearch extends Message
             'query' => $query,
         ]);
 
+        $expression = new Expression('message_id = message.id');
         $query->joinWith(['topic', 'author.department'])
             ->where([
-                'message_id' => 'id',
                 'department_id' => $this->department_id,
-                'to' => $user->id,
-            ]);
+                'user_to' => $user->id,
+            ])->andWhere($expression);
 
         return $dataProvider;
     }
@@ -120,13 +120,14 @@ class MessageSearch extends Message
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
         $expression = new Expression('message_id = message.id');
-        $query->joinWith(['topic', 'recipient.department'])
+        $query->joinWith(['topic', 'recipient', 'recipient.department'])
             ->alias('message')
             ->where([
                 'department_id' => $this->department_id,
-                'from' => $user->id,
-            ])->where($expression);
+                'user_from' => $user->id,
+            ])->andWhere($expression);
 
         return $dataProvider;
     }

@@ -17,10 +17,14 @@ echo GridView::widget([
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
 
-        'id',
-        'text',
-        'recipient.username',
+        [
+            'header' => 'Кому',
+            'value' => function($model) {
+                return $model->recipient->username;
+            }
+        ],
         'topic.topic',
+        'text',
 
         ['class' => 'yii\grid\ActionColumn'],
     ],

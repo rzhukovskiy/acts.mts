@@ -124,7 +124,7 @@ class CompanyOfferController extends Controller
         $modelCompanyOffer = CompanyOffer::find()->joinWith('company')->where([
             'user_id' => $currentUser->id,
             'status' => Company::STATUS_NEW,
-        ])->where(['<', 'communication_at', time() - 300])->one();
+        ])->andWhere(['<', 'communication_at', time() - 300])->one();
 
         if($modelCompanyOffer) {
             return Json::encode([

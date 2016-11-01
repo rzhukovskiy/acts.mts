@@ -11,8 +11,8 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $text
- * @property string $from
- * @property string $to
+ * @property string $user_from
+ * @property string $user_to
  * @property string $topic_id
  * @property string $created_at
  * @property string $updated_at
@@ -26,7 +26,6 @@ use yii\db\ActiveRecord;
  */
 class Message extends ActiveRecord
 {
-    public $recipient;
     public $topic_str;
 
     /**
@@ -55,7 +54,7 @@ class Message extends ActiveRecord
         return [
             [['text', 'topic_str'], 'string'],
             [['text'], 'required'],
-            [['from', 'to', 'topic_id', 'created_at', 'updated_at', 'is_read', 'recipient'], 'integer'],
+            [['user_from', 'user_to', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
         ];
     }
 
@@ -67,12 +66,12 @@ class Message extends ActiveRecord
         return [
             'id' => 'ID',
             'text' => 'Сообщение',
-            'user_id' => 'От',
+            'user_from' => 'От',
+            'user_to' => 'Кому',
             'topic_id' => 'Тема',
             'created_at' => 'Создано',
             'updated_at' => 'Updated At',
             'is_read' => 'Прочитано',
-            'recipient' => 'Кому',
             'topic_str' => 'Тема',
         ];
     }
@@ -88,12 +87,12 @@ class Message extends ActiveRecord
 
     public function getAuthor()
     {
-        return $this->hasOne(User::className(), ['id' => 'from']);
+        return $this->hasOne(User::className(), ['id' => 'user_from']);
     }
 
     public function getRecipient()
     {
-        return $this->hasOne(User::className(), ['id' => 'to']);
+        return $this->hasOne(User::className(), ['id' => 'user_to']);
     }
 
     public function getTopic()

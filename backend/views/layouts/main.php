@@ -64,7 +64,7 @@ AppAsset::register($this);
 <?php
 //ацкий костыль по выводу алертов. не смог придумать более адекватный способ
 $action = Yii::$app->controller->action->id;
-if (Yii::$app->user->identity->role != User::ROLE_ADMIN && !in_array($action, [
+if (in_array(Yii::$app->user->identity->role, [User::ROLE_WATCHER, User::ROLE_MANAGER]) && !in_array($action, [
         'update',
         'info',
         'member',

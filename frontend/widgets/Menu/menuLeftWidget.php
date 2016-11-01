@@ -49,9 +49,11 @@ class menuLeftWidget extends Widget
         $items = [];
         // Admin links
         if (Yii::$app->user->identity &&
-            (Yii::$app->user->identity->role == User::ROLE_ADMIN ||
-                Yii::$app->user->identity->role == User::ROLE_MANAGER ||
-                Yii::$app->user->identity->role == User::ROLE_WATCHER)
+            in_array(Yii::$app->user->identity->role, [
+                User::ROLE_ADMIN,
+                User::ROLE_MANAGER,
+                User::ROLE_WATCHER
+            ])
         ) {
             /** @var Company $company */
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
@@ -127,6 +129,11 @@ class menuLeftWidget extends Widget
                     'label'  => 'История ТС',
                     'url'    => ['/car/list'],
                     'active' => Yii::$app->controller->id == 'car',
+                ],
+                [
+                    'label'  => 'Загрузка ТС',
+                    'url'    => ['/car/upload'],
+                    'active' => false,
                 ],
                 [
                     'label'  => 'Количество ТС',
