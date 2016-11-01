@@ -37,7 +37,7 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete'],
+                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],

@@ -111,8 +111,7 @@ class CompanyOffer extends ActiveRecord
         $newProcessLength = strlen(trim($this->process));
         $oldProcessLength = strlen(trim($this->getOldAttribute('process')));
         if ($this->process && ($newProcessLength > $oldProcessLength)) {
-            $this->process .= '
-' . (new \DateTime())->format('d-m-Y H:i');
+            $this->process .= ' ' . (new \DateTime())->format('d-m-Y H:i');
         }
 
         return parent::beforeSave($insert);
