@@ -94,7 +94,8 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Сообщения',
-                    'url' => '#',
+                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
+                    'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
         } // Account manager links

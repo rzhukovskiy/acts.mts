@@ -19,9 +19,14 @@ use yii\db\ActiveRecord;
  *
  * @property User $user
  * @property Topic $topic
+ *
+ * @property integer $recipient
+ * @property string $topic_str
  */
 class Message extends ActiveRecord
 {
+    public $recipient;
+    public $topic_str;
     /**
      * @inheritdoc
      */
@@ -65,6 +70,8 @@ class Message extends ActiveRecord
             'created_at' => 'Создано',
             'updated_at' => 'Updated At',
             'is_read' => 'Прочитано',
+            'recipient' => 'Кому',
+            'topic_str' => 'Тема',
         ];
     }
 

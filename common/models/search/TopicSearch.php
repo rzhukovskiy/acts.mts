@@ -13,8 +13,6 @@ use common\models\Topic;
  */
 class TopicSearch extends Topic
 {
-    public $department_id;
-
     /**
      * @inheritdoc
      */
@@ -71,30 +69,6 @@ class TopicSearch extends Topic
         ]);
 
         $query->andFilterWhere(['like', 'topic', $this->topic]);
-
-        return $dataProvider;
-    }
-
-    /**
-     * Creates data provider instance with search query applied
-     *
-     * @param User $user
-     *
-     * @return ActiveDataProvider
-     */
-    public function searchByUser($user)
-    {
-        $query = Topic::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $query->joinWith(['author author', 'recipient recipient', 'recipient.department recipientDepartment', 'author.department authorDepartment']);
-        $query->andFilterWhere(['and', ['author.id' => $user->id], ['recipientDepartment.id' => $this->department_id]]);
-        $query->orFilterWhere(['and', ['recipient.id' => $user->id], ['authorDepartment.id' => $this->department_id]]);
 
         return $dataProvider;
     }

@@ -2,7 +2,8 @@
 
 namespace common\models\search;
 
-use Yii;
+use common\models\User;
+use yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Message;
@@ -12,6 +13,8 @@ use common\models\Message;
  */
 class MessageSearch extends Message
 {
+    public $department_id;
+
     /**
      * @inheritdoc
      */
@@ -68,6 +71,33 @@ class MessageSearch extends Message
         ]);
 
         $query->andFilterWhere(['like', 'text', $this->text]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param User $user
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchByUser($user)
+    {
+        $query = Message::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $query->joinWith(['topic', 'user', 'user.department'])
+            ->where([
+                'message_id' => 'id',
+                'department_id' => $this->department_id,
+            ])
+            ->andWhere(['or', ['from' => $user->id],['to' => $user->id]]);
 
         return $dataProvider;
     }

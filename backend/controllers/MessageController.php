@@ -2,9 +2,11 @@
 
 namespace backend\controllers;
 
+use common\models\Department;
 use common\models\Message;
-use common\models\search\TopicSearch;
-use Yii;
+use common\models\search\MessageSearch;
+use common\models\User;
+use yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -33,13 +35,31 @@ class MessageController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
-        $searchModel = new TopicSearch();
+        $searchModel = new MessageSearch();
         $searchModel->department_id = $department_id;
         $dataProvider = $searchModel->searchByUser($currentUser);
+
+        $currentDepartment = Department::findOne($department_id);
+        if (!$currentDepartment){
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $listUser = User::find()
+            ->alias('user')
+            ->joinWith('department department')
+            ->where(['department_id' => $department_id])
+            ->andwhere(['!=', 'user.id', $currentUser->id])
+            ->select(['username', 'user.id'])
+            ->indexBy('id')
+            ->column();
+        
+        $model = new Message();
+        $model->user_id = $currentUser->id;
 
         return $this->render('list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'listUser' => $listUser,
+            'model' => $model,
         ]);
     }
 
