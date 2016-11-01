@@ -36,9 +36,25 @@ return [
             'class'  => 'yii\image\ImageDriver',
             'driver' => 'GD',  //GD or Imagick
         ],
+        /*
+        'user' => [
+            'identityCookie' => [
+                'name' => '_identity',
+                'httpOnly' => true,
+                'path' => '/',
+                'domain' => '.acts.mts',
+            ],
+        ],
+        'session' => [
+            'cookieParams' =>
+                ['domain' => '.acts.mts']
+        ],
+        */
     ],
+    /*
     'aliases' => [
         '@backWeb' => 'http://back.acts.mts/',
         '@frontWeb' => 'http://front.acts.mts/',
     ],
+     */
 ];

@@ -31,7 +31,7 @@ AppAsset::register($this);
                 <div class="col-sm-12">
                     <?= Html::a(Yii::$app->user->identity->username,
                         '/site/logout',
-                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
+                        ['class' => 'btn btn-primary btn-sm pull-right']) ?>
                     <?php if (Yii::$app->request->cookies->getValue('isAdmin') == '1') : ?>
                         <?= Html::a('Стать админом',
                             ['/user/login', 'id' => 1],
@@ -39,7 +39,7 @@ AppAsset::register($this);
                     <?php endif; ?>
                     <?= Html::a('Сменить кабинет',
                         Yii::getAlias('@backWeb'),
-                        ['class' => 'btn btn-primary btn-sm pull-right']) ?>
+                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                 </div>
             </div>
         <?php } ?>
