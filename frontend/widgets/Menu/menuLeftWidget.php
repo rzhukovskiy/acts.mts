@@ -124,7 +124,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'mark' || Yii::$app->controller->id == 'type',
                 ],
                 [
-                    'label'  => 'Список ТС и история',
+                    'label'  => 'История ТС',
                     'url'    => ['/car/list'],
                     'active' => Yii::$app->controller->id == 'car',
                 ],
@@ -254,7 +254,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'card',
                 ],
                 [
-                    'label'  => 'Список ТС и история',
+                    'label'  => 'История ТС',
                     'url'    => ['/car/list'],
                     'active' => Yii::$app->controller->id == 'car',
                 ],

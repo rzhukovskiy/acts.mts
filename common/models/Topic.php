@@ -11,14 +11,10 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $topic
- * @property string $from
- * @property string $to
  * @property string $message_id
  * @property string $created_at
  * @property string $updated_at
  *
- * @property User $recipient
- * @property User $author
  * @property Message $lastMessage
  */
 class Topic extends ActiveRecord
@@ -47,8 +43,8 @@ class Topic extends ActiveRecord
     public function rules()
     {
         return [
-            [['from', 'to'], 'required'],
-            [['from', 'to', 'message_id', 'created_at', 'updated_at'], 'integer'],
+            [['topic'], 'required'],
+            [['message_id', 'created_at', 'updated_at'], 'integer'],
             [['topic'], 'string', 'max' => 255],
         ];
     }
@@ -76,16 +72,6 @@ class Topic extends ActiveRecord
     public static function find()
     {
         return new TopicQuery(get_called_class());
-    }
-
-    public function getAuthor()
-    {
-        return $this->hasOne(User::className(), ['id' => 'from']);
-    }
-
-    public function getRecipient()
-    {
-        return $this->hasOne(User::className(), ['id' => 'to']);
     }
 
     public function getLastMessage()

@@ -2,13 +2,13 @@
 
 /**
  * @var $this yii\web\View
- * @var $searchModel common\models\search\TopicSearch
+ * @var $searchModel common\models\search\MessageSearch
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
 use yii\grid\GridView;
 
-GridView::widget([
+echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'tableOptions' => ['class' => 'table table-bordered'],
@@ -19,8 +19,8 @@ GridView::widget([
 
         'id',
         'text',
-        'user_id',
-        'topic_id',
+        'recipient.username',
+        'topic.topic',
 
         ['class' => 'yii\grid\ActionColumn'],
     ],

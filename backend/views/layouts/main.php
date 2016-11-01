@@ -43,9 +43,9 @@ AppAsset::register($this);
                             ['/user/login', 'id' => 1],
                             ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
-                    <?= Html::a('Сменить кабинет',
+                    <?= false ? Html::a('Сменить кабинет',
                         Yii::getAlias('@frontWeb'),
-                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
+                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) : '' ?>
                 </div>
             </div>
         <?php } ?>

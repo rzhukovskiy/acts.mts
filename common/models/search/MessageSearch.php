@@ -2,11 +2,12 @@
 
 namespace common\models\search;
 
+use common\models\Message;
 use common\models\User;
 use yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Message;
+use yii\db\Expression;
 
 /**
  * MessageSearch represents the model behind the search form about `common\models\Message`.
@@ -21,7 +22,7 @@ class MessageSearch extends Message
     public function rules()
     {
         return [
-            [['id', 'user_id', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
+            [['id', 'from', 'to', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
             [['text'], 'safe'],
         ];
     }
@@ -63,7 +64,8 @@ class MessageSearch extends Message
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'user_id' => $this->user_id,
+            'from' => $this->from,
+            'to' => $this->to,
             'topic_id' => $this->topic_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -82,7 +84,7 @@ class MessageSearch extends Message
      *
      * @return ActiveDataProvider
      */
-    public function searchByUser($user)
+    public function searchInboxByUser($user)
     {
         $query = Message::find();
 
@@ -92,12 +94,39 @@ class MessageSearch extends Message
             'query' => $query,
         ]);
 
-        $query->joinWith(['topic', 'user', 'user.department'])
+        $query->joinWith(['topic', 'author.department'])
             ->where([
                 'message_id' => 'id',
                 'department_id' => $this->department_id,
-            ])
-            ->andWhere(['or', ['from' => $user->id],['to' => $user->id]]);
+                'to' => $user->id,
+            ]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param User $user
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchOutboxByUser($user)
+    {
+        $query = Message::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        $expression = new Expression('message_id = message.id');
+        $query->joinWith(['topic', 'recipient.department'])
+            ->alias('message')
+            ->where([
+                'department_id' => $this->department_id,
+                'from' => $user->id,
+            ])->where($expression);
 
         return $dataProvider;
     }

@@ -15,8 +15,6 @@ class m161031_152819_create_topic_table extends Migration
         $this->createTable('{{%topic}}', [
             'id' => $this->primaryKey(),
             'topic' => $this->string(255),
-            'from' => $this->integer()->unsigned()->notNull(),
-            'to' => $this->integer()->unsigned()->notNull(),
             'message_id' => $this->integer()->unsigned(),
             'created_at' => $this->integer()->unsigned()->notNull(),
             'updated_at' => $this->integer()->unsigned()->notNull(),

@@ -108,7 +108,7 @@ $columns = [
     [
         'header'         => '',
         'class'          => 'kartik\grid\ActionColumn',
-        'template'       => '{update}{delete}{add-car}',
+        'template'       => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 85px'],
         'buttons'        => [
             'delete' => function ($url, $data, $key) {

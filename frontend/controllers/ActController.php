@@ -61,6 +61,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('m-Y', time() - 22 * 24 * 3600);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $role = Yii::$app->user->identity->role;

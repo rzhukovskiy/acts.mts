@@ -11,22 +11,24 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $text
- * @property string $user_id
+ * @property string $from
+ * @property string $to
  * @property string $topic_id
  * @property string $created_at
  * @property string $updated_at
  * @property integer $is_read
  *
- * @property User $user
+ * @property User $recipient
+ * @property User $author
  * @property Topic $topic
  *
- * @property integer $recipient
  * @property string $topic_str
  */
 class Message extends ActiveRecord
 {
     public $recipient;
     public $topic_str;
+
     /**
      * @inheritdoc
      */
@@ -51,9 +53,9 @@ class Message extends ActiveRecord
     public function rules()
     {
         return [
-            [['text'], 'string'],
-            [['user_id', 'topic_id'], 'required'],
-            [['user_id', 'topic_id', 'created_at', 'updated_at', 'is_read'], 'integer'],
+            [['text', 'topic_str'], 'string'],
+            [['text'], 'required'],
+            [['from', 'to', 'topic_id', 'created_at', 'updated_at', 'is_read', 'recipient'], 'integer'],
         ];
     }
 
@@ -84,13 +86,46 @@ class Message extends ActiveRecord
         return new MessageQuery(get_called_class());
     }
 
-    public function getUser()
+    public function getAuthor()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::className(), ['id' => 'from']);
+    }
+
+    public function getRecipient()
+    {
+        return $this->hasOne(User::className(), ['id' => 'to']);
     }
 
     public function getTopic()
     {
         return $this->hasOne(Topic::className(), ['id' => 'topic_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if (!$this->topic && $this->topic_str) {
+                $modelTopic = new Topic();
+                $modelTopic->topic = $this->topic_str;
+                if (!$modelTopic->save()) {
+                    return false;
+                }
+                $this->topic_id = $modelTopic->id;
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $modelTopic = Topic::findOne($this->topic_id);
+        if ($modelTopic) {
+            $modelTopic->message_id = $this->id;
+            $modelTopic->save();
+        }
+
+        parent::afterSave($insert, $changedAttributes);
     }
 }

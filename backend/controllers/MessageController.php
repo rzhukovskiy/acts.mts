@@ -10,6 +10,7 @@ use yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Url;
 
 /**
  * MessageController implements the CRUD actions for Message model.
@@ -31,13 +32,17 @@ class MessageController extends Controller
         ];
     }
 
-    public function actionList($department_id)
+    public function actionList($department_id, $type = 'inbox')
     {
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
         $searchModel = new MessageSearch();
         $searchModel->department_id = $department_id;
-        $dataProvider = $searchModel->searchByUser($currentUser);
+        if ($type == 'outbox') {
+            $dataProvider = $searchModel->searchOutboxByUser($currentUser);
+        } else {
+            $dataProvider = $searchModel->searchInboxByUser($currentUser);
+        }
 
         $currentDepartment = Department::findOne($department_id);
         if (!$currentDepartment){
@@ -53,7 +58,9 @@ class MessageController extends Controller
             ->column();
         
         $model = new Message();
-        $model->user_id = $currentUser->id;
+        $model->from = $currentUser->id;
+
+        Url::remember();
 
         return $this->render('list', [
             'searchModel' => $searchModel,
@@ -85,11 +92,9 @@ class MessageController extends Controller
         $model = new Message();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(Url::previous());
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return $this->redirect(Url::previous());
         }
     }
 
