@@ -57,6 +57,7 @@ class CompanyController extends Controller
     {
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_ACTIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
