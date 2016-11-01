@@ -26,6 +26,7 @@ use yii\web\IdentityInterface;
  *
  * @property Company $company
  * @property Department $department
+ * @property Department[] $departments
  */
 class User extends ActiveRecord implements IdentityInterface
 {
