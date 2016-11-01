@@ -4,6 +4,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\ActSearch
  * @var $role string
+ * @var $admin boolean
  */
 
 use common\models\Act;
@@ -120,6 +121,7 @@ $columns = [
             },
 
         ],
+        'visible' => $admin,
     ],
 ];
 

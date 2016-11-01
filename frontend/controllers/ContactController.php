@@ -32,6 +32,11 @@ class ContactController extends Controller
                     ],
                     [
                         'actions' => ['list', 'view'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
+                        'actions' => ['list', 'view'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_PARTNER, User::ROLE_CLIENT],
                     ],
@@ -60,6 +65,7 @@ class ContactController extends Controller
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'model'        => $model,
+                'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             ]);
     }
 

@@ -40,7 +40,7 @@ class ActController extends Controller
                     [
                         'actions' => ['list', 'view', 'fix', 'export'],
                         'allow' => true,
-                        'roles' => [User::ROLE_WATCHER],
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
                         'actions' => ['list', 'view'],

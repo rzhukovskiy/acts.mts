@@ -30,6 +30,11 @@ class ErrorController extends Controller
                     [
                         'actions' => ['list', 'view'],
                         'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
+                        'actions' => ['list', 'view'],
+                        'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
                 ],
@@ -49,6 +54,7 @@ class ErrorController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'role' => Yii::$app->user->identity->role,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

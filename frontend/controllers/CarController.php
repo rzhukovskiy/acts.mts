@@ -46,6 +46,11 @@ class CarController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
+                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
                         'actions' => ['list', 'view', 'act-view'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
@@ -239,6 +244,9 @@ class CarController extends Controller
         return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
+    /**
+     * @param $number
+     */
     public function actionCheckExtra($number)
     {
         $car = Car::findOne(['number' => $number]);

@@ -39,6 +39,11 @@ class CardController extends Controller
                     [
                         'actions' => ['list'],
                         'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
+                        'actions' => ['list'],
+                        'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
                 ],

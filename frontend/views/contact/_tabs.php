@@ -9,7 +9,11 @@ use yii\bootstrap\Tabs;
  * @var $active string
  */
 
-if (Yii::$app->user->can(User::ROLE_ADMIN) || Yii::$app->user->can(User::ROLE_CLIENT)) {
+if (Yii::$app->user->can(User::ROLE_ADMIN) ||
+    Yii::$app->user->can(User::ROLE_CLIENT) ||
+    Yii::$app->user->can(User::ROLE_WATCHER) ||
+    Yii::$app->user->can(User::ROLE_MANAGER)
+) {
     foreach (Service::$listType as $type_id => $typeData) {
         $items[] = [
             'label'  => $typeData['ru'],

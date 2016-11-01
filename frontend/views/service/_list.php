@@ -4,7 +4,9 @@ use yii\grid\GridView;
 use common\models\Service;
 
 /* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $dataProvider yii\data\ActiveDataProvider
+ * @var $admin boolean
+ */
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -35,7 +37,8 @@ use common\models\Service;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update} {delete}'
+                    'template' => '{update} {delete}',
+                    'visible'=>$admin
                 ],
             ],
         ]); ?>

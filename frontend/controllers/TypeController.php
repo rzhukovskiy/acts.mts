@@ -3,7 +3,9 @@
     namespace frontend\controllers;
 
     use common\models\search\TypeSearch;
+    use common\models\User;
     use Yii;
+    use yii\filters\AccessControl;
     use yii\web\Controller;
     use common\models\Type;
     use yii\web\NotFoundHttpException;
@@ -22,6 +24,20 @@
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => [User::ROLE_ADMIN],
+                        ],
+                        [
+                            'actions' => ['list'],
+                            'allow' => true,
+                            'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                        ],
                     ],
                 ],
             ];
@@ -55,6 +71,7 @@
                 'dataProvider' => $dataProvider,
                 'newTypeModel' => $newTypeModel,
                 'searchModel' => $searchModel,
+                'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             ] );
         }
 

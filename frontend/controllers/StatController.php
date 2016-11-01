@@ -36,6 +36,11 @@ class StatController extends Controller
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
+                        'actions' => ['view', 'month', 'day', 'total', 'act','list'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
                         'actions' => ['view', 'month', 'day', 'total', 'act'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT]
@@ -344,6 +349,12 @@ class StatController extends Controller
 
         switch ($userRole) {
             case User::ROLE_ADMIN :
+                $view = 'admin';
+                break;
+            case User::ROLE_WATCHER :
+                $view = 'admin';
+                break;
+            case User::ROLE_MANAGER :
                 $view = 'admin';
                 break;
             case User::ROLE_CLIENT:

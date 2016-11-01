@@ -2,6 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $admin null|bool
  */
 
 use yii\grid\GridView;
@@ -30,6 +31,7 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
+                    'visible' => $admin,
                 ],
             ],
         ]);

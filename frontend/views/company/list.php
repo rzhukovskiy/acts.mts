@@ -6,16 +6,22 @@
  * @var $model common\models\Company
  * @var $searchModel \common\models\search\CompanySearch
  * @var $type integer
+ * @var $admin null|bool
  */
 $this->title = \common\models\Company::$listType[$type]['ru'];
+if ($admin) {
+    echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form',
+    [
+        'model' => $model,
+        'type'  => $type,
+    ]);
+}
 
-echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form', [
-    'model' => $model,
-    'type' => $type,
-]);
 
-echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_list', [
+echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_list',
+[
     'dataProvider' => $dataProvider,
-    'searchModel' => $searchModel,
-    'type' => $type,
+    'searchModel'  => $searchModel,
+    'type'         => $type,
+    'admin'        => $admin
 ]);

@@ -35,6 +35,11 @@ class MarkController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
+                    [
+                        'actions' => ['list'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
                 ],
             ],
         ];
@@ -61,6 +66,7 @@ class MarkController extends Controller
             'model' => $model,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

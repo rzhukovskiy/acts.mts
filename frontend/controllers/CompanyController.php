@@ -34,9 +34,14 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
+                    ],
+                    [
+                        'actions' => ['list', 'view'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
                         'actions' => ['list', 'view'],
@@ -74,6 +79,7 @@ class CompanyController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'model' => $model,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

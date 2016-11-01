@@ -37,6 +37,11 @@ class CarCountController extends Controller
                     [
                         'actions' => ['list', 'view','list-full'],
                         'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
+                        'actions' => ['list', 'view','list-full'],
+                        'allow' => true,
                         'roles' => [User::ROLE_CLIENT, User::ROLE_WATCHER],
                     ],
                     [
@@ -98,6 +103,11 @@ class CarCountController extends Controller
         ]);
     }
 
+    /**
+     * @param $type
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionView($type)
     {
         $typeModel = $this->findModel($type);
@@ -127,6 +137,11 @@ class CarCountController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return null|static
+     * @throws NotFoundHttpException
+     */
     protected function findModel($id)
     {
         if (($model = Type::findOne($id)) == null)

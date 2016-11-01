@@ -37,6 +37,11 @@ class UserController extends \yii\web\Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
+                        'actions' => ['list','login'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                    [
                         'actions' => ['login'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER, User::ROLE_CLIENT, User::ROLE_WATCHER],
@@ -81,6 +86,7 @@ class UserController extends \yii\web\Controller
             'dataProvider' => $dataProvider,
             'companyDropDownData' => Company::dataDropDownList($type),
             'newUser' => $newUser,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

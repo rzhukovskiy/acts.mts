@@ -3,6 +3,7 @@
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
+ * @var $admin null|bool
  */
 
 use yii\grid\GridView;
@@ -31,6 +32,7 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update} {delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],
+                    'visible' => $admin,
                 ],
             ],
         ]);

@@ -7,14 +7,6 @@
  */
 use kartik\grid\GridView;
 
-$visibleButton = [
-    'update' => function ($model, $key, $index) {
-        return Yii::$app->user->can(\common\models\User::ROLE_ADMIN);
-    },
-    'delete' => function ($model, $key, $index) {
-        return Yii::$app->user->can(\common\models\User::ROLE_ADMIN);
-    },
-];
 
 echo GridView::widget([
     'id'               => 'act-grid',
@@ -74,7 +66,7 @@ echo GridView::widget([
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{update}{delete}',
             'contentOptions' => ['style' => 'min-width: 80px'],
-            'visibleButtons' => $visibleButton,
+            'visible' => $admin,
         ],
     ],
 ]);

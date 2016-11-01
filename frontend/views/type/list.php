@@ -7,6 +7,7 @@ use yii\grid\GridView;
  * @var $dataProvider \yii\data\ActiveDataProvider
  * @var $newTypeModel \common\models\Type
  * @var $searchModel \common\models\search\TypeSearch;
+ * @var $admin boolean
  */
 
 $this->title = 'Типы ТС';
@@ -14,12 +15,14 @@ $this->title = 'Типы ТС';
 echo $this->render('_tabs');
 ?>
 <div class="image-list">
+    <?php if($admin){?>
     <div class="panel panel-primary">
         <div class="panel-heading">Добавить тип</div>
         <div class="panel-body">
             <?= $this->render('_form', ['model' => $newTypeModel]) ?>
         </div>
     </div>
+    <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading">Типы ТС</div>
         <div class="panel-body">
@@ -43,6 +46,7 @@ echo $this->render('_tabs');
                     [
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{update}{delete}',
+                        'visible' => $admin,
                     ],
                 ]
             ]);

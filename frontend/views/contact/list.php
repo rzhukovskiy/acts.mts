@@ -1,5 +1,4 @@
 <?php
-use common\models\User;
 
 /**
  * @var $this yii\web\View
@@ -15,8 +14,7 @@ echo $this->render('_tabs',
     [
         'type' => $type,
     ]);
-if (Yii::$app->user->can(User::ROLE_ADMIN)) {
-
+if ($admin) {
     echo $this->render('_form',
         [
             'model'       => $model,

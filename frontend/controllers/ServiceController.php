@@ -3,9 +3,11 @@
 namespace frontend\controllers;
 
 use common\models\search\ServiceSearch;
+use common\models\User;
 use Yii;
 use common\models\Service;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -27,6 +29,20 @@ class ServiceController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => [User::ROLE_ADMIN],
+                    ],
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -45,6 +61,7 @@ class ServiceController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 
