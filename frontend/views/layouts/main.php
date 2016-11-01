@@ -3,6 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use common\models\User;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
@@ -37,9 +38,9 @@ AppAsset::register($this);
                             ['/user/login', 'id' => 1],
                             ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
-                    <?= Html::a('Сменить кабинет',
+                    <?= Yii::$app->user->can(User::ROLE_ADMIN) ? Html::a('Сменить кабинет',
                         Yii::getAlias('@backWeb'),
-                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
+                        ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) : '' ?>
                 </div>
             </div>
         <?php } ?>
