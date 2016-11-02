@@ -8,8 +8,7 @@
 use common\models\MonthlyAct;
 use common\models\User;
 use kartik\date\DatePicker;
-use kartik\grid\GridView;
-use yii\helpers\Html;
+
 
 //Настройки фильтров
 $filters = 'Период: ' . DatePicker::widget([
@@ -47,6 +46,7 @@ if (Yii::$app->user->can(User::ROLE_ADMIN)) {
         },
     ];
 }
+
 //Настройки галереи
 echo newerton\fancybox\FancyBox::widget([
     'target'  => 'a.fancybox',
@@ -82,113 +82,55 @@ echo newerton\fancybox\FancyBox::widget([
 ]);
 ?>
 
-<?=
-GridView::widget([
-    'id'               => 'act-grid',
-    'dataProvider'     => $dataProvider,
-    'showPageSummary'  => false,
-    'summary'          => false,
-    'emptyText'        => '',
-    'panel'            => [
-        'type'    => 'primary',
-        'heading' => 'Сводные акты по ' . \common\models\Service::$listType[$type]['ru'],
-        'before'  => false,
-        'footer'  => false,
-        'after'   => false,
-    ],
-    'resizableColumns' => false,
-    'hover'            => false,
-    'striped'          => false,
-    'export'           => false,
-    'filterSelector'   => '.ext-filter',
-    'beforeHeader'     => [
+<?php if ($type == \common\models\Service::TYPE_DISINFECT) {
+    echo $this->render('_list_disinfect',
         [
-            'columns' => [
-                [
-                    'content' => $filters,
-                    'options' => [
-                        'style'   => 'vertical-align: middle',
-                        'colspan' => 9,
-                        'class'   => 'kv-grid-group-filter',
-                    ],
-                ]
-            ],
-            'options' => ['class' => 'extend-header'],
-        ],
-
-    ],
-    'layout'           => '{items}',
-    'columns'          => [
+            'dataProvider'  => $dataProvider,
+            'searchModel'   => $searchModel,
+            'type'          => $type,
+            'admin'         => $admin,
+            'filters'       => $filters,
+            'visibleButton' => $visibleButton
+        ]);
+} elseif ($type == \common\models\Service::TYPE_TIRES) {
+    echo $this->render('_list_tires',
         [
-            'header' => '№',
-            'class'  => 'yii\grid\SerialColumn'
-        ],
-        'client'         => [
-            'attribute' => 'client_id',
-            'value'     => function ($data) {
-                return isset($data->client) ? $data->client->name : 'error';
-            },
-            'filter'    => false,
-        ],
-        'city'           => [
-            'header' => 'Город',
-            'value'  => function ($data) {
-                return isset($data->client) ? $data->client->address : 'error';
-            },
-        ],
-        'profit'         => [
-            'attribute' => 'profit',
-            'value'     => function ($data) {
-                return Html::tag('strong', $data->profit);
-            },
-            'format'    => 'html',
-        ],
-        'payment_status' => [
-            'attribute'      => 'payment_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$paymentStatus[$data->payment_status];
-            },
-            'filter'         => false,
-            'contentOptions' => function ($model) {
-                return [
-                    'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
-                    'style' => 'min-width: 100px'
-                ];
-            },
-        ],
-        'payment_date',
-        'act_status'     => [
-            'attribute'      => 'act_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$actStatus[$data->act_status];
-            },
-            'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 160px'];
-            },
-            'filter'         => false,
-
-        ],
-        /*
-        'img'            => [
-            'attribute' => 'img',
-            'value'     => function ($data) {
-                return $data->getImageList();
-            },
-            'filter'    => false,
-            'format'    => 'raw'
-        ],
-        */
+            'dataProvider'  => $dataProvider,
+            'searchModel'   => $searchModel,
+            'type'          => $type,
+            'admin'         => $admin,
+            'filters'       => $filters,
+            'visibleButton' => $visibleButton
+        ]);
+} else {
+    echo $this->render('_list_common',
         [
-            'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{update}',
-            'contentOptions' => ['style' => 'min-width: 40px'],
-            'visibleButtons' => $visibleButton,
-            'buttons' => [
-                'update' => function ($url, $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/monthly-act/update', 'id' => $model->id]);
-                },
-            ]
-        ],
-    ],
-]);
-?>
+            'dataProvider'  => $dataProvider,
+            'searchModel'   => $searchModel,
+            'type'          => $type,
+            'admin'         => $admin,
+            'filters'       => $filters,
+            'visibleButton' => $visibleButton
+        ]);
+}
+/*
+ * $clientField = [
+        'attribute'         => 'client_id',
+        'group'             => true,
+        'groupedRow'        => true,
+        'groupOddCssClass'  => 'kv-group-header',
+        'groupEvenCssClass' => 'kv-group-header',
+        'value'             => function ($data) {
+            return isset($data->client) ? $data->client->name : 'error';
+        },
+        'groupFooter'       => function ($model, $key, $index, $widget) { // Closure method
+            return [
+                'mergeColumns' => [[2, 3]], // columns to merge in summary
+                'content'      => [             // content to show in each summary cell
+                                                'profit' => GridView::F_SUM,
+                ],
+                'options'      => ['class' => 'kv-group-footer']
+            ];
+        }
+    ];
+ */
