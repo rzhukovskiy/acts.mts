@@ -36,6 +36,9 @@ class MonthlyActController extends Controller
             $MonthlyAct = new MonthlyAct();
             $MonthlyAct->client_id = $act['company_id'];
             $MonthlyAct->type_id = $act['service_type'];
+            if (isset($act['service_id'])) {
+                $MonthlyAct->service_id = $act['service_id'];
+            }
             $MonthlyAct->profit = $act['profit'];
             $MonthlyAct->is_partner = $act['is_partner'];
             $MonthlyAct->act_date = $act['date'];
