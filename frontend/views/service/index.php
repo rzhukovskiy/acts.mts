@@ -10,22 +10,18 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Услуги';
-?>
 
-<?= $this->render('_tabs', [
+echo $this->render('_tabs', [
     'model' => $model,
-]) ?>
+]);
 
-<?
-if($admin){
-    $this->render('_form', [
+if ($admin) {
+    echo $this->render('_form', [
         'model' => $model,
         'searchModel' => $searchModel,
     ]);
 }
-?>
-
-<?= $this->render('_list', [
+echo $this->render('_list', [
     'dataProvider' => $dataProvider,
     'admin' => $admin,
-]) ?>
+]);
