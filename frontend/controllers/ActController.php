@@ -80,6 +80,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('m-Y', time() - 22 * 24 * 3600);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -99,12 +100,21 @@ class ActController extends Controller
     {
         $dataProvider = null;
         $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
+        $searchModel->period = date('m-Y', time() - 22 * 24 * 3600);
         
         if ($serviceId) {
             $searchModel->is_infected = 1;
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
             foreach ($dataProvider->getModels() as $car) {
+                $existed = Act::find()->where([
+                    'number' => $car->number,
+                    'service_type' => Service::TYPE_DISINFECT,
+                    'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
+                ])->all();
+                if (count($existed)) {
+                    continue;
+                }
                 $model = new Act();
                 $model->time_str = '01-' . $searchModel->period;
                 $model->partner_id = Yii::$app->user->identity->company_id;

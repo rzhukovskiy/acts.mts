@@ -68,11 +68,6 @@ class CarSearch extends Car
             return $dataProvider;
         }
 
-        if ($this->scenario == self::SCENARIO_INFECTED) {
-            $query->andWhere('NOT EXISTS (SELECT * FROM ' . Act::tableName() . ' act WHERE service_type = ' . Service::TYPE_DISINFECT .
-                ' AND act.number = car.number AND date_format(served_at, "%Y-%m") = "' . $this->period . '")');
-        }
-
         // grid filtering conditions
         $query->joinWith([
             'company company',
