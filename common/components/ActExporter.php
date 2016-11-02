@@ -5,6 +5,7 @@ use common\models\Act;
 use common\models\ActScope;
 use common\models\Company;
 use common\models\search\ActSearch;
+use common\models\search\ServiceSearch;
 use common\models\Service;
 use PHPExcel;
 use PHPExcel_IOFactory;
@@ -19,8 +20,9 @@ use ZipArchive;
 class ActExporter
 {
     private $company= false;
-    private $companyType = Company::TYPE_WASH;
+    private $serviceType = Company::TYPE_WASH;
     private $time = null;
+    public $objPHPExcel = null;
 
     /**
      * @param ActSearch $searchModel
@@ -30,7 +32,7 @@ class ActExporter
     {
         $this->time = $this->time = \DateTime::createFromFormat('m-Y-d H:i:s', $searchModel->period . '-01 00:00:00')->getTimestamp();
         $this->company = $company;
-        $this->companyType = $searchModel->service_type;
+        $this->serviceType = $searchModel->service_type;
 
         $zip = new ZipArchive();
         $type = Service::$listType[$this->serviceType]['en'];
@@ -41,14 +43,16 @@ class ActExporter
         }
 
         if ($this->company) {
-            foreach($searchModel->getClientsByType($this->companyType) as $actClient) {
+            $listAct = $searchModel->searchClient()->getModels();
+            foreach($listAct as $actClient) {
                 $searchModel->client_id = $actClient->client_id;
-                $this->fillAct($actModel, $actClient->client, $zip);
+                $this->fillAct($searchModel, $actClient->client, $zip);
             }
         } else {
-            foreach($searchModel->getPartnersByType($this->companyType) as $actPartner) {
+            $listAct = $searchModel->searchPartner()->getModels();
+            foreach($listAct as $actPartner) {
                 $searchModel->partner_id = $actPartner->partner_id;
-                $this->fillAct($actModel, $actPartner->partner, $zip);
+                $this->fillAct($searchModel, $actPartner->partner, $zip);
             }
         }
 
@@ -56,15 +60,15 @@ class ActExporter
     }
 
     /**
-     * @param Act $actModel
+     * @param ActSearch $searchModel
      * @param Company $company
      * @param ZipArchive $zip
      */
-    private function fillAct($actModel, $company, &$zip)
+    private function fillAct($searchModel, $company, &$zip)
     {
-        switch ($this->companyType) {
-            case Company::SERVICE_TYPE:
-                $dataList = $actModel->search()->getData();
+        switch ($this->serviceType) {
+            case Company::TYPE_SERVICE:
+                $dataList = $searchModel->search([])->getModels();
                 if (!$dataList) {
                     return;
                 }
@@ -72,24 +76,28 @@ class ActExporter
                     $this->generateAct($company, array($data), $zip);
                 }
                 break;
-            case Company::DISINFECTION_TYPE:
-                $actModel->client_service = 5;
-                $dataList = $actModel->search()->getData();
-                if ($dataList) {
-                    $this->generateDisinfectCertificate($company, $dataList, $zip);
-                    $this->generateAct($company, $dataList, $zip);
+            case Company::TYPE_DISINFECT:
+                $listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
+                foreach ($listService as $serviceId => $serviceDescription) {
+                    $dataProvider = $searchModel->search([]);
+                    if ($this->company) {
+                        $dataProvider->query->andWhere(['clientScopes.service_id' => $serviceId])
+                            ->groupBy('clientScopes.act_id')
+                            ->joinWith('clientScopes clientScopes');
+                    } else {
+                        $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
+                            ->groupBy('partnerScopes.act_id')
+                            ->joinWith('partnerScopes partnerScopes');
+                    }
+                    $dataList = $dataProvider->getModels();
+                    if ($dataList) {
+                        $this->generateDisinfectCertificate($company, $dataList, $zip, $serviceDescription);
+                        $this->generateAct($company, $dataList, $zip, $serviceDescription);
+                    }
                 }
-
-                $actModel->client_service = 9;
-                $dataList = $actModel->search()->getData();
-                if ($dataList) {
-                    $this->generateDisinfectCertificate($company, $dataList, $zip);
-                    $this->generateAct($company, $dataList, $zip);
-                }
-                $actModel->client_service = null;
                 break;
             default:
-                $dataList = $actModel->search()->getData();
+                $dataList = $searchModel->search([])->getModels();
                 if (!$dataList) {
                     return;
                 }
@@ -102,11 +110,10 @@ class ActExporter
      * @param Act[] $dataList
      * @param ZipArchive $zip
      */
-    private function generateDisinfectCertificate($company, $dataList, &$zip)
+    private function generateDisinfectCertificate($company, $dataList, &$zip, $serviceDescription = null)
     {
         $files = 0;
         $totalCount = 0;
-        $clientService = 5;
         $cols = ['A','B','C','D','E','F','G','H','I','J','K'];
 
         /** @var PHPExcel $objPHPExcel */
@@ -117,7 +124,7 @@ class ActExporter
         $worksheet = null;
 
         $cnt = 1;
-
+        $startRow = 8;
         foreach ($dataList as $act) {
             if (!$totalCount || !($totalCount % 80)) {
                 $startRow = 8;
@@ -162,10 +169,8 @@ class ActExporter
                 $worksheet->getColumnDimension('K')->setWidth(3);
             }
 
-            $clientService = $act->client_service;
-
             $endDate = new \DateTime();
-            $endDate->setTimestamp(strtotime($act->service_date));
+            $endDate->setTimestamp($act->served_at);
             $startDate = clone($endDate);
             date_add($endDate, date_interval_create_from_date_string("1 month"));
 
@@ -179,8 +184,8 @@ class ActExporter
             $row = $startRow;
 
             $objDrawing = null;
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('files/top.jpg');
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setPath('images/top.jpg');
             $objDrawing->setName('Sample image');
             $objDrawing->setDescription('Sample image');
             $range = $cols[$startCol] . ($row - 7);
@@ -254,17 +259,17 @@ class ActExporter
             $row++; $row++; $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Мосесян Г.А._____________');
             $objDrawing = null;
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('files/post-small.png');
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setPath('images/post-small.png');
             $objDrawing->setName($act->number);
             $range = $cols[$startCol + 2] . ($row - 3);
             $objDrawing->setCoordinates($range);
             $objDrawing->setWorksheet($worksheet);
             $objDrawing->setOffsetX(-40);
             $objDrawing = null;
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
             $objDrawing->setName($act->number);
-            $objDrawing->setPath('files/sign.png');
+            $objDrawing->setPath('images/sign.png');
             $range = $cols[$startCol + 1] . ($row - 2);
             $objDrawing->setCoordinates($range);
             $objDrawing->setWorksheet($worksheet);
@@ -323,15 +328,14 @@ class ActExporter
             }
 
             if (!($totalCount % 80) || $totalCount == count($dataList)) {
-                $path = "acts/" . date('m-Y', $this->time) . "/$this->companyType";
+                $type = Service::$listType[$this->serviceType]['en'];
+                $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
                 if (!is_dir($path)) {
                     mkdir($path, 0755, 1);
                 }
-                if ($clientService == 9) {
-                    $filename = "Доп. справка $company->name от " . date('m-Y', $this->time) . "-$files.xlsx";
-                } else {
-                    $filename = "Справка $company->name от " . date('m-Y', $this->time) . "-$files.xlsx";
-                }
+
+                $filename = $serviceDescription . " Справка $company->name от " . date('m-Y', $this->time) . "-$files.xlsx";
+
                 $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
                 $objWriter->save($fullFilename);
                 if ($zip) $zip->addFile($fullFilename, iconv('utf-8', 'cp866', $filename));
@@ -344,9 +348,8 @@ class ActExporter
      * @param array $dataList
      * @param ZipArchive $zip
      */
-    private function generateAct($company, $dataList, &$zip)
+    private function generateAct($company, $dataList, &$zip, $serviceDescription = null)
     {
-        $clientService = 5;
         $this->objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel5');
 
@@ -370,12 +373,12 @@ class ActExporter
         $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
 
         //headers;
-        $monthName = StringNum::getMonthName($this->time);
+        $monthName = DateHelper::getMonthName($this->time);
         $date = date_create(date('Y-m-d', $this->time));
         date_add($date, date_interval_create_from_date_string("1 month"));
-        $currentMonthName = StringNum::getMonthName($date->getTimestamp());
+        $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
 
-        if ($this->companyType == Company::DISINFECTION_TYPE) {
+        if ($this->serviceType == Company::TYPE_DISINFECT) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -385,7 +388,7 @@ class ActExporter
             $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:F3');
-            $text = "по договору на оказание услуг " . $company->getRequisites($this->companyType, 'contract');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
             $companyWorkSheet->setCellValue('B3', $text);
             $companyWorkSheet->mergeCells('B4:F4');
             $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
@@ -420,7 +423,7 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->companyType, 'header'));
+            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
         } else {
             $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -434,7 +437,7 @@ class ActExporter
             $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:I3');
-            $text = "по договору на оказание услуг " . $company->getRequisites($this->companyType, 'contract');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
             $companyWorkSheet->setCellValue('B3', $text);
             $companyWorkSheet->mergeCells('B4:I4');
             $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
@@ -450,7 +453,7 @@ class ActExporter
             if($company->is_split) {
                 $companyWorkSheet->mergeCells('H5:J5');
             }
-            if ($this->company || $this->companyType == Company::TIRES_TYPE) {
+            if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
                 $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
@@ -473,7 +476,7 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $company->getRequisites($this->companyType, 'header'));
+            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
         }
 
 
@@ -482,13 +485,11 @@ class ActExporter
         $num = 0;
         $total = 0;
         $count = 0;
-        switch($this->companyType) {
-            case Company::SERVICE_TYPE:
+        switch($this->serviceType) {
+            case Company::TYPE_SERVICE:
                 $first = $dataList[0];
-                $companyWorkSheet->setCellValue('H5', date("d ", strtotime($first->service_date)) . $monthName[1] . date(' Y', $this->time));
-            case Company::TIRES_TYPE:
-                $first = $dataList[0];
-
+                $companyWorkSheet->setCellValue('H5', date("d ", $first->served_at) . $monthName[1] . date(' Y', $this->time));
+            case Company::TYPE_TIRES:
                 $row = 11;
 
                 $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
@@ -539,7 +540,8 @@ class ActExporter
                     );
 
                     $row++;
-                    $date = new DateTime($data->service_date);
+                    $date = new \DateTime();
+                    $date->setTimestamp($data->served_at);
                     $companyWorkSheet->mergeCells("B$row:C$row");
                     $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
                     $companyWorkSheet->mergeCells("D$row:E$row");
@@ -584,7 +586,12 @@ class ActExporter
                     /** @var ActScope $scope */
                     $subtotal = 0;
                     $subcount = 0;
-                    foreach ($data->scope as $scope) {
+                    if ($this->company) {
+                        $listScope = $data->clientScopes;
+                    } else {
+                        $listScope = $data->partnerScopes;
+                    }
+                    foreach ($listScope as $scope) {
                         $row++;
                         $num++;
                         $companyWorkSheet->mergeCells("B$row:F$row");
@@ -595,17 +602,10 @@ class ActExporter
                             $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
                         }
                         $companyWorkSheet->setCellValue("G$row", $scope->amount);
-                        if ($this->company) {
-                            $companyWorkSheet->setCellValue("H$row", $scope->income);
-                            $companyWorkSheet->setCellValue("I$row", $scope->income * $scope->amount);
-                            $total += $scope->amount * $scope->income;
-                            $subtotal += $scope->amount * $scope->income;
-                        } else {
-                            $companyWorkSheet->setCellValue("H$row", $scope->expense);
-                            $companyWorkSheet->setCellValue("I$row", $scope->expense * $scope->amount);
-                            $total += $scope->amount * $scope->expense;
-                            $subtotal += $scope->amount * $scope->expense;
-                        }
+                        $companyWorkSheet->setCellValue("H$row", $scope->price);
+                        $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                        $total += $scope->amount * $scope->price;
+                        $subtotal += $scope->amount * $scope->price;
                         $subcount += $scope->amount;
                         $count += $scope->amount;
                     }
@@ -635,7 +635,7 @@ class ActExporter
                 }
                 break;
 
-            case Company::CARWASH_TYPE:
+            case Company::TYPE_WASH:
                 $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                 $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
                 $companyWorkSheet->getColumnDimension('D')->setAutoSize(true);
@@ -679,7 +679,8 @@ class ActExporter
                     $row++;
                     $num++;
                     $column = 1;
-                    $date = new DateTime($data->service_date);
+                    $date = new \DateTime();
+                    $date->setTimestamp($data->served_at);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
@@ -688,12 +689,21 @@ class ActExporter
                     if($company->is_split) {
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_number);
                     }
+
                     if ($this->company) {
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, Act::$fullList[$data->client_service]);
+                        $services = [];
+                        foreach ($data->clientScopes as $scope) {
+                            $services[] = $scope->description;
+                        }
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, implode('+', $services));
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->income);
                         $total += $data->income;
                     } else {
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, Act::$fullList[$data->partner_service]);
+                        $services = [];
+                        foreach ($data->partnerScopes as $scope) {
+                            $services[] = $scope->description;
+                        }
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, implode('+', $services));
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->expense);
                         $total += $data->expense;
                     }
@@ -747,7 +757,7 @@ class ActExporter
                 }
                 break;
 
-            case Company::DISINFECTION_TYPE:
+            case Company::TYPE_DISINFECT:
                 $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                 $companyWorkSheet->getColumnDimension('C')->setWidth(20);
                 $companyWorkSheet->getColumnDimension('D')->setWidth(20);
@@ -763,7 +773,6 @@ class ActExporter
                     $isParent = true;
                 }
                 foreach ($dataList as $data) {
-                    $clientService = $data->client_service;
                     if ($isParent && $currentId != $data->client_id) {
                         $row++;
 
@@ -783,7 +792,6 @@ class ActExporter
                     $row++;
                     $num++;
                     $column = 1;
-                    $date = new DateTime($data->service_date);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->number);
@@ -801,7 +809,7 @@ class ActExporter
                         ->setFormatCode(
                             PHPExcel_Style_NumberFormat::FORMAT_TEXT
                         );
-                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column, $row, ' ' . $data->check);
                 }
 
                 $companyWorkSheet->getStyle('B12:F12')
@@ -828,7 +836,7 @@ class ActExporter
         }
 
         //footer
-        if ($this->companyType == Company::DISINFECTION_TYPE) {
+        if ($this->serviceType == Company::TYPE_DISINFECT) {
             $row++;
             $companyWorkSheet->setCellValue("E$row", "ВСЕГО");
             $companyWorkSheet->setCellValue("F$row", "$total");
@@ -837,7 +845,7 @@ class ActExporter
             $companyWorkSheet->mergeCells("B$row:F$row");
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
-            $text = "Общая стоимость выполненных услуг составляет: $total (" . StringNum::num2str($total) . ") рублей. НДС нет.";
+            $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
             $row++;
@@ -859,14 +867,14 @@ class ActExporter
 
             $row++;
             //подпись
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('files/sign.png');
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setPath('images/sign.png');
             $objDrawing->setCoordinates("C$row");
             $objDrawing->setWorksheet($companyWorkSheet);
             $objDrawing->setOffsetX(50);
             //печать
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('files/post.png');
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setPath('images/post.png');
             $objDrawing->setCoordinates("C$row");
             $objDrawing->setWorksheet($companyWorkSheet);
             $objDrawing->setOffsetX(100);
@@ -874,7 +882,7 @@ class ActExporter
             $row++;
             $companyWorkSheet->setCellValue("B$row", "Мосесян Г.А. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
-            $companyWorkSheet->setCellValue("E$row", "$company->contact ____________");
+            $companyWorkSheet->setCellValue("E$row", "$company->director ____________");
 
             $row++;
             $row++;
@@ -882,7 +890,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("E$row", "М.П.");
         } else {
             $row++;
-            if ($this->companyType == Company::CARWASH_TYPE) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 if($company->is_split) {
                     $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                     $companyWorkSheet->setCellValue("I$row", "$total");
@@ -911,7 +919,7 @@ class ActExporter
             }
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
-            $text = "Общая стоимость выполненных услуг составляет: $total (" . StringNum::num2str($total) . ") рублей. НДС нет.";
+            $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
             $row++;
@@ -954,12 +962,12 @@ class ActExporter
 
             $row++;
             //подпись
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
             $objDrawing->setName('Sample image');
             $objDrawing->setDescription('Sample image');
-            $objDrawing->setPath('files/sign.png');
+            $objDrawing->setPath('images/sign.png');
 
-            if ($this->companyType == Company::CARWASH_TYPE) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 $objDrawing->setCoordinates("C$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(50);
@@ -969,8 +977,8 @@ class ActExporter
                 $objDrawing->setOffsetX(10);
             }
             //печать
-            $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('files/post.png');
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setPath('images/post.png');
             $objDrawing->setCoordinates("D$row");
             $objDrawing->setWorksheet($companyWorkSheet);
             $objDrawing->setOffsetX(30);
@@ -982,7 +990,7 @@ class ActExporter
                 $companyWorkSheet->mergeCells("G$row:J$row");
             }
             $companyWorkSheet->setCellValue("B$row", "Мосесян Г.А. ____________");
-            $companyWorkSheet->setCellValue("G$row", "$company->contact ____________");
+            $companyWorkSheet->setCellValue("G$row", "$company->director ____________");
 
             $row++; $row++;
 
@@ -990,19 +998,16 @@ class ActExporter
         }
 
         //saving document
-        $path = "acts/" . date('m-Y', $this->time) . "/$this->companyType";
+        $type = Service::$listType[$this->serviceType]['en'];
+        $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
-        if ($this->companyType == Company::SERVICE_TYPE) {
+        if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Акт {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', strtotime($first->service_date)) . ".xls";
+            $filename = "Акт {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            if ($clientService == 9) {
-                $filename = "Доп. акт $company->name от " . date('m-Y', $this->time) . ".xls";
-            } else {
-                $filename = "Акт $company->name от " . date('m-Y', $this->time) . ".xls";
-            }
+            $filename = $serviceDescription. " Акт $company->name от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);
@@ -1036,7 +1041,7 @@ class ActExporter
         $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
 
         //headers
-        $monthName = StringNum::getMonthName($this->time);
+        $monthName = DateHelper::getMonthName($this->time);
         $date = date_create(date('Y-m-d', $this->time));
         date_add($date, date_interval_create_from_date_string("1 month"));
 
@@ -1193,9 +1198,9 @@ class ActExporter
                 )
             )
         );
-        if (in_array($this->companyType, [Company::TIRES_TYPE, Company::SERVICE_TYPE])) {
+        if (in_array($this->serviceType, [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
             $first = $dataList[0];
-            $text = "СЧЕТ б/н от " . date("d ", strtotime($first->service_date)) . ' ' . $monthName[1] . date(' Y', $this->time);
+            $text = "СЧЕТ б/н от " . date("d ", $first->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
             $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
         }
@@ -1223,25 +1228,25 @@ class ActExporter
         $companyWorkSheet->mergeCells("B$row:E$row");
         $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
         $companyWorkSheet->getStyle("B$row:E$row")->getAlignment()->setWrapText(true);
-        $text = "Всего наименований " .count($dataList) . ", на сумму $total (" . StringNum::num2str($total) . "). НДС нет.";
+        $text = "Всего наименований " .count($dataList) . ", на сумму $total (" . DigitHelper::num2str($total) . "). НДС нет.";
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
         //печать
-        $objDrawing = new PHPExcel_Worksheet_Drawing();
+        $objDrawing = new \PHPExcel_Worksheet_Drawing();
         $objDrawing->setName('Sample image');
         $objDrawing->setDescription('Sample image');
-        $objDrawing->setPath('files/post.png');
+        $objDrawing->setPath('images/post.png');
         $objDrawing->setCoordinates("C$row");
         $objDrawing->setWorksheet($companyWorkSheet);
         $objDrawing->setOffsetX(30);
         $row++;
         $row++;
         //подпись
-        $objDrawing = new PHPExcel_Worksheet_Drawing();
+        $objDrawing = new \PHPExcel_Worksheet_Drawing();
         $objDrawing->setName('Sample image');
         $objDrawing->setDescription('Sample image');
-        $objDrawing->setPath('files/sign.png');
+        $objDrawing->setPath('images/sign.png');
         $objDrawing->setCoordinates("B{$row}");
         $objDrawing->setWorksheet($companyWorkSheet);
         $objDrawing->setOffsetX(70);
@@ -1250,19 +1255,16 @@ class ActExporter
         $companyWorkSheet->setCellValue("B$row", 'Мосесян Г.А.__________');
 
         //saving document
-        $path = "acts/" . date('m-Y', $this->time) . "/$this->companyType";
+        $type = Service::$listType[$this->serviceType]['en'];
+        $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
         if (!is_dir($path)) {
             mkdir($path, 0755, 1);
         }
-        if ($this->companyType == Company::SERVICE_TYPE) {
+        if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Счет {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', strtotime($first->service_date)) . ".xls";
+            $filename = "Счет {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            if ($clientService == 9) {
-                $filename = "Доп. счет $company->name от " . date('m-Y', $this->time) . ".xls";
-            } else {
-                $filename = "Счет $company->name от " . date('m-Y', $this->time) . ".xls";
-            }
+            $filename = $serviceDescription . " Счет $company->name от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);

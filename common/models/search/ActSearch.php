@@ -145,11 +145,7 @@ class ActSearch extends Act
                     'client client',
                     'partnerScopes',
                 ]);
-                if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['partner.parent_id' => $this->client_id])->orFilterWhere(['partner_id' => $this->partner_id]);
-                } else {
-                    $query->andFilterWhere(['partner_id' => $this->partner_id]);
-                }
+                $query->andFilterWhere(['partner_id' => $this->partner_id]);
                 $query->orderBy('partner.parent_id, act.partner_id, served_at');
                 break;
 
@@ -222,6 +218,73 @@ class ActSearch extends Act
             ->andFilterWhere(['like', 'act.extra_number', $this->extra_number])
             ->andFilterWhere(['like', 'check', $this->check]);
 
+
+        return $dataProvider;
+    }
+
+    /**
+     * @return ActiveDataProvider
+     */
+    public function searchClient()
+    {
+        $query = Act::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $query->alias('act');
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'card_id' => $this->card_id,
+            'act.type_id' => $this->type_id,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'service_type' => $this->service_type,
+            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
+            'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
+            'DATE_FORMAT(FROM_UNIXTIME(`act`.`created_at`), "%Y-%m-%d")' => $this->createDay,
+        ]);
+        $query->joinWith('client');
+        $query->groupBy('client_id');
+
+        return $dataProvider;
+    }
+
+    /**
+     * @return ActiveDataProvider
+     */
+    public function searchPartner()
+    {
+        $query = Act::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+
+        $query->alias('act');
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'card_id' => $this->card_id,
+            'act.type_id' => $this->type_id,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'service_type' => $this->service_type,
+            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
+            'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
+            'DATE_FORMAT(FROM_UNIXTIME(`act`.`created_at`), "%Y-%m-%d")' => $this->createDay,
+        ]);
+        $query->joinWith('partner');
+        $query->groupBy('partner_id');
 
         return $dataProvider;
     }

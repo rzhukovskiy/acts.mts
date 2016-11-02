@@ -48,6 +48,8 @@ use yii\web\UploadedFile;
  * @property Card $card
  * @property Car $car
  * @property ActScope $scopes
+ * @property ActScope[] $clientScopes
+ * @property ActScope[] $partnerScopes
  */
 class Act extends ActiveRecord
 {
