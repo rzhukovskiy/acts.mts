@@ -6,7 +6,6 @@ use common\components\ActExporter;
 use common\components\ActHelper;
 use common\models\Act;
 use common\models\Car;
-use common\models\Card;
 use common\models\Company;
 use common\models\Entry;
 use common\models\search\ActSearch;
