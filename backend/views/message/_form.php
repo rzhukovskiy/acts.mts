@@ -23,8 +23,8 @@ use yii\widgets\ActiveForm;
         ],
     ]) ?>
 
-    <?= $form->field($model, 'user_to')->dropDownList($listUser) ?>
-    <?= $form->field($model, 'topic_str')->textInput() ?>
+    <?= $model->user_to ? $form->field($model, 'user_to')->hiddenInput()->label(false) : $form->field($model, 'user_to')->dropDownList($listUser) ?>
+    <?= $model->topic_id ? $form->field($model, 'topic_id')->hiddenInput()->label(false) : $form->field($model, 'topic_str')->textInput() ?>
     <?= $form->field($model, 'text')->textarea(['rows' => 6]) ?>
     <?= $form->field($model, 'user_from')->hiddenInput()->label(false) ?>
 

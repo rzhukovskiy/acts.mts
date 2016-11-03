@@ -1,41 +1,49 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\DetailView;
+/**
+ * @var $this yii\web\View
+ * @var $searchModel common\models\search\TopicSearch
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $model common\models\Message
+ * @var $recipient common\models\User
+ */
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Message */
+use yii\bootstrap\Tabs;
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Messages', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Сообщения';
+
+$action = Yii::$app->controller->action->id;
+$requestDepartment = Yii::$app->request->get('department_id');
+
+$items = [
+    [
+        'label' => 'Сообщения',
+        'url' => ['/message/list', 'department_id' => $recipient->department->id],
+        'active' => false,
+    ],
+    [
+        'label' => 'Переписка',
+        'url' => '#',
+        'active' => true,
+    ]
+];
 ?>
-<div class="message-view">
+<div class="user-index">
+    <?= Tabs::widget([
+        'items' => $items,
+    ]); ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'text:ntext',
-            'user_id',
-            'topic_id',
-            'created_at',
-            'updated_at',
-            'is_read',
-        ],
-    ]) ?>
-
+    <div class="panel panel-primary">
+        <div class="panel-heading"><?= $model->topic->topic ?></div>
+        <div class="panel-body">
+            <?= $this->render('_list', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]); ?>
+            
+            <?= $this->render('_form', [
+                'model' => $model,
+            ]); ?>
+        </div>
+    </div>
 </div>

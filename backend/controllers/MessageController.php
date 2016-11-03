@@ -67,18 +67,42 @@ class MessageController extends Controller
             'dataProvider' => $dataProvider,
             'listUser' => $listUser,
             'model' => $model,
+            'type' => $type,
+            'department_id' => $department_id,
         ]);
     }
-
-    /**
-     * Displays a single Message model.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new MessageSearch();
+        $searchModel->topic_id = $model->topic_id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $newModel = new Message();
+        $newModel->user_from = $currentUser->id;
+        $newModel->topic_id = $model->topic_id;
+        if ($currentUser->id == $model->user_from) {
+            $newModel->user_to = $model->user_to;
+            $recipient = $model->recipient;
+        } else  {
+            $newModel->user_to = $model->user_from;
+            $recipient = $model->author;
+        }
+
+        Url::remember();
+        Message::updateAll(['is_read' => 1], [
+            'user_to' => $currentUser->id,
+            'topic_id' => $model->topic_id,
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $newModel,
+            'recipient' => $recipient,
         ]);
     }
 

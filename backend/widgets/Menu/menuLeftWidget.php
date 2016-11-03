@@ -11,6 +11,7 @@ namespace backend\widgets\Menu;
 use common\models\Company;
 use common\models\Department;
 use common\models\search\CompanySearch;
+use common\models\search\MessageSearch;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
@@ -37,6 +38,9 @@ class menuLeftWidget extends Widget
         if (!empty($this->items))
             return $this->items;
 
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+        
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->status = Company::STATUS_NEW;
         $countNew = $searchModel->search()->count;
@@ -47,10 +51,14 @@ class menuLeftWidget extends Widget
         $searchModel->status = Company::STATUS_REFUSE;
         $countRefuse = $searchModel->search()->count;
 
+        $searchModel = new MessageSearch();
+        $searchModel->user_to = $currentUser->id;
+        $searchModel->is_read = null;
+        $countMessage = $searchModel->search([])->count;
 
         $items = [];
         // Admin links
-        if (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
@@ -93,13 +101,13 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
                 [
-                    'label' => 'Сообщения',
+                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
         } // Account manager links
-        elseif (Yii::$app->user->identity->role == User::ROLE_ACCOUNT) {
+        elseif ($currentUser->role == User::ROLE_ACCOUNT) {
             $items = [
                 [
                     'label' => 'Мойки',
@@ -112,17 +120,17 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
                 [
-                    'label' => 'Сообщения',
+                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
-        } elseif (Yii::$app->user->identity && Yii::$app->user->identity->role == User::ROLE_WATCHER) {
+        } elseif ($currentUser && $currentUser->role == User::ROLE_WATCHER) {
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
                     'label' => 'Заявки'  . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
-                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW)
@@ -130,7 +138,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив'  . ($countNew ? '<span class="label label-success">' . $countActive . '</span>' : ''),
-                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ACTIVE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ACTIVE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ACTIVE]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
@@ -138,7 +146,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Отказ'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
-                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => Yii::$app->user->identity->getFirstCompanyType()],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
@@ -150,7 +158,7 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
                 [
-                    'label' => 'Сообщения',
+                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],

@@ -71,6 +71,19 @@ body {
 .price-from label {
     display: block;
     }
+.sub-menu {
+    height: 40px;
+    font-size: 16px;
+}
+.sub-menu a {
+    padding: 5px;
+}
+.sub-menu a.active {
+    color: #ffffff;
+    background-color: #428bca;
+    border: none;
+    border-radius: 3px;
+}
 
 /* tabs */
 .nav>li>a {

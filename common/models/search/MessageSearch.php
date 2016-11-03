@@ -64,8 +64,8 @@ class MessageSearch extends Message
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'from' => $this->from,
-            'to' => $this->to,
+            'user_from' => $this->user_from,
+            'user_to' => $this->user_to,
             'topic_id' => $this->topic_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -96,6 +96,7 @@ class MessageSearch extends Message
 
         $expression = new Expression('message_id = message.id');
         $query->joinWith(['topic', 'author.department'])
+            ->alias('message')
             ->where([
                 'department_id' => $this->department_id,
                 'user_to' => $user->id,

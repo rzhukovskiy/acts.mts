@@ -103,18 +103,17 @@ class Message extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if (!$this->topic && $this->topic_str) {
+            if (!$this->topic_id && $this->topic_str) {
                 $modelTopic = new Topic();
                 $modelTopic->topic = $this->topic_str;
                 if (!$modelTopic->save()) {
                     return false;
                 }
                 $this->topic_id = $modelTopic->id;
-                return true;
             }
-        } else {
-            return false;
+            return true;
         }
+        return false;
     }
 
     public function afterSave($insert, $changedAttributes)

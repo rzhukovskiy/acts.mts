@@ -7,6 +7,7 @@
  */
 
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -15,17 +16,33 @@ echo GridView::widget([
     'layout' => '{items}',
     'emptyText' => '',
     'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-
         [
             'header' => 'Кому',
+            'contentOptions' => ['style' => 'width: 80px'],
             'value' => function($model) {
                 return $model->recipient->username;
             }
         ],
-        'topic.topic',
-        'text',
+        [
+            'attribute' => 'topic.topic',
+            'contentOptions' => ['style' => 'width: 80px'],
+        ],
+        [
+            'attribute' => 'text',
+            'contentOptions' => function ($model, $index, $widget, $grid){
+                return ['style' => $model->is_read ? '' : 'font-weight: bold'];
+            },
+        ],
 
-        ['class' => 'yii\grid\ActionColumn'],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{view}',
+            'contentOptions' => ['style' => 'width: 40px'],
+            'buttons' => [
+                'view' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $model->id]);
+                }
+            ]
+        ],
     ],
 ]);
