@@ -42,9 +42,7 @@ use common\models\Requisites;
         </div>
 
         <div id="details" class="collapse">
-            <?= $form->field($model, 'is_split')->checkbox([], false) ?>
             <?= $form->field($model, 'schedule')->checkbox([], false) ?>
-            <?= $form->field($model, 'cardList') ?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">
                     <strong>Для актов</strong>

@@ -14,7 +14,7 @@ $this->title = 'Редактирование ' . $model->name;
 echo $this->render('_tabs', [
     'model' => $model,
 ]);
-
+print_r(Company::$listType[$model->type]['en']);die;
 echo $this->render(Company::$listType[$model->type]['en'] . '/_form', [
     'model' => $model,
 ]);
