@@ -93,7 +93,7 @@ class ServiceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'ServiceSearch[type]' => $model->type]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -109,9 +109,11 @@ class ServiceController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $type = $model->type;
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'ServiceSearch[type]' => $type]);
     }
 
     /**

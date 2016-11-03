@@ -104,6 +104,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Услуги',
                     'url'   => ['service/index', 'ServiceSearch[type]' => Service::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'service',
                 ],
                 [
                     'label'  => 'Пользователи',
