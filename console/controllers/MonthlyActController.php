@@ -39,6 +39,9 @@ class MonthlyActController extends Controller
             if (isset($act['service_id'])) {
                 $MonthlyAct->service_id = $act['service_id'];
             }
+            if (isset($act['number'])) {
+                $MonthlyAct->number = $act['number'];
+            }
             $MonthlyAct->profit = $act['profit'];
             $MonthlyAct->is_partner = $act['is_partner'];
             $MonthlyAct->act_date = $act['date'];

@@ -17,6 +17,7 @@ use yii\web\UploadedFile;
  * @property integer $type_id
  * @property integer $service_id
  * @property integer $profit
+ * @property string $number
  * @property integer $payment_status
  * @property integer $payment_date
  * @property integer $act_status
@@ -103,7 +104,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 ],
                 'integer'
             ],
-            [['img', 'act_date', 'payment_date'], 'string', 'on' => 'default'],
+            [['img', 'act_date', 'payment_date', 'number'], 'string', 'on' => 'default'],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxFiles' => 10, 'on' => 'default'],
             [
                 [
@@ -139,6 +140,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'type_id'               => 'Тип',
             'service_id'            => 'Услуга',
             'profit'                => 'Сумма',
+            'number'                => 'Номер авто',
             'payment_status'        => 'Статус оплаты',
             'payment_date'          => 'Дата оплаты',
             'act_status'            => 'Статус акта',
@@ -315,7 +317,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
     {
         $partnerAct =
             Act::find()
-                ->select('partner_id as company_id,service_type,SUM(expense) as profit')
+                ->select('partner_id as company_id,service_type')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
                 ->addSelect(new Expression('1 as is_partner'))
                 ->byMonthlyDate($date);
@@ -324,21 +326,21 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $partnerAct = $partnerAct->andWhere(['partner_id' => $idCompany]);
         }
         //Мойки и сервисы
-        $washAndService = clone $partnerAct;
-        $washAndService->addSelect('SUM(expense) as profit')->andWhere([
+        $washAndTires = clone $partnerAct;
+        $washAndTires->addSelect('SUM(expense) as profit')->andWhere([
             'in',
             'service_type',
-            [Service::TYPE_WASH, Service::TYPE_SERVICE]
+            [Service::TYPE_WASH, Service::TYPE_TIRES]
         ])->groupBy('partner_id,service_type,date');
         //var_dump($washAndService->createCommand()->rawSql);
-        $washAndService = $washAndService->asArray()->all();
+        $washAndTires = $washAndTires->asArray()->all();
         //Шиномонтажи
-        $tires = clone $partnerAct;
-        $tires->addSelect('expense as profit')
-            ->andWhere(['service_type' => Service::TYPE_TIRES])
+        $service = clone $partnerAct;
+        $service->addSelect(['expense as profit', 'number'])
+            ->andWhere(['service_type' => Service::TYPE_SERVICE])
             ->orderBy(['company_id' => SORT_DESC]);
         //var_dump($tires->createCommand()->rawSql);
-        $tires = $tires->asArray()->all();
+        $service = $service->asArray()->all();
         //Дезинфекция
         $disinfection = clone $partnerAct;
         $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
@@ -351,7 +353,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
         //var_dump($disinfection->createCommand()->rawSql);
         $disinfection = $disinfection->asArray()->all();
 
-        $partnerAct = array_merge($washAndService, $tires, $disinfection);
+        $partnerAct = array_merge($washAndTires, $service, $disinfection);
 
         return $partnerAct;
     }
@@ -374,21 +376,21 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $clientAct = $clientAct->andWhere(['client_id' => $idCompany]);
         }
         //Мойки и сервисы
-        $washAndService = clone $clientAct;
-        $washAndService->addSelect('SUM(expense) as profit')->andWhere([
+        $washAndTires = clone $clientAct;
+        $washAndTires->addSelect('SUM(income) as profit')->andWhere([
             'in',
             'service_type',
-            [Service::TYPE_WASH, Service::TYPE_SERVICE]
+            [Service::TYPE_WASH, Service::TYPE_TIRES]
         ])->groupBy('client_id,service_type,date');
         //var_dump($washAndService->createCommand()->rawSql);
-        $washAndService = $washAndService->asArray()->all();
+        $washAndTires = $washAndTires->asArray()->all();
         //Шиномонтажи
-        $tires = clone $clientAct;
-        $tires->addSelect('income as profit')
-            ->andWhere(['service_type' => Service::TYPE_TIRES])
+        $service = clone $clientAct;
+        $service->addSelect(['income as profit', 'number'])
+            ->andWhere(['service_type' => Service::TYPE_SERVICE])
             ->orderBy(['company_id' => SORT_DESC]);
         //var_dump($tires->createCommand()->rawSql);
-        $tires = $tires->asArray()->all();
+        $service = $service->asArray()->all();
         //Дезинфекция
         $disinfection = clone $clientAct;
         $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
@@ -401,7 +403,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
         //var_dump($disinfection->createCommand()->rawSql);
         $disinfection = $disinfection->asArray()->all();
 
-        $clientAct = array_merge($washAndService, $tires, $disinfection);
+        $clientAct = array_merge($washAndTires, $service, $disinfection);
 
         return $clientAct;
     }
