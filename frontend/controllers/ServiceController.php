@@ -54,6 +54,7 @@ class ServiceController extends Controller
     {
         $searchModel = new ServiceSearch();
         $dataProvider = new ActiveDataProvider($searchModel->search(Yii::$app->request->queryParams));
+        $dataProvider->pagination = false;
         $model = new Service();
         $model->type = $searchModel->type;
 
@@ -75,7 +76,7 @@ class ServiceController extends Controller
         $model = new Service();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'ServiceSearch[type]' => $model->type]);
         } else {
             return $this->goBack();
         }
