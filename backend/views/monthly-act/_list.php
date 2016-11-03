@@ -92,8 +92,8 @@ echo newerton\fancybox\FancyBox::widget([
             'filters'       => $filters,
             'visibleButton' => $visibleButton
         ]);
-} elseif ($type == \common\models\Service::TYPE_TIRES) {
-    echo $this->render('_list_tires',
+} elseif ($type == \common\models\Service::TYPE_SERVICE) {
+    echo $this->render('_list_service',
         [
             'dataProvider'  => $dataProvider,
             'searchModel'   => $searchModel,
