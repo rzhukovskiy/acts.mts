@@ -39,7 +39,8 @@
         {
             /** @var Act $act */
             foreach (Act::find()->all() as $act) {
-                if (!$act->clientScopes || !$act->partnerScopes) {
+                if ((!$act->clientScopes && $act->partnerScopes) || (!$act->partnerScopes && $act->clientScopes)) {
+                    $this->stdout("$act->id \n");
                     $listScope = $act->clientScopes ? $act->clientScopes : $act->partnerScopes;
 
                     foreach ($listScope as $scope) {
