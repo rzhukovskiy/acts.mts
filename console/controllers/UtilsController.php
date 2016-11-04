@@ -1,18 +1,21 @@
 <?php
     namespace console\controllers;
 
+    use common\models\Act;
     use common\models\CompanyService;
     use common\models\User;
     use yii\console\Controller;
 
-    class TestController extends Controller
+    class UtilsController extends Controller
     {
         public function actionIndex(  )
         {
             $this->stdout("\n");
             $this->stdout("Test controller \n");
             $this->stdout("\nActions: \n");
-            $this->stdout('   test/generate-users' . " — generate test user accounts.\n");
+            $this->stdout('   utils/generate-users' . " — generate test user accounts.\n");
+            $this->stdout('   utils/fix-duplicate-prices' . " — removes duplicate prices for services.\n");
+            $this->stdout('   utils/fix-act-scopes' . " — fixes unfinished scopes in acts.\n");
             $this->stdout("\n");
         }
 
@@ -29,6 +32,26 @@
         {
             foreach (CompanyService::find()->orderBy('id ASC')->all() as $companyService) {
                 $companyService->save();
+            }
+        }
+
+        public function actionFixActScopes()
+        {
+            /** @var Act $act */
+            foreach (Act::find()->all() as $act) {
+                if (!$act->clientScopes || !$act->partnerScopes) {
+                    $listScope = $act->clientScopes ? $act->clientScopes : $act->partnerScopes;
+
+                    foreach ($listScope as $scope) {
+                        $newScope = clone $scope;
+                        $newScope->company_id = $act->clientScopes ? $act->partner_id : $act->client_id;
+                        $newScope->id = null;
+                        $newScope->setIsNewRecord(true);
+                        $newScope->save();
+                    }
+                    $act->status = Act::STATUS_NEW;
+                    $act->save();
+                }
             }
         }
 
