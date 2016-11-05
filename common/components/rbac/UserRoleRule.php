@@ -16,9 +16,9 @@ class UserRoleRule extends Rule
         if ($user) {
             $role = $user->role;
             if ($item->name === User::ROLE_ADMIN) {
-                return $role == User::ROLE_ADMIN;
+                return $role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER;
             } elseif ($item->name === User::ROLE_WATCHER) {
-                return $role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER;
+                return $role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER;
             } elseif ($item->name === User::ROLE_PARTNER) {
                 return $role == User::ROLE_ADMIN || $role == User::ROLE_PARTNER;
             } elseif ($item->name === User::ROLE_CLIENT) {

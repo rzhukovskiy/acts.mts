@@ -9,6 +9,9 @@ return [
         'type' => 1,
         'description' => 'Менеджер',
         'ruleName' => 'userRole',
+        'children' => [
+            3,
+        ],
     ],
     3 => [
         'type' => 1,
