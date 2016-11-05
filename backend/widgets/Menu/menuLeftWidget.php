@@ -125,7 +125,7 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
-        } elseif ($currentUser && $currentUser->role == User::ROLE_WATCHER) {
+        } elseif ($currentUser && ($currentUser->role == User::ROLE_WATCHER || $currentUser->role == User::ROLE_MANAGER)) {
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [

@@ -156,5 +156,8 @@ class SiteController extends Controller
         if (Yii::$app->user->can(User::ROLE_WATCHER)) {
             return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
         }
+        if (Yii::$app->user->can(User::ROLE_MANAGER)) {
+            return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
+        }
     }
 }

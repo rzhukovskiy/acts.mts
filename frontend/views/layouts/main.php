@@ -38,8 +38,8 @@ AppAsset::register($this);
                             ['/user/login', 'id' => 1],
                             ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
-                    <?= false ? Html::a('Сменить кабинет',
-                        Yii::getAlias('@backWeb'),
+                    <?= Yii::$app->user->can(User::ROLE_WATCHER) || Yii::$app->user->can(User::ROLE_MANAGER)
+                        ? Html::a('Сменить кабинет', Yii::getAlias('@backWeb'),
                         ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) : '' ?>
                 </div>
             </div>
