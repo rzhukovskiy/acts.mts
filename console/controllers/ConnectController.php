@@ -53,7 +53,7 @@ class ConnectController extends Controller
         foreach ($rows as $rowData) {
             $company_id = $this->new_db
                 ->createCommand("SELECT * FROM {$this->new_db->tablePrefix}company WHERE old_id = {$rowData['id']}")
-                ->queryAll();
+                ->queryOne();
             $company_id = ArrayHelper::getValue($company_id, ['id'], false);
 
             if ($oldRequestData = $this->old_db
