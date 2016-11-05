@@ -15,21 +15,6 @@ use yii\filters\VerbFilter;
 class CompanyMemberController extends Controller
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all CompanyMember models.
      * @return mixed
      */
@@ -101,9 +86,10 @@ class CompanyMemberController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/company/member', 'id' => $model->company_id]);
     }
 
     /**

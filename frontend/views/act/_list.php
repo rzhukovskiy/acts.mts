@@ -37,7 +37,7 @@ if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->chil
             ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
-if ($role == User::ROLE_ADMIN) {
+if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
     $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
 }

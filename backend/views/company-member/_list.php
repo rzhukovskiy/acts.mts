@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyMember
@@ -17,26 +18,16 @@ use yii\grid\GridView;
         <?= $this->render('/company-member/_form', [
             'model' => $model,
         ]);
-        ?>
-        <?= GridView::widget([
+        ?><?=
+        ListView::widget([
             'dataProvider' => $dataProvider,
-            'tableOptions' => ['class' => 'table table-bordered'],
-            'layout' => '{items}',
-            'emptyText' => '',
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-
-                'position',
-                'name',
-                'phone',
-                'email:email',
-
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update}{delete}',
-                    'contentOptions' => ['style' => 'min-width: 70px'],
-                ],
+            'options' => [
+                'tag' => 'div',
+                'class' => 'list-data',
             ],
-        ]); ?>
+            'layout' => "{items}",
+            'itemView' => '_list_item',
+        ]);
+        ?>
     </div>
 </div>

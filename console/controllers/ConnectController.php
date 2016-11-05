@@ -39,6 +39,13 @@ class ConnectController extends Controller
 
     public function actionMerge()
     {
+        $listStatus = [
+            0 => Company::STATUS_NEW,
+            1 => Company::STATUS_ACTIVE,
+            2 => Company::STATUS_REFUSE,
+            3 => Company::STATUS_NEW,
+        ];
+
         $rows = $this->old_db
             ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request")
             ->queryAll();
@@ -101,6 +108,7 @@ class ConnectController extends Controller
                 $status = Company::STATUS_REFUSE;
                 $created_at = strtotime($refuseData['created']);
             }
+            $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
 
             if (!$company_id) {
                 $companyData = [
