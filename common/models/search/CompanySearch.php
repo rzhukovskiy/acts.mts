@@ -81,7 +81,7 @@ class CompanySearch extends Company
                 if ($this->status == Company::STATUS_NEW) {
                     $query->orderBy('communication_at ASC');
                 } else {
-                    $query->orderBy('city ASC');
+                    $query->orderBy('address ASC');
                 }
 
                 break;
