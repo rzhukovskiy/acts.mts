@@ -14,6 +14,7 @@ $request = Yii::$app->request;
 $items = [];
 
 switch ($role) {
+    case User::ROLE_MANAGER:
     case User::ROLE_WATCHER:
     case User::ROLE_ADMIN:
         foreach (Service::$listType as $type_id => $typeData) {
