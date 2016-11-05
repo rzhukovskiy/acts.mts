@@ -110,11 +110,15 @@ class ConnectController extends Controller
             }
             $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
 
+            $name = ArrayHelper::getValue($rowData, 'name');
+            if(!$name) {
+                $name = 'Без названия ' . $rowData['id'];
+            }
             if (!$company_id) {
                 $companyData = [
                     'NULL',
                     'NULL',
-                    '"' . addslashes(ArrayHelper::getValue($rowData, 'name')) . '"',
+                    '"' . addslashes($name) . '"',
                     '"' . addslashes(ArrayHelper::getValue($rowData, 'address_city')) . '"',
                     '"' . addslashes(ArrayHelper::getValue($employees['Директор'], 'name')) . '"',
                     $type,

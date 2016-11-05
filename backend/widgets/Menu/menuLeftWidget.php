@@ -88,7 +88,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Отказ'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
+                    'label' => 'Архив 2'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/refuse', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
@@ -145,7 +145,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Отказ'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
+                    'label' => 'Архив 2'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
