@@ -288,6 +288,24 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @param $status
+     * @return array
+     */
+    public function getAllServiceType($status)
+    {
+        $res = [];
+        if (!empty($this->department)) {
+            foreach (Service::$listType as $companyType => $serviceData) {
+                if ($this->can($companyType, $status)) {
+                    $res[$companyType] = Company::$listType[$companyType];
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * @param $companyType
      * @param $companyStatus
      * @return int
