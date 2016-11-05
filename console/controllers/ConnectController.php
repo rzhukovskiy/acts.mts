@@ -138,7 +138,9 @@ class ConnectController extends Controller
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
                 } catch (Exception $e) {
                     if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                        continue;
+                        $companyData[2] = $companyData[2] . '_' . $rowData['id'];
+                        $insert = "(" . implode(',', $companyData) . ")";
+                        $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
                     }
                     print_r($e->getMessage());
                     die;
