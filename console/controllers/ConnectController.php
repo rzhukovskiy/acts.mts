@@ -137,14 +137,15 @@ class ConnectController extends Controller
                 try {
                     $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
                 } catch (Exception $e) {
-                    if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                        $companyData[2] = '"' . addslashes($name) . '_' . $rowData['id'] . '"';
+                    if (strpos($e->getMessage(), 'Duplicate') !== false) {
+                        $name = $rowData['id'] . ' ' . $name;
+                        $companyData[2] = '"' . addslashes($name) . '"';
                         $insert = "(" . implode(',', $companyData) . ")";
                         $this->new_db->createCommand("INSERT into {$this->new_db->tablePrefix}company VALUES $insert")->execute();
+                    } else {
+                        print_r($e->getMessage());
+                        continue;
                     }
-                    print_r($e->getMessage());
-                    die;
-                    continue;
                 }
                 $company_id = $this->new_db->lastInsertID;
             }
