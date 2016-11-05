@@ -71,13 +71,13 @@ if (in_array(Yii::$app->user->identity->role, [User::ROLE_WATCHER, User::ROLE_MA
         'driver',
     ])
 ) {
-    DialogAsset::register($this);
-    DateTimePicker::widget(['name' => 'asset']);
-    Dialog::widget([
-        'options' => [],
-    ]);
-    $this->registerJs("$(document).ready(function() {checkAlerts();});", View::POS_END);
-    echo '<audio id="bflat" src="/js/bflat.mp3"></audio>';
+//    DialogAsset::register($this);
+//    DateTimePicker::widget(['name' => 'asset']);
+//    Dialog::widget([
+//        'options' => [],
+//    ]);
+//    $this->registerJs("$(document).ready(function() {checkAlerts();});", View::POS_END);
+//    echo '<audio id="bflat" src="/js/bflat.mp3"></audio>';
 }
 ?>
 
