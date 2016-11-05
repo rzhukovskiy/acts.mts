@@ -170,7 +170,9 @@ class SiteController extends Controller
          * @var \yii\db\Connection $old_db
          */
         $old_db = Yii::$app->db_old;
-        $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request ORDER BY name ASC")->queryAll();
+        $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE id NOT IN (" .
+            implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
+            ") ORDER BY name ASC")->queryAll();
 
         return $this->render('connect', [
             'listCompany' => $listCompany,
