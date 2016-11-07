@@ -152,6 +152,11 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'company',
                 ],
                 [
+                    'label'  => 'Статистика',
+                    'url'    => ['/stat/list-common', ],
+                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->controller->action->id == 'list-common',
+                ],
+                [
                     'label'  => 'Акты',
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'act',

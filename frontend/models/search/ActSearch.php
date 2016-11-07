@@ -2,10 +2,12 @@
 
 namespace frontend\models\search;
 
+use frontend\widgets\datePeriod\DatePeriodWidget;
 use frontend\models\Act;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 
 
 /**
@@ -37,6 +39,7 @@ class ActSearch extends Act
         $scenarios = [
             'statistic_partner_filter' => ['dateFrom', 'dateTo', 'service_type'],
             'statistic_client_filter' => ['dateFrom', 'dateTo', 'service_type'],
+            'statistic_filter' => ['dateFrom', 'dateTo', 'service_type','client_id'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);
@@ -237,4 +240,38 @@ class ActSearch extends Act
 
         return $dataProvider;
     }
+
+    /**
+     * Поиск по типу услуги
+     *
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchStatistic($params)
+    {
+        $query = static::find();
+
+        $query->addSelect([
+            'SUM(expense) as expense',
+            'SUM(profit) as profit',
+            'SUM(income) as income',
+        ]);
+        if (in_array($this->period, [DatePeriodWidget::PERIOD_ALL, DatePeriodWidget::PERIOD_YEAR])) {
+            $query->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
+                ->groupBy('date');
+        } else {
+            $query->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-%d") as date'))
+                ->groupBy('date');
+        }
+        //Чтобы получить client_id надо присвоить
+        $this->load($params);
+        if ($this->client_id) {
+            $query->andWhere(['or', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]])
+                ->joinWith('client client');
+        }
+
+        return $this->createProvider($params, $query);
+    }
+
+
 }

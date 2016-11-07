@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\User;
 use frontend\traits\ChartTrait;
+use frontend\widgets\datePeriod\DatePeriodWidget;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
@@ -92,6 +93,42 @@ class StatController extends Controller
             'totalExpense' => $formatter->asDecimal($totalExpense, 0),
         ]);
     }
+
+    // Списки партнеров или компаний по типам
+    // $group [company, partner]
+    public function actionListCommon()
+    {
+        $searchModel = new ActSearch();
+        $searchModel->scenario = 'statistic_filter';
+        $searchModel->period = Yii::$app->request->get('period');
+        $dataProvider = $searchModel->searchStatistic(Yii::$app->request->queryParams);
+
+        /** @var Company $companyModel */
+        $companyModel = Company::findOne($searchModel->client_id);
+
+        $data = $dataProvider->query->asArray()->all();
+
+        list($data, $maximum) = DatePeriodWidget::getDataForGraph($data);
+        $xDateFormat = DatePeriodWidget::getDateFormat($searchModel->period);
+        list($maximum, $step) = DatePeriodWidget::getMaxAndStep($maximum);
+
+        $title = 'Статистика';
+        if (isset($companyModel->name)) {
+            $title .= ' по компании ' . $companyModel->name;
+        }
+
+        return $this->render('list_common',
+            [
+                'admin'       => Yii::$app->user->identity->role == User::ROLE_ADMIN,
+                'searchModel' => $searchModel,
+                'data'        => $data,
+                'maximum'     => $maximum,
+                'step'        => $step,
+                'xDateFormat' => $xDateFormat,
+                'title'       => $title
+            ]);
+    }
+
 
     // Акты компании с учетом типа или без
     // Выбор шаблона в зависимости от типа компании
