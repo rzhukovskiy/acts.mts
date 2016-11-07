@@ -177,10 +177,9 @@ class DatePeriodWidget extends Widget
         } else {
             $step = $maxFlor / 2;
         }
-        $maximum = $maxPrepare + $step;
+        $maximum = ($maximum - $maximum % $step) + $step;
 
         return [$maximum, $step];
-
     }
 
     /**
