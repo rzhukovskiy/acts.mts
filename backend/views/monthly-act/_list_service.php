@@ -10,7 +10,7 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 
 echo GridView::widget([
-    'id'               => 'act-grid',
+    'id'               => 'monthly-act-grid',
     'dataProvider'     => $dataProvider,
     'summary'          => false,
     'emptyText'        => '',
@@ -80,12 +80,21 @@ echo GridView::widget([
             'pageSummaryFunc' => GridView::F_SUM,
             'format'          => 'html',
         ],
-        [
+        'payment_status' => [
             'attribute'      => 'payment_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$paymentStatus[$data->payment_status];
+            'value'          => function ($model, $key, $index, $column) {
+                return Html::activeDropDownList($model,
+                    'payment_status',
+                    MonthlyAct::$paymentStatus,
+                    [
+                        'class'   => 'form-control change-payment_status',
+                        'data-id' => $model->id,
+                    ]
+
+                );
             },
             'filter'         => false,
+            'format'         => 'raw',
             'contentOptions' => function ($model) {
                 return [
                     'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
@@ -94,15 +103,22 @@ echo GridView::widget([
             },
         ],
         'payment_date',
-        [
+        'act_status'     => [
             'attribute'      => 'act_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$actStatus[$data->act_status];
+            'value'          => function ($model, $key, $index, $column) {
+                return Html::activeDropDownList($model,
+                    'act_status',
+                    MonthlyAct::$actStatus,
+                    [
+                        'class'   => 'form-control change-act_status',
+                        'data-id' => $model->id,
+                    ]);
             },
             'contentOptions' => function ($model) {
                 return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 160px'];
             },
             'filter'         => false,
+            'format'         => 'raw',
 
         ],
         /*

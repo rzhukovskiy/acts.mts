@@ -9,9 +9,10 @@ class MonthlyActController extends Controller
 {
     /**
      * @param bool $allDate
+     * @param bool $type
      * @return int
      */
-    public function actionCreate($allDate = false)
+    public function actionCreate($allDate = false, $type = false)
     {
         $actDate = date('Y-m-d', strtotime('-1 month'));
 
@@ -21,10 +22,8 @@ class MonthlyActController extends Controller
 
             return 0;
         }
-
-        $partnerAct = MonthlyAct::getPartnerAct($allDate);
-
-        $clientAct = MonthlyAct::getClientAct($allDate);
+        $partnerAct = MonthlyAct::getPartnerAct($allDate, false, $type);
+        $clientAct = MonthlyAct::getClientAct($allDate, false, $type);
 
         $allAct = array_merge($partnerAct, $clientAct);
         if (!$allAct) {

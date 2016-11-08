@@ -352,3 +352,7 @@ table.sign {
     font-weight: bold;
     width: 200px;
 }
+.change-act_status,.change-payment_status{
+    height: 24px;
+    font-size: 14px;
+}

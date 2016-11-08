@@ -308,12 +308,17 @@ class MonthlyAct extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param  $date
+     * @param bool $date
      * @param bool $idCompany
-     * @return array
+     * @param bool $type
+     * @return $this|array
      */
-    static public function getPartnerAct($date = false, $idCompany = false)
+    static public function getPartnerAct($date = false, $idCompany = false, $type = false)
     {
+        $washAndTires = [];
+        $service = [];
+        $disinfection = [];
+
         $partnerAct =
             Act::find()
                 ->select('partner_id as company_id,service_type')
@@ -325,47 +330,57 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $partnerAct = $partnerAct->andWhere(['partner_id' => $idCompany]);
         }
         //Мойки и сервисы
-        $washAndTires = clone $partnerAct;
-        $washAndTires->addSelect('SUM(expense) as profit')->andWhere([
-            'in',
-            'service_type',
-            [Service::TYPE_WASH, Service::TYPE_TIRES]
-        ])->byMonthlyDate($date)->groupBy('partner_id,service_type,date');
-        //var_dump($washAndService->createCommand()->rawSql);
-        $washAndTires = $washAndTires->asArray()->all();
-        //Шиномонтажи
-        $service = clone $partnerAct;
-        $service->addSelect(['expense as profit', 'number'])
-            ->andWhere(['service_type' => Service::TYPE_SERVICE])
-            ->byMonthlyDate($date)
-            ->orderBy(['company_id' => SORT_DESC]);
-        //var_dump($tires->createCommand()->rawSql);
-        $service = $service->asArray()->all();
-        //Дезинфекция
-        $disinfection = clone $partnerAct;
-        $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
-            ->addSelect('scopes.service_id as service_id')
-            ->joinWith('scopes scopes')
-            ->andWhere(['service_type' => Service::TYPE_DISINFECT])
-            ->andWhere('scopes.company_id=partner_id')
-            ->byMonthlyDate($date, true)
-            ->groupBy('partner_id,date,service_id')
-            ->orderBy(['service_id' => SORT_DESC]);
-        //var_dump($disinfection->createCommand()->rawSql);
-        $disinfection = $disinfection->asArray()->all();
-
+        if (!$type) {
+            $washAndTires = clone $partnerAct;
+            $washAndTires->addSelect('SUM(expense) as profit')->andWhere([
+                'in',
+                'service_type',
+                [Service::TYPE_WASH, Service::TYPE_TIRES]
+            ])->byMonthlyDate($date)->groupBy('partner_id,service_type,date');
+            //var_dump($washAndService->createCommand()->rawSql);
+            $washAndTires = $washAndTires->asArray()->all();
+        }
+        if (!$type || $type == Service::TYPE_SERVICE) {
+            //Шиномонтажи
+            $service = clone $partnerAct;
+            $service->addSelect(['expense as profit', 'number'])
+                ->andWhere(['service_type' => Service::TYPE_SERVICE])
+                ->byMonthlyDate($date)
+                ->orderBy(['company_id' => SORT_DESC]);
+            //var_dump($tires->createCommand()->rawSql);
+            $service = $service->asArray()->all();
+        }
+        if (!$type || $type == Service::TYPE_DISINFECT) {
+            //Дезинфекция
+            $disinfection = clone $partnerAct;
+            $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
+                ->addSelect('scopes.service_id as service_id')
+                ->joinWith('scopes scopes')
+                ->andWhere(['service_type' => Service::TYPE_DISINFECT])
+                ->andWhere('scopes.company_id=partner_id')
+                ->byMonthlyDate($date, true)
+                ->groupBy('partner_id,date,service_id')
+                ->orderBy(['service_id' => SORT_DESC]);
+            //var_dump($disinfection->createCommand()->rawSql);
+            $disinfection = $disinfection->asArray()->all();
+        }
         $partnerAct = array_merge($washAndTires, $service, $disinfection);
 
         return $partnerAct;
     }
 
     /**
-     * @param $date
+     * @param bool $date
      * @param bool $idCompany
-     * @return array
+     * @param bool $type
+     * @return $this|array
      */
-    static public function getClientAct($date = false, $idCompany = false)
+    static public function getClientAct($date = false, $idCompany = false, $type = false)
     {
+        $washAndTires = [];
+        $service = [];
+        $disinfection = [];
+
         $clientAct =
             Act::find()
                 ->select('client_id as company_id,service_type')
@@ -376,34 +391,40 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $clientAct = $clientAct->andWhere(['client_id' => $idCompany]);
         }
         //Мойки и сервисы
-        $washAndTires = clone $clientAct;
-        $washAndTires->addSelect('SUM(income) as profit')->andWhere([
-            'in',
-            'service_type',
-            [Service::TYPE_WASH, Service::TYPE_TIRES]
-        ])->byMonthlyDate($date)->groupBy('client_id,service_type,date');
-        //var_dump($washAndService->createCommand()->rawSql);
-        $washAndTires = $washAndTires->asArray()->all();
+        if (!$type) {
+            $washAndTires = clone $clientAct;
+            $washAndTires->addSelect('SUM(income) as profit')->andWhere([
+                'in',
+                'service_type',
+                [Service::TYPE_WASH, Service::TYPE_TIRES]
+            ])->byMonthlyDate($date)->groupBy('client_id,service_type,date');
+            //var_dump($washAndService->createCommand()->rawSql);
+            $washAndTires = $washAndTires->asArray()->all();
+        }
         //Шиномонтажи
-        $service = clone $clientAct;
-        $service->addSelect(['income as profit', 'number'])
-            ->andWhere(['service_type' => Service::TYPE_SERVICE])
-            ->byMonthlyDate($date)
-            ->orderBy(['company_id' => SORT_DESC]);
-        //var_dump($tires->createCommand()->rawSql);
-        $service = $service->asArray()->all();
+        if (!$type || $type == Service::TYPE_SERVICE) {
+            $service = clone $clientAct;
+            $service->addSelect(['income as profit', 'number'])
+                ->andWhere(['service_type' => Service::TYPE_SERVICE])
+                ->byMonthlyDate($date)
+                ->orderBy(['company_id' => SORT_DESC]);
+            //var_dump($tires->createCommand()->rawSql);
+            $service = $service->asArray()->all();
+        }
         //Дезинфекция
-        $disinfection = clone $clientAct;
-        $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
-            ->addSelect('scopes.service_id as service_id')
-            ->joinWith('scopes scopes')
-            ->andWhere(['service_type' => Service::TYPE_DISINFECT])
-            ->andWhere('scopes.company_id=client_id')
-            ->byMonthlyDate($date, true)
-            ->groupBy('client_id,date,service_id')
-            ->orderBy(['service_id' => SORT_DESC]);
-        //var_dump($disinfection->createCommand()->rawSql);
-        $disinfection = $disinfection->asArray()->all();
+        if (!$type || $type == Service::TYPE_DISINFECT) {
+            $disinfection = clone $clientAct;
+            $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
+                ->addSelect('scopes.service_id as service_id')
+                ->joinWith('scopes scopes')
+                ->andWhere(['service_type' => Service::TYPE_DISINFECT])
+                ->andWhere('scopes.company_id=client_id')
+                ->byMonthlyDate($date, true)
+                ->groupBy('client_id,date,service_id')
+                ->orderBy(['service_id' => SORT_DESC]);
+            //var_dump($disinfection->createCommand()->rawSql);
+            $disinfection = $disinfection->asArray()->all();
+        }
 
         $clientAct = array_merge($washAndTires, $service, $disinfection);
 
