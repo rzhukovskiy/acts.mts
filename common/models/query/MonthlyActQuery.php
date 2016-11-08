@@ -39,7 +39,7 @@ class MonthlyActQuery extends \yii\db\ActiveQuery
      * @param $servedTime
      * @return $this
      */
-    public function byClient($clientId, $servedTime)
+    public function byClient($servedTime, $clientId)
     {
         $this->andWhere(['client_id' => $clientId, 'is_partner' => MonthlyAct::NOT_PARTNER]);
         $this->andWhere(['act_date' => date('Y-m-00', $servedTime)]);
@@ -52,10 +52,17 @@ class MonthlyActQuery extends \yii\db\ActiveQuery
      * @param $servedTime
      * @return $this
      */
-    public function byPartner($partnerId, $servedTime)
+    public function byPartner($servedTime, $partnerId)
     {
         $this->andWhere(['client_id' => $partnerId, 'is_partner' => MonthlyAct::PARTNER]);
         $this->andWhere(['act_date' => date('Y-m-00', $servedTime)]);
+
+        return $this;
+    }
+
+    public function byType($serviceType)
+    {
+        $this->andWhere(['type_id' => $serviceType]);
 
         return $this;
     }

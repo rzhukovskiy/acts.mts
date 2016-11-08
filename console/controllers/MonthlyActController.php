@@ -31,21 +31,7 @@ class MonthlyActController extends Controller
 
             return 0;
         }
-        foreach ($allAct as $act) {
-            $MonthlyAct = new MonthlyAct();
-            $MonthlyAct->client_id = $act['company_id'];
-            $MonthlyAct->type_id = $act['service_type'];
-            if (isset($act['service_id'])) {
-                $MonthlyAct->service_id = $act['service_id'];
-            }
-            if (isset($act['number'])) {
-                $MonthlyAct->number = $act['number'];
-            }
-            $MonthlyAct->profit = $act['profit'];
-            $MonthlyAct->is_partner = $act['is_partner'];
-            $MonthlyAct->act_date = $act['date'];
-            $MonthlyAct->save();
-        }
+        MonthlyAct::massSaveAct($allAct);
         echo "Monthly Acts successfully created!\n";
 
         return 0;
