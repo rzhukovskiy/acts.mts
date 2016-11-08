@@ -9,6 +9,31 @@ use common\models\MonthlyAct;
 use common\models\User;
 use kartik\date\DatePicker;
 
+$script = <<< JS
+    $('.change-payment_status').change(function(){
+     var select=$(this);
+        $.ajax({
+            url: "/monthly-act/ajax-payment-status",
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+            }
+        });
+    });
+    $('.change-act_status').change(function(){
+        var select=$(this);
+        $.ajax({
+            url: "/monthly-act/ajax-act-status",
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+              select.parent().attr('class',data);
+            }
+        });
+    });
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 
 //Настройки фильтров
 $filters = 'Период: ' . DatePicker::widget([
@@ -24,7 +49,7 @@ $filters = 'Период: ' . DatePicker::widget([
             'format'          => 'm-yyyy',
             'maxViewMode'     => 2,
             'minViewMode'     => 1,
-            'endDate'         => '-1m'
+            //'endDate'         => '-1m'
         ],
         'options'       => [
             'class' => 'form-control ext-filter',
@@ -81,7 +106,6 @@ echo newerton\fancybox\FancyBox::widget([
     ]
 ]);
 ?>
-
 <?php if ($type == \common\models\Service::TYPE_DISINFECT) {
     echo $this->render('_list_disinfect',
         [

@@ -37,20 +37,28 @@ class ActQuery extends ActiveQuery
 
     /**
      * @param $date
+     * @param bool $isDisinfect
      * @return $this
      */
-    public function byMonthlyDate($date)
+    public function byMonthlyDate($date, $isDisinfect = false)
     {
+        //отдельная дата для дезинфекций
+        if (!$date || $date == 'all') {
+            $fromDate = ($isDisinfect) ? strtotime('+2 month') : strtotime('-1 month');
+        } else {
+            $fromDate = $date;
+        }
+
         if (!$date) {
             $this->andWhere([
                 "date_format(FROM_UNIXTIME(served_at), '%Y%m')" => date('Ym',
-                    strtotime('-1 month'))
+                    $fromDate)
             ]);
         } elseif ($date == 'all') {
             $this->andWhere([
                 "<=",
                 "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
-                date('Ym', strtotime('-1 month'))
+                date('Ym', $fromDate)
             ]);
         } else {
             $this->andWhere([

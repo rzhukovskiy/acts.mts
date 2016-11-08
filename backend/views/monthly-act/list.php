@@ -3,8 +3,7 @@
 /**
  * @var $this yii\web\View
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $model common\models\Company
- * @var $searchModel \common\models\search\CompanySearch
+ * @var $searchModel  common\models\search\MonthlyActSearch
  * @var $type integer
  * @var $admin boolean
  */
@@ -12,8 +11,9 @@ $this->title = \common\models\Company::$listType[$type]['ru'];
 
 echo $this->render('_tabs',
     [
-        'type'     => $type,
-        'listType' => $listType
+        'type'        => $type,
+        'listType'    => $listType,
+        'searchModel' => $searchModel
     ]);
 
 

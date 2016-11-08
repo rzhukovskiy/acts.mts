@@ -30,7 +30,7 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
@@ -51,6 +51,8 @@ class MonthlyActController extends Controller
         $searchModel->type_id = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //Запоминаем
+        $this->setSessionDate($searchModel->act_date);
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Service::$listType;
@@ -81,7 +83,15 @@ class MonthlyActController extends Controller
             $model->image = yii\web\UploadedFile::getInstances($model, 'image');
             $model->uploadImage();
             if ($model->save()) {
-                return $this->redirect(['list', 'type' => $model->type_id, 'company' => !$model->is_partner]);
+                $redirect =
+                    [
+                        'list',
+                        'type'                       => $model->type_id,
+                        'company'                    => !$model->is_partner,
+                        'MonthlyActSearch[act_date]' => $this->getSessionDate()
+                    ];
+
+                return $this->redirect($redirect);
             }
         }
 
@@ -104,7 +114,15 @@ class MonthlyActController extends Controller
         $model->scenario = 'detail';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['list', 'type' => $model->type_id, 'company' => !$model->is_partner]);
+            $redirect =
+                [
+                    'list',
+                    'type'                       => $model->type_id,
+                    'company'                    => !$model->is_partner,
+                    'MonthlyActSearch[act_date]' => $this->getSessionDate()
+                ];
+
+            return $this->redirect($redirect);
         }
 
         return $this->render('detail',
@@ -128,6 +146,12 @@ class MonthlyActController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+    /**
+     * @param $id
+     * @param $url
+     * @return yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionDeleteImage($id, $url)
     {
         $model = $this->findModel($id);
@@ -135,6 +159,34 @@ class MonthlyActController extends Controller
         $model->save();
 
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    public function actionAjaxPaymentStatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = $this->findModel($id);
+        $model->payment_status = $status;
+        $model->save();
+
+        return MonthlyAct::colorForPaymentStatus($model->payment_status);
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    public function actionAjaxActStatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = $this->findModel($id);
+        $model->act_status = $status;
+        $model->save();
+
+        return MonthlyAct::colorForStatus($model->act_status);
     }
 
     /**
@@ -151,6 +203,27 @@ class MonthlyActController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getSessionDate()
+    {
+        return Yii::$app->session->get($this->id . "_act_date");
+    }
+
+    /**
+     * @param $actDate
+     */
+    protected function setSessionDate($actDate)
+    {
+        Yii::$app->session->set($this->id . "_act_date", $actDate);
+    }
+
+    protected function removeSessionDate()
+    {
+        Yii::$app->session->remove($this->id . "_act_date");
     }
 
 }

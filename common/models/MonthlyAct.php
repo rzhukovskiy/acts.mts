@@ -305,7 +305,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
                 $MonthlyAct->save();
             }
         }
-
     }
 
     /**
@@ -319,8 +318,8 @@ class MonthlyAct extends \yii\db\ActiveRecord
             Act::find()
                 ->select('partner_id as company_id,service_type')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                ->addSelect(new Expression('1 as is_partner'))
-                ->byMonthlyDate($date);
+                ->addSelect(new Expression('1 as is_partner'));
+
 
         if ($idCompany) {
             $partnerAct = $partnerAct->andWhere(['partner_id' => $idCompany]);
@@ -331,13 +330,14 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'in',
             'service_type',
             [Service::TYPE_WASH, Service::TYPE_TIRES]
-        ])->groupBy('partner_id,service_type,date');
+        ])->byMonthlyDate($date)->groupBy('partner_id,service_type,date');
         //var_dump($washAndService->createCommand()->rawSql);
         $washAndTires = $washAndTires->asArray()->all();
         //Шиномонтажи
         $service = clone $partnerAct;
         $service->addSelect(['expense as profit', 'number'])
             ->andWhere(['service_type' => Service::TYPE_SERVICE])
+            ->byMonthlyDate($date)
             ->orderBy(['company_id' => SORT_DESC]);
         //var_dump($tires->createCommand()->rawSql);
         $service = $service->asArray()->all();
@@ -348,6 +348,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             ->joinWith('scopes scopes')
             ->andWhere(['service_type' => Service::TYPE_DISINFECT])
             ->andWhere('scopes.company_id=partner_id')
+            ->byMonthlyDate($date, true)
             ->groupBy('partner_id,date,service_id')
             ->orderBy(['service_id' => SORT_DESC]);
         //var_dump($disinfection->createCommand()->rawSql);
@@ -369,8 +370,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             Act::find()
                 ->select('client_id as company_id,service_type')
                 ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                ->addSelect(new Expression('0 as is_partner'))
-                ->byMonthlyDate($date);
+                ->addSelect(new Expression('0 as is_partner'));
 
         if ($idCompany) {
             $clientAct = $clientAct->andWhere(['client_id' => $idCompany]);
@@ -381,13 +381,14 @@ class MonthlyAct extends \yii\db\ActiveRecord
             'in',
             'service_type',
             [Service::TYPE_WASH, Service::TYPE_TIRES]
-        ])->groupBy('client_id,service_type,date');
+        ])->byMonthlyDate($date)->groupBy('client_id,service_type,date');
         //var_dump($washAndService->createCommand()->rawSql);
         $washAndTires = $washAndTires->asArray()->all();
         //Шиномонтажи
         $service = clone $clientAct;
         $service->addSelect(['income as profit', 'number'])
             ->andWhere(['service_type' => Service::TYPE_SERVICE])
+            ->byMonthlyDate($date)
             ->orderBy(['company_id' => SORT_DESC]);
         //var_dump($tires->createCommand()->rawSql);
         $service = $service->asArray()->all();
@@ -398,6 +399,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
             ->joinWith('scopes scopes')
             ->andWhere(['service_type' => Service::TYPE_DISINFECT])
             ->andWhere('scopes.company_id=client_id')
+            ->byMonthlyDate($date, true)
             ->groupBy('client_id,date,service_id')
             ->orderBy(['service_id' => SORT_DESC]);
         //var_dump($disinfection->createCommand()->rawSql);
