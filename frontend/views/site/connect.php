@@ -11,6 +11,8 @@ use yii\widgets\ActiveForm;
  */
 ?>
 
+<?= $this->render('connect/_tabs') ?>
+
 <div class="panel panel-primary">
     <div class="panel-heading">
         Соединение программ

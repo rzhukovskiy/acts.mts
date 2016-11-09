@@ -150,7 +150,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionConnect()
+    public function actionConnect($type = 1)
     {
         $connectionData = Yii::$app->request->post('Connection', false);
         if ($connectionData) {
@@ -164,15 +164,28 @@ class SiteController extends Controller
         }
 
         $this->layout = 'main';
-        $listCompany = Company::find()->where(['old_id' => null])->all();
+        $listCompany = Company::find()->where(['old_id' => null, 'type' => $type])->all();
+
+        $listService = [
+            Company::TYPE_OWNER => 'company',
+            Company::TYPE_WASH => 'wash',
+            Company::TYPE_SERVICE => 'service',
+            Company::TYPE_TIRES => 'tires',
+        ];
 
         /**
          * @var \yii\db\Connection $old_db
          */
         $old_db = Yii::$app->db_old;
-        $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE id NOT IN (" .
-            implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
-            ") ORDER BY name ASC")->queryAll();
+        if (isset($listService[$type])) {
+            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request, {$old_db->tablePrefix}request_{$listService[$type]} WHERE request_ptr_id = {$old_db->tablePrefix}request.id AND id NOT IN (" .
+                implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
+                ") ORDER BY name ASC")->queryAll();
+        } else {
+            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE id NOT IN (" .
+                implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
+                ") ORDER BY name ASC")->queryAll();
+        }
 
         return $this->render('connect', [
             'listCompany' => $listCompany,
