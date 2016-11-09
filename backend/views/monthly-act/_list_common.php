@@ -89,7 +89,7 @@ echo GridView::widget([
             'contentOptions' => function ($model) {
                 return [
                     'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
-                    'style' => 'min-width: 100px'
+                    'style' => 'min-width: 130px'
                 ];
             },
         ],
@@ -106,7 +106,7 @@ echo GridView::widget([
                     ]);
             },
             'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 160px'];
+                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 190px'];
             },
             'filter'         => false,
             'format'         => 'raw',
@@ -125,7 +125,7 @@ echo GridView::widget([
         [
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{update}{call}',
-            'contentOptions' => ['style' => 'min-width: 40px'],
+            'contentOptions' => ['style' => 'min-width: 60px'],
             'visibleButtons' => $visibleButton,
             'buttons'        => [
                 'update' => function ($url, $model, $key) {

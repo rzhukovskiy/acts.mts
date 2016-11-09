@@ -356,3 +356,7 @@ table.sign {
     height: 24px;
     font-size: 14px;
 }
+#monthly-act-grid .glyphicon-earphone{
+    font-size: 16px;
+    margin-left: 5px;
+}

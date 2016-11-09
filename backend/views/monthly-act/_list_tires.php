@@ -79,12 +79,21 @@ echo GridView::widget([
             'pageSummaryFunc' => GridView::F_SUM,
             'format'          => 'html',
         ],
-        [
+        'payment_status' => [
             'attribute'      => 'payment_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$paymentStatus[$data->payment_status];
+            'value'          => function ($model, $key, $index, $column) {
+                return Html::activeDropDownList($model,
+                    'payment_status',
+                    MonthlyAct::$paymentStatus,
+                    [
+                        'class'   => 'form-control change-payment_status',
+                        'data-id' => $model->id,
+                    ]
+
+                );
             },
             'filter'         => false,
+            'format'         => 'raw',
             'contentOptions' => function ($model) {
                 return [
                     'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
@@ -93,16 +102,22 @@ echo GridView::widget([
             },
         ],
         'payment_date',
-        [
+        'act_status'     => [
             'attribute'      => 'act_status',
-            'value'          => function ($data) {
-                return MonthlyAct::$actStatus[$data->act_status];
+            'value'          => function ($model, $key, $index, $column) {
+                return Html::activeDropDownList($model,
+                    'act_status',
+                    MonthlyAct::$actStatus,
+                    [
+                        'class'   => 'form-control change-act_status',
+                        'data-id' => $model->id,
+                    ]);
             },
             'contentOptions' => function ($model) {
                 return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 160px'];
             },
             'filter'         => false,
-
+            'format'         => 'raw',
         ],
         /*
         'img'            => [
@@ -115,14 +130,18 @@ echo GridView::widget([
         ],
         */
         [
-            'class'          => 'kartik\grid\ActionColumn',
-            'template'       => '{update}',
-            'contentOptions' => ['style' => 'min-width: 40px'],
+            'class'          => 'yii\grid\ActionColumn',
+            'template'       => '{update}{call}',
+            'contentOptions' => ['style' => 'min-width: 50px'],
             'visibleButtons' => $visibleButton,
             'buttons'        => [
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
                         ['/monthly-act/update', 'id' => $model->id]);
+                },
+                'call'   => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-earphone"></span>',
+                        ['/company/member', 'id' => $model->client_id]);
                 },
             ]
         ],

@@ -132,14 +132,18 @@ echo GridView::widget([
         ],
         */
         [
-            'class'          => 'kartik\grid\ActionColumn',
-            'template'       => '{update}',
-            'contentOptions' => ['style' => 'min-width: 40px'],
+            'class'          => 'yii\grid\ActionColumn',
+            'template'       => '{update}{call}',
+            'contentOptions' => ['style' => 'min-width: 50px'],
             'visibleButtons' => $visibleButton,
             'buttons'        => [
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
                         ['/monthly-act/update', 'id' => $model->id]);
+                },
+                'call'   => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-earphone"></span>',
+                        ['/company/member', 'id' => $model->client_id]);
                 },
             ]
         ],

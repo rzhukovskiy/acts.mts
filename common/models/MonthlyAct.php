@@ -271,6 +271,12 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $this->payment_status = MonthlyAct::PAYMENT_STATUS_DONE;
         }
 
+        /*
+        if (empty($this->payment_date) && $this->payment_status == MonthlyAct::PAYMENT_STATUS_DONE) {
+            $this->payment_date = time();
+        }
+        */
+
         return parent::beforeSave($insert);
     }
 
