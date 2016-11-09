@@ -178,11 +178,11 @@ class SiteController extends Controller
          */
         $old_db = Yii::$app->db_old;
         if (isset($listService[$type])) {
-            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request, {$old_db->tablePrefix}request_{$listService[$type]} WHERE request_ptr_id = {$old_db->tablePrefix}request.id AND id NOT IN (" .
+            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request, {$old_db->tablePrefix}request_{$listService[$type]} WHERE state = 1 AND request_ptr_id = {$old_db->tablePrefix}request.id AND id NOT IN (" .
                 implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
                 ") ORDER BY name ASC")->queryAll();
         } else {
-            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE id NOT IN (" .
+            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE state = 1 AND id NOT IN (" .
                 implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
                 ") ORDER BY name ASC")->queryAll();
         }

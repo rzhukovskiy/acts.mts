@@ -41,7 +41,7 @@ class ConnectController extends Controller
     {
         $listStatus = [
             0 => Company::STATUS_NEW,
-            1 => Company::STATUS_ACTIVE,
+            1 => Company::STATUS_ARCHIVE,
             2 => Company::STATUS_REFUSE,
             3 => Company::STATUS_NEW,
         ];
