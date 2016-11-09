@@ -352,6 +352,13 @@ table.sign {
     font-weight: bold;
     width: 200px;
 }
+.list-data .list-label-md {
+    font-weight: bold;
+    width: 400px;
+}
+.list-data .kv-editable-link {
+    border: none;
+}
 .change-act_status,.change-payment_status{
     height: 24px;
     font-size: 14px;

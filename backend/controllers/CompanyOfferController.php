@@ -10,6 +10,7 @@ use Yii;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * CompanyOfferController implements the CRUD actions for CompanyOffer model.
@@ -83,12 +84,23 @@ class CompanyOfferController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->referrer);
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return ['message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(Yii::$app->request->referrer);
+            } else {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 

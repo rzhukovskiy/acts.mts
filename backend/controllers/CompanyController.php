@@ -217,12 +217,35 @@ class CompanyController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return ['message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        }
+
+        $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
+        $modelCompanyInfo->company_id = $model->id;
+        if ($modelCompanyInfo->isNewRecord) {
+            $modelCompanyInfo->save();
+        }
+
         $modelCompanyOffer = $model->offer ? $model->offer : new CompanyOffer();
         $modelCompanyOffer->company_id = $model->id;
+        if ($modelCompanyOffer->isNewRecord) {
+            $modelCompanyOffer->save();
+        }
 
         return $this->render('offer',
         [
-            'model' => $modelCompanyOffer,
+            'modelCompany' => $model,
+            'modelCompanyInfo' => $modelCompanyInfo,
+            'modelCompanyOffer' => $modelCompanyOffer,
         ]);
     }
 

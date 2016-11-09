@@ -2,15 +2,19 @@
 
 /**
  * @var $this yii\web\View
- * @var $model common\models\CompanyInfo
+ * @var $modelCompany common\models\Company
+ * @var $modelCompanyInfo common\models\CompanyInfo
+ * @var $modelCompanyOffer common\models\CompanyOffer
  */
 
-$this->title = 'Редактирование ' . $model->company->name;
+$this->title = 'Редактирование ' . $modelCompany->name;
 
 echo $this->render('_update_tabs', [
-    'model' => $model->company,
+    'model' => $modelCompany,
 ]);
 
-echo $this->render('/company-offer/_form', [
-    'model' => $model,
+echo $this->render('form/_process', [
+    'modelCompany' => $modelCompany,
+    'modelCompanyInfo' => $modelCompanyInfo,
+    'modelCompanyOffer' => $modelCompanyOffer,
 ]);

@@ -8,6 +8,7 @@ use common\models\search\CompanyInfoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * CompanyInfoController implements the CRUD actions for CompanyInfo model.
@@ -84,12 +85,23 @@ class CompanyInfoController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->referrer);
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return ['message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(Yii::$app->request->referrer);
+            } else {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }            
         }
     }
 

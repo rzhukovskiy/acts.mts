@@ -37,6 +37,7 @@ class CompanyInfo extends ActiveRecord
     public $end_str;
 
     private $contract_date_str;
+    private $fullAddress;
 
     /**
      * @inheritdoc
@@ -88,6 +89,29 @@ class CompanyInfo extends ActiveRecord
     public static function find()
     {
         return new CompanyInfoQuery(get_called_class());
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullAddress()
+    {
+        if (!$this->fullAddress) {
+            $this->fullAddress = implode(', ',
+                [
+                    $this->city,
+                    $this->street,
+                    $this->house,
+                    $this->index,
+                ]);
+        }
+
+        return $this->fullAddress;
+    }
+    
+    public function setFullAddress($value)
+    {
+        $this->fullAddress = $value;
     }
 
     /**
