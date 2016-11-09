@@ -104,11 +104,15 @@ class Company extends ActiveRecord
         ],
         self::STATUS_ACTIVE  => [
             'en' => 'active',
+            'ru' => 'Активные',
+        ],
+        self::STATUS_ARCHIVE  => [
+            'en' => 'archive',
             'ru' => 'Архив',
         ],
         self::STATUS_REFUSE  => [
             'en' => 'refuse',
-            'ru' => 'Отказавшиеся',
+            'ru' => 'Архив 2',
         ],
         self::STATUS_DELETED => [
             'en' => 'deleted',

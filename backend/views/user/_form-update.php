@@ -46,7 +46,7 @@ use common\models\Company;
             <label class="col-sm-2 control-label" for="department-name">Архив</label>
             <div class="col-sm-10">
                 <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
-                    echo Html::checkbox('CompanyType[' . Company::STATUS_ACTIVE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_ACTIVE), [
+                    echo Html::checkbox('CompanyType[' . Company::STATUS_ARCHIVE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_ARCHIVE), [
                         'label' => $companyTypeData['ru'],
                         'labelOptions' => [
                             'class' => 'checkbox-inline',

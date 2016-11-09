@@ -10,15 +10,13 @@ namespace backend\controllers;
 
 
 use common\models\Company;
-use common\models\CompanyService;
 use common\models\Entry;
 use common\models\search\CompanySearch;
 use common\models\search\EntrySearch;
 use common\models\User;
 use yii;
-use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\filters\AccessControl;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class WashController extends Controller

@@ -37,17 +37,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
+                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['active', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -107,11 +107,11 @@ class CompanyController extends Controller
      * @param integer $type
      * @return mixed
      */
-    public function actionActive($type)
+    public function actionArchive($type)
     {
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        $searchModel->status = Company::STATUS_ACTIVE;
+        $searchModel->status = Company::STATUS_ARCHIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
@@ -127,13 +127,13 @@ class CompanyController extends Controller
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
         } else {
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ARCHIVE);
         }
 
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
-            $badgeSearch->status = Company::STATUS_ACTIVE;
+            $badgeSearch->status = Company::STATUS_ARCHIVE;
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 
