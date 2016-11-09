@@ -266,14 +266,23 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $this->dateToTimestamp('act_client_get_date');
         $this->dateToTimestamp('act_we_get_date');
         $this->dateToTimestamp('payment_estimate_date');
-
-        if (!empty($this->payment_date) && $this->payment_status == MonthlyAct::PAYMENT_STATUS_NOT_DONE) {
+        //Если дата изменена - поменять статус
+        if (count($this->getDirtyAttributes(['payment_date'])) == 1 &&
+            !empty($this->payment_date) &&
+            $this->payment_status == MonthlyAct::PAYMENT_STATUS_NOT_DONE
+        ) {
             $this->payment_status = MonthlyAct::PAYMENT_STATUS_DONE;
         }
-
+        //Если был изменен аттрибут
         /*
-        if (empty($this->payment_date) && $this->payment_status == MonthlyAct::PAYMENT_STATUS_DONE) {
-            $this->payment_date = time();
+        if (count($this->getDirtyAttributes(['payment_status'])) == 1) {
+            if ($this->payment_status == MonthlyAct::PAYMENT_STATUS_NOT_DONE) {
+                $this->payment_date=0;
+            } else {
+                if (empty($this->payment_date)) {
+                    $this->payment_date = time();
+                }
+            }
         }
         */
 

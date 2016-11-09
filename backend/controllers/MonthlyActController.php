@@ -83,13 +83,12 @@ class MonthlyActController extends Controller
             $model->image = yii\web\UploadedFile::getInstances($model, 'image');
             $model->uploadImage();
             if ($model->save()) {
-                $redirect =
-                    [
-                        'list',
-                        'type'                       => $model->type_id,
-                        'company'                    => !$model->is_partner,
-                        'MonthlyActSearch[act_date]' => $this->getSessionDate()
-                    ];
+                $redirect = [
+                    'list',
+                    'type'                       => $model->type_id,
+                    'company'                    => !$model->is_partner,
+                    'MonthlyActSearch[act_date]' => $this->getSessionDate()
+                ];
 
                 return $this->redirect($redirect);
             }
@@ -114,13 +113,12 @@ class MonthlyActController extends Controller
         $model->scenario = 'detail';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $redirect =
-                [
-                    'list',
-                    'type'                       => $model->type_id,
-                    'company'                    => !$model->is_partner,
-                    'MonthlyActSearch[act_date]' => $this->getSessionDate()
-                ];
+            $redirect = [
+                'list',
+                'type'                       => $model->type_id,
+                'company'                    => !$model->is_partner,
+                'MonthlyActSearch[act_date]' => $this->getSessionDate()
+            ];
 
             return $this->redirect($redirect);
         }
