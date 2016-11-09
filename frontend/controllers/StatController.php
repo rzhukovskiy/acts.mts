@@ -98,6 +98,8 @@ class StatController extends Controller
     // $group [company, partner]
     public function actionListCommon()
     {
+        $maximum = $step = $xFormat = $title = false;
+
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_filter';
         $searchModel->period = Yii::$app->request->get('period');
@@ -108,13 +110,15 @@ class StatController extends Controller
 
         $data = $dataProvider->query->asArray()->all();
 
-        list($data, $maximum) = DatePeriodWidget::getDataForGraph($data);
-        $xDateFormat = DatePeriodWidget::getDateFormat($searchModel->period);
-        list($maximum, $step) = DatePeriodWidget::getMaxAndStep($maximum);
+        if (!empty($data)) {
+            list($data, $maximum) = DatePeriodWidget::getDataForGraph($data);
+            $xFormat = DatePeriodWidget::getXFormat($searchModel->period);
+            list($maximum, $step) = DatePeriodWidget::getMaxAndStep($maximum);
 
-        $title = 'Статистика';
-        if (isset($companyModel->name)) {
-            $title .= ' по компании ' . $companyModel->name;
+            $title = 'Статистика';
+            if (isset($companyModel->name)) {
+                $title .= ' по компании ' . $companyModel->name;
+            }
         }
 
         return $this->render('list_common',
@@ -124,7 +128,7 @@ class StatController extends Controller
                 'data'        => $data,
                 'maximum'     => $maximum,
                 'step'        => $step,
-                'xDateFormat' => $xDateFormat,
+                'xFormat'     => $xFormat,
                 'title'       => $title
             ]);
     }

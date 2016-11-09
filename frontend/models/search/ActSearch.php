@@ -269,6 +269,12 @@ class ActSearch extends Act
             $query->andWhere(['or', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]])
                 ->joinWith('client client');
         }
+        //Ограничение на текущий месяц
+        $query->andWhere([
+            "<",
+            "date_format(FROM_UNIXTIME(served_at), '%Y%m')",
+            date('Ym', time())
+        ]);
 
         return $this->createProvider($params, $query);
     }
