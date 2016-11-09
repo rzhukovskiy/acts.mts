@@ -51,7 +51,12 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
         </div>
         <?php ActiveForm::end(); ?>
         <hr>
-        <div id="chart_div" style="width:100%;height:500px;"></div>
+        <div id="chart_div" style="width:100%;height:500px;">
+            <? if (empty($data)) {
+                echo "Нет данных за выбранный период";
+            } ?>
+
+        </div>
 
         <?php
         // TODO: refactor it, plz, move collecting data into controller
@@ -69,10 +74,11 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
                 fontSize:20
             },
             axisX:{
-				gridColor: 'Silver',
-				tickColor: 'silver',
-				valueFormatString: '$xDateFormat'
-
+				labelFontColor: 'white',
+				tickColor: 'white',
+				valueFormatString: '" . $xFormat['valueFormatString'] . "',
+				interval:" . $xFormat['interval'] . ",
+                intervalType: '" . $xFormat['intervalType'] . "'
 			},
             axisY2:{
                     valueFormatString:'0',
@@ -108,7 +114,9 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
           }
         });
            chart.render();";
-        $this->registerJs($js);
+        if (!empty($data)) {
+            $this->registerJs($js);
+        }
         ?>
     </div>
 </div>

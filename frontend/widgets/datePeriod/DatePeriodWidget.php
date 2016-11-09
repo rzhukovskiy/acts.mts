@@ -187,12 +187,28 @@ class DatePeriodWidget extends Widget
      * @param $period
      * @return string
      */
-    static function getDateFormat($period)
+    static function getXFormat($period)
     {
-        $xDateFormat =
-            in_array($period, [DatePeriodWidget::PERIOD_ALL, DatePeriodWidget::PERIOD_YEAR]) ? 'YYYY/MM' : 'YYYY/MM/DD';
+        if (in_array($period, [DatePeriodWidget::PERIOD_ALL, DatePeriodWidget::PERIOD_YEAR])) {
+            $xFormat['valueFormatString'] = "YYYY/MM";
+            $xFormat['interval'] = '1';
+            $xFormat['intervalType'] = "month";
+        } elseif ($period == DatePeriodWidget::PERIOD_HALF_YEAR) {
+            $xFormat['valueFormatString'] = "YYYY/MM/DD";
+            $xFormat['interval'] = '1';
+            $xFormat['intervalType'] = "month";
+        } elseif ($period == DatePeriodWidget::PERIOD_QUARTER) {
+            $xFormat['valueFormatString'] = "YYYY/MM/DD";
+            $xFormat['interval'] = '10';
+            $xFormat['intervalType'] = "day";
+        } else {
+            $xFormat['valueFormatString'] = "YYYY/MM/DD";
+            $xFormat['interval'] = '5';
+            $xFormat['intervalType'] = "day";
+        }
 
-        return $xDateFormat;
+
+        return $xFormat;
     }
 
     /**
