@@ -74,8 +74,8 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
                 fontSize:20
             },
             axisX:{
-				gridColor: 'Silver',
-				tickColor: 'silver',
+				labelFontColor: 'white',
+				tickColor: 'white',
 				valueFormatString: '" . $xFormat['valueFormatString'] . "',
 				interval:" . $xFormat['interval'] . ",
                 intervalType: '" . $xFormat['intervalType'] . "'
