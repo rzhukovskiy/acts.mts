@@ -22,6 +22,10 @@ use yii\helpers\Html;
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompany,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
                         'attribute' => 'name',
                         'asPopover' => true,
                         'size' => 'lg',
@@ -35,6 +39,10 @@ use yii\helpers\Html;
                     <?php
                     $editable = Editable::begin([
                         'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
                         'attribute' => 'city',
                         'displayValue' => $modelCompanyInfo->fullAddress,
                         'asPopover' => true,
@@ -59,6 +67,10 @@ use yii\helpers\Html;
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
                         'attribute' => 'phone',
                         'asPopover' => true,
                         'size' => 'lg',
@@ -70,11 +82,57 @@ use yii\helpers\Html;
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md">Часы работы</td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'start_str',
+                        'displayValue' => gmdate('H:i', $modelCompanyInfo->start_at),
+                        'asPopover' => true,
+                        'size' => 'lg',
+                        'options' => [
+                            'class' => 'form-control',
+                        ],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                    ]); ?>
+                    -
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'end_str',
+                        'displayValue' => gmdate('H:i', $modelCompanyInfo->end_at),
+                        'asPopover' => true,
+                        'size' => 'lg',
+                        'options' => [
+                            'class' => 'form-control',
+                        ],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('process') ?></td>
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompanyOffer,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'submitOnEnter' => false,
                         'attribute' => 'process',
+                        'displayValue' => $modelCompanyOffer->processHtml,
                         'inputType' => Editable::INPUT_TEXTAREA,
                         'asPopover' => true,
                         'size' => 'lg',
@@ -90,10 +148,41 @@ use yii\helpers\Html;
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompanyOffer,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
                         'attribute' => 'mail_number',
                         'asPopover' => true,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер почтового отделения'],
+                        'formOptions' => [
+                            'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
+                        ],
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('communication_str') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyOffer,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'communication_str',
+                        'displayValue' => $modelCompanyOffer->communication_str,
+                        'inputType' => Editable::INPUT_DATETIME,
+                        'asPopover' => true,
+                        'size' => 'lg',
+                        'options' => [
+                            'class' => 'form-control',
+                            'pluginOptions' => [
+                                'format' => 'dd-mm-yyyy hh:ii',
+                                'autoclose'=>true,
+                            ],
+                        ],
                         'formOptions' => [
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],

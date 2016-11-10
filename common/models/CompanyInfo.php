@@ -124,7 +124,7 @@ class CompanyInfo extends ActiveRecord
 
     public function getContract_date_str()
     {
-        return $this->contract_date ? date('d-m-Y H:i', $this->contract_date) : '';
+        return $this->contract_date ? date('d-m-Y', $this->contract_date) : '';
     }
 
     public function setContract_date_str($value)
@@ -137,13 +137,14 @@ class CompanyInfo extends ActiveRecord
         if (!empty($this->start_str)) {
             list($hrs, $mnts) = explode(':', $this->start_str);
             $this->start_at = $hrs * 3600 + $mnts * 60;
-
+        }
+        if (!empty($this->end_str)) {
             list($hrs, $mnts) = explode(':', $this->end_str);
             $this->end_at = $hrs * 3600 + $mnts * 60;
         }
 
         if (!empty($this->contract_date_str)) {
-            $this->contract_date = \DateTime::createFromFormat('d-m-Y H:i', $this->contract_date_str)->getTimestamp();
+            $this->contract_date = \DateTime::createFromFormat('d-m-Y', $this->contract_date_str)->getTimestamp();
         }
 
         return parent::beforeSave($insert);

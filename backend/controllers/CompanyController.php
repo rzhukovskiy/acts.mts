@@ -241,8 +241,7 @@ class CompanyController extends Controller
             $modelCompanyOffer->save();
         }
 
-        return $this->render('offer',
-        [
+        return $this->render('offer', [
             'modelCompany' => $model,
             'modelCompanyInfo' => $modelCompanyInfo,
             'modelCompanyOffer' => $modelCompanyOffer,
@@ -252,12 +251,15 @@ class CompanyController extends Controller
     public function actionInfo($id)
     {
         $model = $this->findModel($id);
+
         $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
         $modelCompanyInfo->company_id = $model->id;
+        if ($modelCompanyInfo->isNewRecord) {
+            $modelCompanyInfo->save();
+        }
 
-        return $this->render('info',
-        [
-            'model' => $modelCompanyInfo,
+        return $this->render('info', [
+            'modelCompanyInfo' => $modelCompanyInfo,
         ]);
     }
 

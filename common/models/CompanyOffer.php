@@ -27,6 +27,7 @@ use yii\db\ActiveRecord;
 class CompanyOffer extends ActiveRecord
 {
     private $communication_str;
+    private $processHtml;
     /**
      * @inheritdoc
      */
@@ -100,6 +101,11 @@ class CompanyOffer extends ActiveRecord
     public function setCommunication_str($value)
     {
         $this->communication_str = $value;
+    }
+
+    public function getProcessHtml()
+    {
+        return nl2br($this->process);
     }
 
     public function beforeSave($insert)

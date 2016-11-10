@@ -327,10 +327,10 @@ table.sign {
 .field-disabled div{
     font-size: 2em;
 }
-#monthly-act-detail-form label{
+#monthly-act-detail-form label {
     font-size: 1.5em;
 }
-#monthly-act-form label{
+#monthly-act-form label {
     font-size: 2em;
 }
 
@@ -358,6 +358,9 @@ table.sign {
 }
 .list-data .kv-editable-link {
     border: none;
+}
+.list-data .close {
+    color: #000;
 }
 .change-act_status,.change-payment_status{
     height: 24px;
