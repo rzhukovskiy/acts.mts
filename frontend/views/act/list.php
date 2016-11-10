@@ -7,6 +7,7 @@
  * @var $searchModel \common\models\search\ActSearch
  * @var $role string
  * @var $columns array
+ * @var $is_locked bool
  */
 
 $this->title = 'Акты';
@@ -20,5 +21,6 @@ echo $this->render('_list', [
     'searchModel' => $searchModel,
     'role' => $role,
     'columns' => $columns,
+    'is_locked' => $is_locked,
 ]);
 

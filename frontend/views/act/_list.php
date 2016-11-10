@@ -5,6 +5,7 @@
  * @var $searchModel \common\models\search\ActSearch
  * @var $role string
  * @var $columns array
+ * @var $is_locked bool
  */
 
 use common\models\Company;
@@ -40,6 +41,13 @@ if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->chil
 if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
     $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
+}
+if ($role == User::ROLE_ADMIN) {
+    if ($is_locked) {
+        $filters .= Html::a('Закрыт', '#', ['class' => 'pull-right btn btn-warning btn-sm']);
+    } else {
+        $filters .= Html::a('Остановить загрузку', array_merge(['act/lock'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-warning btn-sm']);
+    }
 }
 
 echo GridView::widget([

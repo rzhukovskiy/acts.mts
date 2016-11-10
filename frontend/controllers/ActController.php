@@ -8,6 +8,7 @@ use common\models\Act;
 use common\models\Car;
 use common\models\Company;
 use common\models\Entry;
+use common\models\Lock;
 use common\models\search\ActSearch;
 use common\models\search\CarSearch;
 use common\models\search\EntrySearch;
@@ -32,7 +33,7 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -72,6 +73,7 @@ class ActController extends Controller
             'company' => $company,
             'role' => $role,
             'columns' => ActHelper::getColumnsByType($type, $role, $company, !empty(Yii::$app->user->identity->company->children)),
+            'is_locked' => Lock::findOne(['period' => $searchModel->period, 'type' => $searchModel->service_type]),
         ]);
     }
 
@@ -93,6 +95,21 @@ class ActController extends Controller
             'company' => $company,
             'role' => Yii::$app->user->identity->role,
         ]);
+    }
+
+    public function actionLock($type)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel->service_type = $type;
+        $searchModel->search(Yii::$app->request->queryParams);
+
+        $lock = new Lock();
+        $lock->period = $searchModel->period;
+        $lock->type = $searchModel->service_type;
+
+        $lock->save();
+
+        return $this->redirect(array_merge(['act/list'], Yii::$app->getRequest()->get()));
     }
 
     public function actionDisinfect($serviceId = null)
