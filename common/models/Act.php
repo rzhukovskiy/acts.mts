@@ -401,7 +401,7 @@ class Act extends ActiveRecord
                 \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
         }
 
-        $is_locked = Lock::findOne(['period' => date('m-Y', $this->served_at), 'type' => $this->service_type]);
+        $is_locked = Lock::findOne(['period' => date('n-Y', $this->served_at), 'type' => $this->service_type]);
         if ($is_locked) {
             $this->addError('period', 'This period is locked');
             return false;

@@ -67,7 +67,7 @@ CanvasJsAsset::register($this);
                     'value' => function ($data) {
                         /** @var \common\models\ActScope $scope */
                         $services = [];
-                        foreach ($data->partnerScope as $scope) {
+                        foreach ($data->partnerScopes as $scope) {
                             $services[] = $scope->description;
                         }
                         return implode('+', $services);

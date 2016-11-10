@@ -13,6 +13,7 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
+use yii\widgets\Pjax;
 
 $filters = 'Период: ' . DatePicker::widget([
         'model' => $searchModel,
@@ -44,9 +45,35 @@ if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::R
 }
 if ($role == User::ROLE_ADMIN) {
     if ($is_locked) {
-        $filters .= Html::a('Закрыт', '#', ['class' => 'pull-right btn btn-warning btn-sm']);
+        $filters .= Html::a('Открыть загрузку', array_merge(['act/unlock'], Yii::$app->getRequest()->get()), [
+            'class' => 'pull-right btn btn-warning btn-sm',
+            'title' => Yii::t('yii', 'Close'),
+            'onclick' => "button = $(this); $.ajax({
+                type     :'GET',
+                cache    : false,
+                url  : $(this).attr('href'),
+                success  : function(response) {
+                    button.text(response);
+                    button.attr('href', '#');
+                }
+                });
+                return false;",
+            ]);
     } else {
-        $filters .= Html::a('Остановить загрузку', array_merge(['act/lock'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-warning btn-sm']);
+        $filters .= Html::a('Закрыть загрузку', array_merge(['act/lock'], Yii::$app->getRequest()->get()), [
+            'class' => 'pull-right btn btn-warning btn-sm',
+            'title' => Yii::t('yii', 'Close'),
+            'onclick' => "button = $(this); $.ajax({
+                type     :'GET',
+                cache    : false,
+                url  : $(this).attr('href'),
+                success  : function(response) {
+                    button.text(response);
+                    button.attr('href', '#');
+                }
+                });
+                return false;",
+        ]);
     }
 }
 

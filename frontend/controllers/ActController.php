@@ -33,7 +33,7 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -109,7 +109,18 @@ class ActController extends Controller
 
         $lock->save();
 
-        return $this->redirect(array_merge(['act/list'], Yii::$app->getRequest()->get()));
+        return "Открыть загрузку";
+    }
+
+    public function actionUnlock($type)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel->service_type = $type;
+        $searchModel->search(Yii::$app->request->queryParams);
+
+        Lock::deleteAll(['period' => $searchModel->period, 'type' => $searchModel->service_type]);
+
+        return "Закрыть загрузку";
     }
 
     public function actionDisinfect($serviceId = null)
