@@ -148,6 +148,12 @@ class ConnectController extends Controller
                     }
                 }
                 $company_id = $this->new_db->lastInsertID;
+            } else {
+                $company = Company::findOne($company_id);
+                if ($company) {
+                    $company->status = $status;
+                    $company->save();
+                }
             }
 
             /////////////////////////////
