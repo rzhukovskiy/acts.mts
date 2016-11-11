@@ -86,6 +86,7 @@ class ConnectController extends Controller
             $employees = ArrayHelper::index($employees, 'position');
 
             $status = Company::STATUS_NEW;
+            $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
             $created_at = time();
             if ($processData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_process WHERE request_id = {$rowData['id']}")
@@ -108,7 +109,6 @@ class ConnectController extends Controller
                 $status = Company::STATUS_REFUSE;
                 $created_at = strtotime($refuseData['created']);
             }
-            $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
 
             $name = ArrayHelper::getValue($rowData, 'name');
             if(!$name) {
