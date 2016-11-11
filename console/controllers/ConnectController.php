@@ -92,21 +92,18 @@ class ConnectController extends Controller
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_process WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_NEW;
                 $created_at = strtotime($processData['updated']);
             }
             if ($archiveData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_done WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_ARCHIVE;
                 $created_at = strtotime($archiveData['created']);
             }
             if ($refuseData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_refused WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_REFUSE;
                 $created_at = strtotime($refuseData['created']);
             }
 
