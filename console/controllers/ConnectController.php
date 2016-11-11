@@ -99,7 +99,7 @@ class ConnectController extends Controller
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_done WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_ACTIVE;
+                $status = Company::STATUS_ARCHIVE;
                 $created_at = strtotime($archiveData['created']);
             }
             if ($refuseData = $this->old_db
