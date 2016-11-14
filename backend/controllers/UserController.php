@@ -58,7 +58,7 @@ class UserController extends Controller
 
         $searchModel = new UserSearch();
         $dataProvider = $searchModel
-            ->search(\Yii::$app->request->queryParams);
+            ->search(Yii::$app->request->queryParams);
 
         $dataProvider->query
             ->joinWith('departments')

@@ -17,6 +17,7 @@ use common\models\CompanyOffer;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
+use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\User;
 use yii;
@@ -66,6 +67,13 @@ class CompanyController extends Controller
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_NEW;
+        
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
+        }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
@@ -77,17 +85,28 @@ class CompanyController extends Controller
         $model = new Company();
         $model->type = $type;
 
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-        } else {
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
-        }
-
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_NEW;
             $typeData['badge'] = $badgeSearch->search()->count;
+        }
+
+        $searchModelUser = new UserSearch();
+        $dataProviderUser = $searchModelUser
+            ->search(Yii::$app->request->queryParams);
+        $dataProviderUser->query
+            ->joinWith('departments')
+            ->andWhere(['is not', 'department_id', null]);
+        $dataProviderUser->pagination = false;
+        $userList = $dataProviderUser->getModels();
+        $userData = [];
+        foreach ($userList as $user) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type;
+            $badgeSearch->user_id = $user->id;
+            $badgeSearch->status = Company::STATUS_NEW;
+            $userData[$user->id] = ['badge' => $badgeSearch->search()->count, 'username' => $user->username];
         }
 
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
@@ -99,6 +118,8 @@ class CompanyController extends Controller
             'type'         => $type,
             'model'        => $model,
             'listType'     => $listType,
+            'userData'     => $userData,
+            'admin'        => Yii::$app->user->identity->role == User::ROLE_ADMIN,
         ]);
     }
 
@@ -113,6 +134,13 @@ class CompanyController extends Controller
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_ACTIVE;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
@@ -123,12 +151,6 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
-
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-        } else {
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
-        }
 
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
@@ -160,6 +182,13 @@ class CompanyController extends Controller
         $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ARCHIVE);
+        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
@@ -170,12 +199,6 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
-
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-        } else {
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ARCHIVE);
-        }
 
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
@@ -207,6 +230,13 @@ class CompanyController extends Controller
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_REFUSE;
 
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
+        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
@@ -217,12 +247,6 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
-
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-        } else {
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_REFUSE);
-        }
 
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
@@ -300,7 +324,7 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
         $model->status = $status;
         $model->save();
-        
+
         return $this->redirect(['company/update', 'id' => $model->id]);
     }
 

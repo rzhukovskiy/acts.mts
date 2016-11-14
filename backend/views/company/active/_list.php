@@ -3,8 +3,12 @@
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
+ * @var $type integer
+ * @var $admin bool
+ * @var $userList User[]
  */
 use kartik\grid\GridView;
+use common\models\User;
 
 ?>
 <div class="panel panel-primary">

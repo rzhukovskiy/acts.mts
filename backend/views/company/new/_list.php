@@ -3,8 +3,10 @@
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
+ * @var $type integer
+ * @var $admin bool
+ * @var $userData array
  */
-
 use yii\grid\GridView;
 
 ?>
@@ -13,8 +15,16 @@ use yii\grid\GridView;
         Список
     </div>
     <div class="panel-body">
-        <?=
-        GridView::widget([
+        <?php
+        if ($admin) {
+            echo $this->render('_selector', [
+                'type' => $type,
+                'userData' => $userData,
+                'searchModel' => $searchModel,
+            ]);
+        }
+        
+        echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-bordered'],

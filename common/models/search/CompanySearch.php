@@ -15,6 +15,7 @@ use yii\db\Expression;
  */
 class CompanySearch extends Company
 {
+    public $user_id;
     /**
      * @inheritdoc
      */
@@ -22,6 +23,7 @@ class CompanySearch extends Company
     {
         return [
             [['name', 'address'], 'string'],
+            [['user_id'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
@@ -34,7 +36,7 @@ class CompanySearch extends Company
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_OFFER => [
-                'name', 'address','fullAddress'
+                'user_id', 'name', 'address', 'fullAddress'
             ],
             'default' => [],
         ];
@@ -73,10 +75,12 @@ class CompanySearch extends Company
             case self::SCENARIO_OFFER:
                 /** @var User $currentUser */
                 $query->joinWith(['info info', 'offer offer']);
-                $currentUser = Yii::$app->user->identity;
-                if ($currentUser->role != User::ROLE_ADMIN) {
-                    $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
-                    $query->where(['in', 'type', array_keys($currentUser->getAllCompanyType($this->status))]);
+                if ($this->user_id) {
+                    $currentUser = User::findOne($this->user_id);
+                    if ($currentUser) {
+                        $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
+                        $query->where(['in', 'type', array_keys($currentUser->getAllCompanyType($this->status))]);
+                    }
                 }
                 if ($this->status == Company::STATUS_NEW) {
                     $query->orderBy('communication_at ASC');
