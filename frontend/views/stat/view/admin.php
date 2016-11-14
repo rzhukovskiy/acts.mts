@@ -122,7 +122,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'columns' => [
                         [
                             'content' => $filters,
-                            'options' => ['colspan' => 6, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                            'options' => ['colspan' => 8, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
                         ],
                     ],
                     'options' => ['class' => 'filters extend-header'],
@@ -132,7 +132,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                         [
                             'content' => '&nbsp',
                             'options' => [
-                                'colspan' => 7,
+                                'colspan' => 8,
                             ]
                         ]
                     ],
@@ -148,7 +148,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
 
                 [
-                    'header' => 'Дата',
+                    'label' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) use ($modelType, $group) {
                         $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
@@ -157,13 +157,17 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'countServe',
-                    'header' => 'Обслужено',
+                    'label' => 'Обслужено',
                     'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
+                    'attribute' => 'ssoom',
+                    'label' => 'ССООМ',
+                ],
+                [
                     'attribute' => 'expense',
-                    'header' => 'Расход',
+                    'label' => 'Расход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
@@ -172,7 +176,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'income',
-                    'header' => 'Доход',
+                    'label' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
@@ -181,7 +185,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'profit',
-                    'header' => 'Прибыль',
+                    'label' => 'Прибыль',
                     'content' => function ($data) {
                         return Html::tag('strong', Yii::$app->formatter->asDecimal($data->profit, 0));
                     },

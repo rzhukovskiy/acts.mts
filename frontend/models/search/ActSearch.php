@@ -2,8 +2,8 @@
 
 namespace frontend\models\search;
 
-use frontend\widgets\datePeriod\DatePeriodWidget;
 use frontend\models\Act;
+use frontend\widgets\datePeriod\DatePeriodWidget;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -22,13 +22,16 @@ class ActSearch extends Act
     public $createDay;
     public $period;
 
+    public $ssoom;
+
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         $rules = [
-            [['dateFrom', 'dateTo', 'service_type', 'client_id'], 'safe'],
+            [['dateFrom', 'dateTo', 'service_type', 'client_id', 'ssoom', 'dateMonth'], 'safe'],
         ];
 
         return array_merge(parent::rules(), $rules);
@@ -37,13 +40,14 @@ class ActSearch extends Act
     public function scenarios()
     {
         $scenarios = [
-            'statistic_partner_filter' => ['dateFrom', 'dateTo', 'service_type'],
-            'statistic_client_filter' => ['dateFrom', 'dateTo', 'service_type'],
-            'statistic_filter' => ['dateFrom', 'dateTo', 'service_type','client_id'],
+            'statistic_partner_filter' => ['dateMonth', 'dateFrom', 'dateTo', 'service_type', 'countServe', 'ssoom'],
+            'statistic_client_filter'  => ['dateMonth', 'dateFrom', 'dateTo', 'service_type', 'countServe', 'ssoom'],
+            'statistic_filter'         => ['dateFrom', 'dateTo', 'service_type', 'client_id'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);
     }
+
 
     /**
      * Поиск по типу услуги
@@ -58,17 +62,16 @@ class ActSearch extends Act
         $query->addSelect([
             'served_at',
             'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'ROUND(SUM(profit)/COUNT(' . Act::tableName() . '.id)) AS ssoom',
             'service_type',
             'SUM(expense) as expense',
             'SUM(profit) as profit',
             'SUM(income) as income',
             'partner_id',
             'client_id',
-        ])
-            ->orderBy('profit DESC')
-            ->with(['partner', 'client']);
+        ])->with(['partner', 'client']);
 
-        return $this->createProvider($params, $query);
+        return $this->createProvider($params, $query, ['profit' => SORT_DESC]);
     }
 
     /**
@@ -84,17 +87,16 @@ class ActSearch extends Act
         $query->addSelect([
             "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
             'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'ROUND(SUM(profit)/COUNT(' . Act::tableName() . '.id)) AS ssoom',
             'service_type',
             'SUM(expense) as expense',
             'SUM(income) as income',
             'SUM(profit) as profit',
             'partner_id',
             'client_id',
-        ])
-            ->groupBy(['DATE_FORMAT(dateMonth, "%Y-%m")'])
-            ->orderBy('dateMonth ASC');
+        ])->groupBy(['DATE_FORMAT(dateMonth, "%Y-%m")']);
 
-        return $this->createProvider($params, $query);
+        return $this->createProvider($params, $query, ['dateMonth' => SORT_ASC]);
     }
 
     /**
@@ -108,15 +110,14 @@ class ActSearch extends Act
         $query->addSelect([
             "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
             'COUNT({{%act}}.id) AS countServe',
+            'ROUND(SUM(profit)/COUNT(' . Act::tableName() . '.id)) AS ssoom',
             'service_type',
             'SUM(expense) as expense',
             'SUM(income) as income',
             'SUM(profit) as profit',
-        ])
-            ->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])
-            ->orderBy('dateMonth ASC');
+        ])->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")']);
 
-        return $this->createProvider($params, $query);
+        return $this->createProvider($params, $query, ['dateMonth' => SORT_ASC]);
     }
 
     /**
@@ -139,12 +140,9 @@ class ActSearch extends Act
             'card_id',
             'service_type',
             'number'
-        ])
-            ->with(['type', 'mark', 'card'])
-            ->orderBy('dateMonth ASC')
-            ->alias('act');
+        ])->with(['type', 'mark', 'card'])->alias('act');
 
-        return $this->createProvider($params, $query);
+        return $this->createProvider($params, $query, ['dateMonth' => SORT_ASC]);
     }
 
     /**
@@ -159,34 +157,70 @@ class ActSearch extends Act
 
         $query->addSelect([
             'COUNT(' . Act::tableName() . '.id) AS countServe',
+            'ROUND(SUM(profit)/COUNT(' . Act::tableName() . '.id)) AS ssoom',
             'SUM(expense) as expense',
             'SUM(profit) as profit',
             'SUM(income) as income',
             'service_type',
-        ])
-            ->with(['type'])
-            ->groupBy('service_type')
-            ->orderBy('profit DESC');
+        ])->with(['type'])->groupBy('service_type');
 
-        return $this->createProvider($params, $query);
+        return $this->createProvider($params, $query, ['profit' => SORT_DESC]);
     }
 
     /**
      * Общий провайдер для статистики
-     *
      * @param $params
-     * @param $query
+     * @param ActiveQuery $query
+     * @param bool|array $order
      * @return ActiveDataProvider
      */
-    private function createProvider($params, ActiveQuery $query)
+    private function createProvider($params, ActiveQuery $query, $order = false)
     {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'  => [
+                'defaultOrder' => $order,
+                'attributes'   => [
+                    'countServe' => [
+                        'asc'  => ['countServe' => SORT_ASC],
+                        'desc' => ['countServe' => SORT_DESC],
+                    ],
+                    'expense'    => [
+                        'asc'  => ['expense' => SORT_ASC],
+                        'desc' => ['expense' => SORT_DESC],
+                    ],
+                    'profit'     => [
+                        'asc'  => ['profit' => SORT_ASC],
+                        'desc' => ['profit' => SORT_DESC],
+                    ],
+                    'income'     => [
+                        'asc'  => ['income' => SORT_ASC],
+                        'desc' => ['income' => SORT_DESC],
+                    ],
+                    'ssoom'      => [
+                        'asc'  => ['ssoom' => SORT_ASC],
+                        'desc' => ['ssoom' => SORT_DESC],
+                    ],
+                    'dateMonth'  => [
+                        'asc'  => ['dateMonth' => SORT_ASC],
+                        'desc' => ['dateMonth' => SORT_DESC],
+                    ],
+                ]
+            ]
         ]);
         $this->load($params);
 
-        if (!$this->validate())
+        if (!$this->validate()) {
             return $dataProvider;
+        }
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'countServe' => $this->countServe,
+            'expense'    => $this->expense,
+            'profit'     => $this->profit,
+            'income'     => $this->income,
+            'ssoom'      => $this->ssoom,
+        ]);
 
         $query->andFilterWhere(['between', "DATE(FROM_UNIXTIME(`served_at`))", $this->dateFrom, $this->dateTo]);
 
@@ -218,25 +252,27 @@ class ActSearch extends Act
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'partner_id' => $this->partner_id,
-            'client_id' => $this->client_id,
-            'type_id' => $this->type_id,
-            'card_id' => $this->card_id,
-            'mark_id' => $this->mark_id,
-            'expense' => $this->expense,
-            'income' => $this->income,
-            'profit' => $this->profit,
+            'id'           => $this->id,
+            'partner_id'   => $this->partner_id,
+            'client_id'    => $this->client_id,
+            'type_id'      => $this->type_id,
+            'card_id'      => $this->card_id,
+            'mark_id'      => $this->mark_id,
+            'expense'      => $this->expense,
+            'income'       => $this->income,
+            'profit'       => $this->profit,
             'service_type' => $this->service_type,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'served_at' => $this->served_at,
+            'status'       => $this->status,
+            'created_at'   => $this->created_at,
+            'updated_at'   => $this->updated_at,
+            'served_at'    => $this->served_at,
         ]);
 
-        $query->andFilterWhere(['like', 'number', $this->number])
-            ->andFilterWhere(['like', 'extra_number', $this->extra_number])
-            ->andFilterWhere(['like', 'check', $this->check]);
+        $query->andFilterWhere(['like', 'number', $this->number])->andFilterWhere([
+                    'like',
+                    'extra_number',
+                    $this->extra_number
+                ])->andFilterWhere(['like', 'check', $this->check]);
 
         return $dataProvider;
     }

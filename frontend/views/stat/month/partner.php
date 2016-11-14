@@ -37,7 +37,7 @@ CanvasJsAsset::register($this);
                 ],
 
                 [
-                    'header' => 'Дата',
+                    'label' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = date('d', strtotime($data->dateMonth)) . ' ' . DateHelper::getMonthName($data->dateMonth, 1) . ' ' . date('Y', strtotime($data->dateMonth));
@@ -46,13 +46,13 @@ CanvasJsAsset::register($this);
                 ],
                 [
                     'attribute' => 'countServe',
-                    'header' => 'Обслужено',
+                    'label' => 'Обслужено',
                     'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Доход',
+                    'label' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },

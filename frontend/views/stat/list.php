@@ -126,7 +126,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'columns' => [
                         [
                             'content' => $filters,
-                            'options' => ['colspan' => 6, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                            'options' => ['colspan' => 8, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
                         ],
                     ],
                     'options' => ['class' => 'filters extend-header'],
@@ -136,7 +136,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                         [
                             'content' => '&nbsp',
                             'options' => [
-                                'colspan' => 7,
+                                'colspan' => 8,
                             ]
                         ]
                     ],
@@ -153,7 +153,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
                 [
                     'attribute' => 'partner_id',
-                    'header' => 'Партнер',
+                    'label' => 'Партнер',
                     'content' => function ($data) use ($group) {
                         if ($group == 'partner')
                             return !empty($data->partner->name) ? Html::a($data->partner->name, ['/stat/view', 'id' => $data->partner->id, 'type' => $data->service_type, 'group' => $group]) : '—';
@@ -162,7 +162,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'contentOptions' => ['class' => 'value_0'],
                 ],
                 [
-                    'header' => 'Город',
+                    'label' => 'Город',
                     'attribute' => 'company_id',
                     'content' => function ($data) {
                         return !empty($data->partner->address) ? $data->partner->address : '-';
@@ -170,14 +170,19 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'countServe',
-                    'header' => 'Обслужено',
+                    'label' => 'Обслужено',
                     'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
+                [
+                    'attribute' => 'ssoom',
+                    'label' => 'ССООМ',
+                ],
+
                 ($group == 'partner') ?
                     $groupCustomColl = [
                         'attribute' => 'expense',
-                        'header' => 'Расход',
+                        'label' => 'Расход',
                         'content' => function ($data) {
                             return Yii::$app->formatter->asDecimal($data->expense, 0);
                         },
@@ -188,7 +193,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     :
                     $groupCustomColl = [
                         'attribute' => 'income',
-                        'header' => 'Доход',
+                        'label' => 'Доход',
                         'content' => function ($data) {
                             return Yii::$app->formatter->asDecimal($data->income, 0);
                         },
@@ -198,7 +203,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     ],
                 [
                     'attribute' => 'profit',
-                    'header' => 'Прибыль',
+                    'label' => 'Прибыль',
                     'content' => function ($data) {
                         return Html::tag('strong', Yii::$app->formatter->asDecimal($data->profit, 0));
                     },

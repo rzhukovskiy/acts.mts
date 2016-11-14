@@ -151,7 +151,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
                 [
                     'attribute' => 'service_type',
-                    'header' => 'Услуга',
+                    'label' => 'Услуга',
                     'content' => function ($data) {
                         if (empty($data->service_type))
                             $title = '—';
@@ -163,13 +163,13 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'countServe',
-                    'header' => 'Обслужено',
+                    'label' => 'Обслужено',
                     'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Расход',
+                    'label' => 'Расход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },

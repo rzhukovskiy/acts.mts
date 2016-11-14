@@ -128,6 +128,8 @@ trait ChartTrait
             ->addSelect('SUM(profit) as profit')
             ->andWhere(['YEAR(FROM_UNIXTIME(served_at))' => date('Y')])
             ->groupBy(["MONTH(FROM_UNIXTIME(served_at))"]);
+        //Иначе не дает сортировать по ssoom
+        $dataProvider->sort=false;
 
         $models = $dataProvider->getModels();
 

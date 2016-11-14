@@ -36,7 +36,7 @@ use common\components\DateHelper;
                 ],
 
                 [
-                    'header' => 'Дата',
+                    'label' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $unixDate = strtotime($data->dateMonth);
@@ -46,20 +46,20 @@ use common\components\DateHelper;
                     }
                 ],
                 [
-                    'header' => 'Карта',
+                    'label' => 'Карта',
                     'attribute' => 'card_id',
                     'content' => function ($data) {
                         return empty($data->card->number) ? '—' : $data->card->number;
                     }
                 ],
                 [
-                    'header' => 'Номер ТС',
+                    'label' => 'Номер ТС',
                     'attribute' => 'number',
                 ],
                 'mark.name',
                 'type.name',
                 [
-                    'header' => 'Услуга',
+                    'label' => 'Услуга',
                     'attribute' => 'service_type',
                     'content' => function ($data) {
                         return \common\models\Service::$listType[$data->service_type]['ru'];
@@ -67,7 +67,7 @@ use common\components\DateHelper;
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Расход',
+                    'label' => 'Расход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
@@ -76,7 +76,7 @@ use common\components\DateHelper;
                 ],
                 [
                     'attribute' => 'income',
-                    'header' => 'Доход',
+                    'label' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->income, 0);
                     },
@@ -85,7 +85,7 @@ use common\components\DateHelper;
                 ],
                 [
                     'attribute' => 'profit',
-                    'header' => 'Прибыль',
+                    'label' => 'Прибыль',
                     'content' => function ($data) {
                         return Html::tag('strong', Yii::$app->formatter->asDecimal($data->profit, 0));
                     },

@@ -151,7 +151,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
                 // TODO: group by year maybe?
                 [
-                    'header' => 'Дата',
+                    'label' => 'Дата',
                     'attribute' => 'dateMonth',
                     'content' => function ($data) {
                         $date = DateHelper::getMonthName($data->dateMonth, 0) . ' ' . date('Y', strtotime($data->dateMonth));
@@ -160,21 +160,19 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
                 [
                     'attribute' => 'countServe',
-                    'header' => 'Обслужено',
+                    'label' => 'Обслужено',
                     'footer' => $totalServe,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
                 [
                     'attribute' => 'expense',
-                    'header' => 'Доход',
+                    'label' => 'Доход',
                     'content' => function ($data) {
                         return Yii::$app->formatter->asDecimal($data->expense, 0);
                     },
                     'footer' => $totalExpense,
                     'footerOptions' => ['style' => 'font-weight: bold'],
                 ],
-
-
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{view}',
