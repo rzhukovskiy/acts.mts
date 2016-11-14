@@ -2,6 +2,7 @@
 namespace console\controllers;
 
 use common\models\Company;
+use common\models\CompanyOffer;
 use common\models\Mark;
 use common\models\Type;
 use Yii;
@@ -33,11 +34,11 @@ class ConnectController extends Controller
         $this->stdout("\n");
         $this->stdout("Connect controller \n");
         $this->stdout("\nActions: \n");
-        $this->stdout('   merge' . " — merge data from both programs.\n");
+        $this->stdout('   merge $type' . " — merge data from both programs.\n");
         $this->stdout("\n");
     }
 
-    public function actionMerge()
+    public function actionMerge($mergeType = false)
     {
         $listStatus = [
             0 => Company::STATUS_NEW,
@@ -61,21 +62,33 @@ class ConnectController extends Controller
                 ->queryOne()
             ) {
                 $type = Company::TYPE_OWNER;
+                if ($mergeType && $mergeType != $type) {
+                    continue;
+                }
             } elseif ($oldRequestData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_wash WHERE request_ptr_id = {$rowData['id']}")
                 ->queryOne()
             ) {
                 $type = Company::TYPE_WASH;
+                if ($mergeType && $mergeType != $type) {
+                    continue;
+                }
             } elseif ($oldRequestData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_tires WHERE request_ptr_id = {$rowData['id']}")
                 ->queryOne()
             ) {
                 $type = Company::TYPE_TIRES;
+                if ($mergeType && $mergeType != $type) {
+                    continue;
+                }
             } elseif ($oldRequestData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_service WHERE request_ptr_id = {$rowData['id']}")
                 ->queryOne()
             ) {
                 $type = Company::TYPE_SERVICE;
+                if ($mergeType && $mergeType != $type) {
+                    continue;
+                }
             } else {
                 continue;
             }
@@ -86,29 +99,26 @@ class ConnectController extends Controller
             $employees = ArrayHelper::index($employees, 'position');
 
             $status = Company::STATUS_NEW;
+            $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
             $created_at = time();
             if ($processData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_process WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_NEW;
                 $created_at = strtotime($processData['updated']);
             }
             if ($archiveData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_done WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_ACTIVE;
                 $created_at = strtotime($archiveData['created']);
             }
             if ($refuseData = $this->old_db
                 ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request_refused WHERE request_id = {$rowData['id']}")
                 ->queryOne()
             ) {
-                $status = Company::STATUS_REFUSE;
                 $created_at = strtotime($refuseData['created']);
             }
-            $status = isset($listStatus[$rowData['state']]) ? $listStatus[$rowData['state']] : $status;
 
             $name = ArrayHelper::getValue($rowData, 'name');
             if(!$name) {
@@ -148,6 +158,16 @@ class ConnectController extends Controller
                     }
                 }
                 $company_id = $this->new_db->lastInsertID;
+            } else {
+                $modelCompanyOffer = CompanyOffer::findOne(['company_id' => $company_id]);
+                if ($modelCompanyOffer) {
+                    continue;
+                }
+                $company = Company::findOne($company_id);
+                if ($company) {
+                    $company->status = $status;
+                    $company->save();
+                }
             }
 
             /////////////////////////////

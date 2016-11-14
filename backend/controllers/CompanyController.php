@@ -37,17 +37,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
+                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -107,6 +107,53 @@ class CompanyController extends Controller
      * @param integer $type
      * @return mixed
      */
+    public function actionActive($type)
+    {
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_ACTIVE;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'address'    => SORT_ASC,
+                'created_at' => SORT_DESC,
+            ]
+        ];
+
+        $model = new Company();
+        $model->type = $type;
+
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
+        }
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_ACTIVE;
+            $typeData['badge'] = $badgeSearch->search()->count;
+        }
+
+        $this->view->title = 'Активные - ' . Company::$listType[$type]['ru'];
+
+        return $this->render('list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'model'        => $model,
+                'listType'     => $listType,
+            ]);
+    }
+
+    /**
+     * Lists all Company models.
+     * @param integer $type
+     * @return mixed
+     */
     public function actionArchive($type)
     {
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
@@ -140,13 +187,13 @@ class CompanyController extends Controller
         $this->view->title = 'Архив - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list',
-        [
-            'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
-            'type'         => $type,
-            'model'        => $model,
-            'listType'     => $listType,
-        ]);
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'model'        => $model,
+                'listType'     => $listType,
+            ]);
     }
 
     /**
