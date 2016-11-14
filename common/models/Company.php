@@ -184,7 +184,7 @@ class Company extends ActiveRecord
             ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
+            ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }
 

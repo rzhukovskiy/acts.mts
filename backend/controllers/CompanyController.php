@@ -37,17 +37,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete','attribute'],
+                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -158,7 +158,7 @@ class CompanyController extends Controller
     {
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        $searchModel->status = Company::STATUS_ARCHIVE;
+        $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
@@ -180,7 +180,7 @@ class CompanyController extends Controller
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
-            $badgeSearch->status = Company::STATUS_ARCHIVE;
+            $badgeSearch->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 
@@ -293,6 +293,15 @@ class CompanyController extends Controller
             'modelCompanyInfo' => $modelCompanyInfo,
             'modelCompanyOffer' => $modelCompanyOffer,
         ]);
+    }
+
+    public function actionStatus($id, $status)
+    {
+        $model = $this->findModel($id);
+        $model->status = $status;
+        $model->save();
+        
+        return $this->redirect(['company/update', 'id' => $model->id]);
     }
 
     public function actionInfo($id)

@@ -259,6 +259,10 @@ table.sign {
     content: normal;
 }
 
+.header-btn {
+    margin-top: -5px;
+}
+
 /*front-form*/
 .front-form .btn {
     padding: 8px 12px 6px;

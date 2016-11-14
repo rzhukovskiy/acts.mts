@@ -6,7 +6,9 @@
  * @var $modelCompanyInfo common\models\CompanyInfo
  * @var $modelCompanyOffer common\models\CompanyOffer
  */
+use common\models\Company;
 use kartik\editable\Editable;
+use kartik\popover\PopoverX;
 use yii\helpers\Html;
 
 ?>
@@ -14,6 +16,14 @@ use yii\helpers\Html;
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $modelCompany->name ?>
+        <div class="header-btn pull-right">
+            <?= $modelCompany->status == Company::STATUS_REFUSE ?
+                Html::a('В архив', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?= $modelCompany->status != Company::STATUS_REFUSE ? 
+                Html::a('В архив 2', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_REFUSE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?= $modelCompany->status != Company::STATUS_NEW ? 
+                Html::a('В активные', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+        </div>
     </div>
     <div class="panel-body">
         <table class="table table-bordered list-data">
@@ -130,13 +140,15 @@ use yii\helpers\Html;
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'submitOnEnter' => false,
                         'attribute' => 'process',
                         'displayValue' => $modelCompanyOffer->processHtml,
                         'inputType' => Editable::INPUT_TEXTAREA,
                         'asPopover' => true,
                         'size' => 'lg',
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарии'],
+                        'editableValueOptions' => ['style' => 'text-align: left'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарии', 'style' => 'text-align: left', 'rows' => 10],
                         'formOptions' => [
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],
@@ -180,7 +192,7 @@ use yii\helpers\Html;
                             'class' => 'form-control',
                             'pluginOptions' => [
                                 'format' => 'dd-mm-yyyy hh:ii',
-                                'autoclose'=>true,
+                                'autoclose' => true,
                             ],
                         ],
                         'formOptions' => [

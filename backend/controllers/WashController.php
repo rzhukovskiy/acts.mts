@@ -48,7 +48,7 @@ class WashController extends Controller
     {
         $searchModel = new CompanySearch();
         $searchModel->type = Company::TYPE_WASH;
-        $searchModel->status = Company::STATUS_NEW;
+        $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->joinWith('acts');
         $dataProvider->sort = [

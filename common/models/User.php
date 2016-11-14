@@ -258,11 +258,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getFirstCompanyType()
     {
-        if (!empty($this->department)) {
-            foreach (Company::$listType as $companyType => $serviceData) {
-                if ($this->can($companyType, Company::STATUS_NEW)) {
-                    return $companyType;
-                }
+        foreach (Company::$listType as $companyType => $serviceData) {
+            if ($this->can($companyType, Company::STATUS_NEW)) {
+                return $companyType;
             }
         }
         

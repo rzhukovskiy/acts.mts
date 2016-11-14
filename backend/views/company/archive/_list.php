@@ -4,6 +4,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
  */
+use common\models\Company;
 use kartik\grid\GridView;
 
 ?>
@@ -35,7 +36,12 @@ use kartik\grid\GridView;
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
                 ],
-                'name',
+                [
+                    'attribute' => 'name',
+                    'contentOptions' => function ($data) {
+                        return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'color: green'] : [];
+                    },
+                ],
                 [
                     'attribute' => 'fullAddress',
                     'content'   => function ($data) {

@@ -32,7 +32,7 @@ use common\models\Department;
         <?= $form->field($model, 'role')->dropDownList(Department::$listRole) ?>
 
         <div class="form-group field-department-name required">
-            <label class="col-sm-2 control-label" for="department-name">Заявки</label>
+            <label class="col-sm-2 control-label" for="department-name">Активные</label>
             <div class="col-sm-10">
                 <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
                     echo Html::checkbox('CompanyType[' . Company::STATUS_ACTIVE . '][' . $companyTypeId . ']', $model->isNewRecord ? false : $model->can($companyTypeId, Company::STATUS_ACTIVE), [
