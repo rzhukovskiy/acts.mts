@@ -3,6 +3,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use common\models\Company;
+
 /**
  * @var $this yii\web\View
  * @var $model common\models\User
@@ -26,53 +27,69 @@ use common\models\Company;
     ]);
     echo $form->field($model, 'username')->textInput();
     echo $form->field($model, 'newPassword')->passwordInput();
-        ?>
-        <div class="form-group field-department-name required">
-            <label class="col-sm-2 control-label" for="department-name">Заявки</label>
-            <div class="col-sm-10">
-                <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
-                    echo Html::checkbox('CompanyType[' . Company::STATUS_NEW . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_NEW), [
-                        'label' => $companyTypeData['ru'],
-                        'labelOptions' => [
-                            'class' => 'checkbox-inline',
-                            'style' => 'margin-right: 10px;'
-                        ]
-                    ]);
-                } ?>
-            </div>
+    ?>
+    <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Заявки</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_ACTIVE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_ACTIVE), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
         </div>
+    </div>
 
-        <div class="form-group field-department-name required">
-            <label class="col-sm-2 control-label" for="department-name">Архив</label>
-            <div class="col-sm-10">
-                <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
-                    echo Html::checkbox('CompanyType[' . Company::STATUS_ARCHIVE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_ARCHIVE), [
-                        'label' => $companyTypeData['ru'],
-                        'labelOptions' => [
-                            'class' => 'checkbox-inline',
-                            'style' => 'margin-right: 10px;'
-                        ]
-                    ]);
-                } ?>
-            </div>
+    <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Заявки</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_NEW . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_NEW), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
         </div>
+    </div>
 
-        <div class="form-group field-department-name required">
-            <label class="col-sm-2 control-label" for="department-name">Отклоненные</label>
-            <div class="col-sm-10">
-                <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
-                    echo Html::checkbox('CompanyType[' . Company::STATUS_REFUSE . '][' . $companyTypeId . ']',  $userModel->can($companyTypeId, Company::STATUS_REFUSE), [
-                        'label' => $companyTypeData['ru'],
-                        'labelOptions' => [
-                            'class' => 'checkbox-inline',
-                            'style' => 'margin-right: 10px;'
-                        ]
-                    ]);
-                } ?>
-            </div>
+    <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Архив</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_ARCHIVE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_ARCHIVE), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
         </div>
+    </div>
+
+    <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Отклоненные</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_REFUSE . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_REFUSE), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
+        </div>
+    </div>
     <div class="form-group">
-        <div class="col-sm-6 col-sm-offset-2"><?= Html::submitButton('Изменить', ['class' => 'btn btn-primary btn-sm']) ?>
+        <div
+            class="col-sm-6 col-sm-offset-2"><?= Html::submitButton('Изменить', ['class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>

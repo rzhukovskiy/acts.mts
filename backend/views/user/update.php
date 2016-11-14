@@ -6,12 +6,12 @@ use yii\bootstrap\Tabs;
  * @var $this \yii\web\View
  * @var $userModel common\models\User
  */
-$this->title = 'Редактирование пользователя ' . Html::encode($model->username);
+$this->title = 'Редактирование пользователя ' . Html::encode($userModel->username);
 
 $items = [
     [
         'label' => 'Пользователи',
-        'url' => Yii::$app->getRequest()->referrer,
+        'url' => ['user/list', 'department' => $userModel->department->id],
     ],
     [
         'label' => 'Редактирование',
