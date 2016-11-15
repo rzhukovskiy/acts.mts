@@ -24,8 +24,3 @@ echo $this->render($action . '/_list', [
     'userData' => $userData,
     'admin' => $admin,
 ]);
-
-echo $this->render('_form', [
-    'model' => $model,
-    'type' => $type,
-]);

@@ -4,12 +4,21 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
  */
+use common\models\Company;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Список
+        <div class="header-btn pull-right">
+            <?= Html::a('Добавить', [
+                'company/create',
+                'Company[type]' => $searchModel->type,
+                'Company[status]' => Company::STATUS_REFUSE
+            ], ['class' => 'btn btn-success btn-sm']) ?>
+        </div>
     </div>
     <div class="panel-body">
         <?=
@@ -35,7 +44,10 @@ use kartik\grid\GridView;
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
                 ],
-                'name',
+                [
+                    'header' => 'Организация',
+                    'attribute' => 'name',
+                ],
                 [
                     'attribute' => 'fullAddress',
                     'content'   => function ($data) {
@@ -45,7 +57,13 @@ use kartik\grid\GridView;
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}',
-                    'contentOptions' => ['style' => 'min-width: 60px'],
+                    'contentOptions' => ['style' => 'width: 60px'],
+                    'buttons' => [
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                ['/company/update', 'id' => $model->id]);
+                        },
+                    ],
                 ],
             ],
         ]);

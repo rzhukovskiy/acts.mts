@@ -7,12 +7,21 @@
  * @var $admin bool
  * @var $userData array
  */
+use common\models\Company;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Список
+        <div class="header-btn pull-right">
+            <?= Html::a('Добавить', [
+                'company/create',
+                'Company[type]' => $searchModel->type,
+                'Company[status]' => Company::STATUS_NEW,
+            ], ['class' => 'btn btn-success btn-sm']) ?>
+        </div>
     </div>
     <div class="panel-body">
         <?php
@@ -36,7 +45,10 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 'address',
-                'name',
+                [
+                    'header' => 'Организация',
+                    'attribute' => 'name',
+                ],
                 [
                     'attribute' => 'fullAddress',
                     'value'     => function ($model) {
@@ -53,6 +65,12 @@ use yii\grid\GridView;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}{delete}',
                     'contentOptions' => ['style' => 'min-width: 70px'],
+                    'buttons' => [
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                ['/company/update', 'id' => $model->id]);
+                        },
+                    ],
                 ],
             ],
         ]);

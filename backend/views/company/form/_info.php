@@ -30,6 +30,7 @@ use kartik\editable\Editable;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -49,6 +50,7 @@ use kartik\editable\Editable;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -68,6 +70,7 @@ use kartik\editable\Editable;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -95,6 +98,7 @@ use kartik\editable\Editable;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
