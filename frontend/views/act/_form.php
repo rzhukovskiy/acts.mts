@@ -95,8 +95,12 @@ use yii\jui\AutoComplete;
             <tr>
                 <td colspan="4">
                     <div class="col-sm-12">
-                        <label class="control-label">Услуги партнера</label>
-                        <?php foreach ($partnerScopes as $scope) { ?>
+                        <label class="control-label">Услуги партнера (<?= $model->partner->name ?>)</label>
+                        <?php
+                        $partnerSum=0;
+                        foreach ($partnerScopes as $scope) {
+                            $partnerSum+=$scope->amount*$scope->price
+                            ?>
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-8">
                                     <?php if (!empty($serviceList)) { ?>
@@ -141,11 +145,23 @@ use yii\jui\AutoComplete;
                                 </button>
                             </div>
                         </div>
+                        <div class="form-group">
+                             <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold">
+                                Сумма
+                            </div>
+                            <div class="col-xs-1"  style="font-weight: bold">
+                                <?= $partnerSum ?>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-sm-12" style="margin-top: 30px;">
-                        <label class="control-label">Услуги клиента</label>
-                        <?php foreach ($clientScopes as $scope) { ?>
+                        <label class="control-label">Услуги клиента (<?= $model->client->name ?>)</label>
+                        <?php
+                        $clientSum=0;
+                        foreach ($clientScopes as $scope) {
+                            $clientSum+=$scope->amount*$scope->price
+                            ?>
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-8">
                                     <?php if (!empty($serviceList)) { ?>
@@ -187,6 +203,14 @@ use yii\jui\AutoComplete;
                                 <button type="button" class="btn btn-primary input-sm addButton">
                                     <i class="glyphicon glyphicon-plus"></i>
                                 </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold">
+                                Сумма
+                            </div>
+                            <div class="col-xs-1"  style="font-weight: bold">
+                                <?= $clientSum ?>
                             </div>
                         </div>
                     </div>
