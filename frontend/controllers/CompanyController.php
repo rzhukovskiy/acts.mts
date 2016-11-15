@@ -152,6 +152,7 @@ class CompanyController extends Controller
                 }
             }
         }
+        Yii::$app->session->setFlash('saved', true);
 
         return $this->redirect(['update', 'id' => $model->id]);
     }

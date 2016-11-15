@@ -18,7 +18,7 @@ use common\models\Company;
         <div class="btn btn-xs btn-primary pull-right" data-toggle="collapse" href="#collapsePriceForm_<?=$type?>"
              aria-expanded="false" aria-controls="collapseExample">Скрыть/Развернуть</div>
     </div>
-    <div class="collapse" id="collapsePriceForm_<?=$type?>">
+    <div class="collapse<?= Yii::$app->session->hasFlash('saved') ? ' in' : '' ?>" id="collapsePriceForm_<?= $type ?>">
         <div class="panel-body">
             <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT]) ? $this->render('/company-service/merged/_list', [
                 'dataProvider' => $model->getMergedPriceDataProvider($type),
