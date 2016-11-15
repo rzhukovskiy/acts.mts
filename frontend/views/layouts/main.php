@@ -58,7 +58,7 @@ AppAsset::register($this);
 
 
 <?= $this->render('parts/_footer') ?>
-<div class="nav">
+<div class="nav-button">
     <div style="display:none;" class="nav_up" id="nav_up"></div>
     <div style="display:none;" class="nav_down" id="nav_down"></div>
 </div>
