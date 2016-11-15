@@ -15,21 +15,29 @@ use yii\helpers\Html;
 use kartik\date\DatePicker;
 use yii\widgets\Pjax;
 
+//Скрытие фильтров
+$script = <<< JS
+    $('.show-search').click(function(){
+        $('#act-grid-filters').toggle();
+    });
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+//Выбор периода
 $filters = 'Период: ' . DatePicker::widget([
-        'model' => $searchModel,
-        'attribute' => 'period',
-        'type' => DatePicker::TYPE_INPUT,
-        'language' => 'ru',
+        'model'         => $searchModel,
+        'attribute'     => 'period',
+        'type'          => DatePicker::TYPE_INPUT,
+        'language'      => 'ru',
         'pluginOptions' => [
-            'autoclose' => true,
-            'changeMonth' => true,
-            'changeYear' => true,
+            'autoclose'       => true,
+            'changeMonth'     => true,
+            'changeYear'      => true,
             'showButtonPanel' => true,
-            'format' => 'm-yyyy',
-            'maxViewMode' => 2,
-            'minViewMode' => 1,
+            'format'          => 'm-yyyy',
+            'maxViewMode'     => 2,
+            'minViewMode'     => 1,
         ],
-        'options' => [
+        'options'       => [
             'class' => 'form-control ext-filter',
         ]
     ]);
@@ -113,7 +121,7 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => '&nbsp',
+                    'content' => '<button class="btn btn-primary show-search">Поиск</button>',
                     'options' => [
                         'colspan' => count($columns),
                     ]

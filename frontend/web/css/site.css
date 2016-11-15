@@ -313,3 +313,6 @@ table.sign {
 .list-group-sub .list-group-item.active a{
     color: #ffffff!important;
 }
+#act-grid #act-grid-filters{
+    display: none;
+}
