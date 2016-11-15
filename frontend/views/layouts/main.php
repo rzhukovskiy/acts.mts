@@ -4,10 +4,10 @@
 /* @var $content string */
 
 use common\models\User;
-use yii\helpers\Html;
-use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use frontend\assets\AppAsset;
 use frontend\widgets\Menu\menuLeftWidget;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 ?>
@@ -20,7 +20,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="shortcut icon" href="/favicon.png" >
+    <link rel="shortcut icon" href="/favicon.png">
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -38,8 +38,8 @@ AppAsset::register($this);
                             ['/user/login', 'id' => 1],
                             ['class' => 'btn btn-danger btn-sm pull-right', 'style' => 'margin-right: 10px']) ?>
                     <?php endif; ?>
-                    <?= Yii::$app->user->can(User::ROLE_WATCHER)
-                        ? Html::a('Сменить кабинет', Yii::getAlias('@backWeb'),
+                    <?= Yii::$app->user->can(User::ROLE_WATCHER) ? Html::a('Сменить кабинет',
+                        Yii::getAlias('@backWeb'),
                         ['class' => 'btn btn-primary btn-sm pull-right', 'style' => 'margin-right: 10px']) : '' ?>
                 </div>
             </div>
@@ -58,7 +58,10 @@ AppAsset::register($this);
 
 
 <?= $this->render('parts/_footer') ?>
-
+<div class="nav">
+    <div style="display:none;" class="nav_up" id="nav_up"></div>
+    <div style="display:none;" class="nav_down" id="nav_down"></div>
+</div>
 
 <?php $this->endBody() ?>
 </body>
