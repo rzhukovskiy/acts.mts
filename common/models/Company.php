@@ -598,10 +598,11 @@ class Company extends ActiveRecord
      * Набор данных для выпадайки
      *
      * @param null|integer $type
+     * @param boolean|array $sort
      * @param boolean $useUniversal
      * @return array
      */
-    public static function dataDropDownList($type = null, $useUniversal = false)
+    public static function dataDropDownList($type = null, $useUniversal = false, $sort = false)
     {
         $query = static::find();
 
@@ -615,7 +616,9 @@ class Company extends ActiveRecord
                 $query = $query->orWhere(['service_type.type' => $type]);
             }
         }
-
+        if ($sort) {
+            $query->orderBy($sort);
+        }
         $query = $query->asArray()->all();
 
         return ArrayHelper::map($query, 'id', 'name');

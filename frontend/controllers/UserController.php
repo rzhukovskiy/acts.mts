@@ -81,11 +81,12 @@ class UserController extends \yii\web\Controller
                 Yii::$app->session->addFlash('add_user_form', 'Ошибка. Пользователь не сохранен.');
             }
 
-        return $this->render('list', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'companyDropDownData' => Company::dataDropDownList($type),
-            'newUser' => $newUser,
+        return $this->render('list',
+        [
+            'searchModel'         => $searchModel,
+            'dataProvider'        => $dataProvider,
+            'companyDropDownData' => Company::dataDropDownList($type, false, ['id' => SORT_DESC]),
+            'newUser'             => $newUser,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
