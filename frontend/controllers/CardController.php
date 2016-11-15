@@ -8,6 +8,7 @@ use common\models\Company;
 use common\models\Card;
 use Yii;
 use frontend\models\search\CardSearch;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -32,7 +33,7 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete'],
+                        'actions' => ['list', 'create', 'update', 'delete','diapason'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -75,6 +76,26 @@ class CardController extends Controller
             'dataProvider' => $dataProvider,
             'companyDropDownData' => $companyDropDownData,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    /**
+     * Lists all Card models.
+     * @return mixed
+     */
+    public function actionDiapason()
+    {
+        $dataProvider = new ArrayDataProvider([
+            'allModels'  => Card::getDiapason(),
+            'sort'       => [
+                'attributes' => ['type', 'val'],
+            ],
+            'pagination' => false,
+        ]);
+
+        return $this->render('diapason',
+        [
+            'dataProvider' => $dataProvider,
         ]);
     }
 

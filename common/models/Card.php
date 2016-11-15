@@ -1,7 +1,6 @@
 <?php
 namespace common\models;
 
-use common\components\ArrayHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -28,6 +27,9 @@ class Card extends ActiveRecord
     const STATUS_NOT_ACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const TYPE_FREE = 0;
+    const TYPE_NON_FREE = 1;
+
     public $car_number;
     public $car_type;
     public $car_mark;
@@ -35,6 +37,11 @@ class Card extends ActiveRecord
     public $cardStatus = [
         'Активна',
         'Заблокирована'
+    ];
+
+    static $cardType = [
+        self::TYPE_FREE     => 'Свободны',
+        self::TYPE_NON_FREE => 'Заняты',
     ];
 
     /**
@@ -76,15 +83,15 @@ class Card extends ActiveRecord
 
     public function attributeLabels()
     {
-        return array(
-            'id' => 'ID',
-            'number' => 'Номер карты',
+        return [
+            'id'         => 'ID',
+            'number'     => 'Номер карты',
             'company_id' => 'Компания',
-            'status' => 'Статус',
+            'status'     => 'Статус',
             'created_at' => 'Создана',
             'updated_at' => 'Изменена',
-            'company' => 'Компания',
-        );
+            'company'    => 'Компания',
+        ];
     }
 
     public function beforeSave($insert)
@@ -92,9 +99,9 @@ class Card extends ActiveRecord
         if ($insert && !$this->number) {
             $salt = self::randomSalt();
             $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
-        } elseif($insert) {
+        } elseif ($insert) {
             $numPointList = explode('-', $this->number);
-            if(count($numPointList) > 1) {
+            if (count($numPointList) > 1) {
                 for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
                     $card = clone $this;
                     $card->number = $num;
@@ -107,14 +114,64 @@ class Card extends ActiveRecord
                 Act::updateAll(['is_fixed' => 1], ['card_id' => $existed->id]);
                 $existed->company_id = $this->company_id;
                 $existed->save();
+
                 return false;
             }
         }
+
         return true;
     }
 
     public function randomSalt()
     {
         return str_pad(rand(1, 9999), 4, "0", STR_PAD_RIGHT);
+    }
+
+    /**
+     * @return array
+     */
+    static public function getDiapason()
+    {
+        $cards = Card::find()->select('number')->orderBy(['number' => SORT_ASC])->indexBy('number')->column();
+        $max = array_pop($cards);
+        array_push($cards, $max);
+        $arr = [];
+        $free = [];
+        $nonFree = [];
+        $data = [];
+
+        for ($i = 1; $i <= $max; $i++) {
+            if (isset($cards[$i])) {
+                if (count($free) != 0) {
+                    $arr[] = [$free[0], $i, self::TYPE_FREE];
+                    $free = [];
+                }
+                if (count($nonFree) == 0) {
+                    $nonFree[] = $i;
+                }
+            } else {
+                if (count($nonFree) != 0) {
+                    $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE];
+                    $nonFree = [];
+                }
+                if (count($free) == 0) {
+                    $free[] = $i;
+                }
+            }
+        }
+        if (count($nonFree) != 0) {
+            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE];
+        }
+        if (count($free) != 0) {
+            $arr[] = [$free[0], $i, self::TYPE_FREE];
+        }
+        foreach ($arr as $val) {
+            $data[] = [
+                'type' => $val[2],
+                'val'  => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
+            ];
+        }
+
+        return $data;
     }
 }

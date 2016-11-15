@@ -126,7 +126,12 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Карты',
                     'url'    => ['/card/list'],
-                    'active' => Yii::$app->controller->id == 'card',
+                    'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action != 'diapason',
+                ],
+                [
+                    'label'  => 'Диапазон карт',
+                    'url'    => ['/card/diapason'],
+                    'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action == 'diapason',
                 ],
                 [
                     'label'  => 'Информация ТС',
