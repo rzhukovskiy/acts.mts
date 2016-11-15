@@ -8,6 +8,7 @@
 
 namespace backend\controllers;
 
+use common\components\ArrayHelper;
 use common\models\Company;
 use common\models\MonthlyAct;
 use common\models\search\MonthlyActSearch;
@@ -30,7 +31,7 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
@@ -67,6 +68,24 @@ class MonthlyActController extends Controller
                 'type'         => $type,
                 'company'      => $company,
                 'listType'     => $listType
+            ]);
+    }
+
+    public function actionArchive()
+    {
+        $searchModel = new MonthlyActSearch();
+        // $searchModel->scenario = 'statistic_filter';
+        $searchModel->period = Yii::$app->request->get('period');
+        $dataProvider = $searchModel->searchArchive(Yii::$app->request->queryParams);
+        $models = $dataProvider->getModels();
+        $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
+
+
+        return $this->render('archive/list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'totalProfit'  => $totalProfit
             ]);
     }
 

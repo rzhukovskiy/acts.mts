@@ -161,7 +161,7 @@ class menuLeftWidget extends Widget
                     ]
                 ],
                 [
-                    'label'  => 'Организации',
+                    'label'  => 'Статистика',
                     'url'    => '#',
                     'active' => Yii::$app->controller->id == 'stat',
                     'items'  => [

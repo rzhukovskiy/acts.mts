@@ -1,6 +1,7 @@
 $('body').off('click', '.date-send');
+$('body').off('change', '.select-period');
 
-$('body').on('click', '.date-send', function (e) {
+$('body').one('click', '.date-send', function (e) {
     var startDate = new Date();
     var endDate = new Date();
     switch ($('.select-period').val()) {
@@ -43,4 +44,35 @@ $('body').on('click', '.date-send', function (e) {
     $('.date-to').change();
     $('.date-to').focusout();
     $('.autoinput').remove();
+});
+
+$('body').on('change','.select-period', function(e) {
+    switch ($(this).val()) {
+        case '1':
+            $('#year').fadeIn();
+            $('#month').fadeIn();
+            $('#half').fadeOut();
+            $('#quarter').fadeOut();
+            break;
+        case '2':
+            $('#year').fadeIn();
+            $('#quarter').fadeIn();
+            $('#month').fadeOut();
+            $('#half').fadeOut();
+            break;
+        case '3':
+            $('#year').fadeIn();
+            $('#half').fadeIn();
+            $('#month').fadeOut();
+            $('#quarter').fadeOut();
+            break;
+        case '4':
+            $('#year').fadeIn();
+            $('#month').fadeOut();
+            $('#quarter').fadeOut();
+            $('#half').fadeOut();
+            break;
+        default:
+            $('.autoinput').not('.select-period').fadeOut();
+    }
 });

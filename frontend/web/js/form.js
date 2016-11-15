@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    $('body').off('click', '.date-send');
+    $('body').off('change', '.select-period');
+
     navigationButton();
 
     addHeaders({
@@ -34,7 +37,7 @@ $(document).ready(function() {
 
     imagePreview();
 
-    $('body').on('change','.select-period', function(e) {
+    $('body').one('change','.select-period', function(e) {
         switch ($(this).val()) {
             case '1':
                 $('#year').fadeIn();
@@ -64,8 +67,8 @@ $(document).ready(function() {
                 $('.autoinput').not('.select-period').fadeOut();
         }
     });
-    
-    $('body').on('click','.date-send', function(e) {
+
+    $('body').one('click','.date-send', function(e) {
         var startDate = new Date();
         var endDate = new Date();
         switch ($('.select-period').val()) {

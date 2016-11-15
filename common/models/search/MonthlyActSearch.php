@@ -29,6 +29,7 @@ class MonthlyActSearch extends MonthlyAct
             [['client_id', 'type_id'], 'integer'],
             [['act_date'], 'string'],
             ['act_date', 'default', 'value' => date('n-Y', strtotime('-1 month'))],
+            [['dateFrom', 'dateTo'], 'safe'],
         ];
     }
 
@@ -76,6 +77,43 @@ class MonthlyActSearch extends MonthlyAct
             'updated_at'                       => $this->updated_at,
 
         ]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function searchArchive($params)
+    {
+        $query = static::find();
+        $query->addSelect([
+            'DATE_FORMAT(`act_date`, "%c-%Y") as act_date',
+            'type_id',
+            'client_id',
+            'profit'
+        ])->with('client');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'client_id'  => $this->client_id,
+            'type_id'    => $this->type_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ]);
+
+        $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
+        $query->orderBy(['act_date' => SORT_DESC, 'type_id' => SORT_ASC]);
 
         return $dataProvider;
     }
