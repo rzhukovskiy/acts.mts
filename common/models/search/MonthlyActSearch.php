@@ -18,6 +18,7 @@ class MonthlyActSearch extends MonthlyAct
     public $dateTo;
     public $period;
     public $createDay;
+    public $dateMonth;
     public $day;
 
     /**
@@ -29,7 +30,7 @@ class MonthlyActSearch extends MonthlyAct
             [['client_id', 'type_id'], 'integer'],
             [['act_date'], 'string'],
             ['act_date', 'default', 'value' => date('n-Y', strtotime('-1 month'))],
-            [['dateFrom', 'dateTo'], 'safe'],
+            [['dateFrom', 'dateTo','dateMonth'], 'safe'],
         ];
     }
 
@@ -89,7 +90,7 @@ class MonthlyActSearch extends MonthlyAct
     {
         $query = static::find();
         $query->addSelect([
-            'DATE_FORMAT(`act_date`, "%c-%Y") as act_date',
+            'DATE_FORMAT(`act_date`, "%c-%Y") as dateMonth',
             'type_id',
             'client_id',
             'profit'

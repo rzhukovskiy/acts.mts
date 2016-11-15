@@ -89,7 +89,13 @@ $filters .= \frontend\widgets\datePeriod\DatePeriodWidget::widget([
                         return $data->client->name;
                     },
                 ],
-                'act_date',
+                [
+                    'attribute' => 'act_date',
+                    'label'     => 'Дата',
+                    'content'   => function ($data) {
+                        return $data->dateMonth;
+                    },
+                ],
                 [
                     'attribute' => 'type_id',
                     'label'     => 'Услуга',
