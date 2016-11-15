@@ -6,11 +6,19 @@
  */
 use common\models\Company;
 use kartik\grid\GridView;
+use yii\helpers\Html;
 
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         Список
+        <div class="header-btn pull-right">
+            <?= Html::a('Добавить', [
+                'company/create', 
+                'Company[type]' => $searchModel->type, 
+                'Company[status]' => Company::STATUS_ARCHIVE
+            ], ['class' => 'btn btn-success btn-sm']) ?>
+        </div>
     </div>
     <div class="panel-body">
         <?=
@@ -37,14 +45,15 @@ use kartik\grid\GridView;
                     'groupEvenCssClass' => 'kv-group-header',
                 ],
                 [
+                    'header' => 'Организация',
                     'attribute' => 'name',
                     'contentOptions' => function ($data) {
-                        return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'color: green'] : [];
+                        return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'font-weight: bold'] : [];
                     },
                 ],
                 [
                     'attribute' => 'fullAddress',
-                    'content'   => function ($data) {
+                    'content' => function ($data) {
                         return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
                 ],
@@ -52,6 +61,12 @@ use kartik\grid\GridView;
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
+                    'buttons' => [
+                        'update' => function ($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                ['/company/update', 'id' => $model->id]);
+                        },
+                    ],
                 ],
             ],
         ]);

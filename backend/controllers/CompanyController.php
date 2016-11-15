@@ -269,17 +269,17 @@ class CompanyController extends Controller
 
     /**
      * Creates Company model.
-     * @param integer $type
      * @return mixed
      */
-    public function actionCreate($type)
+    public function actionCreate()
     {
         $model = new Company();
-        $model->type = $type;
         $model->status = Company::STATUS_NEW;
+        $model->name = 'Без названия ' . rand(1, 1000);
+        $model->address = 'Неизвестный';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['company/new', 'type' => $type]);
+        if ($model->load(Yii::$app->request->get()) && $model->save()) {
+            return $this->redirect(['company/update', 'id' => $model->id]);
         } else {
             return $this->goBack();
         }

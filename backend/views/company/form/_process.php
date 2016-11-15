@@ -61,6 +61,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]);
                     $form = $editable->getForm();
                     echo Html::hiddenInput('kv-complex', '1');
@@ -88,6 +89,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -110,6 +112,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                     -
                     <?= Editable::widget([
@@ -128,6 +131,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -152,6 +156,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -171,6 +176,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>
@@ -198,6 +204,7 @@ use yii\helpers\Html;
                         'formOptions' => [
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>

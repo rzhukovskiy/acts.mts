@@ -365,6 +365,9 @@ table.sign {
 .list-data .kv-editable-link {
     border: none;
 }
+.kv-editable-link {
+    color: #000;
+}
 .list-data .close {
     color: #000;
 }
