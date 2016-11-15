@@ -48,8 +48,8 @@ class menuLeftWidget extends Widget
 
         $items = [];
         // Admin links
-        if (Yii::$app->user->identity &&
-            in_array(Yii::$app->user->identity->role, [
+        if (Yii::$app->user->identity && in_array(Yii::$app->user->identity->role,
+            [
                 User::ROLE_ADMIN,
                 User::ROLE_MANAGER,
                 User::ROLE_WATCHER
@@ -67,43 +67,50 @@ class menuLeftWidget extends Widget
                             ($company && $company->type == Company::TYPE_OWNER))),
                 ],
                 [
-                    'label'  => Company::$listType[Company::TYPE_WASH]['ru'],
-                    'url'    => ['/company/list?type=' . Company::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_WASH ||
-                            ($company && $company->type == Company::TYPE_WASH))),
+                    'label'  => 'Организации',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'company'&&Yii::$app->request->get('type') != Company::TYPE_OWNER,
+                    'items'  => [
+                        [
+                            'label'  => Company::$listType[Company::TYPE_WASH]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_WASH],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_WASH ||
+                                    ($company && $company->type == Company::TYPE_WASH))),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_SERVICE]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_SERVICE],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_SERVICE ||
+                                    ($company && $company->type == Company::TYPE_SERVICE))),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_TIRES]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_TIRES],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_TIRES ||
+                                    ($company && $company->type == Company::TYPE_TIRES))),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_DISINFECT]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_DISINFECT],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_DISINFECT ||
+                                    ($company && $company->type == Company::TYPE_DISINFECT))),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL ||
+                                    ($company && $company->type == Company::TYPE_UNIVERSAL))),
+                        ],
+                    ],
                 ],
                 [
-                    'label'  => Company::$listType[Company::TYPE_SERVICE]['ru'],
-                    'url'    => ['/company/list?type=' . Company::TYPE_SERVICE],
-                    'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_SERVICE ||
-                            ($company && $company->type == Company::TYPE_SERVICE))),
-                ],
-                [
-                    'label'  => Company::$listType[Company::TYPE_TIRES]['ru'],
-                    'url'    => ['/company/list?type=' . Company::TYPE_TIRES],
-                    'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_TIRES ||
-                            ($company && $company->type == Company::TYPE_TIRES))),
-                ],
-                [
-                    'label'  => Company::$listType[Company::TYPE_DISINFECT]['ru'],
-                    'url'    => ['/company/list?type=' . Company::TYPE_DISINFECT],
-                    'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_DISINFECT ||
-                            ($company && $company->type == Company::TYPE_DISINFECT))),
-                ],
-                [
-                    'label'  => Company::$listType[Company::TYPE_UNIVERSAL]['ru'],
-                    'url'    => ['/company/list?type=' . Company::TYPE_UNIVERSAL],
-                    'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL ||
-                            ($company && $company->type == Company::TYPE_UNIVERSAL))),
-                ],
-                [
-                    'label' => 'Услуги',
-                    'url'   => ['service/index', 'ServiceSearch[type]' => Service::TYPE_WASH],
+                    'label'  => 'Услуги',
+                    'url'    => ['service/index', 'ServiceSearch[type]' => Service::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'service',
                 ],
                 [
@@ -122,39 +129,59 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'card',
                 ],
                 [
-                    'label'  => 'Марки и Типы',
-                    'url'    => ['/mark/list'],
-                    'active' => Yii::$app->controller->id == 'mark' || Yii::$app->controller->id == 'type',
+                    'label'  => 'Информация ТС',
+                    'url'    => '#',
+                    'active' => in_array(Yii::$app->controller->id, ['mark', 'type', 'car', 'car-count']),
+                    'items'  => [
+                        [
+                            'label'  => 'Марки и Типы',
+                            'url'    => ['/mark/list'],
+                            'active' => Yii::$app->controller->id == 'mark' || Yii::$app->controller->id == 'type',
+                        ],
+                        [
+                            'label'  => 'История ТС',
+                            'url'    => ['/car/list'],
+                            'active' => Yii::$app->controller->id == 'car',
+                        ],
+                        [
+                            'label'  => 'Загрузка ТС',
+                            'url'    => ['/car/upload'],
+                            'active' => false,
+                        ],
+                        [
+                            'label'  => 'Количество ТС',
+                            'url'    => ['/car-count/list'],
+                            'active' => Yii::$app->controller->id == 'car-count',
+                        ],
+                    ]
                 ],
                 [
-                    'label'  => 'История ТС',
-                    'url'    => ['/car/list'],
-                    'active' => Yii::$app->controller->id == 'car',
-                ],
-                [
-                    'label'  => 'Загрузка ТС',
-                    'url'    => ['/car/upload'],
-                    'active' => false,
-                ],
-                [
-                    'label'  => 'Количество ТС',
-                    'url'    => ['/car-count/list'],
-                    'active' => Yii::$app->controller->id == 'car-count',
-                ],
-                [
-                    'label'  => 'Статистика партнеров',
-                    'url'    => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'partner'],
-                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'partner',
-                ],
-                [
-                    'label'  => 'Статистика компаний',
-                    'url'    => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'company'],
-                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->request->get('group') == 'company',
-                ],
-                [
-                    'label'  => 'Статистика',
-                    'url'    => ['/stat/list-common', ],
-                    'active' => Yii::$app->controller->id == 'stat' && Yii::$app->controller->action->id == 'list-common',
+                    'label'  => 'Организации',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'stat',
+                    'items'  => [
+                        [
+                            'label'  => 'Статистика партнеров',
+                            'url'    => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'partner'],
+                            'active' =>
+                                Yii::$app->controller->id == 'stat' &&
+                                Yii::$app->request->get('group') == 'partner',
+                        ],
+                        [
+                            'label'  => 'Статистика компаний',
+                            'url'    => ['/stat/list', 'type' => Company::TYPE_WASH, 'group' => 'company'],
+                            'active' =>
+                                Yii::$app->controller->id == 'stat' &&
+                                Yii::$app->request->get('group') == 'company',
+                        ],
+                        [
+                            'label'  => 'Статистика общая',
+                            'url'    => ['/stat/list-common',],
+                            'active' =>
+                                Yii::$app->controller->id == 'stat' &&
+                                Yii::$app->controller->action->id == 'list-common',
+                        ],
+                    ]
                 ],
                 [
                     'label'  => 'Акты',
@@ -184,8 +211,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Добавить машину',
                         'url'    => [
                             '/act/create-entry',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' =>
                             Yii::$app->controller->id == 'act' &&
@@ -197,8 +224,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Контакты',
                         'url'    => [
                             '/contact/list',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' => Yii::$app->controller->id == 'user',
                     ],
@@ -206,8 +233,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Архив',
                         'url'    => [
                             '/act/list',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' =>
                             Yii::$app->controller->id == 'act' &&
@@ -227,8 +254,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Добавить машину',
                         'url'    => [
                             '/act/create',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' =>
                             Yii::$app->controller->id == 'act' &&
@@ -239,8 +266,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Контакты',
                         'url'    => [
                             '/contact/list',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' => Yii::$app->controller->id == 'contact',
                     ],
@@ -248,8 +275,8 @@ class menuLeftWidget extends Widget
                         'label'  => 'Архив',
                         'url'    => [
                             '/act/list',
-                            'type' => $company->type == Company::TYPE_UNIVERSAL ?
-                                $company->serviceTypes[0]->type : $company->type
+                            'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
+                                $company->type
                         ],
                         'active' =>
                             Yii::$app->controller->id == 'act' &&
