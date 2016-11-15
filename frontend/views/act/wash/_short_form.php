@@ -46,7 +46,7 @@ use yii\jui\AutoComplete;
                 <td style="width: 100px">
                     <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
-                <td class="complex-number">
+                <td class="complex-number" >
                     <label class="control-label" for="act-card_id">Номер <span class="extra-number" style="display:none">и номер прицепа</span></label>
                     <div class="input-group">
                         <?= AutoComplete::widget([
@@ -57,7 +57,18 @@ use yii\jui\AutoComplete;
                                 'source' => Car::find()->where(['!=', 'type_id', 7])->select('number as value')->asArray()->all(),
                                 'minLength' => '2',
                                 'autoFill' => true,
-                            ]
+                            ],
+                            'clientEvents' => [
+                                'response' => 'function (event, ui) {
+                                    if(ui.content.length==0){
+                                        $("#act-mark_id").show();
+                                        $("#act-type_id").show();
+                                    }else{
+                                        $("#act-mark_id").hide();
+                                        $("#act-type_id").hide();
+                                    }
+                                }'
+                            ],
                         ]) ?>
                         <?= AutoComplete::widget([
                             'model' => $model,
@@ -72,10 +83,10 @@ use yii\jui\AutoComplete;
                     </div>
                 </td>
                 <td>
-                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::getMarkList(), ['style'=>'display:none'])->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
+                    <?= $form->field($model, 'type_id')->dropdownList(Type::getTypeList(), ['max-width','style'=>'display:none'])->error(false) ?>
                 </td>
             </tr>
             <tr>
