@@ -143,7 +143,7 @@ class Card extends ActiveRecord
         for ($i = 1; $i <= $max; $i++) {
             if (isset($cards[$i])) {
                 if (count($free) != 0) {
-                    $arr[] = [$free[0], $i, self::TYPE_FREE];
+                    $arr[] = [$free[0], $i-1, self::TYPE_FREE];
                     $free = [];
                 }
                 if (count($nonFree) == 0) {
@@ -151,7 +151,7 @@ class Card extends ActiveRecord
                 }
             } else {
                 if (count($nonFree) != 0) {
-                    $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE];
+                    $arr[] = [$nonFree[0], $i-1, self::TYPE_NON_FREE];
                     $nonFree = [];
                 }
                 if (count($free) == 0) {
