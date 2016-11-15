@@ -172,6 +172,13 @@ use yii\helpers\Html;
                             'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
                         ],
                     ]); ?>
+                    <div class="form-group">
+
+                            <?= Html::a('Проверить почтовое отправление',
+                                'https://www.pochta.ru/tracking#' . $modelCompanyOffer->mail_number,
+                                ['target' => 'blank', 'class' => 'btn btn-primary']) ?>
+
+                    </div>
                 </td>
             </tr>
             <tr>
