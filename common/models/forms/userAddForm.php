@@ -47,6 +47,11 @@ class userAddForm extends Model
         $model->salt = Yii::$app->security->generateRandomString();
         $model->created_at = time();
         $model->updated_at = time();
+
+        if (!empty($this->password)) {
+            $model->password_hash = md5($model->salt . $this->password);
+        }
+
         if ($model->save())
             return true;
 
@@ -65,10 +70,16 @@ class userAddForm extends Model
         $model->salt = Yii::$app->security->generateRandomString();
         $model->created_at = time();
         $model->updated_at = time();
+
         $department = Department::findOne(['id' => $department_id]);
         if ($department) {
             $model->role = $department->role;
         }
+
+        if (!empty($this->password)) {
+            $model->password_hash = md5($model->salt . $this->password);
+        }
+
         if ($model->save()) {
             if ($department) {
                 $model->link('departments', $department);
