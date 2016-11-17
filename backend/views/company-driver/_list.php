@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Html;
 use yii\widgets\ListView;
 
 /* @var $this yii\web\View
@@ -12,13 +13,12 @@ use yii\widgets\ListView;
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $searchModel->company->name ?> :: Водители
+        <div class="header-btn pull-right">
+            <?= Html::a('Добавить', ['company-driver/create', 'company_id' => $searchModel->company_id], ['class' => 'btn btn-danger btn-sm']) ?>
+        </div>
     </div>
     <div class="panel-body">
-        <?= $this->render('/company-driver/_form', [
-            'model' => $model,
-        ]);
-        ?><?=
-        ListView::widget([
+        <?= ListView::widget([
             'dataProvider' => $dataProvider,
             'options' => [
                 'tag' => 'div',

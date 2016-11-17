@@ -44,14 +44,16 @@ class CompanyMemberController extends Controller
     /**
      * Creates a new CompanyMember model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $company_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($company_id = null)
     {
         $model = new CompanyMember();
+        $model->company_id = $company_id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->referrer);
+            return $this->redirect(['company/member', 'id' => $model->company_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

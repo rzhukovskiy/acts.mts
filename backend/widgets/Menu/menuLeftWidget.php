@@ -87,7 +87,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/archive', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE)
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
                     ),
                 ],
                 [
@@ -149,7 +150,8 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE)
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
                     ),
                 ],
                 [

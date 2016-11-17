@@ -99,10 +99,10 @@ class CompanyInfo extends ActiveRecord
         if (!$this->fullAddress) {
             $this->fullAddress = implode(', ',
                 [
-                    $this->city,
-                    $this->street,
-                    $this->house,
-                    $this->index,
+                    $this->city ? $this->city : $this->getAttributeLabel('city'),
+                    $this->street ? $this->city : $this->getAttributeLabel('street'),
+                    $this->house ? $this->city : $this->getAttributeLabel('house'),
+                    $this->index ? $this->city : $this->getAttributeLabel('index'),
                 ]);
         }
 

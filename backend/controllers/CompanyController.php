@@ -316,6 +316,7 @@ class CompanyController extends Controller
             'modelCompany' => $model,
             'modelCompanyInfo' => $modelCompanyInfo,
             'modelCompanyOffer' => $modelCompanyOffer,
+            'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
         ]);
     }
 
@@ -404,10 +405,10 @@ class CompanyController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $type = $model->type;
+        $status = Company::$listStatus[$model->status]['en'];
         $model->delete();
 
-        return $this->redirect(['list', 'type' => $type]);
+        return $this->redirect(['company/' . $status, 'type' => $model->type]);
     }
 
     /**

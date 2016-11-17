@@ -17,7 +17,7 @@ use yii\helpers\Html;
                 'company/create', 
                 'Company[type]' => $searchModel->type, 
                 'Company[status]' => Company::STATUS_ARCHIVE
-            ], ['class' => 'btn btn-success btn-sm']) ?>
+            ], ['class' => 'btn btn-danger btn-sm']) ?>
         </div>
     </div>
     <div class="panel-body">

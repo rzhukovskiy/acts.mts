@@ -5,6 +5,7 @@
  * @var $modelCompany common\models\Company
  * @var $modelCompanyInfo common\models\CompanyInfo
  * @var $modelCompanyOffer common\models\CompanyOffer
+ * @var $admin bool
  */
 
 $this->title = 'Редактирование ' . $modelCompany->name;
@@ -17,4 +18,5 @@ echo $this->render('form/_process', [
     'modelCompany' => $modelCompany,
     'modelCompanyInfo' => $modelCompanyInfo,
     'modelCompanyOffer' => $modelCompanyOffer,
+    'admin' => $admin,
 ]);

@@ -20,7 +20,7 @@ use yii\helpers\Html;
                 'company/create',
                 'Company[type]' => $searchModel->type,
                 'Company[status]' => Company::STATUS_NEW,
-            ], ['class' => 'btn btn-success btn-sm']) ?>
+            ], ['class' => 'btn btn-danger btn-sm']) ?>
         </div>
     </div>
     <div class="panel-body">
@@ -63,7 +63,7 @@ use yii\helpers\Html;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update}{delete}',
+                    'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 70px'],
                     'buttons' => [
                         'update' => function ($url, $model, $key) {

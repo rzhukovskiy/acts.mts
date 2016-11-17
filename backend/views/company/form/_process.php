@@ -5,6 +5,7 @@
  * @var $modelCompany common\models\Company
  * @var $modelCompanyInfo common\models\CompanyInfo
  * @var $modelCompanyOffer common\models\CompanyOffer
+ * @var $admin bool
  */
 use common\models\Company;
 use kartik\editable\Editable;
@@ -17,12 +18,13 @@ use yii\helpers\Html;
     <div class="panel-heading">
         <?= $modelCompany->name ?>
         <div class="header-btn pull-right">
-            <?= $modelCompany->status == Company::STATUS_REFUSE ?
+            <?= $modelCompany->status != Company::STATUS_ARCHIVE ?
                 Html::a('В архив', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
             <?= $modelCompany->status != Company::STATUS_REFUSE ? 
                 Html::a('В архив 2', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_REFUSE], ['class' => 'btn btn-success btn-sm']) : '' ?>
-            <?= $modelCompany->status != Company::STATUS_NEW ? 
+            <?= $modelCompany->status != Company::STATUS_ACTIVE ?
                 Html::a('В активные', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?= $admin ? Html::a('Удалить', ['company/delete','id' => $modelCompany->id], ['class' => 'btn btn-danger btn-sm']) : ''?>
         </div>
     </div>
     <div class="panel-body">

@@ -44,14 +44,16 @@ class CompanyDriverController extends Controller
     /**
      * Creates a new CompanyDriver model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $company_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($company_id = null)
     {
         $model = new CompanyDriver();
+        $model->company_id = $company_id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Yii::$app->request->referrer);
+            return $this->redirect(['company/driver', 'id' => $model->company_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

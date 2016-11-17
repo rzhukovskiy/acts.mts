@@ -18,11 +18,11 @@ use yii\bootstrap\Html;
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('mark_id')?></td>
-        <td><?= $model->mark ?></td>
+        <td><?= $model->mark->name ?></td>
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('type_id')?></td>
-        <td><?= $model->type ?></td>
+        <td><?= $model->type->name ?></td>
     </tr>
     <tr>
         <td class="list-label-sm"></td>

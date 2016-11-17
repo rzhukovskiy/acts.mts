@@ -103,7 +103,7 @@ class Company extends ActiveRecord
             'ru' => 'Заявки',
         ],
         self::STATUS_ACTIVE  => [
-            'en' => 'active',
+            'en' => 'archive',
             'ru' => 'Активные',
         ],
         self::STATUS_ARCHIVE  => [
