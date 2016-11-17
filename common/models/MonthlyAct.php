@@ -313,12 +313,16 @@ class MonthlyAct extends \yii\db\ActiveRecord
     /**
      * @param $act \common\models\Act
      */
-    public static function redoMonthlyAct($act)
-    {
+    public static function redoMonthlyAct($act)   {
+
         $clientId = $act->client_id;
         $partnerId = $act->partner_id;
         $time = $act->served_at;
         $serviceType = $act->service_type;
+
+        if(!self::isNeedNewAct($time, $serviceType)){
+            return false;
+        }
 
         $partnerAct = $clientAct = [];
 
@@ -579,6 +583,26 @@ class MonthlyAct extends \yii\db\ActiveRecord
             $this->img = $tmpImg;
         }
 
+    }
+
+    /**
+     * @param $date
+     * @param $type
+     * @return bool
+     */
+    private static function isNeedNewAct($date, $type)
+    {
+        if ($type != Company::TYPE_DISINFECT) {
+            $nowDate = new \DateTime();
+        } else {
+            $nowDate = (new \DateTime())->modify('+2 month');
+        }
+        $nowDate = $nowDate->format('Y-m-00');
+        $actDate = (new \DateTime())->setTimestamp($date)->format('Y-m-00');
+        var_dump($actDate);
+        var_dump($nowDate);
+        var_dump($actDate < $nowDate);
+        return $actDate < $nowDate;
     }
 
     /**

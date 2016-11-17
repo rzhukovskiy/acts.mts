@@ -600,12 +600,15 @@ class Company extends ActiveRecord
      * @param null|integer $type
      * @param boolean|array $sort
      * @param boolean $useUniversal
+     * @param boolean $isActive
      * @return array
      */
-    public static function dataDropDownList($type = null, $useUniversal = false, $sort = false)
+    public static function dataDropDownList($type = null, $useUniversal = false, $sort = false, $isActive = false)
     {
         $query = static::find();
-
+        if ($isActive) {
+            $query->active();
+        }
         if (!is_null($type)) {
             $query = $query->andWhere(['{{%company}}.type' => $type]);
             //Если успользуем универсальные компании, то проверяем их на подходящий тип и подмешиваем
@@ -616,6 +619,7 @@ class Company extends ActiveRecord
                 $query = $query->orWhere(['service_type.type' => $type]);
             }
         }
+
         if ($sort) {
             $query->orderBy($sort);
         }

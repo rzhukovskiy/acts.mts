@@ -20,7 +20,7 @@ use yii\bootstrap\Html;
 $this->title = "Архив актов";
 $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel,
         'client_id',
-        Company::dataDropDownList($type, true),
+        Company::dataDropDownList($type, true,['name'=>SORT_ASC],true),
         ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 $filters .= \frontend\widgets\datePeriod\DatePeriodWidget::widget([
     'model'        => $searchModel,
@@ -116,6 +116,11 @@ echo \kartik\grid\GridView::widget([
         [
             'attribute' => 'type_id',
             'label'     => 'Услуга',
+            'group'             => true,  // enable grouping
+            'options'           => ['class' => 'kv-grouped-header'],
+            'groupedRow'        => true,  // enable grouping
+            'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
+            'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
             'content'   => function ($data) {
                 return Company::$listType[$data->type_id]['ru'];
             },

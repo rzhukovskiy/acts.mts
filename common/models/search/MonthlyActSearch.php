@@ -96,8 +96,9 @@ class MonthlyActSearch extends MonthlyAct
             'client_id',
             'service_id',
             'profit',
-            'number'
-        ])->with('client');
+            'number',
+            'client.name'
+        ])->joinWith('client client');
 
 
         $dataProvider = new ActiveDataProvider([
@@ -126,7 +127,7 @@ class MonthlyActSearch extends MonthlyAct
         }
 
         $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
-        $query->orderBy(['type_id' => SORT_ASC, 'act_date' => SORT_DESC]);
+        $query->orderBy(['client.name' => SORT_ASC, 'type_id' => SORT_ASC, 'act_date' => SORT_DESC]);
 
         return $dataProvider;
     }
