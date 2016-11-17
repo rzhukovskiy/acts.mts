@@ -82,9 +82,11 @@ if (in_array(Yii::$app->user->identity->role, [User::ROLE_WATCHER, User::ROLE_MA
 ?>
 
 <?= $this->render('parts/_footer') ?>
-
-
 <?php $this->endBody() ?>
+<div class="nav-button">
+    <div style="display:none;" class="nav_up" id="nav_up"></div>
+    <div style="display:none;" class="nav_down" id="nav_down"></div>
+</div>
 </body>
 </html>
 <?php $this->endPage() ?>

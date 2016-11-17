@@ -180,7 +180,7 @@ use yii\helpers\Html;
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
-                    <div class="form-group">
+                    <div class="form-group" style="display: inline">
 
                             <?= Html::a('Проверить почтовое отправление',
                                 'https://www.pochta.ru/tracking#' . $modelCompanyOffer->mail_number,

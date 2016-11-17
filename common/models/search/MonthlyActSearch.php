@@ -3,6 +3,7 @@
 namespace common\models\search;
 
 use common\components\ArrayHelper;
+use common\models\Company;
 use common\models\MonthlyAct;
 use yii;
 use yii\data\ActiveDataProvider;
@@ -30,7 +31,7 @@ class MonthlyActSearch extends MonthlyAct
             [['client_id', 'type_id'], 'integer'],
             [['act_date'], 'string'],
             ['act_date', 'default', 'value' => date('n-Y', strtotime('-1 month'))],
-            [['dateFrom', 'dateTo','dateMonth'], 'safe'],
+            [['dateFrom', 'dateTo', 'dateMonth'], 'safe'],
         ];
     }
 
@@ -76,7 +77,6 @@ class MonthlyActSearch extends MonthlyAct
             'is_partner'                       => $this->is_partner,
             'created_at'                       => $this->created_at,
             'updated_at'                       => $this->updated_at,
-
         ]);
 
         return $dataProvider;
@@ -91,10 +91,14 @@ class MonthlyActSearch extends MonthlyAct
         $query = static::find();
         $query->addSelect([
             'DATE_FORMAT(`act_date`, "%c-%Y") as dateMonth',
+            'act_date',
             'type_id',
             'client_id',
-            'profit'
+            'service_id',
+            'profit',
+            'number'
         ])->with('client');
+
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -105,16 +109,24 @@ class MonthlyActSearch extends MonthlyAct
         if (!$this->validate()) {
             return $dataProvider;
         }
+
+        if (!$this->client_id) {
+            $query->groupBy(['client_id']);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'client_id'  => $this->client_id,
-            'type_id'    => $this->type_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+        if ($this->type_id == Company::TYPE_OWNER) {
+            $query->andFilterWhere(['is_partner' => MonthlyAct::NOT_PARTNER]);
+        } else {
+            $query->andFilterWhere(['is_partner' => MonthlyAct::PARTNER, 'type_id' => $this->type_id,]);
+        }
 
         $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
-        $query->orderBy(['act_date' => SORT_DESC, 'type_id' => SORT_ASC]);
+        $query->orderBy(['type_id' => SORT_ASC, 'act_date' => SORT_DESC]);
 
         return $dataProvider;
     }

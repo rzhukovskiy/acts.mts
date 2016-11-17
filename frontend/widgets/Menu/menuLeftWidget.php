@@ -60,14 +60,14 @@ class menuLeftWidget extends Widget
 
             $items = [
                 [
-                    'label'  => Company::$listType[Company::TYPE_OWNER]['ru'],
+                    'label'  => 'Компании',
                     'url'    => ['/company/list?type=' . Company::TYPE_OWNER],
                     'active' => (Yii::$app->controller->id == 'company' &&
                         (Yii::$app->request->get('type') == Company::TYPE_OWNER ||
                             ($company && $company->type == Company::TYPE_OWNER))),
                 ],
                 [
-                    'label'  => 'Организации',
+                    'label'  => 'Партнеры',
                     'url'    => '#',
                     'active' => Yii::$app->controller->id == 'company'&&Yii::$app->request->get('type') != Company::TYPE_OWNER,
                     'items'  => [

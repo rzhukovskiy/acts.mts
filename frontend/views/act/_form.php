@@ -146,10 +146,10 @@ use yii\jui\AutoComplete;
                             </div>
                         </div>
                         <div class="form-group">
-                             <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold">
+                             <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold;font-size: 1.2em">
                                 Сумма
                             </div>
-                            <div class="col-xs-1"  style="font-weight: bold">
+                            <div class="col-xs-1"  style="font-weight: bold;font-size: 1.2em">
                                 <?= $partnerSum ?>
                             </div>
                         </div>
@@ -206,10 +206,10 @@ use yii\jui\AutoComplete;
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold">
+                            <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold;font-size: 1.2em">
                                 Сумма
                             </div>
-                            <div class="col-xs-1"  style="font-weight: bold">
+                            <div class="col-xs-1"  style="font-weight: bold;font-size: 1.2em">
                                 <?= $clientSum ?>
                             </div>
                         </div>
