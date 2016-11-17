@@ -177,6 +177,9 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 [
                     'attribute' => 'ssoom',
                     'label' => 'ССООМ',
+                    'content' => function ($data) {
+                        return Html::tag('strong', Yii::$app->formatter->asDecimal($data->ssoom, 0));
+                    },
                     'contentOptions' => ['class' => 'success'],
                 ],
 

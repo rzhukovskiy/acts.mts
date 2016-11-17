@@ -22,19 +22,20 @@ echo GridView::widget([
     ],
     'columns'      => [
         [
-            'attribute' => 'type',
-            'header'    => 'Тип',
-            'content'   => function ($data) {
-                return Card::$cardType[$data['type']];
-            },
+            'attribute' => 'company_name',
+            'header'    => 'Компания',
         ],
         [
             'attribute' => 'val',
             'header'    => 'Значение',
         ],
         [
-            'attribute' => 'company_name',
-            'header'    => 'Компания',
+            'attribute' => 'type',
+            'header'    => 'Тип',
+            'content'   => function ($data) {
+                return Card::$cardType[$data['type']];
+            },
         ],
+
     ],
 ]);
