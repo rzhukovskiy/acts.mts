@@ -2,17 +2,16 @@
 
 namespace frontend\controllers;
 
-use common\components\ArrayHelper;
-use common\models\User;
-use common\models\Company;
 use common\models\Card;
-use Yii;
+use common\models\Company;
+use common\models\User;
 use frontend\models\search\CardSearch;
+use Yii;
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 class CardController extends Controller
 {
@@ -23,8 +22,8 @@ class CardController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs'  => [
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -33,19 +32,19 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete','diapason'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_ADMIN],
+                        'actions' => ['list', 'create', 'update', 'delete', 'diapason'],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
                         'actions' => ['list'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
                     [
                         'actions' => ['list'],
-                        'allow' => true,
-                        'roles' => [User::ROLE_CLIENT],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_CLIENT],
                     ],
                 ],
             ],
@@ -70,12 +69,13 @@ class CardController extends Controller
         $dataProvider = CardSearch::addCarToSearch($dataProvider);
         $companyDropDownData = Company::dataDropDownList();
 
-        return $this->render('list', [
-            'model' => new Card(),
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        return $this->render('list',
+        [
+            'model'               => new Card(),
+            'searchModel'         => $searchModel,
+            'dataProvider'        => $dataProvider,
             'companyDropDownData' => $companyDropDownData,
-            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+            'admin'               => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 
@@ -88,15 +88,15 @@ class CardController extends Controller
         $dataProvider = new ArrayDataProvider([
             'allModels'  => Card::getDiapason(),
             'sort'       => [
-                'attributes' => ['type', 'val'],
+                'attributes' => ['type', 'val', 'company_name'],
             ],
             'pagination' => false,
         ]);
 
         return $this->render('diapason',
-        [
-            'dataProvider' => $dataProvider,
-        ]);
+            [
+                'dataProvider' => $dataProvider,
+            ]);
     }
 
     /**
@@ -129,8 +129,9 @@ class CardController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->goBack();
         } else {
-            return $this->render('update', [
-                'model' => $model,
+            return $this->render('update',
+            [
+                'model'               => $model,
                 'companyDropDownData' => $companyDropDownData,
             ]);
         }

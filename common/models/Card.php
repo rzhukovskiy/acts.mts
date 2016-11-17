@@ -4,6 +4,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * Card model
@@ -132,27 +133,48 @@ class Card extends ActiveRecord
      */
     static public function getDiapason()
     {
-        $cards = Card::find()->select('number')->orderBy(['number' => SORT_ASC])->indexBy('number')->column();
+        $cards =
+            Card::find()
+                ->select('number,company.name as company_name')
+                ->joinWith('company')
+                ->orderBy(['number' => SORT_ASC])
+                ->indexBy('number')
+                ->asArray()
+                ->all();
         $max = array_pop($cards);
         array_push($cards, $max);
         $arr = [];
         $free = [];
         $nonFree = [];
+        $company = false;
         $data = [];
 
-        for ($i = 1; $i <= $max; $i++) {
+        for ($i = 1; $i <= $max['number']; $i++) {
+            //Для выборки
             if (isset($cards[$i])) {
                 if (count($free) != 0) {
-                    $arr[] = [$free[0], $i-1, self::TYPE_FREE];
+                    $arr[] = [$free[0], $i - 1, self::TYPE_FREE];
                     $free = [];
+
+                }
+                if (!$company) {
+                    $company = $cards[$i]['company_name'];
+                }
+                if ($company != $cards[$i]['company_name']) {
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $cards[$i]['company_name']];
+                    $nonFree = [];
+                    $company = false;
                 }
                 if (count($nonFree) == 0) {
                     $nonFree[] = $i;
                 }
+
+                //Для отсутствующих
             } else {
                 if (count($nonFree) != 0) {
-                    $arr[] = [$nonFree[0], $i-1, self::TYPE_NON_FREE];
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $cards[$i]['company_name']];
                     $nonFree = [];
+                    $company = false;
                 }
                 if (count($free) == 0) {
                     $free[] = $i;
@@ -165,10 +187,12 @@ class Card extends ActiveRecord
         if (count($free) != 0) {
             $arr[] = [$free[0], $i, self::TYPE_FREE];
         }
+        ArrayHelper::multisort($arr, 2);
         foreach ($arr as $val) {
             $data[] = [
-                'type' => $val[2],
-                'val'  => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
+                'type'         => $val[2],
+                'val'          => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
+                'company_name' => $val[3],
             ];
         }
 

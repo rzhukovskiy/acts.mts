@@ -22,25 +22,19 @@ echo GridView::widget([
     ],
     'columns'      => [
         [
-            'attribute'      => 'type',
-            'header'         => 'Тип',
-            'content'        => function ($data) {
+            'attribute' => 'type',
+            'header'    => 'Тип',
+            'content'   => function ($data) {
                 return Card::$cardType[$data['type']];
-            },
-            'contentOptions' => function ($model) {
-                return [
-                    'class' => ($model['type'] == Card::TYPE_FREE) ? 'success' : 'danger',
-                ];
             },
         ],
         [
-            'attribute'      => 'val',
-            'header'         => 'Значение',
-            'contentOptions' => function ($model) {
-                return [
-                    'class' => ($model['type'] == Card::TYPE_FREE) ? 'success' : 'danger',
-                ];
-            },
+            'attribute' => 'val',
+            'header'    => 'Значение',
+        ],
+        [
+            'attribute' => 'company_name',
+            'header'    => 'Компания',
         ],
     ],
 ]);
