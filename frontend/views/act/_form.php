@@ -150,7 +150,7 @@ use yii\jui\AutoComplete;
                                 Сумма
                             </div>
                             <div class="col-xs-1"  style="font-size: 1.2em">
-                                <strong style="padding-left: 2px"><?= $partnerSum ?></strong>
+                                <strong style="padding-left: 5px"><?= $partnerSum ?></strong>
                             </div>
                         </div>
                     </div>
@@ -210,7 +210,7 @@ use yii\jui\AutoComplete;
                                 Сумма
                             </div>
                             <div class="col-xs-1"  style="font-size: 1.2em">
-                                <strong style="padding-left: 2px"><?= $clientSum ?></strong>
+                                <strong style="padding-left: 5px"><?= $clientSum ?></strong>
                             </div>
                         </div>
                     </div>
