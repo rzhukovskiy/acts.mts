@@ -182,24 +182,29 @@ class ActSearch extends Act
                 'defaultOrder' => $order,
                 'attributes'   => [
                     'countServe' => [
-                        'asc'  => ['countServe' => SORT_ASC],
-                        'desc' => ['countServe' => SORT_DESC],
+                        'asc'     => ['countServe' => SORT_ASC],
+                        'desc'    => ['countServe' => SORT_DESC],
+                        'default' => SORT_DESC,
                     ],
                     'expense'    => [
-                        'asc'  => ['expense' => SORT_ASC],
-                        'desc' => ['expense' => SORT_DESC],
+                        'asc'     => ['expense' => SORT_ASC],
+                        'desc'    => ['expense' => SORT_DESC],
+                        'default' => SORT_DESC,
                     ],
                     'profit'     => [
-                        'asc'  => ['profit' => SORT_ASC],
-                        'desc' => ['profit' => SORT_DESC],
+                        'asc'     => ['profit' => SORT_ASC],
+                        'desc'    => ['profit' => SORT_DESC],
+                        'default' => SORT_DESC,
                     ],
                     'income'     => [
-                        'asc'  => ['income' => SORT_ASC],
-                        'desc' => ['income' => SORT_DESC],
+                        'asc'     => ['income' => SORT_ASC],
+                        'desc'    => ['income' => SORT_DESC],
+                        'default' => SORT_DESC,
                     ],
                     'ssoom'      => [
-                        'asc'  => ['ssoom' => SORT_ASC],
-                        'desc' => ['ssoom' => SORT_DESC],
+                        'asc'     => ['ssoom' => SORT_ASC],
+                        'desc'    => ['ssoom' => SORT_DESC],
+                        'default' => SORT_DESC,
                     ],
                     'dateMonth'  => [
                         'asc'  => ['dateMonth' => SORT_ASC],

@@ -164,6 +164,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 [
                     'attribute' => 'ssoom',
                     'label' => 'ССООМ',
+                    'contentOptions' => ['class' => 'success'],
                 ],
                 [
                     'attribute' => 'expense',

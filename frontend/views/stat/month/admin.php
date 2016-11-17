@@ -54,6 +54,7 @@ CanvasJsAsset::register($this);
                 [
                     'attribute' => 'ssoom',
                     'label' => 'ССООМ',
+                    'contentOptions' => ['class' => 'success'],
                 ],
                 [
                     'attribute' => 'expense',
