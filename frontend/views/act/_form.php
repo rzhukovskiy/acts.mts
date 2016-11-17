@@ -149,8 +149,8 @@ use yii\jui\AutoComplete;
                              <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold;font-size: 1.2em">
                                 Сумма
                             </div>
-                            <div class="col-xs-1"  style="font-weight: bold;font-size: 1.2em">
-                                <?= $partnerSum ?>
+                            <div class="col-xs-1"  style="font-size: 1.2em">
+                                <strong style="padding-left: 2px"><?= $partnerSum ?></strong>
                             </div>
                         </div>
                     </div>
@@ -209,8 +209,8 @@ use yii\jui\AutoComplete;
                             <div class="col-xs-2 col-xs-offset-8" style="font-weight: bold;font-size: 1.2em">
                                 Сумма
                             </div>
-                            <div class="col-xs-1"  style="font-weight: bold;font-size: 1.2em">
-                                <?= $clientSum ?>
+                            <div class="col-xs-1"  style="font-size: 1.2em">
+                                <strong style="padding-left: 2px"><?= $clientSum ?></strong>
                             </div>
                         </div>
                     </div>
