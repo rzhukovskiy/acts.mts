@@ -231,10 +231,10 @@ function navigationButton(){
         $('#nav_down').fadeIn('slow');
 
         $(window).bind('scrollstart', function(){
-            $('#nav_up,#nav_down').stop().animate({'opacity':'0.2'});
+            $('#nav_up,#nav_down').stop();
         });
         $(window).bind('scrollstop', function(){
-            $('#nav_up,#nav_down').stop().animate({'opacity':'1'});
+            $('#nav_up,#nav_down').stop();
         });
 
         $('#nav_down').click(
