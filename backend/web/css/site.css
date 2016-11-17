@@ -384,7 +384,7 @@ table.sign {
     padding: 7px;
     border: 1px solid #CCC;
     position: fixed;
-    background: white url(../images/arrow_up.png) no-repeat top left;
+    background: #3fad46 url(../images/arrow_up.png) no-repeat top left;
     background-position: 50% 50%;
     width: 60px;
     height: 40px;
@@ -403,7 +403,7 @@ table.sign {
     border: 1px solid #CCC;
     border-radius: 3px 3px 3px 3px;
     position: fixed;
-    background: white url(../images/arrow_down.png) no-repeat top left;
+    background: #3fad46 url(../images/arrow_down.png) no-repeat top left;
     background-position: 50% 50%;
     width: 60px;
     height: 40px;
@@ -415,5 +415,5 @@ table.sign {
 }
 
 .nav-button {
-    background: #ffffff;
+    background: #3fad46;
 }
