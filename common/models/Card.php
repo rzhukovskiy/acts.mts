@@ -161,7 +161,7 @@ class Card extends ActiveRecord
                     $company = $cards[$i]['company_name'];
                 }
                 if ($company != $cards[$i]['company_name']) {
-                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $cards[$i]['company_name']];
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $company];
                     $nonFree = [];
                     $company = false;
                 }
@@ -172,7 +172,7 @@ class Card extends ActiveRecord
                 //Для отсутствующих
             } else {
                 if (count($nonFree) != 0) {
-                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $cards[$i]['company_name']];
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $company];
                     $nonFree = [];
                     $company = false;
                 }
@@ -182,7 +182,7 @@ class Card extends ActiveRecord
             }
         }
         if (count($nonFree) != 0) {
-            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE];
+            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE,$company];
         }
         if (count($free) != 0) {
             $arr[] = [$free[0], $i, self::TYPE_FREE];
