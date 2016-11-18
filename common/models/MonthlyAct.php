@@ -599,9 +599,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
         }
         $nowDate = $nowDate->format('Y-m-00');
         $actDate = (new \DateTime())->setTimestamp($date)->format('Y-m-00');
-        var_dump($actDate);
-        var_dump($nowDate);
-        var_dump($actDate < $nowDate);
         return $actDate < $nowDate;
     }
 
