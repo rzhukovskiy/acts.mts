@@ -29,16 +29,24 @@ class CompanyMemberController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single CompanyMember model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
+    public function actionSend($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+
+        $plainTextContent = Yii::$app->request->post('text');
+        $subject = Yii::$app->request->post('topic');
+        $toEmail = $model->email;
+        $toName = $model->name;
+
+        /** @var SwiftMailer $SwiftMailer */
+        $headers  = 'From: info@mtransservice.ru' . "\r\n";
+        $headers .= 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+        $headers .= "To: $toName <$toEmail>" . "\r\n";
+
+        $res = mail($toEmail, $subject, $plainTextContent, $headers);
+
+        return $this->redirect(['company/member', 'id' => $model->company_id]);
     }
 
     /**

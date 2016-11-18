@@ -2,6 +2,7 @@
 
 use common\models\CompanyMember;
 use yii\bootstrap\Html;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View
  * @var $model CompanyMember
@@ -22,7 +23,24 @@ use yii\bootstrap\Html;
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('email')?></td>
-        <td><?= $model->email ?></td>
+        <td>
+            <?= $model->email ?>
+            <?php
+            Modal::begin([
+                'header' => '<h2>Отправка письма</h2>',
+                'toggleButton' => [
+                    'tag' => 'a',
+                    'label' => '<span class="glyphicon glyphicon-envelope"></span>',
+                ],
+            ]);
+
+            echo $this->render('_mail', [
+                'model' => $model,
+            ]);
+
+            Modal::end();
+            ?>
+        </td>
     </tr>
     <tr>
         <td class="list-label-sm"></td>

@@ -56,6 +56,7 @@ use yii\helpers\Html;
                     }
                 ],
                 [
+                    'header' => 'Связь',
                     'attribute' => 'offer.communication_at',
                     'value' => function($model) {
                         return !empty($model->offer->communication_at) ? date('d-m-Y H:i', $model->offer->communication_at) : 'Не указана';
