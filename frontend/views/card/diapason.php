@@ -23,7 +23,7 @@ echo GridView::widget([
     'columns'      => [
         [
             'header' => '№',
-            'class' => 'yii\grid\SerialColumn',
+            'class'  => 'yii\grid\SerialColumn',
         ],
         [
             'attribute' => 'company_name',
@@ -32,6 +32,10 @@ echo GridView::widget([
         [
             'attribute' => 'val',
             'header'    => 'Значение',
+        ],
+        [
+            'attribute' => 'count',
+            'header'    => 'Количество',
         ],
         [
             'attribute' => 'type',

@@ -149,33 +149,37 @@ class Card extends ActiveRecord
         $nonFree = [];
         $company = false;
         $data = [];
+        $count = -1;
 
         for ($i = 1; $i <= $max['number']; $i++) {
+            $count++;
             //Для выборки
             if (isset($cards[$i])) {
                 if (count($free) != 0) {
-                    $arr[] = [$free[0], $i - 1, self::TYPE_FREE];
+                    $arr[] = [$free[0], $i - 1, self::TYPE_FREE, $count];
                     $free = [];
-
+                    $count = 0;
                 }
                 if (!$company) {
                     $company = $cards[$i]['company_name'];
                 }
                 if ($company != $cards[$i]['company_name']) {
-                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $company];
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $count, $company];
                     $nonFree = [];
-                    $company = false;
+                    $company = ($cards[$i]['company_name']) ? $cards[$i]['company_name'] : false;
+                    $count = 0;
                 }
+
                 if (count($nonFree) == 0) {
                     $nonFree[] = $i;
                 }
-
                 //Для отсутствующих
             } else {
                 if (count($nonFree) != 0) {
-                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $company];
+                    $arr[] = [$nonFree[0], $i - 1, self::TYPE_NON_FREE, $count, $company];
                     $nonFree = [];
                     $company = false;
+                    $count = 0;
                 }
                 if (count($free) == 0) {
                     $free[] = $i;
@@ -183,17 +187,18 @@ class Card extends ActiveRecord
             }
         }
         if (count($nonFree) != 0) {
-            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE, $company];
+            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE, $count, $company];
         }
         if (count($free) != 0) {
-            $arr[] = [$free[0], $i, self::TYPE_FREE];
+            $arr[] = [$free[0], $i, $count, self::TYPE_FREE];
         }
         ArrayHelper::multisort($arr, 2);
         foreach ($arr as $val) {
             $data[] = [
                 'type'         => $val[2],
                 'val'          => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
-                'company_name' => $val[3],
+                'count'        => $val[3],
+                'company_name' => $val[4],
             ];
         }
 

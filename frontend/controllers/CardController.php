@@ -88,7 +88,7 @@ class CardController extends Controller
         $dataProvider = new ArrayDataProvider([
             'allModels'  => Card::getDiapason(),
             'sort'       => [
-                'attributes' => ['type', 'val', 'company_name'],
+                'attributes' => ['type', 'val', 'count', 'company_name'],
             ],
             'pagination' => false,
         ]);
