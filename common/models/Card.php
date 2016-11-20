@@ -137,6 +137,7 @@ class Card extends ActiveRecord
             Card::find()
                 ->select('number,company.name as company_name')
                 ->joinWith('company')
+                ->andWhere(['company.status' => Company::STATUS_ACTIVE])
                 ->orderBy(['number' => SORT_ASC])
                 ->indexBy('number')
                 ->asArray()
@@ -182,7 +183,7 @@ class Card extends ActiveRecord
             }
         }
         if (count($nonFree) != 0) {
-            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE,$company];
+            $arr[] = [$nonFree[0], $i, self::TYPE_NON_FREE, $company];
         }
         if (count($free) != 0) {
             $arr[] = [$free[0], $i, self::TYPE_FREE];
