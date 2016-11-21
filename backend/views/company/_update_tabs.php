@@ -43,7 +43,7 @@ if ($model->type == Company::TYPE_OWNER) {
 }
 $items[] = [
     'label' => 'Цены и ТС',
-    'url' => ['company/driver', 'id' => $model->id],
+    'url' => ['company/price', 'id' => $model->id],
     'active' => \Yii::$app->controller->action->id == 'driver',
 ];
 
