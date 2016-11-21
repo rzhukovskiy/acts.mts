@@ -31,6 +31,7 @@ use yii\bootstrap\Modal;
                 'toggleButton' => [
                     'tag' => 'a',
                     'label' => '<span class="glyphicon glyphicon-envelope"></span>',
+                    'style' => 'cursor: pointer',
                 ],
             ]);
 

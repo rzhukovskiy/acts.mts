@@ -41,6 +41,11 @@ if ($model->type == Company::TYPE_OWNER) {
         'active' => \Yii::$app->controller->action->id == 'driver',
     ];
 }
+$items[] = [
+    'label' => 'Цены и ТС',
+    'url' => ['company/driver', 'id' => $model->id],
+    'active' => \Yii::$app->controller->action->id == 'driver',
+];
 
 echo Tabs::widget([
     'items' => $items,

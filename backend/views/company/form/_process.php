@@ -46,7 +46,7 @@ use yii\helpers\Html;
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md">Адрес</td>
+                <td class="list-label-md">Адрес организации</td>
                 <td>
                     <?php
                     $editable = Editable::begin([
@@ -76,7 +76,8 @@ use yii\helpers\Html;
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('phone') ?></td>
+                <td class="list-label-md">
+                    <?= $modelCompany->type == Company::TYPE_WASH ? 'Телефон для записи на мойку' : $modelCompanyInfo->getAttributeLabel('phone') ?></td>
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompanyInfo,
@@ -205,9 +206,11 @@ use yii\helpers\Html;
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',
+                            'removeButton' => false,
                             'pluginOptions' => [
                                 'format' => 'dd-mm-yyyy hh:ii',
                                 'autoclose' => true,
+                                'pickerPosition' => 'top-right',
                             ],
                         ],
                         'formOptions' => [

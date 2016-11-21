@@ -70,11 +70,11 @@ class CompanyInfo extends ActiveRecord
             'city' => 'Город',
             'street' => 'Улица',
             'house' => 'Строение',
-            'address_mail' => 'Почтовый адрес',
-            'email' => 'Имейл',
-            'pay' => 'Дни оплаты',
-            'contract' => 'Договор',
-            'contract_date_str' => 'Дата договора',
+            'address_mail' => 'Адрес для почтового отправления',
+            'email' => 'Официальный адрес эл. почты',
+            'pay' => 'Банковские дни оплаты по договору',
+            'contract' => 'Номер договора',
+            'contract_date_str' => 'Дата заключения договора',
             'start_at' => 'Начало работы',
             'end_at' => 'Окончание работы',
             'start_str' => 'Начало работы',
@@ -100,9 +100,9 @@ class CompanyInfo extends ActiveRecord
             $this->fullAddress = implode(', ',
                 [
                     $this->city ? $this->city : $this->getAttributeLabel('city'),
-                    $this->street ? $this->city : $this->getAttributeLabel('street'),
-                    $this->house ? $this->city : $this->getAttributeLabel('house'),
-                    $this->index ? $this->city : $this->getAttributeLabel('index'),
+                    $this->street ? $this->street : $this->getAttributeLabel('street'),
+                    $this->house ? $this->house : $this->getAttributeLabel('house'),
+                    $this->index ? $this->index : $this->getAttributeLabel('index'),
                 ]);
         }
 

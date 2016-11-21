@@ -55,6 +55,26 @@ use kartik\editable\Editable;
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('pay') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'pay',
+                        'asPopover' => true,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'дни оплаты'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('contract') ?></td>
                 <td>
                     <?= Editable::widget([

@@ -67,7 +67,7 @@ class CompanyOffer extends ActiveRecord
         return [
             'id' => 'ID',
             'company_id' => 'Компания',
-            'process' => 'Комментарии',
+            'process' => 'Статус клиента',
             'mail_number' => 'Номер почтового отправления',
             'communication_at' => 'Дата следующей связи',
             'communication_str' => 'Дата следующей связи',
