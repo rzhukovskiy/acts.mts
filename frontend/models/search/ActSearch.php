@@ -40,8 +40,24 @@ class ActSearch extends Act
     public function scenarios()
     {
         $scenarios = [
-            'statistic_partner_filter' => ['dateMonth', 'dateFrom', 'dateTo', 'service_type', 'countServe', 'ssoom'],
-            'statistic_client_filter'  => ['dateMonth', 'dateFrom', 'dateTo', 'service_type', 'countServe', 'ssoom'],
+            'statistic_partner_filter' => [
+                'dateMonth',
+                'dateFrom',
+                'dateTo',
+                'service_type',
+                'countServe',
+                'ssoom',
+                'client_id'
+            ],
+            'statistic_client_filter'  => [
+                'dateMonth',
+                'dateFrom',
+                'dateTo',
+                'service_type',
+                'countServe',
+                'ssoom',
+                'client_id'
+            ],
             'statistic_filter'         => ['dateFrom', 'dateTo', 'service_type', 'client_id'],
         ];
 
@@ -225,6 +241,7 @@ class ActSearch extends Act
             'profit'     => $this->profit,
             'income'     => $this->income,
             'ssoom'      => $this->ssoom,
+            'client_id'  => $this->client_id
         ]);
 
         $query->andFilterWhere(['between', "DATE(FROM_UNIXTIME(`served_at`))", $this->dateFrom, $this->dateTo]);
@@ -274,10 +291,10 @@ class ActSearch extends Act
         ]);
 
         $query->andFilterWhere(['like', 'number', $this->number])->andFilterWhere([
-                    'like',
-                    'extra_number',
-                    $this->extra_number
-                ])->andFilterWhere(['like', 'check', $this->check]);
+            'like',
+            'extra_number',
+            $this->extra_number
+        ])->andFilterWhere(['like', 'check', $this->check]);
 
         return $dataProvider;
     }
