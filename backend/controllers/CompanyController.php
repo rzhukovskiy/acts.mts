@@ -14,6 +14,7 @@ use common\models\CompanyDriver;
 use common\models\CompanyInfo;
 use common\models\CompanyMember;
 use common\models\CompanyOffer;
+use common\models\CompanyService;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
@@ -38,23 +39,45 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
                 ],
             ],
         ];
+    }
+
+    public function actionAddPrice($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($priceData = Yii::$app->request->post('Price')) {
+            foreach ($priceData['type'] as $type_id) {
+                foreach ($priceData['service'] as $service_id => $price) {
+                    $companyService = new CompanyService();
+                    $companyService->company_id = $model->id;
+                    $companyService->service_id = $service_id;
+                    $companyService->type_id = $type_id;
+                    $companyService->price = $price;
+
+                    $companyService->save();
+                }
+            }
+        }
+        Yii::$app->session->setFlash('saved', true);
+
+        return $this->redirect(['price', 'id' => $model->id]);
     }
 
     /**
@@ -327,6 +350,15 @@ class CompanyController extends Controller
         $model->save();
 
         return $this->redirect(['company/update', 'id' => $model->id]);
+    }
+
+    public function actionPrice($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('price', [
+            'model' => $model,
+        ]);
     }
 
     public function actionInfo($id)
