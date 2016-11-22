@@ -194,6 +194,11 @@ class MonthlyAct extends \yii\db\ActiveRecord
         }
     }
 
+    public function dateFix()
+    {
+        return \DateTime::createFromFormat('Y-m-d', $this->act_date)->modify('+1 month')->format('Y-m-01');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
