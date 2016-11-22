@@ -20,7 +20,7 @@ use yii\bootstrap\Html;
 $this->title = "Архив актов";
 $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel,
         'client_id',
-        Company::dataDropDownList($type, true,['name'=>SORT_ASC],true),
+        Company::dataDropDownList($type, true, ['name' => SORT_ASC], true),
         ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 $filters .= \frontend\widgets\datePeriod\DatePeriodWidget::widget([
     'model'        => $searchModel,
@@ -98,10 +98,10 @@ echo \kartik\grid\GridView::widget([
             'content'   => function ($data) use ($type) {
                 return Html::a($data->client->name,
                     \yii\helpers\Url::to([
-                            '/monthly-act/archive',
-                            'type'                        => $type,
-                            'MonthlyActSearch[client_id]' => $data->client_id
-                        ]));
+                        '/monthly-act/archive',
+                        'type'                        => $type,
+                        'MonthlyActSearch[client_id]' => $data->client_id
+                    ]));
             },
             'format'    => 'raw'
         ],
@@ -109,22 +109,22 @@ echo \kartik\grid\GridView::widget([
             'attribute' => 'act_date',
             'label'     => 'Дата',
             'content'   => function ($data) {
-                return Yii::$app->formatter->asDate($data->act_date, 'LLLL yyyy');
+                return Yii::$app->formatter->asDate($data->dateFix(), 'LLLL yyyy');
             },
             'visible'   => $searchModel->client_id
         ],
         [
-            'attribute' => 'type_id',
-            'label'     => 'Услуга',
+            'attribute'         => 'type_id',
+            'label'             => 'Услуга',
             'group'             => true,  // enable grouping
             'options'           => ['class' => 'kv-grouped-header'],
             'groupedRow'        => true,  // enable grouping
             'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
             'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
-            'content'   => function ($data) {
+            'content'           => function ($data) {
                 return Company::$listType[$data->type_id]['ru'];
             },
-            'visible'   => $searchModel->client_id && $searchModel->type_id == Company::TYPE_OWNER
+            'visible'           => $searchModel->client_id && $searchModel->type_id == Company::TYPE_OWNER
         ],
         [
             'attribute' => 'service_id',

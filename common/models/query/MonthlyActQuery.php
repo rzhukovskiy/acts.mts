@@ -11,6 +11,7 @@ use common\models\MonthlyAct;
  */
 class MonthlyActQuery extends \yii\db\ActiveQuery
 {
+    public $type;
     /*public function active()
     {
         return $this->andWhere('[[status]]=1');

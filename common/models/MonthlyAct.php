@@ -2,10 +2,13 @@
 
 namespace common\models;
 
+use common\models\monthlyAct\DisinfectMonthlyAct;
+use common\models\monthlyAct\ServiceMonthlyAct;
+use common\models\monthlyAct\TiresMonthlyAct;
+use common\models\monthlyAct\WashMonthlyAct;
 use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 use yii\helpers\Html;
 use yii\web\UploadedFile;
 
@@ -17,7 +20,6 @@ use yii\web\UploadedFile;
  * @property integer $type_id
  * @property integer $service_id
  * @property integer $act_id
- * @property integer $profit
  * @property string $number
  * @property integer $payment_status
  * @property integer $payment_date
@@ -97,7 +99,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     'type_id',
                     'service_id',
                     'act_id',
-                    'profit',
                     'payment_status',
                     'act_status',
                     'is_partner',
@@ -191,6 +192,11 @@ class MonthlyAct extends \yii\db\ActiveRecord
         if (!empty($this->$attr)) {
             $this->$attr = \DateTime::createFromFormat('d-m-Y H:i:s', $this->$attr . ' 12:00:00')->getTimestamp();
         }
+    }
+
+    public function dateFix()
+    {
+        return \DateTime::createFromFormat('Y-m-d', $this->act_date)->modify('+1 month')->format('Y-m-01');
     }
 
     /**
@@ -290,248 +296,38 @@ class MonthlyAct extends \yii\db\ActiveRecord
     }
 
     /**
-     * Проверка, существует ли уже такой акт, перед сохранением
-     * @return bool
+     * @param $type
+     * @return bool|DisinfectMonthlyAct|ServiceMonthlyAct|TiresMonthlyAct|WashMonthlyAct
      */
-    public function isUnique()
+    static function getRealObject($type)
     {
-        $checkedMonthlyAct =
-            MonthlyAct::find()
-                ->andWhere(['client_id' => $this->client_id])
-                ->andWhere(['act_date' => $this->act_date])
-                ->andWhere(['type_id' => $this->type_id]);
-        if ($this->type_id == Service::TYPE_SERVICE) {
-            $checkedMonthlyAct->andWhere(['act_id' => $this->act_id]);
-        }
-        if ($this->type_id == Service::TYPE_DISINFECT) {
-            $checkedMonthlyAct->andWhere(['service_id' => $this->service_id]);
+        switch ($type) {
+            case Service::TYPE_WASH:
+                return new WashMonthlyAct();
+                break;
+            case Service::TYPE_SERVICE:
+                return new ServiceMonthlyAct();
+                break;
+            case Service::TYPE_TIRES:
+                return new TiresMonthlyAct();
+                break;
+            case Service::TYPE_DISINFECT:
+                return new DisinfectMonthlyAct();
+                break;
         }
 
-        return !$checkedMonthlyAct->exists();
+        return false;
     }
 
     /**
-     * @param $act \common\models\Act
+     * @param array $row
+     * @return bool|DisinfectMonthlyAct|ServiceMonthlyAct|TiresMonthlyAct|WashMonthlyAct|static
      */
-    public static function redoMonthlyAct($act)   {
-
-        $clientId = $act->client_id;
-        $partnerId = $act->partner_id;
-        $time = $act->served_at;
-        $serviceType = $act->service_type;
-
-        if(!self::isNeedNewAct($time, $serviceType)){
-            return false;
-        }
-
-        $partnerAct = $clientAct = [];
-
-        //удаляем все месячный акты, где компания - партнер, за заданную дату, заданного типа и не закрытые
-        $partnerMonthlyAct = MonthlyAct::find()->byPartner($time, $partnerId)->byType($serviceType)->all();
-        if (isset($partnerMonthlyAct)) {
-            foreach ($partnerMonthlyAct as $monthlyAct) {
-                if ($monthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
-                    $monthlyAct->delete();
-                }
-            }
-            $partnerAct = MonthlyAct::getPartnerAct($time, $partnerId, $serviceType);
-        }
-        //удаляем все месячный акты, где компания - клиент, за заданную дату, заданного типа и не закрытые
-        $clientMonthlyAct = MonthlyAct::find()->byClient($time, $clientId)->byType($serviceType)->all();
-        if (isset($clientMonthlyAct)) {
-            foreach ($clientMonthlyAct as $monthlyAct) {
-                if ($monthlyAct->act_status != MonthlyAct::ACT_STATUS_DONE) {
-                    $monthlyAct->delete();
-                }
-            }
-            $clientAct = MonthlyAct::getClientAct($time, $clientId, $serviceType);
-        }
-
-        $allAct = array_merge($partnerAct, $clientAct);
-        if ($allAct) {
-            self::massSaveAct($allAct, true);
-        }
-    }
-
-    /**
-     * @param bool $date
-     * @param bool $idCompany
-     * @param bool $type
-     * @return $this|array
-     */
-    static public function getPartnerAct($date = false, $idCompany = false, $type = false)
+    public static function instantiate($row)
     {
-        $wash = [];
-        $tires = [];
-        $service = [];
-        $disinfection = [];
-
-        $partnerAct =
-            Act::find()
-                ->select('partner_id as company_id,service_type')
-                ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                ->addSelect(new Expression('1 as is_partner'));
-
-
-        if ($idCompany) {
-            $partnerAct = $partnerAct->andWhere(['partner_id' => $idCompany]);
-        }
-
-        //Мойки
-        if (!$type || $type == Service::TYPE_WASH) {
-            $wash = clone $partnerAct;
-            $wash->addSelect('SUM(expense) as profit')->andWhere([
-                'in',
-                'service_type',
-                [Service::TYPE_WASH]
-            ])->byMonthlyDate($date)->groupBy('partner_id,service_type,date');
-            //var_dump($washAndService->createCommand()->rawSql);
-            $wash = $wash->asArray()->all();
-        }
-        //Сервисы
-        if (!$type || $type == Service::TYPE_TIRES) {
-            $tires = clone $partnerAct;
-            $tires->addSelect('SUM(expense) as profit')->andWhere([
-                'in',
-                'service_type',
-                [Service::TYPE_TIRES]
-            ])->byMonthlyDate($date)->groupBy('partner_id,service_type,date');
-            //var_dump($washAndService->createCommand()->rawSql);
-            $tires = $tires->asArray()->all();
-        }
-        if (!$type || $type == Service::TYPE_SERVICE) {
-            //Шиномонтажи
-            $service = clone $partnerAct;
-            $service->addSelect(['expense as profit', 'number', 'id as act_id'])
-                ->andWhere(['service_type' => Service::TYPE_SERVICE])
-                ->byMonthlyDate($date)
-                ->orderBy(['company_id' => SORT_DESC]);
-            //var_dump($tires->createCommand()->rawSql);
-            $service = $service->asArray()->all();
-        }
-        if (!$type || $type == Service::TYPE_DISINFECT) {
-            //Дезинфекция
-            $disinfection = clone $partnerAct;
-            $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
-                ->addSelect('scopes.service_id as service_id')
-                ->joinWith('scopes scopes')
-                ->andWhere(['service_type' => Service::TYPE_DISINFECT])
-                ->andWhere('scopes.company_id=partner_id')
-                ->byMonthlyDate($date, true)
-                ->groupBy('partner_id,date,service_id')
-                ->orderBy(['service_id' => SORT_DESC]);
-            //var_dump($disinfection->createCommand()->rawSql);
-            $disinfection = $disinfection->asArray()->all();
-        }
-        $partnerAct = array_merge($wash, $tires, $service, $disinfection);
-
-        return $partnerAct;
+        return self::getRealObject($row['type_id']);
     }
 
-    /**
-     * @param bool $date
-     * @param bool $idCompany
-     * @param bool $type
-     * @return $this|array
-     */
-    static public function getClientAct($date = false, $idCompany = false, $type = false)
-    {
-        $wash = [];
-        $tires = [];
-        $service = [];
-        $disinfection = [];
-
-        $clientAct =
-            Act::find()
-                ->select('client_id as company_id,service_type')
-                ->addSelect(new Expression('date_format(FROM_UNIXTIME(served_at), "%Y-%m-00") as date'))
-                ->addSelect(new Expression('0 as is_partner'));
-
-        if ($idCompany) {
-            $clientAct = $clientAct->andWhere(['client_id' => $idCompany]);
-        }
-        //Мойки
-        if (!$type || $type == Service::TYPE_WASH) {
-            $wash = clone $clientAct;
-            $wash->addSelect('SUM(income) as profit')->andWhere([
-                'in',
-                'service_type',
-                [Service::TYPE_WASH]
-            ])->byMonthlyDate($date)->groupBy('client_id,service_type,date');
-            //var_dump($washAndService->createCommand()->rawSql);
-            $wash = $wash->asArray()->all();
-        }
-        //Сервисы
-        if (!$type || $type == Service::TYPE_TIRES) {
-            $tires = clone $clientAct;
-            $tires->addSelect('SUM(income) as profit')->andWhere([
-                'in',
-                'service_type',
-                [Service::TYPE_TIRES]
-            ])->byMonthlyDate($date)->groupBy('client_id,service_type,date');
-            //var_dump($washAndService->createCommand()->rawSql);
-            $tires = $tires->asArray()->all();
-        }
-        //Шиномонтажи
-        if (!$type || $type == Service::TYPE_SERVICE) {
-            $service = clone $clientAct;
-            $service->addSelect(['income as profit', 'number', 'id as act_id'])
-                ->andWhere(['service_type' => Service::TYPE_SERVICE])
-                ->byMonthlyDate($date)
-                ->orderBy(['company_id' => SORT_DESC]);
-            //var_dump($tires->createCommand()->rawSql);
-            $service = $service->asArray()->all();
-        }
-        //Дезинфекция
-        if (!$type || $type == Service::TYPE_DISINFECT) {
-            $disinfection = clone $clientAct;
-            $disinfection->addSelect(new Expression('SUM(scopes.price*scopes.amount) as profit'))
-                ->addSelect('scopes.service_id as service_id')
-                ->joinWith('scopes scopes')
-                ->andWhere(['service_type' => Service::TYPE_DISINFECT])
-                ->andWhere('scopes.company_id=client_id')
-                ->byMonthlyDate($date, true)
-                ->groupBy('client_id,date,service_id')
-                ->orderBy(['service_id' => SORT_DESC]);
-            //var_dump($disinfection->createCommand()->rawSql);
-            $disinfection = $disinfection->asArray()->all();
-        }
-
-        $clientAct = array_merge($wash, $tires, $service, $disinfection);
-
-        return $clientAct;
-    }
-
-    /**
-     * МАссовое сохранение месячных актов, с опциональной проверкой, существует ли уже такой акт
-     * @param $allAct
-     * @param bool $checkUnique
-     */
-    static function massSaveAct($allAct, $checkUnique = false)
-    {
-        foreach ($allAct as $act) {
-            $monthlyAct = new MonthlyAct();
-            $monthlyAct->client_id = $act['company_id'];
-            $monthlyAct->type_id = $act['service_type'];
-            if (isset($act['service_id'])) {
-                $monthlyAct->service_id = $act['service_id'];
-            }
-            if (isset($act['number'])) {
-                $monthlyAct->number = $act['number'];
-            }
-            if (isset($act['act_id'])) {
-                $monthlyAct->act_id = $act['act_id'];
-            }
-            $monthlyAct->profit = $act['profit'];
-            $monthlyAct->is_partner = $act['is_partner'];
-            $monthlyAct->act_date = $act['date'];
-
-            if ($checkUnique && !$monthlyAct->isUnique()) {
-                continue;
-            }
-            $monthlyAct->save();
-        }
-    }
 
     /**
      * @throws \yii\base\ErrorException
@@ -585,22 +381,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
 
     }
 
-    /**
-     * @param $date
-     * @param $type
-     * @return bool
-     */
-    private static function isNeedNewAct($date, $type)
-    {
-        if ($type != Company::TYPE_DISINFECT) {
-            $nowDate = new \DateTime();
-        } else {
-            $nowDate = (new \DateTime())->modify('+2 month');
-        }
-        $nowDate = $nowDate->format('Y-m-00');
-        $actDate = (new \DateTime())->setTimestamp($date)->format('Y-m-00');
-        return $actDate < $nowDate;
-    }
 
     /**
      * Список изображений для галереи
