@@ -2,6 +2,10 @@
 
 namespace common\models;
 
+use common\models\monthlyAct\DisinfectMonthlyAct;
+use common\models\monthlyAct\ServiceMonthlyAct;
+use common\models\monthlyAct\TiresMonthlyAct;
+use common\models\monthlyAct\WashMonthlyAct;
 use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -288,29 +292,9 @@ class MonthlyAct extends \yii\db\ActiveRecord
     }
 
     /**
-     * Проверка, существует ли уже такой акт, перед сохранением
-     * @return bool
-     */
-    public function isUnique()
-    {
-        $checkedMonthlyAct =
-            MonthlyAct::find()
-                ->andWhere(['client_id' => $this->client_id])
-                ->andWhere(['act_date' => $this->act_date])
-                ->andWhere(['type_id' => $this->type_id]);
-        if ($this->type_id == Service::TYPE_SERVICE) {
-            $checkedMonthlyAct->andWhere(['act_id' => $this->act_id]);
-        }
-        if ($this->type_id == Service::TYPE_DISINFECT) {
-            $checkedMonthlyAct->andWhere(['service_id' => $this->service_id]);
-        }
-
-        return !$checkedMonthlyAct->exists();
-    }
-
-    /**
      * @param $act \common\models\Act
      */
+
     public static function redoMonthlyAct($act)
     {
 
@@ -350,6 +334,27 @@ class MonthlyAct extends \yii\db\ActiveRecord
         if ($allAct) {
             self::massSaveAct($allAct, true);
         }
+    }
+
+
+    static function getRealObject($type)
+    {
+        switch ($type) {
+            case Service::TYPE_WASH:
+                return new WashMonthlyAct();
+                break;
+            case Service::TYPE_SERVICE:
+                return new ServiceMonthlyAct();
+                break;
+            case Service::TYPE_TIRES:
+                return new TiresMonthlyAct();
+                break;
+            case Service::TYPE_DISINFECT:
+                return new DisinfectMonthlyAct();
+                break;
+        }
+
+        return false;
     }
 
     /**
@@ -573,7 +578,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
             if (isset($act['act_id'])) {
                 $monthlyAct->act_id = $act['act_id'];
             }
-            $monthlyAct->profit = $act['profit'];
             $monthlyAct->is_partner = $act['is_partner'];
             $monthlyAct->act_date = $act['date'];
 

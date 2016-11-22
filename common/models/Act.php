@@ -638,7 +638,7 @@ class Act extends ActiveRecord
             }
         }
         //Пересчитываем месячный акт
-        MonthlyAct::redoMonthlyAct($this);
+        MonthlyAct::getRealObject($this->service_type)->saveFromAct($this);
 
         parent::afterSave($insert, $changedAttributes);
     }

@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\models\Act;
 use common\models\MonthlyAct;
 use Yii;
 use yii\console\Controller;
@@ -42,7 +43,14 @@ class MonthlyActController extends Controller
      */
     public function actionClearAndCreateAll()
     {
+        /*
         MonthlyAct::deleteAll();
         $this->actionCreate('all');
+        */
+        $allAct = Act::find()->all();
+        MonthlyAct::deleteAll();
+        foreach ($allAct as $act) {
+            MonthlyAct::getRealObject($act->service_type)->saveFromAct($act);
+        }
     }
 }

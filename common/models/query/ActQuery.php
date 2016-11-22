@@ -14,7 +14,7 @@ class ActQuery extends ActiveQuery
 {
     /**
      * @inheritdoc
-     * @return \common\models\Car[]|array
+     * @return \common\models\Act[]|array
      */
     public function all($db = null)
     {
