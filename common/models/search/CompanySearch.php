@@ -80,7 +80,7 @@ class CompanySearch extends Company
                     if ($currentUser) {
                         $query->orWhere(['offer.user_id' => null]);
                         $query->orWhere(['offer.user_id' => $currentUser->id]);
-                        $query->andFilterWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
+                        $query->andWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
                 if ($this->status == Company::STATUS_NEW) {
