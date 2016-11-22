@@ -95,7 +95,6 @@ class MonthlyActSearch extends MonthlyAct
             'type_id',
             'client_id',
             'service_id',
-            'profit',
             'number',
             'client.name'
         ])->joinWith('client client');
