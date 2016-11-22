@@ -78,7 +78,8 @@ class CompanySearch extends Company
                 if ($this->user_id) {
                     $currentUser = User::findOne($this->user_id);
                     if ($currentUser) {
-                        $query->andFilterWhere(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
+                        $query->orWhere(['offer.user_id' => null]);
+                        $query->orWhere(['offer.user_id' => $currentUser->id]);
                         $query->andFilterWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
