@@ -17,7 +17,6 @@ use yii\web\UploadedFile;
  * @property integer $type_id
  * @property integer $service_id
  * @property integer $act_id
- * @property integer $profit
  * @property string $number
  * @property integer $payment_status
  * @property integer $payment_date
@@ -97,7 +96,6 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     'type_id',
                     'service_id',
                     'act_id',
-                    'profit',
                     'payment_status',
                     'act_status',
                     'is_partner',
@@ -313,14 +311,15 @@ class MonthlyAct extends \yii\db\ActiveRecord
     /**
      * @param $act \common\models\Act
      */
-    public static function redoMonthlyAct($act)   {
+    public static function redoMonthlyAct($act)
+    {
 
         $clientId = $act->client_id;
         $partnerId = $act->partner_id;
         $time = $act->served_at;
         $serviceType = $act->service_type;
 
-        if(!self::isNeedNewAct($time, $serviceType)){
+        if (!self::isNeedNewAct($time, $serviceType)) {
             return false;
         }
 
@@ -426,6 +425,58 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $partnerAct = array_merge($wash, $tires, $service, $disinfection);
 
         return $partnerAct;
+    }
+
+    public function getProfit()
+    {
+        $profit = (new \yii\db\Query())->from('{{%act}} act');
+
+        if ($this->is_partner == self::PARTNER) {
+            $profit->where(["partner_id" => $this->client_id]);
+        } else {
+            $profit->where(["client_id" => $this->client_id]);
+        }
+
+        if ($this->type_id == Service::TYPE_WASH || $this->type_id == Service::TYPE_TIRES) {
+            if ($this->is_partner == self::PARTNER) {
+                $profit->select([new Expression('SUM(expense) as profit')]);
+            } else {
+                $profit->select([new Expression('SUM(income) as profit')]);
+            }
+            $profit->andWhere([
+                "date_format(FROM_UNIXTIME(served_at), '%Y-%m-00')" => $this->act_date
+            ])->andWhere([
+                "service_type" => $this->type_id,
+            ]);
+
+        } elseif ($this->type_id == Service::TYPE_SERVICE) {
+            if ($this->is_partner == self::PARTNER) {
+                $profit->select(['expense']);
+            } else {
+                $profit->select(['income']);
+            }
+            $profit->andWhere(["id" => $this->act_id]);
+
+        } elseif ($this->type_id == Service::TYPE_DISINFECT) {
+            if ($this->is_partner == self::PARTNER) {
+                $profit->select([new Expression('COUNT(scopes.id)')]);
+            } else {
+                $profit->select([new Expression('SUM(scopes.price*scopes.amount) as profit')]);
+            }
+            $profit->join('LEFT JOIN', '{{%act_scope}} scopes', 'scopes.act_id = act.id')
+                ->andWhere([
+                    "date_format(FROM_UNIXTIME(served_at), '%Y-%m-00')" => $this->act_date
+                ])
+                ->andWhere([
+                    "service_type" => $this->type_id,
+                ])
+                ->andWhere(['scopes.service_id' => $this->service_id])
+                ->andWhere(['scopes.company_id' => $this->client_id]);
+        }
+
+        $profit = $profit->scalar();
+
+        return isset($profit) ? $profit : 0;
     }
 
     /**
@@ -599,6 +650,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
         }
         $nowDate = $nowDate->format('Y-m-00');
         $actDate = (new \DateTime())->setTimestamp($date)->format('Y-m-00');
+
         return $actDate < $nowDate;
     }
 
