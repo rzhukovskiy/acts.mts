@@ -87,6 +87,9 @@ class CompanyController extends Controller
      */
     public function actionNew($type)
     {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_NEW;
@@ -112,6 +115,9 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_NEW;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 
@@ -123,12 +129,14 @@ class CompanyController extends Controller
             ->andWhere(['is not', 'department_id', null]);
         $dataProviderUser->pagination = false;
         $userList = $dataProviderUser->getModels();
+
         $userData = [];
         foreach ($userList as $user) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type;
             $badgeSearch->user_id = $user->id;
             $badgeSearch->status = Company::STATUS_NEW;
+            $badgeSearch->user_id = $user->id;
             $userData[$user->id] = ['badge' => $badgeSearch->search()->count, 'username' => $user->username];
         }
 
@@ -153,6 +161,9 @@ class CompanyController extends Controller
      */
     public function actionActive($type)
     {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_ACTIVE;
@@ -179,6 +190,9 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_ACTIVE;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 
@@ -201,6 +215,9 @@ class CompanyController extends Controller
      */
     public function actionArchive($type)
     {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
@@ -227,6 +244,9 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 
@@ -249,6 +269,9 @@ class CompanyController extends Controller
      */
     public function actionRefuse($type)
     {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_REFUSE;
@@ -275,6 +298,9 @@ class CompanyController extends Controller
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
             $badgeSearch->status = Company::STATUS_REFUSE;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
             $typeData['badge'] = $badgeSearch->search()->count;
         }
 

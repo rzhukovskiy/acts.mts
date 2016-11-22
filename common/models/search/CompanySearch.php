@@ -78,8 +78,8 @@ class CompanySearch extends Company
                 if ($this->user_id) {
                     $currentUser = User::findOne($this->user_id);
                     if ($currentUser) {
-                        $query->where(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
-                        $query->where(['in', 'type', array_keys($currentUser->getAllCompanyType($this->status))]);
+                        $query->andFilterWhere(['or', ['offer.user_id' => null], ['offer.user_id' => $currentUser->id]]);
+                        $query->andFilterWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
                 if ($this->status == Company::STATUS_NEW) {
@@ -104,7 +104,7 @@ class CompanySearch extends Company
                 $query->andFilterWhere(['like', 'CONCAT_WS(",",info.index,info.city,info.street,info.house)', $this->getFullAddress()]);
                 break;
         }
-
+        
         return $dataProvider;
     }
 }

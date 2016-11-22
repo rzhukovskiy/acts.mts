@@ -172,20 +172,27 @@ class UserController extends Controller
         ]);
 
         if ($loginModel->virtualLogin()) {
+            /** @var User $currentUser */
+            $currentUser = Yii::$app->user->identity;
+
             if (Yii::$app->user->isGuest) {
                 return $this->redirect('/site/index');
             }
-            if (Yii::$app->user->can(User::ROLE_ADMIN)) {
+            if ($currentUser->role == User::ROLE_ADMIN) {
                 return $this->redirect(['department/index']);
             }
-            if (Yii::$app->user->can(User::ROLE_ACCOUNT)) {
+            if ($currentUser->role == User::ROLE_ACCOUNT) {
                 return $this->redirect(['wash/list']);
             }
-            if (Yii::$app->user->can(User::ROLE_WATCHER)) {
-                return $this->redirect(['company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
+            if ($currentUser->role == User::ROLE_WATCHER) {
+                return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
             }
-        } else
+            if ($currentUser->role == User::ROLE_MANAGER) {
+                return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
+            }
+        } else {
             return $this->goBack(); // return to list action
+        }
     }
 
     /**

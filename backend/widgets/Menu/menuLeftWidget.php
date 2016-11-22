@@ -40,17 +40,17 @@ class menuLeftWidget extends Widget
 
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
-        
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+            $searchModel->user_id = $currentUser->id;
+        }
         $searchModel->status = Company::STATUS_NEW;
         $countNew = $searchModel->search()->count;
-        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
-        $searchModel->status = Company::STATUS_ACTIVE;
-        $countActive = $searchModel->search()->count;
-        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+
         $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
         $countArchive = $searchModel->search()->count;
-        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+
         $searchModel->status = Company::STATUS_REFUSE;
         $countRefuse = $searchModel->search()->count;
 

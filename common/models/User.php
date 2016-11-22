@@ -304,16 +304,30 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @param $companyType
+     * @param $companyType int|array
      * @param $companyStatus
      * @return int
      */
     public function can($companyType, $companyStatus)
     {
-        return count(DepartmentUserCompanyType::findAll([
-            'user_id'  => $this->id,
-            'company_type'   => $companyType,
-            'company_status' => $companyStatus,
-        ]));
+        if (is_array($companyType)) {
+            foreach ($companyType as $type) {
+               if (!count(DepartmentUserCompanyType::findAll([
+                    'user_id'  => $this->id,
+                    'company_type'   => $companyType,
+                    'company_status' => $companyStatus,
+                ]))) {
+                   return false;
+               }
+            }
+
+            return true;
+        } else {
+            return count(DepartmentUserCompanyType::findAll([
+                'user_id'  => $this->id,
+                'company_type'   => $companyType,
+                'company_status' => $companyStatus,
+            ]));
+        }
     }
 }
