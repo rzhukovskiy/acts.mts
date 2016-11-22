@@ -8,31 +8,12 @@ use yii\console\Controller;
 
 class MonthlyActController extends Controller
 {
-    /**
-     * @param bool $allDate
-     * @param bool $type
-     * @return int
-     */
-    public function actionCreate($allDate = false, $type = false)
+    public function actionCreateAll()
     {
-        $actDate = date('Y-m-d', strtotime('-1 month'));
-
-        $isHasAct = MonthlyAct::find()->where(['act_date' => $actDate])->exists();
-        if ($isHasAct) {
-            echo "Monthly Acts already created!\n";
-
-            return 0;
+        $allAct = Act::find()->all();
+        foreach ($allAct as $act) {
+            MonthlyAct::getRealObject($act->service_type)->saveFromAct($act);
         }
-        $partnerAct = MonthlyAct::getPartnerAct($allDate, false, $type);
-        $clientAct = MonthlyAct::getClientAct($allDate, false, $type);
-
-        $allAct = array_merge($partnerAct, $clientAct);
-        if (!$allAct) {
-            echo "Monthly Acts not created!\n";
-
-            return 0;
-        }
-        MonthlyAct::massSaveAct($allAct);
         echo "Monthly Acts successfully created!\n";
 
         return 0;
@@ -41,16 +22,8 @@ class MonthlyActController extends Controller
     /**
      *
      */
-    public function actionClearAndCreateAll()
+    public function actionClear()
     {
-        /*
         MonthlyAct::deleteAll();
-        $this->actionCreate('all');
-        */
-        $allAct = Act::find()->all();
-        MonthlyAct::deleteAll();
-        foreach ($allAct as $act) {
-            MonthlyAct::getRealObject($act->service_type)->saveFromAct($act);
-        }
     }
 }
