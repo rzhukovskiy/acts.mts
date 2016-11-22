@@ -3,7 +3,9 @@
 namespace common\models\monthlyAct;
 
 use common\models\MonthlyAct;
+use common\models\query\MonthlyActQuery;
 use common\models\Service;
+use yii\db\Expression;
 
 
 /**
@@ -11,6 +13,8 @@ use common\models\Service;
  */
 class DisinfectMonthlyAct extends MonthlyAct implements MonthlyActInterface
 {
+    static $type = Service::TYPE_DISINFECT;
+
     /**
      * @param \common\models\Act $act
      * @return mixed|void
@@ -30,6 +34,34 @@ class DisinfectMonthlyAct extends MonthlyAct implements MonthlyActInterface
             }
         }
 
+    }
+
+    /**
+     * @return false|int|null|string
+     */
+    public function getProfit()
+    {
+        $partnerClientId = ($this->is_partner == self::PARTNER) ? 'partner_id' : 'client_id';
+        $profit = (new \yii\db\Query())->from('{{%act}} act')->where([$partnerClientId => $this->client_id]);
+
+        if ($this->is_partner == self::PARTNER) {
+            $profit->select([new Expression('COUNT(scopes.id)')]);
+        } else {
+            $profit->select([new Expression('SUM(scopes.price*scopes.amount) as profit')]);
+        }
+        $profit->join('LEFT JOIN', '{{%act_scope}} scopes', 'scopes.act_id = act.id')
+            ->andWhere([
+                "date_format(FROM_UNIXTIME(served_at), '%Y-%m-00')" => $this->act_date
+            ])
+            ->andWhere([
+                "service_type" => Service::TYPE_DISINFECT,
+            ])
+            ->andWhere(['scopes.service_id' => $this->service_id])
+            ->andWhere(['scopes.company_id' => $this->client_id]);
+
+        $profit = $profit->scalar();
+
+        return isset($profit) ? $profit : 0;
     }
 
     /**
@@ -68,5 +100,37 @@ class DisinfectMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $monthlyAct->service_id = $serviceId;
         $monthlyAct->act_date = $date;
         $monthlyAct->save();
+    }
+
+    //-------------------
+    //Служебная часть
+    //----------------
+
+    /**
+     *
+     */
+    public function init()
+    {
+        $this->type_id = self::$type;
+        parent::init();
+    }
+
+    /**
+     * @return MonthlyActQuery
+     */
+    public static function find()
+    {
+        return new MonthlyActQuery(get_called_class(), ['type' => self::$type]);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        $this->type_id = self::$type;
+
+        return parent::beforeSave($insert);
     }
 }

@@ -3,7 +3,9 @@
 namespace common\models\monthlyAct;
 
 use common\models\MonthlyAct;
+use common\models\query\MonthlyActQuery;
 use common\models\Service;
+use yii\db\Expression;
 
 
 /**
@@ -11,6 +13,8 @@ use common\models\Service;
  */
 class WashMonthlyAct extends MonthlyAct implements MonthlyActInterface
 {
+    static $type = Service::TYPE_WASH;
+
     /**
      * @param \common\models\Act $act
      * @return mixed|void
@@ -29,6 +33,30 @@ class WashMonthlyAct extends MonthlyAct implements MonthlyActInterface
     }
 
     /**
+     * @return false|int|null|string
+     */
+    public function getProfit()
+    {
+        $partnerClientId = ($this->is_partner == self::PARTNER) ? 'partner_id' : 'client_id';
+        $profit = (new \yii\db\Query())->from('{{%act}} act')->where([$partnerClientId => $this->client_id]);
+
+        if ($this->is_partner == self::PARTNER) {
+            $profit->select([new Expression('SUM(expense) as profit')]);
+        } else {
+            $profit->select([new Expression('SUM(income) as profit')]);
+        }
+        $profit->andWhere([
+            "date_format(FROM_UNIXTIME(served_at), '%Y-%m-00')" => $this->act_date
+        ])->andWhere([
+            "service_type" => self::$type,
+        ]);
+
+        $profit = $profit->scalar();
+
+        return isset($profit) ? $profit : 0;
+    }
+
+    /**
      * @param $clientId
      * @param $isPartner
      * @param $time
@@ -41,8 +69,7 @@ class WashMonthlyAct extends MonthlyAct implements MonthlyActInterface
                 ->andWhere(['client_id' => $clientId])
                 ->andWhere(['act_date' => $time])
                 ->andWhere(['is_partner' => $isPartner])
-                ->andWhere(['type_id' => Service::TYPE_WASH]);
-
+                ->andWhere(['type_id' => self::$type]);
 
         return !$checkedMonthlyAct->exists();
     }
@@ -56,9 +83,41 @@ class WashMonthlyAct extends MonthlyAct implements MonthlyActInterface
     {
         $monthlyAct = new MonthlyAct();
         $monthlyAct->client_id = $companyId;
-        $monthlyAct->type_id = Service::TYPE_WASH;
+        $monthlyAct->type_id = self::$type;
         $monthlyAct->is_partner = $isPartner;
         $monthlyAct->act_date = $date;
         $monthlyAct->save();
+    }
+
+    //-------------------
+    //Служебная часть
+    //----------------
+
+    /**
+     *
+     */
+    public function init()
+    {
+        $this->type_id = self::$type;
+        parent::init();
+    }
+
+    /**
+     * @return MonthlyActQuery
+     */
+    public static function find()
+    {
+        return new MonthlyActQuery(get_called_class(), ['type' => self::$type]);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        $this->type_id = self::$type;
+
+        return parent::beforeSave($insert);
     }
 }

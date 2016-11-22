@@ -15,4 +15,9 @@ interface MonthlyActInterface
      * @return mixed
      */
     public function saveFromAct($act);
+
+    /**
+     * @return int
+     */
+    public function getProfit();
 }
