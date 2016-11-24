@@ -102,12 +102,12 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Акты и оплата',
                     'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&!Yii::$app->controller->action=='archive'),
+                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id!='archive'),
                 ],
                 [
                     'label'  => 'Архив актов',
                     'url'    => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action=='archive'),
+                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id=='archive'),
                 ],
                 [
                     'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
