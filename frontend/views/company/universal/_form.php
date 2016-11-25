@@ -44,6 +44,7 @@ use yii\helpers\ArrayHelper;
         </div>
 
         <div id="details" class="collapse">
+            <?= $form->field($model, 'is_act_sign')->checkbox([], false) ?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">
                     <strong>Для актов</strong>

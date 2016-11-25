@@ -150,11 +150,11 @@ class ActExporter
                 $worksheet->getPageMargins()->setRight(0.5);
                 $worksheet->getPageMargins()->setBottom(0.3);
 
-                $objPHPExcel->getDefaultStyle()->applyFromArray(array(
-                    'font' => array(
+                $objPHPExcel->getDefaultStyle()->applyFromArray([
+                    'font' => [
                         'size' => 10,
-                    )
-                ));
+                    ]
+                ]);
 
                 $worksheet->getColumnDimension('A')->setWidth(13);
                 $worksheet->getColumnDimension('B')->setWidth(15);
@@ -194,21 +194,21 @@ class ActExporter
             $objDrawing = null;
 
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
-            $worksheet->getStyle($range)->applyFromArray(array(
-                'alignment' => array(
+            $worksheet->getStyle($range)->applyFromArray([
+                'alignment' => [
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-                )
-            ));
+                ]
+            ]);
             $worksheet->mergeCells($range);
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'СПРАВКА');
 
             $row++;
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
-            $worksheet->getStyle($range)->applyFromArray(array(
-                'alignment' => array(
+            $worksheet->getStyle($range)->applyFromArray([
+                'alignment' => [
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-                )
-            ));
+                ]
+            ]);
             $worksheet->mergeCells($range);
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'о проведении дезинфекции транспорта');
 
@@ -225,21 +225,21 @@ class ActExporter
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Марка');
             $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->mark->name);
-            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray(array(
-                    'font' => array(
-                        'color' => array('argb' => 'FF006699'),
-                    ),
-                )
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
+                        'color' => ['argb' => 'FF006699'],
+                    ],
+                ]
             );
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Гос. номер');
             $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->number);
-            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray(array(
-                    'font' => array(
-                        'color' => array('argb' => 'FF006699'),
-                    ),
-                )
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
+                        'color' => ['argb' => 'FF006699'],
+                    ],
+                ]
             );
 
             $row++;
@@ -259,22 +259,23 @@ class ActExporter
             $row++; $row++; $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Мосесян Г.А._____________');
             $objDrawing = null;
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('images/post-small.png');
-            $objDrawing->setName($act->number);
-            $range = $cols[$startCol + 2] . ($row - 3);
-            $objDrawing->setCoordinates($range);
-            $objDrawing->setWorksheet($worksheet);
-            $objDrawing->setOffsetX(-40);
-            $objDrawing = null;
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setName($act->number);
-            $objDrawing->setPath('images/sign.png');
-            $range = $cols[$startCol + 1] . ($row - 2);
-            $objDrawing->setCoordinates($range);
-            $objDrawing->setWorksheet($worksheet);
-            $objDrawing = null;
-
+            if($company->is_act_sign){
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/post-small.png');
+                $objDrawing->setName($act->number);
+                $range = $cols[$startCol + 2] . ($row - 3);
+                $objDrawing->setCoordinates($range);
+                $objDrawing->setWorksheet($worksheet);
+                $objDrawing->setOffsetX(-40);
+                $objDrawing = null;
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName($act->number);
+                $objDrawing->setPath('images/sign.png');
+                $range = $cols[$startCol + 1] . ($row - 2);
+                $objDrawing->setCoordinates($range);
+                $objDrawing->setWorksheet($worksheet);
+                $objDrawing = null;
+            }
             $row += 3;
 
             $row++;
@@ -285,37 +286,37 @@ class ActExporter
                 "г. Воронеж, ул. Героев Сибиряков, д. 24, кв. 116 \n Тел.: 8 800 55 008 55 \n " .
                 "E-Mail: mtransservice@mail.ru \n Web.: mtransservice.ru";
             $worksheet->setCellValueByColumnAndRow($startCol, $row, $text);
-            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray(array(
-                    'font' => array(
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
                         'size' => 6,
-                    ),
-                )
+                    ],
+                ]
             );
             $worksheet->getRowDimension($row)->setRowHeight(40);
 
             if ($cnt == 2) {
                 $row++;
                 $worksheet->getStyle("A$row:K$row")
-                    ->applyFromArray(array(
-                            'borders' => array(
-                                'top' => array(
+                    ->applyFromArray([
+                            'borders' => [
+                                'top' => [
                                     'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                    'color' => array('argb' => 'FF000000'),
-                                ),
-                            ),
-                        )
+                                    'color' => ['argb' => 'FF000000'],
+                                ],
+                            ],
+                        ]
                     );
                 $borderStart = $startRow - 7;
                 $borderEnd = $borderStart + 50;
                 $worksheet->getStyle("E$borderStart:E$borderEnd")
-                    ->applyFromArray(array(
-                            'borders' => array(
-                                'right' => array(
+                    ->applyFromArray([
+                            'borders' => [
+                                'right' => [
                                     'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                    'color' => array('argb' => 'FF000000'),
-                                ),
-                            ),
-                        )
+                                    'color' => ['argb' => 'FF000000'],
+                                ],
+                            ],
+                        ]
                     );
             }
 
@@ -866,18 +867,20 @@ class ActExporter
             $companyWorkSheet->setCellValue("E$row", "Заказчик");
 
             $row++;
-            //подпись
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('images/sign.png');
-            $objDrawing->setCoordinates("C$row");
-            $objDrawing->setWorksheet($companyWorkSheet);
-            $objDrawing->setOffsetX(50);
-            //печать
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('images/post.png');
-            $objDrawing->setCoordinates("C$row");
-            $objDrawing->setWorksheet($companyWorkSheet);
-            $objDrawing->setOffsetX(100);
+            if($company->is_act_sign){
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/sign.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(50);
+                //печать
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/post.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(100);
+            }
 
             $row++;
             $companyWorkSheet->setCellValue("B$row", "Мосесян Г.А. ____________");
@@ -903,12 +906,12 @@ class ActExporter
                 $companyWorkSheet->setCellValue("G$row", "$count");
                 $companyWorkSheet->setCellValue("H$row", "$total");
                 $companyWorkSheet->setCellValue("I$row", "$total");
-                $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
-                        'font' => array(
+                $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray([
+                        'font' => [
                             'bold' => true,
                             'size' => 12,
-                        ),
-                    )
+                        ],
+                    ]
                 );
             }
 
@@ -962,28 +965,29 @@ class ActExporter
 
             $row++;
             //подпись
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setName('Sample image');
-            $objDrawing->setDescription('Sample image');
-            $objDrawing->setPath('images/sign.png');
+            if ($company->is_act_sign) {
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName('Sample image');
+                $objDrawing->setDescription('Sample image');
+                $objDrawing->setPath('images/sign.png');
 
-            if ($this->serviceType == Company::TYPE_WASH) {
-                $objDrawing->setCoordinates("C$row");
+                if ($this->serviceType == Company::TYPE_WASH) {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(50);
+                } else {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(10);
+                }
+                //печать
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/post.png');
+                $objDrawing->setCoordinates("D$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
-                $objDrawing->setOffsetX(50);
-            } else {
-                $objDrawing->setCoordinates("C$row");
-                $objDrawing->setWorksheet($companyWorkSheet);
-                $objDrawing->setOffsetX(10);
+                $objDrawing->setOffsetX(30);
             }
-            //печать
-            $objDrawing = new \PHPExcel_Worksheet_Drawing();
-            $objDrawing->setPath('images/post.png');
-            $objDrawing->setCoordinates("D$row");
-            $objDrawing->setWorksheet($companyWorkSheet);
-            $objDrawing->setOffsetX(30);
             $row++;
-
             $companyWorkSheet->mergeCells("B$row:E$row");
             $companyWorkSheet->mergeCells("G$row:I$row");
             if($company->is_split) {
@@ -1232,25 +1236,31 @@ class ActExporter
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
-        //печать
-        $objDrawing = new \PHPExcel_Worksheet_Drawing();
-        $objDrawing->setName('Sample image');
-        $objDrawing->setDescription('Sample image');
-        $objDrawing->setPath('images/post.png');
-        $objDrawing->setCoordinates("C$row");
-        $objDrawing->setWorksheet($companyWorkSheet);
-        $objDrawing->setOffsetX(30);
-        $row++;
-        $row++;
-        //подпись
-        $objDrawing = new \PHPExcel_Worksheet_Drawing();
-        $objDrawing->setName('Sample image');
-        $objDrawing->setDescription('Sample image');
-        $objDrawing->setPath('images/sign.png');
-        $objDrawing->setCoordinates("B{$row}");
-        $objDrawing->setWorksheet($companyWorkSheet);
-        $objDrawing->setOffsetX(70);
-        $row++;
+        if ($company->is_act_sign) {
+            //печать
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setName('Sample image');
+            $objDrawing->setDescription('Sample image');
+            $objDrawing->setPath('images/post.png');
+            $objDrawing->setCoordinates("C$row");
+            $objDrawing->setWorksheet($companyWorkSheet);
+            $objDrawing->setOffsetX(30);
+            $row++;
+            $row++;
+            //подпись
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setName('Sample image');
+            $objDrawing->setDescription('Sample image');
+            $objDrawing->setPath('images/sign.png');
+            $objDrawing->setCoordinates("B{$row}");
+            $objDrawing->setWorksheet($companyWorkSheet);
+            $objDrawing->setOffsetX(70);
+            $row++;
+        }else{
+            $row++;
+            $row++;
+            $row++;
+        }
         $companyWorkSheet->mergeCells("B$row:E$row");
         $companyWorkSheet->setCellValue("B$row", 'Мосесян Г.А.__________');
 

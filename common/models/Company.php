@@ -24,6 +24,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $is_infected
  * @property integer $is_main
  * @property integer $is_sign
+ * @property integer $is_act_sign
  * @property integer $schedule
  * @property integer $created_at
  * @property integer $updated_at
@@ -175,6 +176,7 @@ class Company extends ActiveRecord
                     'director',
                     'is_split',
                     'is_sign',
+                    'is_act_sign',
                     'cardList',
                     'requisitesList',
                     'serviceList',
@@ -202,6 +204,7 @@ class Company extends ActiveRecord
             'is_split'    => 'Разделять прицеп',
             'schedule'    => 'По записи',
             'is_sign'     => 'Подпись',
+            'is_act_sign' => 'Подпись и печать в акте',
             'director'    => 'Директор',
             'serviceList' => 'Сервисы',
             'fullAddress' => 'Адрес',
