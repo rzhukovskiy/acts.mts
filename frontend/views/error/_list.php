@@ -41,8 +41,7 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'card_id',
-        'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
+        'attribute' => 'card_number',
         'value' => function ($data) {
             return isset($data->card) ? $data->card->number : 'error';
         },

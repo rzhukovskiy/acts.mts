@@ -303,13 +303,13 @@ class menuLeftWidget extends Widget
                     'url'    => ['/car/list'],
                     'active' => Yii::$app->controller->id == 'car',
                 ],
-                [
-                    'label'  => 'Список ТС',
-                    'url'    => ['/car-count/list-full'],
-                    'active' =>
-                        Yii::$app->controller->id == 'car-count' &&
-                        Yii::$app->controller->action->id == 'list-full',
-                ],
+//                [
+//                    'label'  => 'Список ТС',
+//                    'url'    => ['/car-count/list-full'],
+//                    'active' =>
+//                        Yii::$app->controller->id == 'car-count' &&
+//                        Yii::$app->controller->action->id == 'list-full',
+//                ],
                 [
                     'label'  => 'Контакты',
                     'url'    => ['/contact/list', 'type' => Company::TYPE_WASH],

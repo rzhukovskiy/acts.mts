@@ -10,8 +10,6 @@ namespace common\components;
 
 
 use common\models\Act;
-use common\models\Card;
-use common\models\Company;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
@@ -142,8 +140,7 @@ class ActHelper
                 },
             ],
             'card' => [
-                'attribute' => 'card_id',
-                'filter' => Card::find()->select(['number', 'id'])->indexBy('id')->column(),
+                'attribute' => 'card_number',
                 'value' => function ($data) {
                     return isset($data->card) ? $data->card->number : 'error';
                 },

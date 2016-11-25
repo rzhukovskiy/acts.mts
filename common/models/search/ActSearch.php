@@ -27,7 +27,7 @@ class ActSearch extends Act
     public function rules()
     {
         return [
-            [['partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
+            [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
             [['number', 'extra_number', 'period'], 'string'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
@@ -41,11 +41,11 @@ class ActSearch extends Act
     {
         // bypass scenarios() implementation in the parent class
         return [
-            self::SCENARIO_CAR => ['card_id', 'number', 'dateFrom', 'dateTo'],
-            self::SCENARIO_CLIENT => ['check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_PARTNER => ['check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_ERROR => ['check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
-            self::SCENARIO_HISTORY => ['client_id', 'number', 'dateFrom', 'dateTo'],
+            self::SCENARIO_CAR => ['card_number', 'card_id', 'number', 'dateFrom', 'dateTo'],
+            self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
+            self::SCENARIO_HISTORY => ['card_number', 'client_id', 'number', 'dateFrom', 'dateTo'],
             'default' => [],
         ];
     }
@@ -218,6 +218,14 @@ class ActSearch extends Act
             ->andFilterWhere(['like', 'act.extra_number', $this->extra_number])
             ->andFilterWhere(['like', 'check', $this->check]);
 
+        $dataProvider->setSort([
+            'attributes' => [
+                'card_number' => [
+                    'label' => 'Карта',
+                    'default' => SORT_ASC
+                ],
+            ]
+        ]);
 
         return $dataProvider;
     }
