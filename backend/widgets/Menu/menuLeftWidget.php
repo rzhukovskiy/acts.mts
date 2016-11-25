@@ -102,12 +102,17 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Акты и оплата',
                     'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&!Yii::$app->controller->action=='archive'),
+                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id!='archive'),
+                ],
+                [
+                    'label'  => 'Планирование',
+                    'url'    => ['/plan/list'],
+                    'active' => (Yii::$app->controller->id == 'plan'),
                 ],
                 [
                     'label'  => 'Архив актов',
                     'url'    => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action=='archive'),
+                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id=='archive'),
                 ],
                 [
                     'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
@@ -161,6 +166,11 @@ class menuLeftWidget extends Widget
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE)
                     ),
+                ],
+                [
+                    'label'  => 'Планирование',
+                    'url'    => ['/plan/list'],
+                    'active' => (Yii::$app->controller->id == 'plan'),
                 ],
                 [
                     'label'  => 'Акты и оплата',

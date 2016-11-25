@@ -130,7 +130,7 @@ echo \kartik\grid\GridView::widget([
             'attribute' => 'service_id',
             'label'     => 'Услуга',
             'content'   => function ($data) {
-                return $data->service->description;;
+                return $data->service->description;
             },
             'visible'   => $searchModel->client_id && $searchModel->type_id == Company::TYPE_DISINFECT
         ],

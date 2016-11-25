@@ -47,7 +47,7 @@ class ServiceMonthlyAct extends MonthlyAct implements MonthlyActInterface
         } else {
             $profit->select(['income']);
         }
-        $profit->andWhere(["id" => self::$type]);
+        $profit->andWhere(["service_type" => self::$type])->andWhere(["id" => $this->act_id]);
 
         $profit = $profit->scalar();
 

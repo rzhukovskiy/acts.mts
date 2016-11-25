@@ -95,6 +95,7 @@ class MonthlyActSearch extends MonthlyAct
             'type_id',
             'client_id',
             'service_id',
+            'act_id',
             'is_partner',
             'number',
             'client.name'
