@@ -27,6 +27,7 @@ use common\models\Company;
     ]);
     echo $form->field($model, 'username')->textInput();
     echo $form->field($model, 'newPassword')->passwordInput();
+    echo $form->field($model, 'is_account')->checkbox([], false);
     ?>
     <div class="form-group field-department-name required">
         <label class="col-sm-2 control-label" for="department-name">Активные</label>

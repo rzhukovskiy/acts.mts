@@ -19,6 +19,7 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property integer $status
  * @property integer $role
+ * @property integer $is_account
  * @property integer $company_id
  * @property integer $created_at
  * @property integer $updated_at
@@ -66,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'unique'],
             ['email', 'email'],
             [['role', 'company_id'], 'integer'],
-            ['email', 'safe'],
+            [['is_account', 'email'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
@@ -82,6 +83,7 @@ class User extends ActiveRecord implements IdentityInterface
             'email' => 'Электронная почта',
             'auth_key' => 'Ключ авторизации',
             'status' => 'Статус',
+            'is_account' => 'Может записывать',
             'role' => 'Роль',
             'company_id' => 'Компания',
             'created_at' => 'Дата создания',

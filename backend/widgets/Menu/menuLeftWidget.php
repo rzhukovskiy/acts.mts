@@ -48,7 +48,7 @@ class menuLeftWidget extends Widget
         $searchModel->status = Company::STATUS_NEW;
         $countNew = $searchModel->search()->count;
 
-        $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
+        $searchModel->status = [Company::STATUS_ARCHIVE, Company::STATUS_ACTIVE];
         $countArchive = $searchModel->search()->count;
 
         $searchModel->status = Company::STATUS_REFUSE;
@@ -75,7 +75,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'user',
                 ],
                 [
-                    'label' => 'Заявки'  . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
+                    'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/new', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW]['en']) ||
@@ -83,7 +83,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив'  . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
+                    'label' => 'Архив' . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
                     'url' => ['/company/archive', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
@@ -92,7 +92,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив 2'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
+                    'label' => 'Архив 2' . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/refuse', 'type' => Company::TYPE_WASH],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
@@ -100,22 +100,22 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label'  => 'Акты и оплата',
-                    'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id!='archive'),
+                    'label' => 'Акты и оплата',
+                    'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id != 'archive'),
                 ],
                 [
-                    'label'  => 'Планирование',
-                    'url'    => ['/plan/list'],
+                    'label' => 'Планирование',
+                    'url' => ['/plan/list'],
                     'active' => (Yii::$app->controller->id == 'plan'),
                 ],
                 [
-                    'label'  => 'Архив актов',
-                    'url'    => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'&&Yii::$app->controller->action->id=='archive'),
+                    'label' => 'Архив актов',
+                    'url' => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
+                    'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id == 'archive'),
                 ],
                 [
-                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
@@ -129,12 +129,12 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
                 ],
                 [
-                    'label'  => 'Акты и оплата',
-                    'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'label' => 'Акты и оплата',
+                    'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
                 [
-                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
@@ -143,7 +143,7 @@ class menuLeftWidget extends Widget
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
             $items = [
                 [
-                    'label' => 'Заявки'  . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
+                    'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW]['en']) ||
@@ -151,7 +151,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив'  . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
+                    'label' => 'Архив' . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
@@ -160,7 +160,7 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив 2'  . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
+                    'label' => 'Архив 2' . ($countNew ? '<span class="label label-success">' . $countRefuse . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_REFUSE]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
@@ -168,21 +168,28 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label'  => 'Планирование',
-                    'url'    => ['/plan/list'],
+                    'label' => 'Планирование',
+                    'url' => ['/plan/list'],
                     'active' => (Yii::$app->controller->id == 'plan'),
                 ],
                 [
-                    'label'  => 'Акты и оплата',
-                    'url'    => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'label' => 'Акты и оплата',
+                    'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act'),
                 ],
                 [
-                    'label' => 'Сообщения'  . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
             ];
+            if ($currentUser->is_account) {
+                $items[] = [
+                    'label' => 'Запись на мойку',
+                    'url' => ['/wash/list'],
+                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
+                ];
+            }
         } else {
             $items = [
                 [

@@ -33,7 +33,7 @@ class WashController extends Controller
                     [
                         'actions' => ['list', 'view'],
                         'allow' => true,
-                        'roles' => [User::ROLE_ACCOUNT],
+                        'roles' => [User::ROLE_ACCOUNT, User::ROLE_MANAGER, User::ROLE_WATCHER],
                     ],
                 ],
             ],
