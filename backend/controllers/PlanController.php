@@ -56,7 +56,7 @@ class PlanController extends Controller
         $realUser = User::findOne(Yii::$app->user->id);
         if ($realUser->role == User::ROLE_ADMIN) {
             $allUser =
-                User::find()->innerJoinWith('departments')->where(['role' => User::ROLE_WATCHER])->indexBy('id')->all();
+                User::find()->innerJoinWith('departments')->where(['{{%user}}.role' => User::ROLE_WATCHER])->indexBy('id')->all();
         } else {
             $allUser = [$realUser];
         }
