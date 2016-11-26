@@ -25,13 +25,11 @@ use yii\widgets\ActiveForm;
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]); ?>
-        <?= $form->field($model, 'user_id')->hiddenInput()->label(false) ?>
+        <?= Html::activeHiddenInput($model, 'user_id') ?>
+        <?= Html::activeHiddenInput($model, 'status') ?>
+        <?= Html::activeHiddenInput($model, 'comment') ?>
 
         <?= $form->field($model, 'task_name')->textInput(['maxlength' => true]) ?>
-
-        <?= $form->field($model, 'status')->hiddenInput()->label(false) ?>
-
-        <?= $form->field($model, 'comment')->hiddenInput()->label(false) ?>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
