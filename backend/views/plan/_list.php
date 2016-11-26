@@ -79,6 +79,7 @@ echo \kartik\grid\GridView::widget([
             'value'     => function ($data) {
                 return Editable::widget([
                     'model'           => $data,
+                    'placement'=>\kartik\popover\PopoverX::ALIGN_BOTTOM,
                     'formOptions'     => [
                         'action' => ['update', 'id' => $data->id]
                     ],
