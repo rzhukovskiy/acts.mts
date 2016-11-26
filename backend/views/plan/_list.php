@@ -18,7 +18,7 @@ echo \kartik\grid\GridView::widget([
     'emptyText'        => '',
     'panel'            => [
         'type'    => 'primary',
-        'heading' => 'Архив актов ',
+        'heading' => 'Задачи',
         'before'  => false,
         'footer'  => false,
         'after'   => false,

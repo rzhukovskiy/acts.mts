@@ -129,6 +129,11 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
                 ],
                 [
+                    'label' => 'Планирование',
+                    'url' => ['/plan/list'],
+                    'active' => (Yii::$app->controller->id == 'plan'),
+                ],
+                [
                     'label' => 'Акты и оплата',
                     'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act'),

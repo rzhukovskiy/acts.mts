@@ -36,7 +36,7 @@ class PlanController extends Controller
                     [
                         'actions' => ['list', 'update'],
                         'allow'   => true,
-                        'roles'   => [User::ROLE_WATCHER],
+                        'roles'   => [User::ROLE_WATCHER, User::ROLE_ACCOUNT],
                     ]
                 ],
             ],
@@ -56,7 +56,11 @@ class PlanController extends Controller
         $realUser = User::findOne(Yii::$app->user->id);
         if ($realUser->role == User::ROLE_ADMIN) {
             $allUser =
-                User::find()->innerJoinWith('departments')->where(['{{%user}}.role' => User::ROLE_WATCHER])->indexBy('id')->all();
+                User::find()
+                    ->innerJoinWith('departments')
+                    ->where(['<>', '{{%user}}.role', User::ROLE_ADMIN])
+                    ->indexBy('id')
+                    ->all();
         } else {
             $allUser = [$realUser];
         }
@@ -67,14 +71,14 @@ class PlanController extends Controller
         if ($userId && isset($allUser[$userId])) {
             $user = $allUser[$userId];
         } else {
-            $user = $allUser[0];
+            $user = current($allUser);
         }
 
         $userId = $user->id;
         $this->view->title = 'Планы сотрудника ' . $user->username;
 
         $searchModel = new PlanSearch();
-        $searchModel->user_id = $userId;
+        $searchModel->user_id = $user->id;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -82,7 +86,6 @@ class PlanController extends Controller
             'user_id' => $user->id,
             'status'  => Plan::STATUS_NOT_DONE,
         ]);
-
 
         return $this->render('list',
             [

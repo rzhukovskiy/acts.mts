@@ -29,9 +29,9 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'task_name')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'status')->dropDownList(\common\models\Plan::$listStatus) ?>
+        <?= $form->field($model, 'status')->hiddenInput()->label(false) ?>
 
-        <?= $form->field($model, 'comment')->textarea(['maxlength' => true]) ?>
+        <?= $form->field($model, 'comment')->hiddenInput()->label(false) ?>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
