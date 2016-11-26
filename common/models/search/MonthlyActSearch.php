@@ -52,14 +52,32 @@ class MonthlyActSearch extends MonthlyAct
         $dataProvider = new ActiveDataProvider([
             'query'      => $query,
             'pagination' => false,
-            'sort'       => [
-                'defaultOrder' => ['client_id' => SORT_DESC],
-            ],
+            'sort'=>[
+                'defaultOrder'=>[
+                    'parent_key' => SORT_ASC
+                ]
+            ]
         ]);
+
+        $sort = $dataProvider->getSort();
+        $sort->attributes = array_merge($sort->attributes,
+            [
+                'parent_key' => [
+                    'asc'  => ['parent_key' => SORT_ASC],
+                    'desc' => ['parent_key' => SORT_DESC]
+                ]
+            ]);
+        $dataProvider->setSort($sort);
 
         $this->load($params);
         $company = ArrayHelper::getValue($params, 'company', 0);
         $this->is_partner = ($company == 0) ? 1 : 0;
+
+        $query->alias('company');
+        $query->joinWith('client client')->addSelect([
+                    'company.*',
+                    new yii\db\Expression('IF(IFNULL(client.parent_id,0)=0, client.id*1000, client.parent_id*1000+client.id) as parent_key')
+                ]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -70,13 +88,13 @@ class MonthlyActSearch extends MonthlyAct
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id'                               => $this->id,
-            'client_id'                        => $this->client_id,
-            'type_id'                          => $this->type_id,
+            'company.id'                               => $this->id,
+            'company.client_id'                        => $this->client_id,
+            'company.type_id'                          => $this->type_id,
             'DATE_FORMAT(`act_date`, "%c-%Y")' => $this->act_date,
-            'is_partner'                       => $this->is_partner,
-            'created_at'                       => $this->created_at,
-            'updated_at'                       => $this->updated_at,
+            'company.is_partner'                       => $this->is_partner,
+            'company.created_at'                       => $this->created_at,
+            'company.updated_at'                       => $this->updated_at,
         ]);
 
         return $dataProvider;
@@ -104,7 +122,21 @@ class MonthlyActSearch extends MonthlyAct
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=>[
+                'defaultOrder'=>[
+                    'parent_key' => SORT_ASC
+                ]
+            ]
         ]);
+        $sort = $dataProvider->getSort();
+        $sort->attributes = array_merge($sort->attributes,
+            [
+                'parent_key' => [
+                    'asc'  => ['parent_key' => SORT_ASC],
+                    'desc' => ['parent_key' => SORT_DESC]
+                ]
+            ]);
+        $dataProvider->setSort($sort);
 
         $this->load($params);
 
@@ -112,14 +144,19 @@ class MonthlyActSearch extends MonthlyAct
             return $dataProvider;
         }
 
+        $query->alias('company');
+        $query->joinWith('client client')->addSelect([
+            new yii\db\Expression('IF(IFNULL(client.parent_id,0)=0, client.id*1000, client.parent_id*1000+client.id) as parent_key')
+        ]);
+
         if (!$this->client_id) {
             $query->groupBy(['client_id']);
         }
         // grid filtering conditions
         $query->andFilterWhere([
-            'client_id'  => $this->client_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'company.client_id'  => $this->client_id,
+            'company.created_at' => $this->created_at,
+            'company.updated_at' => $this->updated_at,
         ]);
         if ($this->type_id == Company::TYPE_OWNER) {
             $query->andFilterWhere(['is_partner' => MonthlyAct::NOT_PARTNER]);

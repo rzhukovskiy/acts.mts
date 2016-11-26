@@ -9,6 +9,7 @@ use common\models\LoginForm;
 use common\models\search\UserSearch;
 use common\models\User;
 use Yii;
+use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
@@ -64,9 +65,24 @@ class UserController extends \yii\web\Controller
             ->search(\Yii::$app->request->queryParams);
 
         $dataProvider->query
-            ->joinWith('company')
+            ->joinWith('company company')
             ->andWhere(['type' => $type]);
         $dataProvider->pagination = false;
+
+        $dataProvider->query->addSelect([
+            new Expression('IF(IFNULL(company.parent_id,0)=0, company.id*1000, company.parent_id*1000+company.id) as parent_key')
+        ]);
+
+        $sort = $dataProvider->getSort();
+        $sort->attributes = array_merge($sort->attributes,
+            [
+                'parent_key' => [
+                    'asc'  => ['parent_key' => SORT_ASC],
+                    'desc' => ['parent_key' => SORT_DESC]
+                ]
+            ]);
+        $dataProvider->setSort($sort);
+        $dataProvider->sort->defaultOrder=['parent_key' => SORT_ASC];
 
         $newUser = new userAddForm();
         $newUser->role = User::ROLE_PARTNER;

@@ -65,11 +65,7 @@ class CompanyController extends Controller
         $searchModel->status = Company::STATUS_ACTIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->sort = [
-            'defaultOrder' => [
-                'created_at' => SORT_DESC,
-            ]
-        ];
+        $dataProvider->sort->defaultOrder=['parent_key' => SORT_ASC];
 
         $model = new Company();
         $model->type = $type;

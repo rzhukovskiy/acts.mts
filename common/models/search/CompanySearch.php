@@ -90,6 +90,18 @@ class CompanySearch extends Company
                 }
 
                 break;
+            case self::SCENARIO_DEFAULT:
+                $sort = $dataProvider->getSort();
+                $sort->attributes = array_merge($sort->attributes,
+                    [
+                        'parent_key' => [
+                            'asc'  => ['parent_key' => SORT_ASC],
+                            'desc' => ['parent_key' => SORT_DESC]
+                        ]
+                    ]);
+                $dataProvider->setSort($sort);
+                $query->addSelect(['company.*',new Expression('IF(IFNULL(company.parent_id,0)=0, company.id*1000, company.parent_id*1000+company.id) as parent_key')]);
+                break;
         }
         
         $query->andFilterWhere([

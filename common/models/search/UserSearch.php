@@ -55,7 +55,8 @@
                 // $query->where('0=1');
                 return $dataProvider;
             }
-
+            $query->alias('user');
+            $query->select('user.*');
             // grid filtering conditions
             $query->andFilterWhere([
                 'id' => $this->id,

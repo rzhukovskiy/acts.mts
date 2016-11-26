@@ -63,6 +63,7 @@ class Company extends ActiveRecord
     const STATUS_ACTIVE = 10;
 
     const SCENARIO_OFFER = 'offer';
+    const SCENARIO_DEFAULT = 'default';
 
     const TYPE_OWNER = 1;
     const TYPE_WASH = 2;
