@@ -49,7 +49,10 @@ echo \kartik\grid\GridView::widget([
             'footer'        => 'Итого:',
             'footerOptions' => ['style' => 'font-weight: bold'],
         ],
-        'task_name',
+        [
+            'attribute'      => 'task_name',
+            'contentOptions' => ['style' => 'width:45%'],
+        ],
         [
             'value'          => function ($model) {
                 return Html::activeDropDownList($model,
@@ -69,7 +72,7 @@ echo \kartik\grid\GridView::widget([
             'contentOptions' => function ($model) {
                 return [
                     'class' => \common\models\Plan::colorForStatus($model->status),
-                    'style' => 'min-width: 100px'
+                    'style' => 'width: 150px'
                 ];
             },
 
@@ -83,6 +86,7 @@ echo \kartik\grid\GridView::widget([
                     'formOptions'     => [
                         'action' => ['update', 'id' => $data->id]
                     ],
+                    'valueIfNull'     => '(не задано)',
                     'buttonsTemplate' => '{submit}',
                     'inputType'       => Editable::INPUT_TEXTAREA,
                     'submitButton'    => [
@@ -91,9 +95,10 @@ echo \kartik\grid\GridView::widget([
                     'attribute'       => 'comment',
                     'asPopover'       => true,
                     'size'            => 'md',
-                    'options'         => ['class'       => 'form-control',
-                                          'placeholder' => 'Введите название',
-                                          'id'          => 'editable' . $data->id
+                    'options'         => [
+                        'class'       => 'form-control',
+                        'placeholder' => 'Введите название',
+                        'id'          => 'editable' . $data->id
                     ],
                 ]);
             },
@@ -103,9 +108,7 @@ echo \kartik\grid\GridView::widget([
             'class'          => 'yii\grid\ActionColumn',
             'template'       => '{delete}',
             'contentOptions' => ['style' => 'width: 60px'],
-            'visibleButtons' => [
-                'delete' => $admin
-            ],
+            'visible'        => $admin,
         ],
 
 
