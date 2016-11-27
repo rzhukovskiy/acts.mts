@@ -48,6 +48,7 @@ echo \kartik\grid\GridView::widget([
             'class'         => 'yii\grid\SerialColumn',
             'footer'        => 'Итого:',
             'footerOptions' => ['style' => 'font-weight: bold'],
+            'contentOptions' => ['style' => 'width: 50px'],
         ],
         [
             'attribute'      => 'task_name',
@@ -82,7 +83,7 @@ echo \kartik\grid\GridView::widget([
             'value'     => function ($data) {
                 return Editable::widget([
                     'model'           => $data,
-                    'placement'       => \kartik\popover\PopoverX::ALIGN_LEFT,
+                    'placement'       => \kartik\popover\PopoverX::ALIGN_TOP_RIGHT,
                     'formOptions'     => [
                         'action' => ['update', 'id' => $data->id]
                     ],
