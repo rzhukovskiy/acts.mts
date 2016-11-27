@@ -114,7 +114,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
     </div>
     <div class="panel-body">
         <?php
-        Pjax::begin();
+        //Pjax::begin();
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
@@ -126,7 +126,6 @@ $filters .= 'Выбор периода: ' . $periodForm;
             'hover' => false,
             'striped' => false,
             'export' => false,
-            'summary' => false,
             'filterSelector' => '.ext-filter',
             'beforeHeader' => [
                 [
@@ -222,7 +221,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 ],
             ],
         ]);
-        Pjax::end();
+        //Pjax::end();
         ?>
         <hr>
 
