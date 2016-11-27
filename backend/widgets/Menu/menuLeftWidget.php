@@ -119,6 +119,11 @@ class menuLeftWidget extends Widget
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
+                [
+                    'label' => 'Запись на мойку',
+                    'url' => ['/wash/list'],
+                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
+                ]
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
