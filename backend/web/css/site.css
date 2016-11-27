@@ -371,7 +371,7 @@ table.sign {
 .list-data .close {
     color: #000;
 }
-.change-act_status,.change-payment_status{
+.change-act_status,.change-payment_status,.change-status{
     height: 24px;
     font-size: 14px;
 }

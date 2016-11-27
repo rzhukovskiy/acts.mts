@@ -29,13 +29,13 @@ echo $this->render('_tabs',
         'userId'  => $userId,
     ]);
 
-if ($admin) {
-    echo $this->render('_form',
-        [
-            'model'       => $model,
-            'searchModel' => $searchModel,
-        ]);
-}
+
+echo $this->render('_form',
+    [
+        'model'       => $model,
+        'searchModel' => $searchModel,
+    ]);
+
 echo $this->render('_list',
     [
         'dataProvider' => $dataProvider,

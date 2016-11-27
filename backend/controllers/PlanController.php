@@ -34,7 +34,7 @@ class PlanController extends Controller
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'update'],
+                        'actions' => ['list', 'create', 'update'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_ACCOUNT],
                     ]

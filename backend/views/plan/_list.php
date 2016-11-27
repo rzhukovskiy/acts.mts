@@ -79,7 +79,7 @@ echo \kartik\grid\GridView::widget([
             'value'     => function ($data) {
                 return Editable::widget([
                     'model'           => $data,
-                    'placement'=>\kartik\popover\PopoverX::ALIGN_BOTTOM,
+                    'placement'       => \kartik\popover\PopoverX::ALIGN_BOTTOM,
                     'formOptions'     => [
                         'action' => ['update', 'id' => $data->id]
                     ],
@@ -91,7 +91,10 @@ echo \kartik\grid\GridView::widget([
                     'attribute'       => 'comment',
                     'asPopover'       => true,
                     'size'            => 'md',
-                    'options'         => ['class' => 'form-control', 'placeholder' => 'Введите название'],
+                    'options'         => ['class'       => 'form-control',
+                                          'placeholder' => 'Введите название',
+                                          'id'          => 'editable' . $data->id
+                    ],
                 ]);
             },
             'format'    => 'raw'
@@ -101,9 +104,7 @@ echo \kartik\grid\GridView::widget([
             'template'       => '{delete}',
             'contentOptions' => ['style' => 'width: 60px'],
             'visibleButtons' => [
-                'delete' => function ($model, $key, $index) use ($admin) {
-                    return ($model->status === Plan::STATUS_DONE) && $admin;
-                }
+                'delete' => $admin
             ],
         ],
 
