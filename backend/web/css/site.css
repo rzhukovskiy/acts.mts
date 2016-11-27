@@ -415,3 +415,6 @@ table.sign {
 .nav-button {
     background: #3fad46;
 }
+.kv-editable-link{
+    border: none!important;
+}

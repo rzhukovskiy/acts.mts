@@ -71,7 +71,8 @@ class PlanController extends Controller
         if ($userId && isset($allUser[$userId])) {
             $user = $allUser[$userId];
         } else {
-            $user = current($allUser);
+            $user = array_shift($allUser);
+            array_unshift($allUser,$user);
         }
 
         $userId = $user->id;
