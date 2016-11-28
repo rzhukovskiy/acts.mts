@@ -103,12 +103,11 @@ class UserController extends Controller
 
     /**
      * @param $id
-     * @param $type
      * @return string
      * @throws NotFoundHttpException
      * @throws \Exception
      */
-    public function actionDelete($id, $type)
+    public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
