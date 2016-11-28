@@ -38,7 +38,7 @@ class CompanySearch extends Company
             self::SCENARIO_OFFER => [
                 'user_id', 'name', 'address', 'fullAddress'
             ],
-            'default' => [],
+            'default' => ['address'],
         ];
     }
 
