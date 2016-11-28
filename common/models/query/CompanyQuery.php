@@ -10,6 +10,7 @@ namespace common\models\query;
 
 use common\models\Company;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 
 class CompanyQuery extends ActiveQuery
 {
@@ -45,4 +46,24 @@ class CompanyQuery extends ActiveQuery
     {
         return $this->andWhere(['status' => Company::STATUS_NEW]);
     }
+
+    /**
+     * @return $this
+     */
+    public function addParentKey()
+    {
+        return $this->addSelect([
+            new Expression('IF(IFNULL(company.parent_id,0)=0, company.id*1000, company.parent_id*1000+company.id) as parent_key')
+        ]);
+    }
+
+    /**
+     * @return $this
+     */
+    public function orderByParentKey()
+    {
+        return $this->addOrderBy(['is_nested' => SORT_DESC, 'parent_key' => SORT_ASC]);
+    }
+
+
 }

@@ -132,8 +132,8 @@ class MonthlyActSearch extends MonthlyAct
         $sort->attributes = array_merge($sort->attributes,
             [
                 'parent_key' => [
-                    'asc'  => ['parent_key' => SORT_ASC],
-                    'desc' => ['parent_key' => SORT_DESC]
+                    'asc'  => ['is_nested' => SORT_DESC, 'parent_key' => SORT_ASC],
+                    'desc' => ['is_nested' => SORT_ASC, 'parent_key' => SORT_DESC]
                 ]
             ]);
         $dataProvider->setSort($sort);

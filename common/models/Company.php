@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -19,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property string $address
  * @property string $director
  * @property integer $type
+ * @property integer $is_nested
  * @property integer $status
  * @property integer $is_split
  * @property integer $is_infected
@@ -64,6 +66,9 @@ class Company extends ActiveRecord
 
     const SCENARIO_OFFER = 'offer';
     const SCENARIO_DEFAULT = 'default';
+
+    const IS_NOT_NESTED = 0;
+    const IS_NESTED = 1;
 
     const TYPE_OWNER = 1;
     const TYPE_WASH = 2;
@@ -171,6 +176,7 @@ class Company extends ActiveRecord
         return [
             [['name', 'address'], 'required'],
             [['name'], 'unique'],
+            [['is_nested'], 'integer'],
             [
                 [
                     'parent_id',
@@ -554,10 +560,32 @@ class Company extends ActiveRecord
 
     /**
      * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (!empty($this->parent_id)) {
+            $this->is_nested = self::IS_NESTED;
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @param bool $insert
      * @param array $changedAttributes
      */
     public function afterSave($insert, $changedAttributes)
     {
+        //Отмечаем родительскую компанию
+        if ($this->is_nested == self::IS_NESTED &&
+            !empty($this->parent->children) &&
+            $this->parent->is_nested == self::IS_NOT_NESTED
+        ) {
+            $this->parent->is_nested = self::IS_NESTED;
+            $this->parent->save();
+        }
+
         /**
          * смотрим есть ли карты и сохраняем
          */
@@ -623,9 +651,12 @@ class Company extends ActiveRecord
                 $query = $query->orWhere(['service_type.type' => $type]);
             }
         }
+        if ($type == self::TYPE_OWNER) {
+            $query = $query->alias('company')->addSelect(['company.*'])->addParentKey()->orderByParentKey();
+        }
 
         if ($sort) {
-            $query->orderBy($sort);
+            $query->addOrderBy($sort);
         }
         $query = $query->asArray()->all();
 
@@ -642,6 +673,14 @@ class Company extends ActiveRecord
         $this->status = self::STATUS_DELETED;
         $this->save();
 
+        if ($this->is_nested == self::IS_NESTED &&
+            empty($this->parent->children) &&
+            $this->parent->is_nested == self::IS_NESTED
+        ) {
+            $this->parent->is_nested = self::IS_NOT_NESTED;
+            $this->parent->save();
+        }
+
         return false;
     }
 
@@ -653,6 +692,18 @@ class Company extends ActiveRecord
         $attribute = array_key_exists($this->type, self::$listCompanyAttributes);
 
         return $attribute;
+    }
+
+    /**
+     * Список для выпадашек, отсортированный по компаниям с родителями
+     * @return mixed
+     */
+    public static function getSortedItemsForDropdown()
+    {
+        $list =
+            Company::dataDropDownList(self::TYPE_OWNER, false);
+
+        return $list;
     }
 
     /**

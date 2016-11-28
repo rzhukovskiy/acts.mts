@@ -417,4 +417,5 @@ table.sign {
 }
 .kv-editable-link{
     border: none!important;
+    text-align: left;
 }

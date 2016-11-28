@@ -28,20 +28,6 @@ echo \kartik\grid\GridView::widget([
     'striped'          => false,
     'export'           => false,
     'filterSelector'   => '.ext-filter',
-    'beforeHeader'     => [
-
-        [
-            'columns' => [
-                [
-                    'content' => '&nbsp',
-                    'options' => [
-                        'colspan' => 8,
-                    ]
-                ]
-            ],
-            'options' => ['class' => 'kv-group-header'],
-        ],
-    ],
     'columns'          => [
         [
             'header'        => '№',

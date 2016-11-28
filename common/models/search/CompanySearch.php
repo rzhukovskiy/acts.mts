@@ -95,12 +95,14 @@ class CompanySearch extends Company
                 $sort->attributes = array_merge($sort->attributes,
                     [
                         'parent_key' => [
-                            'asc'  => ['parent_key' => SORT_ASC],
-                            'desc' => ['parent_key' => SORT_DESC]
+                            'asc'  => ['is_nested' => SORT_DESC, 'parent_key' => SORT_ASC],
+                            'desc' => ['is_nested' => SORT_ASC, 'parent_key' => SORT_DESC]
                         ]
                     ]);
                 $dataProvider->setSort($sort);
-                $query->addSelect(['company.*',new Expression('IF(IFNULL(company.parent_id,0)=0, company.id*1000, company.parent_id*1000+company.id) as parent_key')]);
+                $query->addSelect(['company.*']);
+                $query->addParentKey();
+
                 break;
         }
         
