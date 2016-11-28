@@ -8,15 +8,15 @@ use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
 use common\models\search\UserSearch;
 use common\models\User;
-use Yii;
+use yii;
 use yii\db\Expression;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use yii\web\Controller;
 use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
 
-class UserController extends \yii\web\Controller
+class UserController extends Controller
 {
     /**
      * @inheritdoc
@@ -24,12 +24,6 @@ class UserController extends \yii\web\Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
