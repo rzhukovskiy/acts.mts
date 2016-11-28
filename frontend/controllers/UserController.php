@@ -109,9 +109,10 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
 
-        return 'Delete plz';
+        return $this->redirect(['list', 'type' => $model->company->type]); // TODO: add flash message
     }
 
     /**
