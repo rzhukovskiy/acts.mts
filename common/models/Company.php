@@ -638,6 +638,7 @@ class Company extends ActiveRecord
     public static function dataDropDownList($type = null, $useUniversal = false, $sort = false, $isActive = false)
     {
         $query = static::find();
+        $query->alias('company');
         if ($isActive) {
             $query->active();
         }
@@ -652,7 +653,7 @@ class Company extends ActiveRecord
             }
         }
         if ($type == self::TYPE_OWNER) {
-            $query = $query->alias('company')->addSelect(['company.*'])->addParentKey()->orderByParentKey();
+            $query = $query->addSelect(['company.*'])->addParentKey()->orderByParentKey();
         }
 
         if ($sort) {

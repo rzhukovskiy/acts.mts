@@ -99,7 +99,7 @@ use yii\jui\AutoComplete;
 
                     <div class="form-group" style="height: 25px;">
                         <?php if (!empty($serviceList)) { ?>
-                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control', 'prompt' => 'выберите услугу']) ?>
+                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control']) ?>
                         <?php } else { ?>
                             <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
                         <?php } ?>
