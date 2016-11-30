@@ -642,7 +642,7 @@ class Company extends ActiveRecord
             $query->active();
         }
         if (!is_null($type)) {
-            $query = $query->andWhere(['{{%company}}.type' => $type]);
+            $query = $query->andWhere(['company.type' => $type]);
             //Если успользуем универсальные компании, то проверяем их на подходящий тип и подмешиваем
             if ($useUniversal) {
                 $query = $query->joinWith([
@@ -700,8 +700,7 @@ class Company extends ActiveRecord
      */
     public static function getSortedItemsForDropdown()
     {
-        $list =
-            Company::dataDropDownList(self::TYPE_OWNER, false);
+        $list = Company::dataDropDownList(self::TYPE_OWNER, false);
 
         return $list;
     }

@@ -164,6 +164,7 @@ class ActController extends Controller
         $searchModel->service_type = $type;
 
         foreach ($searchModel->search(Yii::$app->request->queryParams)->getModels() as $act) {
+            $act->byAdmin = Yii::$app->user->identity->role == User::ROLE_ADMIN;
             $act->save();
         }
 
@@ -308,6 +309,7 @@ class ActController extends Controller
                 return $this->redirect(Yii::$app->request->post('__returnUrl'));
             }
         }
+
         $clientScopes = $model->getClientScopes()->all();
         $partnerScopes = $model->getPartnerScopes()->all();
 

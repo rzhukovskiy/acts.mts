@@ -80,6 +80,7 @@ class Act extends ActiveRecord
     public $time_str;
     public $actsCount;
     public $errorMessage = [];
+    public $byAdmin = false;
     /**
      * @var UploadedFile
      */
@@ -379,9 +380,6 @@ class Act extends ActiveRecord
     public function setCard_number($value)
     {
         $this->card_number = $value;
-
-        $card = Card::findOne(['number' => $value]);
-        $this->card_id = $card ? $card->id : $value;
     }
 
     public function getCard_number()
@@ -488,7 +486,7 @@ class Act extends ActiveRecord
             $totalExpense = 0;
             $totalIncome = 0;
 
-            if (empty($this->partnerServiceList) && $this->status == self::STATUS_NEW) {
+            if (empty($this->partnerServiceList) && ($this->status == self::STATUS_NEW || $this->byAdmin)) {
                 $this->partnerServiceList = $this->getPartnerScopes()->asArray()->all();
             }
 
@@ -528,7 +526,7 @@ class Act extends ActiveRecord
                 $this->expense = $totalExpense;
             }
 
-            if (empty($this->clientServiceList) && $this->status == self::STATUS_NEW) {
+            if (empty($this->clientServiceList) && ($this->status == self::STATUS_NEW || $this->byAdmin)) {
                 $this->clientServiceList = $this->getClientScopes()->asArray()->all();
             }
             if (!empty($this->clientServiceList)) {
