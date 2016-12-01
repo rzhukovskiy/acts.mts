@@ -2,13 +2,10 @@
 
 namespace common\models\search;
 
-use common\models\CompanyOffer;
-use common\models\User;
-use Yii;
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use common\models\Company;
-use yii\db\Expression;
+use common\models\User;
+use yii;
+use yii\data\ActiveDataProvider;
 
 /**
  * CardSearch represents the model behind the search form about `common\models\Card`.
@@ -16,13 +13,14 @@ use yii\db\Expression;
 class CompanySearch extends Company
 {
     public $user_id;
+    public $card_number;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['name', 'address'], 'string'],
+            [['card_number', 'name', 'address'], 'string'],
             [['user_id'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
@@ -38,7 +36,7 @@ class CompanySearch extends Company
             self::SCENARIO_OFFER => [
                 'user_id', 'name', 'address', 'fullAddress'
             ],
-            'default' => ['address'],
+            'default' => ['card_number', 'address'],
         ];
     }
 

@@ -25,9 +25,10 @@ use yii\bootstrap\ActiveForm;
             'fieldConfig' => [
                 'template' => '{input}',
                 'inputOptions' => ['class' => 'form-control input-sm'],
-                'options' => ['class' => 'col-sm-4'],
+                'options' => ['class' => 'col-sm-3'],
             ],
         ]) ?>
+        <?= $form->field($searchModel, 'card_number')->textInput(['placeholder' => 'номер карты']); ?>
         <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['prompt' => 'выберите город']); ?>
         <?= $form->field($entrySearchModel, 'day')->widget(DatePicker::classname(), [
             'size' => 'lg',
