@@ -101,6 +101,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
         $searchModel->search(Yii::$app->request->queryParams);
 
         $lock = new Lock();
@@ -116,6 +117,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
         $searchModel->search(Yii::$app->request->queryParams);
 
         Lock::deleteAll(['period' => $searchModel->period, 'type' => $searchModel->service_type]);

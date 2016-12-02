@@ -9,6 +9,9 @@
 namespace backend\controllers;
 
 
+use common\models\Act;
+use common\models\Car;
+use common\models\Card;
 use common\models\Company;
 use common\models\Entry;
 use common\models\search\CompanySearch;
@@ -49,13 +52,7 @@ class WashController extends Controller
         $searchModel = new CompanySearch();
         $searchModel->type = Company::TYPE_WASH;
         $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->joinWith('acts');
-        $dataProvider->sort = [
-            'defaultOrder' => [
-                'created_at' => SORT_DESC,
-            ]
-        ];
+        $dataProvider = $searchModel->searchWithCard(Yii::$app->request->queryParams);
 
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->load(Yii::$app->request->queryParams);
@@ -74,15 +71,26 @@ class WashController extends Controller
     /**
      * Shows an existing Company model.
      * @param integer $id
+     * @param integer $card_number
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView($id, $card_number = null)
     {
         $model = $this->findModel($id);
         $modelEntry = new Entry();
         $modelEntry->load(Yii::$app->request->queryParams);
         $modelEntry->company_id = $model->id;
         $modelEntry->service_type = $model->type;
+        $modelCard = Card::findOne(['number' => $card_number]);
+
+        if ($modelCard) {
+            /** @var Act $modelAct */
+            $modelAct = Act::find()->where(['card_id' => $modelCard->id])->select(['*', 'COUNT(id) AS count'])->groupBy('number')->orderBy('count DESC')->one();
+            $modelEntry->card_id = $modelAct->card_id;
+            $modelEntry->number  = $modelAct->number;
+            $modelEntry->mark_id = $modelAct->mark_id;
+            $modelEntry->type_id = $modelAct->type_id;
+        }
 
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->day = $modelEntry->day;

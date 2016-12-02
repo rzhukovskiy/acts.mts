@@ -2,6 +2,7 @@
 /**
  * @var $model \common\models\Company
  * @var $entrySearchModel \common\models\search\EntrySearch
+ * @var $searchModel \common\models\search\CompanySearch
  */
 
 use yii\bootstrap\Html;
@@ -25,7 +26,12 @@ use yii\bootstrap\Html;
                 } ?>
             </div>
             <div class="col-sm-12 text-center">
-                <?= Html::a('Записать на мойку', ['wash/view', 'id' => $model->id, 'Entry[day]' => $entrySearchModel->day], ['class' => 'btn btn-primary btn-sm pull-center', 'style' => 'margin-bottom: 20px']) ?>
+                <?= Html::a('Записать на мойку', [
+                    'wash/view',
+                    'id' => $model->id,
+                    'Entry[day]' => $entrySearchModel->day,
+                    'card_number' => $searchModel->card_number
+                ], ['class' => 'btn btn-primary btn-sm pull-center', 'style' => 'margin-bottom: 20px']) ?>
             </div>
         </div>
     </div>

@@ -22,6 +22,7 @@ echo $this->render('_search', [
 echo ListView::widget([
     'dataProvider' => $dataProvider,
     'viewParams' => [
+        'searchModel' => $searchModel,
         'entrySearchModel' => $entrySearchModel,
     ],
     'itemView' => '_short_view',

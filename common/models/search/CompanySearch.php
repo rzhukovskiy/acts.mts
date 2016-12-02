@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\models\Card;
 use common\models\Company;
 use common\models\User;
 use yii;
@@ -118,6 +119,66 @@ class CompanySearch extends Company
                 break;
         }
         
+        return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchWithCard($params=[])
+    {
+        $query = Company::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->alias('company');
+        $query->joinWith('acts act');
+        /** @var User $currentUser */
+        $query->joinWith(['info info', 'offer offer']);
+        if ($this->user_id) {
+            $currentUser = User::findOne($this->user_id);
+            if ($currentUser) {
+                $query->orWhere(['offer.user_id' => null]);
+                $query->orWhere(['offer.user_id' => $currentUser->id]);
+                $query->andWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
+            }
+        }
+        if ($this->card_number && !$this->address) {
+            $modelCard = Card::findOne(['number' => $this->card_number]);
+            if ($modelCard) {
+                $query->andWhere(['or', ['act.card_id' => $modelCard->id], ['address' => $modelCard->company->address]]);
+                $query->select(['company.*', 'COUNT(act.id) as service_count']);
+                $query->groupBy('company.id');
+                $query->orderBy('service_count DESC');
+            }
+        } else {
+            $query->andFilterWhere(['like', 'address', $this->address]);
+        }
+
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'type' => $this->type,
+            'company.status' => $this->status,
+        ]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+
         return $dataProvider;
     }
 }
