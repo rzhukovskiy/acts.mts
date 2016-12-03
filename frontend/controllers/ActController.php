@@ -155,7 +155,7 @@ class ActController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'serviceList' => Service::find()->where(['type' => Service::TYPE_DISINFECT])->select(['description', 'id'])->indexBy('id')->column(),
-            'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->column(),
+            'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->active()->column(),
             'role' => Yii::$app->user->identity->role,
         ]);
     }
