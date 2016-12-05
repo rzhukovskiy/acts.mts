@@ -659,7 +659,7 @@ class Company extends ActiveRecord
         if ($sort) {
             $query->addOrderBy($sort);
         }
-        $query = $query->asArray()->all();
+        $query = $query->asArray()->active()->all();
 
         return ArrayHelper::map($query, 'id', 'name');
     }

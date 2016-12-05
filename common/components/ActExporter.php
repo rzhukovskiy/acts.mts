@@ -1020,6 +1020,8 @@ class ActExporter
         if (!$this->company) {
             return;
         }
+
+
         ///////////// check
         $this->objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel5');
@@ -1202,7 +1204,7 @@ class ActExporter
                 )
             )
         );
-        if (in_array($this->serviceType, [Company::TYPE_TIRES, Company::TYPE_SERVICE])) {
+        if (in_array($this->serviceType, [Company::TYPE_SERVICE])) {
             $first = $dataList[0];
             $text = "СЧЕТ б/н от " . date("d ", $first->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
