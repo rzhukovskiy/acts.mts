@@ -141,6 +141,8 @@ class ConnectController extends Controller
                     $created_at,
                     0,
                     $rowData['id'],
+                    1,
+                    0,
                 ];
 
                 $insert = "(" . implode(',', $companyData) . ")";
