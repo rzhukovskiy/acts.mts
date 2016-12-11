@@ -74,7 +74,8 @@ class CompanySearch extends Company
             case self::SCENARIO_OFFER:
                 /** @var User $currentUser */
                 $query->joinWith(['info info', 'offer offer']);
-                if ($this->user_id) {
+                //если пользователь указан и смотрим заявки - то отдаем только или его заявки или без пользователя
+                if ($this->user_id && $this->status == self::STATUS_NEW) {
                     $currentUser = User::findOne($this->user_id);
                     if ($currentUser) {
                         $query->orWhere(['offer.user_id' => null]);
