@@ -11,6 +11,8 @@ use yii\widgets\ListView;
 
 $this->title = 'Запись';
 
+echo $this->render('_tabs');
+
 echo $this->render('_search', [
     'searchModel' => $searchModel,
     'entrySearchModel' => $entrySearchModel,

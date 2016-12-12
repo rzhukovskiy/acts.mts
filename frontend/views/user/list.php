@@ -17,16 +17,16 @@ $this->title = 'Пользователи';
 ?>
 <div class="user-index">
     <?= $this->render('_tabs') ?>
-    <?php if($admin){ ?>
-    <div class="panel panel-primary">
-        <div class="panel-heading">Добавить пользователя</div>
-        <div class="panel-body">
-            <?= $this->render('_form', [
-                'model' => $newUser,
-                'companyDropDownData' => $companyDropDownData,
-            ]) ?>
+    <?php if ($admin) { ?>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Добавить пользователя</div>
+            <div class="panel-body">
+                <?= $this->render('_form', [
+                    'model' => $newUser,
+                    'companyDropDownData' => $companyDropDownData,
+                ]) ?>
+            </div>
         </div>
-    </div>
     <?php } ?>
     <div class="panel panel-primary">
         <div class="panel-heading">Пользователи</div>
@@ -65,9 +65,9 @@ $this->title = 'Пользователи';
                         ),
                     ],
                     [
-                        'class'    => 'yii\grid\ActionColumn',
+                        'class' => 'yii\grid\ActionColumn',
                         'template' => '{login}',
-                        'buttons'  => [
+                        'buttons' => [
                             'login' => function ($url, $model, $key) {
                                 if ($model->role != \common\models\User::ROLE_ADMIN) {
                                     return Html::a('Войти',
@@ -76,18 +76,18 @@ $this->title = 'Пользователи';
                                 }
                             },
                         ],
-                        'visible'  => $admin
+                        'visible' => $admin
                     ],
                     [
-                        'class'    => 'yii\grid\ActionColumn',
+                        'class' => 'yii\grid\ActionColumn',
                         'template' => '{update}{delete}',
-                        'buttons'  => [
+                        'buttons' => [
                             'update' => function ($url, $model, $key) {
                                 return Html::a('<span class="glyphicon glyphicon-pencil"></span>',
                                     ['/user/update', 'id' => $model->id, 'type' => $model->company->type]);
                             },
                         ],
-                        'visible'  => $admin
+                        'visible' => $admin
                     ],
                 ],
             ]); ?>

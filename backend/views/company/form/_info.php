@@ -5,6 +5,7 @@
  * @var $modelCompanyInfo common\models\CompanyInfo
  */
 use kartik\editable\Editable;
+use kartik\popover\PopoverX;
 
 ?>
 
@@ -25,6 +26,7 @@ use kartik\editable\Editable;
                         ],
                         'attribute' => 'email',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите email'],
                         'formOptions' => [
@@ -45,6 +47,7 @@ use kartik\editable\Editable;
                         ],
                         'attribute' => 'address_mail',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите адрес'],
                         'formOptions' => [
@@ -65,6 +68,7 @@ use kartik\editable\Editable;
                         ],
                         'attribute' => 'pay',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'дни оплаты'],
                         'formOptions' => [
@@ -85,6 +89,7 @@ use kartik\editable\Editable;
                         ],
                         'attribute' => 'contract',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Номер договора'],
                         'formOptions' => [
@@ -107,6 +112,7 @@ use kartik\editable\Editable;
                         'displayValue' => $modelCompanyInfo->contract_date_str,
                         'inputType' => Editable::INPUT_DATE,
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',

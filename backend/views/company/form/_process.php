@@ -40,6 +40,7 @@ use yii\helpers\Html;
                         ],
                         'attribute' => 'name',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите название'],
                     ]); ?>
@@ -58,6 +59,7 @@ use yii\helpers\Html;
                         'attribute' => 'city',
                         'displayValue' => $modelCompanyInfo->fullAddress,
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите город'],
                         'formOptions' => [
@@ -87,6 +89,7 @@ use yii\helpers\Html;
                         ],
                         'attribute' => 'phone',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите телефон'],
                         'formOptions' => [
@@ -108,6 +111,7 @@ use yii\helpers\Html;
                         'attribute' => 'start_str',
                         'displayValue' => gmdate('H:i', $modelCompanyInfo->start_at),
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',
@@ -127,6 +131,7 @@ use yii\helpers\Html;
                         'attribute' => 'end_str',
                         'displayValue' => gmdate('H:i', $modelCompanyInfo->end_at),
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',
@@ -174,6 +179,7 @@ use yii\helpers\Html;
                         ],
                         'attribute' => 'mail_number',
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер почтового отделения'],
                         'formOptions' => [
@@ -203,6 +209,7 @@ use yii\helpers\Html;
                         'displayValue' => $modelCompanyOffer->communication_str,
                         'inputType' => Editable::INPUT_DATETIME,
                         'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',

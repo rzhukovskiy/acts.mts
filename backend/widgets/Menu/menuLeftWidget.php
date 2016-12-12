@@ -121,50 +121,18 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
                 [
-                    'label' => 'Запись на мойку',
+                    'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
-                        Yii::$app->controller->id == 'entry',
-                ],
-                [
-                    'label' => 'Запись на сервис',
-                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
-                        Yii::$app->controller->id == 'entry',
-                ],
-                [
-                    'label' => 'Запись на ш/м',
-                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
-                        Yii::$app->controller->id == 'entry',
+                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
                 ],
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
             $items = [
                 [
-                    'label' => 'Запись на мойку',
+                    'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
-                        Yii::$app->controller->id == 'entry',
-                ],
-                [
-                    'label' => 'Запись на сервис',
-                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
-                        Yii::$app->controller->id == 'entry',
-                ],
-                [
-                    'label' => 'Запись на ш/м',
-                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
-                        Yii::$app->controller->id == 'entry',
+                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
                 ],
                 [
                     'label' => 'Акты и оплата',
@@ -228,25 +196,9 @@ class menuLeftWidget extends Widget
             ];
             if ($currentUser->is_account) {
                 $items[] = [
-                    'label' => 'Запись на мойку',
+                    'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
-                        Yii::$app->controller->id == 'entry',
-                ];
-                $items[] = [
-                    'label' => 'Запись на сервис',
-                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
-                        Yii::$app->controller->id == 'entry',
-                ];
-                $items[] = [
-                    'label' => 'Запись на ш/м',
-                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
-                    'active' => (Yii::$app->controller->id == 'order' &&
-                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
-                        Yii::$app->controller->id == 'entry',
+                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
                 ];
             }
         } else {
