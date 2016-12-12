@@ -22,7 +22,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class WashController extends Controller
+class OrderController extends Controller
 {
     /**
      * @inheritdoc
@@ -45,12 +45,13 @@ class WashController extends Controller
 
     /**
      * Lists all Wash Company models.
+     * @param integer $type
      * @return mixed
      */
-    public function actionList()
+    public function actionList($type)
     {
         $searchModel = new CompanySearch();
-        $searchModel->type = Company::TYPE_WASH;
+        $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
         $dataProvider = $searchModel->searchWithCard(Yii::$app->request->queryParams);
 

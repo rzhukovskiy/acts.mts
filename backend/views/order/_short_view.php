@@ -26,8 +26,8 @@ use yii\bootstrap\Html;
                 } ?>
             </div>
             <div class="col-sm-12 text-center">
-                <?= Html::a('Записать на мойку', [
-                    'wash/view',
+                <?= Html::a('Записать', [
+                    'order/view',
                     'id' => $model->id,
                     'Entry[day]' => $entrySearchModel->day,
                     'card_number' => $searchModel->card_number

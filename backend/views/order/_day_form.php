@@ -18,7 +18,7 @@ use yii\helpers\Html;
 
         <?php
         $form = ActiveForm::begin([
-            'action' => ['wash/view', 'id' => $model->company_id],
+            'action' => ['order/view', 'id' => $model->company_id],
             'method' => 'get',
             'id' => 'act-form',
         ]) ?>

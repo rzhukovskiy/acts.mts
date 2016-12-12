@@ -9,7 +9,7 @@
  */
 use yii\widgets\ListView;
 
-$this->title = 'Мойки';
+$this->title = 'Запись';
 
 echo $this->render('_search', [
     'searchModel' => $searchModel,

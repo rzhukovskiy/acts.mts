@@ -12,6 +12,7 @@ use common\models\Company;
 use common\models\Department;
 use common\models\search\CompanySearch;
 use common\models\search\MessageSearch;
+use common\models\Service;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
@@ -121,9 +122,25 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Запись на мойку',
-                    'url' => ['/wash/list'],
-                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
-                ]
+                    'url' => ['/order/list', 'type' => Service::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Запись на сервис',
+                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Запись на ш/м',
+                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
+                        Yii::$app->controller->id == 'entry',
+                ],
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {

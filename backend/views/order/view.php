@@ -10,12 +10,12 @@
 use yii\bootstrap\Html;
 use yii\bootstrap\Tabs;
 
-$this->title = 'Запись на мойку ' . Html::encode($model->name);
+$this->title = 'Запись ТС ' . Html::encode($model->name);
 
 $items = [
     [
-        'label' => 'Мойки',
-        'url' => ['wash/list', 'companySearch[address]' => $model->address],
+        'label' => 'Список',
+        'url' => ['order/list', 'companySearch[address]' => $model->address],
     ],
     [
         'label' => 'Запись',
