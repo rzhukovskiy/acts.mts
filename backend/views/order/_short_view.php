@@ -29,6 +29,7 @@ use yii\bootstrap\Html;
                 <?= Html::a('Записать', [
                     'order/view',
                     'id' => $model->id,
+                    'type' => $model->type,
                     'Entry[day]' => $entrySearchModel->day,
                     'card_number' => $searchModel->card_number
                 ], ['class' => 'btn btn-primary btn-sm pull-center', 'style' => 'margin-bottom: 20px']) ?>

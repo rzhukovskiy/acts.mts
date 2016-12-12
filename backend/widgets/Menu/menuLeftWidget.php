@@ -146,9 +146,25 @@ class menuLeftWidget extends Widget
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
             $items = [
                 [
-                    'label' => 'Мойки',
-                    'url' => ['/wash/list'],
-                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
+                    'label' => 'Запись на мойку',
+                    'url' => ['/order/list', 'type' => Service::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Запись на сервис',
+                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Запись на ш/м',
+                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
+                        Yii::$app->controller->id == 'entry',
                 ],
                 [
                     'label' => 'Акты и оплата',
@@ -213,8 +229,24 @@ class menuLeftWidget extends Widget
             if ($currentUser->is_account) {
                 $items[] = [
                     'label' => 'Запись на мойку',
-                    'url' => ['/wash/list'],
-                    'active' => Yii::$app->controller->id == 'wash' || Yii::$app->controller->id == 'entry',
+                    'url' => ['/order/list', 'type' => Service::TYPE_WASH],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_WASH) ||
+                        Yii::$app->controller->id == 'entry',
+                ];
+                $items[] = [
+                    'label' => 'Запись на сервис',
+                    'url' => ['/order/list', 'type' => Service::TYPE_SERVICE],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_SERVICE) ||
+                        Yii::$app->controller->id == 'entry',
+                ];
+                $items[] = [
+                    'label' => 'Запись на ш/м',
+                    'url' => ['/order/list', 'type' => Service::TYPE_TIRES],
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->request->get('type', null) == Service::TYPE_TIRES) ||
+                        Yii::$app->controller->id == 'entry',
                 ];
             }
         } else {

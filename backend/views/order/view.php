@@ -15,7 +15,7 @@ $this->title = 'Запись ТС ' . Html::encode($model->name);
 $items = [
     [
         'label' => 'Список',
-        'url' => ['order/list', 'companySearch[address]' => $model->address],
+        'url' => ['order/list', 'companySearch[address]' => $model->address, 'type' => $model->type],
     ],
     [
         'label' => 'Запись',
