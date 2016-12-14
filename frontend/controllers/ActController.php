@@ -321,6 +321,7 @@ class ActController extends Controller
             'serviceList' => $serviceList,
             'clientScopes' => $clientScopes,
             'partnerScopes' => $partnerScopes,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 

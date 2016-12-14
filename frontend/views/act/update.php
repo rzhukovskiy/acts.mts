@@ -8,7 +8,7 @@ use yii\bootstrap\Tabs;
  * @var $serviceList array
  * @var $clientScopes \common\models\ActScope[]
  * @var $partnerScopes \common\models\ActScope[]
- * @var $role string
+ * @var $admin bool
  */
 
 $this->title = 'Редактирование акта';
@@ -30,7 +30,7 @@ echo Tabs::widget([
     ],
 ]);
 
-echo $this->render('_form', [
+echo $this->render($admin ? '_form' : 'partner/_form', [
     'model' => $model,
     'serviceList' => $serviceList,
     'clientScopes' => $clientScopes,
