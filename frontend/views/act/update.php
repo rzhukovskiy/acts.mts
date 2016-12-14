@@ -1,4 +1,5 @@
 <?php
+use common\models\Service;
 use yii\bootstrap\Tabs;
 
 /**
@@ -30,7 +31,7 @@ echo Tabs::widget([
     ],
 ]);
 
-echo $this->render($admin ? '_form' : 'partner/_form', [
+echo $this->render($admin ? '_form' : Service::$listType[$model->service_type]['en'] . '/_short_form', [
     'model' => $model,
     'serviceList' => $serviceList,
     'clientScopes' => $clientScopes,

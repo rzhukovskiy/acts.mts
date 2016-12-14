@@ -24,7 +24,13 @@ use yii\jui\AutoComplete;
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([
-            'action' => ['act/create', 'type' => $model->service_type],
+            'action' => $model->isNewRecord ?  [
+                'act/create',
+                'type' => $model->service_type,
+            ] : [
+                'act/update',
+                'id' => $model->id
+            ],
             'id' => 'act-form',
         ]) ?>
         <table class="table table-bordered">
@@ -103,7 +109,8 @@ use yii\jui\AutoComplete;
             </tr>
             <tr>
                 <td colspan="7">
-                    <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary btn-sm']) ?>
+                    <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
+                    <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
                 </td>
             </tr>
             </tbody>
