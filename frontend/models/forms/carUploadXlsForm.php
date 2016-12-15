@@ -175,8 +175,9 @@ class CarUploadXlsForm extends Model
                     if ($newMarkModel = $this->createMark($name))
                         $car->mark_id = $newMarkModel->id;
 
-                if (\PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($is_infected) == \PHPExcel_Cell_DataType::TYPE_STRING)
+                if (\PHPExcel_Cell_DefaultValueBinder::dataTypeForValue($is_infected) != \PHPExcel_Cell_DataType::TYPE_NULL) {
                     $car->is_infected = $is_infected;
+                }
 
                 if ($car->save()) {
                     $this->updatedCounter++;
