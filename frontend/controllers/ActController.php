@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\components\ActExporter;
 use common\components\ActHelper;
 use common\models\Act;
+use common\models\ActScope;
 use common\models\Car;
 use common\models\Company;
 use common\models\Entry;
@@ -306,6 +307,11 @@ class ActController extends Controller
         $model->time_str = date('d-m-Y', $model->served_at);
 
         if ($model->load(Yii::$app->request->post())) {
+            if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
+                ActScope::deleteAll(['act_id' => $model->id]);
+                $model->delete();
+            }
+
             $model->image = UploadedFile::getInstance($model, 'image');
             if ($model->save()) {
                 return $this->redirect(Yii::$app->request->post('__returnUrl'));
