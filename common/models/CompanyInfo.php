@@ -19,23 +19,16 @@ use yii\db\ActiveRecord;
  * @property string $house
  * @property string $address_mail
  * @property string $email
- * @property integer $start_at
- * @property integer $end_at
  * @property string $pay
  * @property string $contract
  * @property integer $contract_date
  *
  * @property Company $company
  *
- * @property string $start_str
- * @property string $end_str
  * @property string $contract_date_str
  */
 class CompanyInfo extends ActiveRecord
 {
-    public $start_str;
-    public $end_str;
-
     private $contract_date_str;
     private $fullAddress;
 
@@ -54,8 +47,8 @@ class CompanyInfo extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'start_at', 'end_at', 'contract_date'], 'integer'],
-            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'start_str', 'end_str'], 'string', 'max' => 255],        ];
+            [['company_id', 'contract_date'], 'integer'],
+            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
     }
 
     /**
@@ -75,10 +68,6 @@ class CompanyInfo extends ActiveRecord
             'pay' => 'Банковские дни оплаты по договору',
             'contract' => 'Номер договора',
             'contract_date_str' => 'Дата заключения договора',
-            'start_at' => 'Начало работы',
-            'end_at' => 'Окончание работы',
-            'start_str' => 'Начало работы',
-            'end_str' => 'Окончание работы',
         ];
     }
 
@@ -134,15 +123,6 @@ class CompanyInfo extends ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (!empty($this->start_str)) {
-            list($hrs, $mnts) = explode(':', $this->start_str);
-            $this->start_at = $hrs * 3600 + $mnts * 60;
-        }
-        if (!empty($this->end_str)) {
-            list($hrs, $mnts) = explode(':', $this->end_str);
-            $this->end_at = $hrs * 3600 + $mnts * 60;
-        }
-
         if (!empty($this->contract_date_str)) {
             $this->contract_date = \DateTime::createFromFormat('d-m-Y', $this->contract_date_str)->getTimestamp();
         }

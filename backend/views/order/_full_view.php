@@ -18,7 +18,8 @@
                 </td>
                 <td colspan="2">
                     <label class="control-label">Время работы:</label>
-                    <?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '24:00' ?>
+                    <?php $companyTime = $model->getCompanyTimeByDay($entrySearchModel->day)?>
+                    <span class="work-time"><?= $companyTime->start_at ? date('H:i', $companyTime->start_at) : '00:00' ?> - <?= $companyTime->end_at ? date('H:i', $companyTime->end_at) : '24:00' ?></span>
                 </td>
             </tr>
             <?php

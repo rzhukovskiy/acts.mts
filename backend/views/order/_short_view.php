@@ -12,7 +12,8 @@ use yii\bootstrap\Html;
     <div class="panel panel-primary">
         <div class="panel-heading">
             <?= $model->name ?>
-            <span class="work-time"><?= $model->info->start_at ? date('H:i', $model->info->start_at) : '00:00' ?> - <?= $model->info->end_at ? date('H:i', $model->info->end_at) : '24:00' ?></span>
+            <?php $companyTime = $model->getCompanyTimeByDay($entrySearchModel->day)?>
+            <span class="work-time"><?= $companyTime->start_at ? date('H:i', $companyTime->start_at) : '00:00' ?> - <?= $companyTime->end_at ? date('H:i', $companyTime->end_at) : '24:00' ?></span>
         </div>
         <div class="panel-body">
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">

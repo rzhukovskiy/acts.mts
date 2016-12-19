@@ -100,44 +100,28 @@ use yii\helpers\Html;
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md">Часы работы</td>
+                <td class="list-label-md">Время работы</td>
                 <td>
                     <?= Editable::widget([
-                        'model' => $modelCompanyInfo,
+                        'model' => $modelCompany,
                         'buttonsTemplate' => '{submit}',
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
-                        'attribute' => 'start_str',
-                        'displayValue' => gmdate('H:i', $modelCompanyInfo->start_at),
+                        'attribute' => 'workTime',
+                        'displayValue' => $modelCompany->workTimeHtml,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
+                        'inputType' => Editable::INPUT_TEXTAREA,
+                        'submitOnEnter' => false,
                         'size' => 'lg',
                         'options' => [
                             'class' => 'form-control',
+                            'style' => 'text-align: left',
+                            'rows' => 10
                         ],
                         'formOptions' => [
-                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
-                    -
-                    <?= Editable::widget([
-                        'model' => $modelCompanyInfo,
-                        'buttonsTemplate' => '{submit}',
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'end_str',
-                        'displayValue' => gmdate('H:i', $modelCompanyInfo->end_at),
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'options' => [
-                            'class' => 'form-control',
-                        ],
-                        'formOptions' => [
-                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                            'action' => ['/company/update', 'id' => $modelCompany->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>

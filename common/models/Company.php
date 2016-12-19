@@ -45,16 +45,19 @@ use yii\helpers\ArrayHelper;
  * @property CompanyAttributes[] $companyAttribute
  * @property CompanyMember[] $members
  * @property CompanyClient[] $companyClient
+ * @property CompanyTime[] $companyTime
  *
  * @property string $cardList
  * @property array $requisitesList
  * @property array $serviceList
+ * @property string $workTime
  */
 class Company extends ActiveRecord
 {
     public $cardList;
     public $requisitesList;
 
+    private $workTime;
     private $serviceList;
     private $fullAddress;
 
@@ -187,7 +190,8 @@ class Company extends ActiveRecord
                     'cardList',
                     'requisitesList',
                     'serviceList',
-                    'schedule'
+                    'schedule',
+                    'workTime',
                 ],
                 'safe'
             ],
@@ -215,6 +219,7 @@ class Company extends ActiveRecord
             'director'    => 'Директор',
             'serviceList' => 'Сервисы',
             'fullAddress' => 'Адрес',
+            'workTime'    => 'Время работы',
         ];
     }
 
@@ -451,6 +456,50 @@ class Company extends ActiveRecord
     }
 
     /**
+     * @return ActiveQuery
+     */
+    public function getCompanyTime()
+    {
+        return $this->hasMany(CompanyTime::className(), ['company_id' => 'id'])->orderBy('day');
+    }
+
+    /**
+     * @param string $day
+     * @return CompanyTime
+     */
+    public function getCompanyTimeByDay($day)
+    {
+        $dayOfWeek = date('w',strtotime($day));
+        $dayOfWeek = $dayOfWeek === 0 ? 7 : $dayOfWeek;
+        return CompanyTime::findOne(['company_id' => $this->id, 'day' => $dayOfWeek]);
+    }
+
+    public function setWorkTime($value)
+    {
+        $this->workTime = $value;
+    }
+
+    public function getWorkTime()
+    {
+        $res = [];
+        foreach ($this->companyTime as $day) {
+            $res[] = gmdate('H:i', $day->start_at) . ' - ' . gmdate('H:i', $day->end_at);
+        }
+
+        return implode("\n", $res);
+    }
+
+    public function getWorkTimeHtml()
+    {
+        $res = [];
+        foreach ($this->companyTime as $day) {
+            $res[] = gmdate('H:i', $day->start_at) . ' - ' . gmdate('H:i', $day->end_at);
+        }
+
+        return implode("<br />", $res);
+    }
+
+    /**
      * @param $day
      * @return Entry[]
      */
@@ -459,8 +508,10 @@ class Company extends ActiveRecord
         if (!count($this->getEntries($day)->all())) {
             return [];
         }
-        $workStart = $this->info->start_at ? date('H:i', $this->info->start_at) : '00:00';
-        $workEnd = $this->info->end_at ? date('H:i', $this->info->end_at) : '24:00';
+        $modelCompanyTIme = $this->getCompanyTimeByDay($day);
+
+        $workStart = $modelCompanyTIme->start_at ? date('H:i', $modelCompanyTIme->start_at) : '00:00';
+        $workEnd = $modelCompanyTIme->end_at ? date('H:i', $modelCompanyTIme->end_at) : '24:00';
 
 
         $points[] = [
@@ -584,6 +635,30 @@ class Company extends ActiveRecord
         ) {
             $this->parent->is_nested = self::IS_NESTED;
             $this->parent->save();
+        }
+
+        /**
+         * сохраняем время работы
+         */
+        if (!empty($this->workTime)) {
+            CompanyTime::deleteAll(['company_id' => $this->id]);
+            $day = 1;
+            foreach (explode("\n", $this->workTime) as $row) {
+                list($start, $end) = explode('-', $row);
+                $modelCompanyTime = new CompanyTime();
+                $modelCompanyTime->company_id = $this->id;
+                $modelCompanyTime->day = $day;
+                if ($start) {
+                    list($hrs, $mnts) = explode(':', trim($start));
+                    $modelCompanyTime->start_at = $hrs * 3600 + $mnts * 60;
+                }
+                if ($end) {
+                    list($hrs, $mnts) = explode(':', trim($end));
+                    $modelCompanyTime->end_at = $hrs * 3600 + $mnts * 60;
+                }
+                $modelCompanyTime->save();
+                $day++;
+            }
         }
 
         /**
