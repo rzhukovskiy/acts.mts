@@ -56,32 +56,6 @@ use yii\widgets\ActiveForm;
             ]
         ])->error(false) ?>
 
-        <?= $form->field($model, 'start_str')->widget(TimePicker::classname(), [
-            'addonOptions' => [
-                'style' => 'width: 100px',
-            ],
-            'pluginOptions' => [
-                'defaultTime' => $model->isNewRecord ? '8:00' : gmdate("H:i", $model->start_at),
-                'showMeridian' => false,
-            ],
-            'options' => [
-                'class' => 'form-control',
-            ]
-        ])->error(false) ?>
-
-        <?= $form->field($model, 'end_str')->widget(TimePicker::classname(), [
-            'addonOptions' => [
-                'style' => 'width: 100px',
-            ],
-            'pluginOptions' => [
-                'defaultTime' => $model->isNewRecord ? '20:00' : gmdate("H:i", $model->end_at),
-                'showMeridian' => false,
-            ],
-            'options' => [
-                'class' => 'form-control',
-            ]
-        ])->error(false) ?>
-
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-6">
                 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>

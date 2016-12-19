@@ -3,6 +3,7 @@ namespace console\controllers;
 
 use common\models\Company;
 use common\models\CompanyOffer;
+use common\models\CompanyTime;
 use common\models\Mark;
 use common\models\Type;
 use Yii;
@@ -203,14 +204,19 @@ class ConnectController extends Controller
             $end_at = ArrayHelper::getValue($rowData, 'time_to');
             list($hrs, $mnts) = explode(':', $end_at);
             $end_at = $end_at ? $hrs * 3600 + $mnts * 60 : 'NULL';
+            for ($day = 1; $day < 8; $day++) {
+                $modelCompanyTime = new CompanyTime();
+                $modelCompanyTime->company_id = $company_id;
+                $modelCompanyTime->day = $day;
+                $modelCompanyTime->start_at = $start_at;
+                $modelCompanyTime->end_at = $end_at;
+            }
             $requestData = [
                 'NULL',
                 $company_id,
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'phone', '')) . '"',
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'address_mail', '')) . '"',
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'email', '')) . '"',
-                $start_at,
-                $end_at,
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'address_index', '')) . '"',
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'address_city', '')) . '"',
                 '"' . addslashes(ArrayHelper::getValue($rowData, 'address_street', '')) . '"',

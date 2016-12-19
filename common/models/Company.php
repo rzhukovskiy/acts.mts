@@ -508,10 +508,10 @@ class Company extends ActiveRecord
         if (!count($this->getEntries($day)->all())) {
             return [];
         }
-        $modelCompanyTIme = $this->getCompanyTimeByDay($day);
+        $modelCompanyTime = $this->getCompanyTimeByDay($day);
 
-        $workStart = $modelCompanyTIme->start_at ? date('H:i', $modelCompanyTIme->start_at) : '00:00';
-        $workEnd = $modelCompanyTIme->end_at ? date('H:i', $modelCompanyTIme->end_at) : '24:00';
+        $workStart = $modelCompanyTime->start_at ? gmdate('H:i', $modelCompanyTime->start_at) : '00:00';
+        $workEnd = $modelCompanyTime->end_at ? gmdate('H:i', $modelCompanyTime->end_at) : '24:00';
 
 
         $points[] = [
@@ -533,11 +533,11 @@ class Company extends ActiveRecord
         /** @var Entry $entry */
         foreach ($this->getEntries($day)->all() as $entry) {
             $points[] = [
-                'value' => date('H:i', $entry->start_at),
+                'value' => gmdate('H:i', $entry->start_at),
                 'type'  => 's',
             ];
             $points[] = [
-                'value' => date('H:i', $entry->end_at),
+                'value' => gmdate('H:i', $entry->end_at),
                 'type'  => 'e',
             ];
         }

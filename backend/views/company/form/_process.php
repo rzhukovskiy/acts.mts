@@ -124,6 +124,7 @@ use yii\helpers\Html;
                             'action' => ['/company/update', 'id' => $modelCompany->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
+                        'footer' => 'Каждый день с новой строки. Разделитель - дефис. {buttons}'
                     ]); ?>
                 </td>
             </tr>

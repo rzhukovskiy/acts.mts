@@ -18,7 +18,7 @@ class CompanyInfoSearch extends CompanyInfo
     public function rules()
     {
         return [
-            [['id', 'company_id', 'start_at', 'end_at'], 'integer'],
+            [['id', 'company_id'], 'integer'],
             [['phone', 'address', 'address_mail', 'email'], 'safe'],
         ];
     }
@@ -61,8 +61,6 @@ class CompanyInfoSearch extends CompanyInfo
         $query->andFilterWhere([
             'id' => $this->id,
             'company_id' => $this->company_id,
-            'start_at' => $this->start_at,
-            'end_at' => $this->end_at,
         ]);
 
         $query->andFilterWhere(['like', 'phone', $this->phone])
