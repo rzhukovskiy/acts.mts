@@ -265,4 +265,26 @@ class ConnectController extends Controller
 
         $this->stdout("Connection is done!\n");
     }
+
+    public function actionFind()
+    {
+        $listCompany = Company::find()->where([
+            '<=', 'updated_at', 1467316800
+        ])->all();
+
+        foreach ($listCompany as $company) {
+            if ($company->old_id) {
+                $oldRequestData = $this->old_db
+                    ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request WHERE id = {$company->old_id}")
+                    ->queryOne();
+
+                $this->stdout("$company->name");
+                if ($oldRequestData && $oldRequestData['name'] && $company->name != $oldRequestData['name']) {
+                    $this->stdout("$company->name -> {$oldRequestData['name']}\n");
+                }
+            }
+        }
+        
+        $this->stdout("Finding is done!\n");
+    }
 }
