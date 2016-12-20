@@ -95,25 +95,9 @@ class ActSearch extends Act
                     'client as client',
                     'partner as partner',
                     'car as car',
+                    'actErrors as actErrors',
                 ]);
-
-                $query->orWhere(['income' => 0]);
-                $query->orWhere(['expense' => 0]);
-                $query->orWhere(['client_id' => 0]);
-                $query->orWhere(['partner_id' => 0]);
-                if ($this->service_type == Service::TYPE_WASH) {
-                    $query->orWhere(['check' => null]);
-                    $query->orWhere(['check' => '']);
-                }
-                if ($this->service_type != Service::TYPE_DISINFECT) {
-                    $query->orWhere('car.company_id != card.company_id');
-                    $query->orWhere(['card.company_id' => null]);
-                }
-                $query->orWhere(['car.company_id' => null]);
-                $query->andFilterWhere(['client_id' => $this->client_id,]);
-                $query->andFilterWhere(['partner_id' => $this->partner_id,]);
-                $query->andFilterWhere(['!=', 'act.status', Act::STATUS_FIXED]);
-
+                $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->orderBy('partner_id, served_at');
                 break;
 

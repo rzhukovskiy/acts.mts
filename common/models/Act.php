@@ -47,6 +47,7 @@ use yii\web\UploadedFile;
  * @property Mark $mark
  * @property Card $card
  * @property Car $car
+ * @property ActError $actErrors
  * @property ActScope $scopes
  * @property ActScope[] $clientScopes
  * @property ActScope[] $partnerScopes
@@ -106,6 +107,14 @@ class Act extends ActiveRecord
      * @var array
      */
     public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год'];
+    public static $listErrors = [
+        self::ERROR_EXPENSE,
+        self::ERROR_INCOME,
+        self::ERROR_CHECK,
+        self::ERROR_CARD,
+        self::ERROR_CAR,
+        self::ERROR_TRUCK,
+    ];
 
     /**
      * @inheritdoc
@@ -256,6 +265,14 @@ class Act extends ActiveRecord
     /**
      * @return ActiveQuery
      */
+    public function getActErrors()
+    {
+        return $this->hasMany(ActError::className(), ['act_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
     public function getPartnerScopes()
     {
         return $this->hasMany(ActScope::className(), ['act_id' => 'id', 'company_id' => 'partner_id']);
@@ -317,9 +334,15 @@ class Act extends ActiveRecord
         switch ($error) {
             case self::ERROR_EXPENSE:
                 $hasError = !$this->expense;
+                foreach ($this->partnerScopes as $scope) {
+                    $hasError = $hasError || !$scope->price;
+                }
                 break;
             case self::ERROR_INCOME:
                 $hasError = !$this->income;
+                foreach ($this->clientScopes as $scope) {
+                    $hasError = $hasError || !$scope->price;
+                }
                 break;
             case self::ERROR_CHECK:
                 $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
@@ -641,7 +664,29 @@ class Act extends ActiveRecord
         //Пересчитываем месячный акт
         MonthlyAct::getRealObject($this->service_type)->saveFromAct($this);
 
+        //Проверяем на ошибки
+        $listErrors = $this->getListError();
+        ActError::deleteAll(['act_id' => $this->id]);
+        foreach ($listErrors as $errorType) {
+            $modelActError = new ActError();
+            $modelActError->act_id = $this->id;
+            $modelActError->error_type = $errorType;
+            $modelActError->save();
+        }
+
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function getListError()
+    {
+        $res = [];
+        foreach (self::$listErrors as $errorType => $errorName) {
+            if ($this->hasError($errorName)) {
+                $res[] = $errorType;
+            }
+        }
+
+        return $res;
     }
 
     /**
