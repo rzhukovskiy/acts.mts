@@ -318,10 +318,11 @@ class Act extends ActiveRecord
      */
     public function getImageLink()
     {
-        if (file_exists('files/checks/' . $this->id . '.jpg')) {
+        $path = \Yii::getAlias('@frontend/web/');
+        if (file_exists($path . 'files/checks/' . $this->id . '.jpg')) {
             return '/files/checks/' . $this->id . '.jpg';
         }
-        if (file_exists('files/checks/' . $this->id . '.png')) {
+        if (file_exists($path . 'files/checks/' . $this->id . '.png')) {
             return '/files/checks/' . $this->id . '.png';
         }
 
