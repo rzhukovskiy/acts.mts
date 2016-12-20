@@ -12,7 +12,7 @@ class m161220_090305_create_act_error_table extends Migration
      */
     public function up()
     {
-        $this->createTable('act_error', [
+        $this->createTable('{{%act_error}}', [
             'id' => $this->primaryKey(),
             'act_id' => $this->integer()->unsigned()->notNull(),
             'error_type' => $this->integer()->unsigned()->notNull(),
@@ -24,6 +24,6 @@ class m161220_090305_create_act_error_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('act_error');
+        $this->dropTable('{{%act_error}}');
     }
 }

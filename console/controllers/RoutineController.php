@@ -21,7 +21,7 @@ class RoutineController extends Controller
     {
         $listAct = Act::find()
             ->where(['>=', 'updated_at', time() - 30 * 24 * 3600])
-            ->where(['status' => Act::STATUS_NEW])
+            ->andWhere(['status' => Act::STATUS_NEW])
             ->all();
 
         foreach ($listAct as $act) {
