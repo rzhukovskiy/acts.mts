@@ -185,7 +185,9 @@ class ActController extends Controller
         $model->service_type = $type;
         $model->partner_id = Yii::$app->user->identity->company_id;
 
-        $serviceList = Service::find()->where(['type' => $type])->select(['description', 'id'])->indexBy('id')->column();
+        $serviceList = Service::find()->where(['type' => $type])
+            ->orderBy('description')->select(['description', 'id'])
+            ->indexBy('id')->column();
 
         if ($model->load(Yii::$app->request->post())) {
             $entryId = Yii::$app->request->post('entry_id', false);
