@@ -19,6 +19,9 @@ use yii\bootstrap\Html;
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
                 <?= $model->fullAddress ?>
             </div>
+            <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
+                Телефон: <?= $model->info->phone ?>
+            </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
                 $arrayFreeTime = $model->getFreeTimeArray($entrySearchModel->day);
