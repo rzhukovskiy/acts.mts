@@ -287,4 +287,27 @@ class ConnectController extends Controller
         
         $this->stdout("Finding is done!\n");
     }
+
+    public function actionTransfer()
+    {
+        $listCompany = Company::find()->with('info')->all();
+
+        /** @var Company $company */
+        foreach ($listCompany as $company) {
+            if ($company->old_id) {
+                $oldRequestData = $this->old_db
+                    ->createCommand("SELECT * FROM {$this->old_db->tablePrefix}request WHERE id = {$company->old_id}")
+                    ->queryOne();
+
+                $this->stdout("$company->name");
+                if ($oldRequestData && $company->info && $oldRequestData['address_phone'] && !$company->info->phone) {
+                    $company->info->phone = $oldRequestData['address_phone'];
+                    $company->info->save();
+                    $this->stdout("$company->name - $company->id \n");
+                }
+            }
+        }
+
+        $this->stdout("Finding is done!\n");
+    }
 }
