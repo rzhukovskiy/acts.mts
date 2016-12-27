@@ -6,11 +6,15 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $act_id integer */
 ?>
 <div class="row" style="margin: 10px -10px">
     <?php $form = ActiveForm::begin([
-        'action' => ['/car/create'],
-        'id'     => 'add-car-model-form'
+        'action' => [
+            '/car/create',
+            'act_id' => $act_id
+        ],
+        'id'     => 'add-car-model-form',
     ]); ?>
 
     <div class="col-xs-6">

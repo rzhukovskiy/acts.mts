@@ -154,13 +154,17 @@ class CarController extends Controller
     /**
      * Creates a new Car model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $act_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($act_id = null)
     {
         $model = new Car();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($act_id && $act = Act::findOne($act_id)) {
+                $act->save();
+            }
             if (!Yii::$app->request->isAjax) {
                 return $this->redirect(Yii::$app->getRequest()->referrer);
             }
