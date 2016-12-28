@@ -162,9 +162,6 @@ class CarController extends Controller
         $model = new Car();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($act_id && $act = Act::findOne($act_id)) {
-                $act->save();
-            }
             if (!Yii::$app->request->isAjax) {
                 return $this->redirect(Yii::$app->getRequest()->referrer);
             }

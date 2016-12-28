@@ -93,4 +93,16 @@ class Car extends ActiveRecord
     {
         return $this->hasMany(Act::className(), ['number' => 'number']);
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $listAct = Act::findAll(['status' => Act::STATUS_NEW, 'number' => $this->number]);
+            foreach ($listAct as $act) {
+                $act->save();
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
+    }
 }
