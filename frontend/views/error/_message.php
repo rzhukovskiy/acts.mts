@@ -21,7 +21,7 @@
         $car->number = $model->number;
         $car->mark_id = $model->mark_id;
         $car->type_id = $model->type_id;
-        echo $this->render('_add_car', ['model' => $car]);
+        echo $this->render('_add_car', ['model' => $car, 'act_id' => $model->id]);
     }
     ?>
 </div>

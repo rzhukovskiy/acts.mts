@@ -19,7 +19,7 @@ echo Tabs::widget([
     'items' => [
         [
             'label' => 'Акты',
-            'url' => $request->referrer,
+            'url' => ['error/list', 'type' => $model->service_type],
             'active' => false,
         ],
         [

@@ -154,9 +154,10 @@ class CarController extends Controller
     /**
      * Creates a new Car model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $act_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($act_id = null)
     {
         $model = new Car();
 

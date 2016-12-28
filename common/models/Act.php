@@ -427,7 +427,7 @@ class Act extends ActiveRecord
         }
 
         $is_locked = Lock::findOne(['period' => date('n-Y', $this->served_at), 'type' => $this->service_type]);
-        if ($is_locked) {
+        if ($insert && $is_locked) {
             $this->addError('period', 'This period is locked');
             return false;
         }
