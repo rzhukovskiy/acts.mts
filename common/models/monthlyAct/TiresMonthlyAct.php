@@ -24,12 +24,12 @@ class TiresMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $clientId = $act->client_id;
         $partnerId = $act->partner_id;
         $date = date('Y-m-00', $act->served_at);
-        if ($this->checkExistByAct($partnerId, MonthlyAct::PARTNER, $date)) {
+        ///if ($this->checkExistByAct($partnerId, MonthlyAct::PARTNER, $date)) {
             $this->saveAct($partnerId, MonthlyAct::PARTNER, $date);
-        }
-        if ($this->checkExistByAct($clientId, MonthlyAct::NOT_PARTNER, $date)) {
+        //
+        //if ($this->checkExistByAct($clientId, MonthlyAct::NOT_PARTNER, $date)) {
             $this->saveAct($clientId, MonthlyAct::NOT_PARTNER, $date);
-        }
+        //}
     }
 
     /**
@@ -87,6 +87,26 @@ class TiresMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $monthlyAct->is_partner = $isPartner;
         $monthlyAct->act_date = $date;
         $monthlyAct->save();
+
+        $fh   = fopen(\Yii::$app->getRuntimePath() . '/logs/act.log', 'a');
+        $data =
+            '[' .
+            date('Y-m-d H:i:s') .
+            '] Акт ' .
+            $monthlyAct->id .
+            ' тип ' .
+            $monthlyAct->type_id .
+            ' Id компании ' .
+            $monthlyAct->client_id .
+            ' Партнер ' .
+            $monthlyAct->is_partner .
+            ' дата акта ' .
+            $monthlyAct->act_date .
+            "\r\n";
+        fwrite($fh, $data);
+        fclose($fh);
+
+
     }
 
     //-------------------
