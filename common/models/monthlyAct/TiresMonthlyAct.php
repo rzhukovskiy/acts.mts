@@ -24,12 +24,12 @@ class TiresMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $clientId = $act->client_id;
         $partnerId = $act->partner_id;
         $date = date('Y-m-00', $act->served_at);
-        ///if ($this->checkExistByAct($partnerId, MonthlyAct::PARTNER, $date)) {
+        if ($this->checkExistByAct($partnerId, MonthlyAct::PARTNER, $date)) {
             $this->saveAct($partnerId, MonthlyAct::PARTNER, $date);
-        //
-        //if ($this->checkExistByAct($clientId, MonthlyAct::NOT_PARTNER, $date)) {
+        }
+        if ($this->checkExistByAct($clientId, MonthlyAct::NOT_PARTNER, $date)) {
             $this->saveAct($clientId, MonthlyAct::NOT_PARTNER, $date);
-        //}
+        }
     }
 
     /**
