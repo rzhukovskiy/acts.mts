@@ -403,6 +403,9 @@ class Act extends ActiveRecord
 
     public function setCard_number($value)
     {
+        $card = Card::findOne(['number' => $value]);
+        $this->card_id = $card ? $card->id : $value;
+
         $this->card_number = $value;
     }
 

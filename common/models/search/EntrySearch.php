@@ -18,7 +18,23 @@ class EntrySearch extends Entry
     public function rules()
     {
         return [
-            [['id', 'company_id', 'type_id', 'card_id', 'mark_id', 'service_type', 'status', 'created_at', 'updated_at', 'start_at', 'end_at'], 'integer'],
+            [
+                [
+                    'id',
+                    'company_id',
+                    'type_id',
+                    'card_id',
+                    'mark_id',
+                    'service_type',
+                    'status',
+                    'created_at',
+                    'updated_at',
+                    'start_at',
+                    'end_at',
+                    'user_id'
+                ],
+                'integer'
+            ],
             [['day', 'number', 'extra_number'], 'safe'],
         ];
     }

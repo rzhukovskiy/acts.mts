@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  * @property integer $updated_at
  * @property integer $start_at
  * @property integer $end_at
+ * @property integer $user_id
  *
  * @property string $start_str
  * @property string $end_str
@@ -35,6 +36,7 @@ use yii\db\ActiveRecord;
  * @property Card $card
  * @property Type $type
  * @property Mark $mark
+ * @property User $user
  */
 class Entry extends ActiveRecord
 {
@@ -81,7 +83,7 @@ class Entry extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'company_id' => 'Мойка',
+            'company_id' => 'Организация',
             'card_id' => 'Карта',
             'card_number' => 'Карта',
             'number' => 'Госномер',
@@ -92,6 +94,7 @@ class Entry extends ActiveRecord
             'end_at' => 'Окончание',
             'start_str' => 'Время',
             'end_str' => 'Окончание',
+            'user_id' => 'Кто записал',
         ];
     }
 
@@ -125,6 +128,14 @@ class Entry extends ActiveRecord
     public function getType()
     {
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     public function setCard_number($value)
@@ -199,6 +210,10 @@ class Entry extends ActiveRecord
                 $this->addError('end_at', ['Время окончания совпадает с существующей записью']);
                 return false;
             }
+        }
+
+        if ($insert && !empty(Yii::$app->user->identity->id)) {
+            $this->user_id = Yii::$app->user->identity->id;
         }
 
         return parent::beforeSave($insert);

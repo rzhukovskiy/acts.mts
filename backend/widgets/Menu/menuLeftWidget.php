@@ -123,7 +123,15 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'list') ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Архив записей',
+                    'url' => ['/order/archive', 'type' => Service::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'order' &&
+                        Yii::$app->controller->action->id == 'archive',
                 ],
             ];
         } // Account manager links
@@ -132,7 +140,15 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'list') ||
+                        Yii::$app->controller->id == 'entry',
+                ],
+                [
+                    'label' => 'Архив записей',
+                    'url' => ['/order/archive', 'type' => Service::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'order' &&
+                        Yii::$app->controller->action->id == 'archive',
                 ],
                 [
                     'label' => 'Акты и оплата',
@@ -198,7 +214,15 @@ class menuLeftWidget extends Widget
                 $items[] = [
                     'label' => 'Запись ТС',
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'order' || Yii::$app->controller->id == 'entry',
+                    'active' => (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'list') ||
+                        Yii::$app->controller->id == 'entry',
+                ];
+                $items[] = [
+                    'label' => 'Архив записей',
+                    'url' => ['/order/archive', 'type' => Service::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'order' &&
+                        Yii::$app->controller->action->id == 'archive',
                 ];
             }
         } else {

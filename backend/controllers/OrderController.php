@@ -34,7 +34,7 @@ class OrderController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'archive'],
                         'allow' => true,
                         'roles' => [User::ROLE_ACCOUNT, User::ROLE_MANAGER, User::ROLE_WATCHER],
                     ],
@@ -44,7 +44,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Lists all Wash Company models.
      * @param integer $type
      * @return mixed
      */
@@ -65,6 +64,28 @@ class OrderController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'entrySearchModel' => $entrySearchModel,
+            'listCity' => $listCity,
+        ]);
+    }
+
+    /**
+     * @param integer $type
+     * @return mixed
+     */
+    public function actionArchive($type)
+    {
+        $searchModel = new EntrySearch();
+        $searchModel->service_type = $type;
+        if (empty($searchModel->day)) {
+            $searchModel->day = date('d-m-Y');
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->orderBy('user_id, start_at');
+        
+        $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+        return $this->render('archive', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
             'listCity' => $listCity,
         ]);
     }

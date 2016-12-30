@@ -189,6 +189,7 @@ class ActSearch extends Act
             'id' => $this->id,
             'card_id' => $this->card_id,
             'act.type_id' => $this->type_id,
+            'act.mark_id' => $this->mark_id,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
