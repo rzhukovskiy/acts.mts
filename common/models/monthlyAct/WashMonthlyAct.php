@@ -87,6 +87,23 @@ class WashMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $monthlyAct->is_partner = $isPartner;
         $monthlyAct->act_date = $date;
         $monthlyAct->save();
+        $fh = fopen(\Yii::$app->getRuntimePath() . '/logs/act.log', 'a');
+        $data =
+            '[' .
+            date('Y-m-d H:i:s') .
+            '] Акт ' .
+            $monthlyAct->id .
+            ' тип ' .
+            $monthlyAct->type_id .
+            ' Id компании ' .
+            $monthlyAct->client_id .
+            ' Партнер ' .
+            $monthlyAct->is_partner .
+            ' дата акта ' .
+            $monthlyAct->act_date .
+            "\r\n";
+        fwrite($fh, $data);
+        fclose($fh);
     }
 
     //-------------------
