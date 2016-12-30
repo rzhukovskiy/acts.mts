@@ -15,8 +15,8 @@ $serviceList = [Service::TYPE_WASH, Service::TYPE_SERVICE, Service::TYPE_TIRES];
 foreach ($serviceList as $type_id) {
     $items[] = [
         'label' => Service::$listType[$type_id]['ru'],
-        'url' => ['/order/list', 'type' => $type_id],
-        'active' => $action == 'list' && $requestType == $type_id,
+        'url' => ['/order/' . $action, 'type' => $type_id],
+        'active' => $requestType == $type_id,
     ];
 }
 
