@@ -8,6 +8,7 @@ use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
 use common\models\search\UserSearch;
+use common\models\Service;
 use common\models\User;
 use Yii;
 use yii\filters\AccessControl;
