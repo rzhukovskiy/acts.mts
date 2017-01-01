@@ -40,6 +40,11 @@ class MonthlyActController extends Controller
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
+                    [
+                        'actions' => ['detail', 'list'],
+                        'allow'   => true,
+                        'roles'   => [User::ROLE_ACCOUNT],
+                    ],
                 ],
             ],
         ];
