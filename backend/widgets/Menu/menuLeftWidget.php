@@ -151,11 +151,6 @@ class menuLeftWidget extends Widget
                         Yii::$app->controller->action->id == 'archive',
                 ],
                 [
-                    'label' => 'Акты и оплата',
-                    'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
-                    'active' => (Yii::$app->controller->id == 'monthly-act'),
-                ],
-                [
                     'label' => 'Планирование',
                     'url' => ['/plan/list'],
                     'active' => (Yii::$app->controller->id == 'plan'),
