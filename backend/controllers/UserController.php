@@ -183,7 +183,7 @@ class UserController extends Controller
                 return $this->redirect(['department/index']);
             }
             if ($currentUser->role == User::ROLE_ACCOUNT) {
-                return $this->redirect(['wash/list']);
+                return $this->redirect(['order/list', 'type' => Service::TYPE_WASH]);
             }
             if ($currentUser->role == User::ROLE_WATCHER) {
                 return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
