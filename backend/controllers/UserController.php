@@ -8,6 +8,7 @@ use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
 use common\models\search\UserSearch;
+use common\models\Service;
 use common\models\User;
 use Yii;
 use yii\filters\AccessControl;
@@ -183,7 +184,7 @@ class UserController extends Controller
                 return $this->redirect(['department/index']);
             }
             if ($currentUser->role == User::ROLE_ACCOUNT) {
-                return $this->redirect(['wash/list']);
+                return $this->redirect(['order/list', 'type' => Service::TYPE_WASH]);
             }
             if ($currentUser->role == User::ROLE_WATCHER) {
                 return $this->redirect(['/company/new', 'type' => Yii::$app->user->identity->getFirstCompanyType()]);
