@@ -75,11 +75,13 @@ class CompanySearch extends Company
                 /** @var User $currentUser */
                 $query->joinWith(['info info', 'offer offer']);
                 //если пользователь указан и смотрим заявки - то отдаем только те разделы, которые ему доступны, и только его заявки или без пользователя
-                if ($this->user_id && $this->status == self::STATUS_NEW) {
+                if ($this->user_id) {
                     $currentUser = User::findOne($this->user_id);
                     if ($currentUser) {
-//                        $query->orWhere(['offer.user_id' => null]);
-//                        $query->orWhere(['offer.user_id' => $currentUser->id]);
+//                        if ($this->status == self::STATUS_NEW) {
+//                            $query->orWhere(['offer.user_id' => null]);
+//                            $query->orWhere(['offer.user_id' => $currentUser->id]);
+//                        }
                         $query->andWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
