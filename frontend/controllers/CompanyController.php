@@ -111,6 +111,7 @@ class CompanyController extends Controller
         } else {
             return $this->render('update', [
                 'model' => $this->findModel($id),
+                'expanded' => Yii::$app->request->get('expanded', false),
                 ''
             ]);
         }

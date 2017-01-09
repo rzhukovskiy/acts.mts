@@ -3,6 +3,7 @@
 /**
  * @var $this yii\web\View
  * @var $model common\models\Company
+ * @var $expanded bool
  */
 
 use common\models\Car;
@@ -43,6 +44,7 @@ if ($model->type == Company::TYPE_OWNER) {
     echo $this->render('/car/_form', [
         'model' => new Car(),
         'companyModel' => $model,
+        'expanded' => $expanded,
     ]);
 
     echo $this->render('/card/_list', [

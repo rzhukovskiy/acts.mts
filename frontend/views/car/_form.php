@@ -3,6 +3,7 @@
 /**
  * @var $companyModel \common\models\Company
  * @var $model \common\models\Car
+ * @var $expanded bool
  */
 
 use yii\helpers\Html;
@@ -18,7 +19,7 @@ use common\models\Type;
              aria-expanded="false" aria-controls="collapseExample">Скрыть/Развернуть
         </div>
     </div>
-    <div class="collapse" id="collapseCarAddForm">
+    <div class="<?= $expanded ? 'collapse in' : 'collapse' ?>" id="collapseCarAddForm">
         <div class="panel-body">
             <?php
             $form = ActiveForm::begin([
