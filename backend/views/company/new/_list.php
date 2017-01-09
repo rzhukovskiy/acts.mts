@@ -25,13 +25,13 @@ use yii\helpers\Html;
     </div>
     <div class="panel-body">
         <?php
-        if ($admin) {
-            echo $this->render('_selector', [
-                'type' => $type,
-                'userData' => $userData,
-                'searchModel' => $searchModel,
-            ]);
-        }
+//        if ($admin) {
+//            echo $this->render('_selector', [
+//                'type' => $type,
+//                'userData' => $userData,
+//                'searchModel' => $searchModel,
+//            ]);
+//        }
         
         echo GridView::widget([
             'dataProvider' => $dataProvider,
