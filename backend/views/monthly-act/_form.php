@@ -60,7 +60,7 @@ $actStatus = MonthlyAct::actDis($model->act_status);
             </div>
         </div>
 
-        <? if($actStatus=='disabled'){?>
+        <? if($actStatus=='false'){?>
         <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::passActStatus($model->act_status), ['class' => 'form-control']) ?>
         <?}else{?>
         <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>
