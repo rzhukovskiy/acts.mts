@@ -9,6 +9,7 @@ use common\models\MonthlyAct;
 use common\models\User;
 use kartik\date\DatePicker;
 
+
 $currentUser = Yii::$app->user->identity;
 if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
     $isAdmin = 0;
@@ -40,10 +41,35 @@ $script = <<< JS
             type: "post",
             data: {status:$(this).val(),id:$(this).data('id')},
             success: function(data){
-              select.parent().attr('class',data);
-              if(($isAdmin!=1)&&(data=='monthly-act-success')){
-                    select.attr('disabled', 'disabled');
-              }
+            var obj = jQuery.parseJSON(data);
+            select.parent().attr('class',obj.color);
+
+            if($isAdmin!=1){
+
+                        var i = obj.value;
+                        if( i == 2){
+                            select.children('option[value="0"]').remove();
+                            select.children('option[value="1"]').remove();
+                            select.children('option[value="3"]').remove();
+
+                        }else if( i == 3) {
+                            select.children('option[value="0"]').remove();
+                            select.children('option[value="1"]').remove();
+
+                        }else if( i == 4){
+                            select.children('option[value="0"]').remove();
+                            select.children('option[value="1"]').remove();
+                            select.children('option[value="2"]').remove();
+                            select.children('option[value="3"]').remove();
+                        }else if( i == 1){
+                            select.children('option[value="0"]').remove();
+
+                        }
+
+
+
+
+            }
 
             }
         });

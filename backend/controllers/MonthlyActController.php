@@ -18,6 +18,7 @@ use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Json;
 
 class MonthlyActController extends Controller
 {
@@ -218,7 +219,9 @@ class MonthlyActController extends Controller
         $model->act_status = $status;
         $model->save();
 
-        return MonthlyAct::colorForStatus($model->act_status);
+        $pass['color'] = MonthlyAct::colorForStatus($model->act_status);
+        $pass['value'] = $status;
+        return Json::encode($pass);
     }
 
     /**
