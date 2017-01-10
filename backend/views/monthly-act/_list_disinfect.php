@@ -121,6 +121,7 @@ echo GridView::widget([
                         'class'   => 'form-control change-act_status',
                         'data-id' => $model->id,
 						'data-actStatus' => $model->act_status,
+                        MonthlyAct::actDis($model->act_status)=>'disabled',
                     ]);
             },
             'contentOptions' => function ($model) {

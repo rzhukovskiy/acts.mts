@@ -10,7 +10,8 @@ use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$isAdmin = MonthlyAct::payDis($model->payment_status);
+$payStatus = MonthlyAct::payDis($model->payment_status);
+$actStatus = MonthlyAct::actDis($model->act_status);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -59,8 +60,12 @@ $isAdmin = MonthlyAct::payDis($model->payment_status);
             </div>
         </div>
 
+        <? if($actStatus=='disabled'){?>
+        <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control','disabled'=>'disabled']) ?>
+        <?}else{?>
         <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>
-        <? if($isAdmin=='disabled'){ ?>
+        <?}?>
+        <? if($payStatus=='disabled'){ ?>
             <?= $form->field($model, 'payment_status')
             ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control','disabled'=>'disabled']) ?>
         <? }else{ ?>

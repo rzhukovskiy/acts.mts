@@ -90,6 +90,7 @@ echo GridView::widget([
                         'data-id' => $model->id,
                         'data-paymentStatus' => $model->payment_status,
 					    MonthlyAct::payDis($model->payment_status)=>'disabled',
+                        MonthlyAct::actDis($model->act_status)=>'disabled',
                     ]
 
                 );

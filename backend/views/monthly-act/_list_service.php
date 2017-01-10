@@ -90,9 +90,8 @@ echo GridView::widget([
                         'class'   => 'form-control change-payment_status',
                         'data-id' => $model->id,
 						'data-paymentStatus' => $model->payment_status,
-						MonthlyAct::payDis($model->payment_status)=>'disabled',
+						 MonthlyAct::payDis($model->payment_status)=>'disabled',
                     ]
-
                 );
             },
             'filter'         => false,
@@ -115,6 +114,7 @@ echo GridView::widget([
                         'class'   => 'form-control change-act_status',
                         'data-id' => $model->id,
 						'data-actStatus' => $model->act_status,
+                        MonthlyAct::actDis($model->act_status)=>'disabled',
 						
                     ]);
             },
