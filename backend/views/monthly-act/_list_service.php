@@ -109,7 +109,8 @@ echo GridView::widget([
             'value'          => function ($model, $key, $index, $column) {
                 return Html::activeDropDownList($model,
                     'act_status',
-                    MonthlyAct::$actStatus,
+                    //MonthlyAct::$actStatus,
+                    MonthlyAct::passActStatus($model->act_status),
                     [
                         'class'   => 'form-control change-act_status',
                         'data-id' => $model->id,

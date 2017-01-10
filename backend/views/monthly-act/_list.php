@@ -44,6 +44,7 @@ $script = <<< JS
               if(($isAdmin!=1)&&(data=='monthly-act-success')){
                     select.attr('disabled', 'disabled');
               }
+
             }
         });
     });

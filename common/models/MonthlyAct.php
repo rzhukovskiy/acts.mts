@@ -6,11 +6,13 @@ use common\models\monthlyAct\DisinfectMonthlyAct;
 use common\models\monthlyAct\ServiceMonthlyAct;
 use common\models\monthlyAct\TiresMonthlyAct;
 use common\models\monthlyAct\WashMonthlyAct;
+use common\models\User;
 use common\traits\JsonTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\Html;
 use yii\web\UploadedFile;
+
 
 /**
  * This is the model class for table "monthly_act".
@@ -72,6 +74,51 @@ class MonthlyAct extends \yii\db\ActiveRecord
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
         self::ACT_STATUS_DONE        => 'Подписан'
     ];
+    static function passActStatus($val)
+    {
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $actStatus = [
+                self::ACT_STATUS_NOT_SIGNED  => 'Не подписан',
+                self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
+                self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
+                self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+                self::ACT_STATUS_DONE        => 'Подписан'];
+        }else {
+            switch ($val) {
+                case 0:
+                    $actStatus = [
+                        self::ACT_STATUS_NOT_SIGNED => 'Не подписан',
+                        self::ACT_STATUS_SEND_SCAN => 'Отправлен скан',
+                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
+                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+                        self::ACT_STATUS_DONE => 'Подписан'];
+                    break;
+                case 1:
+                    $actStatus = [
+                        self::ACT_STATUS_SEND_SCAN => 'Отправлен скан',
+                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
+                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+                        self::ACT_STATUS_DONE => 'Подписан'];
+                    break;
+                case 2:
+                    $actStatus = [
+                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
+                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+                        self::ACT_STATUS_DONE => 'Подписан'];
+                    break;
+                case 3:
+                    $actStatus = [
+                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
+                        self::ACT_STATUS_DONE => 'Подписан'];
+                    break;
+                case 4:
+                    $actStatus = [
+                        self::ACT_STATUS_DONE => 'Подписан'];
+                    break;
+            }
+        }
+        return $actStatus;
+    }
 
     /**
      * @var UploadedFile
