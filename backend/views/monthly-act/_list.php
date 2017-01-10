@@ -8,9 +8,16 @@
 use common\models\MonthlyAct;
 use common\models\User;
 use kartik\date\DatePicker;
+$currentUser = Yii::$app->user->identity;
+if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+    $isAdmin = 0;
+}else{
+    $isAdmin = 1;
+}
 
 $script = <<< JS
     $('.change-payment_status').change(function(){
+       
      var select=$(this);
         $.ajax({
             url: "/monthly-act/ajax-payment-status",
@@ -18,6 +25,9 @@ $script = <<< JS
             data: {status:$(this).val(),id:$(this).data('id')},
             success: function(data){
                 select.parent().attr('class',data);
+                if($isAdmin!=1){
+                    select.attr('disabled', 'disabled');
+                }
             }
         });
     });

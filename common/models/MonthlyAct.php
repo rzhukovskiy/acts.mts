@@ -432,6 +432,17 @@ class MonthlyAct extends \yii\db\ActiveRecord
 
         return $actStatus[$status];
     }
+    static function payDis($val)
+    {
+        
+        $currentUser = Yii::$app->user->identity;
+        if (($val==1) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
+            $disabled = 'disabled';
+        }else{
+            $disabled='false';
+        }
+        return $disabled;
+    }
 
     /**
      * @param $status
