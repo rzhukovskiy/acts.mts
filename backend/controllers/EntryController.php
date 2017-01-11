@@ -27,7 +27,7 @@ class EntryController extends Controller
                     [
                         'actions' => ['create', 'delete', 'update'],
                         'allow' => true,
-                        'roles' => [User::ROLE_ACCOUNT],
+                        'roles' => [User::ROLE_ACCOUNT, User::ROLE_WATCHER, User::ROLE_MANAGER, User::ROLE_ADMIN],
                     ],
                 ],
             ],
