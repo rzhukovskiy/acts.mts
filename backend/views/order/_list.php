@@ -16,7 +16,6 @@ use yii\helpers\Html;
     <div class="panel-body">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
             'layout' => '{items}',
             'emptyText' => '',
             'columns' => [

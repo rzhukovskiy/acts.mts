@@ -533,11 +533,11 @@ class Company extends ActiveRecord
         /** @var Entry $entry */
         foreach ($this->getEntries($day)->all() as $entry) {
             $points[] = [
-                'value' => gmdate('H:i', $entry->start_at),
+                'value' => date('H:i', $entry->start_at),
                 'type'  => 's',
             ];
             $points[] = [
-                'value' => gmdate('H:i', $entry->end_at),
+                'value' => date('H:i', $entry->end_at),
                 'type'  => 'e',
             ];
         }

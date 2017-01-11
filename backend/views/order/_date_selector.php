@@ -1,9 +1,7 @@
 <?php
 
 /**
- * @var $searchModel \common\models\search\CompanySearch
  * @var $entrySearchModel \common\models\search\EntrySearch
- * @var $listCity array
  * @var $type integer
  */
 
@@ -14,7 +12,7 @@ use yii\bootstrap\ActiveForm;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Выбор города
+        Выбор дня
     </div>
     <div class="panel-body">
         <?php
@@ -28,8 +26,6 @@ use yii\bootstrap\ActiveForm;
                 'options' => ['class' => 'col-sm-3'],
             ],
         ]) ?>
-        <?= $form->field($searchModel, 'card_number')->textInput(['placeholder' => 'номер карты']); ?>
-        <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['prompt' => 'выберите город']); ?>
         <?= $form->field($entrySearchModel, 'day')->widget(DatePicker::classname(), [
             'size' => 'lg',
             'removeButton' => false,

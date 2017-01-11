@@ -12,6 +12,10 @@ $this->title = 'Запись';
 
 echo $this->render('_tabs');
 
+echo $this->render('_date_selector', [
+    'entrySearchModel' => $searchModel,
+]);
+
 echo $this->render('_list', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,

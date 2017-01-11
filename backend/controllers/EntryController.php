@@ -54,7 +54,7 @@ class EntryController extends Controller
         }
 
         return $this->redirect([
-            'wash/view',
+            'order/view',
             'id' => $model->company->id,
             'Entry[day]' => $model->day,
         ]);
