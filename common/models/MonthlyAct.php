@@ -102,12 +102,12 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     break;
                 case 2:
                     $actStatus = [
-                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
                         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
                         self::ACT_STATUS_DONE => 'Подписан'];
                     break;
                 case 3:
                     $actStatus = [
+                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
                         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
                         self::ACT_STATUS_DONE => 'Подписан'];
                     break;

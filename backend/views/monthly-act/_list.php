@@ -65,10 +65,6 @@ $script = <<< JS
                             select.children('option[value="0"]').remove();
 
                         }
-
-
-
-
             }
 
             }
