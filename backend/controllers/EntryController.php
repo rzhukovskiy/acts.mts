@@ -56,7 +56,7 @@ class EntryController extends Controller
         return $this->redirect([
             'order/view',
             'id' => $model->company->id,
-            'Entry[day]' => $model->day,
+            'Entry[day]' => date('d-m-Y', $model->start_at),
         ]);
     }
 
@@ -71,10 +71,16 @@ class EntryController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/wash/view', 'id' => $model->company_id, 'Entry[day]' => date('d-m-Y', $model->start_at)]);
+            return $this->redirect([
+                'order/archive',
+                'type' => $model->service_type,
+                'EntrySearch[day]' => date('d-m-Y', $model->start_at),
+            ]);
         } else {
-            return $this->render('update', [
-                'model' => $model,
+            return $this->redirect([
+                'order/view',
+                'id' => $model->company->id,
+                'Entry[day]' => date('d-m-Y', $model->start_at),
             ]);
         }
     }

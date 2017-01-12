@@ -56,7 +56,6 @@ $this->title = 'Пользователи';
                             },
                         ]
                     ],
-
                     [
                         'class' => 'yii\grid\ActionColumn',
                         'template' => '{update}{delete}',

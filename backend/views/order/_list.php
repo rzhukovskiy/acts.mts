@@ -79,6 +79,21 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         return !empty($data->company->name) ? Html::encode($data->company->name) : 'error';
                     },
                 ],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{login}',
+                    'buttons' => [
+                        'login' => function ($url, $model, $key) {
+                            return Html::a('Перенести', [
+                                '/order/list',
+                                'type' => $model->service_type,
+                                'Entry[id]' => $model->id,
+                                'CompanySearch[card_number]' => $model->card_number,
+                                'EntrySearch[day]' => date('d-m-Y', $model->start_at),
+                            ], ['class' => 'btn btn-xs btn-default']);
+                        },
+                    ]
+                ],
                 'status' => [
                     'attribute'      => 'status',
                     'value'          => function ($model) {

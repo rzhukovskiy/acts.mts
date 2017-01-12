@@ -59,11 +59,19 @@ class OrderController extends Controller
         if (empty($entrySearchModel->day)) {
             $entrySearchModel->day = date('d-m-Y');
         }
+
+        $entryData = Yii::$app->request->get('Entry', false);
+        $entryModel = null;
+        if ($entryData) {
+            $entryModel = Entry::findOne($entryData['id']);
+        }
+
         $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'entrySearchModel' => $entrySearchModel,
+            'entryModel' => $entryModel,
             'listCity' => $listCity,
         ]);
     }
@@ -99,10 +107,16 @@ class OrderController extends Controller
     public function actionView($id, $card_number = null)
     {
         $model = $this->findModel($id);
-        $modelEntry = new Entry();
-        $modelEntry->load(Yii::$app->request->queryParams);
-        $modelEntry->company_id = $model->id;
-        $modelEntry->service_type = $model->type;
+        $entryData = Yii::$app->request->get('Entry', false);
+        if ($entryData['id'] and $modelEntry = Entry::findOne($entryData['id'])) {
+            $modelEntry->load(Yii::$app->request->queryParams);
+            $modelEntry->company_id = $model->id;
+        } else {
+            $modelEntry = new Entry();
+            $modelEntry->load(Yii::$app->request->queryParams);
+            $modelEntry->company_id = $model->id;
+            $modelEntry->service_type = $model->type;
+        }
         $modelCard = Card::findOne(['number' => $card_number]);
 
         if ($modelCard) {

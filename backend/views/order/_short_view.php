@@ -3,6 +3,7 @@
  * @var $model \common\models\Company
  * @var $entrySearchModel \common\models\search\EntrySearch
  * @var $searchModel \common\models\search\CompanySearch
+ * @var $entryModel \common\models\Entry
  */
 
 use yii\bootstrap\Html;
@@ -34,8 +35,9 @@ use yii\bootstrap\Html;
                     'order/view',
                     'id' => $model->id,
                     'type' => $model->type,
+                    'Entry[id]' => $entryModel ? $entryModel->id : null,
                     'Entry[day]' => $entrySearchModel->day,
-                    'card_number' => $searchModel->card_number
+                    'card_number' => $searchModel->card_number,
                 ], ['class' => 'btn btn-primary btn-sm pull-center', 'style' => 'margin-bottom: 20px']) ?>
             </div>
         </div>
