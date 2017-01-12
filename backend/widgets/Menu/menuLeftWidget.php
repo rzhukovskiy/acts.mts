@@ -125,7 +125,9 @@ class menuLeftWidget extends Widget
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'order' &&
                             Yii::$app->controller->action->id == 'list') ||
-                        Yii::$app->controller->id == 'entry',
+                        Yii::$app->controller->id == 'entry' ||
+                        (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'view'),
                 ],
                 [
                     'label' => 'Архив записей',
@@ -142,7 +144,9 @@ class menuLeftWidget extends Widget
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'order' &&
                             Yii::$app->controller->action->id == 'list') ||
-                        Yii::$app->controller->id == 'entry',
+                        Yii::$app->controller->id == 'entry' ||
+                        (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'view'),
                 ],
                 [
                     'label' => 'Архив записей',
@@ -211,7 +215,9 @@ class menuLeftWidget extends Widget
                     'url' => ['/order/list', 'type' => Service::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'order' &&
                             Yii::$app->controller->action->id == 'list') ||
-                        Yii::$app->controller->id == 'entry',
+                        Yii::$app->controller->id == 'entry' ||
+                        (Yii::$app->controller->id == 'order' &&
+                            Yii::$app->controller->action->id == 'view'),
                 ];
                 $items[] = [
                     'label' => 'Архив записей',
