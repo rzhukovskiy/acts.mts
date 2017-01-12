@@ -25,7 +25,7 @@ class EntryController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['create', 'delete', 'update'],
+                        'actions' => ['create', 'delete', 'update', 'ajax-status'],
                         'allow' => true,
                         'roles' => [User::ROLE_ACCOUNT, User::ROLE_WATCHER, User::ROLE_MANAGER, User::ROLE_ADMIN],
                     ],
@@ -90,6 +90,20 @@ class EntryController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    public function actionAjaxStatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = $this->findModel($id);
+        $model->status = $status;
+        $model->save();
+
+        return Entry::colorForStatus($model->status);
     }
 
     /**

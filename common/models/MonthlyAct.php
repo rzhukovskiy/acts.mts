@@ -515,6 +515,4 @@ class MonthlyAct extends \yii\db\ActiveRecord
 
         return $paymentStatus[$status];
     }
-
-
 }
