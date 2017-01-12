@@ -213,6 +213,14 @@ class ActExporter
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'о проведении дезинфекции транспорта');
 
             $row++;
+            $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
+            $worksheet->getStyle($range)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                ]
+            ]);
+            $worksheet->mergeCells($range);
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Произведена дезинфекция');
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Выдана');
@@ -251,13 +259,13 @@ class ActExporter
             $row++;
 
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Региональный директор');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Исполнительный директор');
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'ООО «Международный Транспортный Сервис»');
 
             $row++; $row++; $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Мосесян Г.А._____________');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Петросян А.Р.___________');
             $objDrawing = null;
             if($company->is_act_sign){
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
@@ -704,7 +712,7 @@ class ActExporter
                         foreach ($data->partnerScopes as $scope) {
                             $services[] = $scope->description;
                         }
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, implode('+', $services));
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . implode('+', $services));
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->expense);
                         $total += $data->expense;
                     }
@@ -883,7 +891,7 @@ class ActExporter
             }
 
             $row++;
-            $companyWorkSheet->setCellValue("B$row", "Мосесян Г.А. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
             $companyWorkSheet->setCellValue("E$row", "$company->director ____________");
 
@@ -993,7 +1001,7 @@ class ActExporter
             if($company->is_split) {
                 $companyWorkSheet->mergeCells("G$row:J$row");
             }
-            $companyWorkSheet->setCellValue("B$row", "Мосесян Г.А. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
             $companyWorkSheet->setCellValue("G$row", "$company->director ____________");
 
             $row++; $row++;
@@ -1264,7 +1272,7 @@ class ActExporter
             $row++;
         }
         $companyWorkSheet->mergeCells("B$row:E$row");
-        $companyWorkSheet->setCellValue("B$row", 'Мосесян Г.А.__________');
+        $companyWorkSheet->setCellValue("B$row", 'Петросян А.Р.__________');
 
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];

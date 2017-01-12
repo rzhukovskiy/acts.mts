@@ -45,7 +45,7 @@ use yii\helpers\Html;
                         'options' => [
                             'class' => 'form-control datepicker',
                             'readonly' =>'true',
-                            'value' => date('d-m-Y'),
+                            'value' => date('j-Y'),
                         ]
                     ]) ?>
                 </td>
