@@ -44,7 +44,12 @@ use yii\helpers\Html;
                 ],
                 [
                     'attribute'          => 'start_at',
-                    'format'             => ['date', 'php:d-m-Y H:i']
+                    'value'     => function ($model) {
+                        return date('H:i', $model->start_at);
+                    },
+                    'contentOptions' => [
+                        'class' => 'entry-time',
+                    ]
                 ],
                 [
                     'attribute'          => 'user_id',
@@ -55,7 +60,7 @@ use yii\helpers\Html;
                 [
                     'attribute'          => 'company_id',
                     'content'            => function ($data) {
-                        return !empty($data->company->name) ? Html::encode($data->company->name) : 'уккщк';
+                        return !empty($data->company->name) ? Html::encode($data->company->name) : 'error';
                     },
                 ],
             ],

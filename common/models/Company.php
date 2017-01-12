@@ -513,7 +513,6 @@ class Company extends ActiveRecord
         $workStart = $modelCompanyTime->start_at ? gmdate('H:i', $modelCompanyTime->start_at) : '00:00';
         $workEnd = $modelCompanyTime->end_at ? gmdate('H:i', $modelCompanyTime->end_at) : '24:00';
 
-
         $points[] = [
             'value' => '00:00',
             'type'  => 's',
