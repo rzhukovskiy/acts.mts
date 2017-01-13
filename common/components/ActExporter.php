@@ -333,9 +333,10 @@ class ActExporter
             $cnt++;
             $totalCount++;
             if ($cnt == 5) {
+                $row++;
                 $cnt = 1;
                 $worksheet->setBreak( "A$row" , PHPExcel_Worksheet::BREAK_ROW );
-                $startRow += 24;
+                $startRow += 25;
             }
 
             if (!($totalCount % 80) || $totalCount == count($dataList)) {
