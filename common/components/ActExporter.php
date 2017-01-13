@@ -282,6 +282,8 @@ class ActExporter
                 $range = $cols[$startCol + 1] . ($row - 2);
                 $objDrawing->setCoordinates($range);
                 $objDrawing->setWorksheet($worksheet);
+                $objDrawing->setOffsetY(-10);
+                $objDrawing->setOffsetX(-30);
                 $objDrawing = null;
             }
             $row += 3;
@@ -704,7 +706,7 @@ class ActExporter
                         foreach ($data->clientScopes as $scope) {
                             $services[] = $scope->description;
                         }
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, implode('+', $services));
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . implode('+', $services));
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->income);
                         $total += $data->income;
                     } else {
@@ -1228,7 +1230,7 @@ class ActExporter
                 )
             )
         );
-        $text = 'За услуги, оказанные в ' . $monthName[2] . date(' Y');
+        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y');
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
