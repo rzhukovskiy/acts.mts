@@ -145,10 +145,10 @@ class ActExporter
                 $worksheet = new PHPExcel_Worksheet($objPHPExcel, 'справки');
                 $objPHPExcel->addSheet($worksheet);
 
-                $worksheet->getPageMargins()->setTop(0.3);
+                $worksheet->getPageMargins()->setTop(0.1);
                 $worksheet->getPageMargins()->setLeft(0.5);
                 $worksheet->getPageMargins()->setRight(0.5);
-                $worksheet->getPageMargins()->setBottom(0.3);
+                $worksheet->getPageMargins()->setBottom(0.1);
 
                 $objPHPExcel->getDefaultStyle()->applyFromArray([
                     'font' => [
@@ -179,7 +179,7 @@ class ActExporter
                 $startCol = 6;
             }
             if ($cnt == 3) {
-                $startRow += 26;
+                $startRow += 24;
             }
             $row = $startRow;
 
@@ -286,7 +286,7 @@ class ActExporter
                 $objDrawing->setOffsetX(-30);
                 $objDrawing = null;
             }
-            $row += 3;
+            $row += 2;
 
             $row++;
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
@@ -333,7 +333,7 @@ class ActExporter
             $cnt++;
             $totalCount++;
             if ($cnt == 5) {
-                $row++;
+                $row++; $row++;
                 $cnt = 1;
                 $worksheet->setBreak( "A$row" , PHPExcel_Worksheet::BREAK_ROW );
                 $startRow += 25;
