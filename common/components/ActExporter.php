@@ -146,9 +146,9 @@ class ActExporter
                 $objPHPExcel->addSheet($worksheet);
 
                 $worksheet->getPageMargins()->setTop(0.1);
-                $worksheet->getPageMargins()->setLeft(0.5);
+                $worksheet->getPageMargins()->setLeft(0.6);
                 $worksheet->getPageMargins()->setRight(0.5);
-                $worksheet->getPageMargins()->setBottom(0.1);
+                $worksheet->getPageMargins()->setBottom(0);
 
                 $objPHPExcel->getDefaultStyle()->applyFromArray([
                     'font' => [
@@ -179,7 +179,7 @@ class ActExporter
                 $startCol = 6;
             }
             if ($cnt == 3) {
-                $startRow += 24;
+                $startRow += 26;
             }
             $row = $startRow;
 
@@ -305,6 +305,8 @@ class ActExporter
             $worksheet->getRowDimension($row)->setRowHeight(40);
 
             if ($cnt == 2) {
+                $row += 3;
+                $worksheet->getRowDimension($row)->setRowHeight(20);
                 $row++;
                 $worksheet->getStyle("A$row:K$row")
                     ->applyFromArray([
@@ -317,7 +319,7 @@ class ActExporter
                         ]
                     );
                 $borderStart = $startRow - 7;
-                $borderEnd = $borderStart + 50;
+                $borderEnd = $borderStart + 48;
                 $worksheet->getStyle("E$borderStart:E$borderEnd")
                     ->applyFromArray([
                             'borders' => [
@@ -333,10 +335,10 @@ class ActExporter
             $cnt++;
             $totalCount++;
             if ($cnt == 5) {
-                $row++; $row++;
+                $row++;
                 $cnt = 1;
                 $worksheet->setBreak( "A$row" , PHPExcel_Worksheet::BREAK_ROW );
-                $startRow += 25;
+                $startRow += 24;
             }
 
             if (!($totalCount % 80) || $totalCount == count($dataList)) {
