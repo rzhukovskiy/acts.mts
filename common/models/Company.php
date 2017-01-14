@@ -636,6 +636,11 @@ class Company extends ActiveRecord
             $this->parent->save();
         }
 
+        if ($this->info && $this->info->city != $this->address) {
+            $this->info->city = $this->address;
+            $this->info->save();
+        }
+
         /**
          * сохраняем время работы
          */

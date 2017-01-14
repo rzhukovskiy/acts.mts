@@ -129,4 +129,18 @@ class CompanyInfo extends ActiveRecord
 
         return parent::beforeSave($insert);
     }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($this->company->address != $this->city) {
+            $this->company->address = $this->city;
+            $this->company->save();
+        }
+
+        parent::afterSave($insert, $changedAttributes);
+    }
 }
