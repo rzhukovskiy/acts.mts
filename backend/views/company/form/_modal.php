@@ -8,16 +8,18 @@
  * @var $admin bool
  */
 use kartik\time\TimePicker;
+$string = $modelCompany->WorkTime1;
+//print_r($string);
 ?>
 
 <div class="modaltime" style="display: none;">
     <div style="/*width: 50%;float: left;*/">
         <div class='radio'>
-        <label><input type='radio' name='optradio' class="inputtimer" >Круглосуточно</label>
+        <label><input id="radio1" type='radio' name='optradio' class="inputtimer" value="val1">Круглосуточно</label>
         </div>
-        <div class='radio'><label><input type='radio' name='optradio')>Каждый день</label>
+        <div id="radio2" class='radio'><label><input type='radio' name='optradio' value="val2">Каждый день</label>
         </div>
-        <div class='radio'><label><input type='radio' name='optradio' >Другой</label>
+        <div id="radio3" class='radio'><label><input type='radio' name='optradio' value="val3">Другой</label>
         </div>
     </div>
     <div id="everyday" style="display: none;/*width: 50%;float: left;*/">
@@ -25,7 +27,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[0],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -41,7 +43,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[1],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -57,7 +59,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[0],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -73,7 +75,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[1],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -87,7 +89,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[2],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -103,7 +105,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[3],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -117,7 +119,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[4],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -133,7 +135,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[5],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -147,7 +149,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[6],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -163,7 +165,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[7],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -177,7 +179,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[8],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -193,7 +195,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[9],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -207,7 +209,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[10],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -223,7 +225,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[11],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -237,7 +239,7 @@ use kartik\time\TimePicker;
         <div style="float: left;width: 25%"><? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[12],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,
@@ -253,7 +255,7 @@ use kartik\time\TimePicker;
         <? 
         echo TimePicker::widget([
             'name' => 'start_time', 
-            'value' => '00:00',
+            'value' => $string[13],
             'pluginOptions' => [
                 'showSeconds' => false,
                 'showMeridian'=>false,

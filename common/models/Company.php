@@ -488,6 +488,16 @@ class Company extends ActiveRecord
 
         return implode("\n", $res);
     }
+    public function getWorkTime1()
+    {
+        $res = [];
+        foreach ($this->companyTime as $day) {
+            $res[] = gmdate('H:i', $day->start_at);
+            $res[] = gmdate('H:i', $day->end_at);            
+        }
+
+        return $res;
+    }
 
     public function getWorkTimeHtml()
     {
