@@ -12,12 +12,15 @@ use yii\bootstrap\Html;
     <div class="panel panel-primary">
         <div class="panel-heading">
             <?= $model->name ?>
-            <?php $companyTime = $model->getCompanyTimeByDay($entrySearchModel->day)?>
-            <span class="work-time"><?= $companyTime->start_at ? gmdate('H:i', $companyTime->start_at) : '00:00' ?> - <?= $companyTime->end_at ? gmdate('H:i', $companyTime->end_at) : '24:00' ?></span>
         </div>
         <div class="panel-body">
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
-                <?= $model->fullAddress ?>
+                <?php $companyTime = $model->getCompanyTimeByDay($entrySearchModel->day)?>
+            График работы:
+            <span class=""><?= $companyTime->start_at ? gmdate('H:i', $companyTime->start_at) : '00:00' ?> - <?= $companyTime->end_at ? gmdate('H:i', $companyTime->end_at) : '24:00' ?></span>
+            </div>
+            <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
+                Адрес: <?= $model->fullAddress ?>
             </div>
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
                 Телефон: <?= $model->info->phone ?>

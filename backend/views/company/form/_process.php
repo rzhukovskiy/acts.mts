@@ -10,9 +10,76 @@
 use common\models\Company;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
+//use kartik\time\TimePicker;
 use yii\helpers\Html;
-
+include('_modal.php');
+//echo $modelCompany->workTimeHtml;
 ?>
+
+<?
+$script = <<< JS
+    $('#company-worktime-targ').click(function(){
+        var value1 = $(this).text();
+        $('.modaltime').appendTo('form#w20');
+        $('.modaltime').show();     
+    });
+    
+    $("#company-worktime-popover").find(".button").click(function () {
+        alert("hi there");
+        return false;
+    });
+    $('#graphwork').parent().click(function(){
+        var value = $('[name="optradio"]:checked').closest('label').text();
+        if(value == 'Круглосуточно'){
+            var inputte = '00:00-00:00';
+            $('input#company-worktime').val(inputte + '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte);
+        }else if(value=='Каждый день'){
+            var inputte = $("#w1").val() + '-' + $("#w2").val();
+            $('input#company-worktime').val(inputte + '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte);
+        }else if(value=='Другой'){
+            var monfrom = $("#w3").val();
+            var monto = $("#w4").val();
+            var tufrom = $("#w5").val();
+            var tuto = $("#w6").val();
+            var wedfrom = $("#w7").val();
+            var wedto = $("#w8").val();
+            var thufrom = $("#w9").val();
+            var thuto = $("#w10").val();
+            var frifrom = $("#w11").val();
+            var frito = $("#w12").val();
+            var sutfrom = $("#w13").val();
+            var sutto = $("#w14").val();
+            var sanfrom = $("#w15").val();
+            var santo = $("#w16").val();
+            $('input#company-worktime').val(
+                monfrom + '-' + monto+ '\\n' + 
+                tufrom + '-'  + tuto+ '\\n' + 
+                wedfrom + '-' + wedto +'\\n' + 
+                thufrom + '-' + thuto +'\\n' + 
+                frifrom + '-' + frito +'\\n' + 
+                sutfrom + '-' + sutto +'\\n' + 
+                sanfrom + '-' + santo);
+        }
+    });
+    $('[name="optradio"]').on('change', function () {
+        var value = $('[name="optradio"]:checked').closest('label').text();
+        if(value=='Круглосуточно'){
+            $('#everyday').hide();
+            $('#anyday').hide();
+
+        }else if(value=='Каждый день'){
+            $('#anyday').hide();
+            $('#everyday').show();
+        }else if(value=='Другой'){
+            $('#everyday').hide();
+            $('#anyday').show();
+        }
+    });
+    
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+?>
+
 
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -100,19 +167,19 @@ use yii\helpers\Html;
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md">Время работы</td>
+                <td class="list-label-md">График работы</td>
                 <td>
                     <?= Editable::widget([
                         'model' => $modelCompany,
                         'buttonsTemplate' => '{submit}',
                         'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                            'icon' => '<i id="graphwork" class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'workTime',
                         'displayValue' => $modelCompany->workTimeHtml,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
-                        'inputType' => Editable::INPUT_TEXTAREA,
+                        'inputType' => Editable::INPUT_HIDDEN,
                         'submitOnEnter' => false,
                         'size' => 'lg',
                         'options' => [
@@ -124,7 +191,7 @@ use yii\helpers\Html;
                             'action' => ['/company/update', 'id' => $modelCompany->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
-                        'footer' => 'Каждый день с новой строки. Разделитель - дефис. {buttons}'
+                        'footer' => '{buttons}'
                     ]); ?>
                 </td>
             </tr>
