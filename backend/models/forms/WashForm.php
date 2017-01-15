@@ -11,6 +11,7 @@ namespace backend\models\forms;
 use common\models\CompanyClient;
 use common\models\CompanyInfo;
 use common\models\CompanyMember;
+use common\models\CompanyTime;
 use Yii;
 use yii\base\Model;
 
@@ -113,10 +114,25 @@ class WashForm extends Model
         $companyInfo->city = $this->city;
         $companyInfo->street = $this->street;
         $companyInfo->house = $this->building;
-        $companyInfo->start_str = $this->work_from;
-        $companyInfo->end_str = $this->work_to;
+        if (!$companyInfo->save()) {
+            return false;
+        }
+        for ($day = 1; $day < 6; $day++) {
+            $companyTime = new CompanyTime();
+            $companyTime->company_id = $idCompany;
+            $companyTime->day = $day;
+            if ($this->work_from) {
+                list($hrs, $mnts) = explode(':', trim($this->work_from));
+                $companyTime->start_at = $hrs * 3600 + $mnts * 60;
+            }
+            if ($this->work_to) {
+                list($hrs, $mnts) = explode(':', trim($this->work_to));
+                $companyTime->end_at = $hrs * 3600 + $mnts * 60;
+            }
+            $companyTime->save();
+        }
 
-        return $companyInfo->save();
+        return true;
     }
 
     /**
