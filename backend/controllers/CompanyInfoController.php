@@ -90,7 +90,11 @@ class CompanyInfoController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return ['message' => ''];
+                $output = [];
+                foreach (Yii::$app->request->post('CompanyInfo') as $name => $value) {
+                    $output[] = $value;
+                }
+                return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];
             }
