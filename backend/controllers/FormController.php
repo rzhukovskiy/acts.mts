@@ -99,6 +99,8 @@ class FormController extends Controller
             } else {
                 $model->addError('name', 'Организация с таким именем уже существует');
             }
+            print_r($model);
+            die;
         }
 
         return $this->render('wash',

@@ -513,7 +513,6 @@ class Company extends ActiveRecord
         $workStart = $modelCompanyTime->start_at ? gmdate('H:i', $modelCompanyTime->start_at) : '00:00';
         $workEnd = $modelCompanyTime->end_at ? gmdate('H:i', $modelCompanyTime->end_at) : '24:00';
 
-
         $points[] = [
             'value' => '00:00',
             'type'  => 's',
@@ -533,11 +532,11 @@ class Company extends ActiveRecord
         /** @var Entry $entry */
         foreach ($this->getEntries($day)->all() as $entry) {
             $points[] = [
-                'value' => gmdate('H:i', $entry->start_at),
+                'value' => date('H:i', $entry->start_at),
                 'type'  => 's',
             ];
             $points[] = [
-                'value' => gmdate('H:i', $entry->end_at),
+                'value' => date('H:i', $entry->end_at),
                 'type'  => 'e',
             ];
         }
@@ -635,6 +634,11 @@ class Company extends ActiveRecord
         ) {
             $this->parent->is_nested = self::IS_NESTED;
             $this->parent->save();
+        }
+
+        if ($this->info && $this->info->city != $this->address) {
+            $this->info->city = $this->address;
+            $this->info->save();
         }
 
         /**

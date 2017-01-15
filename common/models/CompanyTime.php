@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property string $day
  * @property string $start_at
  * @property string $end_at
+ *
  * @property Company $company
  */
 class CompanyTime extends ActiveRecord

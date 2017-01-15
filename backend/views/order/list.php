@@ -5,6 +5,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\CompanySearch
  * @var $entrySearchModel \common\models\search\EntrySearch
+ * @var $entryModel \common\models\Entry
  * @var $listCity array
  */
 use yii\widgets\ListView;
@@ -26,6 +27,7 @@ echo ListView::widget([
     'viewParams' => [
         'searchModel' => $searchModel,
         'entrySearchModel' => $entrySearchModel,
+        'entryModel' => $entryModel,
     ],
     'itemView' => '_short_view',
     'layout' => '{items}',

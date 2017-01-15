@@ -40,10 +40,18 @@ use yii\db\ActiveRecord;
  */
 class Entry extends ActiveRecord
 {
+    const STATUS_NOT_APPROVED = 0;
+    const STATUS_APPROVED = 1;
+    
     public $day;
     public $start_str;
     public $end_str;
     public $defaultDuration = 3600;
+    
+    public static $listStatus = [
+        self::STATUS_NOT_APPROVED => 'не записан',
+        self::STATUS_APPROVED => 'записан',
+    ];
 
     private $card_number;
     /**
@@ -95,6 +103,7 @@ class Entry extends ActiveRecord
             'start_str' => 'Время',
             'end_str' => 'Окончание',
             'user_id' => 'Кто записал',
+            'status' => 'Статус',
         ];
     }
 
@@ -217,5 +226,19 @@ class Entry extends ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * @param $status
+     * @return mixed
+     */
+    static function colorForStatus($status)
+    {
+        $paymentStatus = [
+            self::STATUS_APPROVED     => 'monthly-act-success',
+            self::STATUS_NOT_APPROVED => 'monthly-act-danger',
+        ];
+
+        return $paymentStatus[$status];
     }
 }

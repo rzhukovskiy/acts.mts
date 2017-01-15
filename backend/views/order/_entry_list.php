@@ -4,9 +4,25 @@
  * @var $searchModel \common\models\search\EntrySearch
  * @var $serviceList array
  */
+use common\models\Entry;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
+$script = <<< JS
+    $('.change-status').change(function(){
+       
+     var select=$(this);
+        $.ajax({
+            url: "/entry/ajax-status",
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+            }
+        });
+    });
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -72,6 +88,29 @@ use yii\helpers\Html;
                                 ['/entry/delete', 'id' => $model->id]);
                         },
                     ]
+                ],
+                'status' => [
+                    'attribute'      => 'status',
+                    'value'          => function ($model) {
+                        return Html::activeDropDownList($model,
+                            'status',
+                            Entry::$listStatus,
+                            [
+                                'class'   => 'form-control change-status',
+                                'data-id' => $model->id,
+                                'data-status' => $model->status,
+                            ]
+
+                        );
+                    },
+                    'filter'         => false,
+                    'format'         => 'raw',
+                    'contentOptions' => function ($model) {
+                        return [
+                            'class' => Entry::colorForStatus($model->status),
+                            'style' => 'min-width: 130px'
+                        ];
+                    },
                 ],
             ],
         ]);

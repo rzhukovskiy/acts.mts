@@ -42,7 +42,7 @@ use yii\bootstrap\ActiveForm;
             'options' => [
                 'class' => 'form-control input-sm datepicker',
                 'readonly' =>'true',
-                'value' => date('d-m-Y'),
+                'value' => $entrySearchModel->day,
             ]
         ])->error(false); ?>
         <?= Html::submitButton('Показать', ['class' => 'btn btn-primary btn-sm']) ?>
