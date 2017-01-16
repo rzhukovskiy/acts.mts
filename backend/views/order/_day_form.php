@@ -18,7 +18,7 @@ use yii\helpers\Html;
 
         <?php
         $form = ActiveForm::begin([
-            'action' => ['order/view', 'id' => $model->company_id],
+            'action' => ['order/view', 'id' => $model->company_id, 'card_number' => $model->card_number],
             'method' => 'get',
             'id' => 'act-form',
         ]) ?>
@@ -46,11 +46,11 @@ use yii\helpers\Html;
                             'class' => 'form-control datepicker',
                             'readonly' =>'true',
                             'value' => date('d-m-Y'),
-                        ]
+                        ],
+                        'pluginEvents' => [
+                            "hide" => "function(e) { $(this).parents('form').submit() }",
+                        ],
                     ]) ?>
-                </td>
-                <td style="width: 150px">
-                    <?= Html::submitButton('Выбрать', ['class' => 'btn btn-primary']) ?>
                 </td>
             </tr>
             </tbody>
