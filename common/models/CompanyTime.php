@@ -19,6 +19,9 @@ use yii\db\ActiveRecord;
  */
 class CompanyTime extends ActiveRecord
 {
+    const TYPE_WHOLEDAY = 0;
+    const TYPE_EVERYDAY = 1;
+    const TYPE_ANYDAY = 2;
     /**
      * @inheritdoc
      */

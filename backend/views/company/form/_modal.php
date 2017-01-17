@@ -3,36 +3,43 @@
 /**
  * @var $this yii\web\View
  * @var $modelCompany common\models\Company
- * @var $modelCompanyInfo common\models\CompanyInfo
- * @var $modelCompanyOffer common\models\CompanyOffer
- * @var $admin bool
  */
-use kartik\time\TimePicker;
-$string = $modelCompany->WorkTime1;
-//print_r($string);
+use common\components\DateHelper;
+use kartik\datetime\DateTimePicker;
+
+$workTime = $modelCompany->getWorkTimeArray();
 ?>
 
 <div class="modaltime" style="display: none;">
-    <div style="/*width: 50%;float: left;*/">
+    <div>
         <div class='radio'>
-        <label><input id="radio1" type='radio' name='optradio' class="inputtimer" value="val1">Круглосуточно</label>
+            <label><input id="radio1" type='radio' name='Company[workTime][type]' value="0">Круглосуточно</label>
         </div>
-        <div id="radio2" class='radio'><label><input type='radio' name='optradio' value="val2">Каждый день</label>
+        <div class='radio'>
+            <label><input id="radio2" type='radio' name='Company[workTime][type]' value="1">Ежедневно</label>
         </div>
-        <div id="radio3" class='radio'><label><input type='radio' name='optradio' value="val3">Другой</label>
+        <div class='radio'>
+            <label><input id="radio3" type='radio' name='Company[workTime][type]' value="2" checked="checked">Другой</label>
         </div>
     </div>
-    <div id="everyday" style="display: none;/*width: 50%;float: left;*/">
+
+    <div id="everyday" style="display: none;">
         <div style="float: left;padding-top: 10px;width: 5%">C  </div>
         <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[0],
+        echo DateTimePicker::widget([
+            'name' => "Company[workTime][start_time]",
+            'value' => $workTime[1]['start_time'],
+            'removeButton' => false,
             'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
+                'startView' => 1,
+                'showMeridian' => false,
+                'autoclose' => true,
+                'format' => 'hh:ii'
+            ],
+            'options' => [
+                'class' => 'form-control datepicker',
+                'readonly' =>'true',
+            ],
         ]);
         ?>
         </div>
@@ -41,229 +48,72 @@ $string = $modelCompany->WorkTime1;
         </div>
         <div style="float: left;width: 25%">
         <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[1],
+        echo DateTimePicker::widget([
+            'name' => "Company[workTime][end_time]",
+            'value' => $workTime[1]['end_time'],
+            'removeButton' => false,
             'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
+                'startView' => 1,
+                'showMeridian' => false,
+                'autoclose' => true,
+                'format' => 'hh:ii'
+            ],
+            'options' => [
+                'class' => 'form-control datepicker',
+                'readonly' =>'true',
+            ],
         ]);
         ?>
         </div>
-
     </div>
-    <div id="anyday" style="display: none;/*width: 50%;float: left;*/">
-        <div style="float: left;padding-top: 10px;width: 13%">Пон с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[0],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
 
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[1],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">ВТ с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[2],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[3],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">СР с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[4],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[5],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">Чет с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[6],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[7],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">Пт с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[8],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[9],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">Сб с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[10],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[11],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="float: left;padding-top: 10px;width: 13%">Воск с  </div>
-        <div style="float: left;width: 25%"><? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[12],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
-        <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
-         По
-        </div>
-        <div style="float: left;width: 25%">
-        <? 
-        echo TimePicker::widget([
-            'name' => 'start_time', 
-            'value' => $string[13],
-            'pluginOptions' => [
-                'showSeconds' => false,
-                'showMeridian'=>false,
-
-            ]
-        ]);
-        ?>
-        </div>
+    <div id="anyday" style="display: none;">
+        <?php for ($day = 1; $day <= 7; $day++) { ?>
+            <div style="float: left;padding-top: 10px;width: 13%">
+                <?=DateHelper::getWeekDayName($day)?> с
+            </div>
+            <div style="float: left;width: 25%"><?
+                echo DateTimePicker::widget([
+                    'name' => "Company[workTime][$day][start_time]",
+                    'value' => $workTime[$day]['start_time'],
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'startView' => 1,
+                        'showMeridian' => false,
+                        'autoclose' => true,
+                        'format' => 'hh:ii'
+                    ],
+                    'options' => [
+                        'class' => 'form-control datepicker',
+                        'readonly' =>'true',
+                    ],
+                ]);
+                ?>
+            </div>
+            <div style="float: left;width: 5%;padding-top: 10px;margin-left: 10px;margin-right: 10px">
+                По
+            </div>
+            <div style="float: left;width: 25%">
+                <?
+                echo DateTimePicker::widget([
+                    'name' => "Company[workTime][$day][end_time]",
+                    'value' => $workTime[$day]['end_time'],
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'startView' => 1,
+                        'showMeridian' => false,
+                        'autoclose' => true,
+                        'format' => 'hh:ii'
+                    ],
+                    'options' => [
+                        'class' => 'form-control datepicker',
+                        'readonly' =>'true',
+                    ],
+                ]);
+                ?>
+            </div>
+            <div style="clear: both;"></div>
+        <?php } ?>
     </div>
     <div style="clear: both;"></div>
 </div>

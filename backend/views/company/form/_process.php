@@ -10,154 +10,31 @@
 use common\models\Company;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
-//use kartik\time\TimePicker;
 use yii\helpers\Html;
-include('_modal.php');
 
- $string = $modelCompany->WorkTime1;
- //print_r($string);
-?>
+echo $this->render('_modal', [
+    'modelCompany' => $modelCompany,
+]);
 
-<?
+$workTime = $modelCompany->getWorkTimeArray();
+
 $script = <<< JS
-    $('#company-worktime-targ').click(function(){
-        var value1 = $(this).text();
-        var strmonfrom = $("#w3").val();
-        var strmonto = $("#w4").val();
-        var strtufrom = $("#w5").val();
-        var strtuto = $("#w6").val();
-        var strwedfrom = $("#w7").val();
-        var strwedto = $("#w8").val();
-        var strthufrom = $("#w9").val();
-        var strthuto = $("#w10").val();
-        var strfrifrom = $("#w11").val();
-        var strfrito = $("#w12").val();
-        var strsutfrom = $("#w13").val();
-        var strsutto = $("#w14").val();
-        var strsanfrom = $("#w15").val();
-        var strsanto = $("#w16").val();
-        
-        if(
-            strmonfrom==strtufrom &&
-            strmonfrom==strwedfrom &&
-            strmonfrom==strthufrom &&
-            strmonfrom==strfrifrom &&
-            strmonfrom==strsutfrom &&
-            strmonfrom==strsanfrom &&
-
-            strmonto==strtuto &&
-            strmonto==strwedto &&
-            strmonto==strthuto &&
-            strmonto==strfrito &&
-            strmonto==strsutto &&
-            strmonto==strsanto &&
-            strmonto=='00:00')
-        {
-             document.querySelector('input[name=optradio][value=val1]').checked = true;
-             $('#everyday').hide();
-             $('#anyday').hide();
-        }else if(
-            strmonfrom==strtufrom &&
-            strmonfrom==strwedfrom &&
-            strmonfrom==strthufrom &&
-            strmonfrom==strfrifrom &&
-            strmonfrom==strsutfrom &&
-            strmonfrom==strsanfrom &&
-
-            strmonto==strtuto &&
-            strmonto==strwedto &&
-            strmonto==strthuto &&
-            strmonto==strfrito &&
-            strmonto==strsutto &&
-            strmonto==strsanto)
-        {
-            document.querySelector('input[name=optradio][value=val2]').checked = true;
-            $('#everyday').show();
-            $('#anyday').hide();
-        }else{
-            document.querySelector('input[name=optradio][value=val3]').checked = true;
-            $('#everyday').hide();
-            $('#anyday').show();
-        }
+    $('#company-worktime-targ').click(function() {
+        $('#everyday').hide();
+        $('#anyday').show();
         $('.modaltime').appendTo('form#w20');
         $('.modaltime').show();     
     });
     
-    $('#graphwork').parent().click(function(){
-        var value = $('[name="optradio"]:checked').closest('label').text();
-        if(value == 'Круглосуточно'){
-            var inputte = '00:00-00:00';
-            $("#w1").val('00:00');
-            $("#w2").val('00:00');
-            $("#w3").val('00:00');
-            $("#w4").val('00:00');
-            $("#w5").val('00:00');
-            $("#w6").val('00:00');
-            $("#w7").val('00:00');
-            $("#w8").val('00:00');
-            $("#w9").val('00:00');
-            $("#w10").val('00:00');
-            $("#w11").val('00:00');
-            $("#w12").val('00:00');
-            $("#w13").val('00:00');
-            $("#w14").val('00:00');
-            $("#w15").val('00:00');
-            $("#w16").val('00:00');
-            $('input#company-worktime').val(inputte + '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte);
-        }else if(value=='Каждый день'){
-            var inputte = $("#w1").val() + '-' + $("#w2").val();
-            
-            $("#w3").val($("#w1").val());
-            $("#w4").val($("#w2").val());
-            $("#w5").val($("#w1").val());
-            $("#w6").val($("#w2").val());
-            $("#w7").val($("#w1").val());
-            $("#w8").val($("#w2").val());
-            $("#w9").val($("#w1").val());
-            $("#w10").val($("#w2").val());
-            $("#w11").val($("#w1").val());
-            $("#w12").val($("#w2").val());
-            $("#w13").val($("#w1").val());
-            $("#w14").val($("#w2").val());
-            $("#w15").val($("#w1").val());
-            $("#w16").val($("#w2").val());
-            $('input#company-worktime').val(inputte + '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte+ '\\n' + inputte);
-        }else if(value=='Другой'){
-            var monfrom = $("#w3").val();
-            var monto = $("#w4").val();
-            var tufrom = $("#w5").val();
-            var tuto = $("#w6").val();
-            var wedfrom = $("#w7").val();
-            var wedto = $("#w8").val();
-            var thufrom = $("#w9").val();
-            var thuto = $("#w10").val();
-            var frifrom = $("#w11").val();
-            var frito = $("#w12").val();
-            var sutfrom = $("#w13").val();
-            var sutto = $("#w14").val();
-            var sanfrom = $("#w15").val();
-            var santo = $("#w16").val();
-
-            $('input#company-worktime').val(
-                monfrom + '-' + monto+ '\\n' + 
-                tufrom + '-'  + tuto+ '\\n' + 
-                wedfrom + '-' + wedto +'\\n' + 
-                thufrom + '-' + thuto +'\\n' + 
-                frifrom + '-' + frito +'\\n' + 
-                sutfrom + '-' + sutto +'\\n' + 
-                sanfrom + '-' + santo);
-        }
-    });
-    $('[name="optradio"]').on('change', function () {
-        var value = $('[name="optradio"]:checked').closest('label').text();
-        if(value=='Круглосуточно'){
+    $('input[type="radio"]').on('change', function () {
+        var value = $('input[type="radio"]:checked').val();
+        if(value == 0){
             $('#everyday').hide();
             $('#anyday').hide();
-
-        }else if(value=='Каждый день'){
+        } else if(value == 1){
             $('#anyday').hide();
             $('#everyday').show();
-        }else if(value=='Другой'){
+        } else if(value == 2){
             $('#everyday').hide();
             $('#anyday').show();
         }
@@ -166,7 +43,6 @@ $script = <<< JS
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
-
 
 <div class="panel panel-primary">
     <div class="panel-heading">

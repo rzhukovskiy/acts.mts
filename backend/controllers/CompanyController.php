@@ -343,7 +343,14 @@ class CompanyController extends Controller
             Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return ['message' => ''];
+                foreach (Yii::$app->request->post('Company') as $name => $value) {
+                    if ($name == 'workTime') {
+                        $output[] = $model->getWorkTimeHtml();
+                    } else {
+                        $output[] = $value;
+                    }
+                }
+                return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];
             }

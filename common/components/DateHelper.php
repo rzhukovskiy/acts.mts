@@ -18,6 +18,8 @@ class DateHelper
         11 => ['Ноябрь', 'Ноября', 'Ноябре'],
         12 => ['Декабрь', 'Декабря', 'Декабре']
     ];
+    
+    static $listWeekDay = ['0', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
     public static function getMonthName($date = false, $position = null)
     {
@@ -45,5 +47,13 @@ class DateHelper
             $num = date('m');
 
         return self::$months[(int)$num];
+    }
+    
+    public static function getWeekDayName($day = false)
+    {
+        if (!$day) {
+            $day = date('w') ? date('w') : 7;
+        }
+        return self::$listWeekDay[$day];
     }
 }

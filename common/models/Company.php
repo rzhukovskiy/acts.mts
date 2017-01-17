@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use common\components\DateHelper;
 use common\models\query\CompanyQuery;
 use common\models\search\CarSearch;
 use Yii;
@@ -488,12 +489,12 @@ class Company extends ActiveRecord
 
         return implode("\n", $res);
     }
-    public function getWorkTime1()
+    public function getWorkTimeArray()
     {
         $res = [];
-        foreach ($this->companyTime as $day) {
-            $res[] = gmdate('H:i', $day->start_at);
-            $res[] = gmdate('H:i', $day->end_at);            
+        foreach ($this->companyTime as $workDay) {
+            $res[$workDay->day]['start_time'] = gmdate('H:i', $workDay->start_at);
+            $res[$workDay->day]['end_time'] = gmdate('H:i', $workDay->end_at);
         }
 
         return $res;
@@ -502,8 +503,9 @@ class Company extends ActiveRecord
     public function getWorkTimeHtml()
     {
         $res = [];
-        foreach ($this->companyTime as $day) {
-            $res[] = gmdate('H:i', $day->start_at) . ' - ' . gmdate('H:i', $day->end_at);
+        foreach ($this->companyTime as $workDay) {
+            $res[] = DateHelper::getWeekDayName($workDay->day) . ': ' .
+                gmdate('H:i', $workDay->start_at) . ' - ' . gmdate('H:i', $workDay->end_at);
         }
 
         return implode("<br />", $res);
@@ -656,22 +658,54 @@ class Company extends ActiveRecord
          */
         if (!empty($this->workTime)) {
             CompanyTime::deleteAll(['company_id' => $this->id]);
-            $day = 1;
-            foreach (explode("\n", $this->workTime) as $row) {
-                list($start, $end) = explode('-', $row);
-                $modelCompanyTime = new CompanyTime();
-                $modelCompanyTime->company_id = $this->id;
-                $modelCompanyTime->day = $day;
-                if ($start) {
-                    list($hrs, $mnts) = explode(':', trim($start));
-                    $modelCompanyTime->start_at = $hrs * 3600 + $mnts * 60;
+
+            if (is_array($this->workTime)) {
+                if ($this->workTime['type'] == CompanyTime::TYPE_EVERYDAY) {
+                    $arrayWorkTime = [];
+                    for ($day = 1; $day < 8; $day++) {
+                        $arrayWorkTime[$day]['start_time'] = $this->workTime['start_time'];
+                        $arrayWorkTime[$day]['end_time'] = $this->workTime['end_time'];
+                    }
+
+                    $this->workTime = $arrayWorkTime;
                 }
-                if ($end) {
-                    list($hrs, $mnts) = explode(':', trim($end));
-                    $modelCompanyTime->end_at = $hrs * 3600 + $mnts * 60;
+
+                unset($this->workTime['type']);
+                unset($this->workTime['start_time']);
+                unset($this->workTime['end_time']);
+                foreach ($this->workTime as $day => $data) {
+                    $modelCompanyTime = new CompanyTime();
+                    $modelCompanyTime->company_id = $this->id;
+                    $modelCompanyTime->day = $day;
+                    if ($data['start_time']) {
+                        list($hrs, $mnts) = explode(':', trim($data['start_time']));
+                        $modelCompanyTime->start_at = $hrs * 3600 + $mnts * 60;
+                    }
+                    if ($data['end_time']) {
+                        list($hrs, $mnts) = explode(':', trim($data['end_time']));
+                        $modelCompanyTime->end_at = $hrs * 3600 + $mnts * 60;
+                    }
+                    $modelCompanyTime->save();
                 }
-                $modelCompanyTime->save();
-                $day++;
+            } else {
+                $day = 1;
+
+                foreach (explode("\n", $this->workTime) as $row) {
+                    list($start, $end) = explode('-', $row);
+                    $modelCompanyTime = new CompanyTime();
+                    $modelCompanyTime->company_id = $this->id;
+                    $modelCompanyTime->day = $day;
+                    if ($start) {
+                        list($hrs, $mnts) = explode(':', trim($start));
+                        $modelCompanyTime->start_at = $hrs * 3600 + $mnts * 60;
+                    }
+                    if ($end) {
+                        list($hrs, $mnts) = explode(':', trim($end));
+                        $modelCompanyTime->end_at = $hrs * 3600 + $mnts * 60;
+                    }
+                    $modelCompanyTime->save();
+                    $day++;
+                }
             }
         }
 
