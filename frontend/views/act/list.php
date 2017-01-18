@@ -20,6 +20,7 @@ echo $this->render('_list', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'role' => $role,
+    'hideFilter' => false,
     'columns' => $columns,
     'is_locked' => $is_locked,
 ]);

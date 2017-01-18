@@ -13,7 +13,6 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
-use yii\widgets\Pjax;
 
 //Скрытие фильтров
 $script = <<< JS

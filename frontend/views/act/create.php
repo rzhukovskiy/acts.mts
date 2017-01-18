@@ -31,5 +31,6 @@ echo $this->render('_list', [
     'role' => $role,
     'hideFilter' => true,
     'columns' => $columns,
+    'is_locked' => false,
 ]);
 
