@@ -109,7 +109,6 @@ class ActSearch extends Act
                     'car',
                     'partner partner',
                     'client client',
-                    'clientScopes',
                 ]);
                 if (!empty($this->client->children)) {
                     $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
@@ -127,7 +126,6 @@ class ActSearch extends Act
                     'car',
                     'partner partner',
                     'client client',
-                    'partnerScopes',
                 ]);
                 $query->andFilterWhere(['partner_id' => $this->partner_id]);
                 $query->orderBy('partner.parent_id, act.partner_id, served_at');
