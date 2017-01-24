@@ -62,6 +62,7 @@ class EntrySearch extends Entry
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);

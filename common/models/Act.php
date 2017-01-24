@@ -346,7 +346,7 @@ class Act extends ActiveRecord
                 }
                 break;
             case self::ERROR_CHECK:
-                $hasError = $this->service_type == Service::TYPE_WASH && !$this->getImageLink();
+                $hasError = $this->service_type == Service::TYPE_WASH && (!$this->check || !$this->getImageLink());
                 break;
             case self::ERROR_CARD:
                 $hasError =

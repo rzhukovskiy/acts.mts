@@ -199,7 +199,7 @@ class ActHelper
                 'attribute' => 'check',
                 'value' => function ($data) {
                     $imageLink = $data->getImageLink();
-                    if ($imageLink) {
+                    if ($data->check && $imageLink) {
                         return Html::a($data->check, $imageLink, ['class' => 'preview']);
                     }
                     return 'error';
