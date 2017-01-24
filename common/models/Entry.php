@@ -209,13 +209,13 @@ class Entry extends ActiveRecord
 
         //проверяем чтобы не пересеклось с существующими записями (только когда создаем просто запись без акта)
         if ($this->isNewRecord && !$this->act_id) {
-            $existed = self::find()->andWhere(['!=', 'id', $this->id])->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->start_at + 600])->andWhere(['>', 'end_at', $this->start_at + 600])->all();
-            if (!empty($existed) && $existed->id != $this->id) {
+            $existed = self::find()->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->start_at + 600])->andWhere(['>', 'end_at', $this->start_at + 600])->all();
+            if (!empty($existed)) {
                 $this->addError('start_at', ['Время начала совпадает с существующей записью']);
                 return false;
             }
-            $existed = self::find()->andWhere(['!=', 'id', $this->id])->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->end_at - 600])->andWhere(['>', 'end_at', $this->end_at - 600])->all();
-            if (!empty($existed) && $existed->id != $this->id) {
+            $existed = self::find()->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->end_at - 600])->andWhere(['>', 'end_at', $this->end_at - 600])->all();
+            if (!empty($existed)) {
                 $this->addError('end_at', ['Время окончания совпадает с существующей записью']);
                 return false;
             }

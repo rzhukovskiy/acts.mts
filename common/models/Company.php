@@ -503,11 +503,23 @@ class Company extends ActiveRecord
     public function getWorkTimeHtml()
     {
         $res = [];
+
         foreach ($this->companyTime as $workDay) {
-            $res[] = DateHelper::getWeekDayName($workDay->day) . ': ' .
-                gmdate('H:i', $workDay->start_at) . ' - ' . gmdate('H:i', $workDay->end_at);
+            $res[$workDay->day] = DateHelper::getWeekDayName($workDay->day) . ': ';
+            if (($workDay->end_at - $workDay->start_at) / 3600 == 24) {
+                $res[$workDay->day] .= 'круглосуточно';
+            } else {
+                $res[$workDay->day] .= gmdate('H:i', $workDay->start_at) . ' - ' . gmdate('H:i', $workDay->end_at);
+            }
         }
 
+        for ($day = 1; $day < 8; $day++) {
+            if (empty($res[$day])) {
+                $res[$day] = DateHelper::getWeekDayName($day) . ': <span class="text-danger">выходной</span>';
+            }
+        }
+
+        ksort($res);
         return implode("<br />", $res);
     }
 
@@ -668,6 +680,14 @@ class Company extends ActiveRecord
                     }
 
                     $this->workTime = $arrayWorkTime;
+                } elseif ($this->workTime['type'] == CompanyTime::TYPE_WHOLEDAY) {
+                    $arrayWorkTime = [];
+                    for ($day = 1; $day < 8; $day++) {
+                        $arrayWorkTime[$day]['start_time'] = '00:00';
+                        $arrayWorkTime[$day]['end_time'] = '24:00';
+                    }
+
+                    $this->workTime = $arrayWorkTime;
                 }
 
                 unset($this->workTime['type']);
@@ -684,8 +704,13 @@ class Company extends ActiveRecord
                     if ($data['end_time']) {
                         list($hrs, $mnts) = explode(':', trim($data['end_time']));
                         $modelCompanyTime->end_at = $hrs * 3600 + $mnts * 60;
+                        if (86400 - $modelCompanyTime->end_at <= 600) {
+                            $modelCompanyTime->end_at = 86400;
+                        }
                     }
-                    $modelCompanyTime->save();
+                    if ($modelCompanyTime->start_at != $modelCompanyTime->end_at) {
+                        $modelCompanyTime->save();
+                    }
                 }
             } else {
                 $day = 1;
