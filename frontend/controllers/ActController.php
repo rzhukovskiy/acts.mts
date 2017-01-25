@@ -82,7 +82,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
         $searchModel->service_type = $type;
-        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -102,7 +102,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
         $searchModel->service_type = $type;
-        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
         $searchModel->search(Yii::$app->request->queryParams);
 
         $lock = new Lock();
@@ -118,7 +118,7 @@ class ActController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
         $searchModel->service_type = $type;
-        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
         $searchModel->search(Yii::$app->request->queryParams);
 
         Lock::deleteAll(['period' => $searchModel->period, 'type' => $searchModel->service_type]);
@@ -130,7 +130,7 @@ class ActController extends Controller
     {
         $dataProvider = null;
         $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
-        $searchModel->period = date('m-Y', time() - 10 * 24 * 3600);
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
         
         if ($serviceId) {
             $searchModel->is_infected = 1;
