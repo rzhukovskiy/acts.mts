@@ -86,7 +86,7 @@ class UtilsController extends Controller
                     $modelCompanyTime->company_id = $company->id;
                     $modelCompanyTime->start_at = $start_at;
                     $modelCompanyTime->end_at = $end_at;
-                    $modelCompanyTime->$day = $i;
+                    $modelCompanyTime->day = $i;
                     $modelCompanyTime->save();
                 }
             } else {
