@@ -36,4 +36,5 @@ echo $this->render($admin ? '_form' : Service::$listType[$model->service_type]['
     'serviceList' => $serviceList,
     'clientScopes' => $clientScopes,
     'partnerScopes' => $partnerScopes,
+    'admin' => $admin,
 ]);

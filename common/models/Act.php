@@ -9,6 +9,7 @@
 namespace common\models;
 
 use common\models\query\ActQuery;
+use yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -449,7 +450,9 @@ class Act extends ActiveRecord
         $car = Car::findOne(['number' => $this->number]);
         if ($car) {
             $this->mark_id = $car->mark_id;
-            $this->type_id = $car->type_id;
+            if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
+                $this->type_id = $car->type_id;
+            }
 
             if (empty($this->client_id)) {
                 $this->client_id = $car->company_id;

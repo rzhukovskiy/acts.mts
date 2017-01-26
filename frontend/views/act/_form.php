@@ -5,6 +5,7 @@
  * @var $serviceList array
  * @var $clientScopes \common\models\ActScope[]
  * @var $partnerScopes \common\models\ActScope[]
+ * @var $admin bool
  */
 
 use common\models\Car;
@@ -86,10 +87,18 @@ use yii\jui\AutoComplete;
                     </div>
                 </td>
                 <td>
-                    <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'mark_id')->dropDownList(Mark::find()
+                        ->select(['name', 'id'])
+                        ->orderBy('id ASC')
+                        ->indexBy('id')
+                        ->column())->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
+                    <?= $form->field($model, 'type_id')->dropDownList(Type::find()
+                        ->select(['name', 'id'])
+                        ->orderBy('id ASC')
+                        ->indexBy('id')
+                        ->column(), ['readonly' => !$admin, 'class' => 'form-control reset'])->error(false) ?>
                 </td>
             </tr>
             <tr>
@@ -114,7 +123,7 @@ use yii\jui\AutoComplete;
                                     <?= Html::input('number', "Act[partnerServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <?= Html::textInput("Act[partnerServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
+                                    <?= Html::textInput("Act[partnerServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm resetable', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
                                     <button type="button" class="btn btn-primary input-sm removeButton">
@@ -137,7 +146,7 @@ use yii\jui\AutoComplete;
                                 <?= Html::input('number', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                             </div>
                             <div class="col-xs-1">
-                                <?= Html::textInput("Act[partnerServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
+                                <?= Html::textInput("Act[partnerServiceList][0][price]", '', ['class' => 'form-control input-sm resetable', 'placeholder' => 'цена']) ?>
                             </div>
                             <div class="col-xs-1">
                                 <button type="button" class="btn btn-primary input-sm addButton">
@@ -175,7 +184,7 @@ use yii\jui\AutoComplete;
                                     <?= Html::input('number', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <?= Html::textInput("Act[clientServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
+                                    <?= Html::textInput("Act[clientServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm resetable', 'placeholder' => 'цена']) ?>
                                 </div>
                                 <div class="col-xs-1">
                                     <button type="button" class="btn btn-primary input-sm removeButton">

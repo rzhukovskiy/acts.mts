@@ -130,6 +130,10 @@ $(document).ready(function() {
             $('.extra-number').hide();
         }
     });
+
+    $(".reset").change(function() {
+        $("input.resetable").val('');
+    });
 });
 
 this.imagePreview = function() {
