@@ -54,7 +54,8 @@ class CompanyOffer extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'communication_at', 'created_at', 'updated_at'], 'integer'],
-            [['process', 'communication_str'], 'string', 'max' => 1000],
+            [['process'], 'string', 'max' => 5000],
+            [['communication_str'], 'string', 'max' => 1000],
             [['mail_number'], 'string', 'max' => 255],
         ];
     }
