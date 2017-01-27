@@ -51,7 +51,7 @@ class OrderController extends Controller
     {
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
-        $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
+        $searchModel->status = [Company::STATUS_ACTIVE];
         $dataProvider = $searchModel->searchWithCard(Yii::$app->request->queryParams);
 
         $entrySearchModel = new EntrySearch();

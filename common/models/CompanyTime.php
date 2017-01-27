@@ -70,4 +70,11 @@ class CompanyTime extends ActiveRecord
     {
         return new CompanyTimeQuery(get_called_class());
     }
+    
+    public function __toString()
+    {
+        return $this->end_at - $this->start_at == 86400
+            ? 'круглосуточно'
+            : gmdate('H:i', $this->start_at) . ' - ' . gmdate('H:i', $this->end_at);
+    }
 }

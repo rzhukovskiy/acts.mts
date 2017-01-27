@@ -19,12 +19,12 @@ use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
 use common\models\search\UserSearch;
-use common\models\Service;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class CompanyController extends Controller
 {
@@ -340,9 +340,10 @@ class CompanyController extends Controller
 
         $hasEditable = Yii::$app->request->post('hasEditable', false);
         if ($hasEditable) {
-            Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+            Yii::$app->response->format = Response::FORMAT_JSON;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $output = [];
                 foreach (Yii::$app->request->post('Company') as $name => $value) {
                     if ($name == 'workTime') {
                         $output[] = $model->getWorkTimeHtml();

@@ -6,7 +6,7 @@ use common\models\Company;
 use common\models\CompanyOffer;
 use common\models\search\CompanyOfferSearch;
 use common\models\User;
-use Yii;
+use yii;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -89,7 +89,15 @@ class CompanyOfferController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return ['message' => ''];
+                $output = [];
+                foreach (Yii::$app->request->post('CompanyOffer') as $name => $value) {
+                    if ($name == 'process') {
+                        $output[] = $model->getProcessHtml();
+                    } else {
+                        $output[] = $value;
+                    }
+                }
+                return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];
             }
