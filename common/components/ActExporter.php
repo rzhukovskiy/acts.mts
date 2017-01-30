@@ -294,7 +294,7 @@ class ActExporter
             $worksheet->getStyle($range)->getAlignment()->setWrapText(true);
             $text = "ИНН 3665100480 КПП 366501001 ОГРН 1143668022266 394065, Россия, Воронежская область," .
                 "г. Воронеж, ул. Героев Сибиряков, д. 24, кв. 116 \n Тел.: 8 800 55 008 55 \n " .
-                "E-Mail: mtransservice@mail.ru \n Web.: mtransservice.ru";
+                "E-Mail: mtransservice@mail.ru, Web.: mtransservice.ru";
             $worksheet->setCellValueByColumnAndRow($startCol, $row, $text);
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
                     'font' => [
@@ -302,7 +302,7 @@ class ActExporter
                     ],
                 ]
             );
-            $worksheet->getRowDimension($row)->setRowHeight(40);
+            $worksheet->getRowDimension($row)->setRowHeight(38);
 
             if ($cnt == 2) {
                 $row += 3;
