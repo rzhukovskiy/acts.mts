@@ -471,7 +471,7 @@ class Company extends ActiveRecord
     public function getCompanyTimeByDay($day)
     {
         $dayOfWeek = date('w',strtotime($day));
-        $dayOfWeek = $dayOfWeek === 0 ? 7 : $dayOfWeek;
+        $dayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
         return CompanyTime::findOne(['company_id' => $this->id, 'day' => $dayOfWeek]);
     }
 
