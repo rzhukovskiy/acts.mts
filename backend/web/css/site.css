@@ -330,6 +330,11 @@ table.sign {
     color: #ffffff;
 }
 
+.monthly-act-info {
+    background-color: #9600ad;
+    color: #ffffff;
+}
+
 .field-disabled div{
     font-size: 2em;
 }

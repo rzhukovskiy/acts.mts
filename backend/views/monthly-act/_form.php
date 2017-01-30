@@ -21,11 +21,11 @@ $actStatus = MonthlyAct::actDis($model->act_status);
         <?= \common\widgets\Alert::widget() ?>
         <?php
         $form = ActiveForm::begin([
-            'action'      => ['monthly-act/update', 'id' => $model->id],
-            'id'          => 'monthly-act-form',
-            'options'     => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+            'action' => ['monthly-act/update', 'id' => $model->id],
+            'id' => 'monthly-act-form',
+            'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
-                'template'     => '{label}<div class="col-sm-6">{input}{error}</div>',
+                'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
                 'labelOptions' => ['class' => 'col-sm-3 control-label'],
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
@@ -48,8 +48,8 @@ $actStatus = MonthlyAct::actDis($model->act_status);
         <!--
         <?= $form->field($model, 'image[]')->fileInput([
             'multiple' => true,
-            'accept'   => 'image/*',
-            'class'    => 'form-control'
+            'accept' => 'image/*',
+            'class' => 'form-control'
         ])->error(false) ?>
         -->
         <div class="form-group field-monthlyact-profit required field-disabled">
@@ -60,32 +60,33 @@ $actStatus = MonthlyAct::actDis($model->act_status);
             </div>
         </div>
 
-        <? if($actStatus=='false'){?>
-        <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::passActStatus($model->act_status), ['class' => 'form-control']) ?>
-        <?}else{?>
-        <?= $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']) ?>
-        <?}?>
-        <? if($payStatus=='disabled'){ ?>
-            <?= $form->field($model, 'payment_status')
-            ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control','disabled'=>'disabled']) ?>
-        <? }else{ ?>
-            <?= $form->field($model, 'payment_status')
-            ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control']) ?>
-        <? } ?>
-        
-        <?= $form->field($model, 'payment_date')->widget(DatePicker::classname(),
+        <?php
+        if ($actStatus == 'false') {
+            $form->field($model, 'act_status')->dropDownList(MonthlyAct::passActStatus($model->act_status), ['class' => 'form-control']);
+        } else {
+            $form->field($model, 'act_status')->dropDownList(MonthlyAct::$actStatus, ['class' => 'form-control']);
+        }
+        if ($payStatus == 'disabled') {
+            $form->field($model, 'payment_status')
+                ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control', 'disabled' => 'disabled']);
+        } else {
+            $form->field($model, 'payment_status')
+                ->dropDownList(MonthlyAct::$paymentStatus, ['class' => 'form-control']);
+        }
+        $form->field($model, 'payment_date')->widget(DatePicker::classname(),
             [
-                'type'          => DatePicker::TYPE_INPUT,
-                'language'      => 'ru',
+                'type' => DatePicker::TYPE_INPUT,
+                'language' => 'ru',
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format'    => 'dd-mm-yyyy'
+                    'format' => 'dd-mm-yyyy'
                 ],
-                'options'       => [
+                'options' => [
                     'class' => 'form-control',
                     'value' => date('d-m-Y'),
                 ]
-            ])->error(false) ?>
+            ])->error(false);
+        ?>
 
 
         <div class="form-group">

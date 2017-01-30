@@ -6,10 +6,11 @@ use common\models\monthlyAct\DisinfectMonthlyAct;
 use common\models\monthlyAct\ServiceMonthlyAct;
 use common\models\monthlyAct\TiresMonthlyAct;
 use common\models\monthlyAct\WashMonthlyAct;
-use common\models\User;
+use common\models\query\MonthlyActQuery;
 use common\traits\JsonTrait;
-use Yii;
+use yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\web\UploadedFile;
 
@@ -42,18 +43,20 @@ use yii\web\UploadedFile;
  *
  * @property Company $client
  */
-class MonthlyAct extends \yii\db\ActiveRecord
+class MonthlyAct extends ActiveRecord
 {
     use JsonTrait;
 
     const PAYMENT_STATUS_NOT_DONE = 0;
     const PAYMENT_STATUS_DONE = 1;
+    const PAYMENT_STATUS_CASH = 2;
 
     const ACT_STATUS_NOT_SIGNED = 0;
     const ACT_STATUS_SEND_SCAN = 1;
     const ACT_STATUS_SEND_ORIGIN = 2;
     const ACT_STATUS_SIGNED_SCAN = 3;
     const ACT_STATUS_DONE = 4;
+    const ACT_STATUS_EMPTY = 5;
 
     const NOT_PARTNER = 0;
     const PARTNER = 1;
@@ -64,7 +67,8 @@ class MonthlyAct extends \yii\db\ActiveRecord
 
     public static $paymentStatus = [
         self::PAYMENT_STATUS_NOT_DONE => 'Не оплачен',
-        self::PAYMENT_STATUS_DONE     => 'Оплачен'
+        self::PAYMENT_STATUS_DONE     => 'Оплачен',
+        self::PAYMENT_STATUS_CASH     => 'Наличка',
     ];
 
     public static $actStatus = [
@@ -72,52 +76,26 @@ class MonthlyAct extends \yii\db\ActiveRecord
         self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
         self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-        self::ACT_STATUS_DONE        => 'Подписан'
+        self::ACT_STATUS_DONE        => 'Подписан',
+        self::ACT_STATUS_EMPTY       => 'Без акта',
     ];
-    static function passActStatus($val)
+
+    public static function passActStatus($currentStatus)
     {
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $actStatus = [
-                self::ACT_STATUS_NOT_SIGNED  => 'Не подписан',
-                self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
-                self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
-                self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-                self::ACT_STATUS_DONE        => 'Подписан'];
-        }else {
-            switch ($val) {
-                case 0:
-                    $actStatus = [
-                        self::ACT_STATUS_NOT_SIGNED => 'Не подписан',
-                        self::ACT_STATUS_SEND_SCAN => 'Отправлен скан',
-                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
-                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-                        self::ACT_STATUS_DONE => 'Подписан'];
-                    break;
-                case 1:
-                    $actStatus = [
-                        self::ACT_STATUS_SEND_SCAN => 'Отправлен скан',
-                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
-                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-                        self::ACT_STATUS_DONE => 'Подписан'];
-                    break;
-                case 2:
-                    $actStatus = [
-                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-                        self::ACT_STATUS_DONE => 'Подписан'];
-                    break;
-                case 3:
-                    $actStatus = [
-                        self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
-                        self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-                        self::ACT_STATUS_DONE => 'Подписан'];
-                    break;
-                case 4:
-                    $actStatus = [
-                        self::ACT_STATUS_DONE => 'Подписан'];
-                    break;
-            }
+            return self::$actStatus;
+        } else {
+            return array_slice(self::$actStatus, $currentStatus);
         }
-        return $actStatus;
+    }
+
+    public static function passPaymentStatus($currentStatus)
+    {
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            return self::$paymentStatus;
+        } else {
+            return [$currentStatus => self::$paymentStatus[$currentStatus]];
+        }
     }
 
     /**
@@ -269,7 +247,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new \common\models\query\MonthlyActQuery(get_called_class());
+        return new MonthlyActQuery(get_called_class());
     }
 
     /**
@@ -448,7 +426,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
                     '',
                     [
                         'class' => 'glyphicon glyphicon-remove',
-                        'href'  => \yii\helpers\Url::to([
+                        'href'  => yii\helpers\Url::to([
                             'monthly-act/delete-image',
                             'id'  => $this->id,
                             'url' => $img
@@ -474,11 +452,13 @@ class MonthlyAct extends \yii\db\ActiveRecord
             self::ACT_STATUS_SEND_SCAN   => 'monthly-act-warning',
             self::ACT_STATUS_SEND_ORIGIN => 'monthly-act-warning',
             self::ACT_STATUS_SIGNED_SCAN => 'monthly-act-warning',
-            self::ACT_STATUS_DONE        => 'monthly-act-success'
+            self::ACT_STATUS_DONE        => 'monthly-act-success',
+            self::ACT_STATUS_EMPTY       => 'monthly-act-info',
         ];
 
         return $actStatus[$status];
     }
+    
     static function payDis($val)
     {
         
@@ -486,18 +466,18 @@ class MonthlyAct extends \yii\db\ActiveRecord
         if (($val==1) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
             $disabled = 'disabled';
         }else{
-            $disabled='false';
+            $disabled = 'false';
         }
         return $disabled;
     }
+    
     static function actDis($val)
-    {
-        
+    {        
         $currentUser = Yii::$app->user->identity;
-        if (($val==4) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
+        if ($val == 4 && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
             $disabled = 'disabled';
         }else{
-            $disabled='false';
+            $disabled = 'false';
         }
         return $disabled;
     }
@@ -511,6 +491,7 @@ class MonthlyAct extends \yii\db\ActiveRecord
         $paymentStatus = [
             self::PAYMENT_STATUS_DONE     => 'monthly-act-success',
             self::PAYMENT_STATUS_NOT_DONE => 'monthly-act-danger',
+            self::PAYMENT_STATUS_CASH     => 'monthly-act-info',
         ];
 
         return $paymentStatus[$status];
