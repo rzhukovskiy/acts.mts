@@ -464,7 +464,7 @@ class MonthlyAct extends ActiveRecord
     static function actDis($val)
     {        
         $currentUser = Yii::$app->user->identity;
-        if ($val == 4 && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
+        if (($val == self::ACT_STATUS_DONE || $val == self::ACT_STATUS_EMPTY) && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
             $disabled = 'disabled';
         }else{
             $disabled = 'false';
