@@ -94,7 +94,7 @@ class MonthlyAct extends ActiveRecord
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             return self::$paymentStatus;
         } else {
-            return [$currentStatus => self::$paymentStatus[$currentStatus]];
+            return array_slice(self::$paymentStatus, $currentStatus);
         }
     }
 
