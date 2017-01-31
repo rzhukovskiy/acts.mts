@@ -163,10 +163,16 @@ class CarController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if (!Yii::$app->request->isAjax) {
-                return $this->redirect(['company/update', 'id' => $model->company_id, 'expanded' => 1]);
+                if ($returnUrl = Yii::$app->request->post('_returnUrl', false)) {
+                    return $this->redirect([$returnUrl]);
+                } else {
+                    return $this->redirect(['company/update', 'id' => $model->company_id, 'expanded' => 1]);
+                }
             }
         } else {
-            if (!Yii::$app->request->isAjax) {
+            if ($returnUrl = Yii::$app->request->post('_returnUrl', false)) {
+                return $this->redirect([$returnUrl]);
+            } else {
                 return $this->redirect(['company/update', 'id' => $model->company_id, 'expanded' => 1]);
             }
         }

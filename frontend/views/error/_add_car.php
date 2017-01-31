@@ -2,6 +2,7 @@
 
 use common\models\Company;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -24,10 +25,13 @@ use yii\widgets\ActiveForm;
         <?= Html::activeHiddenInput($model, 'number'); ?>
         <?= Html::activeHiddenInput($model, 'mark_id'); ?>
         <?= Html::activeHiddenInput($model, 'type_id'); ?>
+        <?= Html::hiddenInput('_returnUrl', Url::current()); ?>
     </div>
     <div class="form-group">
         <?= Html::submitButton('Добавить ТС',
             ['class' => 'btn btn-success col-xs-2']) ?>
+        <?= $form->field($model, 'is_infected')
+            ->checkbox(['label' => '', 'style' => 'height: 32px; float: left; margin-left: 10px']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
