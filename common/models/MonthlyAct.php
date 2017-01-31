@@ -89,15 +89,6 @@ class MonthlyAct extends ActiveRecord
         }
     }
 
-    public static function passPaymentStatus($currentStatus)
-    {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            return self::$paymentStatus;
-        } else {
-            return array_slice(self::$paymentStatus, $currentStatus);
-        }
-    }
-
     /**
      * @var UploadedFile
      */
@@ -460,12 +451,11 @@ class MonthlyAct extends ActiveRecord
     }
     
     static function payDis($val)
-    {
-        
+    {        
         $currentUser = Yii::$app->user->identity;
-        if (($val==1) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
+        if (($val == self::PAYMENT_STATUS_DONE || $val == self::PAYMENT_STATUS_CASH) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
             $disabled = 'disabled';
-        }else{
+        } else {
             $disabled = 'false';
         }
         return $disabled;

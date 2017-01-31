@@ -76,12 +76,12 @@ echo GridView::widget([
             'value'          => function ($model, $key, $index, $column) {
                 return Html::activeDropDownList($model,
                     'payment_status',
-                    MonthlyAct::passPaymentStatus($model->payment_status),
+                    MonthlyAct::$paymentStatus,
                     [
                         'class'   => 'form-control change-payment_status',
                         'data-id' => $model->id,
 						'data-paymentStatus' => $model->payment_status,
-						MonthlyAct::payDis($model->payment_status)=>'disabled',
+						MonthlyAct::payDis($model->payment_status) => 'disabled',
                     ]
 
                 );
