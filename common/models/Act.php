@@ -66,12 +66,13 @@ class Act extends ActiveRecord
     const SCENARIO_CAR = 'car';
     const SCENARIO_CREATE = 'create';
 
-    const ERROR_EXPENSE='expense';
-    const ERROR_INCOME='income';
-    const ERROR_CHECK='check';
-    const ERROR_CARD='card';
-    const ERROR_CAR='car';
-    const ERROR_TRUCK='track';
+    const ERROR_EXPENSE = 'expense';
+    const ERROR_INCOME = 'income';
+    const ERROR_CHECK = 'check';
+    const ERROR_CARD = 'card';
+    const ERROR_CAR = 'car';
+    const ERROR_TRUCK = 'track';
+    const ERROR_LOST = 'lost';
 
     const ACT_WIDTH = 1024;
     const ACT_HEIGHT = 768;
@@ -115,6 +116,7 @@ class Act extends ActiveRecord
         self::ERROR_CARD,
         self::ERROR_CAR,
         self::ERROR_TRUCK,
+        self::ERROR_LOST,
     ];
 
     /**
@@ -368,6 +370,9 @@ class Act extends ActiveRecord
                         $this->extra_number &&
                         !Car::find()->byNumber($this->extra_number)->exists());
                 break;
+            case self::ERROR_LOST:
+                $hasError = $this->card->is_lost;
+                break;
         }
 
         return $this->status != self::STATUS_FIXED && $hasError;
@@ -393,6 +398,7 @@ class Act extends ActiveRecord
             ),
             self::ERROR_CAR     => (!$this->car->company_id) ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
+            self::ERROR_LOST   => 'Потеряшечка',
         ];
         foreach ($errorArr as $key => $err) {
             if ($this->hasError($key)) {
@@ -675,6 +681,7 @@ class Act extends ActiveRecord
         //Проверяем на ошибки
         $listErrors = $this->getListError();
         ActError::deleteAll(['act_id' => $this->id]);
+        Card::markFounded($this->card_number);
         foreach ($listErrors as $errorType) {
             $modelActError = new ActError();
             $modelActError->act_id = $this->id;

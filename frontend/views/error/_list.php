@@ -27,6 +27,9 @@ $columns = [
         'value' => function ($data) {
             return date('d-m-Y', $data->served_at);
         },
+        'contentOptions' => function ($data) {
+            if ($data->hasError(Act::ERROR_LOST)) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'partner_id',

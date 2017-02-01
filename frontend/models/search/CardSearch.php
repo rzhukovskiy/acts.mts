@@ -68,6 +68,7 @@ class CardSearch extends CommonCardSearch
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'is_lost' => $this->is_lost,
             'number' => $this->number,
             'status' => $this->status,
             'created_at' => $this->created_at,

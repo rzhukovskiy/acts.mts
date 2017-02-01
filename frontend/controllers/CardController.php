@@ -32,12 +32,12 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'diapason'],
+                        'actions' => ['list', 'find', 'lost', 'create', 'update', 'delete', 'diapason'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list'],
+                        'actions' => ['list', 'lost', 'find'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -86,7 +86,7 @@ class CardController extends Controller
     public function actionDiapason()
     {
         $dataProvider = new ArrayDataProvider([
-            'allModels'  => Card::getDiapason(),
+            'allModels'  => Card::getRange(),
             'sort'       => [
                 'attributes' => ['type', 'val', 'count', 'company_name'],
             ],
@@ -135,6 +135,40 @@ class CardController extends Controller
                 'companyDropDownData' => $companyDropDownData,
             ]);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionLost()
+    {
+        if ($number = Yii::$app->request->post('number', false)) {
+            Card::markLost($number);
+        }
+
+        $searchModel = new CardSearch();
+        $searchModel->is_lost = 1;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = CardSearch::addCarToSearch($dataProvider);
+
+        return $this->render('lost',
+            [
+                'model'               => new Card(),
+                'searchModel'         => $searchModel,
+                'dataProvider'        => $dataProvider,
+            ]);
+    }
+
+    /**
+     * @param $number int
+     * @return mixed
+     */
+    public function actionFind($number)
+    {
+        Card::markFounded($number);
+
+        return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
     /**

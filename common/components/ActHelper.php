@@ -115,6 +115,9 @@ class ActHelper
                     return $role == User::ROLE_ADMIN ? date('j', $data->served_at) : date('d-m-Y', $data->served_at);
                 },
                 'width' => $role == User::ROLE_ADMIN ? '20px' : '100px',
+                'contentOptions' => function ($data) {
+                    if ($data->hasError(Act::ERROR_LOST)) return ['class' => 'text-danger'];
+                },
             ],
             'mark' => [
                 'attribute' => 'mark_id',

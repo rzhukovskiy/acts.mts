@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  * @property int $company_id
  * @property int $number
  * @property int $status
+ * @property int $is_lost
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -45,6 +46,26 @@ class Card extends ActiveRecord
         self::TYPE_NON_FREE => 'Заняты',
     ];
 
+    public static function markLost($number)
+    {
+        $model = self::findOne(['number' => $number]);
+
+        if ($model) {
+            $model->is_lost = 1;
+            $model->save();
+        }
+    }
+
+    public static function markFounded($number)
+    {
+        $model = self::findOne(['number' => $number]);
+
+        if ($model) {
+            $model->is_lost = 0;
+            $model->save();
+        }
+    }
+
     /**
      * @inheritdoc
      */
@@ -70,6 +91,7 @@ class Card extends ActiveRecord
     {
         return [
             [['number', 'company_id'], 'required'],
+            [['is_lost'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
@@ -131,7 +153,7 @@ class Card extends ActiveRecord
     /**
      * @return array
      */
-    static public function getDiapason()
+    static public function getRange()
     {
         $cards =
             Card::find()

@@ -18,7 +18,7 @@ class CardSearch extends Card
     public function rules()
     {
         return [
-            [['id', 'company_id', 'number', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'company_id', 'number', 'status', 'created_at', 'updated_at', 'is_lost'], 'integer'],
         ];
     }
 
@@ -60,6 +60,7 @@ class CardSearch extends Card
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'is_lost' => $this->is_lost,
             'company_id' => $this->company_id,
             'number' => $this->number,
             'status' => $this->status,
