@@ -271,7 +271,6 @@ class ActSearch extends Act
             'updated_at' => $this->updated_at,
             'service_type' => $this->service_type,
             'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period,
-            'DAY(FROM_UNIXTIME(`served_at`))' => $this->day,
             'DATE_FORMAT(FROM_UNIXTIME(`act`.`created_at`), "%Y-%m-%d")' => $this->createDay,
         ]);
         $query->joinWith('partner');
