@@ -303,7 +303,7 @@ class Company extends ActiveRecord
     public function getEntries($day)
     {
         return $this->hasMany(Entry::className(), ['company_id' => 'id'])
-            ->where(['DAY(FROM_UNIXTIME(`start_at`))' => $day])
+            ->where(['DATE_FORMAT(FROM_UNIXTIME(start_at), "%d-%m-%Y")' => $day])
             ->orderBy('start_at');
     }
 

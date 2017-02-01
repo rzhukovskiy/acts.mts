@@ -88,7 +88,7 @@ class EntrySearch extends Entry
             'updated_at' => $this->updated_at,
             'start_at' => $this->start_at,
             'end_at' => $this->end_at,
-            'DATE_FORMAT(FROM_UNIXTIME(start_at), "%Y-%m-%d")' => $this->day,
+            'DATE_FORMAT(FROM_UNIXTIME(start_at), "%d-%m-%Y")' => $this->day,
         ]);
 
         $query->andFilterWhere(['like', 'number', $this->number])
