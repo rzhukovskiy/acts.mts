@@ -155,6 +155,7 @@ class CompanySearch extends Company
         $query->joinWith('acts act');
         /** @var User $currentUser */
         $query->joinWith(['info info', 'offer offer']);
+        $query->groupBy('company.id');
         if ($this->user_id) {
             $currentUser = User::findOne($this->user_id);
             if ($currentUser) {
