@@ -132,10 +132,17 @@ class Card extends ActiveRecord
                 }
                 $this->number = intval($numPointList[1]);
             }
+
             $existed = Card::findOne(['number' => $this->number]);
             if ($existed) {
-                $existed->company_id = $this->company_id;
-                $existed->save();
+                if ($existed->company_id != $this->company_id) {
+                    //делаем актам с этой картой статус починенных,
+                    //чтобы не вызвало ошибку не совпадения владельца карты и машины
+                    Act::updateAll(['status' => Act::STATUS_FIXED], ['card_id' => $existed->id]);
+
+                    $existed->company_id = $this->company_id;
+                    $existed->save();
+                }
 
                 return false;
             }
