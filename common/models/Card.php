@@ -1,8 +1,8 @@
 <?php
 namespace common\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
@@ -97,7 +97,7 @@ class Card extends ActiveRecord
     }
 
     /**
-     * @return Company
+     * @return ActiveQuery
      */
     public function getCompany()
     {
@@ -134,7 +134,6 @@ class Card extends ActiveRecord
             }
             $existed = Card::findOne(['number' => $this->number]);
             if ($existed) {
-                Act::updateAll(['is_fixed' => 1], ['card_id' => $existed->id]);
                 $existed->company_id = $this->company_id;
                 $existed->save();
 
