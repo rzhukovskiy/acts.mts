@@ -123,6 +123,15 @@ class Card extends ActiveRecord
             $salt = self::randomSalt();
             $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
         } elseif ($insert) {
+            $numPointList = explode(',', $this->number);
+            if (count($numPointList) > 1) {
+                foreach ($numPointList as $range) {
+                    $card = clone $this;
+                    $card->number = $range;
+                    $card->save();
+                }
+            }
+
             $numPointList = explode('-', $this->number);
             if (count($numPointList) > 1) {
                 for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
