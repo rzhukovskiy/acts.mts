@@ -1,8 +1,8 @@
 <?php
 namespace common\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
@@ -97,7 +97,7 @@ class Card extends ActiveRecord
     }
 
     /**
-     * @return Company
+     * @return ActiveQuery
      */
     public function getCompany()
     {
@@ -123,6 +123,15 @@ class Card extends ActiveRecord
             $salt = self::randomSalt();
             $this->number = $salt . str_pad($this->company_id, 4, "0", STR_PAD_LEFT);
         } elseif ($insert) {
+            $numPointList = explode(',', $this->number);
+            if (count($numPointList) > 1) {
+                foreach ($numPointList as $range) {
+                    $card = clone $this;
+                    $card->number = $range;
+                    $card->save();
+                }
+            }
+
             $numPointList = explode('-', $this->number);
             if (count($numPointList) > 1) {
                 for ($num = intval($numPointList[0]); $num < intval($numPointList[1]); $num++) {
@@ -132,11 +141,17 @@ class Card extends ActiveRecord
                 }
                 $this->number = intval($numPointList[1]);
             }
+
             $existed = Card::findOne(['number' => $this->number]);
             if ($existed) {
-                Act::updateAll(['is_fixed' => 1], ['card_id' => $existed->id]);
-                $existed->company_id = $this->company_id;
-                $existed->save();
+                if ($existed->company_id != $this->company_id) {
+                    //делаем актам с этой картой статус починенных,
+                    //чтобы не вызвало ошибку не совпадения владельца карты и машины
+                    Act::updateAll(['status' => Act::STATUS_FIXED], ['card_id' => $existed->id]);
+
+                    $existed->company_id = $this->company_id;
+                    $existed->save();
+                }
 
                 return false;
             }
