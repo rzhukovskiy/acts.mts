@@ -24,6 +24,7 @@ use yii\db\ActiveRecord;
 class Car extends ActiveRecord
 {
     const SCENARIO_INFECTED = 'infected';
+    const SCENARIO_OWNER = 'owner';
     
     public $carsCountByType;
     public $listService;

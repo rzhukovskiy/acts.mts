@@ -34,6 +34,7 @@ class CarSearch extends Car
         return [
             self::SCENARIO_DEFAULT => ['company_id', 'number','mark_id', 'type_id'],
             self::SCENARIO_INFECTED => ['company_id', 'period'],
+            self::SCENARIO_OWNER => ['company_id', 'number','mark_id', 'type_id'],
         ];
     }
 
@@ -80,7 +81,9 @@ class CarSearch extends Car
             'car.is_infected' => $this->is_infected,
         ]);
 
-        $query->andFilterWhere(['or',['company_id'=>$this->company_id],['company.parent_id' => $this->company_id]]);
+        if ($this->scenario != self::SCENARIO_OWNER) {
+            $query->andFilterWhere(['or',['company_id'=>$this->company_id],['company.parent_id' => $this->company_id]]);
+        }
 
         $query->andFilterWhere(['like', 'number', $this->number]);
 

@@ -930,7 +930,7 @@ class Company extends ActiveRecord
      */
     public function getCarSearchModel()
     {
-        $searchModel = new CarSearch();
+        $searchModel = new CarSearch(Car::SCENARIO_OWNER);
         $searchModel->load(Yii::$app->request->queryParams);
         $searchModel->company_id = $this->id;
 
