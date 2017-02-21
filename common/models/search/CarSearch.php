@@ -83,6 +83,8 @@ class CarSearch extends Car
 
         if ($this->scenario != self::SCENARIO_OWNER) {
             $query->andFilterWhere(['or',['company_id'=>$this->company_id],['company.parent_id' => $this->company_id]]);
+        } else {
+            $query->andFilterWhere(['company_id'=>$this->company_id]);
         }
 
         $query->andFilterWhere(['like', 'number', $this->number]);
