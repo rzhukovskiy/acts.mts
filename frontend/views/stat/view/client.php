@@ -98,7 +98,6 @@ $filters .= 'Выбор периода: ' . $periodForm;
 /**
  * Конец виджета
  */
-
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -206,7 +205,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     },
                     subtitles: [
                         {
-                            text: 'Прибыль',
+                            text: 'Расход',
                             horizontalAlign: 'left',
                             fontSize: 14,
                             fontColor: '#069',

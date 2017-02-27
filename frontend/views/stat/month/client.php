@@ -91,7 +91,7 @@ CanvasJsAsset::register($this);
                     dataPointMaxWidth: 30,
                     subtitles:[
                         {
-                            text: "Прибыль",
+                            text: "Расход",
                             horizontalAlign: "left",
                             fontSize: 14,
                             fontColor: "#069",

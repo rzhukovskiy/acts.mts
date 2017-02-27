@@ -216,7 +216,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     },
                     subtitles: [
                         {
-                            text: 'Прибыль',
+                            text: 'Расход',
                             horizontalAlign: 'left',
                             fontSize: 14,
                             fontColor: '#069',

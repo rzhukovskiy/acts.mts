@@ -51,8 +51,13 @@ trait ChartTrait
     {
         $data = $this->fillWithMonth();
 
+        $maxYear = 0;
         foreach ($models as $model) {
-            if ( date('Y', strtotime($model->dateMonth)) == date('Y')) {
+            $maxYear = $maxYear > date('Y', strtotime($model->dateMonth)) ? $maxYear : date('Y', strtotime($model->dateMonth));
+        }
+
+        foreach ($models as $model) {
+            if ( date('Y', strtotime($model->dateMonth)) == $maxYear) {
                 $month = (int) date('m', strtotime($model->dateMonth));
                 $data[$month-1]['y'] = $model->$field; // нумерация отстает от месяца на 1
             }

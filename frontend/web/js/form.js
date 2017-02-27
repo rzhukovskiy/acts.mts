@@ -37,7 +37,7 @@ $(document).ready(function() {
 
     imagePreview();
 
-    $('body').one('change','.select-period', function(e) {
+    $('body').on('change','.select-period', function(e) {
         switch ($(this).val()) {
             case '1':
                 $('#year').fadeIn();
@@ -68,7 +68,7 @@ $(document).ready(function() {
         }
     });
 
-    $('body').one('click','.date-send', function(e) {
+    $('body').on('click','.date-send', function(e) {
         var startDate = new Date();
         var endDate = new Date();
         switch ($('.select-period').val()) {
@@ -101,10 +101,10 @@ $(document).ready(function() {
                 endDate = new Date(parseInt($('#year option:selected').text()) + 1, 0, 1);
                 break;
             default:
-                $('.from_date').remove();
-                $('.to_date').remove();
-                return true;
+                startDate = new Date(1970, 0, 1);
+                endDate = new Date(2070, 0, 1);
         }
+        //я не помню, зачем так сделал, но отправка формы запускается событием фокусаут на поле с датой
         $('.date-from').val(startDate.toISOString());
         $('.date-to').val(endDate.toISOString());
         $('.date-to').change();
