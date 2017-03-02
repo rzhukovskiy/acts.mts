@@ -335,6 +335,34 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [
+                    'label'  => 'Анализ данных',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'analytics',
+                    'items'  => [
+//                        [
+//                            'label'  => 'Анализ по количеству',
+//                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'car'],
+//                            'active' =>
+//                                Yii::$app->controller->id == 'analytics' &&
+//                                Yii::$app->request->get('group') == 'car',
+//                        ],
+                        [
+                            'label'  => 'Анализ по городам',
+                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'city'],
+                            'active' =>
+                                Yii::$app->controller->id == 'analytics' &&
+                                Yii::$app->request->get('group') == 'city',
+                        ],
+                        [
+                            'label'  => 'Анализ общий',
+                            'url'    => ['/analytics/list', 'group' => 'type'],
+                            'active' =>
+                                Yii::$app->controller->id == 'analytics' &&
+                                Yii::$app->request->get('group') == 'type',
+                        ],
+                    ]
+                ],
+                [
                     'label'  => 'Услуги',
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',

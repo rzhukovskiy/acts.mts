@@ -13,6 +13,7 @@ use common\models\User;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
+use yii\web\View;
 
 //Скрытие фильтров
 $script = <<< JS
@@ -20,7 +21,7 @@ $script = <<< JS
         $('#act-grid-filters').toggle();
     });
 JS;
-$this->registerJs($script, \yii\web\View::POS_READY);
+$this->registerJs($script, View::POS_READY);
 //Выбор периода
 $filters = 'Период: ' . DatePicker::widget([
         'model'         => $searchModel,
