@@ -42,25 +42,37 @@ $columns = [
     [
         'header' => 'Количество обслуженных машин',
         'value' => function ($data) {
-            return $data->actsCount . ' ТС';
+            return $data->actsCount;
         },
     ],
-//    [
-//        'header' => '',
-//        'mergeHeader' => false,
-//        'class' => 'kartik\grid\ActionColumn',
-//        'template' => '{view}',
-//        'width' => '40px',
-//        'buttons' => [
-//            'view' => function ($url, $data, $key) use ($company){
-//                if ($company) {
-//                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id, 'company' => $company]);
-//                } else {
-//                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->id]);
-//                }
-//            },
-//        ],
-//    ],
+    [
+        'header' => '',
+        'mergeHeader' => false,
+        'class' => 'kartik\grid\ActionColumn',
+        'template' => '{view}',
+        'width' => '40px',
+        'buttons' => [
+            'view' => function ($url, $data, $key) use ($group) {
+                if ($group == 'city') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[address]' => $data->partner->address,
+                        'ActSearch[period]' => date('n-Y', $data->served_at),
+                        'ActSearch[service_type]' => $data->service_type,
+                    ]);
+                }
+                if ($group == 'type') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[period]' => date('n-Y', $data->served_at),
+                        'ActSearch[service_type]' => $data->service_type,
+                    ]);
+                }
+            },
+        ],
+    ],
 ];
 
 if ($group == 'type') {

@@ -377,3 +377,108 @@ $_SERVER = [
     ],
     'argc' => 1,
 ]
+[03-Mar-2017 15:45:59 Europe/Moscow] An Error occurred while handling another error:
+exception 'ReflectionException' with message 'Method yii\base\View::{closure}() does not exist' in C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php:199
+Stack trace:
+#0 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php(199): ReflectionMethod->__construct('yii\base\View', '{closure}')
+#1 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\views\errorHandler\callStackItem.php(26): yii\web\ErrorHandler->addTypeLinks('yii\base\View::...')
+#2 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(328): require('C:\Winginx\home...')
+#3 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(250): yii\base\View->renderPhpFile('C:\Winginx\home...', Array)
+#4 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php(253): yii\base\View->renderFile('@yii/views/erro...', Array, Object(yii\web\ErrorHandler))
+#5 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php(308): yii\web\ErrorHandler->renderFile('@yii/views/erro...', Array)
+#6 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\views\errorHandler\exception.php(385): yii\web\ErrorHandler->renderCallStackItem(NULL, NULL, 'yii\base\View', '{closure}', Array, 4)
+#7 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(328): require('C:\Winginx\home...')
+#8 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(250): yii\base\View->renderPhpFile('C:\Winginx\home...', Array)
+#9 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php(253): yii\base\View->renderFile('@yii/views/erro...', Array, Object(yii\web\ErrorHandler))
+#10 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\ErrorHandler.php(114): yii\web\ErrorHandler->renderFile('@yii/views/erro...', Array)
+#11 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\ErrorHandler.php(111): yii\web\ErrorHandler->renderException(Object(yii\base\UnknownPropertyException))
+#12 [internal function]: yii\base\ErrorHandler->handleException(Object(yii\base\UnknownPropertyException))
+#13 {main}
+Previous exception:
+exception 'yii\base\UnknownPropertyException' with message 'Getting unknown property: common\models\Act::service_date' in C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Component.php:147
+Stack trace:
+#0 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\db\BaseActiveRecord.php(286): yii\base\Component->__get('service_date')
+#1 C:\Winginx\home\acts.mts\frontend\views\analytics\_list.php(60): yii\db\BaseActiveRecord->__get('service_date')
+#2 [internal function]: yii\base\View->{closure}('/analytics/view...', Object(common\models\Act), NULL)
+#3 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\ActionColumn.php(227): call_user_func(Object(Closure), '/analytics/view...', Object(common\models\Act), NULL)
+#4 [internal function]: yii\grid\ActionColumn->yii\grid\{closure}(Array)
+#5 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\ActionColumn.php(231): preg_replace_callback('/\{([\w\-\/]+)\...', Object(Closure), '{view}')
+#6 C:\Winginx\home\acts.mts\vendor\kartik-v\yii2-grid\ActionColumn.php(300): yii\grid\ActionColumn->renderDataCellContent(Object(common\models\Act), NULL, 0)
+#7 C:\Winginx\home\acts.mts\vendor\kartik-v\yii2-grid\ActionColumn.php(217): kartik\grid\ActionColumn->renderDataCellContent(Object(common\models\Act), NULL, 0)
+#8 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\GridView.php(507): kartik\grid\ActionColumn->renderDataCell(Object(common\models\Act), NULL, 0)
+#9 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\GridView.php(476): yii\grid\GridView->renderTableRow(Object(common\models\Act), NULL, 0)
+#10 C:\Winginx\home\acts.mts\vendor\kartik-v\yii2-grid\GridView.php(1000): yii\grid\GridView->renderTableBody()
+#11 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\GridView.php(347): kartik\grid\GridView->renderTableBody()
+#12 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\widgets\BaseListView.php(155): yii\grid\GridView->renderItems()
+#13 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\GridView.php(316): yii\widgets\BaseListView->renderSection('{items}')
+#14 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\widgets\BaseListView.php(130): yii\grid\GridView->renderSection('{items}')
+#15 [internal function]: yii\widgets\BaseListView->yii\widgets\{closure}(Array)
+#16 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\widgets\BaseListView.php(133): preg_replace_callback('/{\w+}/', Object(Closure), '<div class="pan...')
+#17 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\grid\GridView.php(291): yii\widgets\BaseListView->run()
+#18 C:\Winginx\home\acts.mts\vendor\kartik-v\yii2-grid\GridView.php(971): yii\grid\GridView->run()
+#19 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Widget.php(139): kartik\grid\GridView->run()
+#20 C:\Winginx\home\acts.mts\frontend\views\analytics\_list.php(108): yii\base\Widget::widget(Array)
+#21 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(328): require('C:\Winginx\home...')
+#22 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(250): yii\base\View->renderPhpFile('C:\Winginx\home...', Array)
+#23 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(152): yii\base\View->renderFile('C:\Winginx\home...', Array, NULL)
+#24 C:\Winginx\home\acts.mts\frontend\views\analytics\list.php(23): yii\base\View->render('_list', Array)
+#25 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(328): require('C:\Winginx\home...')
+#26 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(250): yii\base\View->renderPhpFile('C:\Winginx\home...', Array)
+#27 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\View.php(152): yii\base\View->renderFile('C:\Winginx\home...', Array, Object(frontend\controllers\AnalyticsController))
+#28 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Controller.php(381): yii\base\View->render('list', Array, Object(frontend\controllers\AnalyticsController))
+#29 C:\Winginx\home\acts.mts\frontend\controllers\AnalyticsController.php(88): yii\base\Controller->render('list', Array)
+#30 [internal function]: frontend\controllers\AnalyticsController->actionList('2', 'city')
+#31 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\InlineAction.php(57): call_user_func_array(Array, Array)
+#32 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Controller.php(156): yii\base\InlineAction->runWithParams(Array)
+#33 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Module.php(523): yii\base\Controller->runAction('list', Array)
+#34 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\web\Application.php(102): yii\base\Module->runAction('analytics/list', Array)
+#35 C:\Winginx\home\acts.mts\vendor\yiisoft\yii2\base\Application.php(380): yii\web\Application->handleRequest(Object(yii\web\Request))
+#36 C:\Winginx\home\acts.mts\frontend\web\index.php(19): yii\base\Application->run()
+#37 {main}
+$_SERVER = [
+    'Path' => 'C:\\Winginx/;C:\\Winginx/var/',
+    'PHP_FCGI_CHILDREN' => '5',
+    'PHP_FCGI_MAX_REQUESTS' => '0',
+    'SystemDrive' => 'C:',
+    'SystemRoot' => 'C:\\Windows',
+    'TEMP' => 'C:\\Winginx/temp/php',
+    'TMP' => 'C:\\Winginx/temp/php',
+    'windir' => 'C:\\Windows',
+    'HTTP_X_COMPRESS' => 'null',
+    'HTTP_COOKIE' => '_csrf-frontend=47e183644c973094ca4e6b5f4053363e24cd680368bdb3a3565f36e7c404fedea%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%222w-xi4dqrVb2ARIjZoun8V-pwFdj5YsG%22%3B%7D; advanced=218d2d5cbaa780ca053a48d82fc90c17; isAdmin=41206938fb628aee514b27a55672bff62defce91da55bd313d4c4935d0133a2ea%3A2%3A%7Bi%3A0%3Bs%3A7%3A%22isAdmin%22%3Bi%3A1%3Bs%3A1%3A%221%22%3B%7D; _identity=b172cda56ed30d2af35e15ed878c81beb10af462722a532b0ed0cd391552b92da%3A2%3A%7Bi%3A0%3Bs%3A9%3A%22_identity%22%3Bi%3A1%3Bs%3A15%3A%22%5B45%2C%22%22%2C2592000%5D%22%3B%7D',
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.8,ru;q=0.6',
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch',
+    'HTTP_REFERER' => 'http://acts.mtransservice.local/act/list?type=2&company=1',
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+    'HTTP_CACHE_CONTROL' => 'max-age=0',
+    'HTTP_CONNECTION' => 'keep-alive',
+    'HTTP_HOST' => 'acts.mtransservice.local',
+    'REDIRECT_STATUS' => '200',
+    'SERVER_NAME' => 'acts.mtransservice.local',
+    'SERVER_PORT' => '80',
+    'SERVER_ADDR' => '127.0.0.1',
+    'REMOTE_PORT' => '39597',
+    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_SOFTWARE' => 'nginx/1.4.5',
+    'GATEWAY_INTERFACE' => 'CGI/1.1',
+    'SERVER_PROTOCOL' => 'HTTP/1.1',
+    'DOCUMENT_ROOT' => 'C:\\Winginx/home/acts.mts/frontend/web',
+    'DOCUMENT_URI' => '/index.php',
+    'REQUEST_URI' => '/analytics/list?type=2&group=city',
+    'SCRIPT_NAME' => '/index.php',
+    'CONTENT_LENGTH' => '',
+    'CONTENT_TYPE' => '',
+    'REQUEST_METHOD' => 'GET',
+    'QUERY_STRING' => 'type=2&group=city',
+    'SCRIPT_FILENAME' => 'C:\\Winginx/home/acts.mts/frontend/web//index.php',
+    'FCGI_ROLE' => 'RESPONDER',
+    'PHP_SELF' => '/index.php',
+    'REQUEST_TIME_FLOAT' => 1488541559.20936489105224609375,
+    'REQUEST_TIME' => 1488541559,
+    'argv' => [
+        'type=2&group=city',
+    ],
+    'argc' => 1,
+]

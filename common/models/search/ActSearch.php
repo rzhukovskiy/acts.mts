@@ -20,6 +20,7 @@ class ActSearch extends Act
     public $period;
     public $createDay;
     public $day;
+    public $address;
 
     /**
      * @inheritdoc
@@ -27,8 +28,8 @@ class ActSearch extends Act
     public function rules()
     {
         return [
-            [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day'], 'integer'],
-            [['number', 'extra_number', 'period'], 'string'],
+            [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
+            [['number', 'extra_number', 'period', 'address'], 'string'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
@@ -42,8 +43,8 @@ class ActSearch extends Act
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_CAR => ['card_number', 'card_id', 'number', 'dateFrom', 'dateTo'],
-            self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
-            self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period'],
+            self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
+            self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
             self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
             self::SCENARIO_HISTORY => ['card_number', 'client_id', 'number', 'dateFrom', 'dateTo'],
             'default' => [],
@@ -188,6 +189,7 @@ class ActSearch extends Act
             'card_id' => $this->card_id,
             'act.type_id' => $this->type_id,
             'act.mark_id' => $this->mark_id,
+            'partner.address' => $this->address,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

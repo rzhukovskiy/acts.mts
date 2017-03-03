@@ -35,12 +35,12 @@ class AnalyticsController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'common-list'],
+                        'actions' => ['list', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'common-list'],
+                        'actions' => ['list', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
@@ -56,7 +56,7 @@ class AnalyticsController extends Controller
      */
     public function actionList($type = null, $group)
     {
-        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_PARTNER]);
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
         if ($type) {
             $searchModel->service_type = $type;
         }
@@ -68,7 +68,7 @@ class AnalyticsController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->addSelect('partner_id, service_type, COUNT(act.id) as actsCount')
+            ->addSelect('served_at, partner_id, service_type, COUNT(act.id) as actsCount')
             ->orderBy('actsCount DESC');
         if ($group == 'city') {
             $dataProvider->query
@@ -84,6 +84,29 @@ class AnalyticsController extends Controller
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'type' => $type,
+            'group' => $group,
+        ]);
+    }
+
+    /**
+     * @param $group
+     * @return string
+     */
+    public function actionView($group)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
+
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
+            $searchModel->client_id = Yii::$app->user->identity->company->id;
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('view', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'group' => $group,
         ]);
     }
