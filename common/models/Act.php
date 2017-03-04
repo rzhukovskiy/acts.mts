@@ -82,6 +82,7 @@ class Act extends ActiveRecord
     public $partnerServiceList;
     public $time_str;
     public $actsCount;
+    public $carsCount;
     public $errorMessage = [];
     public $byAdmin = false;
     /**

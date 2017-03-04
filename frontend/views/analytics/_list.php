@@ -140,6 +140,17 @@ $columns = [
                         'ActSearch[service_type]' => $data->service_type,
                     ]);
                 }
+                if ($group == 'count') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'count' => $data->actsCount,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $data->service_type,
+                    ]);
+                }
             },
         ],
     ],
@@ -150,6 +161,19 @@ if ($group == 'type') {
         'header' => 'Тип услуги',
         'value' => function ($data) {
             return Service::$listType[$data->service_type]['ru'];
+        }
+    ];
+}
+if ($group == 'count') {
+    $columns[2] = [
+        'header' => 'Количество обслуживаний',
+        'value' => function ($data) {
+            return $data->actsCount . ' обслуживаний';
+        }
+    ];
+    $columns[3] = [
+        'value' => function ($data) {
+            return $data->carsCount;
         }
     ];
 }

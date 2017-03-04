@@ -67,7 +67,7 @@ class AnalyticsController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->addSelect('served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+            ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
             ->orderBy('client_id, actsCount DESC');
         if ($group == 'city') {
             $dataProvider->query
@@ -76,6 +76,20 @@ class AnalyticsController extends Controller
         if ($group == 'type') {
             $dataProvider->query
                 ->groupBy('client_id, act.service_type');
+        }
+        if ($group == 'count') {
+            $dataProvider->query
+                ->groupBy('client_id, act.number');
+            $query = Act::find()
+                ->from(['actsCount' => $dataProvider->query])
+                ->select('COUNT(actsCount) as carsCount, actsCount, client_id')
+                ->groupBy('client_id, actsCount')
+                ->orderBy('client_id, actsCount DESC');
+
+            $dataProvider = new yii\data\ActiveDataProvider([
+                'query' => $query,
+                'pagination' => false,
+            ]);
         }
 
         return $this->render('list', [
@@ -88,14 +102,22 @@ class AnalyticsController extends Controller
     }
 
     /**
+     * @param $count
      * @param $group
      * @return string
      */
-    public function actionView($group)
+    public function actionView($group, $count = 1)
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($group == 'count') {
+            $dataProvider->query
+                ->addSelect('act.number, served_at, partner_id, client_id, 
+                service_type, COUNT(act.id) as actsCount, act.mark_id, act.type_id')
+                ->having(['actsCount' => $count])
+                ->groupBy('client_id, act.number');
+        }
 
         return $this->render('view', [
             'searchModel' => $searchModel,

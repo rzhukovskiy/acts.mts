@@ -339,13 +339,13 @@ class menuLeftWidget extends Widget
                     'url'    => '#',
                     'active' => Yii::$app->controller->id == 'analytics',
                     'items'  => [
-//                        [
-//                            'label'  => 'Анализ по количеству',
-//                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'car'],
-//                            'active' =>
-//                                Yii::$app->controller->id == 'analytics' &&
-//                                Yii::$app->request->get('group') == 'car',
-//                        ],
+                        [
+                            'label'  => 'Анализ по количеству',
+                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'car'],
+                            'active' =>
+                                Yii::$app->controller->id == 'analytics' &&
+                                Yii::$app->request->get('group') == 'count',
+                        ],
                         [
                             'label'  => 'Анализ по городам',
                             'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'city'],

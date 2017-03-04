@@ -10,6 +10,18 @@ use yii\bootstrap\Tabs;
 
 $this->title = 'Анализ данных';
 
+if ($group == 'count') {
+    $items[] = [
+        'label' => 'Анализ по количеству',
+        'url' => [
+            'list',
+            'group' => $group,
+            'ActSearch[dateFrom]' => $searchModel->dateFrom,
+            'ActSearch[dateTo]' => $searchModel->dateTo,
+        ],
+        'active' => false,
+    ];
+}
 if ($group == 'city') {
     $items[] = [
         'label' => 'Анализ по городам',
