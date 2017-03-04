@@ -101,8 +101,8 @@ $(document).ready(function() {
                 endDate = new Date(parseInt($('#year option:selected').text()) + 1, 0, 1);
                 break;
             default:
-                startDate = new Date(1970, 0, 1);
-                endDate = new Date(2070, 0, 1);
+                startDate = new Date(2010, 0, 1);
+                endDate = new Date(2030, 0, 1);
         }
         //я не помню, зачем так сделал, но отправка формы запускается событием фокусаут на поле с датой
         $('.date-from').val(startDate.toISOString());

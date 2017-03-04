@@ -81,6 +81,7 @@ class CarController extends Controller
         $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
         $dataProvider->query
             ->addSelect('client_id, act.number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
+            ->orderBy('client.parent_id, client_id, actsCount DESC')
             ->groupBy('act.number');
 
         $companyDropDownData = Company::dataDropDownList();

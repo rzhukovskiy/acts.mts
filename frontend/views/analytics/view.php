@@ -13,14 +13,25 @@ $this->title = 'Анализ данных';
 if ($group == 'city') {
     $items[] = [
         'label' => 'Анализ по городам',
-        'url' => ['list', 'type' => $searchModel->service_type, 'group' => $group],
+        'url' => [
+            'list',
+            'type' => $searchModel->service_type,
+            'group' => $group,
+            'ActSearch[dateFrom]' => $searchModel->dateFrom,
+            'ActSearch[dateTo]' => $searchModel->dateTo,
+        ],
         'active' => false,
     ];
 }
 if ($group == 'type') {
     $items[] = [
         'label' => 'Анализ общий',
-        'url' => ['list', 'group' => $group],
+        'url' => [
+            'list',
+            'group' => $group,
+            'ActSearch[dateFrom]' => $searchModel->dateFrom,
+            'ActSearch[dateTo]' => $searchModel->dateTo,
+        ],
         'active' => false,
     ];
 }

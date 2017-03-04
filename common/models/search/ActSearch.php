@@ -46,7 +46,7 @@ class ActSearch extends Act
             self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
             self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
             self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
-            self::SCENARIO_HISTORY => ['card_number', 'client_id', 'number', 'dateFrom', 'dateTo'],
+            self::SCENARIO_HISTORY => ['card_number', 'client_id', 'number', 'dateFrom', 'dateTo', 'service_type', 'address'],
             'default' => [],
         ];
     }
@@ -137,6 +137,7 @@ class ActSearch extends Act
                     'type',
                     'mark',
                     'client client',
+                    'partner partner',
                     'car car',
                 ]);
                 if ($this->dateFrom) {
@@ -147,7 +148,7 @@ class ActSearch extends Act
                 } else {
                     $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
-                $query->orderBy('parent_id, client_id, actsCount DESC');
+                $query->orderBy('client.parent_id, client_id');
                 break;
 
             case self::SCENARIO_CAR:

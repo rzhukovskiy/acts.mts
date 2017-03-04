@@ -56,11 +56,10 @@ class AnalyticsController extends Controller
      */
     public function actionList($type = null, $group)
     {
-        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
         if ($type) {
             $searchModel->service_type = $type;
         }
-        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
 
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $searchModel->client_id = Yii::$app->user->identity->company->id;
@@ -68,15 +67,15 @@ class AnalyticsController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->addSelect('served_at, partner_id, service_type, COUNT(act.id) as actsCount')
-            ->orderBy('actsCount DESC');
+            ->addSelect('served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+            ->orderBy('client_id, actsCount DESC');
         if ($group == 'city') {
             $dataProvider->query
-                ->groupBy('partner.address');
+                ->groupBy('client_id, partner.address');
         }
         if ($group == 'type') {
             $dataProvider->query
-                ->groupBy('act.service_type');
+                ->groupBy('client_id, act.service_type');
         }
 
         return $this->render('list', [
@@ -94,12 +93,7 @@ class AnalyticsController extends Controller
      */
     public function actionView($group)
     {
-        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CLIENT]);
-        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
-
-        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
-            $searchModel->client_id = Yii::$app->user->identity->company->id;
-        }
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
