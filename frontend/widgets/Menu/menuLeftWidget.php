@@ -341,7 +341,7 @@ class menuLeftWidget extends Widget
                     'items'  => [
                         [
                             'label'  => 'Анализ по количеству',
-                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'car'],
+                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'count'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&
                                 Yii::$app->request->get('group') == 'count',
