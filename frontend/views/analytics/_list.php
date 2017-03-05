@@ -127,7 +127,7 @@ $columns = [
                         'ActSearch[dateFrom]' => $searchModel->dateFrom,
                         'ActSearch[dateTo]' => $searchModel->dateTo,
                         'ActSearch[client_id]' => $data->client_id,
-                        'ActSearch[service_type]' => $data->service_type,
+                        'ActSearch[service_type]' => $searchModel->service_type,
                     ]);
                 }
                 if ($group == 'type') {
@@ -137,7 +137,7 @@ $columns = [
                         'ActSearch[dateFrom]' => $searchModel->dateFrom,
                         'ActSearch[dateTo]' => $searchModel->dateTo,
                         'ActSearch[client_id]' => $data->client_id,
-                        'ActSearch[service_type]' => $data->service_type,
+                        'ActSearch[service_type]' => $searchModel->service_type,
                     ]);
                 }
                 if ($group == 'count') {
@@ -148,7 +148,7 @@ $columns = [
                         'ActSearch[dateFrom]' => $searchModel->dateFrom,
                         'ActSearch[dateTo]' => $searchModel->dateTo,
                         'ActSearch[client_id]' => $data->client_id,
-                        'ActSearch[service_type]' => $data->service_type,
+                        'ActSearch[service_type]' => $searchModel->service_type,
                     ]);
                 }
             },
