@@ -10,56 +10,43 @@ use yii\bootstrap\Tabs;
 
 $this->title = 'Анализ данных';
 
-if ($group == 'count') {
-    $items[] = [
+$items = [
+    [
         'label' => 'Анализ по количеству',
         'url' => [
             'list',
-            'group' => $group,
-            'ActSearch[dateFrom]' => $searchModel->dateFrom,
-            'ActSearch[dateTo]' => $searchModel->dateTo,
-        ],
-        'active' => false,
-    ];
-}
-if ($group == 'city') {
-    $items[] = [
-        'label' => 'Анализ по городам',
-        'url' => [
-            'list',
             'type' => $searchModel->service_type,
-            'group' => $group,
+            'group' => 'count',
             'ActSearch[dateFrom]' => $searchModel->dateFrom,
             'ActSearch[dateTo]' => $searchModel->dateTo,
         ],
         'active' => false,
-    ];
-}
-if ($group == 'type') {
-    $items[] = [
-        'label' => 'Анализ общий',
+    ],
+    [
+        'label' => 'Список',
         'url' => [
-            'list',
-            'group' => $group,
+            'view',
+            'type' => $searchModel->service_type,
+            'group' => 'count',
+            'count' => $dataProvider->count,
             'ActSearch[dateFrom]' => $searchModel->dateFrom,
             'ActSearch[dateTo]' => $searchModel->dateTo,
         ],
         'active' => false,
-    ];
-}
-$items[] = [
-    'label' => 'Список',
-    'url' => ['#'],
-    'active' => true,
+    ],
+    [
+        'label' => 'Детализация',
+        'url' => ['#'],
+        'active' => true,
+    ]
 ];
 
 echo Tabs::widget([
     'items' => $items,
 ]);
 
-echo $this->render('_view', [
+echo $this->render('_detail', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
-    'group' => $group,
 ]);
 

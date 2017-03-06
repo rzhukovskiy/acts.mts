@@ -10,7 +10,6 @@ use common\models\Act;
 use common\models\Mark;
 use common\models\Type;
 use kartik\grid\GridView;
-use yii\helpers\Html;
 
 $columns = [
     [
@@ -24,7 +23,9 @@ $columns = [
         'value' => function ($data) {
             return date('d-m-Y', $data->served_at);
         },
-        'visible' => $group != 'count',
+        'contentOptions' => function ($data) {
+            if ($data->hasError(Act::ERROR_LOST)) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'mark_id',
@@ -35,6 +36,9 @@ $columns = [
     ],
     [
         'attribute' => 'number',
+        'contentOptions' => function($data) {
+            if($data->hasError('car')) return ['class' => 'text-danger'];
+        },
     ],
     [
         'attribute' => 'type_id',
@@ -42,25 +46,6 @@ $columns = [
         'value' => function ($data) {
             return isset($data->type) ? $data->type->name : 'error';
         },
-    ],
-    [
-        'header' => '',
-        'mergeHeader' => false,
-        'class' => 'kartik\grid\ActionColumn',
-        'template' => '{view}',
-        'width' => '40px',
-        'buttons' => [
-            'view' => function ($url, $data, $key) use ($group, $searchModel) {
-                return Html::a('<span class="glyphicon glyphicon-search"></span>', [
-                    'detail',
-                    'ActSearch[dateFrom]' => $searchModel->dateFrom,
-                    'ActSearch[dateTo]' => $searchModel->dateTo,
-                    'ActSearch[number]' => $data->number,
-                    'ActSearch[service_type]' => $searchModel->service_type,
-                ]);
-            },
-        ],
-        'visible' => $group == 'count',
     ],
 ];
 

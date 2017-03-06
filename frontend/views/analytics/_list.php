@@ -134,7 +134,7 @@ $columns = [
     ],
     'partner.address',
     [
-        'header' => 'Количество обслуженных машин',
+        'header' => 'Количество машин',
         'value' => function ($data) {
             return $data->actsCount;
         },
@@ -200,6 +200,7 @@ if ($group == 'count') {
         }
     ];
     $columns[3] = [
+        'header' => 'Количество машин',
         'value' => function ($data) {
             return $data->carsCount;
         }

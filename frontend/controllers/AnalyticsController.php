@@ -35,12 +35,12 @@ class AnalyticsController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'detail'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'detail'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
@@ -118,12 +118,30 @@ class AnalyticsController extends Controller
                 ->having(['actsCount' => $count])
                 ->groupBy('client_id, act.number');
         }
+        $dataProvider->query->orderBy('served_at DESC');
 
         return $this->render('view', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'group' => $group,
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionDetail()
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->orderBy('served_at DESC');
+
+        return $this->render('detail', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
 }
