@@ -118,7 +118,7 @@ class AnalyticsController extends Controller
                 ->having(['actsCount' => $count])
                 ->groupBy('client_id, act.number');
         }
-        $dataProvider->query->orderBy('served_at DESC');
+        $dataProvider->query->orderBy('served_at ASC');
 
         return $this->render('view', [
             'searchModel' => $searchModel,
@@ -136,7 +136,7 @@ class AnalyticsController extends Controller
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->orderBy('served_at DESC');
+        $dataProvider->query->orderBy('served_at ASC');
 
         return $this->render('detail', [
             'searchModel' => $searchModel,
