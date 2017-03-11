@@ -60,7 +60,7 @@ $columns = [
                 ]);
             },
         ],
-        'visible' => $group == 'count',
+        'visible' => $group == 'count' && $count != 0,
     ],
 ];
 

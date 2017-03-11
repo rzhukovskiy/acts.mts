@@ -10,6 +10,7 @@
 use common\models\Act;
 use common\models\Company;
 use common\models\Service;
+use kartik\grid\DataColumn;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
@@ -76,7 +77,7 @@ $currentMonth--;
 
 $periodForm = '';
 $periodForm .= Html::dropDownList('period', $period, Act::$periodList, [
-    'class' =>'select-period form-control',
+    'class' => 'select-period form-control',
     'style' => 'margin-right: 10px;'
 ]);
 $periodForm .= Html::dropDownList('month', $currentMonth, $months, [
@@ -100,17 +101,17 @@ $periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear)
     'style' => $diff && $diff <= 12 ? '' : 'display:none'
 ]);
 $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
-$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
 if ($admin) {
     $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
             ->andWhere(['type' => Company::TYPE_OWNER])
-            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 } elseif (!empty(Yii::$app->user->identity->company->children)) {
     $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
             ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
-            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 }
 
 $filters .= 'Выбор периода: ' . $periodForm;
@@ -131,7 +132,33 @@ $columns = [
         'groupedRow' => true,
         'groupOddCssClass' => 'kv-group-header',
         'groupEvenCssClass' => 'kv-group-header',
-        'visible' => $admin || !empty(Yii::$app->user->identity->company->children),
+        //уродская конструкция для получения 0 обслуживаний
+        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel, $dataProvider) {
+            $sum = 0;
+            foreach ($dataProvider->getModels() as $model) {
+                if ($model->client_id == $data->client_id) {
+                    $sum += $model->carsCount;
+                }
+            }
+            return $sum >= $data->client->carsCount ? null : [
+                'content' => [
+                    2 => '0 обслуживаний',
+                    3 => $data->client->carsCount - $sum,
+                    4 => Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => 'count',
+                        'count' => 0,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]),
+                ],
+                'contentOptions' => [
+                    4 => ['style' => 'text-align:center'],
+                ],
+            ];
+        }
     ],
     'partner.address',
     [

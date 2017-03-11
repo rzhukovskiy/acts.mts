@@ -3,7 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\Act;
+use common\models\Car;
 use common\models\search\ActSearch;
+use common\models\search\CarSearch;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -109,22 +111,36 @@ class AnalyticsController extends Controller
     public function actionView($group, $count = 1)
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
-
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if ($group == 'count') {
-            $dataProvider->query
-                ->addSelect('act.number, served_at, partner_id, client_id, 
-                service_type, COUNT(act.id) as actsCount, act.mark_id, act.type_id')
-                ->having(['actsCount' => $count])
-                ->groupBy('client_id, act.number');
-        }
         $dataProvider->query->orderBy('served_at ASC');
+
+        if ($group == 'count') {
+            if ($count) {
+                $dataProvider->query
+                    ->addSelect('act.number, served_at, partner_id, client_id, 
+                service_type, COUNT(act.id) as actsCount, act.mark_id, act.type_id')
+                    ->having(['actsCount' => $count])
+                    ->groupBy('client_id, act.number');
+            } else {
+                $dataProvider->query->select('act.number');
+                $query = Car::find()
+                    ->where(['not in', 'number', $dataProvider->query->all()])
+                    ->andWhere(['company_id' => $searchModel->client_id])
+                    ->andWhere('type_id != 7');
+
+                $dataProvider = new yii\data\ActiveDataProvider([
+                    'query' => $query,
+                    'pagination' => false,
+                ]);
+            }
+        }
 
         return $this->render('view', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'group' => $group,
+            'count' => $count,
         ]);
     }
 

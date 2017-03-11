@@ -61,5 +61,6 @@ echo $this->render('_view', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'group' => $group,
+    'count' => $count,
 ]);
 
