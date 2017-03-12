@@ -70,7 +70,9 @@ class AnalyticsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query
             ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
-            ->orderBy('client_id, actsCount DESC');
+            ->orderBy('client_id, actsCount DESC')
+            ->andWhere('car.type_id != 7')
+            ->andWhere('car.type_id != 8');
         if ($group == 'city') {
             $dataProvider->query
                 ->groupBy('client_id, partner.address');
@@ -112,7 +114,9 @@ class AnalyticsController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->orderBy('served_at ASC');
+        $dataProvider->query->orderBy('served_at ASC')
+            ->andWhere('car.type_id != 7')
+            ->andWhere('car.type_id != 8');
 
         if ($group == 'count') {
             if ($count) {
@@ -126,7 +130,8 @@ class AnalyticsController extends Controller
                 $query = Car::find()
                     ->where(['not in', 'number', $dataProvider->query->all()])
                     ->andWhere(['company_id' => $searchModel->client_id])
-                    ->andWhere('type_id != 7');
+                    ->andWhere('type_id != 7')
+                    ->andWhere('type_id != 8');
 
                 $dataProvider = new yii\data\ActiveDataProvider([
                     'query' => $query,
@@ -152,7 +157,9 @@ class AnalyticsController extends Controller
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->orderBy('served_at ASC');
+        $dataProvider->query->orderBy('served_at ASC')
+            ->andWhere('car.type_id != 7')
+            ->andWhere('car.type_id != 8');
 
         return $this->render('detail', [
             'searchModel' => $searchModel,

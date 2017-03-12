@@ -143,7 +143,7 @@ $columns = [
             return $sum >= $data->client->carsCount ? null : [
                 'content' => [
                     2 => '0 обслуживаний',
-                    3 => $data->client->carsCount - $sum,
+                    3 => count($data->client->getCars()->where('type_id != 7 AND type_id !=8')->all()) - $sum,
                     4 => Html::a('<span class="glyphicon glyphicon-search"></span>', [
                         'view',
                         'group' => 'count',

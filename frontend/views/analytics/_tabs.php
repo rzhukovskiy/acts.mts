@@ -12,6 +12,7 @@ use yii\bootstrap\Tabs;
 $request = Yii::$app->request;
 $items = [];
 foreach (Service::$listType as $type_id => $typeData) {
+    if ($type_id == Service::TYPE_DISINFECT) continue;
     $items[] = [
         'label' => $typeData['ru'],
         'url' => ['list', 'type' => $type_id, 'group' => $group],
