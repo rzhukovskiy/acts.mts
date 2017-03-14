@@ -19,7 +19,7 @@ return [
         ],
     ],
     'aliases' => [
-        '@backWeb' => 'http://back.acts.mts/',
-        '@frontWeb' => 'http://front.acts.mts/',
+        '@backWeb' => 'http://back.workz.ru/',
+        '@frontWeb' => 'http://front.workz.ru/',
     ],
 ];

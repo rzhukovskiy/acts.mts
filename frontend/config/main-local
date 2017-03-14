@@ -11,12 +11,12 @@ $config = [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'path' => '/',
-                'domain' => '.acts.mts',
+                'domain' => 'front.workz.ru',
             ],
         ],
         'session' => [
             'cookieParams' =>
-                ['domain' => '.acts.mts']
+                ['domain' => 'front.workz.ru']
         ],
     ],
 ];

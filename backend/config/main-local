@@ -11,13 +11,13 @@ $config = [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'path' => '/',
-                'domain' => '.acts.mts',
+                'domain' => 'back.workz.ru',
             ],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
             'cookieParams' =>
-                ['domain' => '.acts.mts']
+                ['domain' => 'back.workz.ru']
         ],
     ],
 ];

@@ -76,6 +76,8 @@ use common\models\Department;
             </div>
         </div>
 
+
+
         <div class="form-group field-department-name required">
             <label class="col-sm-2 control-label" for="department-name">Отклоненные</label>
             <div class="col-sm-10">
