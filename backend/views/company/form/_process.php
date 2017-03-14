@@ -52,8 +52,8 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 Html::a('В архив', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
             <?= $modelCompany->status != Company::STATUS_REFUSE ? 
                 Html::a('В архив 2', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_REFUSE], ['class' => 'btn btn-success btn-sm']) : '' ?>
-            <?= $modelCompany->status != Company::STATUS_ARCHIVE2 ?
-                Html::a('В архив 3', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE2], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?= $modelCompany->status != Company::STATUS_ARCHIVE3 ?
+                Html::a('В архив 3', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE3], ['class' => 'btn btn-success btn-sm']) : '' ?>
 
             <?= $modelCompany->status != Company::STATUS_ACTIVE ?
                 Html::a('В активные', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ACTIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>

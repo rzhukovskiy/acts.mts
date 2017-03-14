@@ -55,8 +55,8 @@ class menuLeftWidget extends Widget
         $searchModel->status = Company::STATUS_REFUSE;
         $countRefuse = $searchModel->search()->count;
 
-        $searchModel->status = Company::STATUS_ARCHIVE2;
-        $countArchive2 = $searchModel->search()->count;
+        $searchModel->status = Company::STATUS_ARCHIVE3;
+        $countArchive3 = $searchModel->search()->count;
 
         $searchModel = new MessageSearch();
         $searchModel->user_to = $currentUser->id;
@@ -104,11 +104,11 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив 3' . ($countNew ? '<span class="label label-success">' . $countArchive2 . '</span>' : ''),
-                    'url' => ['/company/archive2', 'type' => Company::TYPE_WASH],
+                    'label' => 'Архив 3' . ($countNew ? '<span class="label label-success">' . $countArchive3 . '</span>' : ''),
+                    'url' => ['/company/archive3', 'type' => Company::TYPE_WASH],
                     'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE2]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE2)
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE3]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3)
                     ),
                 ],
                 [
@@ -205,11 +205,11 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
-                    'label' => 'Архив 3' . ($countNew ? '<span class="label label-success">' . $countArchive2 . '</span>' : ''),
-                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE2]['en'], 'type' => $currentUser->getFirstCompanyType()],
+                    'label' => 'Архив 3' . ($countNew ? '<span class="label label-success">' . $countArchive3 . '</span>' : ''),
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE3]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
-                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE2]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE2) ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE3]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
                     ),
                 ],

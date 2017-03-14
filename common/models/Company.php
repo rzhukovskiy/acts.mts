@@ -66,7 +66,7 @@ class Company extends ActiveRecord
     const STATUS_NEW = 1;
     const STATUS_ARCHIVE = 2;
     const STATUS_REFUSE = 3;
-    const STATUS_ARCHIVE2 = 4;
+    const STATUS_ARCHIVE3 = 4;
     const STATUS_ACTIVE = 10;
 
     const SCENARIO_OFFER = 'offer';
@@ -126,8 +126,8 @@ class Company extends ActiveRecord
             'en' => 'refuse',
             'ru' => 'Архив 2',
         ],
-        self::STATUS_ARCHIVE2  => [
-            'en' => 'archive2',
+        self::STATUS_ARCHIVE3  => [
+            'en' => 'archive3',
             'ru' => 'Архив 3',
         ],
         self::STATUS_DELETED => [
@@ -203,7 +203,7 @@ class Company extends ActiveRecord
             ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
-            ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ARCHIVE2, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
+            ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ARCHIVE3, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }
 
