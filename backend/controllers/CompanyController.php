@@ -39,17 +39,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'new', 'create', 'update', 'info', 'member', 'driver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -314,6 +314,60 @@ class CompanyController extends Controller
             'model'        => $model,
             'listType'     => $listType,
         ]);
+    }
+
+    /**
+     * Lists all Company models.
+     * @param integer $type
+     * @return mixed
+     */
+    public function actionArchive3($type)
+    {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_ARCHIVE3;
+
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ARCHIVE3);
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'address'    => SORT_ASC,
+                'created_at' => SORT_DESC,
+            ]
+        ];
+
+        $model = new Company();
+        $model->type = $type;
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_ARCHIVE3;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
+            $typeData['badge'] = $badgeSearch->search()->count;
+        }
+
+        $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
+
+        return $this->render('list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'model'        => $model,
+                'listType'     => $listType,
+            ]);
     }
 
     /**
