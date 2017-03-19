@@ -108,7 +108,7 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
         $entryData = Yii::$app->request->get('Entry', false);
-        if ($entryData['id'] and $modelEntry = Entry::findOne($entryData['id'])) {
+        if (!empty($entryData['id']) and $modelEntry = Entry::findOne($entryData['id'])) {
             $modelEntry->load(Yii::$app->request->queryParams);
             $modelEntry->company_id = $model->id;
         } else {
