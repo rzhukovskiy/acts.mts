@@ -22,5 +22,5 @@ echo $this->render($action . '/_list', [
     'searchModel' => $searchModel,
     'type' => $type,
 //    'userData' => $userData,
-    'admin' => $admin,
+    'admin' => isset($admin) ? $admin : false,
 ]);
