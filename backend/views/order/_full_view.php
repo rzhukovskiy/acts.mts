@@ -31,7 +31,8 @@
                 if (!$i || !($i % 4)) {
                     echo '<tr class="free-time">';
                 }
-                echo '<td style="width:25%">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</td>';
+                echo '<td style="width:25%">' . $freeTime['start'] . ' - ' .
+                    (isset($freeTime['end']) ? $freeTime['end'] : '24:00') . '</td>';
                 if ($i + 1 == count($arrayFreeTime) && count($arrayFreeTime) % 4) {
                     for ($j = 0; $j < 4 - count($arrayFreeTime) % 4; $j++) {
                         echo '<td style="width:25%"></td>';
