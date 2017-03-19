@@ -21,6 +21,6 @@ echo $this->render($action . '/_list', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'type' => $type,
-    'userData' => $userData,
+//    'userData' => $userData,
     'admin' => $admin,
 ]);
