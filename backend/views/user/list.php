@@ -43,7 +43,10 @@ $this->title = 'Пользователи';
                     [
                         'attribute' => 'username',
                         'content' => function ($data) {
-                            return Html::a($data->username, ['update', 'id' => $data->id, 'type' => $data->company->type]);
+                            return Html::a($data->username, [
+                                'update',
+                                'id' => $data->id,
+                            ]);
                         }
                     ],
                     [
