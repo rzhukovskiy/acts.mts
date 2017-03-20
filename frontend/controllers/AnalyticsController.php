@@ -174,10 +174,35 @@ class AnalyticsController extends Controller
             ->andWhere('car.type_id != 7')
             ->andWhere('car.type_id != 8');
 
+        // Вывод среднего времени обслуживания
+        $TimeNow = time(); // Текущая дата
+
+        $rows = (new \yii\db\Query())
+            ->select(['id', 'served_at'])
+            ->from('act')
+            ->where(['number' => $searchModel->number])
+            ->andWhere(['service_type' => $searchModel->service_type])
+            //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
+            ->orderBy('served_at ASC')
+            ->all();
+
+        // Есди автомобиль обслуживался в этом году
+        if(count($rows) > 0) {
+
+            // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
+            $srTimeService = round(round(($TimeNow - $rows[0][served_at]) / 86400) / count($rows));
+
+            Yii::$app->view->params['srTimeService'] = "Данный автомобиль обслуживается в среднем 1 раз в " . $srTimeService . " дней.";
+        } else {
+            Yii::$app->view->params['srTimeService'] = "Данный автомобиль не обслуживался более года.";
+        }
+        // END Вывод среднего времени обслуживания
+
         return $this->render('detail', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
     }
+
 }
