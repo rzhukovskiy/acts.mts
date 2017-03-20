@@ -68,6 +68,3 @@ echo GridView::widget([
     'export' => false,
     'columns' => $columns,
 ]);
-
-// Вывод среднего времени обслуживания
-echo $this->params['srTimeService'];

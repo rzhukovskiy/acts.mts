@@ -44,6 +44,14 @@ $columns = [
         },
     ],
     [
+        'header' => 'Среднее обслуживание',
+        'value' => function ($data) {
+            // Вывод среднего времени обслуживания
+            return \frontend\controllers\AnalyticsController::GetSrTime($data->car->number, $data->service_type);
+        },
+        'visible' => $group == 'count',
+    ],
+    [
         'header' => '',
         'mergeHeader' => false,
         'class' => 'kartik\grid\ActionColumn',
@@ -63,7 +71,6 @@ $columns = [
         'visible' => $group == 'count' && $count != 0,
     ],
 ];
-
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
