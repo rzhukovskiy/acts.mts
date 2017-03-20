@@ -22,4 +22,5 @@ echo $this->render('_list',
         'dataProvider' => $dataProvider,
         'searchModel'  => $searchModel,
         'type'         => $type,
+        'admin'        => $admin
     ]);

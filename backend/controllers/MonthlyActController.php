@@ -67,13 +67,21 @@ class MonthlyActController extends Controller
             $listType = Yii::$app->user->identity->getAllServiceType(Company::STATUS_ACTIVE);
         }
 
+        $currentUser = Yii::$app->user->identity;
+        if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
+            $admin = true;
+        } else {
+            $admin = false;
+        }
+
         return $this->render('list',
             [
                 'dataProvider' => $dataProvider,
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'company'      => $company,
-                'listType'     => $listType
+                'listType'     => $listType,
+                'admin'        => $admin,
             ]);
     }
 
