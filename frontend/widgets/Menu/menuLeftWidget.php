@@ -347,7 +347,7 @@ class menuLeftWidget extends Widget
                                 Yii::$app->request->get('group') == 'count',
                         ],
                         [
-                            'label'  => 'Анализ по городам',
+                            'label'  => 'Статистика помытых машин по городам',
                             'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'city'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&
