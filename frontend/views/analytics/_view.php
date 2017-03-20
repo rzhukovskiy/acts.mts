@@ -44,7 +44,7 @@ $columns = [
         },
     ],
     [
-        'header' => 'Среднее обслуживание',
+        'header' => 'Период обслуживаний',
         'value' => function ($data) {
             // Вывод среднего времени обслуживания
             return \frontend\controllers\AnalyticsController::GetSrTime($data->car->number, $data->service_type);
