@@ -31,12 +31,12 @@ class SiteController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'error', 'signup', 'connect'],
+                        'actions' => ['index', 'error', 'signup', 'login'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'error', 'connect'],
+                        'actions' => ['logout', 'error', 'connect', 'login'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -116,6 +116,16 @@ class SiteController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Logs in the current user.
+     *
+     * @return mixed
+     */
+    public function actionLogin()
+    {
+        return $this->goHome();
     }
 
     /**
