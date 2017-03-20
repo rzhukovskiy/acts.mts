@@ -121,7 +121,7 @@ $columns = [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
         'contentOptions' => ['style' => 'max-width: 40px'],
-        'visible' => $group != 'count' AND $group != 'type',
+        'visible' => $group != 'count' AND $group != 'type' AND $group != 'average',
     ],
     [
         'attribute' => 'client_id',
@@ -186,6 +186,16 @@ $columns = [
                         'ActSearch[service_type]' => $searchModel->service_type,
                     ]);
                 }
+                if ($group == 'average') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]);
+                }
                 if ($group == 'type') {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>', [
                         'view',
@@ -217,6 +227,51 @@ if ($group == 'type') {
         'header' => 'Тип услуги',
         'value' => function ($data) {
             return Service::$listType[$data->service_type]['ru'];
+        }
+    ];
+}
+if ($group == 'average') {
+    $columns[2] = [
+        'header' => 'Кол-во ТС в парке',
+        'value' => function ($data) {
+            return count($data->client->getCars()->where('company_id = ' . $data->client->id .  ' AND type_id != 7 AND type_id !=8')->all());
+        },
+    ];
+    $columns[3] = [
+        'header' => 'Кол-во обслужившихся<br />машин',
+        'value' => function ($data) {
+            return \frontend\controllers\AnalyticsController::GetWorkCars($data->client->id);
+        }
+    ];
+    $columns[4] = [
+        'header' => 'Кол-во операций',
+        'value' => function ($data) {
+            return $data->actsCount;
+        }
+    ];
+    $columns[5] = [
+        'header' => 'Среднее кол-во<br />операций',
+        'value' => function ($data) {
+
+            // Получаем количество обслуживающихся машин
+            $CarsWork = \frontend\controllers\AnalyticsController::GetWorkCars($data->client->id);
+
+            if($CarsWork > 0) {
+            // Получаем среднее количество операций
+            $AverRes = $data->actsCount / $CarsWork;
+
+            // Отображаем только одно число после запатой
+            $AverRes = sprintf("%.1f", $AverRes);
+
+            if ($AverRes < 0.1) {
+                $AverRes = 0;
+            }
+
+            } else {
+                $AverRes = 0;
+            }
+
+            return $AverRes;
         }
     ];
 }

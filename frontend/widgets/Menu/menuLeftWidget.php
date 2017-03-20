@@ -354,6 +354,13 @@ class menuLeftWidget extends Widget
                                 Yii::$app->request->get('group') == 'city',
                         ],
                         [
+                            'label'  => 'Среднее кол-во<br />операций на 1ТС',
+                            'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'average'],
+                            'active' =>
+                                Yii::$app->controller->id == 'analytics' &&
+                                Yii::$app->request->get('group') == 'average',
+                        ],
+                        [
                             'label'  => 'Общая статистика',
                             'url'    => ['/analytics/list', 'group' => 'type'],
                             'active' =>

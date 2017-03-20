@@ -35,6 +35,18 @@ if ($group == 'city') {
         'active' => false,
     ];
 }
+if ($group == 'average') {
+    $items[] = [
+        'label' => 'Среднее кол-во операций на 1ТС',
+        'url' => [
+            'list',
+            'group' => $group,
+            'ActSearch[dateFrom]' => $searchModel->dateFrom,
+            'ActSearch[dateTo]' => $searchModel->dateTo,
+        ],
+        'active' => false,
+    ];
+}
 if ($group == 'type') {
     $items[] = [
         'label' => 'Общая статистика',

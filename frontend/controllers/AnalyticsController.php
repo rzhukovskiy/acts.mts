@@ -90,6 +90,10 @@ class AnalyticsController extends Controller
             $dataProvider->query
                 ->groupBy('client_id, partner.address');
         }
+        if ($group == 'average') {
+            $dataProvider->query
+                ->groupBy('client_id, act.service_type');
+        }
         if ($group == 'type') {
             $dataProvider->query
                 ->groupBy('client_id, act.service_type');
@@ -203,6 +207,57 @@ class AnalyticsController extends Controller
             'dataProvider' => $dataProvider,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
+    }
+
+    public function GetWorkCars($company_id) {
+
+        // Получаем среднее количество операций
+
+        // Получаем список заказов компании
+        $sqlRows = (new \yii\db\Query())
+            ->select(['id', 'number'])
+            ->from('act')
+            ->where(['client_id' => $company_id])
+            ->all();
+
+        if(count($sqlRows) > 0) {
+
+            // Получаем список машин компании
+            $sqlCars = (new \yii\db\Query())
+                ->select(['id', 'number'])
+                ->from('car')
+                ->where(['company_id' => $company_id])
+                ->andWhere(['<>', 'type_id', 7])
+                ->andWhere(['<>', 'type_id', 8])
+                ->all();
+
+            $ArrayCars = [];
+
+            for($c = 0; $c < count($sqlCars); $c++) {
+                $index = $sqlCars[$c]["number"];
+                $ArrayCars[$index] = 1;
+
+                $index = null;
+            }
+
+            $ArrayWorkCars = [];
+
+            for($i = 0; $i < count($sqlRows); $i++) {
+                $index = $sqlRows[$i]["number"];
+
+                // Сравниваем список машин компании со списком машин из заказов без повторных заказов
+                if($ArrayCars[$index] == 1) {
+                    $ArrayWorkCars[$index] = 1;
+                }
+
+                $index = null;
+            }
+
+            return count($ArrayWorkCars);
+        } else {
+            return 0;
+        }
+
     }
 
 }
