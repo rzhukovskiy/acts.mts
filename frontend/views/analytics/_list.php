@@ -121,7 +121,7 @@ $columns = [
         'header' => '№',
         'class' => 'kartik\grid\SerialColumn',
         'contentOptions' => ['style' => 'max-width: 40px'],
-        'visible' => $group != 'count',
+        'visible' => $group != 'count' AND $group != 'type',
     ],
     [
         'attribute' => 'client_id',
