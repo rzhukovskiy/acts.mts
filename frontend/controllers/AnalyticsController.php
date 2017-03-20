@@ -190,7 +190,7 @@ class AnalyticsController extends Controller
         if(count($rows) > 0) {
 
             // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
-            $srTimeService = round(round(($TimeNow - $rows[0][served_at]) / 86400) / count($rows));
+            $srTimeService = round(round(($TimeNow - $rows[0]["served_at"]) / 86400) / count($rows));
 
             Yii::$app->view->params['srTimeService'] = "Данный автомобиль обслуживается в среднем 1 раз в " . $srTimeService . " дней.";
         } else {
