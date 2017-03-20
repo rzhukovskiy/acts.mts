@@ -354,7 +354,7 @@ class menuLeftWidget extends Widget
                                 Yii::$app->request->get('group') == 'city',
                         ],
                         [
-                            'label'  => 'Анализ общий',
+                            'label'  => 'Общая статистика',
                             'url'    => ['/analytics/list', 'group' => 'type'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&

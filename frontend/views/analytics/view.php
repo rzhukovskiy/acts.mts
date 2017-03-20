@@ -37,7 +37,7 @@ if ($group == 'city') {
 }
 if ($group == 'type') {
     $items[] = [
-        'label' => 'Анализ общий',
+        'label' => 'Общая статистика',
         'url' => [
             'list',
             'group' => $group,
