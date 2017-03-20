@@ -164,7 +164,7 @@ echo GridView::widget([
         [
             'attribute' => 'car.is_infected',
             'content' => function ($data) {
-                return $data->car->is_infected ? 'да' : 'нет';
+                return !empty($data->car->is_infected) ? 'да' : 'нет';
             },
             'visible' => $admin,
         ],
