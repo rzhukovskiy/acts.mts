@@ -7,7 +7,7 @@
  * @var $searchModel \common\models\search\ActSearch
  */
 
-$this->title = 'Анализ данных';
+$this->title = 'Статистика данных';
 
 if ($group != 'type') {
     echo $this->render('_tabs', [

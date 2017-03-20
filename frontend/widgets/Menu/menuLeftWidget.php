@@ -335,7 +335,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'stat',
                 ],
                 [
-                    'label'  => 'Анализ данных',
+                    'label'  => 'Статистика данных',
                     'url'    => '#',
                     'active' => Yii::$app->controller->id == 'analytics',
                     'items'  => [

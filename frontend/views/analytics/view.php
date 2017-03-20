@@ -8,7 +8,7 @@
 
 use yii\bootstrap\Tabs;
 
-$this->title = 'Анализ данных';
+$this->title = 'Статистика данных';
 
 if ($group == 'count') {
     $items[] = [

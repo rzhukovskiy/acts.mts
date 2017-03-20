@@ -242,7 +242,7 @@ echo GridView::widget([
     'filterSelector' => '.ext-filter',
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Анализ данных',
+        'heading' => 'Статистика данных',
         'before' => false,
         'footer' => false,
         'after' => false,
