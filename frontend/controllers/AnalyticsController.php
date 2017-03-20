@@ -68,11 +68,24 @@ class AnalyticsController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query
-            ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
-            ->orderBy('client_id, actsCount DESC')
-            ->andWhere('car.type_id != 7')
-            ->andWhere('car.type_id != 8');
+
+        if ($group == 'type') {
+            // Убираем дизенфекцию из общей статистики
+            $dataProvider->query
+                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->orderBy('client_id, actsCount DESC')
+                ->andWhere('service_type != 5')
+                ->andWhere('car.type_id != 7')
+                ->andWhere('car.type_id != 8');
+            // Убираем дизенфекцию из общей статистики
+        } else {
+            $dataProvider->query
+                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->orderBy('client_id, actsCount DESC')
+                ->andWhere('car.type_id != 7')
+                ->andWhere('car.type_id != 8');
+        }
+
         if ($group == 'city') {
             $dataProvider->query
                 ->groupBy('client_id, partner.address');
