@@ -108,7 +108,7 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
         $entryData = Yii::$app->request->get('Entry', false);
-        if ($entryData['id'] and $modelEntry = Entry::findOne($entryData['id'])) {
+        if (!empty($entryData['id']) and $modelEntry = Entry::findOne($entryData['id'])) {
             $modelEntry->load(Yii::$app->request->queryParams);
             $modelEntry->company_id = $model->id;
         } else {
@@ -122,10 +122,12 @@ class OrderController extends Controller
         if ($modelCard) {
             /** @var Act $modelAct */
             $modelAct = Act::find()->where(['card_id' => $modelCard->id])->select(['*', 'COUNT(id) AS count'])->groupBy('number')->orderBy('count DESC')->one();
-            $modelEntry->card_id = $modelAct->card_id;
-            $modelEntry->number  = $modelAct->number;
-            $modelEntry->mark_id = $modelAct->mark_id;
-            $modelEntry->type_id = $modelAct->type_id;
+            if ($modelAct) {
+                $modelEntry->card_id = $modelAct->card_id;
+                $modelEntry->number  = $modelAct->number;
+                $modelEntry->mark_id = $modelAct->mark_id;
+                $modelEntry->type_id = $modelAct->type_id;
+            }
         }
 
         $entrySearchModel = new EntrySearch();

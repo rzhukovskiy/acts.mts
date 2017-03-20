@@ -9,13 +9,7 @@ use common\models\MonthlyAct;
 use common\models\User;
 use kartik\date\DatePicker;
 
-
-$currentUser = Yii::$app->user->identity;
-if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
-    $isAdmin = 0;
-}else{
-    $isAdmin = 1;
-}
+$isAdmin = $admin ? 1 : 0;
 
 $script = <<< JS
     $('.change-payment_status').change(function(){

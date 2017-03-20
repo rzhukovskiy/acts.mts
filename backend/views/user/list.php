@@ -43,7 +43,10 @@ $this->title = 'Пользователи';
                     [
                         'attribute' => 'username',
                         'content' => function ($data) {
-                            return Html::a($data->username, ['update', 'id' => $data->id, 'type' => $data->company->type]);
+                            return Html::a($data->username, [
+                                'update',
+                                'id' => $data->id,
+                            ]);
                         }
                     ],
                     [
@@ -61,7 +64,7 @@ $this->title = 'Пользователи';
                         'template' => '{update}{delete}',
                         'buttons' => [
                             'update' => function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/user/update', 'id' => $model->id, 'type' => $model->company->type]);
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/user/update', 'id' => $model->id]);
                             },
                         ]
                     ],

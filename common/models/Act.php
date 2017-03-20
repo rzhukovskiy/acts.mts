@@ -372,7 +372,7 @@ class Act extends ActiveRecord
                         !Car::find()->byNumber($this->extra_number)->exists());
                 break;
             case self::ERROR_LOST:
-                $hasError = $this->card->is_lost;
+                $hasError = $this->card && $this->card->is_lost;
                 break;
         }
 
@@ -389,17 +389,17 @@ class Act extends ActiveRecord
             self::ERROR_EXPENSE => 'Не указан расход',
             self::ERROR_INCOME  => 'Не указан приход',
             self::ERROR_CHECK   => 'Чек не загружен',
-            self::ERROR_CARD    => (!$this->card->company_id) ? 'Не существует такой номер карты' : (
-            (!$this->car->company_id) ? false :
+            self::ERROR_CARD    => (empty($this->card->company_id)) ? 'Не существует такой номер карты' : (
+            (empty($this->car->company_id)) ? false :
                 'Не совпадает номер карты с номером ТС.<br>
                 Карта - ' .
-                $this->card->company->name .
+                (isset($this->card->company) ? $this->card->company->name : 'Неизвестна') .
                 '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
-                ' ТС - ' . $this->car->company->name
+                ' ТС - ' . (isset($this->car->company) ? $this->car->company->name : 'Неизвестна')
             ),
-            self::ERROR_CAR     => (!$this->car->company_id) ? 'Некорректный номер ТС' : false,
+            self::ERROR_CAR     => empty($this->car->company_id) ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
-            self::ERROR_LOST   => 'Потеряшечка',
+            self::ERROR_LOST    => 'Потеряшечка',
         ];
         foreach ($errorArr as $key => $err) {
             if ($this->hasError($key)) {
@@ -711,16 +711,13 @@ class Act extends ActiveRecord
     private function uploadImage()
     {
         if ($this->image) {
-//            $image = \Yii::$app->image->load($this->image->tempName);
-//            /**
-//             * @var $image \yii\image\drivers\Image
-//             */
-//            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
-//
-//            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
-
+            $image = \Yii::$app->image->load($this->image->tempName);
+            /**
+             * @var $image \yii\image\drivers\Image
+             */
             $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
-            $this->image->saveAs($imagePath);
+
+            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
         }
 
         return false;

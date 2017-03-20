@@ -28,7 +28,8 @@ use yii\bootstrap\Html;
                 <?php
                 $arrayFreeTime = $model->getFreeTimeArray($entrySearchModel->day);
                 foreach ($arrayFreeTime as $freeTime) {
-                    echo '<div class="col-sm-12">' . $freeTime['start'] . ' - ' . $freeTime['end'] . '</div>';
+                    echo '<div class="col-sm-12">' . $freeTime['start'] . ' - ' .
+                        (isset($freeTime['end']) ? $freeTime['end'] : '24:00') . '</div>';
                 } ?>
             </div>
             <div class="col-sm-12 text-center">
