@@ -711,16 +711,13 @@ class Act extends ActiveRecord
     private function uploadImage()
     {
         if ($this->image) {
-//            $image = \Yii::$app->image->load($this->image->tempName);
-//            /**
-//             * @var $image \yii\image\drivers\Image
-//             */
-//            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
-//
-//            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
-
+            $image = \Yii::$app->image->load($this->image->tempName);
+            /**
+             * @var $image \yii\image\drivers\Image
+             */
             $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
-            $this->image->saveAs($imagePath);
+
+            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
         }
 
         return false;

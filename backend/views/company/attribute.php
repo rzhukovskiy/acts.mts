@@ -5,7 +5,7 @@
  * @var $model common\models\Company
  */
 
-$this->title = 'Редактирование ' . $company->name;
+$this->title = 'Редактирование ' . $model->name;
 
 echo $this->render('_update_tabs',
     [
