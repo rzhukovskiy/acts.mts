@@ -340,7 +340,7 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'analytics',
                     'items'  => [
                         [
-                            'label'  => 'Статистка по<br />количеству<br />помятых машин',
+                            'label'  => 'Статистка по<br />количеству<br />помытых машин',
                             'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'count'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&
