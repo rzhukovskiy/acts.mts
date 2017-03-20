@@ -12,7 +12,7 @@ $this->title = 'Статистика данных';
 
 $items = [
     [
-        'label' => 'Анализ по количеству',
+        'label' => 'Статистка по количеству помятых машин',
         'url' => [
             'list',
             'type' => $searchModel->service_type,
