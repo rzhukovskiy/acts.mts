@@ -71,7 +71,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     'header'    => 'Карта',
                     'attribute' => 'card.number',
                     'value'     => function ($model) {
-                        return $model->card->number;
+                        return $model->card ? $model->card->number : $model->card_id;
                     },
                 ],
                 [
