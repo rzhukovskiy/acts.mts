@@ -2,6 +2,8 @@
 /**
  * @var $model \common\models\Act
  */
+use common\models\Act;
+use common\models\Car;
 
 ?>
 <div class="col-sm-12" style="padding: 10px;">
@@ -15,8 +17,8 @@
         }
     }
     //TODO разделить два типа ошибок с номером машины
-    if ($model->hasError(\common\models\Act::ERROR_CAR) && !$model->car->company_id) {
-        $car = new \common\models\Car();
+    if ($model->hasError(Act::ERROR_CAR) && empty($model->car->company_id)) {
+        $car = new Car();
         $car->company_id = $model->client_id;
         $car->number = $model->number;
         $car->mark_id = $model->mark_id;
