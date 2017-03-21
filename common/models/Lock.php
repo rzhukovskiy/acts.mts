@@ -52,7 +52,7 @@ class Lock extends \yii\db\ActiveRecord
 
             return (new \yii\db\Query())
                 ->select(['id', 'company_id'])
-                ->from('lock')
+                ->from('{{%lock}}')
                 ->where(['type' => $type])
                 ->andWhere(['period' => $period])
                 ->all();
@@ -61,7 +61,7 @@ class Lock extends \yii\db\ActiveRecord
 
             $LockedLisk = (new \yii\db\Query())
                 ->select(['id', 'company_id'])
-                ->from('lock')
+                ->from('{{%lock}}')
                 ->where(['type' => $type])
                 ->andWhere(['period' => $period])
                 ->all();

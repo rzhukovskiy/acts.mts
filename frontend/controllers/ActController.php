@@ -100,12 +100,12 @@ class ActController extends Controller
 
     public function actionLock($type)
     {
-        (new \yii\db\Query())->createCommand()->delete('lock', [
+        (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
         ])->execute();
 
-        (new \yii\db\Query())->createCommand()->insert('lock', [
+        (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
             'id' => '',
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
@@ -117,7 +117,7 @@ class ActController extends Controller
 
     public function actionUnlock($type)
     {
-        (new \yii\db\Query())->createCommand()->delete('lock', [
+        (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
         ])->execute();

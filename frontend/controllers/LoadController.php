@@ -122,7 +122,7 @@ class LoadController extends Controller
             }
 
             if (($CloseAll == false) && ($CloseCompany == false)) {
-                (new \yii\db\Query())->createCommand()->insert('lock', [
+                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                     'id' => '',
                     'type' => $type,
                     'period' => $period,
@@ -130,14 +130,14 @@ class LoadController extends Controller
                 ])->execute();
                 return 2;
             } elseif (($CloseAll == true) && ($CloseCompany == true)) {
-                (new \yii\db\Query())->createCommand()->delete('lock', [
+                (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
                     'type' => $type,
                     'period' => $period,
                     'company_id' => $company,
                 ])->execute();
                 return 2;
             } elseif (($CloseAll == true) && ($CloseCompany == false)) {
-                (new \yii\db\Query())->createCommand()->insert('lock', [
+                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                     'id' => '',
                     'type' => $type,
                     'period' => $period,
@@ -145,7 +145,7 @@ class LoadController extends Controller
                 ])->execute();
                 return 1;
             } elseif (($CloseAll == false) && ($CloseCompany == true)) {
-                (new \yii\db\Query())->createCommand()->delete('lock', [
+                (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
                     'type' => $type,
                     'period' => $period,
                     'company_id' => $company,
@@ -154,7 +154,7 @@ class LoadController extends Controller
             }
 
         } else {
-            (new \yii\db\Query())->createCommand()->insert('lock', [
+            (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                 'id' => '',
                 'type' => $type,
                 'period' => $period,

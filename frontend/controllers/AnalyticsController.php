@@ -196,7 +196,7 @@ class AnalyticsController extends Controller
 
             $rows = (new \yii\db\Query())
                 ->select(['id', 'served_at'])
-                ->from('act')
+                ->from('{{%act}}')
                 ->where(['number' => $number])
                 ->andWhere(['service_type' => $serviceType])
                 //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
@@ -228,7 +228,7 @@ class AnalyticsController extends Controller
         // Получаем список заказов компании
         $sqlRows = (new \yii\db\Query())
             ->select(['id', 'number'])
-            ->from('act')
+            ->from('{{%act}}')
             ->where(['client_id' => $company_id])
             ->all();
 
