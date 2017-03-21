@@ -28,7 +28,7 @@ $workTime = $modelCompany->getWorkTimeArray();
         <div style="float: left;padding-top: 10px;width: 5%">C  </div>
         <div style="float: left;width: 25%"><?= DateTimePicker::widget([
             'name' => "Company[workTime][start_time]",
-            'value' => $workTime[1]['start_time'],
+            'value' => ArrayHelper::getValue($workTime[1], 'start_time', ''),
             'removeButton' => false,
             'pluginOptions' => [
                 'startView' => 1,
