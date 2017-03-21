@@ -6,6 +6,7 @@
  */
 use common\components\DateHelper;
 use kartik\datetime\DateTimePicker;
+use yii\helpers\ArrayHelper;
 
 $workTime = $modelCompany->getWorkTimeArray();
 ?>
@@ -73,7 +74,7 @@ $workTime = $modelCompany->getWorkTimeArray();
             <div style="float: left;width: 25%">
                 <?= DateTimePicker::widget([
                     'name' => "Company[workTime][$day][start_time]",
-                    'value' => $workTime[$day]['start_time'],
+                    'value' => ArrayHelper::getValue($workTime[$day], 'start_time', ''),
                     'removeButton' => false,
                     'pluginOptions' => [
                         'startView' => 1,
@@ -94,7 +95,7 @@ $workTime = $modelCompany->getWorkTimeArray();
             <div style="float: left;width: 25%">
                 <?= DateTimePicker::widget([
                     'name' => "Company[workTime][$day][end_time]",
-                    'value' => $workTime[$day]['end_time'],
+                    'value' => ArrayHelper::getValue($workTime[$day], 'end_time', ''),
                     'removeButton' => false,
                     'pluginOptions' => [
                         'startView' => 1,
