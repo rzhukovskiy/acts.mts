@@ -196,6 +196,11 @@ class menuLeftWidget extends Widget
                     ]
                 ],
                 [
+                    'label'  => 'Закрыть загрузки',
+                    'url'    => ['/load/list', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'load',
+                ],
+                [
                     'label'  => 'Акты',
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'act',

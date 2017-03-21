@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ActExporter;
-use common\components\ActHelper;
+use common\components\LoadHelper;
 use common\models\Act;
 use common\models\ActScope;
 use common\models\Car;
@@ -22,7 +22,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
-class ActController extends Controller
+class LoadController extends Controller
 {
     /**
      * @inheritdoc
@@ -34,7 +34,7 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -67,13 +67,17 @@ class ActController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $role = Yii::$app->user->identity->role;
 
+        $locked = Lock::CheckLocked($searchModel->period, $type);
+
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
             'company' => $company,
             'role' => $role,
-            'columns' => ActHelper::getColumnsByType($type, $role, $company, !empty(Yii::$app->user->identity->company->children)),
+            'locked' => $locked,
+            'period' => $searchModel->period,
+            'columns' => LoadHelper::getColumnsByType($type, $role, $locked, $searchModel->period, $company, !empty(Yii::$app->user->identity->company->children)),
             'is_locked' => Lock::CheckLocked($searchModel->period, $searchModel->service_type, true),
         ]);
     }
@@ -98,31 +102,66 @@ class ActController extends Controller
         ]);
     }
 
-    public function actionLock($type)
+    public function actionClose($type, $company, $period)
     {
-        (new \yii\db\Query())->createCommand()->delete('lock', [
-            'type' => $type,
-            'period' => date('n-Y', time() - 10 * 24 * 3600),
-        ])->execute();
 
-        (new \yii\db\Query())->createCommand()->insert('lock', [
-            'id' => '',
-            'type' => $type,
-            'period' => date('n-Y', time() - 10 * 24 * 3600),
-            'company_id' => 0,
-        ])->execute();
+        $LockedLisk = Lock::CheckLocked($period, $type);
 
-        return "Открыть загрузку";
-    }
+        if(count($LockedLisk) > 0) {
 
-    public function actionUnlock($type)
-    {
-        (new \yii\db\Query())->createCommand()->delete('lock', [
-            'type' => $type,
-            'period' => date('n-Y', time() - 10 * 24 * 3600),
-        ])->execute();
+            $CloseAll = false;
+            $CloseCompany = false;
 
-        return "Закрыть загрузку";
+            for ($c = 0; $c < count($LockedLisk); $c++) {
+                if ($LockedLisk[$c]["company_id"] == 0) {
+                    $CloseAll = true;
+                }
+                if ($LockedLisk[$c]["company_id"] == $company) {
+                    $CloseCompany = true;
+                }
+            }
+
+            if (($CloseAll == false) && ($CloseCompany == false)) {
+                (new \yii\db\Query())->createCommand()->insert('lock', [
+                    'id' => '',
+                    'type' => $type,
+                    'period' => $period,
+                    'company_id' => $company,
+                ])->execute();
+                return 2;
+            } elseif (($CloseAll == true) && ($CloseCompany == true)) {
+                (new \yii\db\Query())->createCommand()->delete('lock', [
+                    'type' => $type,
+                    'period' => $period,
+                    'company_id' => $company,
+                ])->execute();
+                return 2;
+            } elseif (($CloseAll == true) && ($CloseCompany == false)) {
+                (new \yii\db\Query())->createCommand()->insert('lock', [
+                    'id' => '',
+                    'type' => $type,
+                    'period' => $period,
+                    'company_id' => $company,
+                ])->execute();
+                return 1;
+            } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                (new \yii\db\Query())->createCommand()->delete('lock', [
+                    'type' => $type,
+                    'period' => $period,
+                    'company_id' => $company,
+                ])->execute();
+                return 1;
+            }
+
+        } else {
+            (new \yii\db\Query())->createCommand()->insert('lock', [
+                'id' => '',
+                'type' => $type,
+                'period' => $period,
+                'company_id' => $company,
+            ])->execute();
+            return 2;
+        }
     }
 
     public function actionDisinfect($serviceId = null)
@@ -233,7 +272,7 @@ class ActController extends Controller
             'serviceList' => $serviceList,
             'role' => $role,
             'model' => $model,
-            'columns' => ActHelper::getColumnsByType($type, $role, 0, !empty(Yii::$app->user->identity->company->children)),
+            'columns' => LoadHelper::getColumnsByType($type, $role, 0, !empty(Yii::$app->user->identity->company->children)),
         ]);
     }
 
@@ -293,7 +332,7 @@ class ActController extends Controller
             'serviceList' => $serviceList,
             'role' => $role,
             'model' => $model,
-            'columns' => ActHelper::getColumnsByType($type, $role, 0),
+            'columns' => LoadHelper::getColumnsByType($type, $role, 0),
         ]);
     }
 

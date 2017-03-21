@@ -44,4 +44,42 @@ class Lock extends \yii\db\ActiveRecord
             'period' => 'Period',
         ];
     }
+
+    public static function CheckLocked($period, $type, $check_period = false)
+    {
+
+        if(false == false) {
+
+            return (new \yii\db\Query())
+                ->select(['id', 'company_id'])
+                ->from('lock')
+                ->where(['type' => $type])
+                ->andWhere(['period' => $period])
+                ->all();
+
+        } else {
+
+            $LockedLisk = (new \yii\db\Query())
+                ->select(['id', 'company_id'])
+                ->from('lock')
+                ->where(['type' => $type])
+                ->andWhere(['period' => $period])
+                ->all();
+
+            $CloseAll = false;
+
+            if(count($LockedLisk) > 0) {
+                for ($c = 0; $c < count($LockedLisk); $c++) {
+                    if ($LockedLisk[$c]["company_id"] == 0) {
+                        $CloseAll = true;
+                    }
+                }
+            }
+
+            return $CloseAll;
+
+        }
+
+    }
+
 }

@@ -439,7 +439,31 @@ class Act extends ActiveRecord
                 \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
         }
 
-        $is_locked = Lock::findOne(['period' => date('n-Y', $this->served_at), 'type' => $this->service_type]);
+        $LockedLisk = Lock::CheckLocked(date('n-Y', $this->served_at), $this->service_type);
+        $is_locked = false;
+
+        if(count($LockedLisk) > 0) {
+
+            $CloseAll = false;
+            $CloseCompany = false;
+
+            for ($c = 0; $c < count($LockedLisk); $c++) {
+                if ($LockedLisk[$c]["company_id"] == 0) {
+                    $CloseAll = true;
+                }
+                if ($LockedLisk[$c]["company_id"] == $this->partner_id) {
+                    $CloseCompany = true;
+                }
+            }
+
+            if (($CloseAll == true) && ($CloseCompany == false)) {
+                $is_locked = true;
+            } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                $is_locked = true;
+            }
+
+        }
+
         if ($insert && $is_locked) {
             $this->addError('period', 'This period is locked');
             return false;
