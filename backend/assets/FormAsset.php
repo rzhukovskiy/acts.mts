@@ -15,7 +15,7 @@ class FormAsset extends AssetBundle
         //'css/bootstrap-checkbox.css'
     ];
     public $js = [
-        'js/front-form.js'
+        'js/form.js'
     ];
     public $depends = [
         'frontend\assets\AppAsset',
