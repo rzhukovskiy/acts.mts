@@ -186,7 +186,7 @@ class AnalyticsController extends Controller
         ]);
     }
 
-    public function GetSrTime($number, $serviceType) {
+    public static function GetSrTime($number, $serviceType) {
 
         // Вывод среднего времени обслуживания
 
@@ -221,7 +221,7 @@ class AnalyticsController extends Controller
         // END Вывод среднего времени обслуживания
     }
 
-    public function GetWorkCars($company_id) {
+    public static function GetWorkCars($company_id) {
 
         // Получаем среднее количество операций
 
@@ -235,13 +235,10 @@ class AnalyticsController extends Controller
         if(count($sqlRows) > 0) {
 
             // Получаем список машин компании
-            $sqlCars = (new \yii\db\Query())
-                ->select(['id', 'number'])
-                ->from('car')
-                ->where(['company_id' => $company_id])
-                ->andWhere(['<>', 'type_id', 7])
-                ->andWhere(['<>', 'type_id', 8])
-                ->all();
+
+            $sqlCars = Car::find()->where(['company_id' => $company_id])
+                ->andWhere(['!=', 'type_id', 7])
+                ->andWhere(['!=', 'type_id', 8])->all();
 
             $ArrayCars = [];
 
@@ -258,8 +255,10 @@ class AnalyticsController extends Controller
                 $index = $sqlRows[$i]["number"];
 
                 // Сравниваем список машин компании со списком машин из заказов без повторных заказов
-                if($ArrayCars[$index] == 1) {
-                    $ArrayWorkCars[$index] = 1;
+                if(isset($ArrayCars[$index])) {
+                    if ($ArrayCars[$index] == 1) {
+                        $ArrayWorkCars[$index] = 1;
+                    }
                 }
 
                 $index = null;
