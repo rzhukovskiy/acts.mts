@@ -90,6 +90,10 @@ class AnalyticsController extends Controller
             $dataProvider->query
                 ->groupBy('client_id, partner.address');
         }
+        if ($group == 'average') {
+            $dataProvider->query
+                ->groupBy('client_id, act.service_type');
+        }
         if ($group == 'type') {
             $dataProvider->query
                 ->groupBy('client_id, act.service_type');
@@ -151,6 +155,7 @@ class AnalyticsController extends Controller
                     'pagination' => false,
                 ]);
             }
+
         }
 
         return $this->render('view', [
@@ -174,14 +179,22 @@ class AnalyticsController extends Controller
             ->andWhere('car.type_id != 7')
             ->andWhere('car.type_id != 8');
 
+        return $this->render('detail', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    public function GetSrTime($number, $serviceType) {
         // Вывод среднего времени обслуживания
         $TimeNow = time(); // Текущая дата
 
         $rows = (new \yii\db\Query())
             ->select(['id', 'served_at'])
             ->from('act')
-            ->where(['number' => $searchModel->number])
-            ->andWhere(['service_type' => $searchModel->service_type])
+            ->where(['number' => $number])
+            ->andWhere(['service_type' => $serviceType])
             //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
             ->orderBy('served_at ASC')
             ->all();
@@ -192,17 +205,62 @@ class AnalyticsController extends Controller
             // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
             $srTimeService = round(round(($TimeNow - $rows[0]["served_at"]) / 86400) / count($rows));
 
-            Yii::$app->view->params['srTimeService'] = "Данный автомобиль обслуживается в среднем 1 раз в " . $srTimeService . " дней.";
+            return "1 раз в " . $srTimeService . " дней";
         } else {
-            Yii::$app->view->params['srTimeService'] = "Данный автомобиль не обслуживался более года.";
+            return "Не обслуживался более года.";
         }
         // END Вывод среднего времени обслуживания
+    }
 
-        return $this->render('detail', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
-        ]);
+    public function GetWorkCars($company_id) {
+
+        // Получаем среднее количество операций
+
+        // Получаем список заказов компании
+        $sqlRows = (new \yii\db\Query())
+            ->select(['id', 'number'])
+            ->from('act')
+            ->where(['client_id' => $company_id])
+            ->all();
+
+        if(count($sqlRows) > 0) {
+
+            // Получаем список машин компании
+            $sqlCars = (new \yii\db\Query())
+                ->select(['id', 'number'])
+                ->from('car')
+                ->where(['company_id' => $company_id])
+                ->andWhere(['<>', 'type_id', 7])
+                ->andWhere(['<>', 'type_id', 8])
+                ->all();
+
+            $ArrayCars = [];
+
+            for($c = 0; $c < count($sqlCars); $c++) {
+                $index = $sqlCars[$c]["number"];
+                $ArrayCars[$index] = 1;
+
+                $index = null;
+            }
+
+            $ArrayWorkCars = [];
+
+            for($i = 0; $i < count($sqlRows); $i++) {
+                $index = $sqlRows[$i]["number"];
+
+                // Сравниваем список машин компании со списком машин из заказов без повторных заказов
+                if($ArrayCars[$index] == 1) {
+                    $ArrayWorkCars[$index] = 1;
+                }
+
+                $index = null;
+            }
+
+            return count($ArrayWorkCars);
+        } else {
+            return 0;
+        }
+
     }
 
 }

@@ -12,7 +12,7 @@ $this->title = 'Статистика данных';
 
 if ($group == 'count') {
     $items[] = [
-        'label' => 'Статистка по количеству помятых машин',
+        'label' => 'Статистка по количеству помытых машин',
         'url' => [
             'list',
             'group' => $group,
@@ -28,6 +28,18 @@ if ($group == 'city') {
         'url' => [
             'list',
             'type' => $searchModel->service_type,
+            'group' => $group,
+            'ActSearch[dateFrom]' => $searchModel->dateFrom,
+            'ActSearch[dateTo]' => $searchModel->dateTo,
+        ],
+        'active' => false,
+    ];
+}
+if ($group == 'average') {
+    $items[] = [
+        'label' => 'Среднее кол-во операций на 1ТС',
+        'url' => [
+            'list',
             'group' => $group,
             'ActSearch[dateFrom]' => $searchModel->dateFrom,
             'ActSearch[dateTo]' => $searchModel->dateTo,
