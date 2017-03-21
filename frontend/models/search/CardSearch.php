@@ -99,9 +99,11 @@ class CardSearch extends CommonCardSearch
         ')->queryAll();
         $car = ArrayHelper::index($car, 'card_id');
         foreach ($dataProvider->getModels() as &$model) {
-            $model->car_number = $car[$model->id]['number'];
-            $model->car_type = $car[$model->id]['type'];
-            $model->car_mark = $car[$model->id]['mark'];
+            if (isset($car[$model->id])) {
+                $model->car_number = $car[$model->id]['number'];
+                $model->car_type = $car[$model->id]['type'];
+                $model->car_mark = $car[$model->id]['mark'];                
+            }
         }
 
         return $dataProvider;
