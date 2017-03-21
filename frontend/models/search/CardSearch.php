@@ -83,7 +83,7 @@ class CardSearch extends CommonCardSearch
 
     /**
      * Подмешиваем данные о машинах в датпровайдер карт
-     * @param $dataProvider
+     * @param $dataProvider ActiveDataProvider
      * @return mixed
      */
     public static function addCarToSearch($dataProvider)
@@ -98,7 +98,7 @@ class CardSearch extends CommonCardSearch
             GROUP BY card_id
         ')->queryAll();
         $car = ArrayHelper::index($car, 'card_id');
-        foreach ($dataProvider->models as &$model) {
+        foreach ($dataProvider->getModels() as &$model) {
             $model->car_number = $car[$model->id]['number'];
             $model->car_type = $car[$model->id]['type'];
             $model->car_mark = $car[$model->id]['mark'];

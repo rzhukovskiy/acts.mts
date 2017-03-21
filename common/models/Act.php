@@ -14,6 +14,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
+use yii\helpers\ArrayHelper;
 
 /**
  * Act model
@@ -644,7 +645,7 @@ class Act extends ActiveRecord
                     } else {
                         //на 20% увеличиваем цену для клиента
                         $clientScope->price = $kpd * $serviceData['price'];
-                        $clientScope->description = $serviceData['description'];
+                        $clientScope->description = ArrayHelper::getValue($serviceData, 'description', 'Нет описания');
                     }
                     $clientScope->amount = $serviceData['amount'];
                     $clientScope->save();
@@ -711,13 +712,16 @@ class Act extends ActiveRecord
     private function uploadImage()
     {
         if ($this->image) {
-            $image = \Yii::$app->image->load($this->image->tempName);
-            /**
-             * @var $image \yii\image\drivers\Image
-             */
-            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
+//            $image = \Yii::$app->image->load($this->image->tempName);
+//            /**
+//             * @var $image \yii\image\drivers\Image
+//             */
+//            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
+//
+//            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
 
-            return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
+            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
+            $this->image->saveAs($imagePath);
         }
 
         return false;

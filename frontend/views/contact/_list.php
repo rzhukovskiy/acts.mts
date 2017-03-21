@@ -2,7 +2,7 @@
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $searchModel \common\models\search\MonthlyActSearch
+ * @var $searchModel \common\models\search\ContactSearch
  * @var $admin boolean
  */
 use kartik\grid\GridView;
@@ -27,22 +27,6 @@ echo GridView::widget([
     'striped'          => false,
     'export'           => false,
     'filterSelector'   => '.ext-filter',
-    'beforeHeader'     => [
-        [
-            'columns' => [
-                [
-                    'content' => $filters,
-                    'options' => [
-                        'style'   => 'vertical-align: middle',
-                        'colspan' => 9,
-                        'class'   => 'kv-grid-group-filter',
-                    ],
-                ]
-            ],
-            'options' => ['class' => 'extend-header'],
-        ],
-
-    ],
     'layout'           => '{items}',
     'columns'          => [
         [

@@ -3,17 +3,20 @@
 /**
  * @var $this yii\web\View
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $model common\models\Company
- * @var $searchModel \common\models\search\CompanySearch
+ * @var $model common\models\Contact
+ * @var $searchModel \common\models\search\ContactSearch
  * @var $type integer
  * @var $admin boolean
  */
-$this->title = \common\models\Company::$listType[$type]['ru'];
+use common\models\Company;
+
+$this->title = Company::$listType[$type]['ru'];
 
 echo $this->render('_tabs',
     [
         'type' => $type,
     ]);
+
 if ($admin) {
     echo $this->render('_form',
         [

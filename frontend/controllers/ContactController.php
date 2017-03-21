@@ -65,7 +65,7 @@ class ContactController extends Controller
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'model'        => $model,
-                'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+                'admin'        => Yii::$app->user->can(User::ROLE_ADMIN),
             ]);
     }
 

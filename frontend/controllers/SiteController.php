@@ -36,7 +36,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'error', 'connect', 'login'],
+                        'actions' => ['logout', 'error', 'login'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -157,54 +157,6 @@ class SiteController extends Controller
         }
         return $this->render('signup', [
             'model' => $model,
-        ]);
-    }
-
-    public function actionConnect($type = 1)
-    {
-        $connectionData = Yii::$app->request->post('Connection', false);
-        if ($connectionData) {
-            foreach ($connectionData as $companyId => $oldId) {
-                $company = Company::findOne($companyId);
-                if ($company) {
-                    $company->old_id = $oldId;
-                    $company->save();
-                }
-            }
-        }
-
-        $this->layout = 'main';
-        $listCompany = Company::find()->where(['old_id' => null, 'type' => $type])->all();
-
-        $listService = [
-            Company::TYPE_OWNER => 'company',
-            Company::TYPE_WASH => 'wash',
-            Company::TYPE_SERVICE => 'service',
-            Company::TYPE_TIRES => 'tires',
-        ];
-
-        /**
-         * @var \yii\db\Connection $old_db
-         */
-        $old_db = Yii::$app->db_old;
-        if (isset($listService[$type])) {
-            $existed = Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column();
-            if (count($existed)) {
-                $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request, {$old_db->tablePrefix}request_{$listService[$type]} WHERE state = 1 AND request_ptr_id = {$old_db->tablePrefix}request.id AND id NOT IN (" .
-                    implode(',', $existed) .
-                    ") ORDER BY name ASC")->queryAll();
-            } else {
-                $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request, {$old_db->tablePrefix}request_{$listService[$type]} WHERE state = 1 AND request_ptr_id = {$old_db->tablePrefix}request.id ORDER BY name ASC")->queryAll();
-            }
-        } else {
-            $rows = $old_db->createCommand("SELECT * FROM {$old_db->tablePrefix}request WHERE state = 1 AND id NOT IN (" .
-                implode(',', Company::find()->select('old_id')->where(['is not', 'old_id', null])->indexBy('old_id')->column()) .
-                ") ORDER BY name ASC")->queryAll();
-        }
-
-        return $this->render('connect', [
-            'listCompany' => $listCompany,
-            'rows' => $rows,
         ]);
     }
 
