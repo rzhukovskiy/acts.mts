@@ -187,28 +187,37 @@ class AnalyticsController extends Controller
     }
 
     public function GetSrTime($number, $serviceType) {
+
         // Вывод среднего времени обслуживания
-        $TimeNow = time(); // Текущая дата
 
-        $rows = (new \yii\db\Query())
-            ->select(['id', 'served_at'])
-            ->from('act')
-            ->where(['number' => $number])
-            ->andWhere(['service_type' => $serviceType])
-            //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
-            ->orderBy('served_at ASC')
-            ->all();
+        if($serviceType >= 0) {
 
-        // Есди автомобиль обслуживался в этом году
-        if(count($rows) > 0) {
+            $TimeNow = time(); // Текущая дата
 
-            // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
-            $srTimeService = round(round(($TimeNow - $rows[0]["served_at"]) / 86400) / count($rows));
+            $rows = (new \yii\db\Query())
+                ->select(['id', 'served_at'])
+                ->from('act')
+                ->where(['number' => $number])
+                ->andWhere(['service_type' => $serviceType])
+                //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
+                ->orderBy('served_at ASC')
+                ->all();
 
-            return "1 раз в " . $srTimeService . " дней";
+            // Есди автомобиль обслуживался в этом году
+            if (count($rows) > 0) {
+
+                // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
+                $srTimeService = round(round(($TimeNow - $rows[0]["served_at"]) / 86400) / count($rows));
+
+                return "1 раз в " . $srTimeService . " дней";
+            } else {
+                return "Не обслуживался более года.";
+            }
+
         } else {
             return "Не обслуживался более года.";
         }
+
         // END Вывод среднего времени обслуживания
     }
 

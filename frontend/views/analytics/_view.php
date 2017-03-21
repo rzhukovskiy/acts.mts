@@ -47,7 +47,11 @@ $columns = [
         'header' => 'Период обслуживаний',
         'value' => function ($data) {
             // Вывод среднего времени обслуживания
-            return \frontend\controllers\AnalyticsController::GetSrTime($data->car->number, $data->service_type);
+            if(isset($data->service_type)) {
+                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, $data->service_type);
+            } else {
+                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, -1);
+            }
         },
         'visible' => $group == 'count',
     ],
