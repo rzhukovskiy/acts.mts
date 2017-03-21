@@ -25,8 +25,7 @@ $workTime = $modelCompany->getWorkTimeArray();
 
     <div id="everyday" style="display: none;">
         <div style="float: left;padding-top: 10px;width: 5%">C  </div>
-        <div style="float: left;width: 25%"><? 
-        echo DateTimePicker::widget([
+        <div style="float: left;width: 25%"><?= DateTimePicker::widget([
             'name' => "Company[workTime][start_time]",
             'value' => $workTime[1]['start_time'],
             'removeButton' => false,
@@ -47,8 +46,7 @@ $workTime = $modelCompany->getWorkTimeArray();
          По
         </div>
         <div style="float: left;width: 25%">
-        <? 
-        echo DateTimePicker::widget([
+        <?= DateTimePicker::widget([
             'name' => "Company[workTime][end_time]",
             'value' => $workTime[1]['end_time'],
             'removeButton' => false,
@@ -70,10 +68,10 @@ $workTime = $modelCompany->getWorkTimeArray();
     <div id="anyday" style="display: none;">
         <?php for ($day = 1; $day <= 7; $day++) { ?>
             <div style="float: left;padding-top: 10px;width: 13%">
-                <?=DateHelper::getWeekDayName($day)?> с
+                <?= DateHelper::getWeekDayName($day)?> с
             </div>
-            <div style="float: left;width: 25%"><?
-                echo DateTimePicker::widget([
+            <div style="float: left;width: 25%">
+                <?= DateTimePicker::widget([
                     'name' => "Company[workTime][$day][start_time]",
                     'value' => $workTime[$day]['start_time'],
                     'removeButton' => false,
@@ -94,8 +92,7 @@ $workTime = $modelCompany->getWorkTimeArray();
                 По
             </div>
             <div style="float: left;width: 25%">
-                <?
-                echo DateTimePicker::widget([
+                <?= DateTimePicker::widget([
                     'name' => "Company[workTime][$day][end_time]",
                     'value' => $workTime[$day]['end_time'],
                     'removeButton' => false,
