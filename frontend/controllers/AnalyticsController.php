@@ -221,18 +221,45 @@ class AnalyticsController extends Controller
         // END Вывод среднего времени обслуживания
     }
 
-    public static function GetWorkCars($company_id) {
+    public static function GetWorkCars($company_id, $service_type)
+    {
 
         // Получаем среднее количество операций
 
-        // Получаем список заказов компании
-        $sqlRows = (new \yii\db\Query())
-            ->select(['id', 'number'])
-            ->from('{{%act}}')
-            ->where(['client_id' => $company_id])
-            ->all();
+        if (isset(Yii::$app->request->queryParams['ActSearch']['dateFrom']) && (isset(Yii::$app->request->queryParams['ActSearch']['dateFrom']))) {
 
-        if(count($sqlRows) > 0) {
+            // Если указан период
+
+            // Дата от
+            $DataFrom = explode("T", Yii::$app->request->queryParams['ActSearch']['dateFrom']);
+            $DataFrom = explode("-", $DataFrom[0]);
+            $DataFrom = mktime(00, 00, 01, $DataFrom['1'], $DataFrom['2'], $DataFrom['0']) + 86400;
+
+            // Дата до
+            $DataTo = explode("T", Yii::$app->request->queryParams['ActSearch']['dateTo']);
+            $DataTo = explode("-", $DataTo[0]);
+            $DataTo = mktime(00, 00, 01, $DataTo['1'], $DataTo['2'], $DataTo['0']) + 86400;
+
+            // Получаем список заказов компании
+            $sqlRows = (new \yii\db\Query())
+                ->select(['id', 'number'])
+                ->from('{{%act}}')
+                ->where(['client_id' => $company_id])
+                ->andWhere(['>=', 'served_at', $DataFrom])
+                ->andWhere(['<', 'served_at', $DataTo])
+                ->andWhere(['service_type' => $service_type])
+                ->all();
+        } else {
+            // Получаем список заказов компании
+            $sqlRows = (new \yii\db\Query())
+                ->select(['id', 'number'])
+                ->from('{{%act}}')
+                ->where(['client_id' => $company_id])
+                ->andWhere(['service_type' => $service_type])
+                ->all();
+        }
+
+        if (count($sqlRows) > 0) {
 
             // Получаем список машин компании
 
@@ -242,7 +269,7 @@ class AnalyticsController extends Controller
 
             $ArrayCars = [];
 
-            for($c = 0; $c < count($sqlCars); $c++) {
+            for ($c = 0; $c < count($sqlCars); $c++) {
                 $index = $sqlCars[$c]["number"];
                 $ArrayCars[$index] = 1;
 
@@ -251,11 +278,11 @@ class AnalyticsController extends Controller
 
             $ArrayWorkCars = [];
 
-            for($i = 0; $i < count($sqlRows); $i++) {
+            for ($i = 0; $i < count($sqlRows); $i++) {
                 $index = $sqlRows[$i]["number"];
 
                 // Сравниваем список машин компании со списком машин из заказов без повторных заказов
-                if(isset($ArrayCars[$index])) {
+                if (isset($ArrayCars[$index])) {
                     if ($ArrayCars[$index] == 1) {
                         $ArrayWorkCars[$index] = 1;
                     }
