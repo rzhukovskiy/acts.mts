@@ -51,8 +51,20 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            //'suffix' => '.html',
             'rules' => [
+                '' => 'site/index',
+
+
+                '<action>'=>'site/<action>',
             ],
+        ],
+        'assetManager' => [
+            'basePath' => '@webroot/assets',
+            'baseUrl' => '@web/assets'
+        ],
+        'request' => [
+            'baseUrl' => ''
         ],
     ],
     'params' => $params,
