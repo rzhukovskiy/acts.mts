@@ -10,4 +10,5 @@ $this->title = 'Редактирование ' . $model->number;
 echo $this->render('_form', [
     'model' => $model,
     'companyModel' => $model->company,
+    'expanded'  => true,
 ]);

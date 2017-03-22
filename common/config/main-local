@@ -19,7 +19,7 @@ return [
         ],
     ],
     'aliases' => [
-        '@backWeb' => 'backend.local',
-        '@frontWeb' => 'frontend.local',
+        '@backWeb' => 'http://back.acts.mts/',
+        '@frontWeb' => 'http://front.acts.mts/',
     ],
 ];

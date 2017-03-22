@@ -193,7 +193,8 @@ class CarController extends Controller
             return $this->redirect(['/company/update', 'id' => $model->company_id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model'     => $model,
+                'expanded'  => true,
             ]);
         }
     }

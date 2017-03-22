@@ -19,7 +19,7 @@ use common\models\Type;
              aria-expanded="false" aria-controls="collapseExample">Скрыть/Развернуть
         </div>
     </div>
-    <div class="<?= $expanded ? 'collapse in' : 'collapse' ?>" id="collapseCarAddForm">
+    <div class="<?= !empty($expanded) ? 'collapse in' : 'collapse' ?>" id="collapseCarAddForm">
         <div class="panel-body">
             <?php
             $form = ActiveForm::begin([

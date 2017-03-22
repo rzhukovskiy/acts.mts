@@ -11,13 +11,13 @@ $config = [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'path' => '/',
-                'domain' => 'backend.local',
+                'domain' => '.acts.mts',
             ],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
             'cookieParams' =>
-                ['domain' => 'backend.local']
+                ['domain' => '.acts.mts']
         ],
     ],
 ];

@@ -11,12 +11,12 @@ $config = [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'path' => '/',
-                'domain' => 'frontend.local',
+                'domain' => '.acts.mts',
             ],
         ],
         'session' => [
             'cookieParams' =>
-                ['domain' => 'frontend.local']
+                ['domain' => '.acts.mts']
         ],
     ],
 ];
