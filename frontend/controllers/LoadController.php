@@ -23,6 +23,7 @@ use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
+use yii\db\Expression;
 
 class LoadController extends Controller
 {
@@ -70,6 +71,9 @@ class LoadController extends Controller
         $role = Yii::$app->user->identity->role;
 
         $locked = Lock::CheckLocked($searchModel->period, $type);
+
+        $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
+        $dataProvider->query->groupBy('partner_id');
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,

@@ -55,7 +55,7 @@ class LoadHelper
                     return isset($data->client->parent) ? [
                         'class' => 'grouped hidden',
                         'data-header' => $data->client->parent->name,
-                        'data-footer' => 'Итого ' . $data->client->parent->name . ':',
+                        //'data-footer' => 'Итого ' . $data->client->parent->name . ':',
                     ] : ['class' => 'hidden'];
                 },
             ],
@@ -72,7 +72,7 @@ class LoadHelper
                     return isset($data->partner->parent) ? [
                         'class' => 'grouped hidden',
                         'data-header' => $data->partner->parent->name,
-                        'data-footer' => 'Итого ' . $data->partner->parent->name . ':',
+                        //'data-footer' => 'Итого ' . $data->partner->parent->name . ':',
                     ] : ['class' => 'hidden'];
                 },
             ],
@@ -89,7 +89,7 @@ class LoadHelper
                     return isset($data->client) ? [
                         'class' => 'grouped hidden',
                         'data-header' => $data->client->name . ' - ' . $data->client->address,
-                        'data-footer' => 'Итого ' . $data->client->name . ':',
+                        //'data-footer' => 'Итого ' . $data->client->name . ':',
                         'data-parent' => 1,
                     ] : ['class' => 'hidden'];
                 },
@@ -108,7 +108,7 @@ class LoadHelper
                     return isset($data->partner) ? [
                         'class' => 'grouped hidden',
                         'data-header' => $data->partner->name . ' - ' . $data->partner->address,
-                        'data-footer' => 'Итого ' . $data->partner->name . ':',
+//                        'data-footer' => 'Итого ' . $data->partner->name . ':',
                         'data-parent' => 1,
                     ] : ['class' => 'hidden'];
                 },
