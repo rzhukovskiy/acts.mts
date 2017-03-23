@@ -115,7 +115,7 @@ use yii\jui\AutoComplete;
             </tr>
 
             <!-- Выводим кнопку для преждевременного закрытия загрузок -->
-            <?
+            <?php
 
             if(($model->service_type == 2) || ($model->service_type == 3) || ($model->service_type == 4) || ($model->service_type == 5)) {
 
