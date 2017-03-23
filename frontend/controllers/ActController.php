@@ -34,7 +34,7 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -49,7 +49,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'closeload'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -113,6 +113,64 @@ class ActController extends Controller
         ])->execute();
 
         return "Открыть загрузку";
+    }
+
+    public function actionCloseload($type, $company, $period)
+    {
+
+        if (($type == 2) || ($type == 3) || ($type == 4) || ($type == 5)) {
+
+            $LockedLisk = Lock::CheckLocked($period, $type);
+
+            if (count($LockedLisk) > 0) {
+
+                $CloseAll = false;
+                $CloseCompany = false;
+
+                for ($c = 0; $c < count($LockedLisk); $c++) {
+                    if ($LockedLisk[$c]["company_id"] == 0) {
+                        $CloseAll = true;
+                    }
+                    if ($LockedLisk[$c]["company_id"] == $company) {
+                        $CloseCompany = true;
+                    }
+                }
+
+                if (($CloseAll == false) && ($CloseCompany == false)) {
+                    (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
+                        'id' => '',
+                        'type' => $type,
+                        'period' => $period,
+                        'company_id' => $company,
+                    ])->execute();
+                    return 1;
+                } elseif (($CloseAll == true) && ($CloseCompany == true)) {
+                    (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+                        'type' => $type,
+                        'period' => $period,
+                        'company_id' => $company,
+                    ])->execute();
+                    return 1;
+                } elseif (($CloseAll == true) && ($CloseCompany == false)) {
+                    return 0;
+                } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                    return 0;
+                }
+
+            } else {
+                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
+                    'id' => '',
+                    'type' => $type,
+                    'period' => $period,
+                    'company_id' => $company,
+                ])->execute();
+                return 1;
+            }
+
+        } else {
+            return 0;
+        }
+
     }
 
     public function actionUnlock($type)

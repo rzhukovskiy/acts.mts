@@ -153,6 +153,97 @@ JS;
                     <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
                 </td>
             </tr>
+
+            <!-- Выводим кнопку для преждевременного закрытия загрузок -->
+            <?
+
+            if(($model->service_type == 2) || ($model->service_type == 3) || ($model->service_type == 4) || ($model->service_type == 5)) {
+
+                // Текушая дата
+                $DateNow = time();
+
+                // Текущий день недели
+                $DayNow = date("j", $DateNow);
+
+                // Если сегодня первый день месяца
+                if ($DayNow == 1) {
+
+                    // Дата прошлого дня
+                    $DateYesterday = $DateNow - 86400;
+
+                    $LockedLisk = \common\models\Lock::CheckLocked(date('n-Y', $DateYesterday), $model->service_type);
+                    $is_locked = false;
+
+                    if (count($LockedLisk) > 0) {
+
+                        $CloseAll = false;
+                        $CloseCompany = false;
+
+                        for ($c = 0; $c < count($LockedLisk); $c++) {
+                            if ($LockedLisk[$c]["company_id"] == 0) {
+                                $CloseAll = true;
+                            }
+                            if ($LockedLisk[$c]["company_id"] == Yii::$app->user->identity->company_id) {
+                                $CloseCompany = true;
+                            }
+                        }
+
+                        if (($CloseAll == true) && ($CloseCompany == false)) {
+                            $is_locked = true;
+                        } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                            $is_locked = true;
+                        }
+
+                    }
+
+                    if ($is_locked == false) {
+
+                        // Название месяцев
+                        $months = [
+                            'январь',
+                            'февраль',
+                            'март',
+                            'апрель',
+                            'май',
+                            'июнь',
+                            'июль',
+                            'август',
+                            'сентябрь',
+                            'октябрь',
+                            'ноябрь',
+                            'декабрь',
+                        ];
+
+                        // Название прошлого месяца
+                        $MountYesterday = date("n", $DateYesterday) - 1;
+                        $MountYesterday = $months[$MountYesterday];
+
+                        echo "<tr><td colspan=\"7\">Если Вы загрузили всю необходимую информацию за " . $MountYesterday . " месяц и Вам нечего больше добавить, то просим Вас нажать на кнопку  \"Закрыть загрузку\". После нажатия на эту кнопку, возможностей добавить или изменить какие либо данные за этот период не будет.
+                        <br /><br /><a class=\"btn btn-danger btn-sm\" href=\"/act/closeload?type=" . $model->service_type . "&company=" . Yii::$app->user->identity->company_id . "&period=" . date('n-Y', $DateYesterday) . "\" onclick=\"
+                        button = $(this); $.ajax({
+                type     :'GET',
+                cache    : false,
+                url  : $(this).attr('href'),
+                success  : function(response) {
+                if(response == 1) {
+                location.reload();
+                }
+                                    
+                }
+                });
+                return false;
+                        \">Закрыть загрузку</a>
+                        
+                        </td></tr>";
+
+                    }
+
+                }
+
+            }
+            ?>
+            <!-- END Выводим кнопку для преждевременного закрытия загрузок -->
+
             </tbody>
         </table>
         <?php ActiveForm::end() ?>

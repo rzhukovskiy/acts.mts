@@ -48,7 +48,7 @@ class Lock extends \yii\db\ActiveRecord
     public static function CheckLocked($period, $type, $check_period = false)
     {
 
-        if(false == false) {
+        if($check_period == false) {
 
             return (new \yii\db\Query())
                 ->select(['id', 'company_id'])
