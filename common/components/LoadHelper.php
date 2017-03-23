@@ -312,7 +312,14 @@ class LoadHelper
             'contact' => [
                 'header' => 'Связь с клиентом',
                 'class' => 'kartik\grid\ActionColumn',
-                'template' => '',
+                'template'       => '{call}',
+                'contentOptions' => ['style' => 'min-width: 50px'],
+                'buttons'        => [
+                    'call'   => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-earphone"></span>',
+                            ['/load/contact', 'id' => $model->client_id], ['target'=>'_blank']);
+                    },
+                ]
             ],
             'city' => 'partner.address',
             'check' => [

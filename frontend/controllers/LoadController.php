@@ -8,10 +8,12 @@ use common\models\Act;
 use common\models\ActScope;
 use common\models\Car;
 use common\models\Company;
+use common\models\CompanyMember;
 use common\models\Entry;
 use common\models\Lock;
 use common\models\search\ActSearch;
 use common\models\search\CarSearch;
+use common\models\search\CompanyMemberSearch;
 use common\models\search\EntrySearch;
 use common\models\Service;
 use common\models\User;
@@ -34,7 +36,7 @@ class LoadController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -162,6 +164,27 @@ class LoadController extends Controller
             ])->execute();
             return 2;
         }
+    }
+
+    public function actionContact($id)
+    {
+
+        $model = $this->findModel($id);
+        $modelCompanyMember = new CompanyMember();
+        $modelCompanyMember->company_id = $model->id;
+
+        $searchModel = new CompanyMemberSearch();
+        $searchModel->company_id = $model->id;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('member',
+            [
+                'model'        => $modelCompanyMember,
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+            ]);
+
     }
 
     public function actionDisinfect($serviceId = null)
