@@ -232,6 +232,7 @@ class LoadHelper
                             if ((($CloseAll == true) && ($CloseCompany == false)) || (($CloseAll == false) && ($CloseCompany == true))) {
                                return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-primary btn-sm',
+                                    'data-id' => $data->client_id,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -239,13 +240,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                button.text(\"Открыт\");
-                button.css(\"background-color\", \"#c9302c\");
-                button.css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                button.text(\"Закрыт\");
-                button.css(\"background-color\", \"#1863e6\");
-                button.css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
@@ -255,6 +256,7 @@ class LoadHelper
                             } elseif ((($CloseAll == true) && ($CloseCompany == true)) || (($CloseAll == false) && ($CloseCompany == false))) {
                                 return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-danger btn-sm',
+                                    'data-id' => $data->client_id,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -262,13 +264,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                button.text(\"Открыт\");
-                button.css(\"background-color\", \"#c9302c\");
-                button.css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                button.text(\"Закрыт\");
-                button.css(\"background-color\", \"#1863e6\");
-                button.css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
@@ -280,6 +282,7 @@ class LoadHelper
                         } else {
                             return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
                                 'class' => 'btn btn-danger btn-sm',
+                                'data-id' => $data->client_id,
                                 'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -287,13 +290,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                button.text(\"Открыт\");
-                button.css(\"background-color\", \"#c9302c\");
-                button.css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                button.text(\"Закрыт\");
-                button.css(\"background-color\", \"#1863e6\");
-                button.css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
