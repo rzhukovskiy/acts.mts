@@ -41,7 +41,7 @@ class LoadController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],

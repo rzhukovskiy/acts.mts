@@ -115,10 +115,10 @@ class LoadHelper
                 'filter' => false,
             ],
             'name' => [
-                'attribute' => 'name',
+                'header' => 'Название',
                 'filter' => Company::find()->select(['id', 'name'])->orderBy('id ASC')->indexBy('id')->column(),
                 'value' => function ($data) {
-                    return $data->client->name;
+                    return $data->partner->name;
                 },
             ],
             'city' => [
@@ -224,15 +224,15 @@ class LoadHelper
                                 if ($LockedLisk[$c]["company_id"] == 0) {
                                     $CloseAll = true;
                                 }
-                                if ($LockedLisk[$c]["company_id"] == $data->client_id) {
+                                if ($LockedLisk[$c]["company_id"] == $data->partner_id) {
                                     $CloseCompany = true;
                                 }
                             }
 
                             if ((($CloseAll == true) && ($CloseCompany == false)) || (($CloseAll == false) && ($CloseCompany == true))) {
-                               return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
+                               return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-primary btn-sm',
-                                    'data-id' => $data->client_id,
+                                    'data-id' => $data->partner_id,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -240,13 +240,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
@@ -254,9 +254,9 @@ class LoadHelper
                 return false;",
                                 ]);
                             } elseif ((($CloseAll == true) && ($CloseCompany == true)) || (($CloseAll == false) && ($CloseCompany == false))) {
-                                return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
+                                return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-danger btn-sm',
-                                    'data-id' => $data->client_id,
+                                    'data-id' => $data->partner_id,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -264,13 +264,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
@@ -280,9 +280,9 @@ class LoadHelper
                             }
 
                         } else {
-                            return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->client_id, 'period' => $GLOBALS['pediod']]), [
+                            return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
                                 'class' => 'btn btn-danger btn-sm',
-                                'data-id' => $data->client_id,
+                                'data-id' => $data->partner_id,
                                 'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -290,13 +290,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->client_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->client_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
                 }
                                     
                 }
@@ -387,30 +387,30 @@ class LoadHelper
         $assets = [
             User::ROLE_ADMIN => [
                 [
-                    Service::TYPE_WASH => ['row', 'name', 'city', 'expense', 'CloseButt', 'contact'],
-                    Service::TYPE_SERVICE => ['row', 'name', 'city', 'expense', 'CloseButt', 'contact'],
-                    Service::TYPE_TIRES => ['row', 'name', 'city', 'expense', 'CloseButt', 'contact'],
-                    Service::TYPE_DISINFECT => ['row', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'name', 'city', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
-                    Service::TYPE_SERVICE => ['row', 'name', 'city', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'name', 'city', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'name', 'city', 'day', 'mark', 'number', 'type', 'income', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
             ],
             User::ROLE_WATCHER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check', 'updateButtons'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
-                    Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -427,16 +427,16 @@ class LoadHelper
             ],
             User::ROLE_MANAGER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check', 'updateButtons'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
-                    Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income', 'updateButtons'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
