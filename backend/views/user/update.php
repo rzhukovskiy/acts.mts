@@ -31,7 +31,6 @@ echo Tabs::widget( [
             <?= $this->render('_form-update', [
                 'model' => $model,
                 'userModel'=>$userModel,
-                //'companyDropDownData' => $companyDropDownData,
             ]) ?>
         </div>
     </div>
