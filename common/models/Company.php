@@ -225,6 +225,7 @@ class Company extends ActiveRecord
             'director'    => 'Директор',
             'serviceList' => 'Сервисы',
             'fullAddress' => 'Адрес',
+            'expensive' => 'Стоимость',
             'workTime'    => 'Время работы',
         ];
     }
