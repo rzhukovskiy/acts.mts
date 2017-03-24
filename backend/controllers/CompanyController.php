@@ -481,6 +481,7 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //$dataProvider->leftJoin('order', '`order`.`customer_id` = `customer`.`id`')
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,

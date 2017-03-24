@@ -214,6 +214,19 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     </div>
                 </td>
             </tr>
+
+            <?php
+            if($modelCompany->type == 1) {
+                echo "<tr>
+                <td class=\"list-label-md\">Создать коммерческое предложение</td>
+                <td>" . Html::a('Создать', [
+                        'company/offer',
+                        'type' => $modelCompany->type,
+                    ], ['class' => 'btn btn-primary']) . "</td>
+            </tr>";
+            }
+            ?>
+
             <tr>
                 <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('communication_str') ?></td>
                 <td>

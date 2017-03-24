@@ -226,7 +226,7 @@ class LoadHelper
 
                             if ((($CloseAll == true) && ($CloseCompany == false)) || (($CloseAll == false) && ($CloseCompany == true))) {
                                return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
-                                    'class' => 'btn btn-primary btn-sm',
+                                    'class' => 'btn btn-success btn-sm',
                                     'data-id' => $data->partner_id,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
@@ -240,8 +240,8 @@ class LoadHelper
                 $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
                 $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }
@@ -264,8 +264,8 @@ class LoadHelper
                 $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
                 $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }
@@ -290,8 +290,8 @@ class LoadHelper
                 $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
                 $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#428bca\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#175fdd\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }

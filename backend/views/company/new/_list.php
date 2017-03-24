@@ -22,12 +22,6 @@ use yii\helpers\Html;
                 'Company[status]' => Company::STATUS_NEW,
             ], ['class' => 'btn btn-danger btn-sm']) ?>
         </div>
-        <div class="header-btn pull-right">
-            <?= Html::a('Создать коммерческое предложение', [
-                'company/offer',
-                'type' => $searchModel->type,
-            ], ['class' => 'pull-right btn btn-warning btn-sm', 'style' => 'margin-right:10px;']) ?>
-        </div>
     </div>
     <div class="panel-body">
         <?php
