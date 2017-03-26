@@ -112,6 +112,8 @@ if ($admin) {
     $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
             ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+} else {
+    $filters = '';
 }
 
 $filters .= 'Выбор периода: ' . $periodForm;
