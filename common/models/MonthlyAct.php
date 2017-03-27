@@ -67,17 +67,17 @@ class MonthlyAct extends ActiveRecord
 
     public static $paymentStatus = [
         self::PAYMENT_STATUS_NOT_DONE => 'Не оплачен',
-        self::PAYMENT_STATUS_DONE     => 'Оплачен',
-        self::PAYMENT_STATUS_CASH     => 'Наличка',
+        self::PAYMENT_STATUS_DONE => 'Оплачен',
+        self::PAYMENT_STATUS_CASH => 'Наличка',
     ];
 
     public static $actStatus = [
-        self::ACT_STATUS_NOT_SIGNED  => 'Не подписан',
-        self::ACT_STATUS_SEND_SCAN   => 'Отправлен скан',
+        self::ACT_STATUS_NOT_SIGNED => 'Не подписан',
+        self::ACT_STATUS_SEND_SCAN => 'Отправлен скан',
         self::ACT_STATUS_SIGNED_SCAN => 'Подписан скан',
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
-        self::ACT_STATUS_DONE        => 'Подписан',
-        self::ACT_STATUS_EMPTY       => 'Без акта',
+        self::ACT_STATUS_DONE => 'Подписан',
+        self::ACT_STATUS_EMPTY => 'Без акта',
     ];
 
     public static function passActStatus($currentStatus)
@@ -85,7 +85,7 @@ class MonthlyAct extends ActiveRecord
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             return self::$actStatus;
         } else {
-            return array_slice(self::$actStatus, $currentStatus);
+            return array_slice(self::$actStatus, $currentStatus, null, true);
         }
     }
 
@@ -141,8 +141,8 @@ class MonthlyAct extends ActiveRecord
             [
                 ['client_id'],
                 'exist',
-                'skipOnError'     => true,
-                'targetClass'     => Company::className(),
+                'skipOnError' => true,
+                'targetClass' => Company::className(),
                 'targetAttribute' => ['client_id' => 'id']
             ],
         ];
@@ -154,28 +154,28 @@ class MonthlyAct extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'                    => 'ID',
-            'client_id'             => 'Клиент',
-            'type_id'               => 'Тип',
-            'service_id'            => 'Услуга',
-            'act_id'                => 'Базовый акт',
-            'profit'                => 'Сумма',
-            'number'                => 'Номер авто',
-            'payment_status'        => 'Статус оплаты',
-            'payment_date'          => 'Дата оплаты',
-            'act_status'            => 'Статус акта',
-            'act_date'              => 'Дата акта',
-            'img'                   => 'Сканы акта',
-            'image'                 => 'Загрузить акт',
-            'act_comment'           => 'Комментарии к акту',
-            'act_send_date'         => 'Дата отправления акта по почте',
-            'act_client_get_date'   => 'Дата получения акта клиентом',
-            'act_we_get_date'       => 'Дата получения акта нами',
-            'payment_comment'       => 'Комментарии к оплате',
+            'id' => 'ID',
+            'client_id' => 'Клиент',
+            'type_id' => 'Тип',
+            'service_id' => 'Услуга',
+            'act_id' => 'Базовый акт',
+            'profit' => 'Сумма',
+            'number' => 'Номер авто',
+            'payment_status' => 'Статус оплаты',
+            'payment_date' => 'Дата оплаты',
+            'act_status' => 'Статус акта',
+            'act_date' => 'Дата акта',
+            'img' => 'Сканы акта',
+            'image' => 'Загрузить акт',
+            'act_comment' => 'Комментарии к акту',
+            'act_send_date' => 'Дата отправления акта по почте',
+            'act_client_get_date' => 'Дата получения акта клиентом',
+            'act_we_get_date' => 'Дата получения акта нами',
+            'payment_comment' => 'Комментарии к оплате',
             'payment_estimate_date' => 'Дата предполагаемой оплаты',
-            'post_number'           => 'Номер почтового отправления',
-            'created_at'            => 'Created At',
-            'updated_at'            => 'Updated At',
+            'post_number' => 'Номер почтового отправления',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ];
     }
 
@@ -417,9 +417,9 @@ class MonthlyAct extends ActiveRecord
                     '',
                     [
                         'class' => 'glyphicon glyphicon-remove',
-                        'href'  => yii\helpers\Url::to([
+                        'href' => yii\helpers\Url::to([
                             'monthly-act/delete-image',
-                            'id'  => $this->id,
+                            'id' => $this->id,
                             'url' => $img
                         ])
                     ]);
@@ -439,35 +439,35 @@ class MonthlyAct extends ActiveRecord
     static function colorForStatus($status)
     {
         $actStatus = [
-            self::ACT_STATUS_NOT_SIGNED  => 'monthly-act-danger',
-            self::ACT_STATUS_SEND_SCAN   => 'monthly-act-warning',
+            self::ACT_STATUS_NOT_SIGNED => 'monthly-act-danger',
+            self::ACT_STATUS_SEND_SCAN => 'monthly-act-warning',
             self::ACT_STATUS_SEND_ORIGIN => 'monthly-act-warning',
             self::ACT_STATUS_SIGNED_SCAN => 'monthly-act-warning',
-            self::ACT_STATUS_DONE        => 'monthly-act-success',
-            self::ACT_STATUS_EMPTY       => 'monthly-act-info',
+            self::ACT_STATUS_DONE => 'monthly-act-success',
+            self::ACT_STATUS_EMPTY => 'monthly-act-info',
         ];
 
         return $actStatus[$status];
     }
-    
+
     static function payDis($val)
-    {        
+    {
         $currentUser = Yii::$app->user->identity;
         if (($val == self::PAYMENT_STATUS_DONE || $val == self::PAYMENT_STATUS_CASH) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
-            $disabled = 'disabled';
+            $disabled = true;
         } else {
-            $disabled = 'false';
+            $disabled = false;
         }
         return $disabled;
     }
-    
+
     static function actDis($val)
-    {        
+    {
         $currentUser = Yii::$app->user->identity;
         if (($val == self::ACT_STATUS_DONE || $val == self::ACT_STATUS_EMPTY) && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
-            $disabled = 'disabled';
-        }else{
-            $disabled = 'false';
+            $disabled = true;
+        } else {
+            $disabled = false;
         }
         return $disabled;
     }
@@ -479,9 +479,9 @@ class MonthlyAct extends ActiveRecord
     static function colorForPaymentStatus($status)
     {
         $paymentStatus = [
-            self::PAYMENT_STATUS_DONE     => 'monthly-act-success',
+            self::PAYMENT_STATUS_DONE => 'monthly-act-success',
             self::PAYMENT_STATUS_NOT_DONE => 'monthly-act-danger',
-            self::PAYMENT_STATUS_CASH     => 'monthly-act-info',
+            self::PAYMENT_STATUS_CASH => 'monthly-act-info',
         ];
 
         return $paymentStatus[$status];

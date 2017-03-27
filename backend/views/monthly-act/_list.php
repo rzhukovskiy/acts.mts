@@ -6,6 +6,7 @@
  * @var $admin boolean
  */
 use common\models\MonthlyAct;
+use common\models\Service;
 use common\models\User;
 use kartik\date\DatePicker;
 
@@ -69,21 +70,21 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
 //Настройки фильтров
 $filters = 'Период: ' . DatePicker::widget([
-        'model'         => $searchModel,
-        'attribute'     => 'act_date',
-        'type'          => DatePicker::TYPE_INPUT,
-        'language'      => 'ru',
+        'model' => $searchModel,
+        'attribute' => 'act_date',
+        'type' => DatePicker::TYPE_INPUT,
+        'language' => 'ru',
         'pluginOptions' => [
-            'autoclose'       => true,
-            'changeMonth'     => true,
-            'changeYear'      => true,
+            'autoclose' => true,
+            'changeMonth' => true,
+            'changeYear' => true,
             'showButtonPanel' => true,
-            'format'          => 'm-yyyy',
-            'maxViewMode'     => 2,
-            'minViewMode'     => 1,
+            'format' => 'm-yyyy',
+            'maxViewMode' => 2,
+            'minViewMode' => 1,
             //'endDate'         => '-1m'
         ],
-        'options'       => [
+        'options' => [
             'class' => 'form-control ext-filter',
         ]
     ]);
@@ -106,29 +107,29 @@ if (Yii::$app->user->can(User::ROLE_ADMIN)) {
 
 //Настройки галереи
 echo newerton\fancybox\FancyBox::widget([
-    'target'  => 'a.fancybox',
+    'target' => 'a.fancybox',
     'helpers' => true,
-    'mouse'   => true,
-    'config'  => [
-        'maxWidth'    => '90%',
-        'maxHeight'   => '90%',
-        'playSpeed'   => 7000,
-        'padding'     => 0,
-        'fitToView'   => false,
-        'width'       => '70%',
-        'height'      => '70%',
-        'autoSize'    => false,
-        'closeClick'  => false,
-        'openEffect'  => 'elastic',
+    'mouse' => true,
+    'config' => [
+        'maxWidth' => '90%',
+        'maxHeight' => '90%',
+        'playSpeed' => 7000,
+        'padding' => 0,
+        'fitToView' => false,
+        'width' => '70%',
+        'height' => '70%',
+        'autoSize' => false,
+        'closeClick' => false,
+        'openEffect' => 'elastic',
         'closeEffect' => 'elastic',
-        'prevEffect'  => 'elastic',
-        'nextEffect'  => 'elastic',
-        'closeBtn'    => false,
+        'prevEffect' => 'elastic',
+        'nextEffect' => 'elastic',
+        'closeBtn' => false,
         'openOpacity' => true,
-        'helpers'     => [
-            'title'   => ['type' => 'float'],
+        'helpers' => [
+            'title' => ['type' => 'float'],
             'buttons' => [],
-            'thumbs'  => ['width' => 68, 'height' => 50],
+            'thumbs' => ['width' => 68, 'height' => 50],
             'overlay' => [
                 'css' => [
                     'background' => 'rgba(0, 0, 0, 0.8)'
@@ -138,34 +139,34 @@ echo newerton\fancybox\FancyBox::widget([
     ]
 ]);
 ?>
-<?php if ($type == \common\models\Service::TYPE_DISINFECT) {
+<?php if ($type == Service::TYPE_DISINFECT) {
     echo $this->render('_list_disinfect',
         [
-            'dataProvider'  => $dataProvider,
-            'searchModel'   => $searchModel,
-            'type'          => $type,
-            'admin'         => $admin,
-            'filters'       => $filters,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'admin' => $admin,
+            'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
-} elseif ($type == \common\models\Service::TYPE_SERVICE) {
+} elseif ($type == Service::TYPE_SERVICE) {
     echo $this->render('_list_service',
         [
-            'dataProvider'  => $dataProvider,
-            'searchModel'   => $searchModel,
-            'type'          => $type,
-            'admin'         => $admin,
-            'filters'       => $filters,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'admin' => $admin,
+            'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
 } else {
     echo $this->render('_list_common',
         [
-            'dataProvider'  => $dataProvider,
-            'searchModel'   => $searchModel,
-            'type'          => $type,
-            'admin'         => $admin,
-            'filters'       => $filters,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'admin' => $admin,
+            'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
 }
