@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
         <?php $form = ActiveForm::begin([
             'action'      => $model->isNewRecord ? ['contact/create', 'type' => $type] :
-                ['contact/update', 'id' => $model->id, 'type' => $model->type],
+                ['contact/update', 'id' => $model->id, 'type' => Yii::$app->request->get('type')],
             'id'          => 'contact-form',
             'options'     => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
@@ -26,10 +26,10 @@ use yii\widgets\ActiveForm;
             ],
         ]); ?>
 
-        <? //$form->field($model, 'company_id')->dropdownList(\common\models\Company::dataDropDownList($type, true),
-        // ['prompt' => 'выберите компанию'])
+        <?php $form->field($model, 'company_id')->dropdownList(\common\models\Company::dataDropDownList($model->type, true),
+         ['prompt' => 'выберите компанию'])
         ?>
-        <?= Html::activeHiddenInput($model, 'type', ['value' => $model->type]) ?>
+        <?= Html::activeHiddenInput($model, 'type', ['value' => Yii::$app->request->get('type')]) ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'position')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
