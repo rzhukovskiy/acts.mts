@@ -156,27 +156,27 @@ use yii\jui\AutoComplete;
 
                     }
 
+                    // Название месяцев
+                    $months = [
+                        'январь',
+                        'февраль',
+                        'март',
+                        'апрель',
+                        'май',
+                        'июнь',
+                        'июль',
+                        'август',
+                        'сентябрь',
+                        'октябрь',
+                        'ноябрь',
+                        'декабрь',
+                    ];
+
+                    // Название прошлого месяца
+                    $MountYesterday = date("n", $DateYesterday) - 1;
+                    $MountYesterday = $months[$MountYesterday];
+
                     if ($is_locked == false) {
-
-                        // Название месяцев
-                        $months = [
-                            'январь',
-                            'февраль',
-                            'март',
-                            'апрель',
-                            'май',
-                            'июнь',
-                            'июль',
-                            'август',
-                            'сентябрь',
-                            'октябрь',
-                            'ноябрь',
-                            'декабрь',
-                        ];
-
-                        // Название прошлого месяца
-                        $MountYesterday = date("n", $DateYesterday) - 1;
-                        $MountYesterday = $months[$MountYesterday];
 
                         echo "<tr><td colspan=\"7\">Если Вы загрузили всю необходимую информацию за " . $MountYesterday . " месяц и Вам нечего больше добавить, то просим Вас нажать на кнопку  \"Закрыть загрузку\". После нажатия на эту кнопку, возможностей добавить или изменить какие либо данные за этот период не будет.
                         <br /><br /><a class=\"btn btn-danger btn-sm\" href=\"/act/closeload?type=" . $model->service_type . "&company=" . Yii::$app->user->identity->company_id . "&period=" . date('n-Y', $DateYesterday) . "\" onclick=\"
@@ -196,6 +196,8 @@ use yii\jui\AutoComplete;
                         
                         </td></tr>";
 
+                    } else {
+                        echo "<tr><td colspan=\"7\">Вы не можете загрузить информацию за " . $MountYesterday . " месяц, так как загрузка за этот месяц завершена. При возникновении вопросом, просим связаться с нами. Контакты указаны в программе в боковом меню, в разделе контакты.</td></tr>";
                     }
 
                 }
