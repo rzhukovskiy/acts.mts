@@ -481,6 +481,7 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->orWhere(['type' => 6]);
         $dataProvider->query->leftJoin('company_service', 'company.id = company_service.company_id');
         $dataProvider->sort = [
             'defaultOrder' => [

@@ -24,16 +24,16 @@ $items = [
         'url'    => ['company/offer', 'type' => 4],
         'active' => $model->type == 4,
     ],
-    [
+    /*[
         'label'  => 'Дезинфекция',
         'url'    => ['company/offer', 'type' => 5],
         'active' => $model->type == 5,
-    ],
-    [
+    ],*/
+    /*[
         'label'  => 'Универсальная',
         'url'    => ['company/offer', 'type' => 6],
         'active' => $model->type == 6,
-    ]
+    ]*/
 ];
 
 echo Tabs::widget([

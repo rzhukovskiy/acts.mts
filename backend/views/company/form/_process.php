@@ -221,7 +221,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 <td class=\"list-label-md\">Создать коммерческое предложение</td>
                 <td>" . Html::a('Создать', [
                         'company/offer',
-                        'type' => $modelCompany->type,
+                        'type' => 2,
                     ], ['class' => 'btn btn-primary']) . "</td>
             </tr>";
             }
