@@ -54,9 +54,158 @@ use yii\helpers\Html;
                     }
                 ],
                 [
-                    'attribute' => 'expensive',
+                    'attribute' => 'Стоимость услуг',
                     'content'   => function ($data) {
-                        return ($data->fullAddress) ? $data->fullAddress : 'не задан';
+
+                        if ($data->type == 2) {
+
+                            $Typelist = \common\models\Type::find()->asArray()->all();
+                            $ServicesList = $data->getCompanyServices()->where('company_id = ' . $data->id . ' AND (service_id=1 OR service_id=2) AND price>0')->orderBy('company_id ASC')->asArray()->all();
+
+                            $ArrayTypes = [];
+
+                            foreach ($Typelist as $type) {
+                                $ArrayTypes[$type['id']] = $type['name'];
+                            }
+
+                            $PriceArray = [];
+
+                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#dddddd"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
+<table width="100%" border="0"><tr><td width="100%" colspan=\'2\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #dddddd;\'>Стоимость</td></tr>
+<tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Снаружи</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>Внутри</td></tr>
+</table>
+</td></tr>';
+
+                            foreach ($ServicesList as $service) {
+                                $PriceArray[$service['type_id']][$service['service_id']] = $service['price'];
+                            }
+
+                            $Last_service_type = 0;
+
+                            foreach ($ServicesList as $service) {
+
+                                if (($service['price'] > 0) && ($Last_service_type != $service['type_id'])) {
+                                    $type_id = $service['type_id'];
+                                    $Last_service_type = $type_id;
+                                    $ResTypeCompany .= "<tr><td align='left' valign='middle' style='padding:5px;'>" . $ArrayTypes[$type_id] . "</td>";
+                                    $type_id = 0;
+
+                                    if ((isset($PriceArray[$service['type_id']][1])) && (isset($PriceArray[$service['type_id']][2]))) {
+                                        if (($PriceArray[$service['type_id']][1] > 0) && ($PriceArray[$service['type_id']][2] > 0)) {
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
+                                        }
+                                    } else if (isset($PriceArray[$service['type_id']][1])) {
+                                        if ($PriceArray[$service['type_id']][1] > 0) {
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td></tr></table></td></tr>';
+                                        }
+                                    } else if (isset($PriceArray[$service['type_id']][2])) {
+                                        if ($PriceArray[$service['type_id']][2] > 0) {
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>-</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                            $ResTypeCompany .= '</table>';
+
+                            return $ResTypeCompany;
+
+                        } else if($data->type == 4) {
+
+                            $Typelist = \common\models\Type::find()->asArray()->all();
+                            $ServicesList = $data->getCompanyServices()->where('company_id = ' . $data->id . ' AND (service_id=6 OR service_id=7 OR service_id=8 OR service_id=9) AND price>0')->orderBy('company_id ASC')->asArray()->all();
+
+                            $ArrayTypes = [];
+
+                            foreach ($Typelist as $type) {
+                                $ArrayTypes[$type['id']] = $type['name'];
+                            }
+
+                            $PriceArray = [];
+
+                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#dddddd"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
+<table width="100%" border="0"><tr><td width="100%" colspan=\'4\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #dddddd;\'>Стоимость</td></tr>
+<tr><td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Одинарное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>Парное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>Балансировка</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>Полный</td></tr>
+</table>
+</td></tr>';
+
+                            foreach ($ServicesList as $service) {
+                                $PriceArray[$service['type_id']][$service['service_id']] = $service['price'];
+                            }
+
+                            $Last_service_type = 0;
+
+                            foreach ($ServicesList as $service) {
+
+                                if (($service['price'] > 0) && ($Last_service_type != $service['type_id'])) {
+                                    $type_id = $service['type_id'];
+                                    $Last_service_type = $type_id;
+                                    $ResTypeCompany .= "<tr><td align='left' valign='middle' style='padding:5px;'>" . $ArrayTypes[$type_id] . "</td>";
+                                    $type_id = 0;
+
+                                    $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr>';
+
+                                    if (isset($PriceArray[$service['type_id']][6])) {
+                                        if ($PriceArray[$service['type_id']][6] > 0) {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][6] . '</td>';
+                                        } else {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>-</td>';
+                                        }
+                                    } else {
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>-</td>';
+                                    }
+
+                                    if (isset($PriceArray[$service['type_id']][7])) {
+                                        if ($PriceArray[$service['type_id']][7] > 0) {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][7] . '</td>';
+                                        } else {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                        }
+                                    } else {
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                    }
+
+                                    if (isset($PriceArray[$service['type_id']][9])) {
+                                        if ($PriceArray[$service['type_id']][9] > 0) {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][9] . '</td>';
+                                        } else {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                        }
+                                    } else {
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                    }
+
+                                    if (isset($PriceArray[$service['type_id']][8])) {
+                                        if ($PriceArray[$service['type_id']][8] > 0) {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][8] . '</td>';
+                                        } else {
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td>';
+                                        }
+                                    } else {
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td>';
+                                    }
+
+                                    $ResTypeCompany .= '</tr></table></td></tr>';
+
+                                }
+
+                            }
+
+                            $ResTypeCompany .= '</table>';
+
+                            return $ResTypeCompany;
+                        } else {
+                            return '-';
+                        }
+
+                    }
+                ],
+                [
+                    'attribute' => 'Галочка',
+                    'content'   => function ($data) {
+                        return '';
                     }
                 ],
             ],

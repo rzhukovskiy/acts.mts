@@ -332,6 +332,14 @@ class Company extends ActiveRecord
     /**
      * @return ActiveQuery
      */
+    public function getCompanyServices()
+    {
+        return $this->hasMany(CompanyService::className(), ['company_id' => 'id'])->orderBy('type_id');
+    }
+
+    /**
+     * @return ActiveQuery
+     */
     public function getActs()
     {
         if ($this->type == self::TYPE_OWNER) {
