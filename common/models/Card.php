@@ -172,13 +172,14 @@ class Card extends ActiveRecord
     {
         $cards =
             Card::find()
-                ->select('number,company.name as company_name')
+                ->select('number, company_id, company.name as company_name')
                 ->joinWith('company')
                 ->andWhere(['company.status' => Company::STATUS_ACTIVE])
                 ->orderBy(['number' => SORT_ASC])
                 ->indexBy('number')
                 ->asArray()
                 ->all();
+
         $max = array_pop($cards);
         array_push($cards, $max);
         $arr = [];
@@ -235,7 +236,7 @@ class Card extends ActiveRecord
                 'type'         => $val[2],
                 'val'          => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
                 'count'        => $val[3],
-                'company_name' => $val[4],
+                'company_name' => ArrayHelper::getValue($val, 4 , 'Неизвестно'),
             ];
         }
 
