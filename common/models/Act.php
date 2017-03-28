@@ -147,7 +147,7 @@ class Act extends ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'number'], 'required'],
+            [['partner_id', 'car_number'], 'required'],
             ['check', 'filter', 'filter' => 'trim'],
             ['check', 'default'],
             ['check', 'unique'],
@@ -189,7 +189,7 @@ class Act extends ActiveRecord
             'client_id'    => 'Клиент',
             'card_id'      => 'Карта',
             'car_id'       => 'Номер',
-            'car_id'       => 'п/п',
+            'extra_car_id' => 'п/п',
             'card_number'  => 'Карта',
             'car_number'   => 'Номер',
             'extra_car_number' => 'п/п',
@@ -469,7 +469,7 @@ class Act extends ActiveRecord
         //подставляем тип и марку из машины, если нашли по номеру
         $car = Car::findOne(['number' => $this->car_number]);
         if ($car) {
-            $this->car_id = $card->id;
+            $this->car_id = $car->id;
             $this->car_number = $car->number;
             $this->mark_id = $car->mark_id;
 

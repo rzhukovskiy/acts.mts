@@ -130,10 +130,10 @@ class LoadHelper
                     return isset($data->mark) ? $data->mark->name : 'error';
                 },
             ],
-            'number' => [
-                'attribute' => 'number',
+            'car' => [
+                'attribute' => 'car_number',
                 'value' =>  function ($data) {
-                    return $data->number . ($data->client->is_split ? " ($data->extra_number)" : '');
+                    return $data->car_number . ($data->client->is_split ? " ($data->extra_car_number)" : '');
                 },
                 'contentOptions' => function ($data) {
                     if ($data->hasError('car')) return ['class' => 'text-danger'];
@@ -448,19 +448,19 @@ class LoadHelper
             ],
             User::ROLE_PARTNER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'partnerService', 'expense', 'check', 'partnerButtons'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'expense', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'number', 'type', 'expense'],
+                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'partnerService', 'expense', 'check', 'partnerButtons'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
                 ],
             ],
             User::ROLE_CLIENT => [
                 [],
                 [
-                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'income', 'city', 'check'],
-                    Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'card', 'income', 'city', 'viewButtons'],
-                    Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'number', 'type', 'income', 'buttons'],
+                    Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check'],
+                    Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
+                    Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
+                    Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'buttons'],
                 ]
             ],
         ];

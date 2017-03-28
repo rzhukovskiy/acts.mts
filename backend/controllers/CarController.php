@@ -70,8 +70,8 @@ class CarController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
         $dataProvider->query
-            ->addSelect('client_id, act.number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
-            ->groupBy('act.number');
+            ->addSelect('client_id, act.car_number, act.mark_id, act.type_id, COUNT(act.id) as actsCount')
+            ->groupBy('act.car_number');
 
         $companyDropDownData = Company::dataDropDownList();
 
@@ -88,7 +88,7 @@ class CarController extends Controller
         $searchModel = new CarSearch();
 
         if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
-            $searchModel->client_id = Yii::$app->user->identity->company->id;
+            $searchModel->company_id = Yii::$app->user->identity->company->id;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

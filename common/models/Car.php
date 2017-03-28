@@ -96,10 +96,18 @@ class Car extends ActiveRecord
         return $this->hasMany(Act::className(), ['number' => 'number']);
     }
 
+    public function beforeSave($insert)
+    {
+        //номер в верхний регистр
+        $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
+        return parent::beforeSave($insert);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            $listAct = Act::findAll(['status' => Act::STATUS_NEW, 'number' => $this->number]);
+            //если эта машина уже упоминалась в актах - пересохраняем ее
+            $listAct = Act::findAll(['status' => Act::STATUS_NEW, 'car_number' => $this->number]);
             foreach ($listAct as $act) {
                 $act->save();
             }

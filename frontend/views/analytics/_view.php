@@ -34,7 +34,11 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'number',
+        'header' => 'Номер',
+        'value' => function ($data) {
+            //неудачная кострукция, $data может быть как Car так и Act. аттрибуты там по-разному называются
+            return !empty($data->car_number) ? $data->car_number : $data->number;
+        },
     ],
     [
         'attribute' => 'type_id',

@@ -72,7 +72,7 @@ class AnalyticsController extends Controller
         if ($group == 'type') {
             // Убираем дизенфекцию из общей статистики
             $dataProvider->query
-                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->addSelect('act.car_number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
                 ->orderBy('client_id, actsCount DESC')
                 ->andWhere('service_type != 5')
                 ->andWhere('car.type_id != 7')
@@ -80,7 +80,7 @@ class AnalyticsController extends Controller
             // Убираем дизенфекцию из общей статистики
         } else {
             $dataProvider->query
-                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->addSelect('act.car_number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
                 ->orderBy('client_id, actsCount DESC')
                 ->andWhere('car.type_id != 7')
                 ->andWhere('car.type_id != 8');
@@ -100,7 +100,7 @@ class AnalyticsController extends Controller
         }
         if ($group == 'count') {
             $dataProvider->query
-                ->groupBy('client_id, act.number');
+                ->groupBy('client_id, act.car_number');
             $query = Act::find()
                 ->from(['actsCount' => $dataProvider->query])
                 ->select('COUNT(actsCount) as carsCount, actsCount, client_id')
@@ -138,14 +138,14 @@ class AnalyticsController extends Controller
         if ($group == 'count') {
             if ($count) {
                 $dataProvider->query
-                    ->addSelect('act.number, served_at, partner_id, client_id, 
+                    ->addSelect('car_number, served_at, partner_id, client_id, 
                 service_type, COUNT(act.id) as actsCount, act.mark_id, act.type_id')
                     ->having(['actsCount' => $count])
-                    ->groupBy('client_id, act.number');
+                    ->groupBy('client_id, act.car_number');
             } else {
-                $dataProvider->query->select('act.number');
+                $dataProvider->query->select('car_number')->indexBy('car_number');
                 $query = Car::find()
-                    ->where(['not in', 'number', $dataProvider->query->all()])
+                    ->where(['not in', 'number', array_keys($dataProvider->query->all())])
                     ->andWhere(['company_id' => $searchModel->client_id])
                     ->andWhere('type_id != 7')
                     ->andWhere('type_id != 8');
