@@ -78,7 +78,7 @@ JS;
                     <?= $form->field($model, 'card_number')->textInput(); ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'number')->widget(AutoComplete::classname(),
+                    <?= $form->field($model, 'car_number')->widget(AutoComplete::classname(),
                     [
                         'options'       => ['class' => 'form-control', 'autocomplete' => 'on'],
                         'clientOptions' => [

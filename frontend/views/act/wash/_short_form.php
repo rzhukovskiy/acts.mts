@@ -57,7 +57,7 @@ use yii\jui\AutoComplete;
                     <div class="input-group">
                         <?= AutoComplete::widget([
                             'model' => $model,
-                            'attribute' => 'number',
+                            'attribute' => 'car_number',
                             'options' => ['class' => 'form-control main-number', 'autocomplete' => 'on', 'style' => 'width: 50%'],
                             'clientOptions' => [
                                 'source' => Car::find()->where(['!=', 'type_id', 7])->select('number as value')->asArray()->all(),
@@ -78,7 +78,7 @@ use yii\jui\AutoComplete;
                         ]) ?>
                         <?= AutoComplete::widget([
                             'model' => $model,
-                            'attribute' => 'extra_number',
+                            'attribute' => 'extra_car_number',
                             'options' => ['class' => 'form-control input-group-addon extra-number', 'autocomplete' => 'on', 'style' => 'display:none; width: 50%'],
                             'clientOptions' => [
                                 'source' => Car::find()->where(['type_id' => 7])->select('number as value')->asArray()->all(),
@@ -144,19 +144,19 @@ use yii\jui\AutoComplete;
                     // Дата прошлого дня
                     $DateYesterday = $DateNow - 86400;
 
-                    $LockedLisk = \common\models\Lock::CheckLocked(date('n-Y', $DateYesterday), $model->service_type);
+                    $LockedList = \common\models\Lock::CheckLocked(date('n-Y', $DateYesterday), $model->service_type);
                     $is_locked = false;
 
-                    if (count($LockedLisk) > 0) {
+                    if (count($LockedList) > 0) {
 
                         $CloseAll = false;
                         $CloseCompany = false;
 
-                        for ($c = 0; $c < count($LockedLisk); $c++) {
-                            if ($LockedLisk[$c]["company_id"] == 0) {
+                        for ($c = 0; $c < count($LockedList); $c++) {
+                            if ($LockedList[$c]["company_id"] == 0) {
                                 $CloseAll = true;
                             }
-                            if ($LockedLisk[$c]["company_id"] == Yii::$app->user->identity->company_id) {
+                            if ($LockedList[$c]["company_id"] == Yii::$app->user->identity->company_id) {
                                 $CloseCompany = true;
                             }
                         }

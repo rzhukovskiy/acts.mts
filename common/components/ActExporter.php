@@ -242,7 +242,7 @@ class ActExporter
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Гос. номер');
-            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->number);
+            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->car_number);
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
                     'font' => [
                         'color' => ['argb' => 'FF006699'],
@@ -270,14 +270,14 @@ class ActExporter
             if($company->is_act_sign){
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setPath('images/post-small.png');
-                $objDrawing->setName($act->number);
+                $objDrawing->setName($act->car_number);
                 $range = $cols[$startCol + 2] . ($row - 3);
                 $objDrawing->setCoordinates($range);
                 $objDrawing->setWorksheet($worksheet);
                 $objDrawing->setOffsetX(-40);
                 $objDrawing = null;
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
-                $objDrawing->setName($act->number);
+                $objDrawing->setName($act->car_number);
                 $objDrawing->setPath('images/sign.png');
                 $range = $cols[$startCol + 1] . ($row - 2);
                 $objDrawing->setCoordinates($range);
@@ -562,12 +562,12 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
                     $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
                     if ($this->company) {
-                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->number);
+                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
                         $companyWorkSheet->mergeCells("H$row:I$row");
                         $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
                     } else {
                         $companyWorkSheet->mergeCells("G$row:I$row");
-                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->number);
+                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
                     }
                     $companyWorkSheet->getStyle("B$row:I$row")
                         ->applyFromArray(array(
@@ -699,9 +699,9 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
-                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->number);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                     if($company->is_split) {
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_number);
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
                     }
 
                     if ($this->company) {
@@ -808,7 +808,7 @@ class ActExporter
                     $column = 1;
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
-                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->number);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Санитарная обработка кузова');
                     if ($this->company) {
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->income);

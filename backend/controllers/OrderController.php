@@ -124,7 +124,7 @@ class OrderController extends Controller
             $modelAct = Act::find()->where(['card_id' => $modelCard->id])->select(['*', 'COUNT(id) AS count'])->groupBy('number')->orderBy('count DESC')->one();
             if ($modelAct) {
                 $modelEntry->card_id = $modelAct->card_id;
-                $modelEntry->number  = $modelAct->number;
+                $modelEntry->number  = $modelAct->car_number;
                 $modelEntry->mark_id = $modelAct->mark_id;
                 $modelEntry->type_id = $modelAct->type_id;
             }

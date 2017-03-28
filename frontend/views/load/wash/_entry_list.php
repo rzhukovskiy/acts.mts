@@ -49,7 +49,7 @@ use yii\helpers\Html;
                         return $model->mark->name;
                     },
                 ],
-                'number',
+                'car_number',
                 [
                     'header' => 'Тип ТС',
                     'attribute' => 'type.name',

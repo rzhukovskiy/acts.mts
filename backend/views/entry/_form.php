@@ -54,7 +54,7 @@ $form = ActiveForm::begin([
                 ]) ?>
                 <?= AutoComplete::widget([
                     'model' => $model,
-                    'attribute' => 'extra_number',
+                    'attribute' => 'extra_car_number',
                     'options' => ['class' => 'form-control input-group-addon extra-number', 'autocomplete' => 'on', 'style' => 'display:none; width: 50%'],
                     'clientOptions' => [
                         'source' => Car::find()->where(['type_id' => 7])->select('number as value')->asArray()->all(),

@@ -26,6 +26,9 @@ use yii\helpers\ArrayHelper;
  * @property integer $type_id
  * @property integer $mark_id
  * @property integer $card_id
+ * @property integer $card_number
+ * @property integer $car_id
+ * @property integer $extra_car_id
  * @property integer $status
  * @property integer $expense
  * @property integer $income
@@ -35,13 +38,12 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $check
- * @property string $number
- * @property string $extra_number
+ * @property string $car_number
+ * @property string $extra_car_number
  *
  * @property array $serviceList
  * @property array $clientServiceList
  * @property array $partnerServiceList
- * @property string $card_number
  *
  * @property Company $client
  * @property Company $partner
@@ -186,9 +188,11 @@ class Act extends ActiveRecord
             'partner_id'   => 'Партнер',
             'client_id'    => 'Клиент',
             'card_id'      => 'Карта',
+            'car_id'       => 'Номер',
+            'car_id'       => 'п/п',
             'card_number'  => 'Карта',
-            'number'       => 'Номер',
-            'extra_number' => 'п/п',
+            'car_number'   => 'Номер',
+            'extra_car_number' => 'п/п',
             'mark_id'      => 'Марка',
             'type_id'      => 'Тип',
             'income'       => 'Сумма',
@@ -240,7 +244,7 @@ class Act extends ActiveRecord
      */
     public function getCar()
     {
-        return $this->hasOne(Car::className(), ['number' => 'number']);
+        return $this->hasOne(Car::className(), ['id' => 'car_id']);
     }
 
     /**
@@ -305,8 +309,9 @@ class Act extends ActiveRecord
      */
     public function disinfectCar($car, $serviceId)
     {
-        $this->client_id = $car->company_id;
-        $this->number = $car->number;
+        $this->client_id    = $car->company_id;
+        $this->car_number   = $car->number;
+        $this->car_id       = $car->id;
         $this->service_type = Service::TYPE_DISINFECT;
 
         $this->serviceList = [
@@ -354,23 +359,15 @@ class Act extends ActiveRecord
                 $hasError = $this->service_type == Service::TYPE_WASH && (!$this->check || !$this->getImageLink());
                 break;
             case self::ERROR_CARD:
-                $hasError =
-                    ($this->service_type != Service::TYPE_DISINFECT) &&
-                    (empty($this->card->company_id) || 
-                        (!empty($this->car->company_id) && $this->card->company_id != $this->car->company_id));
+                $hasError = ($this->service_type != Service::TYPE_DISINFECT && !$this->card_id) ||
+                        ($this->car_id && $this->card->company_id != $this->car->company_id);
                 break;
             case self::ERROR_CAR:
-                $hasError =
-                    !isset($this->car->company_id) ||
+                $hasError = !($this->car_id) ||
                     ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id);
                 break;
             case self::ERROR_TRUCK:
-                $hasError =
-                    (isset($this->client) && $this->client->is_split && !$this->extra_number) ||
-                    (isset($this->client) &&
-                        $this->client->is_split &&
-                        $this->extra_number &&
-                        !Car::find()->byNumber($this->extra_number)->exists());
+                $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_car_id);
                 break;
             case self::ERROR_LOST:
                 $hasError = $this->card && $this->card->is_lost;
@@ -390,15 +387,15 @@ class Act extends ActiveRecord
             self::ERROR_EXPENSE => 'Не указан расход',
             self::ERROR_INCOME  => 'Не указан приход',
             self::ERROR_CHECK   => 'Чек не загружен',
-            self::ERROR_CARD    => (empty($this->card->company_id)) ? 'Не существует такой номер карты' : (
-            (empty($this->car->company_id)) ? false :
+            self::ERROR_CARD    => (!$this->card_id) ? 'Не существует такой номер карты' : (
+                (!$this->car_id) ? false :
                 'Не совпадает номер карты с номером ТС.<br>
                 Карта - ' .
-                (isset($this->card->company) ? $this->card->company->name : 'Неизвестна') .
+                ($this->card_id ? $this->card->company->name : 'Неизвестна') .
                 '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
-                ' ТС - ' . (isset($this->car->company) ? $this->car->company->name : 'Неизвестна')
+                ' ТС - ' . ($this->car_id ? $this->car->company->name : 'Неизвестна')
             ),
-            self::ERROR_CAR     => empty($this->car->company_id) ? 'Некорректный номер ТС' : false,
+            self::ERROR_CAR     => !$this->car_id ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
             self::ERROR_LOST    => 'Потеряшечка',
         ];
@@ -411,47 +408,22 @@ class Act extends ActiveRecord
         return $errorMessage;
     }
 
-    public function setCard_number($value)
-    {
-        $card = Card::findOne(['number' => $value]);
-        $this->card_id = $card ? $card->id : $value;
-
-        $this->card_number = $value;
-    }
-
-    public function getCard_number()
-    {
-        $card = Card::findOne($this->card_id);
-        return $card ? $card->number : $this->card_id;
-    }
-
     public function beforeSave($insert)
     {
-        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
-        
-        if (!empty($this->card_number)) {
-            $card = Card::findOne(['number' => $this->card_number]);
-            $this->card_id = $card ? $card->id : $this->card_number;
-        }
-
-        if (!empty($this->time_str)) {
-            $this->served_at =
-                \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
-        }
-
-        $LockedLisk = Lock::CheckLocked(date('n-Y', $this->served_at), $this->service_type);
+        //проверяем не закрыт ли период для добавления
+        $LockedList = Lock::CheckLocked(date('n-Y', $this->served_at), $this->service_type);
         $is_locked = false;
 
-        if(count($LockedLisk) > 0) {
+        if(count($LockedList) > 0) {
 
             $CloseAll = false;
             $CloseCompany = false;
 
-            for ($c = 0; $c < count($LockedLisk); $c++) {
-                if ($LockedLisk[$c]["company_id"] == 0) {
+            for ($c = 0; $c < count($LockedList); $c++) {
+                if ($LockedList[$c]["company_id"] == 0) {
                     $CloseAll = true;
                 }
-                if ($LockedLisk[$c]["company_id"] == $this->partner_id) {
+                if ($LockedList[$c]["company_id"] == $this->partner_id) {
                     $CloseCompany = true;
                 }
             }
@@ -468,20 +440,39 @@ class Act extends ActiveRecord
             $this->addError('period', 'This period is locked');
             return false;
         }
+        $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+
+        $card = Card::findOne(['number' => $this->card_number]);
+        if ($card) {
+            $this->card_id = $card->id;
+            $this->card_number = $card->number;
+        }
 
         //определяем клиента по карте
-        if (!empty($this->card)) {
+        if ($this->card_id) {
             $this->client_id = $this->card->company_id;
         }
 
+        if (!$this->client_id) {
+            $this->addError('client', 'Client not set');
+            return false;
+        }
+
+        if (!empty($this->time_str)) {
+            $this->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
+        }
+
         //номер в верхний регистр
-        $this->number = mb_strtoupper(str_replace(' ', '', $this->number), 'UTF-8');
-        $this->extra_number = mb_strtoupper(str_replace(' ', '', $this->extra_number), 'UTF-8');
+        $this->car_number = mb_strtoupper(str_replace(' ', '', $this->car_number), 'UTF-8');
+        $this->extra_car_number = mb_strtoupper(str_replace(' ', '', $this->extra_car_number), 'UTF-8');
 
         //подставляем тип и марку из машины, если нашли по номеру
-        $car = Car::findOne(['number' => $this->number]);
+        $car = Car::findOne(['number' => $this->car_number]);
         if ($car) {
+            $this->car_id = $card->id;
+            $this->car_number = $car->number;
             $this->mark_id = $car->mark_id;
+
             if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
                 $this->type_id = $car->type_id;
             }
@@ -489,10 +480,6 @@ class Act extends ActiveRecord
             if (empty($this->client_id)) {
                 $this->client_id = $car->company_id;
             }
-        }
-
-        if (empty($this->client_id)) {
-            return false;
         }
 
         if ($insert) {
@@ -707,7 +694,9 @@ class Act extends ActiveRecord
         //Проверяем на ошибки
         $listErrors = $this->getListError();
         ActError::deleteAll(['act_id' => $this->id]);
-        Card::markFounded($this->card_number);
+        if ($this->card_id) {
+            Card::markFoundedById($this->card_id);            
+        }
         foreach ($listErrors as $errorType) {
             $modelActError = new ActError();
             $modelActError->act_id = $this->id;

@@ -46,7 +46,7 @@ class Card extends ActiveRecord
         self::TYPE_NON_FREE => 'Заняты',
     ];
 
-    public static function markLost($number)
+    public static function markLostByNumber($number)
     {
         $model = self::findOne(['number' => $number]);
 
@@ -56,9 +56,9 @@ class Card extends ActiveRecord
         }
     }
 
-    public static function markFounded($number)
+    public static function markFoundedById($card_id)
     {
-        $model = self::findOne(['number' => $number]);
+        $model = self::findOne($card_id);
 
         if ($model) {
             $model->is_lost = 0;

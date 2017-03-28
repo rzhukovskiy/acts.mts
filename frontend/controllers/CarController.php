@@ -124,7 +124,7 @@ class CarController extends Controller
     {
         $model = $this->findModel($id);
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_CAR]);
-        $searchModel->number = $model->number;
+        $searchModel->car_number = $model->number;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andFilterWhere(['!=', 'service_type', Service::TYPE_DISINFECT]);
