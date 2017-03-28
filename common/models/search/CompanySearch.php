@@ -24,6 +24,7 @@ class CompanySearch extends Company
             [['card_number', 'name'], 'string'],
             [['user_id'], 'integer'],
             [['services'], 'safe'],
+            [['cartypes'], 'safe'],
             [['address'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
@@ -37,9 +38,9 @@ class CompanySearch extends Company
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_OFFER => [
-                'user_id', 'name', 'address', 'services', 'fullAddress'
+                'user_id', 'name', 'address', 'services', 'cartypes', 'fullAddress'
             ],
-            'default' => ['card_number', 'address', 'services'],
+            'default' => ['card_number', 'address', 'cartypes', 'services'],
         ];
     }
 
@@ -206,7 +207,7 @@ class CompanySearch extends Company
         ]);
 
         $query->leftJoin('car', 'company.id = car.company_id');
-        $query->andFilterWhere(['cartypes.type_id' => $this->cartypes]);
+        $query->andFilterWhere(['car.type_id' => $this->cartypes]);
 
         $query->leftJoin('company_service', 'company.id = company_service.company_id');
         $query->andFilterWhere(['company_service.service_id' => $this->services]);

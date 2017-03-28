@@ -68,10 +68,16 @@ use yii\bootstrap\ActiveForm;
                 ],
                 [
                     'header' => 'Организация',
+                    'options' => [
+                        'style' => 'width: 320px',
+                    ],
                     'attribute' => 'name',
                 ],
                 [
                     'attribute' => 'fullAddress',
+                    'options' => [
+                        'style' => 'width: 315px',
+                    ],
                     'content'   => function ($data) {
                         return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
@@ -93,9 +99,9 @@ use yii\bootstrap\ActiveForm;
 
                             $PriceArray = [];
 
-                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#dddddd"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
-<table width="100%" border="0"><tr><td width="100%" colspan=\'2\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #dddddd;\'>Стоимость</td></tr>
-<tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Снаружи</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>Внутри</td></tr>
+                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#c6c6c6"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
+<table width="100%" border="0"><tr><td width="100%" colspan=\'2\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #c6c6c6;\'>Стоимость</td></tr>
+<tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Снаружи</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>Внутри</td></tr>
 </table>
 </td></tr>';
 
@@ -115,15 +121,15 @@ use yii\bootstrap\ActiveForm;
 
                                     if ((isset($PriceArray[$service['type_id']][1])) && (isset($PriceArray[$service['type_id']][2]))) {
                                         if (($PriceArray[$service['type_id']][1] > 0) && ($PriceArray[$service['type_id']][2] > 0)) {
-                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
                                         }
                                     } else if (isset($PriceArray[$service['type_id']][1])) {
                                         if ($PriceArray[$service['type_id']][1] > 0) {
-                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td></tr></table></td></tr>';
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>' . $PriceArray[$service['type_id']][1] . '</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>-</td></tr></table></td></tr>';
                                         }
                                     } else if (isset($PriceArray[$service['type_id']][2])) {
                                         if ($PriceArray[$service['type_id']][2] > 0) {
-                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>-</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
+                                            $ResTypeCompany .= '<td align=\'center\' valign=\'middle\' style=\'padding:5px;\'><table width="100%" border="0"><tr><td width="50%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>-</td><td width="50%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>' . $PriceArray[$service['type_id']][2] . '</td></tr></table></td></tr>';
                                         }
                                     }
 
@@ -148,9 +154,9 @@ use yii\bootstrap\ActiveForm;
 
                             $PriceArray = [];
 
-                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#dddddd"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
-<table width="100%" border="0"><tr><td width="100%" colspan=\'4\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #dddddd;\'>Стоимость</td></tr>
-<tr><td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Одинарное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>Парное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>Балансировка</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>Полный</td></tr>
+                            $ResTypeCompany = '<table width="100%" border="1" bordercolor="#c6c6c6"><tr><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>Вид ТС</td><td align=\'center\' valign=\'middle\' style=\'padding:5px;\'>
+<table width="100%" border="0"><tr><td width="100%" colspan=\'4\' align=\'center\' valign=\'middle\' style=\'border-bottom:1px solid #c6c6c6;\'>Стоимость</td></tr>
+<tr><td width="25%" align=\'center\' valign=\'middle\' style=\'padding-right:5px;\'>Одинарное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>Парное</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>Балансировка</td><td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>Полный</td></tr>
 </table>
 </td></tr>';
 
@@ -182,32 +188,32 @@ use yii\bootstrap\ActiveForm;
 
                                     if (isset($PriceArray[$service['type_id']][7])) {
                                         if ($PriceArray[$service['type_id']][7] > 0) {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][7] . '</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][7] . '</td>';
                                         } else {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>-</td>';
                                         }
                                     } else {
-                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>-</td>';
                                     }
 
                                     if (isset($PriceArray[$service['type_id']][9])) {
                                         if ($PriceArray[$service['type_id']][9] > 0) {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][9] . '</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>' . $PriceArray[$service['type_id']][9] . '</td>';
                                         } else {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>-</td>';
                                         }
                                     } else {
-                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px; padding-right:5px;\'>-</td>';
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'>-</td>';
                                     }
 
                                     if (isset($PriceArray[$service['type_id']][8])) {
                                         if ($PriceArray[$service['type_id']][8] > 0) {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>' . $PriceArray[$service['type_id']][8] . '</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>' . $PriceArray[$service['type_id']][8] . '</td>';
                                         } else {
-                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td>';
+                                            $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>-</td>';
                                         }
                                     } else {
-                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #dddddd; padding-left:5px;\'>-</td>';
+                                        $ResTypeCompany .= '<td width="25%" align=\'center\' valign=\'middle\' style=\'border-left:1px solid #c6c6c6; padding-left:5px;\'>-</td>';
                                     }
 
                                     $ResTypeCompany .= '</tr></table></td></tr>';
