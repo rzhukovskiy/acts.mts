@@ -17,8 +17,13 @@ echo $this->render('/company/offer/_update_tabs', [
 
 echo $this->render($action . '/_list', [
     'dataProvider' => $dataProvider,
+    'searchModelType'  => $searchModelType,
+    'searchModelService'  => $searchModelService,
     'searchModel' => $searchModel,
     'type' => $type,
+    'listCar' => $listCar,
+    'listService' => $listService,
+    'listCity' => $listCity,
 //    'userData' => $userData,
     'admin' => isset($admin) ? $admin : false,
 ]);

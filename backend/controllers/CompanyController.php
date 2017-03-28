@@ -18,7 +18,11 @@ use common\models\CompanyService;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
+use common\models\search\ServiceSearch;
+use common\models\search\TypeSearch;
 use common\models\search\UserSearch;
+use common\models\Service;
+use common\models\Type;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -469,6 +473,9 @@ class CompanyController extends Controller
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
 
+        $searchModelType = new TypeSearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModelService = new ServiceSearch(['scenario' => Company::SCENARIO_OFFER]);
+
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_ACTIVE;
@@ -505,13 +512,28 @@ class CompanyController extends Controller
 
         $this->view->title = 'Активные - ' . Company::$listType[$type]['ru'];
 
+        $listCar = Type::find()->select(['name', 'id'])->orderBy('id')->indexBy('id')->column();
+
+        if($type == 2) {
+            $listService = Service::find()->andWhere(['id' => 1])->orWhere(['id' => 2])->select(['description', 'id'])->indexBy('id')->column();
+        } else if($type == 4) {
+            $listService = Service::find()->andWhere(['id' => 6])->orWhere(['id' => 7])->orWhere(['id' => 8])->orWhere(['id' => 9])->select(['description', 'id'])->indexBy('id')->column();
+        }
+
+        $listCity = Company::find()->active()->andWhere(['type' => $type])->orWhere(['type' => 6])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+
         return $this->render('newoffer',
             [
                 'dataProvider' => $dataProvider,
+                'searchModelType'  => $searchModelType,
+                'searchModelService'  => $searchModelService,
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'model'        => $model,
                 'listType'     => $listType,
+                'listCar' => $listCar,
+                'listService' => $listService,
+                'listCity' => $listCity,
             ]);
     }
 

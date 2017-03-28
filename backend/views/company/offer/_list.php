@@ -11,6 +11,7 @@ use common\models\Company;
 use kartik\grid\GridView;
 use common\models\User;
 use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
 
 ?>
 <div class="panel panel-primary">
@@ -19,11 +20,32 @@ use yii\helpers\Html;
         <div class="header-btn pull-right">
         </div>
     </div>
+
+    <div class="panel-body">
+        <?php
+        $form = ActiveForm::begin([
+            'id' => 'offer-form',
+            'method' => 'get',
+            'options' => ['class' => 'form-horizontal col-sm-12', 'style' => 'margin: 20px 0;'],
+            'fieldConfig' => [
+                'template' => '{input}',
+                'inputOptions' => ['class' => 'form-control input-sm'],
+                'options' => ['class' => 'col-sm-3'],
+            ],
+        ]) ?>
+        <?= $form->field($searchModelType, 'id')->dropdownList($listCar, ['multiple' => 'true', 'prompt' => 'Выберите типы ТС']); ?>
+        <?= $form->field($searchModelService, 'id')->dropdownList($listService, ['multiple' => 'true', 'prompt' => 'Выберите типы услуг']); ?>
+        <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['multiple' => 'true', 'prompt' => 'Выберите город']); ?>
+        <?= Html::submitButton('Применить', ['class' => 'btn btn-primary btn-sm']) ?>
+
+        <?php ActiveForm::end() ?>
+    </div>
+
     <div class="panel-body">
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
+            //'filterModel' => $searchModel,
             'hover' => false,
             'striped' => false,
             'export' => false,

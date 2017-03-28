@@ -21,8 +21,9 @@ class CompanySearch extends Company
     public function rules()
     {
         return [
-            [['card_number', 'name', 'address'], 'string'],
+            [['card_number', 'name'], 'string'],
             [['user_id'], 'integer'],
+            [['address'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
