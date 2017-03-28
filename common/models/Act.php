@@ -497,26 +497,33 @@ class Act extends ActiveRecord
 
         if ($insert) {
             //преобразуем Герину поебень в нормальный массив
-            if (!empty($this->serviceList[0]) && count(explode('+', $this->serviceList[0]['service_id'])) > 1) {
-                $serviceList = [];
-                foreach (explode('+', $this->serviceList[0]['service_id']) as $serviceId) {
-                    $serviceList[] = [
-                        'service_id' => $serviceId,
-                        'price'      => $this->serviceList[0]['price'],
-                        'amount'     => $this->serviceList[0]['amount'],
-                    ];
+
+            if(isset($this->serviceList[0]['service_id'])) {
+                if (!empty($this->serviceList[0]) && count(explode('+', ArrayHelper::getValue($this->serviceList[0], 'service_id', null))) > 1) {
+                    $serviceList = [];
+                    foreach (explode('+', ArrayHelper::getValue($this->serviceList[0], 'service_id', null)) as $serviceId) {
+                        $serviceList[] = [
+                            'service_id' => $serviceId,
+                            'price' => $this->serviceList[0]['price'],
+                            'amount' => $this->serviceList[0]['amount'],
+                        ];
+                    }
+                    $this->serviceList = $serviceList;
                 }
-                $this->serviceList = $serviceList;
             }
             /**
              * суммируем все указанные услуги и считаем доход, расход и прибыль\
              */
             if (!empty($this->serviceList)) {
+
                 $totalExpense = 0;
                 $totalIncome = 0;
                 foreach ($this->serviceList as $serviceData) {
+
+                    ArrayHelper::getValue($serviceData, 'service_id', null);
+
                     $clientService = CompanyService::findOne([
-                        'service_id' => $serviceData['service_id'],
+                        'service_id' => ArrayHelper::getValue($serviceData, 'service_id', null),
                         'company_id' => $this->client_id,
                         'type_id'    => $this->type_id,
                     ]);
@@ -528,7 +535,7 @@ class Act extends ActiveRecord
                     }
 
                     $partnerService = CompanyService::findOne([
-                        'service_id' => $serviceData['service_id'],
+                        'service_id' => ArrayHelper::getValue($serviceData, 'service_id', null),
                         'company_id' => $this->partner_id,
                         'type_id'    => $this->type_id,
                     ]);
