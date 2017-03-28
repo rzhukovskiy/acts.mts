@@ -57,6 +57,8 @@ class Company extends ActiveRecord
 {
     public $cardList;
     public $requisitesList;
+    public $services;
+    public $cartypes;
 
     private $workTime;
     private $serviceList;

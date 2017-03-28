@@ -33,10 +33,11 @@ use yii\bootstrap\ActiveForm;
                 'options' => ['class' => 'col-sm-3'],
             ],
         ]) ?>
-        <?= $form->field($searchModelType, 'id')->dropdownList($listCar, ['multiple' => 'true', 'prompt' => 'Выберите типы ТС']); ?>
-        <?= $form->field($searchModelService, 'id')->dropdownList($listService, ['multiple' => 'true', 'prompt' => 'Выберите типы услуг']); ?>
+        <?= $form->field($searchModel, 'cartypes')->dropdownList($listCar, ['multiple' => 'true', 'prompt' => 'Выберите типы ТС']); ?>
+        <?= $form->field($searchModel, 'services')->dropdownList($listService, ['multiple' => 'true', 'prompt' => 'Выберите типы услуг']); ?>
         <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['multiple' => 'true', 'prompt' => 'Выберите город']); ?>
         <?= Html::submitButton('Применить', ['class' => 'btn btn-primary btn-sm']) ?>
+        <?= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 10px;">Сбросить</span>', '/company/offer?type=' . Yii::$app->request->get('type')); ?>
 
         <?php ActiveForm::end() ?>
     </div>

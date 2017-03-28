@@ -473,9 +473,6 @@ class CompanyController extends Controller
         /** @var User $currentUser */
         $currentUser = Yii::$app->user->identity;
 
-        $searchModelType = new TypeSearch(['scenario' => Company::SCENARIO_OFFER]);
-        $searchModelService = new ServiceSearch(['scenario' => Company::SCENARIO_OFFER]);
-
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_ACTIVE;
@@ -487,9 +484,7 @@ class CompanyController extends Controller
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
         }
 
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->orWhere(['type' => 6]);
-        $dataProvider->query->leftJoin('company_service', 'company.id = company_service.company_id');
+        $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,
@@ -518,6 +513,8 @@ class CompanyController extends Controller
             $listService = Service::find()->andWhere(['id' => 1])->orWhere(['id' => 2])->select(['description', 'id'])->indexBy('id')->column();
         } else if($type == 4) {
             $listService = Service::find()->andWhere(['id' => 6])->orWhere(['id' => 7])->orWhere(['id' => 8])->orWhere(['id' => 9])->select(['description', 'id'])->indexBy('id')->column();
+        } else {
+            $listService = Service::find()->select(['description', 'id'])->indexBy('id')->column();
         }
 
         $listCity = Company::find()->active()->andWhere(['type' => $type])->orWhere(['type' => 6])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
@@ -525,8 +522,6 @@ class CompanyController extends Controller
         return $this->render('newoffer',
             [
                 'dataProvider' => $dataProvider,
-                'searchModelType'  => $searchModelType,
-                'searchModelService'  => $searchModelService,
                 'searchModel'  => $searchModel,
                 'type'         => $type,
                 'model'        => $model,
