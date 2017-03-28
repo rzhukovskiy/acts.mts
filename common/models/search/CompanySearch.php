@@ -206,11 +206,9 @@ class CompanySearch extends Company
             'company.status' => $this->status,
         ]);
 
-        $query->leftJoin('car', 'company.id = car.company_id');
-        $query->andFilterWhere(['car.type_id' => $this->cartypes]);
-
         $query->leftJoin('company_service', 'company.id = company_service.company_id');
         $query->andFilterWhere(['company_service.service_id' => $this->services]);
+        $query->andFilterWhere(['company_service.type_id' => $this->cartypes]);
 
         $query->andFilterWhere(['or like', 'address', $this->address]);
         $query->andFilterWhere(['like', 'name', $this->name]);
