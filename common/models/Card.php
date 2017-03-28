@@ -236,7 +236,7 @@ class Card extends ActiveRecord
                 'type'         => $val[2],
                 'val'          => ($val[0] != $val[1]) ? ($val[0] . ' - ' . $val[1]) : $val[0],
                 'count'        => $val[3],
-                'company_name' => ArrayHelper::getValue($val, 4 , 'Неизвестно'),
+                'company_name' => ArrayHelper::getValue($val, 4 , 'Нет компании'),
             ];
         }
 
