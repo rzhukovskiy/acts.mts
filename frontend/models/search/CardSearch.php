@@ -90,7 +90,7 @@ class CardSearch extends CommonCardSearch
     {
         $car = Yii::$app->db->createCommand('SELECT card_id, car_id, mark.name as mark,type.name as type
             FROM (
-                SELECT card_id, car_id, count(car_id) as cn FROM ' . Act::tableName() . ' GROUP BY number,card_id ORDER BY card_id,cn DESC
+                SELECT card_id, car_id, count(car_id) as cn FROM ' . Act::tableName() . ' GROUP BY car_id, card_id ORDER BY card_id, cn DESC
             ) as act
             LEFT JOIN ' . Car::tableName() . ' as car ON car.id=act.car_id
             LEFT JOIN ' . Type::tableName() . ' as type ON car.type_id=type.id
