@@ -387,15 +387,15 @@ class Act extends ActiveRecord
             self::ERROR_EXPENSE => 'Не указан расход',
             self::ERROR_INCOME  => 'Не указан приход',
             self::ERROR_CHECK   => 'Чек не загружен',
-            self::ERROR_CARD    => (!$this->card_id) ? 'Не существует такой номер карты' : (
-                (!$this->car_id) ? false :
+            self::ERROR_CARD    => empty($this->card) ? 'Не существует такой номер карты' : (
+                (empty($this->car)) ? false :
                 'Не совпадает номер карты с номером ТС.<br>
                 Карта - ' .
-                ($this->card_id ? $this->card->company->name : 'Неизвестна') .
+                (!empty($this->card) ? $this->card->company->name : 'Неизвестна') .
                 '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
-                ' ТС - ' . ($this->car_id ? $this->car->company->name : 'Неизвестна')
+                ' ТС - ' . (!empty($this->car) ? $this->car->company->name : 'Неизвестна')
             ),
-            self::ERROR_CAR     => !$this->car_id ? 'Некорректный номер ТС' : false,
+            self::ERROR_CAR     => empty($this->car) ? 'Некорректный номер ТС' : false,
             self::ERROR_TRUCK   => 'Неверный дополнительный номер',
             self::ERROR_LOST    => 'Потеряшечка',
         ];
