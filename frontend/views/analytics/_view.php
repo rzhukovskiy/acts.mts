@@ -54,7 +54,7 @@ $columns = [
             if(isset($data->service_type)) {
                 return \frontend\controllers\AnalyticsController::GetSrTime($data->car_number, $data->service_type);
             } else {
-                return \frontend\controllers\AnalyticsController::GetSrTime($data->car_number, -1);
+                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, -1);
             }
         },
         'visible' => $group == 'count',
