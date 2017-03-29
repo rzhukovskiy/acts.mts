@@ -453,11 +453,6 @@ class Act extends ActiveRecord
             $this->client_id = $this->card->company_id;
         }
 
-        if (!$this->client_id) {
-            $this->addError('client', 'Client not set');
-            return false;
-        }
-
         if (!empty($this->time_str)) {
             $this->served_at = \DateTime::createFromFormat('d-m-Y H:i:s', $this->time_str . ' 12:00:00')->getTimestamp();
         }
@@ -480,6 +475,11 @@ class Act extends ActiveRecord
             if (empty($this->client_id)) {
                 $this->client_id = $car->company_id;
             }
+        }
+
+        if (!$this->client_id) {
+            $this->addError('client', 'Client not set');
+            return false;
         }
 
         if ($insert) {

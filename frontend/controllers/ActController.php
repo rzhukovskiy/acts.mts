@@ -100,7 +100,7 @@ class ActController extends Controller
 
     public function actionLock($type)
     {
-        (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+        (new yii\db\Query())->createCommand()->delete('{{%lock}}', [
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
         ])->execute();
@@ -269,6 +269,7 @@ class ActController extends Controller
                     }
                     return $this->redirect(Yii::$app->request->referrer);
                 }
+                print_r($model->getErrors());die;
             }
         }
 
