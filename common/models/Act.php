@@ -364,7 +364,7 @@ class Act extends ActiveRecord
                 break;
             case self::ERROR_CAR:
                 $hasError = !($this->car_id) ||
-                    ($this->service_type != Service::TYPE_DISINFECT && $this->car->company_id != $this->client_id);
+                    ($this->service_type != Service::TYPE_DISINFECT && !empty($this->car) && $this->car->company_id != $this->client_id);
                 break;
             case self::ERROR_TRUCK:
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_car_id);
