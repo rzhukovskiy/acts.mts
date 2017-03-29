@@ -48,7 +48,7 @@ class OrderController extends Controller
      * @return mixed
      */
     public function actionList($type)
-    {
+    {   
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];

@@ -72,6 +72,7 @@ switch ($diff) {
         $period = 0;
 }
 
+$filters = '';
 $periodForm = '';
 $periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' =>'select-period form-control', 'style' => 'margin-right: 10px;']);
 $periodForm .= Html::dropDownList('month', '', $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);

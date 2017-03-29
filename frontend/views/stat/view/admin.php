@@ -80,6 +80,7 @@ $currentMonth = isset($searchModel->dateFrom)
     : date('n');
 $currentMonth--;
 
+$filters = '';
 $periodForm = '';
 $periodForm .= Html::dropDownList('period', $period, Act::$periodList, [
     'class' =>'select-period form-control',
