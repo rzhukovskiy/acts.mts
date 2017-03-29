@@ -196,21 +196,21 @@ class CompanySearch extends Company
         }
 
         $query->andFilterWhere([
-            'type' => $this->type,
+            'company.type' => $this->type,
         ]);
         $query->orFilterWhere([
-            'type' => 6,
+            'company.type' => 6,
         ]);
         $query->andFilterWhere([
-            'id' => $this->id,
+            'company.id' => $this->id,
             'company.status' => $this->status,
         ]);
 
-        $query->leftJoin('company_service', 'company.id = company_service.company_id');
+        $query->innerJoin('company_service', 'company.id = company_service.company_id');
         $query->andFilterWhere(['company_service.service_id' => $this->services]);
         $query->andFilterWhere(['company_service.type_id' => $this->cartypes]);
 
-        $query->andFilterWhere(['or like', 'address', $this->address]);
+        $query->andFilterWhere(['or like', 'company.address', $this->address]);
         $query->andFilterWhere(['like', 'name', $this->name]);
 
         switch ($this->scenario) {
