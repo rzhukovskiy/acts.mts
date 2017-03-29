@@ -105,7 +105,7 @@ echo GridView::widget([
                 return !empty($data->mark->name) ? Html::encode($data->mark->name) : '';
             },
         ],
-        'car_number',
+        'number',
         [
             'attribute' => 'type_id',
             'content' => function ($data) {
