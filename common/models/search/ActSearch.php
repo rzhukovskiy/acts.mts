@@ -29,7 +29,7 @@ class ActSearch extends Act
     {
         return [
             [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
-            [['number', 'extra_number', 'period', 'address'], 'string'],
+            [['car_number', 'extra_car_number', 'period', 'address'], 'string'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
@@ -42,11 +42,11 @@ class ActSearch extends Act
     {
         // bypass scenarios() implementation in the parent class
         return [
-            self::SCENARIO_CAR => ['card_number', 'card_id', 'number', 'dateFrom', 'dateTo'],
-            self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
-            self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'number', 'extra_number', 'period', 'service_type', 'address'],
-            self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'number', 'extra_number'],
-            self::SCENARIO_HISTORY => ['card_number', 'client_id', 'number', 'dateFrom', 'dateTo', 'service_type', 'address'],
+            self::SCENARIO_CAR => ['card_number', 'card_id', 'car_number', 'dateFrom', 'dateTo'],
+            self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
+            self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
+            self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number'],
+            self::SCENARIO_HISTORY => ['card_number', 'client_id', 'car_number', 'dateFrom', 'dateTo', 'service_type', 'address'],
             'default' => [],
         ];
     }
@@ -200,8 +200,8 @@ class ActSearch extends Act
             'DATE_FORMAT(FROM_UNIXTIME(`act`.`created_at`), "%Y-%m-%d")' => $this->createDay,
         ]);
 
-        $query->andFilterWhere(['like', 'act.number', $this->number])
-            ->andFilterWhere(['like', 'act.extra_number', $this->extra_number])
+        $query->andFilterWhere(['like', 'act.car_number', $this->car_number])
+            ->andFilterWhere(['like', 'act.extra_car_number', $this->extra_car_number])
             ->andFilterWhere(['like', 'check', $this->check]);
 
         $dataProvider->setSort([

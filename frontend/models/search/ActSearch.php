@@ -290,10 +290,10 @@ class ActSearch extends Act
             'served_at'    => $this->served_at,
         ]);
 
-        $query->andFilterWhere(['like', 'number', $this->number])->andFilterWhere([
+        $query->andFilterWhere(['like', 'number', $this->car_number])->andFilterWhere([
             'like',
-            'extra_number',
-            $this->extra_number
+            'extra_car_number',
+            $this->extra_car_number
         ])->andFilterWhere(['like', 'check', $this->check]);
 
         return $dataProvider;

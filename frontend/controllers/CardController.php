@@ -143,7 +143,7 @@ class CardController extends Controller
     public function actionLost()
     {
         if ($number = Yii::$app->request->post('number', false)) {
-            Card::markLost($number);
+            Card::markLostByNumber($number);
         }
 
         $searchModel = new CardSearch();
@@ -166,7 +166,7 @@ class CardController extends Controller
      */
     public function actionFind($number)
     {
-        Card::markFounded($number);
+        Card::markFoundedById($number);
 
         return $this->redirect(Yii::$app->getRequest()->referrer);
     }

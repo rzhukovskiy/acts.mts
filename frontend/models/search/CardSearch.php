@@ -88,11 +88,11 @@ class CardSearch extends CommonCardSearch
      */
     public static function addCarToSearch($dataProvider)
     {
-        $car = Yii::$app->db->createCommand('SELECT card_id, act.number, mark.name as mark,type.name as type
+        $car = Yii::$app->db->createCommand('SELECT card_id, act.car_number, mark.name as mark,type.name as type
             FROM (
                 SELECT card_id, number, count(number) as cn FROM ' . Act::tableName() . ' GROUP BY number,card_id ORDER BY card_id,cn DESC
             ) as act
-            LEFT JOIN ' . Car::tableName() . ' as car ON car.number=act.number
+            LEFT JOIN ' . Car::tableName() . ' as car ON car.number=act.car_number
             LEFT JOIN ' . Type::tableName() . ' as type ON car.type_id=type.id
             LEFT JOIN ' . Mark::tableName() . ' as mark ON car.mark_id=mark.id
             GROUP BY card_id

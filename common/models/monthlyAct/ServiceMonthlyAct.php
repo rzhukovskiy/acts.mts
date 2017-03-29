@@ -23,7 +23,7 @@ class ServiceMonthlyAct extends MonthlyAct implements MonthlyActInterface
         $id = $act->id;
         $clientId = $act->client_id;
         $partnerId = $act->partner_id;
-        $number = $act->number;
+        $number = $act->car_number;
         $date = date('Y-m-00', $act->served_at);
 
         if ($this->checkExistByAct($partnerId, MonthlyAct::PARTNER, $date, $id)) {

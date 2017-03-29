@@ -5,9 +5,11 @@
  * @var $searchModel \common\models\search\ActSearch
  * @var $group string
  * @var $admin boolean
+ * @var $subQuery yii\db\Query
  */
 
 use common\models\Act;
+use common\models\Car;
 use common\models\Company;
 use common\models\Service;
 use kartik\grid\DataColumn;
@@ -135,17 +137,18 @@ $columns = [
         'groupOddCssClass' => 'kv-group-header',
         'groupEvenCssClass' => 'kv-group-header',
         //уродская конструкция для получения 0 обслуживаний
-        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel, $dataProvider) {
-            $sum = 0;
-            foreach ($dataProvider->getModels() as $model) {
-                if ($model->client_id == $data->client_id) {
-                    $sum += $model->carsCount;
-                }
-            }
-            return $sum >= $data->client->carsCount ? null : [
+        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel, $subQuery) {
+            $subQuery->addSelect('car_id');
+            $notServed = Car::find()
+                ->where(['not in', 'id', $subQuery->column()])
+                ->andWhere(['company_id' => $searchModel->client_id])
+                ->andWhere('type_id != 7')
+                ->andWhere('type_id != 8')->count();
+
+            return !$notServed ? null : [
                 'content' => [
                     2 => '0 обслуживаний',
-                    3 => count($data->client->getCars()->where('type_id != 7 AND type_id !=8')->all()) - $sum,
+                    3 => $notServed,
                     4 => Html::a('<span class="glyphicon glyphicon-search"></span>', [
                         'view',
                         'group' => 'count',

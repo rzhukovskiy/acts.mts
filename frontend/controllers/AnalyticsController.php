@@ -5,9 +5,10 @@ namespace frontend\controllers;
 use common\models\Act;
 use common\models\Car;
 use common\models\search\ActSearch;
-use common\models\search\CarSearch;
 use common\models\User;
 use yii;
+use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -68,11 +69,12 @@ class AnalyticsController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $subQuery = null;
 
         if ($group == 'type') {
             // Убираем дизенфекцию из общей статистики
             $dataProvider->query
-                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->addSelect('car_id, car_number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
                 ->orderBy('client_id, actsCount DESC')
                 ->andWhere('service_type != 5')
                 ->andWhere('car.type_id != 7')
@@ -80,7 +82,7 @@ class AnalyticsController extends Controller
             // Убираем дизенфекцию из общей статистики
         } else {
             $dataProvider->query
-                ->addSelect('act.number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
+                ->addSelect('car_id, car_number, served_at, partner_id, client_id, service_type, COUNT(act.id) as actsCount')
                 ->orderBy('client_id, actsCount DESC')
                 ->andWhere('car.type_id != 7')
                 ->andWhere('car.type_id != 8');
@@ -92,22 +94,22 @@ class AnalyticsController extends Controller
         }
         if ($group == 'average') {
             $dataProvider->query
-                ->groupBy('client_id, act.service_type');
+                ->groupBy('client_id, service_type');
         }
         if ($group == 'type') {
             $dataProvider->query
-                ->groupBy('client_id, act.service_type');
+                ->groupBy('client_id, service_type');
         }
         if ($group == 'count') {
-            $dataProvider->query
-                ->groupBy('client_id, act.number');
+            $subQuery = $dataProvider->query
+                ->groupBy('client_id, car_number');
             $query = Act::find()
-                ->from(['actsCount' => $dataProvider->query])
+                ->from(['actsCount' => $subQuery])
                 ->select('COUNT(actsCount) as carsCount, actsCount, client_id')
                 ->groupBy('client_id, actsCount')
                 ->orderBy('client_id, actsCount DESC');
 
-            $dataProvider = new yii\data\ActiveDataProvider([
+            $dataProvider = new ActiveDataProvider([
                 'query' => $query,
                 'pagination' => false,
             ]);
@@ -119,6 +121,7 @@ class AnalyticsController extends Controller
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'type' => $type,
             'group' => $group,
+            'subQuery' => $subQuery,
         ]);
     }
 
@@ -138,19 +141,19 @@ class AnalyticsController extends Controller
         if ($group == 'count') {
             if ($count) {
                 $dataProvider->query
-                    ->addSelect('act.number, served_at, partner_id, client_id, 
+                    ->addSelect('car_number, served_at, partner_id, client_id, 
                 service_type, COUNT(act.id) as actsCount, act.mark_id, act.type_id')
                     ->having(['actsCount' => $count])
-                    ->groupBy('client_id, act.number');
+                    ->groupBy('client_id, act.car_number');
             } else {
-                $dataProvider->query->select('act.number');
+                $dataProvider->query->select('car_id');
                 $query = Car::find()
-                    ->where(['not in', 'number', $dataProvider->query->all()])
+                    ->where(['not in', 'id', $dataProvider->query->column()])
                     ->andWhere(['company_id' => $searchModel->client_id])
                     ->andWhere('type_id != 7')
                     ->andWhere('type_id != 8');
 
-                $dataProvider = new yii\data\ActiveDataProvider([
+                $dataProvider = new ActiveDataProvider([
                     'query' => $query,
                     'pagination' => false,
                 ]);
@@ -194,10 +197,10 @@ class AnalyticsController extends Controller
 
             $TimeNow = time(); // Текущая дата
 
-            $rows = (new \yii\db\Query())
+            $rows = (new Query())
                 ->select(['id', 'served_at'])
                 ->from('{{%act}}')
-                ->where(['number' => $number])
+                ->where(['car_number' => $number])
                 ->andWhere(['service_type' => $serviceType])
                 //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
                 ->orderBy('served_at ASC')
@@ -241,8 +244,8 @@ class AnalyticsController extends Controller
             $DataTo = mktime(00, 00, 01, $DataTo['1'], $DataTo['2'], $DataTo['0']) + 86400;
 
             // Получаем список заказов компании
-            $sqlRows = (new \yii\db\Query())
-                ->select(['id', 'number'])
+            $sqlRows = (new Query())
+                ->select(['id', 'car_number'])
                 ->from('{{%act}}')
                 ->where(['client_id' => $company_id])
                 ->andWhere(['>=', 'served_at', $DataFrom])
@@ -251,8 +254,8 @@ class AnalyticsController extends Controller
                 ->all();
         } else {
             // Получаем список заказов компании
-            $sqlRows = (new \yii\db\Query())
-                ->select(['id', 'number'])
+            $sqlRows = (new Query())
+                ->select(['id', 'car_number'])
                 ->from('{{%act}}')
                 ->where(['client_id' => $company_id])
                 ->andWhere(['service_type' => $service_type])
@@ -279,7 +282,7 @@ class AnalyticsController extends Controller
             $ArrayWorkCars = [];
 
             for ($i = 0; $i < count($sqlRows); $i++) {
-                $index = $sqlRows[$i]["number"];
+                $index = $sqlRows[$i]["car_number"];
 
                 // Сравниваем список машин компании со списком машин из заказов без повторных заказов
                 if (isset($ArrayCars[$index])) {

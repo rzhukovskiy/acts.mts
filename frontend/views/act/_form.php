@@ -66,7 +66,7 @@ use yii\jui\AutoComplete;
                     <div class="input-group">
                         <?= AutoComplete::widget([
                             'model' => $model,
-                            'attribute' => 'number',
+                            'attribute' => 'car_number',
                             'options' => ['class' => 'form-control', 'autocomplete' => 'on', 'style' => 'width: 50%'],
                             'clientOptions' => [
                                 'source' => Car::find()->where(['!=', 'type_id', 7])->select('number as value')->asArray()->all(),
@@ -76,7 +76,7 @@ use yii\jui\AutoComplete;
                         ]) ?>
                         <?= AutoComplete::widget([
                             'model' => $model,
-                            'attribute' => 'extra_number',
+                            'attribute' => 'extra_car_number',
                             'options' => ['class' => 'form-control input-group-addon', 'autocomplete' => 'on', 'style' => 'width: 50%'],
                             'clientOptions' => [
                                 'source' => Car::find()->where(['type_id' => 7])->select('number as value')->asArray()->all(),

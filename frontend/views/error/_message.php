@@ -20,7 +20,7 @@ use common\models\Car;
     if ($model->hasError(Act::ERROR_CAR) && empty($model->car->company_id)) {
         $car = new Car();
         $car->company_id = $model->client_id;
-        $car->number = $model->number;
+        $car->number = $model->car_number;
         $car->mark_id = $model->mark_id;
         $car->type_id = $model->type_id;
         echo $this->render('_add_car', ['model' => $car, 'act_id' => $model->id]);

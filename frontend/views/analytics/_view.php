@@ -34,7 +34,11 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'number',
+        'header' => 'Номер',
+        'value' => function ($data) {
+            //неудачная кострукция, $data может быть как Car так и Act. аттрибуты там по-разному называются
+            return !empty($data->car_number) ? $data->car_number : $data->number;
+        },
     ],
     [
         'attribute' => 'type_id',
@@ -48,9 +52,9 @@ $columns = [
         'value' => function ($data) {
             // Вывод среднего времени обслуживания
             if(isset($data->service_type)) {
-                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, $data->service_type);
+                return \frontend\controllers\AnalyticsController::GetSrTime($data->car_number, $data->service_type);
             } else {
-                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, -1);
+                return \frontend\controllers\AnalyticsController::GetSrTime($data->car_number, -1);
             }
         },
         'visible' => $group == 'count',
@@ -67,7 +71,7 @@ $columns = [
                     'detail',
                     'ActSearch[dateFrom]' => $searchModel->dateFrom,
                     'ActSearch[dateTo]' => $searchModel->dateTo,
-                    'ActSearch[number]' => $data->number,
+                    'ActSearch[car_number]' => $data->car_number,
                     'ActSearch[service_type]' => $searchModel->service_type,
                 ]);
             },
