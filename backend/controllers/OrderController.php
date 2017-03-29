@@ -48,7 +48,7 @@ class OrderController extends Controller
      * @return mixed
      */
     public function actionList($type)
-    {   
+    {
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
@@ -121,7 +121,7 @@ class OrderController extends Controller
 
         if ($modelCard) {
             /** @var Act $modelAct */
-            $modelAct = Act::find()->where(['card_id' => $modelCard->id])->select(['*', 'COUNT(id) AS count'])->groupBy('number')->orderBy('count DESC')->one();
+            $modelAct = Act::find()->where(['card_id' => $modelCard->id])->select(['*', 'COUNT(id) AS count'])->groupBy('car_number')->orderBy('count DESC')->one();
             if ($modelAct) {
                 $modelEntry->card_id = $modelAct->card_id;
                 $modelEntry->number  = $modelAct->car_number;
