@@ -6,6 +6,7 @@
  * @var $group string
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel \common\models\search\ActSearch
+ * @var $subQuery yii\db\Query
  */
 
 $this->title = 'Статистика данных';
@@ -22,5 +23,6 @@ echo $this->render('_list', [
     'searchModel' => $searchModel,
     'group' => $group,
     'admin' => $admin,
+    'subQuery' => $subQuery,
 ]);
 

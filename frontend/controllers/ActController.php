@@ -15,7 +15,7 @@ use common\models\search\CarSearch;
 use common\models\search\EntrySearch;
 use common\models\Service;
 use common\models\User;
-use Yii;
+use yii;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\Controller;
