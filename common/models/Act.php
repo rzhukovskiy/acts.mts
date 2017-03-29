@@ -360,7 +360,7 @@ class Act extends ActiveRecord
                 break;
             case self::ERROR_CARD:
                 $hasError = ($this->service_type != Service::TYPE_DISINFECT && !$this->card_id) ||
-                        ($this->car_id && $this->card->company_id != $this->car->company_id);
+                        ($this->car_id && $this->card_id &&$this->card->company_id != $this->car->company_id);
                 break;
             case self::ERROR_CAR:
                 $hasError = !($this->car_id) ||
