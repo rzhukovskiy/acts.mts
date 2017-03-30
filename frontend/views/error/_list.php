@@ -45,9 +45,6 @@ $columns = [
     ],
     [
         'attribute' => 'card_number',
-        'value' => function ($data) {
-            return isset($data->card) ? $data->card->number : 'error';
-        },
         'contentOptions' => function($data) {
             if($data->hasError('card')) return ['class' => 'text-danger'];
         },

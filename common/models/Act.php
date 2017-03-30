@@ -93,8 +93,6 @@ class Act extends ActiveRecord
      */
     public $image;
 
-    private $card_number;
-
     public static $listStatus = [
         self::STATUS_NEW    => [
             'ru' => 'Новый',
