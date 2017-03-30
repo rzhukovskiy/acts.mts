@@ -195,7 +195,7 @@ class ActController extends Controller
 
             foreach ($dataProvider->getModels() as $car) {
                 $existed = Act::find()->where([
-                    'number' => $car->number,
+                    'car_id' => $car->id,
                     'service_type' => Service::TYPE_DISINFECT,
                     'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
                 ])->all();
