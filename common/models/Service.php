@@ -45,6 +45,7 @@ class Service extends ActiveRecord
             'id' => self::TYPE_DISINFECT,
             'en' => 'disinfect',
             'ru' => 'Дезинфекция',
+            'in' => 'дезинфекции',
         ],
     ];
 
