@@ -189,20 +189,20 @@ class AnalyticsController extends Controller
         ]);
     }
 
-    public static function GetSrTime($number, $serviceType) {
+    public static function getSrTime($number, $serviceType) {
 
         // Вывод среднего времени обслуживания
 
         if($serviceType >= 0) {
 
-            $TimeNow = time(); // Текущая дата
+            $timeNow = time(); // Текущая дата
 
             $rows = (new Query())
                 ->select(['id', 'served_at'])
                 ->from('{{%act}}')
                 ->where(['car_number' => $number])
                 ->andWhere(['service_type' => $serviceType])
-                //->andWhere(['>' ,'served_at', ($TimeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
+                //->andWhere(['>' ,'served_at', ($timeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
                 ->orderBy('served_at ASC')
                 ->all();
 
@@ -210,7 +210,7 @@ class AnalyticsController extends Controller
             if (count($rows) > 0) {
 
                 // Вычисляем количество обслуживаний автомобиля и вычисляем среднюю частоту
-                $srTimeService = round(round(($TimeNow - $rows[0]["served_at"]) / 86400) / count($rows));
+                $srTimeService = round(round(($timeNow - $rows[0]["served_at"]) / 86400) / count($rows));
 
                 return "1 раз в " . $srTimeService . " дней";
             } else {
@@ -224,7 +224,7 @@ class AnalyticsController extends Controller
         // END Вывод среднего времени обслуживания
     }
 
-    public static function GetWorkCars($company_id, $service_type)
+    public static function getWorkCars($company_id, $service_type, $showCarsWork = true, $actsCount = 0)
     {
 
         // Получаем среднее количество операций
@@ -234,22 +234,22 @@ class AnalyticsController extends Controller
             // Если указан период
 
             // Дата от
-            $DataFrom = explode("T", Yii::$app->request->queryParams['ActSearch']['dateFrom']);
-            $DataFrom = explode("-", $DataFrom[0]);
-            $DataFrom = mktime(00, 00, 01, $DataFrom['1'], $DataFrom['2'], $DataFrom['0']) + 86400;
+            $dataFrom = explode("T", Yii::$app->request->queryParams['ActSearch']['dateFrom']);
+            $dataFrom = explode("-", $dataFrom[0]);
+            $dataFrom = mktime(00, 00, 01, $dataFrom['1'], $dataFrom['2'], $dataFrom['0']) + 86400;
 
             // Дата до
-            $DataTo = explode("T", Yii::$app->request->queryParams['ActSearch']['dateTo']);
-            $DataTo = explode("-", $DataTo[0]);
-            $DataTo = mktime(00, 00, 01, $DataTo['1'], $DataTo['2'], $DataTo['0']) + 86400;
+            $dataTo = explode("T", Yii::$app->request->queryParams['ActSearch']['dateTo']);
+            $dataTo = explode("-", $dataTo[0]);
+            $dataTo = mktime(00, 00, 01, $dataTo['1'], $dataTo['2'], $dataTo['0']) + 86400;
 
             // Получаем список заказов компании
             $sqlRows = (new Query())
                 ->select(['id', 'car_number'])
                 ->from('{{%act}}')
                 ->where(['client_id' => $company_id])
-                ->andWhere(['>=', 'served_at', $DataFrom])
-                ->andWhere(['<', 'served_at', $DataTo])
+                ->andWhere(['>=', 'served_at', $dataFrom])
+                ->andWhere(['<', 'served_at', $dataTo])
                 ->andWhere(['service_type' => $service_type])
                 ->all();
         } else {
@@ -270,31 +270,53 @@ class AnalyticsController extends Controller
                 ->andWhere(['!=', 'type_id', 7])
                 ->andWhere(['!=', 'type_id', 8])->all();
 
-            $ArrayCars = [];
+            $arrayCars = [];
 
             for ($c = 0; $c < count($sqlCars); $c++) {
                 $index = $sqlCars[$c]["number"];
-                $ArrayCars[$index] = 1;
+                $arrayCars[$index] = 1;
 
                 $index = null;
             }
 
-            $ArrayWorkCars = [];
+            $arrayWorkCars = [];
 
             for ($i = 0; $i < count($sqlRows); $i++) {
                 $index = $sqlRows[$i]["car_number"];
 
                 // Сравниваем список машин компании со списком машин из заказов без повторных заказов
-                if (isset($ArrayCars[$index])) {
-                    if ($ArrayCars[$index] == 1) {
-                        $ArrayWorkCars[$index] = 1;
+                if (isset($arrayCars[$index])) {
+                    if ($arrayCars[$index] == 1) {
+                        $arrayWorkCars[$index] = 1;
                     }
                 }
 
                 $index = null;
             }
 
-            return count($ArrayWorkCars);
+            if($showCarsWork == true) {
+                return count($arrayWorkCars);
+            } else {
+
+                if(count($arrayWorkCars) > 0) {
+                    // Получаем среднее количество операций
+                    $averRes = $actsCount / count($arrayWorkCars);
+
+                    // Отображаем только одно число после запатой
+                    $averRes = sprintf("%.1f", $averRes);
+
+                    if ($averRes < 0.1) {
+                        $averRes = 0;
+                    }
+
+                } else {
+                    $averRes = 0;
+                }
+
+                return $averRes;
+
+            }
+
         } else {
             return 0;
         }

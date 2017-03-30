@@ -52,9 +52,9 @@ $columns = [
         'value' => function ($data) {
             // Вывод среднего времени обслуживания
             if(isset($data->service_type)) {
-                return \frontend\controllers\AnalyticsController::GetSrTime($data->car_number, $data->service_type);
+                return \frontend\controllers\AnalyticsController::getSrTime($data->car_number, $data->service_type);
             } else {
-                return \frontend\controllers\AnalyticsController::GetSrTime($data->number, -1);
+                return \frontend\controllers\AnalyticsController::getSrTime($data->number, -1);
             }
         },
         'visible' => $group == 'count',

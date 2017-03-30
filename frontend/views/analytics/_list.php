@@ -246,7 +246,7 @@ if ($group == 'average') {
     $columns[3] = [
         'header' => 'Кол-во обслужившихся<br />машин',
         'value' => function ($data) {
-            return \frontend\controllers\AnalyticsController::GetWorkCars($data->client->id, $data->service_type);
+            return \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, true);
         }
     ];
     $columns[4] = [
@@ -258,26 +258,7 @@ if ($group == 'average') {
     $columns[5] = [
         'header' => 'Среднее кол-во<br />операций',
         'value' => function ($data) {
-
-            // Получаем количество обслуживающихся машин
-            $CarsWork = \frontend\controllers\AnalyticsController::GetWorkCars($data->client->id, $data->service_type);
-
-            if($CarsWork > 0) {
-            // Получаем среднее количество операций
-            $AverRes = $data->actsCount / $CarsWork;
-
-            // Отображаем только одно число после запатой
-            $AverRes = sprintf("%.1f", $AverRes);
-
-            if ($AverRes < 0.1) {
-                $AverRes = 0;
-            }
-
-            } else {
-                $AverRes = 0;
-            }
-
-            return $AverRes;
+            return \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
         }
     ];
 }
