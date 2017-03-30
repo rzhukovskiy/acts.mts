@@ -70,7 +70,7 @@ class LoadController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $role = Yii::$app->user->identity->role;
 
-        $locked = Lock::CheckLocked($searchModel->period, $type);
+        $locked = Lock::checkLocked($searchModel->period, $type);
 
         $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
         $dataProvider->query->groupBy('partner_id');
@@ -84,7 +84,7 @@ class LoadController extends Controller
             'locked' => $locked,
             'period' => $searchModel->period,
             'columns' => LoadHelper::getColumnsByType($type, $role, $locked, $searchModel->period, $company, !empty(Yii::$app->user->identity->company->children)),
-            'is_locked' => Lock::CheckLocked($searchModel->period, $searchModel->service_type, true),
+            'is_locked' => Lock::checkLocked($searchModel->period, $searchModel->service_type, true),
         ]);
     }
 
@@ -111,23 +111,23 @@ class LoadController extends Controller
     public function actionClose($type, $company, $period)
     {
 
-        $LockedLisk = Lock::CheckLocked($period, $type);
+        $lockedLisk = Lock::checkLocked($period, $type);
 
-        if(count($LockedLisk) > 0) {
+        if(count($lockedLisk) > 0) {
 
-            $CloseAll = false;
-            $CloseCompany = false;
+            $closeAll = false;
+            $closeCompany = false;
 
-            for ($c = 0; $c < count($LockedLisk); $c++) {
-                if ($LockedLisk[$c]["company_id"] == 0) {
-                    $CloseAll = true;
+            for ($c = 0; $c < count($lockedLisk); $c++) {
+                if ($lockedLisk[$c]["company_id"] == 0) {
+                    $closeAll = true;
                 }
-                if ($LockedLisk[$c]["company_id"] == $company) {
-                    $CloseCompany = true;
+                if ($lockedLisk[$c]["company_id"] == $company) {
+                    $closeCompany = true;
                 }
             }
 
-            if (($CloseAll == false) && ($CloseCompany == false)) {
+            if (($closeAll == false) && ($closeCompany == false)) {
                 (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                     'id' => '',
                     'type' => $type,
@@ -135,14 +135,14 @@ class LoadController extends Controller
                     'company_id' => $company,
                 ])->execute();
                 return 2;
-            } elseif (($CloseAll == true) && ($CloseCompany == true)) {
+            } elseif (($closeAll == true) && ($closeCompany == true)) {
                 (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
                     'type' => $type,
                     'period' => $period,
                     'company_id' => $company,
                 ])->execute();
                 return 2;
-            } elseif (($CloseAll == true) && ($CloseCompany == false)) {
+            } elseif (($closeAll == true) && ($closeCompany == false)) {
                 (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                     'id' => '',
                     'type' => $type,
@@ -150,7 +150,7 @@ class LoadController extends Controller
                     'company_id' => $company,
                 ])->execute();
                 return 1;
-            } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+            } elseif (($closeAll == false) && ($closeCompany == true)) {
                 (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
                     'type' => $type,
                     'period' => $period,

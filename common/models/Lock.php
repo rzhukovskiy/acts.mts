@@ -45,7 +45,7 @@ class Lock extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function CheckLocked($period, $type, $check_period = false)
+    public static function checkLocked($period, $type, $check_period = false)
     {
 
         if($check_period == false) {
@@ -59,24 +59,24 @@ class Lock extends \yii\db\ActiveRecord
 
         } else {
 
-            $LockedLisk = (new \yii\db\Query())
+            $lockedLisk = (new \yii\db\Query())
                 ->select(['id', 'company_id'])
                 ->from('{{%lock}}')
                 ->where(['type' => $type])
                 ->andWhere(['period' => $period])
                 ->all();
 
-            $CloseAll = false;
+            $closeAll = false;
 
-            if(count($LockedLisk) > 0) {
-                for ($c = 0; $c < count($LockedLisk); $c++) {
-                    if ($LockedLisk[$c]["company_id"] == 0) {
-                        $CloseAll = true;
+            if(count($lockedLisk) > 0) {
+                for ($c = 0; $c < count($lockedLisk); $c++) {
+                    if ($lockedLisk[$c]["company_id"] == 0) {
+                        $closeAll = true;
                     }
                 }
             }
 
-            return $CloseAll;
+            return $closeAll;
 
         }
 

@@ -120,37 +120,37 @@ use yii\jui\AutoComplete;
             if(($model->service_type == 2) || ($model->service_type == 3) || ($model->service_type == 4) || ($model->service_type == 5)) {
 
                 // Текушая дата
-                $DateNow = time();
+                $dateNow = time();
 
                 // Текущий день недели
-                $DayNow = date("j", $DateNow);
+                $dayNow = date("j", $dateNow);
 
                 // Если сегодня первый день месяца
-                if ($DayNow == 1) {
+                if ($dayNow == 1) {
 
                     // Дата прошлого дня
-                    $DateYesterday = $DateNow - 86400;
+                    $dateYesterday = $dateNow - 86400;
 
-                    $LockedLisk = \common\models\Lock::CheckLocked(date('n-Y', $DateYesterday), $model->service_type);
+                    $lockedLisk = \common\models\Lock::checkLocked(date('n-Y', $dateYesterday), $model->service_type);
                     $is_locked = false;
 
-                    if (count($LockedLisk) > 0) {
+                    if (count($lockedLisk) > 0) {
 
-                        $CloseAll = false;
-                        $CloseCompany = false;
+                        $closeAll = false;
+                        $closeCompany = false;
 
-                        for ($c = 0; $c < count($LockedLisk); $c++) {
-                            if ($LockedLisk[$c]["company_id"] == 0) {
-                                $CloseAll = true;
+                        for ($c = 0; $c < count($lockedLisk); $c++) {
+                            if ($lockedLisk[$c]["company_id"] == 0) {
+                                $closeAll = true;
                             }
-                            if ($LockedLisk[$c]["company_id"] == Yii::$app->user->identity->company_id) {
-                                $CloseCompany = true;
+                            if ($lockedLisk[$c]["company_id"] == Yii::$app->user->identity->company_id) {
+                                $closeCompany = true;
                             }
                         }
 
-                        if (($CloseAll == true) && ($CloseCompany == false)) {
+                        if (($closeAll == true) && ($closeCompany == false)) {
                             $is_locked = true;
-                        } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                        } elseif (($closeAll == false) && ($closeCompany == true)) {
                             $is_locked = true;
                         }
 
@@ -173,13 +173,13 @@ use yii\jui\AutoComplete;
                     ];
 
                     // Название прошлого месяца
-                    $MountYesterday = date("n", $DateYesterday) - 1;
-                    $MountYesterday = $months[$MountYesterday];
+                    $mountYesterday = date("n", $dateYesterday) - 1;
+                    $mountYesterday = $months[$mountYesterday];
 
                     if ($is_locked == false) {
 
-                        echo "<tr><td colspan=\"7\">Если Вы загрузили всю необходимую информацию за " . $MountYesterday . " месяц и Вам нечего больше добавить, то просим Вас нажать на кнопку  \"Закрыть загрузку\". После нажатия на эту кнопку, возможностей добавить или изменить какие либо данные за этот период не будет.
-                        <br /><br /><a class=\"btn btn-danger btn-sm\" href=\"/act/closeload?type=" . $model->service_type . "&company=" . Yii::$app->user->identity->company_id . "&period=" . date('n-Y', $DateYesterday) . "\" onclick=\"
+                        echo "<tr><td colspan=\"7\">Если Вы загрузили всю необходимую информацию за " . $mountYesterday . " месяц и Вам нечего больше добавить, то просим Вас нажать на кнопку  \"Закрыть загрузку\". После нажатия на эту кнопку, возможностей добавить или изменить какие либо данные за этот период не будет.
+                        <br /><br /><a class=\"btn btn-danger btn-sm\" href=\"/act/closeload?type=" . $model->service_type . "&company=" . Yii::$app->user->identity->company_id . "&period=" . date('n-Y', $dateYesterday) . "\" onclick=\"
                         button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -197,7 +197,7 @@ use yii\jui\AutoComplete;
                         </td></tr>";
 
                     } else {
-                        echo "<tr><td colspan=\"7\">Вы не можете загрузить информацию за " . $MountYesterday . " месяц, так как загрузка за этот месяц завершена. При возникновении вопросом, просим связаться с нами. Контакты указаны в программе в боковом меню, в разделе контакты.</td></tr>";
+                        echo "<tr><td colspan=\"7\">Вы не можете загрузить информацию за " . $mountYesterday . " месяц, так как загрузка за этот месяц завершена. При возникновении вопросом, просим связаться с нами. Контакты указаны в программе в боковом меню, в разделе контакты.</td></tr>";
                     }
 
                 }

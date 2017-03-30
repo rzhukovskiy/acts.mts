@@ -409,26 +409,26 @@ class Act extends ActiveRecord
     public function beforeSave($insert)
     {
         //проверяем не закрыт ли период для добавления
-        $LockedList = Lock::CheckLocked(date('n-Y', $this->served_at), $this->service_type);
+        $lockedList = Lock::checkLocked(date('n-Y', $this->served_at), $this->service_type);
         $is_locked = false;
 
-        if(count($LockedList) > 0) {
+        if(count($lockedList) > 0) {
 
-            $CloseAll = false;
-            $CloseCompany = false;
+            $closeAll = false;
+            $closeCompany = false;
 
-            for ($c = 0; $c < count($LockedList); $c++) {
-                if ($LockedList[$c]["company_id"] == 0) {
-                    $CloseAll = true;
+            for ($c = 0; $c < count($lockedList); $c++) {
+                if ($lockedList[$c]["company_id"] == 0) {
+                    $closeAll = true;
                 }
-                if ($LockedList[$c]["company_id"] == $this->partner_id) {
-                    $CloseCompany = true;
+                if ($lockedList[$c]["company_id"] == $this->partner_id) {
+                    $closeCompany = true;
                 }
             }
 
-            if (($CloseAll == true) && ($CloseCompany == false)) {
+            if (($closeAll == true) && ($closeCompany == false)) {
                 $is_locked = true;
-            } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+            } elseif (($closeAll == false) && ($closeCompany == true)) {
                 $is_locked = true;
             }
 

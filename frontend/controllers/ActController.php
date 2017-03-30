@@ -74,7 +74,7 @@ class ActController extends Controller
             'company' => $company,
             'role' => $role,
             'columns' => ActHelper::getColumnsByType($type, $role, $company, !empty(Yii::$app->user->identity->company->children)),
-            'is_locked' => Lock::CheckLocked($searchModel->period, $searchModel->service_type, true),
+            'is_locked' => Lock::checkLocked($searchModel->period, $searchModel->service_type, true),
         ]);
     }
 
@@ -120,23 +120,23 @@ class ActController extends Controller
 
         if (($type == 2) || ($type == 3) || ($type == 4) || ($type == 5)) {
 
-            $LockedLisk = Lock::CheckLocked($period, $type);
+            $lockedLisk = Lock::checkLocked($period, $type);
 
-            if (count($LockedLisk) > 0) {
+            if (count($lockedLisk) > 0) {
 
-                $CloseAll = false;
-                $CloseCompany = false;
+                $closeAll = false;
+                $closeCompany = false;
 
-                for ($c = 0; $c < count($LockedLisk); $c++) {
-                    if ($LockedLisk[$c]["company_id"] == 0) {
-                        $CloseAll = true;
+                for ($c = 0; $c < count($lockedLisk); $c++) {
+                    if ($lockedLisk[$c]["company_id"] == 0) {
+                        $closeAll = true;
                     }
-                    if ($LockedLisk[$c]["company_id"] == $company) {
-                        $CloseCompany = true;
+                    if ($lockedLisk[$c]["company_id"] == $company) {
+                        $closeCompany = true;
                     }
                 }
 
-                if (($CloseAll == false) && ($CloseCompany == false)) {
+                if (($closeAll == false) && ($closeCompany == false)) {
                     (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
                         'id' => '',
                         'type' => $type,
@@ -144,16 +144,16 @@ class ActController extends Controller
                         'company_id' => $company,
                     ])->execute();
                     return 1;
-                } elseif (($CloseAll == true) && ($CloseCompany == true)) {
+                } elseif (($closeAll == true) && ($closeCompany == true)) {
                     (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
                         'type' => $type,
                         'period' => $period,
                         'company_id' => $company,
                     ])->execute();
                     return 1;
-                } elseif (($CloseAll == true) && ($CloseCompany == false)) {
+                } elseif (($closeAll == true) && ($closeCompany == false)) {
                     return 0;
-                } elseif (($CloseAll == false) && ($CloseCompany == true)) {
+                } elseif (($closeAll == false) && ($closeCompany == true)) {
                     return 0;
                 }
 
