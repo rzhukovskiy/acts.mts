@@ -1022,7 +1022,7 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Акт {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Акт {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
             $filename = $serviceDescription. " Акт $company->name от " . date('m-Y', $this->time) . ".xls";
         }
@@ -1287,7 +1287,7 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Счет {$company->name} - {$first->number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Счет {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
             $filename = $serviceDescription . " Счет $company->name от " . date('m-Y', $this->time) . ".xls";
         }
