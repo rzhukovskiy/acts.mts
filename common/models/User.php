@@ -23,6 +23,7 @@ use yii\web\IdentityInterface;
  * @property integer $company_id
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $code
  * @property string $password write-only password
  *
  * @property Company $company
@@ -66,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['username', 'unique'],
             ['email', 'email'],
-            [['role', 'company_id'], 'integer'],
+            [['role', 'company_id', 'code'], 'integer'],
             [['is_account', 'email'], 'safe'],
             ['is_account', 'default', 'value' => 0],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
@@ -89,6 +90,7 @@ class User extends ActiveRecord implements IdentityInterface
             'company_id' => 'Компания',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
+            'code' => 'Номер в телефонии',
         ];
     }
 

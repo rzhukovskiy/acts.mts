@@ -19,7 +19,15 @@ use yii\bootstrap\Modal;
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('phone')?></td>
-        <td><?= $model->phone ?></td>
+        <td>
+            <?php foreach (explode(',', $model->phone) as $phone) {
+                $phone = trim($phone);
+                $code = Yii::$app->user->identity->code;
+                echo "<a href='https://ih392584.vds.myihor.ru/app/click_to_call/click_to_call.php?" .
+                    "src_cid_name=$code&src_cid_number=$code&dest_cid_name=&dest_cid_number=&src=$code&dest=$phone" .
+                    "&auto_answer=&rec=false&ringback=us-ring'>$phone</a><br />";
+            } ?>
+        </td>
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('email')?></td>

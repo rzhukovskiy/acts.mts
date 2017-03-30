@@ -23,6 +23,7 @@ use yii\widgets\ActiveForm;
         ],
     ]);
     echo $form->field($model, 'username')->textInput();
+    echo $form->field($model, 'code')->textInput();
     echo $form->field($model, 'password')->passwordInput();
     echo $form->field($model, 'is_account')->checkbox([], false);
     ?>
