@@ -1233,7 +1233,7 @@ class ActExporter
                 )
             )
         );
-        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y');
+        $text = 'За услуги ' . Service::$listType[$this->serviceType]['en'] . ', оказанные в ' . $monthName[2] . date(' Y');
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
