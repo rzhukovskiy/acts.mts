@@ -9,6 +9,7 @@ use yii\base\Model;
 class userUpdateForm extends Model
 {
     public $username;
+    public $code;
     public $newPassword;
     public $role;
     public $email;
@@ -22,7 +23,7 @@ class userUpdateForm extends Model
             [['username', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
             ['newPassword', 'string', 'min' => 4, 'tooShort' => 'Длинна пароля должна быть более {min, number} символов'],
             ['newPassword', 'string', 'max' => 24, 'tooLong' => 'Максимальная длинна пароля {max, number} символа.'],
-            [['is_account', 'role'], 'safe'],
+            [['code', 'is_account', 'role'], 'safe'],
             ['username', 'unique', 'targetClass' => User::className(), 'targetAttribute' => 'username', 'comboNotUnique' => 'Попробуйте другое имя. Такой логин уже используется.']
         ];
     }
@@ -31,6 +32,7 @@ class userUpdateForm extends Model
     {
         return [
             'username' => 'Имя пользователя',
+            'code' => 'Номер телефонии',
             'newPassword' => 'Пароль',
             'email' => 'Почта',
             'company_id' => 'Компания',

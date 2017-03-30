@@ -114,6 +114,7 @@ class UserController extends Controller
         $model->setAttributes([
             'username' => $userModel->username,
             'role' => $userModel->role,
+            'code' => $userModel->code,
             'is_account' => $userModel->is_account,
             'company_id' => $userModel->company_id,
             'oldPassword' => $userModel->password_hash,
