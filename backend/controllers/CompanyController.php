@@ -1227,7 +1227,7 @@ class CompanyController extends Controller
                                 $stringStyle = '';
 
                                 if($numServices != 1) {
-                                    if($tmpArray[0] != 9) {
+                                    if($services[0] != 9) {
                                         $stringStyle = ' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'';
                                     } else {
                                         $stringStyle = ' style=\'padding-left:5px;\'';
@@ -1384,7 +1384,7 @@ class CompanyController extends Controller
                                         $stringStyle = '';
 
                                         if($numServices != 1) {
-                                            if($tmpArray[0] != 9) {
+                                            if($services[0] != 9) {
                                                 $stringStyle = ' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'';
                                             } else {
                                                 $stringStyle = ' style=\'padding-left:5px;\'';
@@ -2060,7 +2060,7 @@ class CompanyController extends Controller
                                     $stringStyle = '';
 
                                     if($numServices != 1) {
-                                        if($tmpArray[0] != 9) {
+                                        if($services[0] != 9) {
                                             $stringStyle = ' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'';
                                         } else {
                                             $stringStyle = ' style=\'padding-left:5px;\'';
@@ -2217,7 +2217,7 @@ class CompanyController extends Controller
                                             $stringStyle = '';
 
                                             if($numServices != 1) {
-                                                if($tmpArray[0] != 9) {
+                                                if($services[0] != 9) {
                                                     $stringStyle = ' style=\'border-left:1px solid #c6c6c6; padding-left:5px; padding-right:5px;\'';
                                                 } else {
                                                     $stringStyle = ' style=\'padding-left:5px;\'';
