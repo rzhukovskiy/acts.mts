@@ -18,7 +18,7 @@
                 </td>
                 <td colspan="2">
                     <label class="control-label">Время работы:</label>
-                    <?php $companyTime = !empty($entrySearchModel) ? $model->getCompanyTimeByDay($entrySearchModel->day) : false?>
+                    <?php $companyTime = !empty($searchModel) ? $model->getCompanyTimeByDay($searchModel->day) : false?>
                     <span class="work-time">
                         <?= $companyTime ? $companyTime : 'Выходной' ?>
                     </span>
