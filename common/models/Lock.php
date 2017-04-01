@@ -50,21 +50,11 @@ class Lock extends \yii\db\ActiveRecord
 
         if($check_period == false) {
 
-            return (new \yii\db\Query())
-                ->select(['id', 'company_id'])
-                ->from('{{%lock}}')
-                ->where(['type' => $type])
-                ->andWhere(['period' => $period])
-                ->all();
+            return Lock::find()->where(['type' => $type, 'period' => $period])->all();
 
         } else {
 
-            $lockedLisk = (new \yii\db\Query())
-                ->select(['id', 'company_id'])
-                ->from('{{%lock}}')
-                ->where(['type' => $type])
-                ->andWhere(['period' => $period])
-                ->all();
+            $lockedLisk = Lock::find()->where(['type' => $type, 'period' => $period])->all();
 
             $closeAll = false;
 
