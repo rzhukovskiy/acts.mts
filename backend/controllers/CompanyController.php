@@ -475,7 +475,7 @@ class CompanyController extends Controller
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        $searchModel->status = Company::STATUS_ACTIVE;
+        //$searchModel->status = Company::STATUS_ACTIVE;
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
