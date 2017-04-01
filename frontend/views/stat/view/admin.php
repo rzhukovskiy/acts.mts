@@ -5,6 +5,7 @@ use kartik\grid\GridView;
 use yii\bootstrap\Html;
 use common\components\DateHelper;
 use common\assets\CanvasJs\CanvasJsAsset;
+use common\models\Act;
 
 /**
  * @var $this \yii\web\View
