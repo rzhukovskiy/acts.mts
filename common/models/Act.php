@@ -409,7 +409,18 @@ class Act extends ActiveRecord
     public function beforeSave($insert)
     {
         //проверяем не закрыт ли период для добавления
-        $lockedList = Lock::checkLocked(date('n-Y', $this->served_at), $this->service_type);
+
+        $timePeriod = '';
+
+        if(date("j", time()) == 1) {
+            $timePeriod = time() - 86400;
+        } else {
+            $timePeriod = time();
+        }
+
+        $timePeriod = date('n-Y', $timePeriod);
+
+        $lockedList = Lock::checkLocked($timePeriod, $this->service_type);
         $is_locked = false;
 
         if(count($lockedList) > 0) {
