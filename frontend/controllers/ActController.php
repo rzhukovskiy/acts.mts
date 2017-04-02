@@ -100,17 +100,18 @@ class ActController extends Controller
 
     public function actionLock($type)
     {
-        (new yii\db\Query())->createCommand()->delete('{{%lock}}', [
-            'type' => $type,
-            'period' => date('n-Y', time() - 10 * 24 * 3600),
-        ])->execute();
 
-        (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-            'id' => '',
+        Lock::deleteAll([
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
-            'company_id' => 0,
-        ])->execute();
+        ]);
+
+        $lock = new Lock();
+        $lock->period = date('n-Y', time() - 10 * 24 * 3600);
+        $lock->type = $type;
+        $lock->company_id = 0;
+
+        $lock->save();
 
         return "Открыть загрузку";
     }
@@ -137,19 +138,23 @@ class ActController extends Controller
                 }
 
                 if (($closeAll == false) && ($closeCompany == false)) {
-                    (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-                        'id' => '',
-                        'type' => $type,
-                        'period' => $period,
-                        'company_id' => $company,
-                    ])->execute();
+
+                    $lock = new Lock();
+                    $lock->period = $period;
+                    $lock->type = $type;
+                    $lock->company_id = $company;
+
+                    $lock->save();
+
                     return 1;
                 } elseif (($closeAll == true) && ($closeCompany == true)) {
-                    (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+
+                    Lock::deleteAll([
                         'type' => $type,
                         'period' => $period,
                         'company_id' => $company,
-                    ])->execute();
+                    ]);
+
                     return 1;
                 } elseif (($closeAll == true) && ($closeCompany == false)) {
                     return 0;
@@ -158,12 +163,14 @@ class ActController extends Controller
                 }
 
             } else {
-                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-                    'id' => '',
-                    'type' => $type,
-                    'period' => $period,
-                    'company_id' => $company,
-                ])->execute();
+
+                $lock = new Lock();
+                $lock->period = $period;
+                $lock->type = $type;
+                $lock->company_id = $company;
+
+                $lock->save();
+
                 return 1;
             }
 
@@ -175,10 +182,11 @@ class ActController extends Controller
 
     public function actionUnlock($type)
     {
-        (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+
+        Lock::deleteAll([
             'type' => $type,
             'period' => date('n-Y', time() - 10 * 24 * 3600),
-        ])->execute();
+        ]);
 
         return "Закрыть загрузку";
     }

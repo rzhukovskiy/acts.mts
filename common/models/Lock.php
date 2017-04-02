@@ -30,6 +30,7 @@ class Lock extends \yii\db\ActiveRecord
             [['type', 'period'], 'required'],
             [['type'], 'integer'],
             [['period'], 'string', 'max' => 255],
+            [['company_id'], 'integer'],
         ];
     }
 
@@ -42,6 +43,7 @@ class Lock extends \yii\db\ActiveRecord
             'id' => 'ID',
             'type' => 'Type',
             'period' => 'Period',
+            'company_id' => 'Company_id',
         ];
     }
 
