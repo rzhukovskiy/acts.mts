@@ -128,44 +128,54 @@ class LoadController extends Controller
             }
 
             if (($closeAll == false) && ($closeCompany == false)) {
-                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-                    'id' => '',
-                    'type' => $type,
-                    'period' => $period,
-                    'company_id' => $company,
-                ])->execute();
+
+                $lock = new Lock();
+                $lock->period = $period;
+                $lock->type = $type;
+                $lock->company_id = $company;
+
+                $lock->save();
+
                 return 2;
             } elseif (($closeAll == true) && ($closeCompany == true)) {
-                (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+
+                Lock::deleteAll([
                     'type' => $type,
                     'period' => $period,
                     'company_id' => $company,
-                ])->execute();
+                ]);
+
                 return 2;
             } elseif (($closeAll == true) && ($closeCompany == false)) {
-                (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-                    'id' => '',
-                    'type' => $type,
-                    'period' => $period,
-                    'company_id' => $company,
-                ])->execute();
+
+                $lock = new Lock();
+                $lock->period = $period;
+                $lock->type = $type;
+                $lock->company_id = $company;
+
+                $lock->save();
+
                 return 1;
             } elseif (($closeAll == false) && ($closeCompany == true)) {
-                (new \yii\db\Query())->createCommand()->delete('{{%lock}}', [
+
+                Lock::deleteAll([
                     'type' => $type,
                     'period' => $period,
                     'company_id' => $company,
-                ])->execute();
+                ]);
+
                 return 1;
             }
 
         } else {
-            (new \yii\db\Query())->createCommand()->insert('{{%lock}}', [
-                'id' => '',
-                'type' => $type,
-                'period' => $period,
-                'company_id' => $company,
-            ])->execute();
+
+            $lock = new Lock();
+            $lock->period = $period;
+            $lock->type = $type;
+            $lock->company_id = $company;
+
+            $lock->save();
+
             return 2;
         }
     }

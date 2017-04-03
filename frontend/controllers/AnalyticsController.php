@@ -197,14 +197,7 @@ class AnalyticsController extends Controller
 
             $timeNow = time(); // Текущая дата
 
-            $rows = (new Query())
-                ->select(['id', 'served_at'])
-                ->from('{{%act}}')
-                ->where(['car_number' => $number])
-                ->andWhere(['service_type' => $serviceType])
-                //->andWhere(['>' ,'served_at', ($timeNow - 31535999)]) Если хотим узнать среднее количество только за прошедший год
-                ->orderBy('served_at ASC')
-                ->all();
+            $rows = Act::find()->where(['car_number' => $number, 'service_type' => $serviceType])->orderBy('served_at ASC')->all();
 
             // Есди автомобиль обслуживался в этом году
             if (count($rows) > 0) {
@@ -244,22 +237,11 @@ class AnalyticsController extends Controller
             $dataTo = mktime(00, 00, 01, $dataTo['1'], $dataTo['2'], $dataTo['0']) + 86400;
 
             // Получаем список заказов компании
-            $sqlRows = (new Query())
-                ->select(['id', 'car_number'])
-                ->from('{{%act}}')
-                ->where(['client_id' => $company_id])
-                ->andWhere(['>=', 'served_at', $dataFrom])
-                ->andWhere(['<', 'served_at', $dataTo])
-                ->andWhere(['service_type' => $service_type])
-                ->all();
+            $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->andWhere(['>=', 'served_at', $dataFrom])->andWhere(['<', 'served_at', $dataTo])->all();
+
         } else {
             // Получаем список заказов компании
-            $sqlRows = (new Query())
-                ->select(['id', 'car_number'])
-                ->from('{{%act}}')
-                ->where(['client_id' => $company_id])
-                ->andWhere(['service_type' => $service_type])
-                ->all();
+            $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->all();
         }
 
         if (count($sqlRows) > 0) {
