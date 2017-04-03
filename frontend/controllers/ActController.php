@@ -250,6 +250,8 @@ class ActController extends Controller
         $model->service_type = $type;
         $model->partner_id = Yii::$app->user->identity->company_id;
 
+        $showError = '';
+
         $serviceList = Service::find()->where(['type' => $type])
             ->orderBy('description')->select(['description', 'id'])
             ->indexBy('id')->column();
@@ -277,7 +279,7 @@ class ActController extends Controller
                     }
                     return $this->redirect(Yii::$app->request->referrer);
                 }
-                print_r($model->getErrors());die;
+                $showError = $model->getErrors();
             }
         }
 
@@ -300,6 +302,7 @@ class ActController extends Controller
             'serviceList' => $serviceList,
             'role' => $role,
             'model' => $model,
+            'showError' => $showError,
             'columns' => ActHelper::getColumnsByType($type, $role, 0, !empty(Yii::$app->user->identity->company->children)),
         ]);
     }

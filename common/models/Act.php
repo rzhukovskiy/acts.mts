@@ -443,7 +443,11 @@ class Act extends ActiveRecord
         }
 
         if ($insert && $is_locked) {
-            $this->addError('period', 'This period is locked');
+            if(isset($this->time_str)) {
+                $this->addError('period', date('n', $dataArrayParam));
+            } else {
+                $this->addError('period', date('n', $this->served_at));
+            }
             return false;
         }
         $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
@@ -484,7 +488,7 @@ class Act extends ActiveRecord
         }
 
         if (!$this->client_id) {
-            $this->addError('client', 'Client not set');
+            $this->addError('client', 'Клиент не выбран.');
             return false;
         }
 

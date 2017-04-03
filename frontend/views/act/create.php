@@ -22,6 +22,7 @@ if ($role == User::ROLE_PARTNER) {
         'serviceList' => $serviceList,
         'model' => $model,
         'role' => $role,
+        'showError' => $showError,
     ]);
 }
 

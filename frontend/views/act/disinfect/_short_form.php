@@ -117,7 +117,7 @@ use yii\jui\AutoComplete;
             <!-- Выводим кнопку для преждевременного закрытия загрузок -->
             <?php
 
-            if(($model->service_type == 2) || ($model->service_type == 3) || ($model->service_type == 4) || ($model->service_type == 5)) {
+            if(($model->service_type == 2) || ($model->service_type == 3) || ($model->service_type == 4) || ($model->service_type == 5) || ($model->service_type == 6)) {
 
                 // Текушая дата
                 $dateNow = time();
@@ -125,11 +125,27 @@ use yii\jui\AutoComplete;
                 // Текущий день недели
                 $dayNow = date("j", $dateNow);
 
-                // Если сегодня первый день месяца
-                if ($dayNow == 1) {
+                // Название месяцев
+                $months = [
+                    'январь',
+                    'февраль',
+                    'март',
+                    'апрель',
+                    'май',
+                    'июнь',
+                    'июль',
+                    'август',
+                    'сентябрь',
+                    'октябрь',
+                    'ноябрь',
+                    'декабрь',
+                ];
 
-                    // Дата прошлого дня
-                    $dateYesterday = $dateNow - 86400;
+                // Если сегодня первый день месяца
+                if (($dayNow >= 1) && ($dayNow < 15)) {
+
+                    // Дата прошлого месяца
+                    $dateYesterday = $dateNow - 1382400;
 
                     $lockedLisk = \common\models\Lock::checkLocked(date('n-Y', $dateYesterday), $model->service_type);
                     $is_locked = false;
@@ -156,22 +172,6 @@ use yii\jui\AutoComplete;
 
                     }
 
-                    // Название месяцев
-                    $months = [
-                        'январь',
-                        'февраль',
-                        'март',
-                        'апрель',
-                        'май',
-                        'июнь',
-                        'июль',
-                        'август',
-                        'сентябрь',
-                        'октябрь',
-                        'ноябрь',
-                        'декабрь',
-                    ];
-
                     // Название прошлого месяца
                     $mountYesterday = date("n", $dateYesterday) - 1;
                     $mountYesterday = $months[$mountYesterday];
@@ -196,10 +196,18 @@ use yii\jui\AutoComplete;
                         
                         </td></tr>";
 
-                    } else {
-                        echo "<tr><td colspan=\"7\">Вы не можете загрузить информацию за " . $mountYesterday . " месяц, так как загрузка за этот месяц завершена. При возникновении вопросом, просим связаться с нами. Контакты указаны в программе в боковом меню, в разделе контакты.</td></tr>";
                     }
 
+                }
+
+                if((isset($showError)) && ($showError != '')) {
+                    if(isset($model->getErrors()['period'][0])) {
+                        $mountYesterday = $model->getErrors()['period'][0] - 1;
+                        $mountYesterday = $months[$mountYesterday];
+                        echo "<tr><td colspan=\"7\" style=\"color:#ff0000;\">Вы не можете загрузить информацию за " . $mountYesterday . " месяц, так как загрузка за этот месяц завершена. При возникновении вопросом, просим связаться с нами. Контакты указаны в программе в боковом меню, в разделе контакты.</td></tr>";
+                    } else if(isset($model->getErrors()['client'][0])) {
+                        echo "<tr><td colspan=\"7\" style=\"color:#ff0000;\">" . $model->getErrors()['client'][0] . "</td></tr>";
+                    }
                 }
 
             }
