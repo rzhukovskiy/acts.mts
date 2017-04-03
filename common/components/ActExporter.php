@@ -4,6 +4,7 @@ namespace common\components;
 use common\models\Act;
 use common\models\ActScope;
 use common\models\Company;
+use common\models\Car;
 use common\models\search\ActSearch;
 use common\models\search\ServiceSearch;
 use common\models\Service;
@@ -66,6 +67,47 @@ class ActExporter
      */
     private function fillAct($searchModel, $company, &$zip)
     {
+
+        // Прикрепить еще один файл "Статистика и анализ"
+        if ($this->company) {
+            switch ($this->serviceType) {
+                case Company::TYPE_SERVICE:
+                    $dataList = $searchModel->search([])->getModels();
+                    if ($dataList) {
+                        foreach ($dataList as $data) {
+                            $this->generateStat($company, array($data), $zip);
+                        }
+                    }
+                    break;
+                case Company::TYPE_DISINFECT:
+                    $listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
+                    foreach ($listService as $serviceId => $serviceDescription) {
+                        $dataProvider = $searchModel->search([]);
+                        if ($this->company) {
+                            $dataProvider->query->andWhere(['clientScopes.service_id' => $serviceId])
+                                ->groupBy('clientScopes.act_id')
+                                ->joinWith('clientScopes clientScopes');
+                        } else {
+                            $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
+                                ->groupBy('partnerScopes.act_id')
+                                ->joinWith('partnerScopes partnerScopes');
+                        }
+                        $dataList = $dataProvider->getModels();
+                        if ($dataList) {
+                            $this->generateStat($company, $dataList, $zip);
+                        }
+                    }
+                    break;
+                default:
+                    $dataList = $searchModel->search([])->getModels();
+                    if ($dataList) {
+                        $this->generateStat($company, $dataList, $zip);
+                    }
+
+            }
+        }
+        // END Прикрепить еще один файл "Статистика и анализ"
+
         switch ($this->serviceType) {
             case Company::TYPE_SERVICE:
                 $dataList = $searchModel->search([])->getModels();
@@ -1295,4 +1337,242 @@ class ActExporter
         $objWriter->save($fullFilename);
         if ($zip) $zip->addFile($fullFilename, iconv('utf-8', 'cp866', $filename));
     }
+
+    /** Создание файла статистики и анализа
+     * @param Company $company
+     * @param array $dataList
+     * @param ZipArchive $zip
+     */
+    private function generateStat($company, $dataList, &$zip, $serviceDescription = null)
+    {
+        $this->objPHPExcel = new PHPExcel();
+        $objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel5');
+
+        // Creating a workbook
+        $this->objPHPExcel->getProperties()->setCreator('Mtransservice');
+        $this->objPHPExcel->getProperties()->setTitle('Акт');
+        $this->objPHPExcel->getProperties()->setSubject('Акт');
+        $this->objPHPExcel->getProperties()->setDescription('');
+        $this->objPHPExcel->getProperties()->setCategory('');
+        $this->objPHPExcel->removeSheetByIndex(0);
+
+        //adding worksheet
+        $companyWorkSheet = new PHPExcel_Worksheet($this->objPHPExcel, 'акт');
+        $this->objPHPExcel->addSheet($companyWorkSheet);
+
+        $companyWorkSheet->getPageMargins()->setTop(2);
+        $companyWorkSheet->getPageMargins()->setLeft(0.5);
+        $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
+        $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+        $companyWorkSheet->getColumnDimension('A')->setWidth(2);
+        $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
+
+        //headers;
+        $monthName = DateHelper::getMonthName($this->time);
+        $date = date_create(date('Y-m-d', $this->time));
+        date_add($date, date_interval_create_from_date_string("1 month"));
+        $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
+
+        $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        ));
+        $companyWorkSheet->mergeCells('B2:I2');
+        if($company->is_split) {
+            $companyWorkSheet->mergeCells('B2:J2');
+        }
+        $text = "Статистика и анализ обслуженных машин";
+        $companyWorkSheet->setCellValue('B2', $text);
+        $companyWorkSheet->mergeCells('B3:I3');
+        $text = "за " . $monthName[0] . " " . date('Y', $this->time) . " компании " . $company->name;
+        $companyWorkSheet->setCellValue('B3', $text);
+        $companyWorkSheet->mergeCells('B4:I4');
+
+        $companyWorkSheet->mergeCells('B5:F5');
+        $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+        $companyWorkSheet->getStyle('H5:I5')->applyFromArray(array(
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+            )
+        ));
+        $companyWorkSheet->mergeCells('H5:I5');
+        if($company->is_split) {
+            $companyWorkSheet->mergeCells('H5:J5');
+        }
+        $companyWorkSheet->mergeCells('G5:I5');
+        if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
+            $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
+        } else {
+            $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+        }
+
+        // Первая таблица
+
+        $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
+        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
+        $companyWorkSheet->setCellValue('B9', "1. Количество обслуженных машин");
+
+        //main values
+        $rowStart = 11;
+        $row = 11;
+        $num = 0;
+        $total = 0;
+        $count = 0;
+
+        $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+        $companyWorkSheet->getColumnDimension('C')->setWidth(5);
+        $companyWorkSheet->getColumnDimension('D')->setWidth(5);
+        $companyWorkSheet->getColumnDimension('E')->setWidth(10);
+        $companyWorkSheet->getColumnDimension('F')->setWidth(9);
+        $companyWorkSheet->getColumnDimension('G')->setWidth(25);
+        $companyWorkSheet->getColumnDimension('H')->setWidth(6);
+        $companyWorkSheet->getColumnDimension('I')->setWidth(7);
+        if($company->is_split) {
+            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+        }
+
+        $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+        $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+        $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('E' . $row)->getAlignment()->setWrapText(true);
+
+        // Запрос
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
+        if ($this->serviceType) {
+            $searchModel->service_type = $this->serviceType;
+        }
+
+        // Формирование параметров поиска
+        $timeFrom = $this->time - 86400;
+        $timeFrom = mktime(21, 00, 00, date('m', $timeFrom), 01, date('Y', $timeFrom));
+
+        $timeTo = $this->time + 3456000;
+        $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 86400;
+        // Формирование параметров поиска
+
+        $resCars = Yii::$app->getDb()->createCommand("SELECT COUNT(actsCount) as carsCount, `actsCount`, `client_id` FROM (SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND (`client_id`=" . $company->id . ") AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `car_number` ORDER BY `client_id`, `actsCount` DESC) `actsCount` GROUP BY `client_id`, `actsCount` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
+
+        // Запрос
+
+        $headers = ['Ко-во обслуживаний за 1 месяц', '', '', 'Ко-во машин'];
+        $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
+        /** @var Act $data */
+        $currentId = 0;
+        $isParent = false;
+        if ($this->company && count($company->children) > 0) {
+            $isParent = true;
+        }
+
+        foreach ($resCars as $value) {
+            $row++;
+            $num++;
+            $column = 1;
+
+            $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+
+            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $value['actsCount']);
+            $column++; $column++;
+            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, $value['carsCount']);
+        }
+
+        $companyWorkSheet->getStyle('B' . $rowStart . ':E' . $rowStart . '')->applyFromArray(array(
+                'font' => array(
+                    'bold' => true,
+                    'color' => array('argb' => 'FF006699'),
+                ),
+            )
+        );
+        if($company->is_split) {
+            $companyWorkSheet->getStyle('J' . $rowStart . '')->applyFromArray(array(
+                    'font' => array(
+                        'bold' => true,
+                        'color' => array('argb' => 'FF006699'),
+                    ),
+                )
+            );
+        }
+
+        $companyWorkSheet->getStyle("B" . $rowStart . ":E$row")
+            ->applyFromArray(array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => 'FF000000'),
+                        ),
+                    ),
+                )
+            );
+        if($company->is_split) {
+            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
+                ->applyFromArray(array(
+                        'borders' => array(
+                            'allborders' => array(
+                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                'color' => array('argb' => 'FF000000'),
+                            ),
+                        ),
+                    )
+                );
+        }
+
+        $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "Итого в Вашем филиале за " . $monthName[0] . " " . date('Y', $this->time) . ":");
+
+        $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "- 50 машин было помыто более 1-3 раз");
+
+        $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "- 20 машин не было помыто ни одного раза");
+
+        $row++; $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "Рекомендованное среднее кол-во мойки 1 ТС за один месяц составляет 1-3 раза.");
+
+        // END Первая таблица
+
+        //footer
+
+        $row++; $row++; $row++;
+        $companyWorkSheet->getRowDimension($row)->setRowHeight(35);
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValue('B' . $row . '', "Более подробную информацию Вы можете посмотреть в своем личном кабинете, на сайте http://docs.mtransservice.ru");
+
+        $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->getRowDimension($row)->setRowHeight(35);
+        $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValue('B' . $row . '', "При возникновении вопросов, Вы всегда можете связаться с персональным менеджером нашей компании.");
+
+        $row++; $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "С Уважением,");
+
+        $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "Международный Транспортный Сервис");
+
+        //saving document
+        $type = Service::$listType[$this->serviceType]['en'];
+        $path = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
+        if (!is_dir($path)) {
+            mkdir($path, 0755, 1);
+        }
+        if ($this->serviceType == Company::TYPE_SERVICE) {
+            $first = $dataList[0];
+            $filename = "Статистика_анализ {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+        } else {
+            $filename = $serviceDescription. " Статистика_анализ $company->name от " . date('m-Y', $this->time) . ".xls";
+        }
+        $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
+        $objWriter->save($fullFilename);
+        if ($zip) $zip->addFile($fullFilename, iconv('utf-8', 'cp866', $filename));
+
+    }
+
 }
