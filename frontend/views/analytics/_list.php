@@ -313,7 +313,7 @@ echo GridView::widget([
     'columns' => $columns,
 ]);
 
-if($group == 'count') {
+/*if($group == 'count') {
     // TODO: refactor it, plz, move collecting data into controller
     echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" style='padding: 10px;'><div id=\"chart_div\" style=\"width:100%;height:500px;\"></div></div></div>";
     $js = "
@@ -348,4 +348,4 @@ if($group == 'count') {
 
             $('#chart_div').CanvasJSChart(options);";
     $this->registerJs($js);
-}
+}*/
