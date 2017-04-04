@@ -1411,6 +1411,7 @@ class ActExporter
 
         $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
+        $companyWorkSheet->mergeCells('B9:I9');
         $companyWorkSheet->setCellValue('B9', "1. Количество обслуженных машин");
 
         //main values
@@ -1424,25 +1425,24 @@ class ActExporter
         $companyWorkSheet->getColumnDimension('C')->setWidth(5);
         $companyWorkSheet->getColumnDimension('D')->setWidth(5);
         $companyWorkSheet->getColumnDimension('E')->setWidth(10);
-        $companyWorkSheet->getColumnDimension('F')->setWidth(9);
-        $companyWorkSheet->getColumnDimension('G')->setWidth(25);
+        $companyWorkSheet->getColumnDimension('F')->setWidth(3);
+        $companyWorkSheet->getColumnDimension('G')->setWidth(31);
         $companyWorkSheet->getColumnDimension('H')->setWidth(6);
         $companyWorkSheet->getColumnDimension('I')->setWidth(7);
         if($company->is_split) {
             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
         }
 
-        $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+        $companyWorkSheet->getRowDimension($row)->setRowHeight(45);
         $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-        $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+        $companyWorkSheet->mergeCells('B' . $row . ':C' . $row . '');
+        $companyWorkSheet->mergeCells('D' . $row . ':E' . $row . '');
         $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('C' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('E' . $row)->getAlignment()->setWrapText(true);
 
         // Запрос
-        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_HISTORY]);
-        if ($this->serviceType) {
-            $searchModel->service_type = $this->serviceType;
-        }
 
         // Формирование параметров поиска
         $timeFrom = $this->time;
@@ -1455,7 +1455,7 @@ class ActExporter
 
         // Запрос
 
-        $headers = ['Ко-во обслуживаний за 1 месяц', '', '', 'Ко-во машин'];
+        $headers = ['Ко-во машин', '', 'Ко-во обслуживаний за 1 месяц'];
         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
         /** @var Act $data */
         $currentId = 0;
@@ -1473,15 +1473,17 @@ class ActExporter
             $num++;
             $column = 1;
 
-            $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+            $companyWorkSheet->mergeCells('B' . $row . ':C' . $row . '');
+            $companyWorkSheet->mergeCells('D' . $row . ':E' . $row . '');
+            $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $value['actsCount']);
-            $column++; $column++;
-            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, $value['carsCount']);
+            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $value['carsCount']);
+            $column++;
+            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, $value['actsCount']);
 
             $numWorkCar += $value['carsCount'];
 
-            if($value['actsCount'] > 1) {
+            if($value['actsCount'] > 2) {
                 $numBigWorkCar += $value['carsCount'];
             }
 
@@ -1494,11 +1496,13 @@ class ActExporter
             $num++;
             $column = 1;
 
-            $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+            $companyWorkSheet->mergeCells('B' . $row . ':C' . $row . '');
+            $companyWorkSheet->mergeCells('D' . $row . ':E' . $row . '');
+            $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 0);
-            $column++; $column++;
-            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, (count($numCompanyCar) - $numWorkCar));
+            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, (count($numCompanyCar) - $numWorkCar));
+            $column++;
+            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, 0);
         }
 
         $companyWorkSheet->getStyle('B' . $rowStart . ':E' . $rowStart . '')->applyFromArray(array(
@@ -1541,26 +1545,183 @@ class ActExporter
                 );
         }
 
-        $row++;
-        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-        $companyWorkSheet->setCellValue('B' . $row . '', "Итого в Вашем филиале за " . $monthName[0] . " " . date('Y', $this->time) . ":");
+        $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+        $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого в Вашем филиале за " . $monthName[0] . " " . date('Y', $this->time) . ":");
+        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $rowStart++;
 
-        $row++;
-        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-        $companyWorkSheet->setCellValue('B' . $row . '', "- " . $numBigWorkCar . " машин было обслужено более 1-3 раз");
+        $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+        $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "- " . $numBigWorkCar . " машин было обслужено более 2 раз");
+        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $rowStart++;
 
-        $row++;
-        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-        $companyWorkSheet->setCellValue('B' . $row . '', "- " . (count($numCompanyCar) - $numWorkCar) . " машин не было обслужено ни одного раза");
+        $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+        $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "- " . (count($numCompanyCar) - $numWorkCar) . " машин не было обслужено ни одного раза");
+        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $rowStart++;
 
         if($this->serviceType == 2) {
-            $row++;
-            $row++;
-            $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-            $companyWorkSheet->setCellValue('B' . $row . '', "Рекомендованное среднее кол-во мойки 1 ТС за один месяц составляет 1-3 раза.");
+            $companyWorkSheet->getRowDimension($rowStart)->setRowHeight(35);
+            $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+            $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Рекомендованное среднее кол-во мойки 1 ТС за один месяц составляет 2 раза.");
+            $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $rowStart++;
+        }
+
+        if(($rowStart - 1) > $row) {
+            $row += (($rowStart - 1) - $row);
         }
 
         // END Первая таблица
+
+        // Вторая таблица
+        $row++;
+        $row++;
+        $row++;
+
+        $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
+        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "2. Статистика обслуженных машин по городам");
+
+        //main values
+        $row++; $row++;
+        $rowStart = $row;
+        $num = 0;
+        $total = 0;
+        $count = 0;
+
+        $companyWorkSheet->getRowDimension($row)->setRowHeight(45);
+        $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+        $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('C' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('E' . $row)->getAlignment()->setWrapText(true);
+
+        // Запрос
+
+        // Формирование параметров поиска
+        $timeFrom = $this->time;
+
+        $timeTo = $this->time + 3456000;
+        $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 75600;
+        // Формирование параметров поиска
+
+        $resCity = Yii::$app->getDb()->createCommand("SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND (`client_id`=" . $company->id . ") AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `partner`.`address` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
+
+        // Запрос
+
+        $headers = ['Город', '', '', 'Ко-во операций'];
+        $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
+        /** @var Act $data */
+        $currentId = 0;
+        $isParent = false;
+        if ($this->company && count($company->children) > 0) {
+            $isParent = true;
+        }
+
+        // Количество обслуженных машин
+        $numWorkCar = 0;
+        $arrCityWork = [];
+        $z = 0;
+
+        foreach ($resCity as $value) {
+            $row++;
+            $num++;
+            $column = 1;
+
+            $companyWorkSheet->mergeCells('B' . $row . ':D' . $row . '');
+            $companyWorkSheet->getStyle('B' . $row . ':I' . $row . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+            $resCompany = Company::find()->select(['address'])->where(['id' => $value['partner_id']])->column();
+
+            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $resCompany[0]);
+            $column++;$column++;
+            $companyWorkSheet->setCellValueByColumnAndRow($column, $row, $value['actsCount']);
+
+            $numWorkCar += $value['actsCount'];
+            $arrCityWork[$z][0] = $resCompany[0];
+            $arrCityWork[$z][1] = $value['actsCount'];
+            $z++;
+
+        }
+
+        $companyWorkSheet->getStyle('B' . $rowStart . ':E' . $rowStart . '')->applyFromArray(array(
+                'font' => array(
+                    'bold' => true,
+                    'color' => array('argb' => 'FF006699'),
+                ),
+            )
+        );
+        if($company->is_split) {
+            $companyWorkSheet->getStyle('J' . $rowStart . '')->applyFromArray(array(
+                    'font' => array(
+                        'bold' => true,
+                        'color' => array('argb' => 'FF006699'),
+                    ),
+                )
+            );
+        }
+
+        $companyWorkSheet->getStyle("B" . $rowStart . ":E$row")
+            ->applyFromArray(array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('argb' => 'FF000000'),
+                        ),
+                    ),
+                )
+            );
+        if($company->is_split) {
+            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
+                ->applyFromArray(array(
+                        'borders' => array(
+                            'allborders' => array(
+                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                'color' => array('argb' => 'FF000000'),
+                            ),
+                        ),
+                    )
+                );
+        }
+
+        $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+        $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого в " . $monthName[2] . " " . date('Y', $this->time) . "г было произведено обслуживание ТС:");
+        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $rowStart++;
+
+        $finishPerecnt = 0;
+
+        for($z = 0; $z < count($arrCityWork); $z++) {
+            $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
+
+            if(($z + 1) == count($arrCityWork)) {
+                $percentGet = 100 - $finishPerecnt;
+                $percentGet = number_format($percentGet, 2);
+            } else {
+                $percentGet = $arrCityWork[$z][1] / ($numWorkCar / 100);
+                $percentGet = number_format($percentGet, 2);
+                $finishPerecnt += $percentGet;
+            }
+
+            $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "- " . $percentGet . "% " . $arrCityWork[$z][0]);
+            $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $rowStart++;
+        }
+
+        if(($rowStart - 1) > $row) {
+            $row += (($rowStart - 1) - $row);
+        }
+
+        // END Вторая таблица
 
         //footer
 
