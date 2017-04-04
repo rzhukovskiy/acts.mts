@@ -15,6 +15,9 @@ use common\models\Service;
 use kartik\grid\DataColumn;
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use common\assets\CanvasJs\CanvasJsAsset;
+
+CanvasJsAsset::register($this);
 
 $halfs = [
     '1е полугодие',
@@ -309,3 +312,40 @@ echo GridView::widget([
     ],
     'columns' => $columns,
 ]);
+
+if($group == 'count') {
+    // TODO: refactor it, plz, move collecting data into controller
+    echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" style='padding: 10px;'><div id=\"chart_div\" style=\"width:100%;height:500px;\"></div></div></div>";
+    $js = "
+            var dataTable = [];
+            console.log('Hello');
+            $('.table tbody tr').each(function (id, value) {
+                dataTable.push({
+                    label: $(this).find('.value_0').text(),
+                    y: parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', '')),
+                });
+            });
+            console.log(dataTable);
+            var options = {
+                title: {
+                    text: 'По филиалам',
+                    fontColor: '#069',
+                    fontSize: 22,
+                },
+                data: [
+                    {
+                        type: 'pie', //change it to line, area, bar, pie, etc
+                        dataPoints: dataTable,
+                        yValueFormatString: '### ### ###',
+                        toolTipContent: '{label}: <strong>{y}</strong>',
+                        indexLabel: '{label} - {y}',
+                        indexLabelFontSize: 14,
+                        indexLabelFontColor: '#069',
+                        indexLabelFontWeight: 'bold'
+                    }
+                ]
+            };
+
+            $('#chart_div').CanvasJSChart(options);";
+    $this->registerJs($js);
+}
