@@ -1384,13 +1384,28 @@ class ActExporter
         }
         $text = "Статистика и анализ обслуженных машин";
         $companyWorkSheet->setCellValue('B2', $text);
+
+        $styleArray = array(
+            'font'  => array(
+                'size'  => 14,
+            ));
+
+        $companyWorkSheet->getStyle('B2')->applyFromArray($styleArray);
+
         $companyWorkSheet->mergeCells('B3:I3');
         $text = "за " . $monthName[0] . " " . date('Y', $this->time) . " компании " . $company->name;
         $companyWorkSheet->setCellValue('B3', $text);
+        $companyWorkSheet->getStyle('B3')->applyFromArray($styleArray);
         $companyWorkSheet->mergeCells('B4:I4');
+
+        $styleArray = array(
+            'font'  => array(
+                'size'  => 12,
+            ));
 
         $companyWorkSheet->mergeCells('B5:F5');
         $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+        $companyWorkSheet->getStyle('B5')->applyFromArray($styleArray);
         $companyWorkSheet->getStyle('H5:I5')->applyFromArray(array(
             'alignment' => array(
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
@@ -1406,6 +1421,7 @@ class ActExporter
         } else {
             $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
         }
+        $companyWorkSheet->getStyle('G5')->applyFromArray($styleArray);
 
         // Первая таблица
 
@@ -1413,6 +1429,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B9:I9');
         $companyWorkSheet->setCellValue('B9', "1. Количество обслуженных машин");
+        $companyWorkSheet->getStyle('B9')->applyFromArray($styleArray);
 
         //main values
         $rowStart = 11;
@@ -1586,6 +1603,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "2. Статистика обслуженных машин по городам");
+        $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
 
         //main values
         $row++; $row++;
@@ -1730,6 +1748,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "3. Среднее кол-во операций на 1 ТС");
+        $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
 
         //main values
         $row++; $row++;
@@ -1843,6 +1862,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "4. Расходы на обслуживание ТС за " . $monthName[0] . " " . date('Y', $this->time));
+        $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
 
         //main values
         $row++; $row++;
@@ -1920,6 +1940,7 @@ class ActExporter
         if($incomeVals > 0) {
             $incomeVal = $incomeVals;
             $firstIncome = $incomeVal;
+            $percentDelta = "100%";
         }
 
         $companyWorkSheet->setCellValueByColumnAndRow($column, $row, $incomeVal);
