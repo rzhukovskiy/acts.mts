@@ -217,7 +217,7 @@ class AnalyticsController extends Controller
         // END Вывод среднего времени обслуживания
     }
 
-    public static function getWorkCars($company_id, $service_type, $showCarsWork = true, $actsCount = 0)
+    public static function getWorkCars($company_id, $service_type, $showCarsWork = true, $actsCount = 0, $timeFrom = 0, $timeTo = 0)
     {
 
         // Получаем среднее количество операций
@@ -241,7 +241,11 @@ class AnalyticsController extends Controller
 
         } else {
             // Получаем список заказов компании
-            $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->all();
+            if(($timeFrom > 0) && ($timeTo > 0)) {
+                $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->andWhere(['>=', 'served_at', $timeFrom])->andWhere(['<', 'served_at', $timeTo])->all();
+            } else {
+                $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->all();
+            }
         }
 
         if (count($sqlRows) > 0) {
