@@ -1472,7 +1472,7 @@ class ActExporter
 
         // Запрос
 
-        $headers = ['Кол-во машин', '', 'Кол-во обслуживаний за 1 месяц'];
+        $headers = ['Кол-во ТС', '', 'Кол-во обслуживаний за 1 месяц'];
         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
         /** @var Act $data */
         $currentId = 0;
@@ -1564,19 +1564,19 @@ class ActExporter
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого в Вашем филиале за " . $monthName[0] . " " . date('Y', $this->time) . ":");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого:");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "- " . $numBigWorkCar . " машин было обслужено более 2 раз");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, $numBigWorkCar . " машин было обслужено более 2 раз");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "- " . (count($numCompanyCar) - $numWorkCar) . " машин не было обслужено ни одного раза");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, (count($numCompanyCar) - $numWorkCar) . " машин не было обслужено ни одного раза");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
@@ -1710,7 +1710,7 @@ class ActExporter
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого в " . $monthName[2] . " " . date('Y', $this->time) . "г было произведено обслуживание ТС:");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Итого:");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
@@ -1747,7 +1747,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-        $companyWorkSheet->setCellValue('B' . $row . '', "3. Среднее кол-во операций на 1 ТС");
+        $companyWorkSheet->setCellValue('B' . $row . '', "3. Среднее кол-во операций на 1ТС");
         $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
 
         //main values
@@ -1767,6 +1767,10 @@ class ActExporter
         $companyWorkSheet->getStyle('C' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('E' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('F' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('G' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('H' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('I' . $row)->getAlignment()->setWrapText(true);
 
         // Запрос
 
@@ -1781,7 +1785,7 @@ class ActExporter
 
         // Запрос
 
-        $headers = ['ТС в парке', '', 'Кол-во обслужившихся ТС', '', 'Кол-во операций', '', 'Среднее кол-во операций'];
+        $headers = ['ТС в парке', '', 'Кол-во обслуженных ТС', '', 'Кол-во операций', '', 'Среднее кол-во операций на 1ТС'];
         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
         /** @var Act $data */
         $currentId = 0;
@@ -1861,7 +1865,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
         $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
-        $companyWorkSheet->setCellValue('B' . $row . '', "4. Расходы на обслуживание ТС за " . $monthName[0] . " " . date('Y', $this->time));
+        $companyWorkSheet->setCellValue('B' . $row . '', "4. Расходы на обслуживание");
         $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
 
         //main values
@@ -1880,8 +1884,10 @@ class ActExporter
         $companyWorkSheet->getStyle('C' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('E' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('F' . $row)->getAlignment()->setWrapText(true);
+        $companyWorkSheet->getStyle('G' . $row)->getAlignment()->setWrapText(true);
 
-        $headers = ['Месяц', '', 'Сумма, руб.', '', html_entity_decode('&#916;')];
+        $headers = ['Месяц', '', 'Сумма, руб.', '', html_entity_decode('&#916;') . " отноешнию к предыдущим месяцам"];
         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
         /** @var Act $data */
         $currentId = 0;
@@ -1897,7 +1903,7 @@ class ActExporter
         // Запрос
 
         // Формирование параметров поиска
-        $timeFrom = strtotime(date("m/1/Y", ($this->time - 3456000))) - 86400;
+        /*$timeFrom = strtotime(date("m/1/Y", ($this->time - 3456000))) - 86400;
         $timeFrom = date("Y-m-dT21:00:00", $timeFrom);
         $timeFrom .= ".000Z";
 
@@ -1905,14 +1911,14 @@ class ActExporter
         $lastMonthName = DateHelper::getMonthName(strtotime(date("m/1/Y", ($this->time - 3456000))));
         $timeTo = strtotime(date("m/1/Y", $timeTo)) - 86400;
         $timeTo = date("Y-m-dT21:00:00", $timeTo);
-        $timeTo .= ".000Z";
+        $timeTo .= ".000Z";*/
         // Формирование параметров поиска
 
-        $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $company->id . ") OR (`client_id`=" . $company->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
+        //$resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $company->id . ") OR (`client_id`=" . $company->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
 
         // Запрос
 
-        $row++;
+        /*$row++;
         $num++;
         $column = 1;
 
@@ -1952,7 +1958,7 @@ class ActExporter
 
         $companyWorkSheet->getStyle('G' . $row)
             ->getAlignment()
-            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);*/
 
         // End Позапрошлый месяц
 
