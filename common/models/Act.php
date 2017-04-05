@@ -575,7 +575,13 @@ class Act extends ActiveRecord
                             'type_id'    => $this->type_id,
                         ]);
                         if (!empty($companyService) && $companyService->service->is_fixed) {
-                            $scope->price = $companyService->price;
+
+                            if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) && (isset($serviceData['price'])) && ($serviceData['price'] >= 0)) {
+                                $scope->price = $serviceData['price'];
+                            } else {
+                                $scope->price = $companyService->price;
+                            }
+
                             $scope->description = $companyService->service->description;
                         } else {
                             $scope->price = $serviceData['price'];
@@ -615,7 +621,13 @@ class Act extends ActiveRecord
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
-                            $scope->price = $companyService->price;
+
+                            if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) && (isset($serviceData['price'])) && ($serviceData['price'] >= 0)) {
+                                $scope->price = $serviceData['price'];
+                            } else {
+                                $scope->price = $companyService->price;
+                            }
+
                             $scope->description = $companyService->service->description;
                         } else {
                             $scope->price = $serviceData['price'];
