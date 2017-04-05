@@ -471,47 +471,18 @@ class CompanyController extends Controller
     public function actionOffer($type)
     {
         /** @var User $currentUser */
+
         $currentUser = Yii::$app->user->identity;
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         //$searchModel->status = Company::STATUS_ACTIVE;
 
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-        } else {
-            $searchModel->user_id = Yii::$app->user->identity->id;
-            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_ACTIVE);
-        }
-
-        $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
-        $dataProvider->sort = [
-            'defaultOrder' => [
-                'address'    => SORT_ASC,
-                'created_at' => SORT_DESC,
-            ]
-        ];
-
-        $model = new Company();
-        $model->type = $type;
-
-        foreach ($listType as $type_id => &$typeData) {
-            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
-            $badgeSearch->type = $type_id;
-            $badgeSearch->status = Company::STATUS_ACTIVE;
-            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
-                $badgeSearch->user_id = $currentUser->id;
-            }
-            $typeData['badge'] = $badgeSearch->search()->count;
-        }
-
-        $this->view->title = 'Активные - ' . Company::$listType[$type]['ru'];
-
         $listCar = Type::find()->select(['name', 'id'])->orderBy('id')->indexBy('id')->column();
 
-        if($type == 2) {
+        if ($type == 2) {
             $listService = Service::find()->andWhere(['id' => 1])->orWhere(['id' => 2])->select(['description', 'id'])->indexBy('id')->column();
-        } else if($type == 4) {
+        } else if ($type == 4) {
             $listService = Service::find()->andWhere(['id' => 6])->orWhere(['id' => 7])->orWhere(['id' => 8])->orWhere(['id' => 9])->select(['description', 'id'])->indexBy('id')->column();
         } else {
             $listService = Service::find()->select(['description', 'id'])->indexBy('id')->column();
@@ -519,17 +490,46 @@ class CompanyController extends Controller
 
         $listCity = Company::find()->active()->andWhere(['type' => $type])->orWhere(['type' => 6])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
 
-        return $this->render('newoffer',
-            [
-                'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'type'         => $type,
-                'model'        => $model,
-                'listType'     => $listType,
+        $listType = Company::$listType;
+
+        if(isset(Yii::$app->request->queryParams['CompanySearch'])) {
+
+            $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
+            $dataProvider->sort = [
+                'defaultOrder' => [
+                    'address' => SORT_ASC,
+                    'created_at' => SORT_DESC,
+                ]
+            ];
+
+            $model = new Company();
+            $model->type = $type;
+
+            return $this->render('newoffer',
+                [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'type' => $type,
+                    'model' => $model,
+                    'listType' => $listType,
+                    'listCar' => $listCar,
+                    'listService' => $listService,
+                    'listCity' => $listCity
+                ]);
+        } else {
+            $model = new Company();
+            $model->type = $type;
+
+            return $this->render('clearoffer', [
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
                 'listCar' => $listCar,
                 'listService' => $listService,
-                'listCity' => $listCity,
-            ]);
+                'listCity' => $listCity]);
+        }
+
     }
 
     public function actionMember($id)
