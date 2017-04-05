@@ -1384,20 +1384,24 @@ class ActExporter
         }
 
         $textService = '';
+        $textTitle = '';
 
         switch ($this->serviceType) {
             case 2:
                 $textService = "мойка";
+                $textTitle = "мойке";
                 break;
             case 3:
                 $textService = "сервис";
+                $textTitle = "сервису";
                 break;
             case 4:
                 $textService = "шиномонтаж";
+                $textTitle = "шиномонтажу";
                 break;
         }
 
-        $text = "Статистика и анализ обслуженных (" . $textService . ") машин";
+        $text = "Статистика и анализ по " . $textTitle . " машин";
         $companyWorkSheet->setCellValue('B2', $text);
 
         $styleArray = array(
@@ -1408,7 +1412,7 @@ class ActExporter
         $companyWorkSheet->getStyle('B2')->applyFromArray($styleArray);
 
         $companyWorkSheet->mergeCells('B3:I3');
-        $text = "за " . $monthName[0] . " " . date('Y', $this->time) . " компании " . $company->name;
+        $text = "компании " . $company->name . " за " . $monthName[0] . " " . date('Y', $this->time);
         $companyWorkSheet->setCellValue('B3', $text);
         $companyWorkSheet->getStyle('B3')->applyFromArray($styleArray);
         $companyWorkSheet->mergeCells('B4:I4');
@@ -1453,6 +1457,7 @@ class ActExporter
         $total = 0;
         $count = 0;
 
+        $companyWorkSheet->getColumnDimension('A')->setWidth(7);
         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
         $companyWorkSheet->getColumnDimension('C')->setWidth(5);
         $companyWorkSheet->getColumnDimension('D')->setWidth(5);
