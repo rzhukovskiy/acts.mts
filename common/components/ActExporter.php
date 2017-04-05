@@ -1570,13 +1570,13 @@ class ActExporter
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, $numBigWorkCar . " машин было обслужено более 2 раз");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, $numBigWorkCar . " машин обслужено более 2 раз");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, (count($numCompanyCar) - $numWorkCar) . " машин не было обслужено ни одного раза");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, (count($numCompanyCar) - $numWorkCar) . " машин не обслужено ни одного раза");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
@@ -1584,7 +1584,7 @@ class ActExporter
             $companyWorkSheet->getRowDimension($rowStart)->setRowHeight(35);
             $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
             $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-            $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Рекомендованное среднее кол-во мойки 1 ТС за один месяц составляет 2 раза.");
+            $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, "Рекомендованное среднее кол-во моек 1 ТС за месяц - 2 раза.");
             $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
             $rowStart++;
         }
@@ -1887,7 +1887,7 @@ class ActExporter
         $companyWorkSheet->getStyle('F' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->getStyle('G' . $row)->getAlignment()->setWrapText(true);
 
-        $headers = ['Месяц', '', 'Сумма, руб.', '', html_entity_decode('&#916;') . " отноешнию к предыдущим месяцам"];
+        $headers = ['Месяц', '', 'Сумма, руб.', '', html_entity_decode('&#916;') . " по отношению к предыдущему месяцу"];
         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
         /** @var Act $data */
         $currentId = 0;

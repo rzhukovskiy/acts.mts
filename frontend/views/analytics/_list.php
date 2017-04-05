@@ -169,12 +169,26 @@ $columns = [
             ];
         }
     ],
-    'partner.address',
+    [
+        'header' => 'Город',
+        'contentOptions' => ['class' => 'value_0'],
+        'value' => function ($data) {
+            return $data->partner->address;
+        },
+    ],
     [
         'header' => 'Количество машин',
         'value' => function ($data) {
             return $data->actsCount;
         },
+        'contentOptions' => ['class' => 'value_2'],
+    ],
+    [
+        'header' => '%',
+        'value' => function () {
+            return 0;
+        },
+        'contentOptions' => ['class' => 'value_3'],
     ],
     [
         'header' => '',
@@ -313,17 +327,29 @@ echo GridView::widget([
     'columns' => $columns,
 ]);
 
-/*if($group == 'count') {
+if($group == 'city') {
     // TODO: refactor it, plz, move collecting data into controller
     echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" style='padding: 10px;'><div id=\"chart_div\" style=\"width:100%;height:500px;\"></div></div></div>";
     $js = "
             var dataTable = [];
             console.log('Hello');
+            
+            var summVal = 0;
+            var idArr = [];
+            var valArr = [];
+            var index = 0;
+            
             $('.table tbody tr').each(function (id, value) {
+            if($(this).find('.value_0').text() != '') {
                 dataTable.push({
                     label: $(this).find('.value_0').text(),
                     y: parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', '')),
                 });
+                    summVal += parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    valArr[index] = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    idArr[index] = $(this).find('.value_3');
+                    index++;
+                }
             });
             console.log(dataTable);
             var options = {
@@ -344,8 +370,21 @@ echo GridView::widget([
                         indexLabelFontWeight: 'bold'
                     }
                 ]
-            };
-
-            $('#chart_div').CanvasJSChart(options);";
+            }; $('#chart_div').CanvasJSChart(options);
+            
+            var itemVal = 0;
+            var lastVal = 0;
+            for (var i = 0; i < index; i++) {
+            
+            if((i + 1) == index) {
+            itemVal = 100 - lastVal;
+            idArr[i].text(itemVal.toFixed(2));
+            } else {
+            itemVal = valArr[i] / (summVal / 100);
+            idArr[i].text(itemVal.toFixed(2));
+            lastVal += itemVal;
+            }
+            itemVal = 0;
+            }";
     $this->registerJs($js);
-}*/
+}
