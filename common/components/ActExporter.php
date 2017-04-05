@@ -1897,17 +1897,15 @@ class ActExporter
         // Запрос
 
         // Формирование параметров поиска
-        $timeFrom = $this->time - 3456000;
-        $timeFrom = strtotime(date("m/1/Y", $timeFrom)) - 86400;
+        $timeFrom = strtotime(date("m/1/Y", ($this->time - 3456000))) - 86400;
         $timeFrom = date("Y-m-dT21:00:00", $timeFrom);
         $timeFrom .= ".000Z";
 
-        $timeTo = $this->time - 86400;
+        $timeTo = strtotime(date("m/1/Y", ($this->time - 3456000))) + 3024000;
         $lastMonthName = DateHelper::getMonthName(strtotime(date("m/1/Y", ($this->time - 3456000))));
         $timeTo = strtotime(date("m/1/Y", $timeTo)) - 86400;
         $timeTo = date("Y-m-dT21:00:00", $timeTo);
         $timeTo .= ".000Z";
-
         // Формирование параметров поиска
 
         $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $company->id . ") OR (`client_id`=" . $company->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
@@ -1963,15 +1961,12 @@ class ActExporter
         // Запрос
 
         // Формирование параметров поиска
-        $timeFrom = $this->time - 86400;
-        $timeFrom = strtotime(date("m/1/Y", $timeFrom)) - 86400;
+        $timeFrom = strtotime(date("m/1/Y", $this->time - 86400)) - 86400;
         $timeFrom = date("Y-m-dT21:00:00", $timeFrom);
         $timeFrom .= ".000Z";
 
-        $timeTo = $this->time;
         $lastMonthName = DateHelper::getMonthName(strtotime(date("m/1/Y", ($this->time - 86400))));
-        $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 75600;
-        $timeTo = date("Y-m-dT21:00:00", $timeTo - 86400);
+        $timeTo = date("Y-m-dT21:00:00", $this->time - 86400);
         $timeTo .= ".000Z";
         // Формирование параметров поиска
 
