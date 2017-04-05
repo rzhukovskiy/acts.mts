@@ -1382,7 +1382,22 @@ class ActExporter
         if($company->is_split) {
             $companyWorkSheet->mergeCells('B2:J2');
         }
-        $text = "Статистика и анализ обслуженных машин";
+
+        $textService = '';
+
+        switch ($this->serviceType) {
+            case 2:
+                $textService = "мойка";
+                break;
+            case 3:
+                $textService = "сервис";
+                break;
+            case 4:
+                $textService = "шиномонтаж";
+                break;
+        }
+
+        $text = "Статистика и анализ обслуженных (" . $textService . ") машин";
         $companyWorkSheet->setCellValue('B2', $text);
 
         $styleArray = array(
@@ -1570,13 +1585,13 @@ class ActExporter
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, $numBigWorkCar . " машин обслужено более 2 раз");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, $numBigWorkCar . " машин обслужено более 2-ух раз.");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
-        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, (count($numCompanyCar) - $numWorkCar) . " машин не обслужено ни одного раза");
+        $companyWorkSheet->setCellValueByColumnAndRow(6, $rowStart, (count($numCompanyCar) - $numWorkCar) . " машин не обслужено ни одного раза.");
         $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart . '')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $rowStart++;
 
@@ -2197,9 +2212,9 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Статистика_анализ {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Статистика_анализ_" . $textService . " {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            $filename = $serviceDescription. " Статистика_анализ $company->name от " . date('m-Y', $this->time) . ".xls";
+            $filename = $serviceDescription. " Статистика_анализ_" . $textService . " $company->name от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);
