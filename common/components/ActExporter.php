@@ -1263,7 +1263,18 @@ class ActExporter
             $first = $dataList[0];
             $text = "СЧЕТ б/н от " . date("d ", $first->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
-            $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+            if ($this->serviceType == Company::TYPE_DISINFECT) {
+
+                if($serviceDescription == 'дезинфекция') {
+                    $text = "СЧЕТ б/н от 01" . ' ' . $monthName[1] . date(' Y', $this->time);
+                } else {
+                    $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+                }
+
+            } else {
+                $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+            }
+
         }
         $companyWorkSheet->setCellValue("B$row", $text);
 
