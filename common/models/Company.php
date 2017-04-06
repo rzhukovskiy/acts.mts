@@ -550,8 +550,13 @@ class Company extends ActiveRecord
         }
         $modelCompanyTime = $this->getCompanyTimeByDay($day);
 
-        $workStart = $modelCompanyTime->start_at ? gmdate('H:i', $modelCompanyTime->start_at) : '00:00';
-        $workEnd = $modelCompanyTime->end_at ? gmdate('H:i', $modelCompanyTime->end_at) : '24:00';
+        if(isset($modelCompanyTime)) {
+            $workStart = $modelCompanyTime->start_at ? gmdate('H:i', $modelCompanyTime->start_at) : '00:00';
+            $workEnd = $modelCompanyTime->end_at ? gmdate('H:i', $modelCompanyTime->end_at) : '24:00';
+        } else {
+            $workStart = '00:00';
+            $workEnd = '24:00';
+        }
 
         $points[] = [
             'value' => '00:00',
