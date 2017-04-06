@@ -239,7 +239,7 @@ class CompanySearch extends Company
             // удаляем пустые значения из массива
 
             if(count($arrSelCarTypes) == 1) {
-                $query->orderBy([new \yii\db\Expression('company_service.service_id = ' . Yii::$app->request->queryParams['sort'] . ' DESC, company_service.price DESC')]);
+                $query->orderBy([new \yii\db\Expression('company_service.service_id = ' . Yii::$app->request->queryParams['sort'] . ' DESC, company_service.price ASC')]);
             } else {
             }
         }
