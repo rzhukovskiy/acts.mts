@@ -476,7 +476,7 @@ class CompanyController extends Controller
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        //$searchModel->status = Company::STATUS_ACTIVE;
+        $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
 
         $listCar = Type::find()->select(['name', 'id'])->orderBy('id')->indexBy('id')->column();
 

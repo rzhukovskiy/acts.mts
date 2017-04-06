@@ -206,7 +206,7 @@ class CompanySearch extends Company
             'company.status' => $this->status,
         ]);
 
-        $query->innerJoin('company_service', 'company.id = company_service.company_id');
+        $query->leftJoin('company_service', 'company.id = company_service.company_id');
         $query->andFilterWhere(['company_service.service_id' => $this->services]);
         $query->andFilterWhere(['company_service.type_id' => $this->cartypes]);
 
