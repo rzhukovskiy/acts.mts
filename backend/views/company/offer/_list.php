@@ -49,7 +49,7 @@ use yii\bootstrap\ActiveForm;
     </div>
 
     <!-- Кнопки сортировки -->
-    <?
+    <?php
 
     $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
 
