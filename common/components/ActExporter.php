@@ -1412,6 +1412,9 @@ class ActExporter
         $companyWorkSheet->getStyle('B2')->applyFromArray($styleArray);
 
         $companyWorkSheet->mergeCells('B3:I3');
+        $companyWorkSheet->getRowDimension(3)->setRowHeight(45);
+        $companyWorkSheet->getStyle('B3:I3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+        $companyWorkSheet->getStyle('B3')->getAlignment()->setWrapText(true);
         $text = "компании " . $company->name . " за " . $monthName[0] . " " . date('Y', $this->time);
         $companyWorkSheet->setCellValue('B3', $text);
         $companyWorkSheet->getStyle('B3')->applyFromArray($styleArray);
@@ -1444,15 +1447,15 @@ class ActExporter
 
         // Первая таблица
 
+        $companyWorkSheet->getRowDimension(8)->setRowHeight(-1);
         $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
-        $companyWorkSheet->mergeCells('B9:I9');
-        $companyWorkSheet->setCellValue('B9', "1. Количество обслуженных машин");
-        $companyWorkSheet->getStyle('B9')->applyFromArray($styleArray);
+        $companyWorkSheet->mergeCells('B8:I8');
+        $companyWorkSheet->setCellValue('B8', "1. Количество обслуженных машин");
+        $companyWorkSheet->getStyle('B8')->applyFromArray($styleArray);
 
         //main values
-        $rowStart = 11;
-        $row = 11;
+        $rowStart = 10;
+        $row = 10;
         $num = 0;
         $total = 0;
         $count = 0;
@@ -1619,8 +1622,6 @@ class ActExporter
         $row++;
         $row++;
 
-        $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "2. Статистика обслуженных машин по городам");
         $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
@@ -1764,8 +1765,6 @@ class ActExporter
         $row++;
         $row++;
 
-        $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "3. Среднее кол-во операций на 1ТС");
         $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
@@ -1882,8 +1881,6 @@ class ActExporter
         $row++;
         $row++;
 
-        $companyWorkSheet->getRowDimension(9)->setRowHeight(-1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(-1);
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
         $companyWorkSheet->setCellValue('B' . $row . '', "4. Расходы на обслуживание");
         $companyWorkSheet->getStyle('B' . $row)->applyFromArray($styleArray);
