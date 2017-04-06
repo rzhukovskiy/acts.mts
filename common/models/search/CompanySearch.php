@@ -219,6 +219,31 @@ class CompanySearch extends Company
                 break;
         }
 
+        if(isset(Yii::$app->request->queryParams['sort'])) {
+            $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+
+            // удаляем пустые значения из массива
+            for($i = 0; $i < count($arrSelCarTypes); $i++) {
+                if(isset($arrSelCarTypes[$i])) {
+                    if ($arrSelCarTypes[$i] > 0) {
+
+                    } else {
+                        unset($arrSelCarTypes[$i]);
+                    }
+                } else {
+                    if(count($arrSelCarTypes) == 1) {
+                        $arrSelCarTypes = [];
+                    }
+                }
+            }
+            // удаляем пустые значения из массива
+
+            if(count($arrSelCarTypes) == 1) {
+                $query->orderBy([new \yii\db\Expression('company_service.service_id = ' . Yii::$app->request->queryParams['sort'] . ' DESC, company_service.price DESC')]);
+            } else {
+            }
+        }
+
         return $dataProvider;
     }
 

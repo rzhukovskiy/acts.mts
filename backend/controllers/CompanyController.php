@@ -495,12 +495,45 @@ class CompanyController extends Controller
         if(isset(Yii::$app->request->queryParams['CompanySearch'])) {
 
             $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
-            $dataProvider->sort = [
-                'defaultOrder' => [
-                    'address' => SORT_ASC,
-                    'created_at' => SORT_DESC,
-                ]
-            ];
+
+            if(isset(Yii::$app->request->queryParams['sort'])) {
+
+                $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+
+                // удаляем пустые значения из массива
+                for($i = 0; $i < count($arrSelCarTypes); $i++) {
+                    if(isset($arrSelCarTypes[$i])) {
+                        if ($arrSelCarTypes[$i] > 0) {
+
+                        } else {
+                            unset($arrSelCarTypes[$i]);
+                        }
+                    } else {
+                        if(count($arrSelCarTypes) == 1) {
+                            $arrSelCarTypes = [];
+                        }
+                    }
+                }
+                // удаляем пустые значения из массива
+
+                if(count($arrSelCarTypes) == 1) {
+                } else {
+                    $dataProvider->sort = [
+                        'defaultOrder' => [
+                            'address' => SORT_ASC,
+                            'created_at' => SORT_DESC,
+                        ]
+                    ];
+                }
+
+            } else {
+                $dataProvider->sort = [
+                    'defaultOrder' => [
+                        'address' => SORT_ASC,
+                        'created_at' => SORT_DESC,
+                    ]
+                ];
+            }
 
             $model = new Company();
             $model->type = $type;
@@ -618,7 +651,8 @@ class CompanyController extends Controller
     public static function getPriceFilter($data) {
 
         // Список типов машин
-        $carTypes = $GLOBALS['getParams']['cartypes'];
+        $paramsGet = Yii::$app->request->get('CompanySearch');
+        $carTypes = $paramsGet['cartypes'];
 
         // удаляем пустые значения из массива
         for($i = 0; $i < count($carTypes); $i++) {
@@ -639,7 +673,7 @@ class CompanyController extends Controller
         // Список типов машин
 
         // Список услуг
-        $services = $GLOBALS['getParams']['services'];
+        $services = $paramsGet['services'];
 
         // удаляем пустые значения из массива
         for($i = 0; $i < count($services); $i++) {

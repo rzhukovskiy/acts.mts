@@ -184,13 +184,6 @@ $columns = [
         'contentOptions' => ['class' => 'value_2'],
     ],
     [
-        'header' => '%',
-        'value' => function () {
-            return 0;
-        },
-        'contentOptions' => ['class' => 'value_3'],
-    ],
-    [
         'header' => '',
         'mergeHeader' => false,
         'class' => 'kartik\grid\ActionColumn',
@@ -251,6 +244,68 @@ if ($group == 'type') {
         'value' => function ($data) {
             return Service::$listType[$data->service_type]['ru'];
         }
+    ];
+}
+if ($group == 'city') {
+    $columns[4] = [
+        'header' => '%',
+        'value' => function () {
+            return 0;
+        },
+        'contentOptions' => ['class' => 'value_3'],
+    ];
+    $columns[5] = [
+        'header' => '',
+        'mergeHeader' => false,
+        'class' => 'kartik\grid\ActionColumn',
+        'template' => '{view}',
+        'width' => '40px',
+        'buttons' => [
+            'view' => function ($url, $data, $key) use ($group, $searchModel) {
+                if ($group == 'city') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[address]' => $data->partner->address,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]);
+                }
+                if ($group == 'average') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]);
+                }
+                if ($group == 'type') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]);
+                }
+                if ($group == 'count') {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                        'view',
+                        'group' => $group,
+                        'count' => $data->actsCount,
+                        'ActSearch[dateFrom]' => $searchModel->dateFrom,
+                        'ActSearch[dateTo]' => $searchModel->dateTo,
+                        'ActSearch[client_id]' => $data->client_id,
+                        'ActSearch[service_type]' => $searchModel->service_type,
+                    ]);
+                }
+            },
+        ],
     ];
 }
 if ($group == 'average') {

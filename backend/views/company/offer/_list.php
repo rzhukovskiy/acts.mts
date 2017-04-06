@@ -48,10 +48,57 @@ use yii\bootstrap\ActiveForm;
         <?php ActiveForm::end() ?>
     </div>
 
+    <!-- Кнопки сортировки -->
+    <?
+
+    $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+
+    // удаляем пустые значения из массива
+    for($i = 0; $i < count($arrSelCarTypes); $i++) {
+        if(isset($arrSelCarTypes[$i])) {
+            if ($arrSelCarTypes[$i] > 0) {
+
+            } else {
+                unset($arrSelCarTypes[$i]);
+            }
+        } else {
+            if(count($arrSelCarTypes) == 1) {
+                $arrSelCarTypes = [];
+            }
+        }
+    }
+    // удаляем пустые значения из массива
+
+    if(count($arrSelCarTypes) == 1) {
+        if (Yii::$app->request->queryParams['CompanySearch']['services']) {
+            $arrButtSort = Yii::$app->request->queryParams['CompanySearch']['services'];
+
+            for ($i = 0; $i < count($arrButtSort); $i++) {
+                if (strpos(Yii::$app->request->url, '&sort=') > 0) {
+                    echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $listService[$arrButtSort[$i]] . '</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&sort=')) . '&sort=' . $arrButtSort[$i]);
+                } else {
+                    echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $listService[$arrButtSort[$i]] . '</span>', Yii::$app->request->url . '&sort=' . $arrButtSort[$i]);
+                }
+            }
+
+        } else {
+
+            foreach ($listService as $key => $value) {
+                if (strpos(Yii::$app->request->url, '&sort=') > 0) {
+                    echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $value . '</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&sort=')) . '&sort=' . $key);
+                } else {
+                    echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $value . '</span>', Yii::$app->request->url . '&sort=' . $key);
+                }
+            }
+
+        }
+    }
+
+    ?>
+    <!-- Кнопки сортировки -->
+
     <div class="panel-body">
         <?php
-
-        $GLOBALS['getParams'] = Yii::$app->request->get('CompanySearch');
 
         echo GridView::widget([
             'dataProvider' => $dataProvider,
