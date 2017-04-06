@@ -488,7 +488,7 @@ class CompanyController extends Controller
             $listService = Service::find()->select(['description', 'id'])->indexBy('id')->column();
         }
 
-        $listCity = Company::find()->active()->andWhere(['type' => $type])->orWhere(['type' => 6])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+        $listCity = Company::find()->where(['status' => Company::STATUS_ACTIVE])->orWhere(['status' => Company::STATUS_ARCHIVE])->andWhere(['type' => $type])->orWhere(['type' => 6])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
 
         $listType = Company::$listType;
 
