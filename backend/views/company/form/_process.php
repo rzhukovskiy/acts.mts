@@ -217,10 +217,18 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
             <?php
             if($modelCompany->type == 1) {
+
+                $adVal = str_replace('Город', '', $modelCompanyInfo->fullAddress);
+                $adVal = str_replace(', Улица', '', $adVal);
+                $adVal = str_replace(', Строение', '', $adVal);
+                $adVal = str_replace(', Индекс', '', $adVal);
+                $adVal = str_replace(' пос ?', '', $adVal);
+
                 echo "<tr>
                 <td class=\"list-label-md\">Создать коммерческое предложение</td>
                 <td>" . Html::a('Создать', [
                         'company/offer',
+                        'ad' => $adVal,
                         'type' => 2,
                     ], ['class' => 'btn btn-primary']) . "</td>
             </tr>";

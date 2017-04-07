@@ -145,6 +145,68 @@ use yii\bootstrap\ActiveForm;
                     }
                 ],
                 [
+                    'attribute' => 'range',
+                    'label' => 'Расстояние',
+                    'content'   => function ($data) {
+                        if ($data->fullAddress) {
+
+                            // Поиск координат яндекса по адресу + поиск рассточния по координатам
+                            /*$response = json_decode(file_get_contents('https://geocode-maps.yandex.ru/1.x/?format=json&results=1&geocode=' . $data->fullAddress . '&apikey=LT8LjqNzfg8R9wpemrSQvRUJHgQ9x7b7yjtlBnystFe1lYO6h0Kratmxax3ojSFDMcLf0-Oi4oXkc-nyFapZJPB92eQaTdYu8Zq~UkmNWeg='));
+
+                            if ($response->response->GeoObjectCollection->metaDataProperty->GeocoderResponseMetaData->found > 0) {
+
+                                $posB = explode(' ', $response->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos);
+                                $posB = $posB[0] . '%20' . $posB[1];
+
+                                $distance = json_decode(file_get_contents("http://calc-api.ru/app:geo-api/null?a=39.202175%2051.662603&b=" . $posB));
+
+                                if(isset($distance->distanse)) {
+
+                                    if($distance->distanse > 0) {
+                                        return $distance->distanse . ' км.';
+                                    } else {
+                                        return 'не задано';
+                                    }
+
+                                } else {
+                                    return 'не задано';
+                                }
+
+                            } else {
+                                return 'не задано';
+                            }*/
+                            // END Поиск координат яндекса по адресу + поиск рассточния по координатам
+
+                            // Поиск расстояния по адресу
+
+                                if(strlen(Yii::$app->request->get('ad')) > 0) {
+
+                                $distance = json_decode(file_get_contents("http://calc-api.ru/app:geo-api/null?a=" . Yii::$app->request->get('ad') . "&b=" . $data->fullAddress));
+
+                                if (isset($distance->distanse)) {
+
+                                    if ($distance->distanse > 0) {
+                                        return $distance->distanse . ' км.';
+                                    } else {
+                                        return 'не задано';
+                                    }
+
+                                } else {
+                                    return 'не задано';
+                                }
+
+                                } else {
+                                    return 'не задано';
+                                }
+                            // END Поиск расстояния по адресу
+
+                        } else {
+                            return 'не задано';
+                        }
+
+                    }
+                ],
+                [
                     'attribute' => 'Галочка',
                     'content'   => function ($data) {
                         return '';

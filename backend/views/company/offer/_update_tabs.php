@@ -11,27 +11,27 @@ use yii\bootstrap\Tabs;
 $items = [
     [
         'label' => 'Мойка',
-        'url'   => ['company/offer', 'type' => 2],
+        'url'   => ['company/offer', 'ad' => Yii::$app->request->get('ad'), 'type' => 2],
         'active' => $model->type == 2,
     ],
     [
         'label'  => 'Сервис',
-        'url'    => ['company/offer', 'type' => 3],
+        'url'    => ['company/offer', 'ad' => Yii::$app->request->get('ad'), 'type' => 3],
         'active' => $model->type == 3,
     ],
     [
         'label'  => 'Шиномонтаж',
-        'url'    => ['company/offer', 'type' => 4],
+        'url'    => ['company/offer', 'ad' => Yii::$app->request->get('ad'), 'type' => 4],
         'active' => $model->type == 4,
     ],
     /*[
         'label'  => 'Дезинфекция',
-        'url'    => ['company/offer', 'type' => 5],
+        'url'    => ['company/offer', 'ad' => Yii::$app->request->get('ad'), 'type' => 5],
         'active' => $model->type == 5,
     ],*/
     /*[
         'label'  => 'Универсальная',
-        'url'    => ['company/offer', 'type' => 6],
+        'url'    => ['company/offer', 'ad' => Yii::$app->request->get('ad'), 'type' => 6],
         'active' => $model->type == 6,
     ]*/
 ];
