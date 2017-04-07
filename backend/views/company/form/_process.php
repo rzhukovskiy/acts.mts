@@ -219,13 +219,13 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             if($modelCompany->type == 1) {
 
                 $adVal = str_replace(',,', '', $modelCompanyInfo->fullAddress);
-                $adVal = str_replace('.', '', $modelCompanyInfo->fullAddress);
+                $adVal = str_replace(', пос. РТС', '', $adVal);
+                $adVal = str_replace('.', '', $adVal);
                 $adVal = str_replace(' ', '', $adVal);
                 $adVal = str_replace(' ', '', $adVal);
                 $adVal = explode(',', $adVal);
-                $adVal = str_replace('Город', '', $adVal[0] . ', ' . $adVal[1] . ', ' . $adVal[2]);
+                $adVal = str_replace('Город', '', $adVal[0] . ' ' . $adVal[1] . ' ' . $adVal[2]);
                 $adVal = str_replace(', Улица', '', $adVal);
-                $adVal = str_replace(', пос. РТС', '', $adVal);
                 $adVal = str_replace(', Строение', '', $adVal);
                 $adVal = str_replace(', Индекс', '', $adVal);
                 $adVal = str_replace(' пос ?', '', $adVal);
