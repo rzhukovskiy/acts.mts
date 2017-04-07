@@ -226,10 +226,11 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 $adVal = explode(',', $adVal);
                 $adVal = $adVal[0] . ' ' . $adVal[1] . ' ' . $adVal[2];
                 $adVal = str_replace('Город', '', $adVal);
-                $adVal = str_replace(', Улица', '', $adVal);
-                $adVal = str_replace(', Строение', '', $adVal);
-                $adVal = str_replace(', Индекс', '', $adVal);
-                $adVal = str_replace(' пос ?', '', $adVal);
+                $adVal = str_replace('Улица', '', $adVal);
+                $adVal = str_replace('Строение', '', $adVal);
+                $adVal = str_replace('Индекс', '', $adVal);
+                $adVal = str_replace('пос?', '', $adVal);
+                $adVal = mb_substr($adVal, 0 , strpos($adVal, 'офис'));
 
                 echo "<tr>
                 <td class=\"list-label-md\">Создать коммерческое предложение</td>
