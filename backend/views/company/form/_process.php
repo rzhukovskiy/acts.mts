@@ -230,7 +230,10 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 $adVal = str_replace('Строение', '', $adVal);
                 $adVal = str_replace('Индекс', '', $adVal);
                 $adVal = str_replace('пос?', '', $adVal);
-                $adVal = mb_substr($adVal, 0 , strpos($adVal, 'офис'));
+
+                if(strpos($adVal, 'офис') > 0) {
+                    $adVal = mb_substr($adVal, 0, strpos($adVal, 'офис' , 'UTF-8'));
+                }
 
                 echo "<tr>
                 <td class=\"list-label-md\">Создать коммерческое предложение</td>
