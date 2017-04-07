@@ -219,6 +219,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             if($modelCompany->type == 1) {
 
                 $adVal = str_replace(',,', ',', $modelCompanyInfo->fullAddress);
+                $adVal = trim($adVal);
                 $adVal = explode(',', $adVal);
                 $adVal = $adVal[0];
                 $adVal = str_replace(', Город', '', $adVal);
