@@ -678,13 +678,13 @@ class Act extends ActiveRecord
                             $clientScope->price = $clientService->price;
                             $clientScope->description = $clientService->service->description;
                         } else {
-                            $clientScope->price = $kpd * $serviceData['price'];
+                            $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
                             $clientScope->description =
                                 Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $clientScope->price = $kpd * $serviceData['price'];
+                        $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
                         $clientScope->description = ArrayHelper::getValue($serviceData, 'description', 'Нет описания');
                     }
                     $clientScope->amount = $serviceData['amount'];
@@ -704,12 +704,12 @@ class Act extends ActiveRecord
                             $partnerScope->price = $partnerService->price;
                             $partnerScope->description = $partnerService->service->description;
                         } else {
-                            $partnerScope->price = $serviceData['price'];
+                            $partnerScope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                             $partnerScope->description =
                                 Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
-                        $partnerScope->price = $serviceData['price'];
+                        $partnerScope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                         $partnerScope->description = $serviceData['description'];
                     }
                     $partnerScope->amount = $serviceData['amount'];
