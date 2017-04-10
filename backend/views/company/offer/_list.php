@@ -181,8 +181,8 @@ use yii\bootstrap\ActiveForm;
                             }*/
                             // END Поиск координат яндекса по адресу + поиск рассточния по координатам
 
-                            // Поиск расстояния по адресу
-
+                            // Поиск расстояния по адресу (calc-api.ru)
+/*
                                 if(strlen(Yii::$app->request->get('ad')) > 0) {
 
                                     $adFrom = Yii::$app->request->get('ad');
@@ -210,6 +210,59 @@ use yii\bootstrap\ActiveForm;
                                 } else {
                                     return 'не задано';
                                 }
+                                */
+                            // END Поиск расстояния по адресу (calc-api.ru)
+
+
+
+                            // Поиск расстояния по адресу
+
+                            if(strlen(Yii::$app->request->get('ad')) > 0) {
+
+                                $adFrom = Yii::$app->request->get('ad');
+                                $adFrom = str_replace('+', ' ', $adFrom);
+                                $adFrom = urlencode($adFrom);
+
+                                $adTo = $data->fullAddress;
+                                $adTo = str_replace('+', ' ', $adTo);
+                                $adTo = urlencode($adTo);
+
+                                $dataDis = file_get_contents("http://maps.googleapis.com/maps/api/distancematrix/json?origins=$adFrom&destinations=$adTo&language=en-EN&sensor=false");
+                                $dataDis = json_decode($dataDis);
+
+                                $distance = 0;
+
+                                foreach($dataDis->rows[0]->elements as $road) {
+                                    if(isset($road->distance->value)) {
+                                        $distance += $road->distance->value;
+                                    }
+                                }
+
+                                if (isset($distance)) {
+
+                                    if ($distance > 99) {
+
+                                        $distance = $distance / 1000;
+
+                                        if($distance > 0) {
+                                            $distance = number_format($distance, 0);
+                                        } else {
+                                            $distance = number_format($distance, 2);
+                                        }
+
+                                        return $distance . ' км.';
+                                    } else {
+                                        return 'не задано';
+                                    }
+
+                                } else {
+                                    return 'не задано';
+                                }
+
+                            } else {
+                                return 'не задано';
+                            }
+
                             // END Поиск расстояния по адресу
 
                         } else {
