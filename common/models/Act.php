@@ -528,7 +528,7 @@ class Act extends ActiveRecord
                         $totalIncome += $clientService->price * $serviceData['amount'];
                     } else {
                         //на 20% увеличиваем цену для клиента
-                        $totalIncome += $kpd * $serviceData['price'] * $serviceData['amount'];
+                        $totalIncome += $kpd * ArrayHelper::getValue($serviceData, 'price', 0) * $serviceData['amount'];
                     }
 
                     $partnerService = CompanyService::findOne([
@@ -539,7 +539,7 @@ class Act extends ActiveRecord
                     if (!empty($partnerService) && $partnerService->service->is_fixed) {
                         $totalExpense += $partnerService->price * $serviceData['amount'];
                     } else {
-                        $totalExpense += $serviceData['price'] * $serviceData['amount'];
+                        $totalExpense += ArrayHelper::getValue($serviceData, 'price', 0) * $serviceData['amount'];
                     }
                 }
 
@@ -577,18 +577,18 @@ class Act extends ActiveRecord
                         if (!empty($companyService) && $companyService->service->is_fixed) {
 
                             if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) && (isset($serviceData['price'])) && ($serviceData['price'] >= 0)) {
-                                $scope->price = $serviceData['price'];
+                                $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                             } else {
                                 $scope->price = $companyService->price;
                             }
 
                             $scope->description = $companyService->service->description;
                         } else {
-                            $scope->price = $serviceData['price'];
+                            $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                             $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
-                        $scope->price = $serviceData['price'];
+                        $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                         $scope->description = $serviceData['description'];
                     }
                     $scope->amount = $serviceData['amount'];
@@ -630,11 +630,11 @@ class Act extends ActiveRecord
 
                             $scope->description = $companyService->service->description;
                         } else {
-                            $scope->price = $serviceData['price'];
+                            $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                             $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
-                        $scope->price = $serviceData['price'];
+                        $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
                         $scope->description = $serviceData['description'];
                     }
                     $scope->amount = $serviceData['amount'];
