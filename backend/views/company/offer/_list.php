@@ -43,7 +43,11 @@ use yii\bootstrap\ActiveForm;
         <?= $form->field($searchModel, 'services')->dropdownList($listService, ['multiple' => 'true']); ?>
         <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['multiple' => 'true']); ?>
         <?= Html::submitButton('Применить', ['class' => 'btn btn-primary btn-sm']) ?>
-        <?= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 10px;">Сбросить</span>', '/company/offer?type=' . Yii::$app->request->get('type')); ?>
+        <?php if(strlen(Yii::$app->request->get('ad')) > 0) {
+            echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 10px;">Сбросить</span>', '/company/offer?ad=' . Yii::$app->request->get('ad') . '&type=' . Yii::$app->request->get('type'));
+        } else {
+        echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 10px;">Сбросить</span>', '/company/offer?type=' . Yii::$app->request->get('type'));
+        }  ?>
 
         <?php ActiveForm::end() ?>
     </div>
@@ -181,19 +185,27 @@ use yii\bootstrap\ActiveForm;
 
                                 if(strlen(Yii::$app->request->get('ad')) > 0) {
 
-                                $distance = json_decode(file_get_contents("http://calc-api.ru/app:geo-api/null?a=" . Yii::$app->request->get('ad') . "&b=" . $data->fullAddress));
+                                    $adFrom = Yii::$app->request->get('ad');
+                                    $adFrom = str_replace('+', '%20', $adFrom);
+                                    $adFrom = str_replace(' ', '%20', $adFrom);
 
-                                if (isset($distance->distanse)) {
+                                    $adTo = $data->fullAddress;
+                                    $adTo = str_replace('+', '%20', $adTo);
+                                    $adTo = str_replace(' ', '%20', $adTo);
 
-                                    if ($distance->distanse > 0) {
-                                        return $distance->distanse . ' км.';
+                                    $distance = json_decode(file_get_contents("http://calc-api.ru/app:geo-api/null?a=" . $adFrom . "&b=" . $adTo));
+
+                                    if (isset($distance->distanse)) {
+
+                                        if ($distance->distanse > 0) {
+                                            return $distance->distanse . ' км.';
+                                        } else {
+                                            return 'не задано';
+                                        }
+
                                     } else {
                                         return 'не задано';
                                     }
-
-                                } else {
-                                    return 'не задано';
-                                }
 
                                 } else {
                                     return 'не задано';
