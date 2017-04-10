@@ -250,6 +250,9 @@ use yii\bootstrap\ActiveForm;
                                             $distance = number_format($distance, 2);
                                         }
 
+
+                                        $distance = str_replace(',', '', $distance);
+
                                         return $distance . ' км.';
                                     } else {
                                         return 'не задано';
