@@ -89,6 +89,7 @@ $.map($(".table tbody tr"), function(el) {
     } else {
     
     var numRange = $(el).children("td").eq(4).text();
+    numRange = numRange.replace(",", "");
     numRange = numRange.split(" ");
     
     arrayDataKey[i][3] = numRange[0];
