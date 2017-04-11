@@ -39,9 +39,9 @@ use yii\bootstrap\ActiveForm;
                 'options' => ['class' => 'col-sm-3'],
             ],
         ]) ?>
-        <?= $form->field($searchModel, 'cartypes')->dropdownList($listCar, ['multiple' => 'true']); ?>
-        <?= $form->field($searchModel, 'services')->dropdownList($listService, ['multiple' => 'true']); ?>
-        <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['multiple' => 'true']); ?>
+        <?= $form->field($searchModel, 'cartypes')->dropdownList($listCar, ['multiple' => 'true', 'size' => '10']); ?>
+        <?= $form->field($searchModel, 'services')->dropdownList($listService, ['multiple' => 'true', 'size' => '10']); ?>
+        <?= $form->field($searchModel, 'address')->dropdownList($listCity, ['multiple' => 'true', 'size' => '10']); ?>
         <?= Html::submitButton('Применить', ['class' => 'btn btn-primary btn-sm']) ?>
         <?php if(strlen(Yii::$app->request->get('ad')) > 0) {
             echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 10px;">Сбросить</span>', '/company/offer?ad=' . Yii::$app->request->get('ad') . '&type=' . Yii::$app->request->get('type'));
