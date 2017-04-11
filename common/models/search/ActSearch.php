@@ -112,7 +112,63 @@ class ActSearch extends Act
                     'client client',
                 ]);
                 if (!empty($this->client->children)) {
-                    $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+
+                    if (!isset(Yii::$app->request->queryParams['ActSearch']['client_id'])) {
+
+                        if ($this->client_id == 59) {
+                            $queryPar = Company::find()->where(['parent_id' => $this->client_id])->all();
+
+                            $arrParParIds = [];
+
+                            for ($i = 0; $i < count($queryPar); $i++) {
+                                $arrParParIds[] = $queryPar[$i]['id'];
+
+                                $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                                for ($j = 0; $j < count($queryParPar); $j++) {
+                                    $arrParParIds[] = $queryParPar[$j]['id'];
+                                }
+
+                            }
+
+                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+
+                        } else {
+                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                        }
+
+                    } else {
+
+                        if ((Yii::$app->request->queryParams['ActSearch']['client_id'] == '') || (Yii::$app->request->queryParams['ActSearch']['client_id'] <= 0)) {
+
+                            if ($this->client_id == 59) {
+                                $queryPar = Company::find()->where(['parent_id' => $this->client_id])->all();
+
+                                $arrParParIds = [];
+
+                                for ($i = 0; $i < count($queryPar); $i++) {
+                                    $arrParParIds[] = $queryPar[$i]['id'];
+
+                                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                                    for ($j = 0; $j < count($queryParPar); $j++) {
+                                        $arrParParIds[] = $queryParPar[$j]['id'];
+                                    }
+
+                                }
+
+                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+
+                            } else {
+                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            }
+
+                        } else {
+                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                        }
+
+                    }
+
                 } else {
                     $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
