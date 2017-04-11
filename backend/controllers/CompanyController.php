@@ -494,29 +494,62 @@ class CompanyController extends Controller
 
         if(isset(Yii::$app->request->queryParams['CompanySearch'])) {
 
-            $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
+            if(isset(Yii::$app->request->queryParams['CompanySearch']['address'])) {
 
-            if(isset(Yii::$app->request->queryParams['sort'])) {
-
-                $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+                // проверяем что город выбран
+                $arrSelCity = Yii::$app->request->queryParams['CompanySearch']['address'];
 
                 // удаляем пустые значения из массива
-                for($i = 0; $i < count($arrSelCarTypes); $i++) {
-                    if(isset($arrSelCarTypes[$i])) {
-                        if ($arrSelCarTypes[$i] > 0) {
+                for ($i = 0; $i < count($arrSelCity); $i++) {
+                    if (isset($arrSelCity[$i])) {
+                        if (strlen($arrSelCity[$i]) > 1) {
 
                         } else {
-                            unset($arrSelCarTypes[$i]);
+                            unset($arrSelCity[$i]);
                         }
                     } else {
-                        if(count($arrSelCarTypes) == 1) {
-                            $arrSelCarTypes = [];
+                        if (count($arrSelCity) == 1) {
+                            $arrSelCity = [];
                         }
                     }
                 }
                 // удаляем пустые значения из массива
+                // проверяем что город выбран
 
-                if(count($arrSelCarTypes) == 1) {
+                if(count($arrSelCity) > 0) {
+
+                $dataProvider = $searchModel->searchOffer(Yii::$app->request->queryParams);
+
+                if (isset(Yii::$app->request->queryParams['sort'])) {
+
+                    $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+
+                    // удаляем пустые значения из массива
+                    for ($i = 0; $i < count($arrSelCarTypes); $i++) {
+                        if (isset($arrSelCarTypes[$i])) {
+                            if ($arrSelCarTypes[$i] > 0) {
+
+                            } else {
+                                unset($arrSelCarTypes[$i]);
+                            }
+                        } else {
+                            if (count($arrSelCarTypes) == 1) {
+                                $arrSelCarTypes = [];
+                            }
+                        }
+                    }
+                    // удаляем пустые значения из массива
+
+                    if (count($arrSelCarTypes) == 1) {
+                    } else {
+                        $dataProvider->sort = [
+                            'defaultOrder' => [
+                                'address' => SORT_ASC,
+                                'created_at' => SORT_DESC,
+                            ]
+                        ];
+                    }
+
                 } else {
                     $dataProvider->sort = [
                         'defaultOrder' => [
@@ -526,29 +559,49 @@ class CompanyController extends Controller
                     ];
                 }
 
+                $model = new Company();
+                $model->type = $type;
+
+                return $this->render('newoffer',
+                    [
+                        'dataProvider' => $dataProvider,
+                        'searchModel' => $searchModel,
+                        'type' => $type,
+                        'model' => $model,
+                        'listType' => $listType,
+                        'listCar' => $listCar,
+                        'listService' => $listService,
+                        'listCity' => $listCity
+                    ]);
+
+                } else {
+                    $model = new Company();
+                    $model->type = $type;
+
+                    return $this->render('clearoffer', [
+                        'searchModel' => $searchModel,
+                        'type' => $type,
+                        'model' => $model,
+                        'listType' => $listType,
+                        'listCar' => $listCar,
+                        'listService' => $listService,
+                        'listCity' => $listCity]);
+                }
+
             } else {
-                $dataProvider->sort = [
-                    'defaultOrder' => [
-                        'address' => SORT_ASC,
-                        'created_at' => SORT_DESC,
-                    ]
-                ];
-            }
+                $model = new Company();
+                $model->type = $type;
 
-            $model = new Company();
-            $model->type = $type;
-
-            return $this->render('newoffer',
-                [
-                    'dataProvider' => $dataProvider,
+                return $this->render('clearoffer', [
                     'searchModel' => $searchModel,
                     'type' => $type,
                     'model' => $model,
                     'listType' => $listType,
                     'listCar' => $listCar,
                     'listService' => $listService,
-                    'listCity' => $listCity
-                ]);
+                    'listCity' => $listCity]);
+            }
+
         } else {
             $model = new Company();
             $model->type = $type;

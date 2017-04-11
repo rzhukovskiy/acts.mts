@@ -26,7 +26,27 @@ echo $this->render($action . '/_list', [
     'admin' => isset($admin) ? $admin : false,
 ]);
 
-$js = '
+$arrSelCity = Yii::$app->request->queryParams['CompanySearch']['address'];
+
+// удаляем пустые значения из массива
+for($i = 0; $i < count($arrSelCity); $i++) {
+    if(isset($arrSelCity[$i])) {
+        if (strlen($arrSelCity[$i]) > 1) {
+
+        } else {
+            unset($arrSelCity[$i]);
+        }
+    } else {
+        if(count($arrSelCity) == 1) {
+            $arrSelCity = [];
+        }
+    }
+}
+// удаляем пустые значения из массива
+
+if(count($arrSelCity) == 1) {
+
+    $js = '
 var tableCont = $(".table table-bordered kv-grid-table kv-table-wrap").children("tbody");
 var tableContTR = tableCont.find("tr");
 
@@ -174,4 +194,6 @@ readyToSort = 1;
 }, false);
 
 ';
-$this->registerJs($js);
+    $this->registerJs($js);
+
+}
