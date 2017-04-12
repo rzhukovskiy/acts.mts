@@ -222,6 +222,7 @@ var tableConts = $(".table table-bordered kv-grid-table kv-table-wrap").children
 var tableContsTR = tableConts.find("tr");
 
 var iz = 0;
+var numNotFull = 0;
 
 var arrayDataKeys = [];
 $.map($(".table tbody tr"), function(el) {
@@ -234,6 +235,7 @@ $.map($(".table tbody tr"), function(el) {
     if($(el).children("td").eq(4).text() == "-") {
     arrayDataKeys[iz][2] = 0;
     arrayDataKeys[iz][3] = "1";
+    numNotFull++;
     } else {
     
     arrayDataKeys[iz][3] = "0";
@@ -248,6 +250,7 @@ $.map($(".table tbody tr"), function(el) {
     
     if($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() == "-") {
     arrayDataKeys[iz][3] = "1";
+    numNotFull++;
     } else {
     SummPrice = SummPrice + parseInt($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() || 0);   
     }
@@ -262,6 +265,7 @@ $.map($(".table tbody tr"), function(el) {
     
         if(trVal == "-") {
     arrayDataKeys[iz][3] = "1";
+    numNotFull++;
     } else {
     SummPrice = SummPrice + parseInt(trVal || 0);   
     }
@@ -288,6 +292,8 @@ function BigPrice() {
     } else if(bigIndex != "-1") {
     if((arrayDataKeys[bigIndex][2] < arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "0") && (arrayDataKeys[zj][2] > 0)) {
     bigIndex = zj;
+    } else if((arrayDataKeys[bigIndex][2] < arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "1") && (arrayDataKeys[zj][2] > 0) && (numNotFull == iz)) {
+    bigIndex = zj;  
     }
     }
     
@@ -313,6 +319,8 @@ function MinPrice() {
     } else if(minIndex != "-1") {
     if((arrayDataKeys[minIndex][2] > arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "0") && (arrayDataKeys[zj][2] > 0)) {
     minIndex = zj;
+    } else if((arrayDataKeys[minIndex][2] > arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "1") && (arrayDataKeys[zj][2] > 0) && (numNotFull == iz)) {
+    minIndex = zj;  
     }
     }
     
