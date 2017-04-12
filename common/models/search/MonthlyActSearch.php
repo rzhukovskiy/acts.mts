@@ -97,6 +97,23 @@ class MonthlyActSearch extends MonthlyAct
             'company.updated_at'                       => $this->updated_at,
         ]);
 
+        //
+        $query->innerJoin('{{%act}}');
+        $dataFilter = explode('-', $this->act_date);
+
+        if($dataFilter[0] > 10) {
+            $dataFilter = $dataFilter[1] . '-' . $dataFilter[0] . '-00';
+        } else {
+            $dataFilter = $dataFilter[1] . '-0' . $dataFilter[0] . '-00';
+        }
+
+        if ($this->is_partner == self::PARTNER) {
+            $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\'');
+        } else {
+            $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\'');
+        }
+        //
+
         return $dataProvider;
     }
 
