@@ -54,7 +54,7 @@ use common\components\DateHelper;
                 ],
                 [
                     'label' => 'Номер ТС',
-                    'attribute' => 'number',
+                    'attribute' => 'car_number',
                 ],
                 'mark.name',
                 'type.name',
