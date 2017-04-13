@@ -72,12 +72,23 @@ class LoadController extends Controller
 
         $locked = Lock::checkLocked($searchModel->period, $type);
 
+        $dataFilter = explode('-', $searchModel->period);
+
+        if($dataFilter[0] > 10) {
+            $dataFilter = $dataFilter[1] . '-' . $dataFilter[0] . '-00';
+        } else {
+            $dataFilter = $dataFilter[1] . '-0' . $dataFilter[0] . '-00';
+        }
+
         if($company == 0) {
             $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
             $dataProvider->query->groupBy('partner_id');
+            $dataProvider->query->andWhere('(expense > 0) AND (service_type=' . $type . ') AND (date_format(FROM_UNIXTIME(served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
+
         } else {
             $dataProvider->query->select('SUM(income) as expense, client.*');
             $dataProvider->query->groupBy('client_id');
+            $dataProvider->query->andWhere('(income > 0) AND (service_type=' . $type . ') AND (date_format(FROM_UNIXTIME(served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
         }
 
         return $this->render('list', [
