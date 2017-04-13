@@ -108,9 +108,9 @@ class MonthlyActSearch extends MonthlyAct
         }
 
         if ($this->is_partner == self::PARTNER) {
-            $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\'');
+            $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND (act.service_type=' .$this->type_id . ') AND (date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
         } else {
-            $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\'');
+            $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' .$this->type_id . ') AND (date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
         }
         //
 
