@@ -73,15 +73,56 @@ use yii\bootstrap\ActiveForm;
     }
     // удаляем пустые значения из массива
 
+    $arrSelCity = Yii::$app->request->queryParams['CompanySearch']['address'];
+
+    // удаляем пустые значения из массива
+    for($i = 0; $i < count($arrSelCity); $i++) {
+        if(isset($arrSelCity[$i])) {
+            if (strlen($arrSelCity[$i]) > 1) {
+
+            } else {
+                unset($arrSelCity[$i]);
+            }
+        } else {
+            if(count($arrSelCity) == 1) {
+                $arrSelCity = [];
+            }
+        }
+    }
+    // удаляем пустые значения из массива
+
     if(count($arrSelCarTypes) == 1) {
         if (Yii::$app->request->queryParams['CompanySearch']['services']) {
             $arrButtSort = Yii::$app->request->queryParams['CompanySearch']['services'];
+
+            // удаляем пустые значения из массива
+            for($i = 0; $i < count($arrButtSort); $i++) {
+                if(isset($arrButtSort[$i])) {
+                    if ($arrButtSort[$i] > 0) {
+
+                    } else {
+                        unset($arrButtSort[$i]);
+                    }
+                } else {
+                    if(count($arrButtSort) == 1) {
+                        $arrButtSort = [];
+                    }
+                }
+            }
+            // удаляем пустые значения из массива
 
             for ($i = 0; $i < count($arrButtSort); $i++) {
                 if (strpos(Yii::$app->request->url, '&sort=') > 0) {
                     echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $listService[$arrButtSort[$i]] . '</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&sort=')) . '&sort=' . $arrButtSort[$i]);
                 } else {
                     echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $listService[$arrButtSort[$i]] . '</span>', Yii::$app->request->url . '&sort=' . $arrButtSort[$i]);
+                }
+            }
+
+            if(count($arrSelCity) == 1) {
+                if (count($arrButtSort) > 1) {
+                    // Сортировка по сумме
+                    echo '<span id="sortSumm" class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">сумма</span>';
                 }
             }
 
@@ -93,6 +134,11 @@ use yii\bootstrap\ActiveForm;
                 } else {
                     echo Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">' . $value . '</span>', Yii::$app->request->url . '&sort=' . $key);
                 }
+            }
+
+            if(count($arrSelCity) == 1) {
+                // Сортировка по сумме
+                echo '<span id="sortSumm" class="btn btn-primary btn-sm" style="margin-left: 30px; margin-bottom: 20px;">сумма</span>';
             }
 
         }

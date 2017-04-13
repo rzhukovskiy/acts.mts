@@ -120,12 +120,6 @@ $.map($(".table tbody tr"), function(el) {
 
 }
 
-// Выделить самый дорогой
-function BigPrice() {
-
-}
-// Выделить самый дорогой
-
 // Кнопка сортировать
 var readyToSort = 1;
 var typeSort = 1;
@@ -140,7 +134,7 @@ typeSort = 1;
 typeSort = 0;
 }
 
-
+readyToSort = 0;
 
             if(typeSort == 0) {
 
@@ -184,9 +178,6 @@ typeSort = 0;
 
             }
 
-
-readyToSort = 0;
-
 readyToSort = 1;
 
 }
@@ -195,6 +186,249 @@ readyToSort = 1;
 
 ';
     $this->registerJs($js);
+
+    $arrSelCarTypes = Yii::$app->request->queryParams['CompanySearch']['cartypes'];
+
+// удаляем пустые значения из массива
+    for ($i = 0; $i < count($arrSelCarTypes); $i++) {
+        if (isset($arrSelCarTypes[$i])) {
+            if ($arrSelCarTypes[$i] > 0) {
+
+            } else {
+                unset($arrSelCarTypes[$i]);
+            }
+        } else {
+            if (count($arrSelCarTypes) == 1) {
+                $arrSelCarTypes = [];
+            }
+        }
+    }
+// удаляем пустые значения из массива
+
+    if (count($arrSelCarTypes) == 1) {
+
+        $jss = '
+var tableContses = $(".table table-bordered kv-grid-table kv-table-wrap").children("tbody");
+var tableContsesTR = tableContses.find("tr");
+
+var izes = 0;
+var numNotFulles = 0;
+
+var arrayDataKeyses = [];
+$.map($(".table tbody tr"), function(el) {
+
+    if($(el).data("key") > 0) {
+    arrayDataKeyses[izes] = [];
+    arrayDataKeyses[izes][0] = el;
+    arrayDataKeyses[izes][1] = $(el).data("key");
+    
+    if($(el).children("td").eq(4).text() == "-") {
+    arrayDataKeyses[izes][2] = 0;
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    
+    arrayDataKeyses[izes][3] = "0";
+    
+    var trVal = $(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").find("td");
+        
+        if(trVal.length != 0) {
+        
+    var SummPrice = 0;
+    
+    for (var zz = 0; zz < trVal.length; zz++) {
+    
+    if($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() == "-") {
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    SummPrice = SummPrice + parseInt($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() || 0);   
+    }
+    
+    }
+    
+    arrayDataKeyses[izes][2] = SummPrice;
+    
+    } else {
+    var SummPrice = 0;
+    trVal = $(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).text();
+    
+        if(trVal == "-") {
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    SummPrice = SummPrice + parseInt(trVal || 0);   
+    }
+    
+    arrayDataKeyses[izes][2] = SummPrice;
+    }
+    
+    }
+
+    izes++;
+    }
+});
+
+function ReplaceItemsTableses(firstEl, secEl) {
+
+    var content1 = $(arrayDataKeyses[firstEl][0]).html();
+    var content1i = $(arrayDataKeyses[firstEl][0]).children("td:first").text();
+    var content2 = $(arrayDataKeyses[secEl][0]).html();
+    var content2i = $(arrayDataKeyses[secEl][0]).children("td:first").text();
+
+    $(arrayDataKeyses[firstEl][0]).html(content2).show();
+    $(arrayDataKeyses[secEl][0]).html(content1).show();
+    $(arrayDataKeyses[firstEl][0]).children("td:first").text(content1i);
+    $(arrayDataKeyses[secEl][0]).children("td:first").text(content2i);
+    
+ 
+izes = 0;
+numNotFulles = 0;
+
+arrayDataKeyses = [];
+$.map($(".table tbody tr"), function(el) {
+
+    if($(el).data("key") > 0) {
+    arrayDataKeyses[izes] = [];
+    arrayDataKeyses[izes][0] = el;
+    arrayDataKeyses[izes][1] = $(el).data("key");
+    
+    if($(el).children("td").eq(4).text() == "-") {
+    arrayDataKeyses[izes][2] = 0;
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    
+    arrayDataKeyses[izes][3] = "0";
+    
+    var trVal = $(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").find("td");
+        
+        if(trVal.length != 0) {
+        
+    var SummPrice = 0;
+    
+    for (var zz = 0; zz < trVal.length; zz++) {
+    
+    if($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() == "-") {
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    SummPrice = SummPrice + parseInt($(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).children("table").children("tbody").children("tr").children("td").eq(zz).text() || 0);   
+    }
+    
+    }
+    
+    arrayDataKeyses[izes][2] = SummPrice;
+    
+    } else {
+    var SummPrice = 0;
+    trVal = $(el).children("td").eq(3).children("table").children("tbody").children("tr").eq(1).children("td").eq(1).text();
+    
+        if(trVal == "-") {
+    arrayDataKeyses[izes][3] = "1";
+    numNotFulles++;
+    } else {
+    SummPrice = SummPrice + parseInt(trVal || 0);   
+    }
+    
+    arrayDataKeyses[izes][2] = SummPrice;
+    }
+    
+    }
+
+    izes++;
+    }
+});
+
+$(arrayDataKeys[firstEl][0]).css("color", "#006699");
+$(arrayDataKeys[secEl][0]).css("color", "#006699");
+
+}
+
+// Кнопка сортировать
+var readyToSortSumm = 1;
+var typeSortSumm = 1;
+
+$("#sortSumm").click(function() {
+
+if(readyToSortSumm == 1) {
+
+if(typeSortSumm == 0) {
+typeSortSumm = 1;
+} else {
+typeSortSumm = 0;
+}
+
+readyToSortSumm = 0;
+
+            if(typeSortSumm == 0) {
+
+    for (var z = 0; z < izes; z++) {
+
+        var min = arrayDataKeyses[z][2];
+        var min_i = z;
+
+        for (var j = z+1; j < izes; j++) {
+
+            if (arrayDataKeyses[j][2] < min) {
+                min = arrayDataKeyses[j][2];
+                min_i = j;
+            }
+        }
+
+        if (z != min_i) {
+        ReplaceItemsTableses(min_i, z);
+        }
+        
+        if (z == (izes - 1)) {
+        GetElements();
+        MinPrice();
+        BigPrice();
+        }
+        
+     }
+
+            } else {
+
+    for (var z = 0; z < izes; z++) {
+
+        var min = arrayDataKeyses[z][2];
+        var min_i = z;
+
+        for (var j = z+1; j < izes; j++) {
+
+            if (arrayDataKeyses[j][2] > min) {
+                min = arrayDataKeyses[j][2];
+                min_i = j;
+            }
+            
+        }
+
+        if (z != min_i) {
+        ReplaceItemsTableses(min_i, z);
+        }
+        
+        if (z == (izes - 1)) {
+        GetElements();
+        MinPrice();
+        BigPrice();
+        }
+        
+     }
+
+            }
+
+readyToSortSumm = 1;
+
+}
+
+});
+
+';
+
+        $this->registerJs($jss);
+
+    }
 
 }
 
@@ -688,6 +922,13 @@ var iz = 0;
 var numNotFull = 0;
 
 var arrayDataKeys = [];
+
+function GetElements() {
+
+iz = 0;
+numNotFull = 0;
+arrayDataKeys = []
+
 $.map($(".table tbody tr"), function(el) {
 
     if($(el).data("key") > 0) {
@@ -745,7 +986,8 @@ $.map($(".table tbody tr"), function(el) {
     iz++;
     }
 });
-
+}
+GetElements();
 
 // Выделить самый дорогой
 function BigPrice() {
@@ -757,9 +999,9 @@ function BigPrice() {
     if((arrayDataKeys[zj][2] > 0) && (bigIndex == "-1")) {
     bigIndex = zj;
     } else if(bigIndex != "-1") {
-    if((arrayDataKeys[bigIndex][2] <= arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "0") && (arrayDataKeys[zj][2] > 0)) {
+    if((arrayDataKeys[bigIndex][2] < arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "0") && (arrayDataKeys[zj][2] > 0)) {
     bigIndex = zj;
-    } else if((arrayDataKeys[bigIndex][2] <= arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "1") && (arrayDataKeys[zj][2] > 0) && (numNotFull == iz)) {
+    } else if((arrayDataKeys[bigIndex][2] < arrayDataKeys[zj][2]) && (arrayDataKeys[zj][3] == "1") && (arrayDataKeys[zj][2] > 0) && (numNotFull == iz)) {
     bigIndex = zj;  
     }
     }
@@ -814,6 +1056,13 @@ var iz = 0;
 var numNotFull = 0;
 
 var arrayDataKeys = [];
+
+function GetElements() {
+
+iz = 0;
+numNotFull = 0;
+arrayDataKeys = []
+
 $.map($(".table tbody tr"), function(el) {
 
     if($(el).data("key") > 0) {
@@ -867,7 +1116,8 @@ $.map($(".table tbody tr"), function(el) {
     iz++;
     }
 });
-
+}
+GetElements();
 
 // Выделить самый дорогой
 function BigPrice() {
