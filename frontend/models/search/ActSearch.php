@@ -155,7 +155,7 @@ class ActSearch extends Act
             'mark_id',
             'card_id',
             'service_type',
-            'number'
+            'car_number'
         ])->with(['type', 'mark', 'card'])->alias('act');
 
         return $this->createProvider($params, $query, ['dateMonth' => SORT_ASC]);
