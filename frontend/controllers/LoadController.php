@@ -72,8 +72,13 @@ class LoadController extends Controller
 
         $locked = Lock::checkLocked($searchModel->period, $type);
 
-        $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
-        $dataProvider->query->groupBy('partner_id');
+        if($company == 0) {
+            $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
+            $dataProvider->query->groupBy('partner_id');
+        } else {
+            $dataProvider->query->select('SUM(income) as expense, client.*');
+            $dataProvider->query->groupBy('client_id');
+        }
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,

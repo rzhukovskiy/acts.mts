@@ -184,6 +184,7 @@ class Act extends ActiveRecord
             'id'           => 'ID',
             'served_at'    => 'Дата',
             'partner_id'   => 'Партнер',
+            'city'   => 'Город',
             'client_id'    => 'Клиент',
             'card_id'      => 'Карта',
             'car_id'       => 'Номер',

@@ -32,6 +32,7 @@ class LoadHelper
         $GLOBALS['locked'] = $locked;
         $GLOBALS['type'] = $type;
         $GLOBALS['pediod'] = $pediod;
+        $GLOBALS['company'] = $company;
 
         $columns = [
             'row' => [
@@ -111,16 +112,22 @@ class LoadHelper
             ],
             'name' => [
                 'header' => 'Название',
-                'filter' => Company::find()->select(['id', 'name'])->orderBy('id ASC')->indexBy('id')->column(),
                 'value' => function ($data) {
-                    return $data->partner->name;
+                    if($GLOBALS['company'] == 1) {
+                        return Company::find()->select(['name'])->where(['id' => $data->id])->column()[0];
+                    } else {
+                        return $data->partner->name;
+                    }
                 },
             ],
             'city' => [
                 'attribute' => 'city',
-                'filter' => Company::find()->select(['id', 'address'])->orderBy('id ASC')->indexBy('id')->column(),
                 'value' => function ($data) {
-                    return $data->address;
+                    if($GLOBALS['company'] == 1) {
+                        return Company::find()->select(['address'])->where(['id' => $data->id])->column()[0];
+                    } else {
+                        return $data->partner->address;
+                    }
                 },
             ],
             'mark' => [
@@ -210,6 +217,12 @@ class LoadHelper
 
                         $LockedLisk = $GLOBALS['locked'];
 
+                        if($GLOBALS['company'] == 1) {
+                            $close_company = $data->id;
+                        } else {
+                            $close_company = $data->partner_id;
+                        }
+
                         if(count($LockedLisk) > 0) {
 
                             $CloseAll = false;
@@ -219,15 +232,15 @@ class LoadHelper
                                 if ($LockedLisk[$c]["company_id"] == 0) {
                                     $CloseAll = true;
                                 }
-                                if ($LockedLisk[$c]["company_id"] == $data->partner_id) {
+                                if ($LockedLisk[$c]["company_id"] == $close_company) {
                                     $CloseCompany = true;
                                 }
                             }
 
                             if ((($CloseAll == true) && ($CloseCompany == false)) || (($CloseAll == false) && ($CloseCompany == true))) {
-                               return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
+                               return Html::a('Закрыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $close_company, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-success btn-sm',
-                                    'data-id' => $data->partner_id,
+                                    'data-id' => $close_company,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -235,13 +248,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }
@@ -249,9 +262,9 @@ class LoadHelper
                 return false;",
                                 ]);
                             } elseif ((($CloseAll == true) && ($CloseCompany == true)) || (($CloseAll == false) && ($CloseCompany == false))) {
-                                return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
+                                return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $close_company, 'period' => $GLOBALS['pediod']]), [
                                     'class' => 'btn btn-danger btn-sm',
-                                    'data-id' => $data->partner_id,
+                                    'data-id' => $close_company,
                                     'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -259,13 +272,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }
@@ -275,9 +288,9 @@ class LoadHelper
                             }
 
                         } else {
-                            return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $data->partner_id, 'period' => $GLOBALS['pediod']]), [
+                            return Html::a('Открыт', array_merge(['load/close'], ['type' => $GLOBALS['type'], 'company' => $close_company, 'period' => $GLOBALS['pediod']]), [
                                 'class' => 'btn btn-danger btn-sm',
-                                'data-id' => $data->partner_id,
+                                'data-id' => $close_company,
                                 'onclick' => "button = $(this); $.ajax({
                 type     :'GET',
                 cache    : false,
@@ -285,13 +298,13 @@ class LoadHelper
                 success  : function(response) {
                 
                 if(response == 1) {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Открыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#d9534f\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#c12e2a\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Открыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#d9534f\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#c12e2a\");
                 } else {
-                $(\"[data-id=" . $data->partner_id . "]\").text(\"Закрыт\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"background-color\", \"#3fad46\");
-                $(\"[data-id=" . $data->partner_id . "]\").css(\"border-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").text(\"Закрыт\");
+                $(\"[data-id=" . $close_company . "]\").css(\"background-color\", \"#3fad46\");
+                $(\"[data-id=" . $close_company . "]\").css(\"border-color\", \"#3fad46\");
                 }
                                     
                 }
@@ -316,7 +329,6 @@ class LoadHelper
                     },
                 ]
             ],
-            'city' => 'partner.address',
             'check' => [
                 'attribute' => 'check',
                 'value' => function ($data) {
