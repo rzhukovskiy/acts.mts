@@ -109,11 +109,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 }
 
                 if (isset($arrListFiles[$i][1])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][2]) . '</td></tr>';
+                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][1]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$i][3])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][2]) . '</td></tr>';
+                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][3]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$i][2])) {
