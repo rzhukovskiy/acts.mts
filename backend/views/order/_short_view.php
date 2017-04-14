@@ -23,7 +23,7 @@ use common\models\CompanyInfo;
                 <?= $model->fullAddress ?>
             </div>
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
-                Телефон: <? $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo(); echo $modelCompanyInfo->phone; ?>
+                Телефон: <?php $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo(); echo $modelCompanyInfo->phone; ?>
             </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
