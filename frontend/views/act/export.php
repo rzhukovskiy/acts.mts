@@ -52,7 +52,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         foreach (FileHelper::findFiles($path) as $file) {
 
             $fileName = basename($file);
-            $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));;
+            $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));
             $fileName = str_replace('__', '_', $fileName);
 
             if (strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
@@ -225,7 +225,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
             } else if (strpos($fileName, 'татистика_анализ_мо') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_мо') + 46));
+                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_мо') + 45));
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
