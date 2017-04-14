@@ -48,8 +48,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         $iAS = 0;
         $arrListFiles = [];
 
-        $disNote = true;
-
         foreach (FileHelper::findFiles($path) as $file) {
 
             if(strpos(basename($file), 'Акт_') > 0) {
@@ -74,46 +72,71 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iS++;
             }
 
-            if(strpos('_' . basename($file), 'дезинфекция') > 0) {
-                $disNote = false;
-                break;
-            }
-
         }
 
-        if($disNote) {
+        if($iA > 0) {
+
+            $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-bottom: 10px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td width="100px" style="padding-left: 10px;">№</td><td width="auto" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
 
             for ($i = 0; $i < $iA; $i++) {
 
+                $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="auto" style="padding:10px;"><table>';
+
                 if (isset($arrListFiles[$i][0])) {
 
-                    if ($i == 0) {
-                        echo '<div class="form-group grid-view"><div class="col-sm-12" style="margin-bottom: 10px;"><b>' . $arrListFiles[$i][0] . '</b></div></div>';
-                    } else {
-                        echo '<div class="form-group grid-view"><div class="col-sm-12" style="margin-bottom: 10px; margin-top: 25px;"><b>' . $arrListFiles[$i][0] . '</b></div></div>';
-                    }
+                    $echoFiles .= '<tr><td><b>' . $arrListFiles[$i][0] . '</b></td></tr>';
 
                 }
 
                 if (isset($arrListFiles[$i][1])) {
-                    echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($arrListFiles[$i][1]), '/' . $arrListFiles[$i][1]) . '</div></div>';
+                    $echoFiles .= '<tr><td>Акт</td></tr>';
                 }
 
                 if (isset($arrListFiles[$i][3])) {
-                    echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($arrListFiles[$i][3]), '/' . $arrListFiles[$i][3]) . '</div></div>';
+                    $echoFiles .= '<tr><td>Счет</td></tr>';
                 }
 
                 if (isset($arrListFiles[$i][2])) {
-                    echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($arrListFiles[$i][2]), '/' . $arrListFiles[$i][2]) . '</div></div>';
+                    $echoFiles .= '<tr><td>Анализ</td></tr>';
                 }
 
+                $echoFiles .= '</table></td><td width="80px" style="padding:10px;"><table style="margin-top:19px;">';
+
+                if (isset($arrListFiles[$i][0])) {
+
+                    $echoFiles .= '<tr><td></td></tr>';
+
+                }
+
+                if (isset($arrListFiles[$i][1])) {
+                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][2]) . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$i][3])) {
+                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][2]) . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$i][2])) {
+                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$i][2]) . '</td></tr>';
+                }
+
+                $echoFiles .= '</table></td></tr>';
 
             }
-        } else {
-            foreach (FileHelper::findFiles($path) as $file) {
-                echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($file), '/' . $file) . '</div></div>';
-            }
+
+            $echoFiles .= '</table></div></div>';
+
+            echo $echoFiles;
+
         }
+
+/*        foreach (FileHelper::findFiles($path) as $file) {
+            <div class="form-group grid-view">
+                <div class="col-sm-12">
+                    echo Html::a(basename($file), '/' . $file) ;
+                </div>
+            </div>
+        }*/
 
         ?>
 
