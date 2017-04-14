@@ -52,6 +52,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         foreach (FileHelper::findFiles($path) as $file) {
 
             $fileName = basename($file);
+            $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));;
             $fileName = str_replace('__', '_', $fileName);
 
             if (strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
@@ -284,7 +285,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         if($iA > 0) {
 
             $i = 0;
-            header ("Content-Type: text/html; charset=utf-8");
             $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td width="100px" style="padding-left: 10px;">№</td><td width="auto" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
 
             foreach ($arrListFiles as $key => $value) {
