@@ -18,7 +18,7 @@ echo Tabs::widget([
             'url'    => [
                 'monthly-act/list',
                 'type' => $model->type_id,
-                'MonthlyActSearch[act_date]' => date(strtotime('j-Y', $model->act_date)),
+                'MonthlyActSearch[act_date]' => date('n-Y', strtotime($model->act_date) + 432000),
             ],
             'active' => false,
         ],

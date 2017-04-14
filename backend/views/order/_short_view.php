@@ -6,6 +6,7 @@
  */
 
 use yii\bootstrap\Html;
+use common\models\CompanyInfo;
 
 ?>
 <div class="col-sm-4">
@@ -22,7 +23,7 @@ use yii\bootstrap\Html;
                 <?= $model->fullAddress ?>
             </div>
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
-                Телефон: <?= $model->info->phone ?>
+                Телефон: <? $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo(); echo $modelCompanyInfo->phone; ?>
             </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
