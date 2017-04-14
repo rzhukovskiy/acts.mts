@@ -253,7 +253,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
             } else if (strpos($fileName, 'татистика_анализ_шиномонтаж_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_шиномонтаж_') + 53));
+                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_шиномонтаж_') + 54));
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
