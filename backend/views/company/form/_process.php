@@ -114,46 +114,23 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 <td class="list-label-md">
                     <?= $modelCompanyInfo->getAttributeLabel('comment') ?></td>
                 <td>
-                    <?php
-
-                    if(isset($modelCompanyInfo->comment)) {
-                        echo Editable::widget([
-                            'model' => $modelCompanyInfo,
-                            'buttonsTemplate' => '{submit}',
-                            'submitButton' => [
-                                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                            ],
-                            'attribute' => 'comment',
-                            'displayValue' => $modelCompanyInfo->comment,
-                            'asPopover' => true,
-                            'placement' => PopoverX::ALIGN_LEFT,
-                            'size' => 'lg',
-                            'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
-                            'formOptions' => [
-                                'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
-                            ],
-                            'valueIfNull' => '<span class="text-danger">не задано</span>',
-                        ]);
-                    } else {
-                        echo Editable::widget([
-                            'model' => $modelCompanyInfo,
-                            'buttonsTemplate' => '{submit}',
-                            'submitButton' => [
-                                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                            ],
-                            'attribute' => 'comment',
-                            'asPopover' => true,
-                            'placement' => PopoverX::ALIGN_LEFT,
-                            'size' => 'lg',
-                            'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
-                            'formOptions' => [
-                                'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
-                            ],
-                            'valueIfNull' => '<span class="text-danger">не задано</span>',
-                        ]);
-                    }
-
-                    ?>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'comment',
+                        'displayValue' => $modelCompanyInfo->comment,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
                 </td>
             </tr>
             <tr>

@@ -32,6 +32,7 @@ class CompanyInfo extends ActiveRecord
 {
     private $contract_date_str;
     private $fullAddress;
+    public $comment;
 
     /**
      * @inheritdoc
@@ -103,6 +104,11 @@ class CompanyInfo extends ActiveRecord
     public function setFullAddress($value)
     {
         $this->fullAddress = $value;
+    }
+
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**
