@@ -495,9 +495,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         }
 
-        /*foreach (FileHelper::findFiles($path) as $file) {
+        foreach (FileHelper::findFiles($path) as $file) {
             echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($file), '/' . $file) . '</div></div>';
-        }*/
+        }
 
 /*        foreach (FileHelper::findFiles($path) as $file) {
             <div class="form-group grid-view">
