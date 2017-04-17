@@ -117,6 +117,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     <?= Editable::widget([
                         'model' => $modelCompanyInfo,
                         'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
