@@ -25,8 +25,10 @@ use common\models\CompanyInfo;
 
                 <?php
                 $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
-                if(strlen($modelCompanyInfo->comment) > 1) {
-                    echo "<div class=\"col-sm-12\" style=\"margin-top: 15px; font-size: larger\">Комментарий: " . $modelCompanyInfo->comment . "</div>";
+                if(isset($modelCompanyInfo->comment)) {
+                    if (strlen($modelCompanyInfo->comment) > 1) {
+                        echo "<div class=\"col-sm-12\" style=\"margin-top: 15px; font-size: larger\">Комментарий: " . $modelCompanyInfo->comment . "</div>";
+                    }
                 }
                 ?>
 
