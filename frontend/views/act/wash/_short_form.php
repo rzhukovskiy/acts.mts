@@ -139,7 +139,7 @@ use yii\jui\AutoComplete;
                                         $numNeedVal = 5;
                                     }
 
-                                    if (($value == 'Химчистка') && ($numNeedVal == 5)) {
+                                    if (($value == 'химчистка') && ($numNeedVal == 5)) {
                                         $newServiceList[$key] = $value;
                                         $numNeedVal = 6;
                                         $checkNewArr = true;
