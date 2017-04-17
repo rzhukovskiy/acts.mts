@@ -111,6 +111,11 @@ class CompanyInfo extends ActiveRecord
         return $this->comment;
     }
 
+    public function setComment($value)
+    {
+        $this->comment = $value;
+    }
+
     /**
      * @return ActiveQuery
      */
