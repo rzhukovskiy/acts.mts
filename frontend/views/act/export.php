@@ -327,27 +327,27 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 }
 
                 if (isset($arrListFiles[$key][4])) {
-                    $echoFiles .= '<tr><td>Дезинфекция справка</td></tr>';
+                    $echoFiles .= '<tr><td>Справка</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][5])) {
-                    $echoFiles .= '<tr><td>Дезинфекция счет</td></tr>';
+                    $echoFiles .= '<tr><td>Счет</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][6])) {
-                    $echoFiles .= '<tr><td>Дезинфекция акт</td></tr>';
+                    $echoFiles .= '<tr><td>Акт</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][7])) {
-                    $echoFiles .= '<tr><td>Доп. дезинфекция справка</td></tr>';
+                    $echoFiles .= '<tr><td>Справка</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][8])) {
-                    $echoFiles .= '<tr><td>Доп. дезинфекция счет</td></tr>';
+                    $echoFiles .= '<tr><td>Счет</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][9])) {
-                    $echoFiles .= '<tr><td>Доп. дезинфекция акт</td></tr>';
+                    $echoFiles .= '<tr><td>Акт</td></tr>';
                 }
 
                 $echoFiles .= '</table></td><td width="80px" style="padding:10px;"><table style="margin-top:19px;">';
@@ -432,27 +432,27 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
 
                     if (isset($arrDopListFiles[$key][4])) {
-                        $echoFiles .= '<tr><td>Дезинфекция справка</td></tr>';
+                        $echoFiles .= '<tr><td>Справка</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][5])) {
-                        $echoFiles .= '<tr><td>Дезинфекция счет</td></tr>';
+                        $echoFiles .= '<tr><td>Счет</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][6])) {
-                        $echoFiles .= '<tr><td>Дезинфекция акт</td></tr>';
+                        $echoFiles .= '<tr><td>Акт</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][7])) {
-                        $echoFiles .= '<tr><td>Доп. дезинфекция справка</td></tr>';
+                        $echoFiles .= '<tr><td>Справка</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][8])) {
-                        $echoFiles .= '<tr><td>Доп. дезинфекция счет</td></tr>';
+                        $echoFiles .= '<tr><td>Счет</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][9])) {
-                        $echoFiles .= '<tr><td>Доп. дезинфекция акт</td></tr>';
+                        $echoFiles .= '<tr><td>Акт</td></tr>';
                     }
 
                     $echoFiles .= '</table></td><td width="80px" style="padding:10px;"><table style="margin-top:19px;">';

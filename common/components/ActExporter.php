@@ -1583,18 +1583,6 @@ class ActExporter
                     ),
                 )
             );
-        if($company->is_split) {
-            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
-                ->applyFromArray(array(
-                        'borders' => array(
-                            'allborders' => array(
-                                'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                'color' => array('argb' => 'FF000000'),
-                            ),
-                        ),
-                    )
-                );
-        }
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
@@ -1727,18 +1715,7 @@ class ActExporter
                     ),
                 )
             );
-        if($company->is_split) {
-            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
-                ->applyFromArray(array(
-                        'borders' => array(
-                            'allborders' => array(
-                                'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                'color' => array('argb' => 'FF000000'),
-                            ),
-                        ),
-                    )
-                );
-        }
+
 
         $companyWorkSheet->mergeCells('G' . $rowStart . ':I' . $rowStart . '');
         $companyWorkSheet->getStyle('G' . $rowStart)->getAlignment()->setWrapText(true);
@@ -1872,18 +1849,6 @@ class ActExporter
                     ),
                 )
             );
-        if($company->is_split) {
-            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
-                ->applyFromArray(array(
-                        'borders' => array(
-                            'allborders' => array(
-                                'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                'color' => array('argb' => 'FF000000'),
-                            ),
-                        ),
-                    )
-                );
-        }
 
         // END Третья таблица
 
@@ -2177,18 +2142,6 @@ class ActExporter
                     ),
                 )
             );
-        if($company->is_split) {
-            $companyWorkSheet->getStyle("J' . $rowStart . ':J$row")
-                ->applyFromArray(array(
-                        'borders' => array(
-                            'allborders' => array(
-                                'style' => PHPExcel_Style_Border::BORDER_THIN,
-                                'color' => array('argb' => 'FF000000'),
-                            ),
-                        ),
-                    )
-                );
-        }
 
         // END Четвертая таблица
 
