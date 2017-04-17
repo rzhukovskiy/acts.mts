@@ -104,8 +104,61 @@ use yii\jui\AutoComplete;
                     </div>
 
                     <div class="form-group" style="height: 25px;">
-                        <?php if (!empty($serviceList)) { ?>
-                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', ArrayHelper::perMutate($serviceList), ['class' => 'form-control']) ?>
+                        <?php if (!empty($serviceList)) {
+
+                            $serviceList = ArrayHelper::perMutate($serviceList);
+                            $newServiceList = [];
+                            $checkNewArr = false;
+                            $numNeedVal = 0;
+
+                            while ($checkNewArr == false) {
+                                foreach ($serviceList as $key => $value) {
+
+                                    if (($value == 'снаружи') && ($numNeedVal == 0)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 1;
+                                    }
+
+                                    if (($value == 'внутри') && ($numNeedVal == 1)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 2;
+                                    }
+
+                                    if (($value == 'внутри+снаружи') && ($numNeedVal == 2)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 3;
+                                    }
+
+                                    if (($value == 'отогрев') && ($numNeedVal == 3)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 4;
+                                    }
+
+                                    if (($value == 'двигатель') && ($numNeedVal == 4)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 5;
+                                    }
+
+                                    if (($value == 'Химчистка') && ($numNeedVal == 5)) {
+                                        $newServiceList[$key] = $value;
+                                        $numNeedVal = 6;
+                                        $checkNewArr = true;
+                                    }
+
+                                }
+                            }
+
+                            foreach ($serviceList as $key => $value) {
+
+                                if (($value == 'снаружи') || ($value == 'внутри') || ($value == 'внутри+снаружи') || ($value == 'отогрев') || ($value == 'двигатель') || ($value == 'химчистка')) {
+                                } else {
+                                    $newServiceList[$key] = $value;
+                                }
+
+                            }
+
+                            ?>
+                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $newServiceList, ['class' => 'form-control']) ?>
                         <?php } else { ?>
                             <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
                         <?php } ?>
