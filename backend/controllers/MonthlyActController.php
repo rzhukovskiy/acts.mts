@@ -37,7 +37,7 @@ class MonthlyActController extends Controller
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['update', 'detail', 'list'],
+                        'actions' => ['update', 'detail', 'list', 'archive'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
