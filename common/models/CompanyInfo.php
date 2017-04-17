@@ -22,6 +22,7 @@ use yii\db\ActiveRecord;
  * @property string $pay
  * @property string $contract
  * @property integer $contract_date
+ * @property integer $comment
  *
  * @property Company $company
  *
@@ -48,7 +49,7 @@ class CompanyInfo extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'contract_date'], 'integer'],
-            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
+            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'comment'], 'string', 'max' => 255],        ];
     }
 
     /**
@@ -68,6 +69,7 @@ class CompanyInfo extends ActiveRecord
             'pay' => 'Банковские дни оплаты по договору',
             'contract' => 'Номер договора',
             'contract_date_str' => 'Дата заключения договора',
+            'comment' => 'Комментарий',
         ];
     }
 

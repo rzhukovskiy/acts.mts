@@ -112,6 +112,29 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             </tr>
             <tr>
                 <td class="list-label-md">
+                    <?= $modelCompanyInfo->getAttributeLabel('comment') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'comment',
+                        'displayValue' => $modelCompanyInfo->comment,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
                     <?= $modelCompany->type == Company::TYPE_WASH ? 'Телефон для записи на мойку' : $modelCompanyInfo->getAttributeLabel('phone') ?></td>
                 <td>
                     <?= Editable::widget([
