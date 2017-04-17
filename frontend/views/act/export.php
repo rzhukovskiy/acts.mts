@@ -302,11 +302,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     break;
             }
 
-            $echoFiles .= '</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="600px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
+            $echoFiles .= '</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
 
             foreach ($arrListFiles as $key => $value) {
 
-                $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="600px" style="padding:10px;"><table>';
+                $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="700px" style="padding:10px;"><table>';
 
                 if (isset($arrListFiles[$key][0])) {
 
@@ -407,11 +407,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             if($idD > 0) {
                 $i = 0;
 
-                $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-top: 20px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">Доп. дезинфекция</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="600px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
+                $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-top: 20px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">Доп. дезинфекция</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
 
                 foreach ($arrDopListFiles as $key => $value) {
 
-                    $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="600px" style="padding:10px;"><table>';
+                    $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="700px" style="padding:10px;"><table>';
 
                     if (isset($arrDopListFiles[$key][0])) {
 
