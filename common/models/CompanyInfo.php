@@ -113,7 +113,6 @@ class CompanyInfo extends ActiveRecord
 
     public function setComment($value)
     {
-        echo $value; die;
         $this->comment = $value;
     }
 
