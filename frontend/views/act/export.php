@@ -48,6 +48,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         $iA = 0;
         $idD = 0;
+        $arrSpravki = [];
+        $arrDopSpravki = [];
 
         foreach (FileHelper::findFiles($path) as $file) {
 
@@ -71,11 +73,23 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 }
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
-                $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][7] = $file;
+                if($pref == '') {
+                    $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][7] = $file;
+                } else {
+                    $arrDopSpravki[$idD][0] = $pref;
+                    $arrDopSpravki[$idD][1] = $file;
+                    if(isset($arrDopListFiles[str_replace(' ', '_', $tmpStrint)][10])) {
+                        $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][10] .= $idD . "-";
+                    } else {
+                        $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][10] = $idD . "-";
+                    }
+
+                }
+
                 $tmpStrint = '';
 
                 $iA++;
@@ -85,19 +99,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($fileName, (strpos($fileName, 'доп._дезинфекция_Счет_') + 39));
 
-                $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
-                    } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                    }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                }
-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -111,19 +114,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($fileName, (strpos($fileName, 'доп._дезинфекция_Акт_') + 37));
 
-                $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
-                    } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                    }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                }
-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -149,11 +141,24 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 }
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
-                $arrListFiles[str_replace(' ', '_', $tmpStrint)][4] = $file;
+                if($pref == '') {
+                    $arrListFiles[str_replace(' ', '_', $tmpStrint)][4] = $file;
+                } else {
+                    $arrSpravki[$idD][0] = $pref;
+                    $arrSpravki[$idD][1] = $file;
+
+                    if(isset($arrListFiles[str_replace(' ', '_', $tmpStrint)][11])) {
+                        $arrListFiles[str_replace(' ', '_', $tmpStrint)][11] .= $idD . "-";
+                    } else {
+                        $arrListFiles[str_replace(' ', '_', $tmpStrint)][11] = $idD . "-";
+                    }
+
+                }
+
                 $tmpStrint = '';
 
                 $iA++;
@@ -163,19 +168,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($fileName, (strpos($fileName, 'дезинфекция_Счет_') + 32));
 
-                $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
-                    } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                    }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                }
-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -189,19 +183,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($fileName, (strpos($fileName, 'дезинфекция_Акт_') + 30));
 
-                $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
-                    } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                    }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
-                }
-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
-                $tmpStrint = str_replace('_', ' ', $tmpStrint) . ' ' . $pref;
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -350,6 +333,28 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $echoFiles .= '<tr><td>Акт</td></tr>';
                 }
 
+                if (isset($arrListFiles[$key][10])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][10]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][0])) {
+                            $echoFiles .= '<tr><td>Справка ' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                        }
+                    }
+
+                }
+
+                if (isset($arrListFiles[$key][11])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][11]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][0])) {
+                            $echoFiles .= '<tr><td>Справка ' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                        }
+                    }
+
+                }
+
                 $echoFiles .= '</table></td><td width="80px" style="padding:10px;"><table style="margin-top:19px;">';
 
                 if (isset($arrListFiles[$key][0])) {
@@ -392,6 +397,28 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 if (isset($arrListFiles[$key][9])) {
                     $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][9]) . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][10])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][10]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
+                            $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                        }
+                    }
+
+                }
+
+                if (isset($arrListFiles[$key][11])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][11]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
+                            $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                        }
+                    }
+
                 }
 
                 $echoFiles .= '</table></td></tr>';
@@ -455,6 +482,28 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $echoFiles .= '<tr><td>Акт</td></tr>';
                     }
 
+                    if (isset($arrDopListFiles[$key][10])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][10]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][0])) {
+                                $echoFiles .= '<tr><td>Справка ' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                            }
+                        }
+
+                    }
+
+                    if (isset($arrDopListFiles[$key][11])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][11]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][0])) {
+                                $echoFiles .= '<tr><td>Справка ' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                            }
+                        }
+
+                    }
+
                     $echoFiles .= '</table></td><td width="80px" style="padding:10px;"><table style="margin-top:19px;">';
 
                     if (isset($arrDopListFiles[$key][0])) {
@@ -499,6 +548,28 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][9]) . '</td></tr>';
                     }
 
+                    if (isset($arrDopListFiles[$key][10])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][10]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
+                                $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                            }
+                        }
+
+                    }
+
+                    if (isset($arrDopListFiles[$key][11])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][11]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
+                                $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                            }
+                        }
+
+                    }
+
                     $echoFiles .= '</table></td></tr>';
 
                     $i++;
@@ -516,13 +587,13 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             echo '<div class="form-group grid-view"><div class="col-sm-12">' . Html::a(basename($file), '/' . $file) . '</div></div>';
         }*/
 
-/*        foreach (FileHelper::findFiles($path) as $file) {
-            <div class="form-group grid-view">
-                <div class="col-sm-12">
-                    echo Html::a(basename($file), '/' . $file) ;
-                </div>
-            </div>
-        }*/
+        /*        foreach (FileHelper::findFiles($path) as $file) {
+                    <div class="form-group grid-view">
+                        <div class="col-sm-12">
+                            echo Html::a(basename($file), '/' . $file) ;
+                        </div>
+                    </div>
+                }*/
 
         ?>
 
