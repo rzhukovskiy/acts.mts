@@ -32,7 +32,7 @@ class CompanyInfo extends ActiveRecord
 {
     private $contract_date_str;
     private $fullAddress;
-    public $comment;
+    private $comment;
 
     /**
      * @inheritdoc
