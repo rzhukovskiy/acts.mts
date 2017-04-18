@@ -109,44 +109,40 @@ use yii\jui\AutoComplete;
                             $serviceList = ArrayHelper::perMutate($serviceList);
                             $newServiceList = [];
                             $checkNewArr = false;
-                            $numNeedVal = 0;
+                            $numcontArr = [];
 
-                            while ($checkNewArr == false) {
                                 foreach ($serviceList as $key => $value) {
 
-                                    if (($value == 'снаружи') && ($numNeedVal == 0)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 1;
+                                    if ($value == 'снаружи') {
+                                        $numcontArr[0] = $key;
                                     }
 
-                                    if (($value == 'внутри') && ($numNeedVal == 1)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 2;
+                                    if ($value == 'внутри') {
+                                        $numcontArr[1] = $key;
                                     }
 
-                                    if (($value == 'внутри+снаружи') && ($numNeedVal == 2)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 3;
+                                    if (($value == 'внутри+снаружи') || ($value == 'снаружи+внутри')) {
+                                        $numcontArr[2] = $key;
+                                        $serviceList[$key] = 'снаружи+внутри';
                                     }
 
-                                    if (($value == 'отогрев') && ($numNeedVal == 3)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 4;
+                                    if ($value == 'отогрев') {
+                                        $numcontArr[3] = $key;
                                     }
 
-                                    if (($value == 'двигатель') && ($numNeedVal == 4)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 5;
+                                    if ($value == 'двигатель') {
+                                        $numcontArr[4] = $key;
                                     }
 
-                                    if (($value == 'химчистка') && ($numNeedVal == 5)) {
-                                        $newServiceList[$key] = $value;
-                                        $numNeedVal = 6;
-                                        $checkNewArr = true;
+                                    if ($value == 'химчистка') {
+                                        $numcontArr[5] = $key;
                                     }
 
                                 }
-                            }
+
+                                for($i = 0; $i < 6; $i++) {
+                                    $newServiceList[$numcontArr[$i]] = $serviceList[$numcontArr[$i]];
+                                }
 
                             foreach ($serviceList as $key => $value) {
 
