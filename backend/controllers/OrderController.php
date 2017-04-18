@@ -67,6 +67,21 @@ class OrderController extends Controller
         }
 
         $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+
+        // Убираем пробел у Оренбурга
+        $newListCity = [];
+
+        foreach ($listCity as $key => $value) {
+            if($key == 'Оренбург ') {
+                $newListCity['Оренбург'] = 'Оренбург';
+            } else {
+                $newListCity[$key] = $value;
+            }
+        }
+
+        $listCity = $newListCity;
+
+        print_r($listCity); die;
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
