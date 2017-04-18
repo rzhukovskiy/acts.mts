@@ -81,7 +81,6 @@ class OrderController extends Controller
 
         $listCity = $newListCity;
 
-        print_r($listCity); die;
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
