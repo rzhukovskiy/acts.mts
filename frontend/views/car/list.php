@@ -209,9 +209,15 @@ echo GridView::widget([
             'template' => '{view}',
             'buttons' => [
                 'view' => function ($url, $data, $key) {
-                    if (!is_null($data->car_id)) // появился акт для машины призрака
-                        return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
-                    return Html::tag('span', 'Нет машины', ['class' => 'label label-danger']);
+
+                    if(isset($data->car->id)) {
+                        return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car->id]);
+                    } else {
+                        if (!is_null($data->car_id)) // появился акт для машины призрака
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
+                        return Html::tag('span', 'Нет машины', ['class' => 'label label-danger']);
+                    }
+
                 },
             ],
         ],
