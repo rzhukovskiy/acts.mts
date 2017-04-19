@@ -178,6 +178,15 @@ class menuLeftWidget extends Widget
             ];
         } elseif ($currentUser && ($currentUser->role == User::ROLE_WATCHER || $currentUser->role == User::ROLE_MANAGER)) {
             $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
+
+            // Исправил ошибку почему для шиномонтажа открывается мойки во вкладке шиномонтажа при заходе из меню
+            $listTypeManager = Yii::$app->user->identity->getAllServiceType(Company::STATUS_ACTIVE);
+            $managerTypeOpen = 2;
+
+            foreach ($listTypeManager as $type_id => $typeData) {
+                $managerTypeOpen = $type_id; break;
+            }
+
             $items = [
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
@@ -215,7 +224,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Акты и оплата',
-                    'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
+                    'url' => ['/monthly-act/list?type=' . $managerTypeOpen],
                     'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id != 'archive'),
                 ],
                 [
