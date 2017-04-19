@@ -22,7 +22,7 @@ $script = <<< JS
     $('#company-worktime-targ').click(function() {
         $('#everyday').hide();
         $('#anyday').show();
-        $('.modaltime').appendTo('form#w20');
+        $('.modaltime').appendTo('form#w21');
         $('.modaltime').show();     
     });
     
