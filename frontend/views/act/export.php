@@ -75,13 +75,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
-                $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
-
                 if($pref == '') {
+                    $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
                     $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][7] = $file;
                 } else {
-                    $arrDopSpravki[$idD][0] = $pref;
+
+                    $premfp =  '';
+
+                    if(strpos($tmpStrint, 'МФП 1') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 1";
+                    } else if(strpos($tmpStrint, 'МФП 2') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 2";
+                    } else if(strpos($tmpStrint, 'МФП 3') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 3";
+                    } else if(strpos($tmpStrint, 'МФП 4') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 4";
+                    } else if(strpos($tmpStrint, 'МФП 5') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 5";
+                    } else {
+                        $premfp = 'Справка №' . $pref;
+                    }
+
+                    $arrDopSpravki[$idD][0] = $premfp;
                     $arrDopSpravki[$idD][1] = $file;
+
+                    $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
+
                     if(isset($arrDopListFiles[str_replace(' ', '_', $tmpStrint)][10])) {
                         $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][10] .= $idD . "-";
                     } else {
@@ -143,13 +167,36 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
-                $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
-
                 if($pref == '') {
+                    $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
                     $arrListFiles[str_replace(' ', '_', $tmpStrint)][4] = $file;
                 } else {
-                    $arrSpravki[$idD][0] = $pref;
+
+                    $premfp =  '';
+
+                    if(strpos($tmpStrint, 'МФП 1') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 1";
+                    } else if(strpos($tmpStrint, 'МФП 2') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 2";
+                    } else if(strpos($tmpStrint, 'МФП 3') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 3";
+                    } else if(strpos($tmpStrint, 'МФП 4') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 4";
+                    } else if(strpos($tmpStrint, 'МФП 5') > 0) {
+                        $tmpStrint = "_ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $premfp = "Справка №$pref МФП 5";
+                    } else {
+                        $premfp = 'Справка №' . $pref;
+                    }
+
+                    $arrSpravki[$idD][0] = $premfp;
                     $arrSpravki[$idD][1] = $file;
+
+                    $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                     if(isset($arrListFiles[str_replace(' ', '_', $tmpStrint)][11])) {
                         $arrListFiles[str_replace(' ', '_', $tmpStrint)][11] .= $idD . "-";
@@ -267,7 +314,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         if($iA > 0) {
 
-            $i = 0;
+            $iz = 0;
             $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">';
 
             switch (Yii::$app->request->get('type')) {
@@ -289,7 +336,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
             foreach ($arrListFiles as $key => $value) {
 
-                $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="700px" style="padding:10px;"><table>';
+                $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($iz + 1) . '</td><td width="700px" style="padding:10px;"><table>';
 
                 if (isset($arrListFiles[$key][0])) {
 
@@ -338,7 +385,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     for ($i = 0; $i < count($tmpArrNames); $i++) {
                         if(isset($arrSpravki[$tmpArrNames[$i]][0])) {
-                            $echoFiles .= '<tr><td>Справка ' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                            $echoFiles .= '<tr><td>' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
                         }
                     }
 
@@ -349,7 +396,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     for ($i = 0; $i < count($tmpArrNames); $i++) {
                         if(isset($arrSpravki[$tmpArrNames[$i]][0])) {
-                            $echoFiles .= '<tr><td>Справка ' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                            $echoFiles .= '<tr><td>' . $arrSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
                         }
                     }
 
@@ -423,7 +470,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $echoFiles .= '</table></td></tr>';
 
-                $i++;
+                $iz++;
 
             }
 
@@ -432,13 +479,13 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             echo $echoFiles;
 
             if($idD > 0) {
-                $i = 0;
+                $iz = 0;
 
                 $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-top: 20px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">Доп. дезинфекция</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
 
                 foreach ($arrDopListFiles as $key => $value) {
 
-                    $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($i + 1) . '</td><td width="700px" style="padding:10px;"><table>';
+                    $echoFiles .= '<tr><td width="100px" valign="top" style="padding: 10px;">' . ($iz + 1) . '</td><td width="700px" style="padding:10px;"><table>';
 
                     if (isset($arrDopListFiles[$key][0])) {
 
@@ -487,7 +534,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                         for ($i = 0; $i < count($tmpArrNames); $i++) {
                             if(isset($arrDopSpravki[$tmpArrNames[$i]][0])) {
-                                $echoFiles .= '<tr><td>Справка ' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                                $echoFiles .= '<tr><td>' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
                             }
                         }
 
@@ -498,7 +545,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                         for ($i = 0; $i < count($tmpArrNames); $i++) {
                             if(isset($arrDopSpravki[$tmpArrNames[$i]][0])) {
-                                $echoFiles .= '<tr><td>Справка ' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
+                                $echoFiles .= '<tr><td>' . $arrDopSpravki[$tmpArrNames[$i]][0] . '</td></tr>';
                             }
                         }
 
@@ -572,7 +619,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $echoFiles .= '</table></td></tr>';
 
-                    $i++;
+                    $iz++;
 
                 }
 
