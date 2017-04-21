@@ -5550,7 +5550,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -6261,7 +6261,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП 1)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -6972,7 +6972,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП 2)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -7683,7 +7683,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП 3)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -8394,7 +8394,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП 4)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -9105,7 +9105,7 @@ class ActExporter
             $companyWorkSheet->setCellValue('B' . $row . '', "ООО \"Агро-Авто\" (Москва ЮГ - МФП 5)");
             $companyWorkSheet->getStyle('B' . $row . '')->applyFromArray($styleArray);
 
-            $row++;
+            $row++; $row++;
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(-1);
             $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
