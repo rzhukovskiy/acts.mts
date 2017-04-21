@@ -83,19 +83,19 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $premfp =  '';
 
                     if(strpos($tmpStrint, 'МФП 1') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 1";
                     } else if(strpos($tmpStrint, 'МФП 2') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 2";
                     } else if(strpos($tmpStrint, 'МФП 3') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 3";
                     } else if(strpos($tmpStrint, 'МФП 4') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 4";
                     } else if(strpos($tmpStrint, 'МФП 5') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 5";
                     } else {
                         $premfp = 'Справка №' . $pref;
@@ -175,19 +175,19 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $premfp =  '';
 
                     if(strpos($tmpStrint, 'МФП 1') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 1";
                     } else if(strpos($tmpStrint, 'МФП 2') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 2";
                     } else if(strpos($tmpStrint, 'МФП 3') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 3";
                     } else if(strpos($tmpStrint, 'МФП 4') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 4";
                     } else if(strpos($tmpStrint, 'МФП 5') > 0) {
-                        $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
+                        $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 5";
                     } else {
                         $premfp = 'Справка №' . $pref;
