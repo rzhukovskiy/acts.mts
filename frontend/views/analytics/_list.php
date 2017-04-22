@@ -141,11 +141,18 @@ $columns = [
         'groupOddCssClass' => 'kv-group-header',
         'groupEvenCssClass' => 'kv-group-header',
         //уродская конструкция для получения 0 обслуживаний
-        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel, $subQuery) {
-            $subQuery->addSelect('car_id');
+        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel) {
+            $subQuery = Act::find()
+                ->select('car_id')
+                ->filterWhere([
+                    'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
+                    'service_type' => $searchModel->service_type,
+                    'client_id' => $data->client_id,
+                ]);
+
             $notServed = Car::find()
                 ->where(['not in', 'id', $subQuery->column()])
-                ->andWhere(['company_id' => $searchModel->client_id])
+                ->andWhere(['company_id' => $data->client_id])
                 ->andWhere('type_id != 7')
                 ->andWhere('type_id != 8')->count();
 
