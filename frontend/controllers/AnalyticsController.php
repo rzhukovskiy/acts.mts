@@ -69,7 +69,7 @@ class AnalyticsController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $subQuery = null;
+        $listServed = null;
 
         if ($group == 'type') {
             // Убираем дизенфекцию из общей статистики
@@ -113,6 +113,26 @@ class AnalyticsController extends Controller
                 'query' => $query,
                 'pagination' => false,
             ]);
+
+            $clientId = 0;
+            foreach ($dataProvider->getModels() as $model) {
+                if ($clientId != $model->client_id) {
+                    $clientId = $model->client_id;
+                    $subQuery = Act::find()
+                        ->select('car_id')
+                        ->filterWhere([
+                            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
+                            'service_type' => $searchModel->service_type,
+                            'client_id' => $clientId,
+                        ]);
+
+                    $listServed[$clientId] = Car::find()
+                        ->where(['not in', 'id', $subQuery->column()])
+                        ->andWhere(['company_id' => $clientId])
+                        ->andWhere('type_id != 7')
+                        ->andWhere('type_id != 8')->count();
+                }
+            }
         }
 
         return $this->render('list', [
@@ -121,7 +141,7 @@ class AnalyticsController extends Controller
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
             'type' => $type,
             'group' => $group,
-            'subQuery' => $subQuery,
+            'listServed' => $listServed,
         ]);
     }
 

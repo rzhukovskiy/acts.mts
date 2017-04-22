@@ -5,7 +5,7 @@
  * @var $searchModel \common\models\search\ActSearch
  * @var $group string
  * @var $admin boolean
- * @var $subQuery yii\db\Query
+ * @var $listServed array
  */
 
 use common\models\Act;
@@ -141,20 +141,8 @@ $columns = [
         'groupOddCssClass' => 'kv-group-header',
         'groupEvenCssClass' => 'kv-group-header',
         //уродская конструкция для получения 0 обслуживаний
-        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel) {
-            $subQuery = Act::find()
-                ->select('car_id')
-                ->filterWhere([
-                    'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
-                    'service_type' => $searchModel->service_type,
-                    'client_id' => $data->client_id,
-                ]);
-
-            $notServed = Car::find()
-                ->where(['not in', 'id', $subQuery->column()])
-                ->andWhere(['company_id' => $data->client_id])
-                ->andWhere('type_id != 7')
-                ->andWhere('type_id != 8')->count();
+        'groupFooter' => $group != 'count' ? null : function ($data) use ($searchModel, $listServed) {
+            $notServed = $listServed[$data->client_id];
 
             return !$notServed ? null : [
                 'content' => [
