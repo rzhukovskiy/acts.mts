@@ -35,7 +35,7 @@ $columns = [
         },
     ],
     [
-        'attribute' => 'number',
+        'attribute' => 'car_number',
         'contentOptions' => function($data) {
             if($data->hasError('car')) return ['class' => 'text-danger'];
         },

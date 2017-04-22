@@ -121,10 +121,10 @@ class AnalyticsController extends Controller
                     $subQuery = Act::find()
                         ->select('car_id')
                         ->filterWhere([
-                            'DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period,
                             'service_type' => $searchModel->service_type,
                             'client_id' => $clientId,
-                        ]);
+                        ])
+                        ->andFilterWhere(['between', 'served_at', strtotime($searchModel->dateFrom), strtotime($searchModel->dateTo)]);
 
                     $listServed[$clientId] = Car::find()
                         ->where(['not in', 'id', $subQuery->column()])
