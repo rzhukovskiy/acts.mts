@@ -3,6 +3,7 @@
 use common\assets\CanvasJs\CanvasJsAsset;
 use common\models\Company;
 use yii\bootstrap\Html;
+use common\components\DateHelper;
 
 /**
  * @var $this yii\web\View
@@ -109,8 +110,32 @@ echo \kartik\grid\GridView::widget([
             'attribute' => 'act_date',
             'label'     => 'Дата',
             'content'   => function ($data) {
-                Yii::$app->formatter->locale = 'ru-RU';
-                return Yii::$app->formatter->asDate($data->dateFix(), 'LLLL yyyy');
+
+    // Фикс ошибки вывода даты на англ языке
+    $dataArr = explode('-', $data->dateFix());
+    if(count($dataArr) == 3) {
+
+        $monthName = [
+            1 => ['Январь', 'Января', 'Январе'],
+            2 => ['Февраль', 'Февраля', 'Феврале'],
+            3 => ['Март', 'Марта', 'Марте'],
+            4 => ['Апрель', 'Апреля', 'Апреле'],
+            5 => ['Май', 'Мая', 'Мае'],
+            6 => ['Июнь', 'Июня', 'Июне'],
+            7 => ['Июль', 'Июля', 'Июле'],
+            8 => ['Август', 'Августа', 'Августе'],
+            9 => ['Сентябрь', 'Сентября', 'Сентябре'],
+            10 => ['Октябрь', 'Октября', 'Октябре'],
+            11 => ['Ноябрь', 'Ноября', 'Ноябре'],
+            12 => ['Декабрь', 'Декабря', 'Декабре']
+        ];
+
+        $mountID = (int) $dataArr[1];
+        return $monthName[$mountID][0] . ' ' . $dataArr[0];
+    } else {
+        return Yii::$app->formatter->asDate($data->dateFix(), 'LLLL yyyy');
+    }
+
             },
             'visible'   => $searchModel->client_id
         ],
