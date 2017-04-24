@@ -109,6 +109,7 @@ echo \kartik\grid\GridView::widget([
             'attribute' => 'act_date',
             'label'     => 'Дата',
             'content'   => function ($data) {
+                Yii::$app->formatter->locale = 'ru-RU';
                 return Yii::$app->formatter->asDate($data->dateFix(), 'LLLL yyyy');
             },
             'visible'   => $searchModel->client_id
