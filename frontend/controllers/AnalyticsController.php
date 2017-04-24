@@ -123,8 +123,10 @@ class AnalyticsController extends Controller
                         ->filterWhere([
                             'service_type' => $searchModel->service_type,
                             'client_id' => $clientId,
-                        ])
-                        ->andFilterWhere(['between', 'served_at', strtotime($searchModel->dateFrom), strtotime($searchModel->dateTo)]);
+                        ]);
+                    if ($searchModel->dateFrom) {
+                        $subQuery->andFilterWhere(['between', 'served_at', strtotime($searchModel->dateFrom), strtotime($searchModel->dateTo)]);
+                    }
 
                     $listServed[$clientId] = Car::find()
                         ->where(['not in', 'id', $subQuery->column()])
