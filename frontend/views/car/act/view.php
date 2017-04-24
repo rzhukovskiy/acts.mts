@@ -7,7 +7,7 @@
  */
 use yii\bootstrap\Tabs;
 
-$this->title = 'История машины ' . $model->number;
+$this->title = 'История машины ' . $model->car_number;
 
 $request = Yii::$app->request;
 
