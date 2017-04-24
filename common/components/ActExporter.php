@@ -5598,7 +5598,7 @@ class ActExporter
             $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 75600;
             // Формирование параметров поиска
 
-            $resCars = Yii::$app->getDb()->createCommand("SELECT COUNT(actsCount) as carsCount, `actsCount`, `client_id` FROM (SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND ((`client_id`=" . $tmpDataCompany->id . ") OR (`client`.`parent_id`=" . $tmpDataCompany->id . ")) AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `car_number` ORDER BY `client_id`, `actsCount` DESC) `actsCount` GROUP BY `client_id`, `actsCount` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
+            $resCars = Yii::$app->getDb()->createCommand("SELECT COUNT(actsCount) as carsCount, `actsCount`, `client_id` FROM (SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND (`client_id`=" . $tmpDataCompany->id . ") AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `car_number` ORDER BY `client_id`, `actsCount` DESC) `actsCount` GROUP BY `client_id`, `actsCount` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 
@@ -5746,7 +5746,7 @@ class ActExporter
             $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 75600;
             // Формирование параметров поиска
 
-            $resCity = Yii::$app->getDb()->createCommand("SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND ((`client_id`=" . $tmpDataCompany->id . ") OR (`client`.`parent_id`=" . $tmpDataCompany->id . ")) AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `partner`.`address` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
+            $resCity = Yii::$app->getDb()->createCommand("SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND (`client_id`=" . $tmpDataCompany->id . ") AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `partner`.`address` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 
@@ -5887,7 +5887,7 @@ class ActExporter
             $timeTo = mktime(21, 00, 00, date('m', $timeTo), 01, date('Y', $timeTo)) - 75600;
             // Формирование параметров поиска
 
-            $resStat = Yii::$app->getDb()->createCommand("SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND ((`client_id`=" . $tmpDataCompany->id . ") OR (`client`.`parent_id`=" . $tmpDataCompany->id . ")) AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `service_type` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
+            $resStat = Yii::$app->getDb()->createCommand("SELECT `car_id`, `car_number`, `served_at`, `partner_id`, `client_id`, `service_type`, COUNT(act.id) as actsCount FROM `act` `act` LEFT JOIN `type` ON `act`.`type_id` = `type`.`id` LEFT JOIN `mark` ON `act`.`mark_id` = `mark`.`id` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` LEFT JOIN `company` `partner` ON `act`.`partner_id` = `partner`.`id` LEFT JOIN `car` `car` ON `act`.`car_id` = `car`.`id` WHERE (`served_at` BETWEEN " . $timeFrom . " AND " . $timeTo . ") AND (`client_id`=" . $tmpDataCompany->id . ") AND (`service_type`=" . $this->serviceType . ") AND (car.type_id != 7) AND (car.type_id != 8) GROUP BY `client_id`, `service_type` ORDER BY `client_id`, `actsCount` DESC", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 
@@ -6007,7 +6007,7 @@ class ActExporter
             $timeTo .= ".000Z";*/
             // Формирование параметров поиска
 
-            //$resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $tmpDataCompany->id . ") OR (`client_id`=" . $tmpDataCompany->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
+            //$resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND (`client_id`=" . $tmpDataCompany->id . ") GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 
@@ -6069,7 +6069,7 @@ class ActExporter
             $timeTo .= ".000Z";
             // Формирование параметров поиска
 
-            $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $tmpDataCompany->id . ") OR (`client_id`=" . $tmpDataCompany->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
+            $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND (`client_id`=" . $tmpDataCompany->id . ") GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 
@@ -6146,7 +6146,7 @@ class ActExporter
             $timeTo .= ".000Z";
             // Формирование параметров поиска
 
-            $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND ((`client`.`parent_id`=" . $tmpDataCompany->id . ") OR (`client_id`=" . $tmpDataCompany->id . ")) GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
+            $resIncome = Yii::$app->getDb()->createCommand("SELECT DATE(FROM_UNIXTIME(served_at)) as dateMonth, COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, `service_type`, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, `partner_id`, `client_id` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $timeFrom . "' AND '" . $timeTo . "') AND (`service_type`=" . $this->serviceType . ") AND (`client_id`=" . $tmpDataCompany->id . ") GROUP BY DATE_FORMAT(dateMonth, \"%Y-%m\") ORDER BY `dateMonth`", [':start_date' => '1970-01-01'])->queryAll();
 
             // Запрос
 

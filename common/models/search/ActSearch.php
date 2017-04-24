@@ -131,10 +131,10 @@ class ActSearch extends Act
 
                             }
 
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     } else {
@@ -157,14 +157,14 @@ class ActSearch extends Act
 
                                 }
 
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                             } else {
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                             }
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     }
@@ -219,10 +219,10 @@ class ActSearch extends Act
 
                             }
 
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     } else {
@@ -245,14 +245,14 @@ class ActSearch extends Act
 
                                 }
 
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                             } else {
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                             }
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     }
@@ -292,10 +292,10 @@ class ActSearch extends Act
 
                             }
 
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     } else {
@@ -318,14 +318,14 @@ class ActSearch extends Act
 
                                 }
 
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id])->orFilterWhere(['client_id' => $arrParParIds]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id], ['client_id' => $arrParParIds]]);
 
                             } else {
-                                $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                             }
 
                         } else {
-                            $query->andFilterWhere(['client.parent_id' => $this->client_id])->orFilterWhere(['client_id' => $this->client_id]);
+                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
                         }
 
                     }
