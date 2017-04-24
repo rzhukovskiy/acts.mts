@@ -158,9 +158,16 @@ class StatController extends Controller
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
-            $dataProvider->query
-                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
-                ->joinWith('client client');
+
+            if($companyModel->id == 154) {
+                $dataProvider->query
+                    ->andWhere(['client_id' => $companyModel->id])
+                    ->joinWith('client client');
+            } else {
+                $dataProvider->query
+                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
+                    ->joinWith('client client');
+            }
         }
         else {
             $dataProvider->query
