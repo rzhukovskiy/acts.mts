@@ -4,6 +4,7 @@ namespace common\components;
 use common\models\Act;
 use common\models\ActScope;
 use common\models\Company;
+use common\models\MonthlyAct;
 use common\models\Car;
 use common\models\search\ActSearch;
 use common\models\search\ServiceSearch;
@@ -40,6 +41,9 @@ class ActExporter
     // сделали ли выгрузку для мфп анализ?
     private $checkMFPStat = false;
 
+    // Проверка на статус акта (без акта)
+    private $noActArr = [];
+
     /**
      * @param ActSearch $searchModel
      * @param bool $company
@@ -58,10 +62,31 @@ class ActExporter
             $zip = null;
         }
 
+        // Получаем из базы тех у кого без акта
+        $dataformat = explode('-', $searchModel->period);
+        if($dataformat[0] > 9) {
+            $dataformat = $dataformat[1] . '-' . $dataformat[0] . '-00';
+        } else {
+            $dataformat = $dataformat[1] . '-0' . $dataformat[0] . '-00';
+        }
+
+        $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['act_status' => 5])->andWhere(['act_date' => $dataformat])->all();
+
+        for($za = 0; $za < count($queryMountActs); $za++) {
+            $index = $queryMountActs[$za]['client_id'];
+            $this->noActArr[$index] = 5;
+            $index = 0;
+        }
+
         if ($this->company) {
             $listAct = $searchModel->searchClient()->getModels();
 
             foreach($listAct as $actClient) {
+
+                if (isset($this->noActArr[$actClient->client->id])) {
+                } else {
+
+                    $this->noActArr[$actClient->client->id] = 1;
 
                     if (($actClient->client->id == 154) || ($actClient->client->id == 849) || ($actClient->client->id == 850) || ($actClient->client->id == 851) || ($actClient->client->id == 852) || ($actClient->client->id == 900)) {
 
@@ -103,7 +128,7 @@ class ActExporter
 
                                 $dataList = $dataProvider->getModels();
 
-                                if(count($dataList) > 0) {
+                                if (count($dataList) > 0) {
                                     $this->arrMFPids[$actClient->client->id][0] = $actClient->client;
                                     $this->arrMFPids[$actClient->client->id][1] = $dataList;
                                 }
@@ -115,7 +140,7 @@ class ActExporter
 
                                 $dataList = $dataProvider->getModels();
 
-                                if(count($dataList) > 0) {
+                                if (count($dataList) > 0) {
                                     $this->arrMFPidsDp[$actClient->client->id][0] = $actClient->client;
                                     $this->arrMFPidsDp[$actClient->client->id][1] = $dataList;
                                 }
@@ -133,6 +158,8 @@ class ActExporter
 
                     }
 
+                }
+
             }
 
             foreach($listAct as $actClient) {
@@ -144,72 +171,79 @@ class ActExporter
 
             foreach($listAct as $actPartner) {
 
-                if (($actPartner->partner->id == 154) || ($actPartner->partner->id == 849) || ($actPartner->partner->id == 850) || ($actPartner->partner->id == 851) || ($actPartner->partner->id == 852) || ($actPartner->partner->id == 900)) {
+                if (isset($this->noActArr[$actPartner->partner->id])) {
+                } else {
 
-                    $searchmfp = $searchModel;
+                    $this->noActArr[$actPartner->partner->id] = 1;
 
-                    switch ($this->serviceType) {
-                        case Company::TYPE_SERVICE:
-                            $dataList = $searchModel->search([])->getModels();
+                    if (($actPartner->partner->id == 154) || ($actPartner->partner->id == 849) || ($actPartner->partner->id == 850) || ($actPartner->partner->id == 851) || ($actPartner->partner->id == 852) || ($actPartner->partner->id == 900)) {
 
-                            foreach ($dataList as $data) {
+                        $searchmfp = $searchModel;
 
-                                $this->arrMFPids[$actPartner->partner->id][0] = $actPartner->partner;
+                        switch ($this->serviceType) {
+                            case Company::TYPE_SERVICE:
+                                $dataList = $searchModel->search([])->getModels();
+
+                                foreach ($dataList as $data) {
+
+                                    $this->arrMFPids[$actPartner->partner->id][0] = $actPartner->partner;
+                                    $searchmfp->client_id = $actPartner->partner_id;
+
+                                    $this->arrMFPids[$actPartner->partner->id][1] = array($data);
+
+                                }
+                                break;
+                            case Company::TYPE_DISINFECT:
+
                                 $searchmfp->client_id = $actPartner->partner_id;
 
-                                $this->arrMFPids[$actPartner->partner->id][1] = array($data);
+                                /*$listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
+                                foreach ($listService as $serviceId => $serviceDescription) {
+                                    $dataProvider = $searchmfp->search([]);
+                                    $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
+                                        ->groupBy('partnerScopes.act_id')
+                                        ->joinWith('partnerScopes partnerScopes');
 
-                            }
-                            break;
-                        case Company::TYPE_DISINFECT:
+                                    $dataList = $dataProvider->getModels();
+                                    $this->arrMFPids[$actPartner->partner->id][1] = $dataList;
+                                }*/
 
-                            $searchmfp->client_id = $actPartner->partner_id;
-
-                            /*$listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
-                            foreach ($listService as $serviceId => $serviceDescription) {
                                 $dataProvider = $searchmfp->search([]);
-                                $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
+                                $dataProvider->query->andWhere(['partnerScopes.service_id' => 4])
                                     ->groupBy('partnerScopes.act_id')
                                     ->joinWith('partnerScopes partnerScopes');
 
                                 $dataList = $dataProvider->getModels();
-                                $this->arrMFPids[$actPartner->partner->id][1] = $dataList;
-                            }*/
 
-                            $dataProvider = $searchmfp->search([]);
-                            $dataProvider->query->andWhere(['partnerScopes.service_id' => 4])
-                                ->groupBy('partnerScopes.act_id')
-                                ->joinWith('partnerScopes partnerScopes');
+                                if (count($dataList) > 0) {
+                                    $this->arrMFPids[$actPartner->partner->id][0] = $actPartner->partner;
+                                    $this->arrMFPids[$actPartner->partner->id][1] = $dataList;
+                                }
 
-                            $dataList = $dataProvider->getModels();
+                                $dataProvider = $searchmfp->search([]);
+                                $dataProvider->query->andWhere(['partnerScopes.service_id' => 5])
+                                    ->groupBy('partnerScopes.act_id')
+                                    ->joinWith('partnerScopes partnerScopes');
 
-                            if(count($dataList) > 0) {
+                                $dataList = $dataProvider->getModels();
+
+                                if (count($dataList) > 0) {
+                                    $this->arrMFPidsDp[$actPartner->partner->id][0] = $actPartner->partner;
+                                    $this->arrMFPidsDp[$actPartner->partner->id][1] = $dataList;
+                                }
+
+                                break;
+                            default:
                                 $this->arrMFPids[$actPartner->partner->id][0] = $actPartner->partner;
+                                $searchmfp->client_id = $actPartner->partner_id;
+
+                                $dataList = $searchmfp->search([])->getModels();
                                 $this->arrMFPids[$actPartner->partner->id][1] = $dataList;
-                            }
 
-                            $dataProvider = $searchmfp->search([]);
-                            $dataProvider->query->andWhere(['partnerScopes.service_id' => 5])
-                                ->groupBy('partnerScopes.act_id')
-                                ->joinWith('partnerScopes partnerScopes');
-
-                            $dataList = $dataProvider->getModels();
-
-                            if(count($dataList) > 0) {
-                                $this->arrMFPidsDp[$actPartner->partner->id][0] = $actPartner->partner;
-                                $this->arrMFPidsDp[$actPartner->partner->id][1] = $dataList;
-                            }
-
-                            break;
-                        default:
-                            $this->arrMFPids[$actPartner->partner->id][0] = $actPartner->partner;
-                            $searchmfp->client_id = $actPartner->partner_id;
-
-                            $dataList = $searchmfp->search([])->getModels();
-                            $this->arrMFPids[$actPartner->partner->id][1] = $dataList;
+                        }
+                        $searchmfp = '';
 
                     }
-                    $searchmfp = '';
 
                 }
 
@@ -232,18 +266,62 @@ class ActExporter
     private function fillAct($searchModel, $company, &$zip)
     {
 
-        // Прикрепить еще один файл "Статистика и анализ"
-        if ($this->company) {
-            switch ($this->serviceType) {
-                case Company::TYPE_SERVICE:
-                    $dataList = $searchModel->search([])->getModels();
-                    if ($dataList) {
-                        foreach ($dataList as $data) {
+        if ($this->noActArr[$company->id] == 1) {
 
-                            if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+            // Прикрепить еще один файл "Статистика и анализ"
+            if ($this->company) {
+                switch ($this->serviceType) {
+                    case Company::TYPE_SERVICE:
+                        $dataList = $searchModel->search([])->getModels();
+                        if ($dataList) {
+                            foreach ($dataList as $data) {
 
-                                if($this->checkMFPStat == false) {
-                                    if(count($this->arrMFPids) > 0) {
+                                if (($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+
+                                    if ($this->checkMFPStat == false) {
+                                        if (count($this->arrMFPids) > 0) {
+                                            $this->generateStatMFP($company, $zip);
+
+                                            // Говорим что мы уже сделали выгрузку для мфп
+                                            $this->checkMFPStat = true;
+                                        }
+
+                                    }
+
+                                } else {
+                                    $this->generateStat($company, array($data), $zip);
+                                }
+
+                            }
+                        }
+                        break;
+                    case Company::TYPE_DISINFECT:
+                        /*$listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
+                        foreach ($listService as $serviceId => $serviceDescription) {
+                            $dataProvider = $searchModel->search([]);
+                            if ($this->company) {
+                                $dataProvider->query->andWhere(['clientScopes.service_id' => $serviceId])
+                                    ->groupBy('clientScopes.act_id')
+                                    ->joinWith('clientScopes clientScopes');
+                            } else {
+                                $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
+                                    ->groupBy('partnerScopes.act_id')
+                                    ->joinWith('partnerScopes partnerScopes');
+                            }
+                            $dataList = $dataProvider->getModels();
+                            if ($dataList) {
+                                $this->generateStat($company, $dataList, $zip);
+                            }
+                        }
+                        break;*/
+                    default:
+                        $dataList = $searchModel->search([])->getModels();
+                        if ($dataList) {
+
+                            if (($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+
+                                if ($this->checkMFPStat == false) {
+                                    if (count($this->arrMFPids) > 0) {
                                         $this->generateStatMFP($company, $zip);
 
                                         // Говорим что мы уже сделали выгрузку для мфп
@@ -253,14 +331,44 @@ class ActExporter
                                 }
 
                             } else {
-                                $this->generateStat($company, array($data), $zip);
+                                $this->generateStat($company, $dataList, $zip);
                             }
 
                         }
+
+                }
+            }
+            // END Прикрепить еще один файл "Статистика и анализ"
+
+            switch ($this->serviceType) {
+                case Company::TYPE_SERVICE:
+                    $dataList = $searchModel->search([])->getModels();
+                    if (!$dataList) {
+                        return;
+                    }
+                    foreach ($dataList as $data) {
+
+                        /*if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+
+                            if($this->checkMFP == false) {
+                        if(count($this->arrMFPids) > 0) {
+                                $this->generateMFPAct($company, false, $zip);
+
+                                // Говорим что мы уже сделали выгрузку для мфп
+                                $this->checkMFP = true;
+    }
+                            }
+
+                        } else {
+                            $this->generateAct($company, array($data), $zip);
+                        }*/
+
+                        $this->generateAct($company, array($data), $zip);
+
                     }
                     break;
                 case Company::TYPE_DISINFECT:
-                    /*$listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
+                    $listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
                     foreach ($listService as $serviceId => $serviceDescription) {
                         $dataProvider = $searchModel->search([]);
                         if ($this->company) {
@@ -274,137 +382,66 @@ class ActExporter
                         }
                         $dataList = $dataProvider->getModels();
                         if ($dataList) {
-                            $this->generateStat($company, $dataList, $zip);
+                            $this->generateDisinfectCertificate($company, $dataList, $zip, $serviceDescription);
+
+                            if (($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+
+                                if ($this->checkMFP == false) {
+
+                                    if (count($this->arrMFPids) > 0) {
+                                        $this->generateMFPAct($company, false, $zip);
+
+                                        // Говорим что мы уже сделали выгрузку для мфп
+                                        $this->checkMFP = true;
+                                    }
+
+                                }
+
+                            } else {
+                                $this->generateAct($company, $dataList, $zip, $serviceDescription);
+                            }
+
                         }
                     }
-                    break;*/
+                    break;
                 default:
                     $dataList = $searchModel->search([])->getModels();
-                    if ($dataList) {
-
-                        if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
-
-                            if($this->checkMFPStat == false) {
-                                if(count($this->arrMFPids) > 0) {
-                                    $this->generateStatMFP($company, $zip);
-
-                                    // Говорим что мы уже сделали выгрузку для мфп
-                                    $this->checkMFPStat = true;
-                                }
-
-                            }
-
-                        } else {
-                            $this->generateStat($company, $dataList, $zip);
-                        }
-
+                    if (!$dataList) {
+                        return;
                     }
 
-            }
-        }
-        // END Прикрепить еще один файл "Статистика и анализ"
+                    if (($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
 
-        switch ($this->serviceType) {
-            case Company::TYPE_SERVICE:
-                $dataList = $searchModel->search([])->getModels();
-                if (!$dataList) {
-                    return;
-                }
-                foreach ($dataList as $data) {
+                        if ($this->checkMFP == false) {
+                            if (count($this->arrMFPids) > 0) {
+                                $this->generateMFPAct($company, false, $zip);
 
-                    /*if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
+                                // Говорим что мы уже сделали выгрузку для мфп
+                                $this->checkMFP = true;
+                            }
 
-                        if($this->checkMFP == false) {
-                    if(count($this->arrMFPids) > 0) {
-                            $this->generateMFPAct($company, false, $zip);
-
-                            // Говорим что мы уже сделали выгрузку для мфп
-                            $this->checkMFP = true;
-}
                         }
 
                     } else {
-                        $this->generateAct($company, array($data), $zip);
-                    }*/
-
-                    $this->generateAct($company, array($data), $zip);
-
-                }
-                break;
-            case Company::TYPE_DISINFECT:
-                $listService = ServiceSearch::getServiceList(Company::TYPE_DISINFECT);
-                foreach ($listService as $serviceId => $serviceDescription) {
-                    $dataProvider = $searchModel->search([]);
-                    if ($this->company) {
-                        $dataProvider->query->andWhere(['clientScopes.service_id' => $serviceId])
-                            ->groupBy('clientScopes.act_id')
-                            ->joinWith('clientScopes clientScopes');
-                    } else {
-                        $dataProvider->query->andWhere(['partnerScopes.service_id' => $serviceId])
-                            ->groupBy('partnerScopes.act_id')
-                            ->joinWith('partnerScopes partnerScopes');
+                        $this->generateAct($company, $dataList, $zip);
                     }
-                    $dataList = $dataProvider->getModels();
-                    if ($dataList) {
-                        $this->generateDisinfectCertificate($company, $dataList, $zip, $serviceDescription);
-
-                        if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
-
-                            if($this->checkMFP == false) {
-
-                                if(count($this->arrMFPids) > 0) {
-                                    $this->generateMFPAct($company, false, $zip);
-
-                                    // Говорим что мы уже сделали выгрузку для мфп
-                                    $this->checkMFP = true;
-                                }
-
-                            }
-
-                        } else {
-                            $this->generateAct($company, $dataList, $zip, $serviceDescription);
-                        }
-
-                    }
-                }
-                break;
-            default:
-                $dataList = $searchModel->search([])->getModels();
-                if (!$dataList) {
-                    return;
-                }
-
-                if(($company->id == 154) || ($company->id == 849) || ($company->id == 850) || ($company->id == 851) || ($company->id == 852) || ($company->id == 900)) {
-
-                    if($this->checkMFP == false) {
-                        if(count($this->arrMFPids) > 0) {
-                            $this->generateMFPAct($company, false, $zip);
-
-                            // Говорим что мы уже сделали выгрузку для мфп
-                            $this->checkMFP = true;
-                        }
-
-                    }
-
-                } else {
-                    $this->generateAct($company, $dataList, $zip);
-                }
-
-        }
-
-        // Выгрузка МФП Доп дизенфекция
-        if($this->serviceType == Company::TYPE_DISINFECT) {
-            if($this->checkMFPdp == false) {
-                if(count($this->arrMFPidsDp) > 0) {
-                    $this->generateMFPAct($company, true, $zip);
-
-                    // Говорим что мы уже сделали выгрузку для мфп
-                    $this->checkMFPdp = true;
-                }
 
             }
-        }
 
+            // Выгрузка МФП Доп дизенфекция
+            if ($this->serviceType == Company::TYPE_DISINFECT) {
+                if ($this->checkMFPdp == false) {
+                    if (count($this->arrMFPidsDp) > 0) {
+                        $this->generateMFPAct($company, true, $zip);
+
+                        // Говорим что мы уже сделали выгрузку для мфп
+                        $this->checkMFPdp = true;
+                    }
+
+                }
+            }
+
+        }
     }
 
     /**
