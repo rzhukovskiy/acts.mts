@@ -62,6 +62,13 @@ class ActSearch extends Act
     {
         $query = Act::find();
 
+        // Если не выбран период то показываем только прошлый месяц
+        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
+
+            $params['ActSearch']['dateFrom'] = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
+            $params['ActSearch']['dateTo'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+        }
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

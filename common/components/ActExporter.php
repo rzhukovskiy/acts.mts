@@ -561,7 +561,7 @@ class ActExporter
             $row++;
 
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Исполнительный директор');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Гениральный Директор');
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'ООО «Международный Транспортный Сервис»');

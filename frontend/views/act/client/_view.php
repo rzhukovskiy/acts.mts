@@ -53,13 +53,13 @@
             </tr>
         </table>
 
-        <div class="form-group" style="margin-top: 20px;">
+        <?php /*<div class="form-group" style="margin-top: 20px;">
             <span class="sign">
                     По качеству работы претензий не имею.
             </span>
         </div>
 
-        <div class="form-group" style="margin-top: 20px;">
+         <div class="form-group" style="margin-top: 20px;">
             <table class="sign">
                 <tr>
                     <td>
@@ -85,6 +85,6 @@
                     </td>
                 </tr>
             </table>
-        </div>
+        </div> */?>
     </div>
 </div>

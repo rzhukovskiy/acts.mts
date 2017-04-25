@@ -165,7 +165,7 @@ class StatController extends Controller
                     ->joinWith('client client');
             } else {
                 $dataProvider->query
-                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
+                    ->andWhere('(`client`.`parent_id`=' . $companyModel->id . ') OR (`client_id`=' . $companyModel->id . ')')
                     ->joinWith('client client');
             }
         }
