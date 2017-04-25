@@ -211,9 +211,21 @@ echo GridView::widget([
                 'view' => function ($url, $data, $key) {
                     if (!is_null($data->car_id)) { // появился акт для машины призрака
                         if($data->car_id == 8294) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299]);
+
+                            if(isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                            } else {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299]);
+                            }
+
                         } else {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
+
+                            if(isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                            } else {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
+                            }
+
                         }
 
                     } else {

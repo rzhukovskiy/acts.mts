@@ -24,7 +24,7 @@ if ($group == 'count') {
 }
 if ($group == 'city') {
     $items[] = [
-        'label' => 'Статистика помытых машин по городам',
+        'label' => 'Статистика обслуженных машин по городам',
         'url' => [
             'list',
             'type' => $searchModel->service_type,

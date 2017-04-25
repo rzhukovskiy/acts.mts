@@ -352,7 +352,7 @@ class menuLeftWidget extends Widget
                                 Yii::$app->request->get('group') == 'count',
                         ],
                         [
-                            'label'  => 'Статистика помытых<br />машин по городам',
+                            'label'  => 'Статистика<br />обслуженных<br />машин по городам',
                             'url'    => ['/analytics/list', 'type' => Company::TYPE_WASH, 'group' => 'city'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&
@@ -365,13 +365,13 @@ class menuLeftWidget extends Widget
                                 Yii::$app->controller->id == 'analytics' &&
                                 Yii::$app->request->get('group') == 'average',
                         ],
-                        [
+                        /*[
                             'label'  => 'Общая статистика',
                             'url'    => ['/analytics/list', 'group' => 'type'],
                             'active' =>
                                 Yii::$app->controller->id == 'analytics' &&
                                 Yii::$app->request->get('group') == 'type',
-                        ],
+                        ],*/
                     ]
                 ],
                 [

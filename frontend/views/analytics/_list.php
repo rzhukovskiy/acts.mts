@@ -323,7 +323,7 @@ if ($group == 'average') {
         }
     ];
     $columns[5] = [
-        'header' => 'Среднее кол-во<br />операций',
+        'header' => 'Среднее кол-во<br />операций на 1 ТС',
         'value' => function ($data) {
             return \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
         }
