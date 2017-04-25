@@ -769,7 +769,7 @@ class ActExporter
             if($company->is_split) {
                 $companyWorkSheet->mergeCells('H5:J5');
             }
-            if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
+            if ($this->company) {
                 $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
@@ -1709,7 +1709,7 @@ class ActExporter
             $companyWorkSheet->mergeCells('H5:J5');
         }
         $companyWorkSheet->mergeCells('G5:I5');
-        if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
+        if ($this->company) {
             $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
         } else {
             $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
@@ -2600,7 +2600,7 @@ class ActExporter
             if($companyMain->is_split) {
                 $companyWorkSheet->mergeCells('H5:J5');
             }
-            if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
+            if ($this->company) {
                 $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
@@ -5527,7 +5527,7 @@ class ActExporter
             $companyWorkSheet->mergeCells('H5:J5');
         }
         $companyWorkSheet->mergeCells('G5:I5');
-        if ($this->company || $this->serviceType == Company::TYPE_TIRES) {
+        if ($this->company) {
             $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
         } else {
             $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
