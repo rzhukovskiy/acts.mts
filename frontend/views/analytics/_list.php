@@ -244,8 +244,8 @@ if ($group == 'type') {
 if ($group == 'city') {
     $columns[4] = [
         'header' => '%',
-        'value' => function () {
-            return 0;
+        'value' => function ($data) {
+            return $data->client_id;
         },
         'contentOptions' => ['class' => 'value_3'],
     ];
@@ -384,9 +384,10 @@ if($group == 'city') {
             var dataTable = [];
             console.log('Hello');
             
-            var summVal = 0;
             var idArr = [];
             var valArr = [];
+            var idComp = [];
+            var summComp = [];
             var index = 0;
             
             $('.table tbody tr').each(function (id, value) {
@@ -395,10 +396,22 @@ if($group == 'city') {
                     label: $(this).find('.value_0').text(),
                     y: parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', '')),
                 });
-                    summVal += parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+
                     valArr[index] = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
                     idArr[index] = $(this).find('.value_3');
+                    idComp[index] = $(this).find('.value_3').text();
+                    
+                    var indexIdComp = parseInt($(this).find('.value_3').text().replace(/\s+/g, '').replace(',', ''));
+                    
+                    if(summComp[indexIdComp] > 0) {
+                    summComp[indexIdComp] += parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    } else {
+                    summComp[indexIdComp] = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    }
+                    
+                    indexIdComp = 0;
                     index++;
+                    
                 }
             });
             console.log(dataTable);
@@ -426,15 +439,21 @@ if($group == 'city') {
             var lastVal = 0;
             for (var i = 0; i < index; i++) {
             
-            if((i + 1) == index) {
-            itemVal = 100 - lastVal;
-            idArr[i].text(itemVal.toFixed(2));
+            var indexIdComp = idComp[i];
+            
+            itemVal = valArr[i] / (summComp[indexIdComp] / 100);
+            
+            if(itemVal == 100) {
+            idArr[i].text(100);
+            } else if(itemVal == 0) {
+            idArr[i].text(0);
             } else {
-            itemVal = valArr[i] / (summVal / 100);
             idArr[i].text(itemVal.toFixed(2));
-            lastVal += itemVal;
             }
+            
             itemVal = 0;
+            indexIdComp = 0;
+            
             }";
     $this->registerJs($js);
 }
