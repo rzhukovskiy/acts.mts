@@ -65,7 +65,13 @@ CanvasJsAsset::register($this);
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth, 'type' => $model->service_type]);
+
+                            if (isset(Yii::$app->request->queryParams['ActSearch']['client_id'])) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth, 'type' => $model->service_type, 'ActSearch[client_id]' => Yii::$app->request->queryParams['ActSearch']['client_id']]);
+                            } else {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/day', 'date' => $model->dateMonth, 'type' => $model->service_type]);
+                            }
+
                         }
                     ]
                 ],
