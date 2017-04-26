@@ -117,7 +117,10 @@ use yii\jui\AutoComplete;
                     <?= $form->field($model, 'check')->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+                    <label class="control-label" for="act-image">Загрузка чека</label><br />
+                    <label><div class="file-upload">
+                            <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+                        </div></label>
                 </td>
             </tr>
             <tr>
