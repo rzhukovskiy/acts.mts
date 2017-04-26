@@ -123,25 +123,75 @@ JS;
                         </div>
                     </div>
 
-                    <div class="form-group" style="height: 25px;">
-                        <div class="col-xs-6">
-                            <?php if (!empty($serviceList)) { ?>
-                                <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
-                            <?php } else { ?>
-                                <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
-                            <?php } ?>
+                    <?php if(isset($partnerScopes)) {
+                        foreach ($partnerScopes as $scope) {?>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-6">
+                                    <?php if (!empty($serviceList)) { ?>
+                                        <?= Html::dropDownList("Act[serviceList][$scope->id][service_id]", (isset($scope->service_id)) ? $scope->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
+                                    <?php } else { ?>
+                                        <?= Html::textInput("Act[serviceList][$scope->id][description]", (isset($scope->description)) ? $scope->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                    <?php } ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <?= Html::input('number', "Act[serviceList][$scope->id][amount]", (isset($scope->amount)) ? $scope->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <?= Html::input('text', "Act[serviceList][$scope->id][price]", (isset($scope->price)) ? $scope->price : 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <button type="button" class="btn btn-primary input-sm removeButton">
+                                        <i class="glyphicon glyphicon-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        <?php } ?>
+
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-primary input-sm addButton"><i
+                                            class="glyphicon glyphicon-plus"></i></button>
+                            </div>
                         </div>
-                        <div class="col-xs-1">
-                            <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+
+                    <?php } else { ?>
+
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[serviceList][0][service_id]", (isset($partnerScopes[0]->service_id)) ? $partnerScopes[0]->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[serviceList][0][description]", (isset($partnerScopes[0]->description)) ? $partnerScopes[0]->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('number', "Act[serviceList][0][amount]", (isset($partnerScopes[0]->amount)) ? $partnerScopes[0]->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('text', "Act[serviceList][0][price]", (isset($partnerScopes[0]->price)) ? $partnerScopes[0]->price : 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-primary input-sm addButton"><i
+                                            class="glyphicon glyphicon-plus"></i></button>
+                            </div>
                         </div>
-                        <div class="col-xs-1">
-                            <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
-                        </div>
-                        <div class="col-xs-1">
-                            <button type="button" class="btn btn-primary input-sm addButton"><i
-                                    class="glyphicon glyphicon-plus"></i></button>
-                        </div>
-                    </div>
+
+                    <?php } ?>
+
                 </td>
             </tr>
             <tr>

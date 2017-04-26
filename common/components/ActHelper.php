@@ -327,8 +327,8 @@ class ActHelper
             User::ROLE_PARTNER => [
                 [
                     Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'partnerService', 'expense', 'check', 'partnerButtons'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
                 ],
             ],

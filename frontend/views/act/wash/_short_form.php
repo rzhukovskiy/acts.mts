@@ -154,12 +154,42 @@ use yii\jui\AutoComplete;
                             }
 
                             ?>
-                            <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $newServiceList, ['class' => 'form-control']) ?>
+                            <?php
+                            $setVal = '';
+
+                            if(isset($partnerScopes)) {
+                                for ($sV = 0; $sV < count($partnerScopes); $sV++) {
+
+                                    if(($sV + 1) == count($partnerScopes)) {
+                                        $setVal .= $partnerScopes[$sV]->service_id;
+                                    } else {
+                                        $setVal .= $partnerScopes[$sV]->service_id . "+";
+                                    }
+
+                                }
+                            }
+
+                            echo Html::dropDownList("Act[serviceList][0][service_id]", $setVal, $newServiceList, ['class' => 'form-control']); ?>
                         <?php } else { ?>
-                            <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control', 'placeholder' => 'Услуга']) ?>
+                            <?php
+                            $setVal = '';
+
+                            if(isset($partnerScopes)) {
+                                for ($sV = 0; $sV < count($partnerScopes); $sV++) {
+
+                                    if(($sV + 1) == count($partnerScopes)) {
+                                        $setVal .= $partnerScopes[$sV]->description;
+                                    } else {
+                                        $setVal .= $partnerScopes[$sV]->description . "+";
+                                    }
+
+                                }
+                            }
+
+                            echo Html::textInput("Act[serviceList][0][description]", $setVal, ['class' => 'form-control', 'placeholder' => 'Услуга']); ?>
                         <?php } ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][price]", 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][amount]", (isset($partnerScopes[0]->amount)) ? $partnerScopes[0]->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                        <?= Html::hiddenInput("Act[serviceList][0][price]", (isset($partnerScopes[0]->price)) ? $partnerScopes[0]->price : 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Цена']) ?>
                     </div>
                 </td>
                 <td>
