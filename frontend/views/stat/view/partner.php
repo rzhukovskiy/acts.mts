@@ -226,7 +226,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                         }
                     ],
                     axisX: {
-                        title: 'Месяц',
+                        title: '',
                         titleFontSize: 14,
                         titleFontColor: '#069',
                         titleFontWeight: 'bol',

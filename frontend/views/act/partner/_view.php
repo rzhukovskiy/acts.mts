@@ -53,11 +53,17 @@
             </tr>
         </table>
 
-        <div class="form-group" style="margin-top: 20px;">
+        <?php
+
+        $is_act_sign = \common\models\Company::find()->where(['id' => $model->partner_id])->select('is_act_sign')->column();
+
+        if((($model->service_type == 4) && ($is_act_sign == 1)) || ($model->service_type != 4)) { ?>
+
+            <div class="form-group" style="margin-top: 20px;">
             <span class="sign">
                     По качеству работы претензий не имею.
             </span>
-        </div>
+            </div>
 
         <div class="form-group" style="margin-top: 20px;">
             <table class="sign">
@@ -86,5 +92,8 @@
                 </tr>
             </table>
         </div>
+
+        <?php } ?>
+
     </div>
 </div>
