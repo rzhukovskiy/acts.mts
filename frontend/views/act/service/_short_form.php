@@ -19,19 +19,49 @@ if (!empty($serviceList)) {
     $fixedList = json_encode(Service::find()
         ->andWhere(['type' => $model->service_type])
         ->select('is_fixed')->indexBy('id')->column());
-    
+
+    // получаем значение фиксированных цен
+    $compServList = json_encode(CompanyService::find()->where('`company_id`=' . Yii::$app->user->identity->company_id)->select('price')->indexBy('service_id')->orderBy('service_id ASC')->column());
+
     $script = <<< JS
     var serviceList = $fixedList;
-    $('.scope-price').hide();
+    var compServList = $compServList;
+    //$('.scope-price').hide();
+    
+    for (var i = 0; i < $('.scope-price').length; i++) {
+        
+        var fixed = serviceList[$('.scope-service').eq(i).val()];
+        
+        if(fixed > 0) {
+            $('.scope-price').eq(i).attr('readonly', true);
+        } else {
+        $('.scope-price').eq(i).attr('readonly', false);
+        }
+        
+        fixed = 1;
+        
+    }
 
     $(document).on('change', '.scope-service', function () {
         var fixed = serviceList[$(this).val()];
         if (fixed > 0) {
-            $(this).parent().parent().find('.scope-price').hide();
+            //$(this).parent().parent().find('.scope-price').hide();
+            $(this).parent().parent().find('.scope-price').attr('readonly', true);
+            
+            if ((typeof(compServList[$(this).val()]) != "undefined") && (compServList[$(this).val()] !== null)) {
+            $(this).parent().parent().find('.scope-price').val(compServList[$(this).val()]);
+            } else {
+            $(this).parent().parent().find('.scope-price').val('0');
+            }
+            
         } else {
-            $(this).parent().parent().find('.scope-price').show();
+            //$(this).parent().parent().find('.scope-price').show();
+            $(this).parent().parent().find('.scope-price').attr('readonly', false);
+            $(this).parent().parent().find('.scope-price').val('');
         }
+        
     });
+    
 JS;
     $this->registerJs($script, View::POS_READY);
 }
