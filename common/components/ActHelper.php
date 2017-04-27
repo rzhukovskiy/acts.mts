@@ -234,7 +234,7 @@ class ActHelper
                 'template' => '{update}',
                 'buttons' => [
                     'update' => function ($url, $data, $key) {
-                        return ($data->created_at > time() - 3600 * 3) ? Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $data->id, 'company' => 1]) : '';
+                        return ($data->created_at > (time() - 3600 * 3)) ? Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $data->id, 'company' => 1]) : '';
                     },
                 ],
                 'width' => '40px',
