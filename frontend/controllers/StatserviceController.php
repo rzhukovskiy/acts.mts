@@ -34,17 +34,17 @@ class StatserviceController extends Controller
                         'roles' => [User::ROLE_ADMIN]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act'],
+                        'actions' => [],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act','list'],
+                        'actions' => ['view', 'company'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act'],
+                        'actions' => [],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT]
                     ]
