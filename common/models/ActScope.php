@@ -50,7 +50,7 @@ class ActScope extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'actsCount'    => 'Обслуживания',
+            'actsCount'    => 'Выполнений',
         ];
     }
 
