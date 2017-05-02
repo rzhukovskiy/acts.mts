@@ -103,7 +103,6 @@ class StatserviceController extends Controller
             $dataProvider->query ->andWhere(['>', '`act`.`client_id`', '0']);
         }
 
-        $dataProvider->query ->andWhere(['between', '`act_scope`.`created_at`', $dateFrom, $dateTo]);
         $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
 
         $dataProvider->query->groupBy('`client_id`, `description`');

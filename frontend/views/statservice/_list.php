@@ -216,12 +216,11 @@ $js = "
             var summComp = [];
             var index = 0;
             
+            var labelArr = [];
+            var vallabelArr = [];
+            
             $('.table tbody tr').each(function (id, value) {
             if($(this).find('.value_0').text() != '') {
-                dataTable.push({
-                    label: $(this).find('.value_0').text(),
-                    y: parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', '')),
-                });
 
                     valArr[index] = parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
                     idArr[index] = $(this).find('.value_2');
@@ -235,11 +234,32 @@ $js = "
                     summComp[indexIdComp] = parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
                     }
                     
+                    var checkHave = false;
+                    for(var i = 0; i < labelArr.length; i++) {
+                    if(labelArr[i] == $(this).find('.value_0').text()) {
+                    vallabelArr[i] += parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
+                    checkHave = true;
+                    }
+                    }
+                    
+                    if(checkHave == false) {
+                    labelArr[index] = $(this).find('.value_0').text();
+                    vallabelArr[index] = parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
+                    }
+                    
                     indexIdComp = 0;
                     index++;
                     
                 }
             });
+            
+            for(var i = 0; i < labelArr.length; i++) {
+                dataTable.push({
+                    label: labelArr[i],
+                    y: vallabelArr[i],
+                });
+            }
+            
             console.log(dataTable);
             var options = {
                 title: {
