@@ -106,7 +106,7 @@ class StatserviceController extends Controller
         $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
 
         $dataProvider->query->groupBy('`client_id`, `description`');
-        $dataProvider->query->orderBy('`client_id` ASC');
+        $dataProvider->query->orderBy('`client_id` ASC, `description` DESC');
 
         return $this->render('list',
             [
