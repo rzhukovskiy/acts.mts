@@ -130,6 +130,7 @@ $columns = [
     ],
     [
         'label' => 'Услуга',
+        'contentOptions' => ['class' => 'value_0'],
         'pageSummary' => 'Всего',
         'content' => function ($data) {
             return $data->description;
@@ -146,13 +147,16 @@ $columns = [
     ],
     [
         'attribute' => 'actsCount',
+        'contentOptions' => ['class' => 'value_1'],
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
     ],
     [
         'label' => '%',
+        'contentOptions' => ['class' => 'value_2'],
         'content' => function ($data) {
-            return 0;
+            $data = Act::find()->where(['`act`.`id`' => $data->act_id])->select('`client_id`')->column();
+            return (isset($data[0])) ? $data[0] : 0;
         },
     ],
 ];
@@ -218,19 +222,19 @@ $js = "
             if($(this).find('.value_0').text() != '') {
                 dataTable.push({
                     label: $(this).find('.value_0').text(),
-                    y: parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', '')),
+                    y: parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', '')),
                 });
 
-                    valArr[index] = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
-                    idArr[index] = $(this).find('.value_3');
-                    idComp[index] = $(this).find('.value_3').text();
+                    valArr[index] = parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
+                    idArr[index] = $(this).find('.value_2');
+                    idComp[index] = $(this).find('.value_2').text();
                     
-                    var indexIdComp = parseInt($(this).find('.value_3').text().replace(/\s+/g, '').replace(',', ''));
+                    var indexIdComp = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
                     
                     if(summComp[indexIdComp] > 0) {
-                    summComp[indexIdComp] += parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    summComp[indexIdComp] += parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
                     } else {
-                    summComp[indexIdComp] = parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', ''));
+                    summComp[indexIdComp] = parseInt($(this).find('.value_1').text().replace(/\s+/g, '').replace(',', ''));
                     }
                     
                     indexIdComp = 0;
