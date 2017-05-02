@@ -69,8 +69,9 @@ class StatserviceController extends Controller
             'pagination' => false,
         ]);
 
-        $dataProvider->query->select('`act_scope`.*, `act`.*, SUM(`act_scope`.`price`) AS `price`, COUNT(DISTINCT `act_scope`.`act_id`) as actsCount');
+        $dataProvider->query->select('SUM(`act`.`income`) AS `price`, COUNT(`act_scope`.`id`) as actsCount, `client_id`, `description`, `name`');
         $dataProvider->query->innerJoin('act', '`act_scope`.`act_id`=`act`.`id`');
+        $dataProvider->query->innerJoin('company', '`act`.`client_id`=`company`.`id`');
         $dataProvider->query ->andWhere(['`act`.`service_type`' => $type]);
 
         $dateFrom = '';
@@ -105,8 +106,8 @@ class StatserviceController extends Controller
         $dataProvider->query ->andWhere(['between', '`act_scope`.`created_at`', $dateFrom, $dateTo]);
         $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
 
-        $dataProvider->query->groupBy('`act`.`client_id`, `act_scope`.`service_id`');
-        $dataProvider->query->orderBy('`act`.`client_id` ASC');
+        $dataProvider->query->groupBy('`client_id`, `description`');
+        $dataProvider->query->orderBy('`client_id` ASC');
 
         return $this->render('list',
             [

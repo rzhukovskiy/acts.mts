@@ -120,8 +120,7 @@ $columns = [
     [
         'attribute' => 'client_id',
         'content' => function ($data) {
-            $data = Act::find()->where(['`act`.`id`' => $data->act_id])->join('INNER JOIN', '`company`', '`company`.`id` = `act`.`client_id`')->select('`company`.`name`')->column();
-            return isset($data[0]) ? $data[0] : 'Клиент не найден';
+            return $data->name;
         },
         'group' => true,
         'groupedRow' => true,
@@ -155,8 +154,7 @@ $columns = [
         'label' => '%',
         'contentOptions' => ['class' => 'value_2'],
         'content' => function ($data) {
-            $data = Act::find()->where(['`act`.`id`' => $data->act_id])->select('`client_id`')->column();
-            return (isset($data[0])) ? $data[0] : 0;
+            return $data->client_id;
         },
     ],
 ];

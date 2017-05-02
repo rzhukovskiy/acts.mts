@@ -33,6 +33,8 @@ class ActScope extends ActiveRecord
 {
 
     public $actsCount;
+    public $name;
+    public $client_id;
 
     /**
      * @inheritdoc
