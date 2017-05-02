@@ -114,6 +114,33 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'service',
                 ],
                 [
+                    'label'  => 'Статистика услуг',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'statservice',
+                    'items'  => [
+                        [
+                            'label'  => 'Компании',
+                            'url'    => ['/statservice/company?type=' . Company::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'company')),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_WASH]['ru'],
+                            'url'    => ['/statservice/list?type=' . Company::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_WASH)),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_SERVICE]['ru'],
+                            'url'    => ['/statservice/list?type=' . Company::TYPE_SERVICE],
+                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_SERVICE)),
+                        ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_TIRES]['ru'],
+                            'url'    => ['/statservice/list?type=' . Company::TYPE_TIRES],
+                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_TIRES)),
+                        ],
+                    ],
+                ],
+                [
                     'label'  => 'Пользователи',
                     'url'    => ['/user/list', 'type' => Company::TYPE_OWNER],
                     'active' => Yii::$app->controller->id == 'user',

@@ -31,12 +31,25 @@ use yii\db\ActiveRecord;
  */
 class ActScope extends ActiveRecord
 {
+
+    public $actsCount;
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%act_scope}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'actsCount'    => 'Обслуживания',
+        ];
     }
 
     /**
