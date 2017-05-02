@@ -69,8 +69,8 @@ class StatserviceController extends Controller
             'pagination' => false,
         ]);
 
-        $dataProvider->query->select('SUM(`act`.`income`) AS `price`, COUNT(`act_scope`.`id`) as actsCount, `client_id`, `description`, `name`');
-        $dataProvider->query->innerJoin('act', '`act_scope`.`act_id`=`act`.`id`');
+        $dataProvider->query->select('SUM(`act_scope`.`price`) AS `price`, COUNT(DISTINCT `act_id`) as actsCount, `client_id`, `description`, `name`');
+        $dataProvider->query->innerJoin('act', '`act_scope`.`act_id`=`act`.`id` AND `act_scope`.`company_id` != `act`.`partner_id`');
         $dataProvider->query->innerJoin('company', '`act`.`client_id`=`company`.`id`');
         $dataProvider->query ->andWhere(['`act`.`service_type`' => $type]);
 
