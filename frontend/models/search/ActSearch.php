@@ -100,12 +100,6 @@ class ActSearch extends Act
     {
         $query = static::find();
 
-        // Если не выбран период то показываем только текущий год
-        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
-            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
-            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
-        }
-
         $query->addSelect([
             "DATE(FROM_UNIXTIME(served_at)) as dateMonth",
             'COUNT(' . Act::tableName() . '.id) AS countServe',
@@ -176,12 +170,6 @@ class ActSearch extends Act
     public function searchTotal($params)
     {
         $query = static::find();
-
-        // Если не выбран период то показываем только текущий год
-        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
-            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
-            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
-        }
 
         $query->addSelect([
             'COUNT(' . Act::tableName() . '.id) AS countServe',

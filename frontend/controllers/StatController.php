@@ -142,7 +142,19 @@ class StatController extends Controller
         $viewName = $this->selectTemplate();
 
         $searchModel = new ActSearch();
-        $searchModel->load(Yii::$app->request->queryParams);
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
+            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
+            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
+        }
+
+        $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
+        $searchModel->dateTo = $params['ActSearch']['dateTo'];
+
+        $searchModel->load($params);
         $searchModel->scenario = 'statistic_client_filter';
 
         /** @var Company $companyModel */
@@ -151,7 +163,7 @@ class StatController extends Controller
 
         $this->view->title = 'Статистика "' . $companyModel->name;
 
-        $dataProvider = $searchModel->searchTypeByMonth(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchTypeByMonth($params);
 
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
@@ -344,8 +356,19 @@ class StatController extends Controller
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_partner_filter';
 
-        $dataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
-        $chartDataProvider = $searchModel->searchTotal(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
+            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
+            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
+        }
+
+        $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
+        $searchModel->dateTo = $params['ActSearch']['dateTo'];
+
+        $dataProvider = $searchModel->searchTotal($params);
+        $chartDataProvider = $searchModel->searchTotal($params);
         $dataProvider->pagination = false;
         $dataProvider->query->joinWith(['client client']);
         $chartDataProvider->query->joinWith(['client client']);
