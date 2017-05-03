@@ -56,8 +56,6 @@ class StatserviceController extends Controller
     public function actionCompany($type)
     {
 
-        // Нужно делать вместо поиска по актам поиск по услугам а иннер джоин акт и тип = , group по company_id
-
         $searchModel = new ActSearch();
 
         $query = ActScope::find();
@@ -119,6 +117,63 @@ class StatserviceController extends Controller
 
     public function actionList($type)
     {
+
+        $searchModel = new ActSearch();
+
+        $query = ActScope::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->query->select('SUM(`act_scope`.`price`) AS `price`, COUNT(DISTINCT `act_id`) as actsCount, `partner_id`, `description`, `name`');
+        $dataProvider->query->innerJoin('act', '`act_scope`.`act_id`=`act`.`id` AND `act_scope`.`company_id` = `act`.`partner_id`');
+        $dataProvider->query->innerJoin('company', '`act`.`partner_id`=`company`.`id`');
+        $dataProvider->query ->andWhere(['`act`.`service_type`' => $type]);
+
+        $dateFrom = '';
+        if(isset(Yii::$app->request->queryParams['ActSearch']['dateFrom'])) {
+            $dateFrom = Yii::$app->request->queryParams['ActSearch']['dateFrom'];
+        } else {
+            $dateFrom = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
+        }
+        $searchModel->dateFrom = $dateFrom;
+        $dateFrom = strtotime($dateFrom);
+
+        $dateTo = '';
+        if(isset(Yii::$app->request->queryParams['ActSearch']['dateTo'])) {
+            $dateTo = Yii::$app->request->queryParams['ActSearch']['dateTo'];
+        } else {
+            $dateTo = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+        }
+        $searchModel->dateTo = $dateTo;
+        $dateTo = strtotime($dateTo);
+
+        if(isset(Yii::$app->request->queryParams['ActSearch']['partner_id'])) {
+            if(Yii::$app->request->queryParams['ActSearch']['partner_id'] > 0) {
+                $dataProvider->query->andWhere(['`act`.`partner_id`' => Yii::$app->request->queryParams['ActSearch']['partner_id']]);
+                $searchModel->partner_id = Yii::$app->request->queryParams['ActSearch']['partner_id'];
+            } else {
+                $dataProvider->query ->andWhere(['>', '`act`.`partner_id`', '0']);
+            }
+        } else {
+            $dataProvider->query ->andWhere(['>', '`act`.`partner_id`', '0']);
+        }
+
+        $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
+
+        $dataProvider->query->groupBy('`partner_id`, `description`');
+        $dataProvider->query->orderBy('`partner_id` ASC, actsCount DESC');
+
+        return $this->render('partnerList',
+            [
+                'type'                => $type,
+                'searchModel'         => $searchModel,
+                'dataProvider'        => $dataProvider,
+            ]);
 
     }
 
