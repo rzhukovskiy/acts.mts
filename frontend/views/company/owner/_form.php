@@ -55,7 +55,7 @@ use common\models\Requisites;
                 $existed = $model->isNewRecord ? null : Requisites::findOne(['company_id' => $model->id, 'type' => $id])
             ?>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" style="font-size: larger"><?=$type['ru']?></label>
+                    <label class="col-sm-offset-2 col-sm-6" style="font-size: larger"><?=$type['ru']?></label>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Договор</label>
