@@ -22,11 +22,11 @@ echo Tabs::widget([
             ],
             'active' => false,
         ],
-        [
+        /*[
             'label'  => 'Редактирование',
             'url'    => ['update', 'id' => $model->id],
             'active' => false,
-        ],
+        ],*/
         [
             'label'  => 'Детализация',
             'url'    => '#',

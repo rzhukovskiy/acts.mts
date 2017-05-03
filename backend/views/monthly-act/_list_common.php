@@ -134,7 +134,7 @@ echo GridView::widget([
             'buttons' => [
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                        ['/monthly-act/update', 'id' => $model->id]);
+                        ['/monthly-act/detail', 'id' => $model->id]);
                 },
                 'call' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-earphone"></span>',
