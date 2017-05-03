@@ -12,6 +12,13 @@ use common\models\Service;
  */
 ?>
 
+<?php
+$script = <<< JS
+    $('.field-service-type').hide(); 
+JS;
+$this->registerJs($script);
+?>
+
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $model->isNewRecord ? 'Добавление услуги' : 'Редактирование услуги ' . $model->description ?>
@@ -28,7 +35,7 @@ use common\models\Service;
             ],
         ]); ?>
 
-        <?= $form->field($model, 'type')->dropDownList(ArrayHelper::map(Service::$listType, 'id', 'ru'), ['disabled' => true]) ?>
+        <?= $form->field($model, 'type')->dropDownList(ArrayHelper::map(Service::$listType, 'id', 'ru')) ?>
 
         <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
