@@ -254,10 +254,12 @@ $js = "
             });
             
             for(var i = 0; i < labelArr.length; i++) {
+            if((labelArr[i] != undefined) && (vallabelArr[i] != undefined)) {
                 dataTable.push({
                     label: labelArr[i],
                     y: vallabelArr[i],
                 });
+                }
             }
             
             console.log(dataTable);
