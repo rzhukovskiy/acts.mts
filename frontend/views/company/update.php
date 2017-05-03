@@ -51,8 +51,8 @@ if ($model->type == Company::TYPE_OWNER) {
         'dataProvider' => $model->getCardDataProvider(),
     ]);
 
-    echo $this->render('partner-exclude/_form',
+/*    echo $this->render('partner-exclude/_form',
         [
             'model' => $model,
-        ]);
+        ]);*/
 }
