@@ -252,10 +252,11 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'buttons' => [
 
                         'view' => function ($url, $model, $key) use ($group) {
+
                             if ($group == 'partner')
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group]);
 
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client->id, 'type' => $model->service_type, 'group' => $group]);
+                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
                         }
                     ]
                 ],
