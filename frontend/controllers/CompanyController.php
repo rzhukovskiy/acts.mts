@@ -34,12 +34,12 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view','editprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view','editprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -115,6 +115,12 @@ class CompanyController extends Controller
                 ''
             ]);
         }
+    }
+
+    public function actionEditprice($id)
+    {
+        //return json_encode(['message' => $id]);
+        return 1;
     }
 
     /**

@@ -120,7 +120,7 @@ $columns = [
     [
         'attribute' => 'partner_id',
         'content' => function ($data) {
-            return $data->name;
+            return $data->name . ' - ' . $data->address;
         },
         'group' => true,
         'groupedRow' => true,

@@ -34,6 +34,7 @@ class ActScope extends ActiveRecord
 
     public $actsCount;
     public $name;
+    public $address;
     public $client_id;
     public $partner_id;
 
