@@ -28,7 +28,7 @@ use common\models\Service;
             ],
         ]); ?>
 
-        <?= $form->field($model, 'type')->dropDownList(ArrayHelper::map(Service::$listType, 'id', 'ru')) ?>
+        <?= $form->field($model, 'type')->dropDownList(ArrayHelper::map(Service::$listType, 'id', 'ru'), ['disabled' => true]) ?>
 
         <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
