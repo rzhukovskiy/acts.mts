@@ -221,7 +221,11 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) use ($group) {
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/list', 'type' => $model->service_type, 'group' => $group]);
+                            if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/list', 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                            } else {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/list', 'type' => $model->service_type, 'group' => $group]);
+                            }
                         },
                     ]
                 ],

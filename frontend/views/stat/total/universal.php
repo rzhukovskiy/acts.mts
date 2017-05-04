@@ -188,10 +188,19 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'template' => '{view}',
                     'buttons' => [
                         'view' => function ($url, $model, $key) use ($group, $modelType) {
-                            if ($modelType == 'client')
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
-
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
+                            if ($modelType == 'client') {
+                                if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                } else {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->client->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
+                                }
+                                } else {
+                                if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                } else {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/month', 'id' => $model->partner->id, 'date' => date('Y-m', strtotime($model->dateMonth)), 'type' => $model->service_type, 'group' => $group]);
+                                }
+                            }
                         }
                     ]
                 ],
