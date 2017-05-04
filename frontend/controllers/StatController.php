@@ -57,7 +57,19 @@ class StatController extends Controller
     {
         $searchModel = new ActSearch();
         $searchModel->scenario = 'statistic_partner_filter';
-        $dataProvider = $searchModel->searchByType(Yii::$app->request->queryParams);
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
+            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
+            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
+        }
+
+        $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
+        $searchModel->dateTo = $params['ActSearch']['dateTo'];
+
+        $dataProvider = $searchModel->searchByType($params);
 
         // Уточнение для текущего набора данных
         $dataProvider->pagination = false;

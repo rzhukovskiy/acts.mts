@@ -107,7 +107,7 @@ $periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters
     'class' => 'autoinput form-control',
     'style' => $diff == 3 ? '' : 'display:none'
 ]);
-$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
+$periodForm .= Html::dropDownList('year', $currentYear, range(date('Y'), date('Y') - 10), [
     'id' => 'year',
     'class' => 'autoinput form-control',
     'style' => $diff && $diff <= 12 ? '' : 'display:none'
@@ -253,10 +253,20 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
                         'view' => function ($url, $model, $key) use ($group) {
 
-                            if ($group == 'partner')
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group]);
+                            if ($group == 'partner') {
+                                if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                } else {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group]);
+                                }
+                            } else {
+                                if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                } else {
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
+                                }
+                            }
 
-                            return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
                         }
                     ]
                 ],
