@@ -5,7 +5,7 @@
  * @var $type int
  */
 
-use yii\grid\GridView;
+use kartik\grid\GridView;
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => '{items}',
@@ -28,6 +28,21 @@ echo GridView::widget([
                 return $data->service->description;
             },
         ],
-        'price',
+        [
+            'attribute' => 'price',
+            'class'=>'kartik\grid\EditableColumn',
+            'readonly'=> false,
+            'options' => [
+                'style' => 'width: 250px',
+            ],
+            'editableOptions'=> function ($data) {
+                return [
+                    'formOptions' => ['action' => ['/company/editprice?service_id=' . $data->id]],
+                    'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+                    'options'=>[
+                        'pluginOptions'=>['min' => 0, 'max' => 99999],
+                    ]
+                ];},
+        ],
     ],
 ]);

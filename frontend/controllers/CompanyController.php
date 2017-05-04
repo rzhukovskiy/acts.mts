@@ -122,8 +122,14 @@ class CompanyController extends Controller
         $editableIndex = Yii::$app->request->post('editableIndex');
         $newPrice = Yii::$app->request->post('CompanyService');
 
-        foreach ($newPrice[$editableIndex]['price'] as $key => $value) {
-            $newPrice = $value;
+        if(!is_numeric($newPrice[$editableIndex]['price']) > 0) {
+
+            foreach ($newPrice[$editableIndex]['price'] as $key => $value) {
+                $newPrice = $value;
+            }
+
+        } else {
+            $newPrice = $newPrice[$editableIndex]['price'];
         }
 
         if(($service_id > 0) && ($newPrice >= 0)) {
