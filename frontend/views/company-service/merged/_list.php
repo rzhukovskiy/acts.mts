@@ -5,7 +5,6 @@
  * @var $type int
  */
 
-use kartik\grid\EditableColumn;
 use kartik\grid\GridView;
 use common\models\Service;
 
@@ -43,22 +42,24 @@ $columns = [
 ];
 
 foreach (Service::findAll(['type' => $type]) as $service) {
+
     $columns[] = [
         'header' => $service->description,
-        'attribute' => 'price',
+        'attribute' => 'price[' . $service->id . ']',
         'class'=>'kartik\grid\EditableColumn',
         'readonly'=> false,
-        'editableOptions'=>[
-            'header'=>$service->description,
-            'formOptions' => ['action' => ['/company/editprice?id=' . 5 . '&type=' . $service->type . '&idService=' . $service->id]],
-            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-            'options'=>[
-                'pluginOptions'=>['min' => 0, 'max' => 99999]
-            ]
-        ],
         'value' => function ($data) use($service) {
             return $data->getPriceForService($service->id);
         },
+        'editableOptions'=> function ($data) use($service) {
+            return [
+            'header'=>$service->description,
+            'formOptions' => ['action' => ['/company/editprice?service_id=' . $data->getIdForService($service->id)]],
+            'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+            'options'=>[
+                'pluginOptions'=>['min' => 0, 'max' => 99999],
+            ]
+        ];},
     ];
 }
 

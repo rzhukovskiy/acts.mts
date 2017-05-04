@@ -117,10 +117,31 @@ class CompanyController extends Controller
         }
     }
 
-    public function actionEditprice($id)
+    public function actionEditprice($service_id)
     {
-        //return json_encode(['message' => $id]);
-        return 1;
+        $editableIndex = Yii::$app->request->post('editableIndex');
+        $newPrice = Yii::$app->request->post('CompanyService');
+
+        foreach ($newPrice[$editableIndex]['price'] as $key => $value) {
+            $newPrice = $value;
+        }
+
+        if(($service_id > 0) && ($newPrice >= 0)) {
+
+            $companyService = CompanyService::findOne($service_id);
+            $companyService->price = $newPrice;
+
+            if ($companyService->save()) {
+                return 1;
+            } else {
+                return json_encode(['message' => 'Ошибка системы']);
+            }
+        } else if($service_id == 0) {
+            return json_encode(['message' => 'Услугу нужно добавить.']);
+        } else {
+            return json_encode(['message' => 'Ошибка системы']);
+        }
+
     }
 
     /**
