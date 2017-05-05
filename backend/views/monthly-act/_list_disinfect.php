@@ -7,6 +7,7 @@
  */
 use common\models\MonthlyAct;
 use kartik\grid\GridView;
+use common\models\CompanyInfo;
 use yii\helpers\Html;
 
 echo GridView::widget([
@@ -110,7 +111,58 @@ echo GridView::widget([
                 ];
             },
         ],
-        'payment_date',
+        [
+            'header' => 'Дни до оплаты',
+            //'attribute' => 'payment_date',
+            'value' => function ($data) {
+
+                $getPay = CompanyInfo::find()->where(['company_id' => $data->client_id])->select('pay')->column();
+
+                if (isset($getPay[0])) {
+
+                    if(mb_strlen($getPay[0]) > 5) {
+
+                        $arrPayData = explode(' ', $getPay[0]);
+
+                        if ((count($arrPayData) == 3) && (is_numeric($arrPayData[0]))) {
+
+                            $selpayDay = $arrPayData[0];
+
+                            if($arrPayData[1] == 'банковских') {
+
+                                $dayOld = 0;
+                                $timeAct = $data->created_at;
+
+                                while ($timeAct < time()) {
+
+                                    $timeAct += 86400;
+
+                                    if((date('w', $timeAct) != 0) && (date('w', $timeAct) != 6)) {
+                                        $dayOld++;
+                                    }
+
+                                }
+
+                                return ($selpayDay - $dayOld) >= 1 ? ((int) ($selpayDay - $dayOld)) : 0;
+
+                            } else if($arrPayData[1] == 'календарных') {
+                                return ($selpayDay - ((time() - $data->created_at) / 86400)) >= 1 ? ((int) ($selpayDay - ((time() - $data->created_at) / 86400))) : 0;
+                            }
+
+                        } else {
+                            return '-';
+                        }
+
+                    } else {
+                        return '-';
+                    }
+
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
         'act_status'     => [
             'attribute'      => 'act_status',
             'value'          => function ($model, $key, $index, $column) {
