@@ -109,6 +109,49 @@ class CompanyInfoController extends Controller
         }
     }
 
+    public function actionUpdatepay($id)
+    {
+        $hasEditable = Yii::$app->request->post('hasEditable');
+
+        if($hasEditable == 1) {
+            $newDayCont = Yii::$app->request->post('CompanyInfo');
+
+            if((isset($newDayCont['payTypeDay'])) && (isset($newDayCont['payDay']))) {
+
+                $newDayType = $newDayCont['payTypeDay'];
+                $newDay = $newDayCont['payDay'];
+
+                if (($newDayType >= 0) && ($newDay >= 0)) {
+
+                    if($newDayType == 0) {
+                        $newDayType = ' банковских дней.';
+                    } else {
+                        $newDayType = ' календарных дней.';
+                    }
+
+                    $companyInfo = CompanyInfo::findOne($id);
+                    $companyInfo->pay = $newDay . $newDayType;
+
+                    if ($companyInfo->save()) {
+                        return json_encode(['output' => $newDay . $newDayType, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+            } else {
+                return json_encode(['message' => 'не получилось']);
+            }
+
+        } else {
+            return 1;
+        }
+
+    }
+
     /**
      * Deletes an existing CompanyInfo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

@@ -32,6 +32,8 @@ class CompanyInfo extends ActiveRecord
 {
     private $contract_date_str;
     private $fullAddress;
+    public $payTypeDay;
+    public $payDay;
     private $comment;
 
     /**
@@ -71,6 +73,8 @@ class CompanyInfo extends ActiveRecord
             'contract' => 'Номер договора',
             'contract_date_str' => 'Дата заключения договора',
             'comment' => 'Комментарий',
+            'payTypeDay' => 'Тип дней',
+            'payDay' => 'Количество дней',
         ];
     }
 

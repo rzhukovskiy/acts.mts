@@ -6,6 +6,7 @@
  */
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
+use yii\helpers\Html;
 
 ?>
 
@@ -60,22 +61,55 @@ use kartik\popover\PopoverX;
             <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('pay') ?></td>
                 <td>
-                    <?= Editable::widget([
+                    <?php $editableForm = Editable::begin([
                         'model' => $modelCompanyInfo,
                         'buttonsTemplate' => '{submit}',
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'pay',
+                        'displayValue' => $modelCompanyInfo->pay,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'options' => ['class' => 'form-control', 'placeholder' => 'дни оплаты'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'дни оплаты', 'style' => 'display:none;'],
                         'formOptions' => [
-                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                            'action' => ['/company-info/updatepay', 'id' => $modelCompanyInfo->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
+                    ]);
+
+                    $form = $editableForm->getForm();
+                    echo Html::hiddenInput('kv-complex', '1');
+
+                    $selpayTypeDay = '';
+                    $selpayDay = '';
+
+                    if(mb_strlen($modelCompanyInfo->pay) > 5) {
+
+                        $arrPayData = explode(' ', $modelCompanyInfo->pay);
+
+                        if((count($arrPayData) == 3) && (is_numeric($arrPayData[0]))) {
+                            $selpayDay = $arrPayData[0];
+
+                            if($arrPayData[1] == 'банковских') {
+                                $selpayTypeDay = 0;
+                            }
+
+                            if($arrPayData[1] == 'календарных') {
+                                $selpayTypeDay = 1;
+                            }
+
+                        }
+
+                    }
+
+                    $editableForm->afterInput =
+                        $form->field($modelCompanyInfo, 'payTypeDay')->dropDownList([0 => 'Банковские дни', 1 => 'Календарные дни'], ['options'=>[$selpayTypeDay => ['Selected'=>true]]]) .
+                        $form->field($modelCompanyInfo, 'payDay')->dropDownList([3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45], ['options'=>[$selpayDay => ['Selected'=>true]]]);
+                    Editable::end();
+
+                    ?>
                 </td>
             </tr>
             <tr>
