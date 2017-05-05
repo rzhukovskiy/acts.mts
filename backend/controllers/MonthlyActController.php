@@ -57,7 +57,19 @@ class MonthlyActController extends Controller
         $searchModel = new MonthlyActSearch();
         $searchModel->type_id = $type;
 
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+
+        if(isset($params['filterStatus'])) {
+
+            if($params['filterStatus'] == 1) {
+                $searchModel->payment_status = 0;
+            } else if($params['filterStatus'] == 2) {
+                $searchModel->act_status = 15;
+            }
+
+        }
+
+        $dataProvider = $searchModel->search($params);
         //Запоминаем
         $this->setSessionDate($searchModel->act_date);
 

@@ -17,6 +17,8 @@ class MonthlyActSearch extends MonthlyAct
 {
     public $dateFrom;
     public $dateTo;
+    public $payment_status;
+    public $act_status;
     public $period;
     public $createDay;
     public $dateMonth;
@@ -31,7 +33,7 @@ class MonthlyActSearch extends MonthlyAct
             [['client_id', 'type_id'], 'integer'],
             [['act_date'], 'string'],
             ['act_date', 'default', 'value' => date('n-Y', strtotime('-1 month'))],
-            [['dateFrom', 'dateTo', 'dateMonth'], 'safe'],
+            [['dateFrom', 'dateTo', 'dateMonth', 'payment_status'], 'safe'],
         ];
     }
 
@@ -93,9 +95,16 @@ class MonthlyActSearch extends MonthlyAct
             'company.type_id'                          => $this->type_id,
             'DATE_FORMAT(`act_date`, "%c-%Y")' => $this->act_date,
             'company.is_partner'                       => $this->is_partner,
+            'company.payment_status'                   => $this->payment_status,
             'company.created_at'                       => $this->created_at,
             'company.updated_at'                       => $this->updated_at,
         ]);
+
+        // фильтр не подписанные
+        if($this->act_status == 15) {
+            $query->andFilterWhere(['!=', 'company.act_status', 5]);
+            $query->andFilterWhere(['!=', 'company.act_status', 4]);
+        }
 
         //
         $query->innerJoin('{{%act}}');

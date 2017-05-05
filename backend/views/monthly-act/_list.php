@@ -7,6 +7,7 @@
  */
 use common\models\MonthlyAct;
 use common\models\Service;
+use yii\helpers\Html;
 use common\models\User;
 use kartik\date\DatePicker;
 
@@ -89,6 +90,21 @@ $filters = 'Период: ' . DatePicker::widget([
         ]
     ]);
 //Настройки кнопок
+
+// Кнопки не оплачен и не подписан
+if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
+    $filters .= Html::a('<span class="btn btn-danger btn-sm" style="margin-left: 15px;">Не оплаченные</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')) . '&filterStatus=' . 1);
+} else {
+    $filters .= Html::a('<span class="btn btn-danger btn-sm" style="margin-left: 15px;">Не оплаченные</span>', Yii::$app->request->url . '&filterStatus=' . 1);;
+}
+
+if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
+    $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')) . '&filterStatus=' . 2);
+} else {
+    $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', Yii::$app->request->url . '&filterStatus=' . 2);;
+}
+// Кнопки не оплачен и не подписан
+
 if (Yii::$app->user->can(User::ROLE_ADMIN)) {
     $visibleButton = [];
 } else {
