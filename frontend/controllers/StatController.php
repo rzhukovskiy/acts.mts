@@ -183,11 +183,7 @@ class StatController extends Controller
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
 
-            if($companyModel->id == 154) {
-                $dataProvider->query
-                    ->andWhere(['client_id' => $companyModel->id])
-                    ->joinWith('client client');
-            } else if($companyModel->id == 59) {
+            if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
                 $queryPar = Company::find()->where(['parent_id' => 154])->all();
 
@@ -290,7 +286,7 @@ class StatController extends Controller
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
 
-            if($companyModel->id == 59) {
+            if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
                 $queryPar = Company::find()->where(['parent_id' => 154])->all();
 
@@ -380,7 +376,7 @@ class StatController extends Controller
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER)
 
-            if($companyModel->id == 59) {
+            if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
                 $queryPar = Company::find()->where(['parent_id' => 154])->all();
 
@@ -486,7 +482,7 @@ class StatController extends Controller
         $identity = Yii::$app->user->identity;
         if ($identity->role == User::ROLE_CLIENT) {
 
-            if($identity->company_id == 59) {
+            if(($identity->company_id == 59) || ($identity->company_id == 154)) {
 
                 $queryPar = Company::find()->where(['parent_id' => 154])->all();
 
