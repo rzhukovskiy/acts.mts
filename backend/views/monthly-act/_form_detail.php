@@ -62,6 +62,7 @@ use yii\helpers\Html;
             </div>
         </div>
 
+        <?= $form->field($model, 'payment_comment')->textarea(['class' => 'form-control']) ?>
 
         <?= $form->field($model, 'act_we_get_date')->widget(DatePicker::classname(),
             [
@@ -76,7 +77,7 @@ use yii\helpers\Html;
                     'value' => date('d-m-Y'),
                 ]
             ])->error(false) ?>
-        <?= $form->field($model, 'payment_comment')->textarea(['class' => 'form-control']) ?>
+
         <?= $form->field($model, 'payment_estimate_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,
