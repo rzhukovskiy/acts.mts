@@ -103,6 +103,8 @@ if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
 } else {
     $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', Yii::$app->request->url . '&filterStatus=' . 2);;
 }
+
+$filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')));
 // Кнопки не оплачен и не подписан
 
 if (Yii::$app->user->can(User::ROLE_ADMIN)) {
