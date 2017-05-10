@@ -105,37 +105,31 @@ echo GridView::widget([
 
                 if (isset($getPay[0])) {
 
-                    if(mb_strlen($getPay[0]) > 5) {
+                    $arrPayData = explode(':', $getPay[0]);
 
-                        $arrPayData = explode(' ', $getPay[0]);
+                    if(count($arrPayData) > 1) {
 
-                        if ((count($arrPayData) == 3) && (is_numeric($arrPayData[0]))) {
+                        $selpayDay = $arrPayData[1];
 
-                            $selpayDay = $arrPayData[0];
+                        if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
 
-                            if($arrPayData[1] == 'банковских') {
+                            $dayOld = 0;
+                            $timeAct = $data->created_at;
 
-                                $dayOld = 0;
-                                $timeAct = $data->created_at;
+                            while ($timeAct < time()) {
 
-                                while ($timeAct < time()) {
+                                $timeAct += 86400;
 
-                                    $timeAct += 86400;
-
-                                    if((date('w', $timeAct) != 0) && (date('w', $timeAct) != 6)) {
-                                        $dayOld++;
-                                    }
-
+                                if ((date('w', $timeAct) != 0) && (date('w', $timeAct) != 6)) {
+                                    $dayOld++;
                                 }
 
-                                return ($selpayDay - $dayOld) >= 1 ? ((int) ($selpayDay - $dayOld)) : 0;
-
-                            } else if($arrPayData[1] == 'календарных') {
-                                return ($selpayDay - ((time() - $data->created_at) / 86400)) >= 1 ? ((int) ($selpayDay - ((time() - $data->created_at) / 86400))) : 0;
                             }
 
-                        } else {
-                            return '-';
+                            return ($selpayDay - $dayOld) >= 1 ? ((int)($selpayDay - $dayOld)) : 0;
+
+                        } else if (($arrPayData[0] == 1) || ($arrPayData[0] == 3)) {
+                            return ($selpayDay - ((time() - $data->created_at) / 86400)) >= 1 ? ((int)($selpayDay - ((time() - $data->created_at) / 86400))) : 0;
                         }
 
                     } else {
