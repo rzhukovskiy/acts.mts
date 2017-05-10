@@ -187,6 +187,42 @@ class StatController extends Controller
                 $dataProvider->query
                     ->andWhere(['client_id' => $companyModel->id])
                     ->joinWith('client client');
+            } else if($companyModel->id == 59) {
+
+                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+
+                $arrParParIds = '';
+                $numArrPar = 0;
+
+                for ($i = 0; $i < count($queryPar); $i++) {
+
+                    if($numArrPar == 0) {
+                        $arrParParIds .= $queryPar[$i]['id'];
+                    } else {
+                        $arrParParIds .= ', ' . $queryPar[$i]['id'];
+                    }
+
+                    $numArrPar++;
+
+                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+
+                        if($numArrPar == 0) {
+                            $arrParParIds .= $queryParPar[$j]['id'];
+                        } else {
+                            $arrParParIds .= ', ' . $queryParPar[$j]['id'];
+                        }
+
+                        $numArrPar++;
+                    }
+
+                }
+
+                $dataProvider->query
+                    ->andWhere('(`client`.`parent_id`=' . $companyModel->id . ') OR (`client_id`=' . $companyModel->id . ') OR (`client_id` IN  (' . $arrParParIds . '))')
+                    ->joinWith('client client');
+
             } else {
                 $dataProvider->query
                     ->andWhere('(`client`.`parent_id`=' . $companyModel->id . ') OR (`client_id`=' . $companyModel->id . ')')
@@ -195,7 +231,7 @@ class StatController extends Controller
         }
         else {
             $dataProvider->query
-                ->andWhere(['partner_id' => $companyModel->id,])
+                ->andWhere(['partner_id' => $companyModel->id])
                 ->with('partner');
         }
 
@@ -253,10 +289,40 @@ class StatController extends Controller
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
-            $dataProvider->query
-                ->addSelect('client_id')
-                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
-                ->joinWith('client client');
+
+            if($companyModel->id == 59) {
+
+                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+
+                $arrParParIds = [];
+
+                for ($i = 0; $i < count($queryPar); $i++) {
+
+                    $arrParParIds[] = $queryPar[$i]['id'];
+
+                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+
+                        $arrParParIds[] = $queryParPar[$j]['id'];
+
+                    }
+
+                }
+
+                $dataProvider->query
+                    ->addSelect('client_id')
+                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id], ['client_id' => $arrParParIds]])
+                    ->joinWith('client client');
+
+            } else {
+
+                $dataProvider->query
+                    ->addSelect('client_id')
+                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
+                    ->joinWith('client client');
+
+            }
         }
         else {
             $dataProvider->query
@@ -313,10 +379,41 @@ class StatController extends Controller
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER)
-            $dataProvider->query
-                ->addSelect('client_id')
-                ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
-                ->joinWith('client client');
+
+            if($companyModel->id == 59) {
+
+                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+
+                $arrParParIds = [];
+
+                for ($i = 0; $i < count($queryPar); $i++) {
+
+                    $arrParParIds[] = $queryPar[$i]['id'];
+
+                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+
+                        $arrParParIds[] = $queryParPar[$j]['id'];
+
+                    }
+
+                }
+
+                $dataProvider->query
+                    ->addSelect('client_id')
+                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id], ['client_id' => $arrParParIds]])
+                    ->joinWith('client client');
+
+            } else {
+
+                $dataProvider->query
+                    ->addSelect('client_id')
+                    ->andWhere(['or', ['client.parent_id' => $companyModel->id], ['client_id' => $companyModel->id]])
+                    ->joinWith('client client');
+
+            }
+
         else
             $dataProvider->query
                 ->addSelect('partner_id')
@@ -388,10 +485,41 @@ class StatController extends Controller
         /** @var User $identity */
         $identity = Yii::$app->user->identity;
         if ($identity->role == User::ROLE_CLIENT) {
-            $dataProvider->query
-                ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
-            $chartDataProvider->query
-                ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
+
+            if($identity->company_id == 59) {
+
+                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+
+                $arrParParIds = [];
+
+                for ($i = 0; $i < count($queryPar); $i++) {
+
+                    $arrParParIds[] = $queryPar[$i]['id'];
+
+                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+
+                        $arrParParIds[] = $queryParPar[$j]['id'];
+
+                    }
+
+                }
+
+                $dataProvider->query
+                    ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id], ['client_id' => $arrParParIds]]);
+                $chartDataProvider->query
+                    ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id], ['client_id' => $arrParParIds]]);
+
+            } else {
+
+                $dataProvider->query
+                    ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
+                $chartDataProvider->query
+                    ->andWhere(['or', ['client.parent_id' => $identity->company_id], ['client_id' => $identity->company_id]]);
+
+            }
+
         }
         if ($identity->role == User::ROLE_PARTNER) {
             $dataProvider->query->andWhere(['partner_id' => $identity->company_id]);
