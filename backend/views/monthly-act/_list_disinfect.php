@@ -122,7 +122,7 @@ echo GridView::widget([
 
                     $arrPayData = explode(':', $getPay[0]);
 
-                    if(count($arrPayData) > 1) {
+                    if((count($arrPayData) > 1) && ($arrPayData[0] != 4)) {
 
                         $selpayDay = $arrPayData[1];
 

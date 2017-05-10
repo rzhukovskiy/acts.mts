@@ -122,11 +122,15 @@ class CompanyInfoController extends Controller
                 $newDay = $newDayCont['payDay'];
                 $newPrePaid = '';
 
+                if($newDayType == 4) {
+                    $newDay = 3;
+                }
+
                 if (($newDayType >= 0) && ($newDay >= 0)) {
 
                     if(isset($newDayCont['prePaid'])) {
 
-                        if(($newDayCont['prePaid'] != '') && ($newDayCont['prePaid'] != ' ') && (($newDayType == 2) || ($newDayType == 3)) && ($newDayCont['prePaid'] > 0)) {
+                        if(($newDayCont['prePaid'] != '') && ($newDayCont['prePaid'] != ' ') && (($newDayType == 2) || ($newDayType == 3) || ($newDayType == 4)) && ($newDayCont['prePaid'] > 0)) {
                             $newPrePaid = ':' . $newDayCont['prePaid'];
                         }
 
@@ -143,14 +147,20 @@ class CompanyInfoController extends Controller
 
                         if(count($arrPayData) > 1) {
 
-                            if (count($arrPayData) == 3) {
-                                $stringRes .= $arrPayData[2] . ' руб. + ';
-                            }
-
-                            if(($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
-                                $stringRes .= $arrPayData[1] . ' банковских дней';
+                            if($arrPayData[0] == 4) {
+                                $stringRes = 'Аванс ' . $arrPayData[2] . ' руб.';
                             } else {
-                                $stringRes .= $arrPayData[1] . ' календарных дней';
+
+                                if (count($arrPayData) == 3) {
+                                    $stringRes .= $arrPayData[2] . ' руб. + ';
+                                }
+
+                                if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+                                    $stringRes .= $arrPayData[1] . ' банковских дней';
+                                } else {
+                                    $stringRes .= $arrPayData[1] . ' календарных дней';
+                                }
+
                             }
 
                         }
