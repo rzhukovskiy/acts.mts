@@ -88,7 +88,23 @@ class CompanyOfferController extends Controller
         if ($hasEditable) {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $checkClearCommStr = false;
+
+            if(isset(Yii::$app->request->post()['CompanyOffer']['communication_str'])) {
+                if(Yii::$app->request->post()['CompanyOffer']['communication_str'] == '') {
+                    $checkClearCommStr = true;
+                }
+            }
+
+            if ($checkClearCommStr == true) {
+                $model->communication_at = '';
+                if($model->save()) {
+                    return json_encode(['output' => '', 'message' => '']);
+                } else {
+                    return ['message' => 'не получилось'];
+                }
+
+            } else if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 $output = [];
                 foreach (Yii::$app->request->post('CompanyOffer') as $name => $value) {
                     if ($name == 'process') {
