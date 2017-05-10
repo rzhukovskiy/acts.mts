@@ -8,6 +8,26 @@ use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 use yii\helpers\Html;
 
+$script = <<< JS
+
+    if (($('.typeDay').val() == 0) || ($('.typeDay').val() == 1)) {
+        $('.field-companyinfo-prepaid').hide();
+    }
+
+$('.typeDay').on('change', function (e) {
+    var valueSelected = this.value;
+    
+    if ((valueSelected == 0) || (valueSelected == 1)) {
+        $('.field-companyinfo-prepaid').hide();
+    } else {
+        $('.field-companyinfo-prepaid').show();
+    }
+    
+});
+    
+JS;
+$this->registerJs($script);
+
 ?>
 
 <div class="panel panel-primary">
@@ -68,7 +88,7 @@ use yii\helpers\Html;
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'pay',
-                        'displayValue' => $modelCompanyInfo->pay,
+                        'displayValue' => $modelCompanyInfo->payData,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
@@ -82,31 +102,26 @@ use yii\helpers\Html;
                     $form = $editableForm->getForm();
                     echo Html::hiddenInput('kv-complex', '1');
 
+                    $arrPayData = explode(':', $modelCompanyInfo->pay);
+
                     $selpayTypeDay = '';
                     $selpayDay = '';
+                    $selprePaid = '';
 
-                    if(mb_strlen($modelCompanyInfo->pay) > 5) {
+                    if(count($arrPayData) > 1) {
+                        $selpayTypeDay = $arrPayData[0];
+                        $selpayDay = $arrPayData[1];
 
-                        $arrPayData = explode(' ', $modelCompanyInfo->pay);
-
-                        if((count($arrPayData) == 3) && (is_numeric($arrPayData[0]))) {
-                            $selpayDay = $arrPayData[0];
-
-                            if($arrPayData[1] == 'банковских') {
-                                $selpayTypeDay = 0;
-                            }
-
-                            if($arrPayData[1] == 'календарных') {
-                                $selpayTypeDay = 1;
-                            }
-
+                        if (count($arrPayData) == 3) {
+                            $selprePaid = $arrPayData[2];
                         }
 
                     }
 
                     $editableForm->afterInput =
-                        $form->field($modelCompanyInfo, 'payTypeDay')->dropDownList([0 => 'Банковские дни', 1 => 'Календарные дни'], ['options'=>[$selpayTypeDay => ['Selected'=>true]]]) .
-                        $form->field($modelCompanyInfo, 'payDay')->dropDownList([3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45], ['options'=>[$selpayDay => ['Selected'=>true]]]);
+                        $form->field($modelCompanyInfo, 'payTypeDay')->dropDownList([0 => 'Банковские дни', 1 => 'Календарные дни', 2 => 'Аванс + банковские дни', 3 => 'Аванс + календарные дни'], ['class' => 'form-control typeDay', 'options'=>[$selpayTypeDay => ['Selected'=>true]]]) .
+                        $form->field($modelCompanyInfo, 'payDay')->dropDownList([3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45], ['options'=>[$selpayDay => ['Selected'=>true]]]) .
+                        $form->field($modelCompanyInfo, 'prePaid')->textInput(['class' => 'form-control prePaid', 'value' => $selprePaid, 'type' => 'number', 'placeholder' => 'Сумма аванса']);
                     Editable::end();
 
                     ?>

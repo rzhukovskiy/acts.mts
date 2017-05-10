@@ -120,20 +120,42 @@ class CompanyInfoController extends Controller
 
                 $newDayType = $newDayCont['payTypeDay'];
                 $newDay = $newDayCont['payDay'];
+                $newPrePaid = '';
 
                 if (($newDayType >= 0) && ($newDay >= 0)) {
 
-                    if($newDayType == 0) {
-                        $newDayType = ' банковских дней';
-                    } else {
-                        $newDayType = ' календарных дней';
+                    if(isset($newDayCont['prePaid'])) {
+
+                        if(($newDayCont['prePaid'] != '') && ($newDayCont['prePaid'] != ' ') && (($newDayType == 2) || ($newDayType == 3)) && ($newDayCont['prePaid'] > 0)) {
+                            $newPrePaid = ':' . $newDayCont['prePaid'];
+                        }
+
                     }
 
                     $companyInfo = CompanyInfo::findOne($id);
-                    $companyInfo->pay = $newDay . $newDayType;
+                    $companyInfo->pay = $newDayType . ':' . $newDay . $newPrePaid;
 
                     if ($companyInfo->save()) {
-                        return json_encode(['output' => $newDay . $newDayType, 'message' => '']);
+
+                        $stringRes = '';
+
+                        $arrPayData = explode(':', $newDayType . ':' . $newDay . $newPrePaid);
+
+                        if(count($arrPayData) > 1) {
+
+                            if (count($arrPayData) == 3) {
+                                $stringRes .= $arrPayData[2] . ' руб. + ';
+                            }
+
+                            if(($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+                                $stringRes .= $arrPayData[1] . ' банковских дней';
+                            } else {
+                                $stringRes .= $arrPayData[1] . ' календарных дней';
+                            }
+
+                        }
+
+                        return json_encode(['output' => $stringRes, 'message' => '']);
                     } else {
                         return json_encode(['message' => 'не получилось']);
                     }

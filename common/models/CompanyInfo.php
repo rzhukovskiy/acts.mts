@@ -34,6 +34,7 @@ class CompanyInfo extends ActiveRecord
     private $fullAddress;
     public $payTypeDay;
     public $payDay;
+    public $prePaid;
     private $comment;
 
     /**
@@ -75,6 +76,7 @@ class CompanyInfo extends ActiveRecord
             'comment' => 'Комментарий',
             'payTypeDay' => 'Тип дней',
             'payDay' => 'Количество дней',
+            'prePaid' => 'Аванс',
         ];
     }
 
@@ -108,6 +110,32 @@ class CompanyInfo extends ActiveRecord
     public function setFullAddress($value)
     {
         $this->fullAddress = $value;
+    }
+
+    // Новый вывод сроков оплаты
+    public function getPayData()
+    {
+        $arrPayData = explode(':', $this->pay);
+
+        if(count($arrPayData) > 1) {
+
+            $stringRes = '';
+
+            if (count($arrPayData) == 3) {
+                $stringRes .= $arrPayData[2] . ' руб. + ';
+            }
+
+            if(($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+                $stringRes .= $arrPayData[1] . ' банковских дней';
+            } else {
+                $stringRes .= $arrPayData[1] . ' календарных дней';
+            }
+
+            return $stringRes;
+        } else {
+            return $this->pay;
+        }
+
     }
 
     public function getComment()
