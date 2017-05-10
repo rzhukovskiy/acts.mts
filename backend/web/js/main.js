@@ -68,7 +68,6 @@ this.checkAlerts = function(options) {
         });
     //setTimeout(checkAlerts, 10000);
 }
-
 //Навигационные кнопки
 function navigationButton() {
     $(function () {
@@ -96,48 +95,6 @@ function navigationButton() {
         );
     });
 }
-
-//звонок на номер
-function callNumber(number) {
-    var userAgent = new SIP.UA({
-        uri: '301@cc.mtransservice.ru',
-        wsServers: ['wss://cc.mtransservice.ru:7443'],
-        authorizationUser: '301',
-        password: 'ieza]Qu5ho'
-    });
-
-    var options = {
-        media: {
-            constraints: {
-                audio: true,
-                video: false
-            },
-        }
-    };
-
-    userAgent.invite('sip:' + number + '@cc.mtransservice.ru', options)
-}
-
 $(document).ready(function () {
     navigationButton();
-
-    if (navigator.webkitGetUserMedia) {
-        navigator.webkitGetUserMedia(
-            // Desired stream parameters
-            {
-                audio: true,
-                video: false
-            },
-            // Callback if success
-            function(stream) {
-                console.log('Stream:', stream);
-            },
-            // Callback if error
-            function(error) {
-                console.log('Error:', error);
-            }
-        );
-    } else {
-        console.log('navigator.webkitGetUserMedia not supported. Are you using latest Chrome/Chromium?');
-    }
 });

@@ -23,7 +23,9 @@ use yii\bootstrap\Modal;
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;
-                echo "<a onclick='callNumber(" .$phone . ");return false;'>$phone</a><br />";
+                echo "<a target='call' href='https://cc.mtransservice.ru/app/click_to_call/click_to_call.php?" .
+                    "src_cid_name=$code&src_cid_number=$code&dest_cid_name=&dest_cid_number=&src=$code&dest=$phone" .
+                    "&auto_answer=true&rec=false&ringback=us-ring'>$phone</a><br />";
             } ?>
         </td>
     </tr>

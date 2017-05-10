@@ -124,9 +124,9 @@ class CompanyInfoController extends Controller
                 if (($newDayType >= 0) && ($newDay >= 0)) {
 
                     if($newDayType == 0) {
-                        $newDayType = ' банковских дней.';
+                        $newDayType = ' банковских дней';
                     } else {
-                        $newDayType = ' календарных дней.';
+                        $newDayType = ' календарных дней';
                     }
 
                     $companyInfo = CompanyInfo::findOne($id);
