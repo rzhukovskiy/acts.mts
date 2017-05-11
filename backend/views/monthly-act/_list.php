@@ -15,7 +15,7 @@ $isAdmin = $admin ? 1 : 0;
 
 $idDataCol = 1;
 $numSelVal = 5;
-if ($type == Service::TYPE_DISINFECT) {
+if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
     $idDataCol = 5;
     $numSelVal = 6;
 }

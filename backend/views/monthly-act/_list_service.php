@@ -55,11 +55,11 @@ echo GridView::widget([
         ],
         [
             'attribute'         => 'client_id',
-            'group'             => true,  // enable grouping
-            'options'           => ['class' => 'kv-grouped-header'],
-            'groupedRow'        => true,  // enable grouping
-            'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
-            'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
+            //'group'             => true,  // enable grouping
+            //'options'           => ['class' => 'kv-grouped-header'],
+            //'groupedRow'        => true,  // enable grouping
+            //'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
+            //'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
             'value'             => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
