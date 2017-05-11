@@ -62,13 +62,13 @@ $.map($(".table tbody tr"), function(el) {
     arrayDataKey[i][2] = $(el).children("td:first").text();
     
     if($(el).children("td").eq(4).text() == "не задано") {
-    arrayDataKey[i][3] = 0;
+    arrayDataKey[i][3] = Number(0);
     } else {
     
     var numRange = $(el).children("td").eq(4).text();
     numRange = numRange.split(" ");
     
-    arrayDataKey[i][3] = numRange[0];
+    arrayDataKey[i][3] = Number(numRange[0]);
     }
     
     i++;
@@ -105,13 +105,13 @@ $.map($(".table tbody tr"), function(el) {
     arrayDataKey[i][2] = $(el).children("td:first").text();
     
     if($(el).children("td").eq(4).text() == "не задано") {
-    arrayDataKey[i][3] = 0;
+    arrayDataKey[i][3] = Number(0);
     } else {
     
     var numRange = $(el).children("td").eq(4).text();
     numRange = numRange.split(" ");
     
-    arrayDataKey[i][3] = numRange[0];
+    arrayDataKey[i][3] = Number(numRange[0]);
     }
     
     i++;
