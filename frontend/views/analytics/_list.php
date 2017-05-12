@@ -328,7 +328,7 @@ if ($group == 'average') {
 
             $srColOper = \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
 
-            if((Yii::$app->request->queryParams['ActSearch']['dateFrom']) && (Yii::$app->request->queryParams['ActSearch']['dateTo'])) {
+            if((isset(Yii::$app->request->queryParams['ActSearch']['dateFrom'])) && (isset(Yii::$app->request->queryParams['ActSearch']['dateTo']))) {
 
                 $resArr = Act::find()->where(['service_type' => $data->service_type])->andWhere(['client_id' => $data->client_id])->andWhere(['!=', 'type_id', 7])->andWhere(['!=', 'type_id', 8])->andWhere(['between', 'served_at', strtotime(Yii::$app->request->queryParams['ActSearch']['dateFrom']), strtotime(Yii::$app->request->queryParams['ActSearch']['dateTo'])])->select('*, COUNT(DISTINCT id) as actsCount')->groupBy(['DATE_FORMAT(DATE(FROM_UNIXTIME(served_at)), "%Y-%m")'])->all();
 
