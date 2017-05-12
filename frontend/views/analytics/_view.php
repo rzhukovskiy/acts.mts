@@ -29,7 +29,6 @@ if ($group == 'average') {
         [
             'header' => 'Месяц',
             'vAlign'=>'middle',
-            'pageSummary' => 'Всего',
             'contentOptions' => ['class' => 'value_0'],
             'filter' => Act::getDayList(),
             'value' => function ($data) {
@@ -57,8 +56,6 @@ if ($group == 'average') {
         [
             'header' => 'Обслужено',
             'vAlign'=>'middle',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM,
             'value' => function ($data) {
                 return $data->actsCount;
             },
@@ -66,8 +63,6 @@ if ($group == 'average') {
         [
             'header' => 'Среднее кол-во<br />операций на 1 ТС',
             'vAlign'=>'middle',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM,
             'contentOptions' => ['class' => 'value_2'],
             'value' => function ($data) {
                 $timeFrom = (date('Y', time()) - 1) . '-12-31 21:00:00';
@@ -158,7 +153,6 @@ echo GridView::widget([
     'summary' => false,
     'emptyText' => '',
     'floatHeader' => true,
-    'showPageSummary' => true,
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
