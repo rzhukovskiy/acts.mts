@@ -328,6 +328,25 @@ if ($group == 'average') {
             return \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
         }
     ];
+    $columns[6] = [
+        'header' => '',
+        'mergeHeader' => false,
+        'class' => 'kartik\grid\ActionColumn',
+        'template' => '{view}',
+        'width' => '40px',
+        'buttons' => [
+            'view' => function ($url, $data, $key) use ($group, $searchModel) {
+                return Html::a('<span class="glyphicon glyphicon-search"></span>', [
+                    'view',
+                    'group' => $group,
+                    'ActSearch[dateFrom]' => (date('Y', time()) - 1) . '-12-31T21:00:00.000Z',
+                    'ActSearch[dateTo]' => date('Y', time()) . '-12-31T21:00:00.000Z',
+                    'ActSearch[client_id]' => $data->client_id,
+                    'ActSearch[service_type]' => $searchModel->service_type,
+                ]);
+            },
+        ],
+    ];
 }
 if ($group == 'count') {
     $columns[2] = [

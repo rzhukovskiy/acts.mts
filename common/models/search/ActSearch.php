@@ -259,7 +259,24 @@ class ActSearch extends Act
                             }
 
                         } else {
-                            $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
+
+                            // МФП выдает неверную детальную среднюю статистику обслуживаний на 1тс
+                            if(isset(Yii::$app->request->queryParams['group'])) {
+                                if (Yii::$app->request->queryParams['group'] == 'average') {
+
+                                    if ($this->client_id == 154) {
+                                        $query->andFilterWhere(['client_id' => $this->client_id]);
+                                    } else {
+                                        $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
+                                    }
+
+                                } else {
+                                    $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
+                                }
+                            } else {
+                                $query->andFilterWhere(['OR', ['client.parent_id' => $this->client_id], ['client_id' => $this->client_id]]);
+                            }
+
                         }
 
                     }

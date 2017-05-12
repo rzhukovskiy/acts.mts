@@ -183,6 +183,11 @@ class AnalyticsController extends Controller
 
         }
 
+        if ($group == 'average') {
+            $dataProvider->query->addSelect('*, COUNT(DISTINCT act.id) as actsCount');
+            $dataProvider->query->groupBy(['DATE_FORMAT(DATE(FROM_UNIXTIME(act.served_at)), "%Y-%m")']);
+        }
+
         return $this->render('view', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -241,6 +246,8 @@ class AnalyticsController extends Controller
 
     public static function getWorkCars($company_id, $service_type, $showCarsWork = true, $actsCount = 0, $timeFrom = 0, $timeTo = 0)
     {
+
+        $sqlRows = '';
 
         // Получаем среднее количество операций
 
@@ -311,10 +318,13 @@ class AnalyticsController extends Controller
                     $averRes = $actsCount / count($arrayWorkCars);
 
                     // Отображаем только одно число после запатой
-                    $averRes = sprintf("%.1f", $averRes);
+                    //$averRes = round($averRes, 2);
+                    $averRes = sprintf("%.6f", $averRes);
 
-                    if ($averRes < 0.1) {
-                        $averRes = 0;
+                    $averRes = rtrim($averRes, '0');
+
+                    if(!(($averRes - floor($averRes)) > 0)) {
+                        $averRes = (int) $averRes;
                     }
 
                 } else {
