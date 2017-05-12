@@ -10,6 +10,8 @@ use kartik\grid\GridView;
 use common\models\CompanyInfo;
 use yii\helpers\Html;
 
+$GLOBALS['company'] = $company;
+
 echo GridView::widget([
     'id'               => 'monthly-act-grid',
     'dataProvider'     => $dataProvider,
@@ -119,25 +121,42 @@ echo GridView::widget([
 
                         $selpayDay = $arrPayData[1];
 
-                        if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+                        $company = $GLOBALS['company'];
 
-                            $dayOld = 0;
-                            $timeAct = $data->created_at;
+                        $dataFromAct = '';
 
-                            while ($timeAct < time()) {
+                        if($company) {
+                            $dataFromAct = date('Y-m-t', $data->created_at) . ' 00:00:01';
+                            $dataFromAct = strtotime($dataFromAct);
+                        } else {
+                            $dataFromAct = $data->created_at;
+                        }
 
-                                $timeAct += 86400;
+                        if((($company) && (time() > $dataFromAct)) || (!$company)) {
 
-                                if ((date('w', $timeAct) != 0) && (date('w', $timeAct) != 6)) {
-                                    $dayOld++;
+                            if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+
+                                $dayOld = 0;
+                                $timeAct = $dataFromAct;
+
+                                while ($timeAct < time()) {
+
+                                    $timeAct += 86400;
+
+                                    if ((date('w', $timeAct) != 0) && (date('w', $timeAct) != 6)) {
+                                        $dayOld++;
+                                    }
+
                                 }
 
+                                return ($selpayDay - $dayOld) >= 1 ? ((int)($selpayDay - $dayOld)) : 0;
+
+                            } else if (($arrPayData[0] == 1) || ($arrPayData[0] == 3)) {
+                                return ($selpayDay - ((time() - $dataFromAct) / 86400)) >= 1 ? ((int)($selpayDay - ((time() - $dataFromAct) / 86400))) : 0;
                             }
 
-                            return ($selpayDay - $dayOld) >= 1 ? ((int)($selpayDay - $dayOld)) : 0;
-
-                        } else if (($arrPayData[0] == 1) || ($arrPayData[0] == 3)) {
-                            return ($selpayDay - ((time() - $data->created_at) / 86400)) >= 1 ? ((int)($selpayDay - ((time() - $data->created_at) / 86400))) : 0;
+                        } else {
+                            return '-';
                         }
 
                     } else {

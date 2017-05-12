@@ -308,6 +308,7 @@ echo newerton\fancybox\FancyBox::widget([
             'searchModel' => $searchModel,
             'type' => $type,
             'admin' => $admin,
+            'company'      => $company,
             'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
@@ -318,6 +319,7 @@ echo newerton\fancybox\FancyBox::widget([
             'searchModel' => $searchModel,
             'type' => $type,
             'admin' => $admin,
+            'company'      => $company,
             'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
@@ -328,6 +330,7 @@ echo newerton\fancybox\FancyBox::widget([
             'searchModel' => $searchModel,
             'type' => $type,
             'admin' => $admin,
+            'company' => $company,
             'filters' => $filters,
             'visibleButton' => $visibleButton
         ]);
