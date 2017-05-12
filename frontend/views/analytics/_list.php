@@ -325,7 +325,21 @@ if ($group == 'average') {
     $columns[5] = [
         'header' => 'Среднее кол-во<br />операций на 1 ТС',
         'value' => function ($data) {
-            return \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
+
+            $srColOper = \frontend\controllers\AnalyticsController::getWorkCars($data->client->id, $data->service_type, false, $data->actsCount);
+
+            if((Yii::$app->request->queryParams['ActSearch']['dateFrom']) && (Yii::$app->request->queryParams['ActSearch']['dateTo'])) {
+
+                $resArr = Act::find()->where(['service_type' => $data->service_type])->andWhere(['client_id' => $data->client_id])->andWhere(['!=', 'type_id', 7])->andWhere(['!=', 'type_id', 8])->andWhere(['between', 'served_at', strtotime(Yii::$app->request->queryParams['ActSearch']['dateFrom']), strtotime(Yii::$app->request->queryParams['ActSearch']['dateTo'])])->select('*, COUNT(DISTINCT id) as actsCount')->groupBy(['DATE_FORMAT(DATE(FROM_UNIXTIME(served_at)), "%Y-%m")'])->all();
+
+                // Делим на количество месяцев в годе, полугоде и квартале
+                if(count($resArr) >= 3) {
+                    $srColOper = $srColOper / count($resArr);
+                }
+
+            }
+
+            return $srColOper;
         }
     ];
     $columns[6] = [
