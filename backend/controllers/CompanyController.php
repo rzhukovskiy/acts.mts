@@ -24,6 +24,7 @@ use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\Type;
 use common\models\User;
+use yii\helpers\Html;
 use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -43,12 +44,12 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver', 'delete', 'attribute', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'member', 'driver', 'delete', 'attribute', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
@@ -433,6 +434,162 @@ class CompanyController extends Controller
             'modelCompanyOffer' => $modelCompanyOffer,
             'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
         ]);
+    }
+
+    public function actionUpdatemember($id)
+    {
+        $hasEditable = Yii::$app->request->post('hasEditable');
+
+        if($hasEditable == 1) {
+            $arrCompanyMember = Yii::$app->request->post('CompanyMember');
+
+            if(isset($arrCompanyMember['name'][$id])) {
+
+                if(mb_strlen($arrCompanyMember['name'][$id]) > 1) {
+
+                    $newVal = $arrCompanyMember['name'][$id];
+
+                    $companyMember = CompanyMember::findOne($id);
+                    $companyMember->name = $newVal;
+
+                    if ($companyMember->save()) {
+                        return json_encode(['output' => $newVal, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+            } else if(isset($arrCompanyMember['email'][$id])) {
+
+                if(mb_strlen($arrCompanyMember['email'][$id]) > 1) {
+
+                    $newVal = $arrCompanyMember['email'][$id];
+
+                    $companyMember = CompanyMember::findOne($id);
+                    $companyMember->email = $newVal;
+
+                    if ($companyMember->save()) {
+                        return json_encode(['output' => $newVal, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+            } else if(isset($arrCompanyMember['position'][$id])) {
+
+                if(mb_strlen($arrCompanyMember['position'][$id]) > 1) {
+
+                    $newVal = $arrCompanyMember['position'][$id];
+
+                    $companyMember = CompanyMember::findOne($id);
+                    $companyMember->position = $newVal;
+
+                    if ($companyMember->save()) {
+                        return json_encode(['output' => $newVal, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+            } else if(isset($arrCompanyMember['phone'][$id])) {
+
+                if(mb_strlen($arrCompanyMember['phone'][$id]) > 1) {
+
+                    $newVal = $arrCompanyMember['phone'][$id];
+
+                    $companyMember = CompanyMember::findOne($id);
+                    $companyMember->phone = $newVal;
+
+                    if ($companyMember->save()) {
+                        return json_encode(['output' => '<span style="color:#3fad46;">Успешно</span>', 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+
+            } else {
+                return json_encode(['message' => 'не получилось']);
+            }
+
+            if((isset($newDayCont['payTypeDay'])) && (isset($newDayCont['payDay']))) {
+
+                $newDayType = $newDayCont['payTypeDay'];
+                $newDay = $newDayCont['payDay'];
+                $newPrePaid = '';
+
+                if($newDayType == 4) {
+                    $newDay = 3;
+                }
+
+                if (($newDayType >= 0) && ($newDay >= 0)) {
+
+                    if(isset($newDayCont['prePaid'])) {
+
+                        if(($newDayCont['prePaid'] != '') && ($newDayCont['prePaid'] != ' ') && (($newDayType == 2) || ($newDayType == 3) || ($newDayType == 4)) && ($newDayCont['prePaid'] > 0)) {
+                            $newPrePaid = ':' . $newDayCont['prePaid'];
+                        }
+
+                    }
+
+                    $companyInfo = CompanyInfo::findOne($id);
+                    $companyInfo->pay = $newDayType . ':' . $newDay . $newPrePaid;
+
+                    if ($companyInfo->save()) {
+
+                        $stringRes = '';
+
+                        $arrPayData = explode(':', $newDayType . ':' . $newDay . $newPrePaid);
+
+                        if(count($arrPayData) > 1) {
+
+                            if($arrPayData[0] == 4) {
+                                $stringRes = 'Аванс ' . $arrPayData[2] . ' руб.';
+                            } else {
+
+                                if (count($arrPayData) == 3) {
+                                    $stringRes .= $arrPayData[2] . ' руб. + ';
+                                }
+
+                                if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
+                                    $stringRes .= $arrPayData[1] . ' банковских дней';
+                                } else {
+                                    $stringRes .= $arrPayData[1] . ' календарных дней';
+                                }
+
+                            }
+
+                        }
+
+                        return json_encode(['output' => $stringRes, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+                } else {
+                    return json_encode(['message' => 'не получилось']);
+                }
+
+            } else {
+                return json_encode(['message' => 'не получилось']);
+            }
+
+        } else {
+            return 1;
+        }
+
     }
 
     public function actionStatus($id, $status)

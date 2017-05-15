@@ -2,7 +2,24 @@
 
 use common\models\CompanyMember;
 use yii\bootstrap\Html;
+use kartik\editable\Editable;
+use kartik\popover\PopoverX;
 use yii\bootstrap\Modal;
+
+$script = <<< JS
+
+// Обновляем страницу если был изменен номер сотрудника
+var numPencil = $(".phoneBody .glyphicon-pencil").length;
+
+$('.phoneBody').bind("DOMSubtreeModified",function(){
+    if($(".phoneBody .glyphicon-pencil").length != numPencil) {
+      location.reload();
+    }
+});
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
 
 /* @var $this yii\web\View
  * @var $model CompanyMember
@@ -11,15 +28,51 @@ use yii\bootstrap\Modal;
 <table class="table table-bordered">
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('name')?></td>
-        <td><?= $model->name ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'name[' . $model->id . ']',
+                'displayValue' => $model->name,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_RIGHT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите фио'],
+                'formOptions' => [
+                    'action' => ['/company/updatemember', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('position')?></td>
-        <td><?= $model->position ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'position[' . $model->id . ']',
+                'displayValue' => $model->position,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_RIGHT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите должность'],
+                'formOptions' => [
+                    'action' => ['/company/updatemember', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('phone')?></td>
-        <td>
+        <td class="phoneBody">
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;
@@ -27,12 +80,45 @@ use yii\bootstrap\Modal;
                     "src_cid_name=$code&src_cid_number=$code&dest_cid_name=&dest_cid_number=&src=$code&dest=$phone" .
                     "&auto_answer=true&rec=false&ringback=us-ring'>$phone</a><br />";
             } ?>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'phone[' . $model->id . ']',
+                'asPopover' => true,
+                'displayValue' => isset($model->phone) ? '<span class="glyphicon glyphicon-pencil"></span>' : '',
+                'placement' => PopoverX::ALIGN_RIGHT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер телефона'],
+                'formOptions' => [
+                    'action' => ['/company/updatemember', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
         </td>
     </tr>
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('email')?></td>
         <td>
-            <?= $model->email ?>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'email[' . $model->id . ']',
+                'displayValue' => $model->email,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_RIGHT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите электронную почту'],
+                'formOptions' => [
+                    'action' => ['/company/updatemember', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
             <?php
             Modal::begin([
                 'header' => '<h2>Отправка письма</h2>',
