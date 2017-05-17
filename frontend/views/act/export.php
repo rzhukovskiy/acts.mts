@@ -497,7 +497,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 } else {
                     $dataExpl = date('m-Y');
                 }
-
+print_r(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search]); echo '<br><br><br>';
                 $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
