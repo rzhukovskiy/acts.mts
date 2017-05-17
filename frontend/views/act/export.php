@@ -84,6 +84,12 @@ echo Tabs::widget([
 ]);
 
 $typeInt = $type;
+$companyInt = 0;
+
+if($company) {
+    $companyInt = 1;
+}
+
 $type = Service::$listType[$type]['en'];
 $time = \DateTime::createFromFormat('m-Y-d', $searchModel->period . '-01')->getTimestamp();
 $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-Y', $time);
@@ -152,7 +158,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -231,7 +237,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -274,7 +280,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -328,7 +334,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -407,7 +413,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -450,7 +456,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -492,7 +498,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -533,7 +539,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -575,7 +581,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -617,7 +623,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
@@ -658,7 +664,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $dataExpl = date('m-Y');
                 }
 
-                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+                $resActLoad = ActExport::find()->where(['type' => $typeInt, 'company' => $companyInt, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
 
                 if (count($resActLoad) > 0) {
                     if (isset($resActLoad[0])) {
