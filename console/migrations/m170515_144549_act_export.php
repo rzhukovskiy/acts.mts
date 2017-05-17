@@ -12,9 +12,9 @@ class m170515_144549_act_export extends Migration
             'company_id' => $this->integer(11),
             'type' => $this->integer(2),
             'company' => $this->integer(1),
-            'period' => $this->string(7),
-            'name' => $this->string(255),
-            'data_load' => $this->string(30)
+            'period' => $this->string(7)->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci'),
+            'name' => $this->string(255)->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci'),
+            'data_load' => $this->string(30)->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci')
         ]);
     }
 
