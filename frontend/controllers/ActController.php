@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\ActExport;
 use common\components\ActExporter;
 use common\components\ActHelper;
 use common\models\Act;
@@ -34,12 +35,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -114,6 +115,176 @@ class ActController extends Controller
         $lock->save();
 
         return "Открыть загрузку";
+    }
+
+    public function actionExportsave()
+    {
+
+        $type = (int) Yii::$app->request->post('type');
+        $company = (int) Yii::$app->request->post('company');
+        $dataExpl = (string) Yii::$app->request->post('dataExpl');
+        $name = (string) Yii::$app->request->post('name');
+
+        $company_id = 0;
+
+        if((isset($type)) && (isset($company)) && (isset($dataExpl)) && (isset($name))) {
+
+            $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $name])->select('id')->column();
+
+            if(count($resActLoad) > 0) {
+                // Файл уже скачивали
+                echo json_encode(['success' => 'true']);
+            } else {
+
+                $companyName = '';
+
+                // получаем название компании
+                if (strpos($name, 'оп._дезинфекция_Справка_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Справка_') + 45));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'оп._дезинфекция_Счет_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Счет_') + 39));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'оп._дезинфекция_Акт_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Акт_') + 37));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'езинфекция_Справка_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'дезинфекция_Справка_') + 38));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'езинфекция_Счет_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'дезинфекция_Счет_') + 32));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'езинфекция_Акт_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'дезинфекция_Акт_') + 30));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'кт_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'Акт_') + 7));
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'татистика_анализ_мо') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_мо') + 45));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'татистика_анализ_сервис_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_сервис_') + 47));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'татистика_анализ_шиномонтаж_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_шиномонтаж_') + 55));
+
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                } else if (strpos($name, 'чет_') > 0) {
+
+                    $companyName = substr($name, (strpos($name, 'Счет_') + 9));
+                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = str_replace('_', ' ', $companyName);
+
+                }
+
+                $companyName = trim($companyName);
+                $newCompanyName = str_replace('«', '"', $companyName);
+                $newCompanyName = str_replace('»', '"', $newCompanyName);
+
+                switch ($type) {
+                    case 1:
+                        break;
+                    case 2:
+                        $companyName = str_replace(' мойка ', '', $companyName);
+                        $newCompanyName = str_replace(' мойка ', '', $newCompanyName);
+                        break;
+                    case 3:
+                        $companyName = str_replace(' сервис ', '', $companyName);
+                        $newCompanyName = str_replace(' сервис ', '', $newCompanyName);
+
+                        $companyNameArr = explode(' - ', $companyName);
+
+                        if(count($companyNameArr) == 3) {
+                            $companyName = $companyNameArr[0];
+                            $companyName = trim($companyName);
+                        }
+
+                        $companyNameArr = explode(' - ', $newCompanyName);
+
+                        if(count($companyNameArr) == 3) {
+                            $newCompanyName = $companyNameArr[0];
+                            $newCompanyName = trim($newCompanyName);
+                        }
+
+                        break;
+                    case 4:
+                        $companyName = str_replace(' шиномонтаж ', '', $companyName);
+                        $newCompanyName = str_replace(' шиномонтаж ', '', $newCompanyName);
+                        break;
+                    case 5:
+                        break;
+                }
+
+                $companyArr = Company::find()->where(['name' => $companyName])->orWhere(['REPLACE(name, "\"", "")' => $companyName])->orWhere(['replace(REPLACE(name, "«", ""), "»" ,"")' => $companyName])->orWhere(['name' => $newCompanyName])->orWhere(['REPLACE(name, "\"", "")' => $newCompanyName])->orWhere(['replace(REPLACE(name, "«", ""), "»" ,"")' => $newCompanyName])->select('id')->column();
+
+                if(isset($companyArr)) {
+                    if (count($companyArr) > 0) {
+                        if(isset($companyArr[0])) {
+                            // получаем id компании
+                            $company_id = $companyArr[0];
+                        }
+                    }
+                }
+
+                // добавляем в базу дату первой выгрузки файла
+                $actExport = new ActExport();
+                $actExport->company_id = $company_id;
+                $actExport->type = $type;
+                $actExport->company = $company;
+                $actExport->period = $dataExpl;
+                $actExport->name = $name;
+                $actExport->data_load = ((string) time());
+
+                if($actExport->save()) {
+                    echo json_encode(['success' => 'true']);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
     }
 
     public function actionCloseload($type, $company, $period)

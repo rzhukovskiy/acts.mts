@@ -3,6 +3,8 @@ use common\models\Service;
 use yii\bootstrap\Tabs;
 use yii\helpers\FileHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use common\models\ActExport;
 
 /**
  * @var $this yii\web\View
@@ -13,6 +15,58 @@ use yii\helpers\Html;
 $this->title = 'Выгрузка актов';
 
 $request = Yii::$app->request;
+
+$actionLink = Url::to('@web/act/exportsave');
+
+$script = <<< JS
+
+    // Записываем в базу когда скачивался акт
+    
+    $(".loadAct").on('click', '*', function() {
+        var clickLink = $(this).attr('href');
+        
+        var type = $type;
+        var company = '';
+        
+        var splitLink = clickLink.split("/");
+        
+        var dataExpl = splitLink[5];
+        var name = splitLink[6];
+        
+        if(clickLink.lastIndexOf('client') > 0) {
+            company = 1;
+        } else {
+            company = 0;
+        }
+        
+        // Меняем статус на скачан
+        var statusFind = $('.statusLoad[data-name="' + $(this).parent().attr("data-name") + '"]');
+        statusFind.text('Скачан');
+        statusFind.css('color', '#3fad46');
+        // Меняем статус на скачан
+        
+        $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'type=' + type + '&company=' + company + '&dataExpl=' + dataExpl + '&name=' + name,
+                url  : '$actionLink',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+        
+    });
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 
 echo Tabs::widget([
     'items' => [
@@ -45,6 +99,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         $arrListFiles = [];
         $arrDopListFiles = [];
+        $arrStatusFile = [];
 
         $iA = 0;
         $idD = 0;
@@ -56,6 +111,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             $fileName = basename($file);
             $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));
             $fileName = str_replace('__', '_', $fileName);
+
+            $statusFile = 0;
 
             if (strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
 
@@ -74,6 +131,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
+
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                // Проверяем статус файла
 
                 if($pref == '') {
                     $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -126,6 +214,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                // Проверяем статус файла
+
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][8] = $file;
@@ -140,6 +259,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
+
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                // Проверяем статус файла
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -166,6 +316,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
+
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
 
                 if($pref == '') {
                     $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -218,6 +399,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
+
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][5] = $file;
@@ -233,6 +445,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
+
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][6] = $file;
@@ -247,6 +490,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
+
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][1] = $file;
@@ -259,6 +533,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
+
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -274,6 +579,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
+
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][2] = $file;
@@ -288,6 +624,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
+
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][2] = $file;
@@ -300,6 +667,37 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = substr($fileName, (strpos($fileName, 'Счет_') + 9));
                 $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
+
+                // Проверяем статус файла
+
+                $file_name_search = basename($file);
+                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+
+                $dataExpl = '';
+
+                if (isset(Yii::$app->request->get('ActSearch')['period'])) {
+                    $dataExpl = (string)Yii::$app->request->get('ActSearch')['period'];
+
+                    $dataExplArr = explode('-', $dataExpl);
+
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                        $dataExpl = 0 . $dataExpl;
+                    }
+
+                } else {
+                    $dataExpl = date('m-Y');
+                }
+
+                $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'name' => $file_name_search])->select('id')->column();
+
+                if (count($resActLoad) > 0) {
+                    if (isset($resActLoad[0])) {
+                        $statusFile = 1;
+                    }
+                }
+
+                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
 
@@ -315,7 +713,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         if($iA > 0) {
 
             $iz = 0;
-            $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">';
+            $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="4" style="padding: 3px 0px 3px 0px">';
 
             switch (Yii::$app->request->get('type')) {
                 case 2:
@@ -332,7 +730,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     break;
             }
 
-            $echoFiles .= '</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
+            $echoFiles .= '</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td><td width="110px" style="padding-left: 10px;">Статус</td></tr>';
 
             foreach ($arrListFiles as $key => $value) {
 
@@ -411,39 +809,75 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 }
 
                 if (isset($arrListFiles[$key][1])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][1]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][1]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][1]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][3])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][3]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][3]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][3]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][2])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][2]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][2]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][2]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][4])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][4]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][4]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][4]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][5])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][5]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][5]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][5]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][6])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][6]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][6]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][6]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][7])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][7]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][7]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][7]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][8])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][8]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][8]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][8]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][9])) {
-                    $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrListFiles[$key][9]) . '</td></tr>';
+
+                    $getFileName = explode('/' , $arrListFiles[$key][9]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrListFiles[$key][9]) . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][10])) {
@@ -451,7 +885,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     for ($i = 0; $i < count($tmpArrNames); $i++) {
                         if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
-                            $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+
+                            $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
+                            $getFileName = $getFileName[(count($getFileName) - 1)];
+                            
+                            $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
                         }
                     }
 
@@ -462,7 +900,121 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     for ($i = 0; $i < count($tmpArrNames); $i++) {
                         if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
-                            $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+
+                            $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
+                            $getFileName = $getFileName[(count($getFileName) - 1)];
+                            
+                            $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                        }
+                    }
+
+                }
+
+                $echoFiles .= '</table></td><td width="110px" style="padding:10px;"><table style="margin-top:19px;">';
+
+                if (isset($arrListFiles[$key][0])) {
+
+                    $echoFiles .= '<tr><td></td></tr>';
+
+                }
+
+                if (isset($arrListFiles[$key][1])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][1]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][3])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][3]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][2])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][2]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][4])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][4]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][5])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][5]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][6])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][6]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][7])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][7]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][8])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][8]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][9])) {
+
+                    $getFileName = explode('/' , $arrListFiles[$key][9]);
+                    $getFileName = $getFileName[(count($getFileName) - 1)];
+                    
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                }
+
+                if (isset($arrListFiles[$key][10])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][10]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
+
+                            $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
+                            $getFileName = $getFileName[(count($getFileName) - 1)];
+                            
+                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        }
+                    }
+
+                }
+
+                if (isset($arrListFiles[$key][11])) {
+                    $tmpArrNames = explode('-', $arrListFiles[$key][11]);
+
+                    for ($i = 0; $i < count($tmpArrNames); $i++) {
+                        if(isset($arrSpravki[$tmpArrNames[$i]][1])) {
+
+                            $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
+                            $getFileName = $getFileName[(count($getFileName) - 1)];
+                            
+                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                         }
                     }
 
@@ -481,7 +1033,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             if($idD > 0) {
                 $iz = 0;
 
-                $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-top: 20px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="3" style="padding: 3px 0px 3px 0px">Доп. дезинфекция</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td></tr>';
+                $echoFiles = '<div class="form-group grid-view"><div class="col-sm-12" style="margin-top: 20px;"><table border="1" bordercolor="#dddddd"><tr style="background: #428bca; color: #fff;"><td align="center" colspan="4" style="padding: 3px 0px 3px 0px">Доп. дезинфекция</td></tr><tr style="background: #eff6fc; color: #3079b5;"><td width="100px" style="padding-left: 10px;">№</td><td width="700px" style="padding: 3px 0px 3px 10px">Название организации</td><td width="80px" style="padding-left: 10px;">Файл</td><td width="110px" style="padding-left: 10px;">Статус</td></tr>';
 
                 foreach ($arrDopListFiles as $key => $value) {
 
@@ -560,39 +1112,75 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
 
                     if (isset($arrDopListFiles[$key][1])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][1]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][1]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][1]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][3])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][3]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][3]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][3]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][2])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][2]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][2]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][2]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][4])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][4]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][4]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][4]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][5])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][5]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][5]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][5]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][6])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][6]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][6]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][6]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][7])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][7]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][7]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][7]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][8])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][8]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][8]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][8]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][9])) {
-                        $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopListFiles[$key][9]) . '</td></tr>';
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][9]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopListFiles[$key][9]) . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][10])) {
@@ -600,7 +1188,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                         for ($i = 0; $i < count($tmpArrNames); $i++) {
                             if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
-                                $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+
+                                $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
+                                $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                                $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
                             }
                         }
 
@@ -611,7 +1203,121 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                         for ($i = 0; $i < count($tmpArrNames); $i++) {
                             if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
-                                $echoFiles .= '<tr><td>' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+
+                                $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
+                                $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                                $echoFiles .= '<tr><td class="loadAct" data-name="' . $getFileName . '">' . Html::a('Скачать', '/' . $arrDopSpravki[$tmpArrNames[$i]][1]) . '</td></tr>';
+                            }
+                        }
+
+                    }
+
+                    $echoFiles .= '</table></td><td width="110px" style="padding:10px;"><table style="margin-top:19px;">';
+
+                    if (isset($arrDopListFiles[$key][0])) {
+
+                        $echoFiles .= '<tr><td></td></tr>';
+
+                    }
+
+                    if (isset($arrDopListFiles[$key][1])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][1]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][3])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][3]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][2])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][2]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][4])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][4]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][5])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][5]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][6])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][6]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][7])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][7]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][8])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][8]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][9])) {
+
+                        $getFileName = explode('/' , $arrDopListFiles[$key][9]);
+                        $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    }
+
+                    if (isset($arrDopListFiles[$key][10])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][10]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
+
+                                $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
+                                $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                            }
+                        }
+
+                    }
+
+                    if (isset($arrDopListFiles[$key][11])) {
+                        $tmpArrNames = explode('-', $arrDopListFiles[$key][11]);
+
+                        for ($i = 0; $i < count($tmpArrNames); $i++) {
+                            if(isset($arrDopSpravki[$tmpArrNames[$i]][1])) {
+
+                                $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
+                                $getFileName = $getFileName[(count($getFileName) - 1)];
+
+                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                             }
                         }
 

@@ -9,8 +9,11 @@ use common\models\MonthlyAct;
 use kartik\grid\GridView;
 use common\models\CompanyInfo;
 use yii\helpers\Html;
+use common\models\ActExport;
+use common\models\Company;
 
 $GLOBALS['company'] = $company;
+$GLOBALS['type'] = $type;
 
 echo GridView::widget([
     'id' => 'monthly-act-grid',
@@ -103,6 +106,23 @@ echo GridView::widget([
             //'attribute' => 'payment_date',
             'value' => function ($data) {
 
+                $company_id = 0;
+                $company = $GLOBALS['company'];
+
+                if($company) {
+                    $company_id = $data->client_id;
+                } else {
+
+                    $arrCompany = Company::find()->where(['name' => $data->client->name])->select('id')->column();
+
+                    if(count($arrCompany) > 0) {
+                        if (isset($arrCompany[0])) {
+                            $company_id = $arrCompany[0];
+                        }
+                    }
+
+                }
+
                 $getPay = CompanyInfo::find()->where(['company_id' => $data->client_id])->select('pay')->column();
 
                 if (isset($getPay[0])) {
@@ -113,18 +133,40 @@ echo GridView::widget([
 
                         $selpayDay = $arrPayData[1];
 
-                        $company = $GLOBALS['company'];
-
                         $dataFromAct = '';
 
                         if($company) {
                             $dataFromAct = date('Y-m-t', $data->created_at) . ' 00:00:01';
                             $dataFromAct = strtotime($dataFromAct);
                         } else {
-                            $dataFromAct = $data->created_at;
+                            $type = $GLOBALS['type'];
+
+                            $dataExpl = '';
+
+                            if (isset(Yii::$app->request->get('MonthlyActSearch')['act_date'])) {
+                                $dataExpl = (string) Yii::$app->request->get('MonthlyActSearch')['act_date'];
+
+                                $dataExplArr = explode('-', $dataExpl);
+
+                                if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                                    $dataExpl = 0 . $dataExpl;
+                                }
+
+                            } else {
+                                $dataExpl = date('m-Y', strtotime("-1 month"));
+                            }
+
+                            $resActLoad = ActExport::find()->where(['type' => $type, 'company' => $company, 'period' => $dataExpl, 'company_id' => $company_id])->andWhere(['like', 'name', '_Акт_'])->select('data_load')->column();
+
+                            if (count($resActLoad) > 0) {
+                                if (isset($resActLoad[0])) {
+                                    $dataFromAct = $resActLoad[0];
+                                }
+                            }
+
                         }
 
-                        if((($company) && (time() > $dataFromAct)) || (!$company)) {
+                        if((($company) && ($dataFromAct != '') && (time() > $dataFromAct)) || ((!$company) && ($dataFromAct != '') && (time() > $dataFromAct))) {
 
                             if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
 
