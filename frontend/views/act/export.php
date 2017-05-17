@@ -689,8 +689,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         }
 
-        print_r($arrStatusFile);
-
         if($iA > 0) {
 
             $iz = 0;
