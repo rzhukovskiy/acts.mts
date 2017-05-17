@@ -113,6 +113,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));
             $fileName = str_replace('__', '_', $fileName);
 
+            $file_name_search = basename($file);
+            $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
             $statusFile = 0;
 
             if (strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
@@ -134,9 +136,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
-
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
 
                 $dataExpl = '';
 
@@ -217,9 +216,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -262,9 +258,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
-
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
 
                 $dataExpl = '';
 
@@ -319,9 +312,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
-
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
 
                 $dataExpl = '';
 
@@ -402,9 +392,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -448,9 +435,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -493,9 +477,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -536,9 +517,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
-
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
 
                 $dataExpl = '';
 
@@ -582,9 +560,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -627,9 +602,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -671,9 +643,6 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 // Проверяем статус файла
 
-                $file_name_search = basename($file);
-                $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
-
                 $dataExpl = '';
 
                 if (isset(Yii::$app->request->get('ActSearch')['period'])) {
@@ -708,6 +677,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
 
             }
+
+            $file_name_search = '';
 
         }
 
