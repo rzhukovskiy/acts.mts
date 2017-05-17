@@ -679,6 +679,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             }
 
             $file_name_search = '';
+            $statusFile = 0;
 
         }
 
