@@ -166,7 +166,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 if($pref == '') {
@@ -245,7 +245,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -288,7 +288,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][1] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrDopListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -342,7 +342,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 if($pref == '') {
@@ -421,7 +421,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -464,7 +464,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -506,7 +506,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -547,7 +547,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -589,7 +589,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -631,7 +631,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -672,7 +672,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     }
                 }
 
-                $arrStatusFile[str_replace(' ', '_', $tmpStrint)][0] = $statusFile;
+                $arrStatusFile[$file_name_search] = $statusFile;
                 // Проверяем статус файла
 
                 $arrListFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
@@ -902,7 +902,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][1]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][3])) {
@@ -910,7 +910,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][3]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][2])) {
@@ -918,7 +918,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][2]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][4])) {
@@ -926,7 +926,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][4]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][5])) {
@@ -934,7 +934,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][5]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][6])) {
@@ -942,7 +942,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][6]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][7])) {
@@ -950,7 +950,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][7]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][8])) {
@@ -958,7 +958,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][8]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][9])) {
@@ -966,7 +966,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                     $getFileName = explode('/' , $arrListFiles[$key][9]);
                     $getFileName = $getFileName[(count($getFileName) - 1)];
                     
-                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                    $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                 }
 
                 if (isset($arrListFiles[$key][10])) {
@@ -978,7 +978,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                             $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
                             $getFileName = $getFileName[(count($getFileName) - 1)];
                             
-                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                         }
                     }
 
@@ -993,7 +993,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                             $getFileName = explode('/' , $arrSpravki[$tmpArrNames[$i]][1]);
                             $getFileName = $getFileName[(count($getFileName) - 1)];
                             
-                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][0] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][0] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                            $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                         }
                     }
 
@@ -1205,7 +1205,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][1]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][3])) {
@@ -1213,7 +1213,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][3]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][2])) {
@@ -1221,7 +1221,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][2]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][4])) {
@@ -1229,7 +1229,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][4]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][5])) {
@@ -1237,7 +1237,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][5]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][6])) {
@@ -1245,7 +1245,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][6]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][7])) {
@@ -1253,7 +1253,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][7]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][8])) {
@@ -1261,7 +1261,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][8]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][9])) {
@@ -1269,7 +1269,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                         $getFileName = explode('/' , $arrDopListFiles[$key][9]);
                         $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                        $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                     }
 
                     if (isset($arrDopListFiles[$key][10])) {
@@ -1281,7 +1281,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                                 $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
                                 $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                             }
                         }
 
@@ -1296,7 +1296,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                                 $getFileName = explode('/' , $arrDopSpravki[$tmpArrNames[$i]][1]);
                                 $getFileName = $getFileName[(count($getFileName) - 1)];
 
-                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$key][1] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$key][1] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
+                                $echoFiles .= '<tr><td class="statusLoad" data-name="' . $getFileName . '" style="color:#' . (($arrStatusFile[$getFileName] == 1) ? '3fad46' : 'd9534f') . '">' . (($arrStatusFile[$getFileName] == 1) ? 'Скачан' : 'Не скачан') . '</td></tr>';
                             }
                         }
 
