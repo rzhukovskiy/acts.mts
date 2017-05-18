@@ -8,6 +8,29 @@ use common\models\Company;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
+$GLOBALS["typeName"] = '';
+
+switch ($type) {
+    case 1:
+        $GLOBALS["typeName"] = 'Компаний';
+        break;
+    case 2:
+        $GLOBALS["typeName"] = 'Моек';
+        break;
+    case 3:
+        $GLOBALS["typeName"] = 'Сервисов';
+        break;
+    case 4:
+        $GLOBALS["typeName"] = 'Шиномонтажей';
+        break;
+    case 5:
+        $GLOBALS["typeName"] = 'Дезинфекций';
+        break;
+    case 6:
+        $GLOBALS["typeName"] = 'Универсальных';
+        break;
+}
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -29,13 +52,15 @@ use yii\helpers\Html;
             'striped' => false,
             'export' => false,
             'summary' => false,
+            'showPageSummary' => true,
             'emptyText' => '',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'columns' => [
                 [
                     'header' => '№',
-                    'class' => 'yii\grid\SerialColumn'
+                    'pageSummary' => 'Всего',
+                    'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
                     'attribute' => 'address',
@@ -43,10 +68,29 @@ use yii\helpers\Html;
                     'groupedRow' => true,
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
+                    'value' => function ($data) {
+                        return $data->address;
+                    },
+                    'groupFooter' => function ($data) {
+                        return ['content'=>[
+                            0 => $GLOBALS["typeName"] . ':',
+                            //0 => 'Итого:',
+                            2 => GridView::F_COUNT,
+                        ],
+                        'contentFormats'=>[
+                            2 => ['format'=>'number'],
+                        ],
+                        'contentOptions' => [
+                            0 => ['style' => 'font-weight: bold'],
+                        ],
+                        ];
+                    },
                 ],
                 [
                     'header' => 'Организация',
                     'attribute' => 'name',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_COUNT,
                     'contentOptions' => function ($data) {
                         return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'font-weight: bold'] : [];
                     },
@@ -58,7 +102,7 @@ use yii\helpers\Html;
                     }
                 ],
                 [
-                    'class' => 'yii\grid\ActionColumn',
+                    'class' => 'kartik\grid\ActionColumn',
                     'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
                     'buttons' => [
