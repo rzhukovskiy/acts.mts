@@ -73,8 +73,8 @@ switch ($type) {
                     },
                     'groupFooter' => function ($data) {
                         return ['content'=>[
-                            0 => $GLOBALS["typeName"] . ':',
-                            //0 => 'Итого:',
+                            //0 => $GLOBALS["typeName"] . ':',
+                            0 => 'Итого:',
                             2 => GridView::F_COUNT,
                         ],
                         'contentFormats'=>[
