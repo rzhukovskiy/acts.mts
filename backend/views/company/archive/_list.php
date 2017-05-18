@@ -8,29 +8,6 @@ use common\models\Company;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
-$GLOBALS["typeName"] = '';
-
-switch ($type) {
-    case 1:
-        $GLOBALS["typeName"] = 'Компаний';
-        break;
-    case 2:
-        $GLOBALS["typeName"] = 'Моек';
-        break;
-    case 3:
-        $GLOBALS["typeName"] = 'Сервисов';
-        break;
-    case 4:
-        $GLOBALS["typeName"] = 'Шиномонтажей';
-        break;
-    case 5:
-        $GLOBALS["typeName"] = 'Дезинфекций';
-        break;
-    case 6:
-        $GLOBALS["typeName"] = 'Универсальных';
-        break;
-}
-
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -73,8 +50,7 @@ switch ($type) {
                     },
                     'groupFooter' => function ($data) {
                         return ['content'=>[
-                            0 => $GLOBALS["typeName"] . ':',
-                            //0 => 'Итого:',
+                            0 => 'Итого:',
                             2 => GridView::F_COUNT,
                         ],
                         'contentFormats'=>[
