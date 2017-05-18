@@ -72,15 +72,10 @@ switch ($type) {
                         return $data->address;
                     },
                     'groupFooter' => function ($model, $key, $index) {
-                        $finalText = $GLOBALS["typeName"] . ':';
-
-                        if(!$finalText) {
-                            $finalText = 1;
-                        }
 
                         return [
                             'content' => [
-                                0 => $finalText,
+                                0 => 1,
                                 //0 => 'Итого:',
                                 2 => GridView::F_COUNT,
                             ],
