@@ -78,12 +78,9 @@ switch ($type) {
                             2 => GridView::F_COUNT,
                         ],
                         'contentFormats'=>[
-                            0 => ['format'=>'callback'],
                             2 => ['format'=>'number'],
                         ],
-                        'contentOptions' => [
-                            0 => ['style' => 'font-weight: bold'],
-                        ],
+
                         ];
                     },
                 ],
