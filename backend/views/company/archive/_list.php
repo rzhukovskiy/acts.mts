@@ -71,8 +71,7 @@ switch ($type) {
                     'value' => function ($data) {
                         return $data->address;
                     },
-                    'groupFooter' => function ($model, $key, $index) {
-
+                    'groupFooter' => function ($data) {
                         return [
                             'content' => [
                                 2 => "Итого " . $GLOBALS["typeName"],
