@@ -75,15 +75,15 @@ switch ($type) {
 
                         return [
                             'content' => [
-                                '2' => (string) ("Итого " . $GLOBALS["typeName"]),
-                                3 => GridView::F_COUNT,
+                                2 => "Итого " . $GLOBALS["typeName"],
+                                3 => GridView::F_COUNT
                             ],
                             'contentFormats' => [
                                 2 => ['format' => 'text'],
-                                3 => ['format' => 'number'],
+                                3 => ['format' => 'number']
                             ],
                             'contentOptions' => [
-                                2 => ['style' => 'font-weight: bold;'],
+                                2 => ['style' => 'font-weight: bold;']
                             ],
                         ];
                     },
