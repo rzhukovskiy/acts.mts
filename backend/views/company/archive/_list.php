@@ -12,22 +12,22 @@ $GLOBALS["typeName"] = '';
 
 switch ($type) {
     case 1:
-        $GLOBALS["typeName"] = 'Компаний';
+        $GLOBALS["typeName"] = 'компаний:';
         break;
     case 2:
-        $GLOBALS["typeName"] = 'Моек';
+        $GLOBALS["typeName"] = 'моек:';
         break;
     case 3:
-        $GLOBALS["typeName"] = 'Сервисов';
+        $GLOBALS["typeName"] = 'сервисов:';
         break;
     case 4:
-        $GLOBALS["typeName"] = 'Шиномонтажей';
+        $GLOBALS["typeName"] = 'шиномонтажей:';
         break;
     case 5:
-        $GLOBALS["typeName"] = 'Дезинфекций';
+        $GLOBALS["typeName"] = 'дезинфекций:';
         break;
     case 6:
-        $GLOBALS["typeName"] = 'Универсальных';
+        $GLOBALS["typeName"] = 'универсальных:';
         break;
 }
 
@@ -75,14 +75,14 @@ switch ($type) {
 
                         return [
                             'content' => [
-                                2 => $GLOBALS["typeName"] . ':',
+                                2 => 'Итого ' . $GLOBALS["typeName"],
                                 3 => GridView::F_COUNT,
                             ],
                             'contentFormats' => [
                                 3 => ['format' => 'number'],
                             ],
                             'contentOptions' => [
-                                2 => ['style' => 'font-weight: bold'],
+                                2 => ['style' => 'font-weight: bold;'],
                             ],
                         ];
                     },
