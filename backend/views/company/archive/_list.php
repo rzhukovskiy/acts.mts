@@ -75,14 +75,14 @@ switch ($type) {
 
                         return [
                             'content' => [
-                                0 => $GLOBALS["typeName"] . ':',
-                                2 => GridView::F_COUNT,
+                                2 => $GLOBALS["typeName"] . ':',
+                                3 => GridView::F_COUNT,
                             ],
                             'contentFormats' => [
-                                2 => ['format' => 'number'],
+                                3 => ['format' => 'number'],
                             ],
                             'contentOptions' => [
-                                0 => ['style' => 'font-weight: bold'],
+                                2 => ['style' => 'font-weight: bold'],
                             ],
                         ];
                     },
