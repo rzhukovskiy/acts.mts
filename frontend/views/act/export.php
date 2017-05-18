@@ -32,6 +32,7 @@ $script = <<< JS
         
         var dataExpl = splitLink[5];
         var name = splitLink[6];
+        name = encodeURIComponent(name);
         
         if(clickLink.lastIndexOf('client') > 0) {
             company = 1;
