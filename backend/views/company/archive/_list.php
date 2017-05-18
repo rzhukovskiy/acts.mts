@@ -72,17 +72,24 @@ switch ($type) {
                         return $data->address;
                     },
                     'groupFooter' => function ($model, $key, $index) {
-                        return ['content'=>[
-                            0 => 'Summary Week: ',
-                            //0 => 'Итого:',
-                            2 => GridView::F_COUNT,
-                        ],
-                        'contentFormats'=>[
-                            2 => ['format'=>'number'],
-                        ],
-                        'contentOptions' => [
-                            0 => ['style' => 'font-weight: bold'],
-                        ],
+                        $finalText = $GLOBALS["typeName"] . ':';
+
+                        if(!$finalText) {
+                            $finalText = 1;
+                        }
+
+                        return [
+                            'content' => [
+                                0 => $finalText,
+                                //0 => 'Итого:',
+                                2 => GridView::F_COUNT,
+                            ],
+                            'contentFormats' => [
+                                2 => ['format' => 'number'],
+                            ],
+                            'contentOptions' => [
+                                0 => ['style' => 'font-weight: bold'],
+                            ],
                         ];
                     },
                 ],
