@@ -71,9 +71,9 @@ switch ($type) {
                     'value' => function ($data) {
                         return $data->address;
                     },
-                    'groupFooter' => function ($data) {
+                    'groupFooter' => function ($model, $key, $index) {
                         return ['content'=>[
-                            0 => ':',
+                            0 => 'Summary Week: ',
                             //0 => 'Итого:',
                             2 => GridView::F_COUNT,
                         ],
