@@ -75,8 +75,7 @@ switch ($type) {
 
                         return [
                             'content' => [
-                                0 => 1,
-                                //0 => 'Итого:',
+                                0 => $GLOBALS["typeName"] . ':',
                                 2 => GridView::F_COUNT,
                             ],
                             'contentFormats' => [
