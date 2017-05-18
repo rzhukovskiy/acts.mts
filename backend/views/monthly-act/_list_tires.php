@@ -18,6 +18,7 @@ $GLOBALS['type'] = $type;
 echo GridView::widget([
     'id'               => 'act-grid',
     'dataProvider'     => $dataProvider,
+    'filterModel' => $searchModel,
     'summary'          => false,
     'emptyText'        => '',
     'panel'            => [
@@ -59,21 +60,25 @@ echo GridView::widget([
             'vAlign'      => GridView::ALIGN_TOP,
         ],
         [
-            'attribute'         => 'client_id',
-            'group'             => true,  // enable grouping
-            'options'           => ['class' => 'kv-grouped-header'],
-            'groupedRow'        => true,  // enable grouping
-            'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
-            'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
+            'attribute'         => 'client_name',
+            'header' => 'Клиент',
+            //'group'             => true,  // enable grouping
+            //'options'           => ['class' => 'kv-grouped-header'],
+            //'groupedRow'        => true,  // enable grouping
+            //'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
+            //'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
             'value'             => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
+            'filter' => true,
         ],
         [
+            'attribute' => 'client_city',
             'header' => 'Город',
             'value'  => function ($data) {
                 return isset($data->client) ? $data->client->address : 'error';
             },
+            'filter' => true,
 
         ],
         [

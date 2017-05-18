@@ -23,6 +23,8 @@ class MonthlyActSearch extends MonthlyAct
     public $createDay;
     public $dateMonth;
     public $day;
+    public $client_name;
+    public $client_city;
 
     /**
      * @inheritdoc
@@ -33,7 +35,7 @@ class MonthlyActSearch extends MonthlyAct
             [['client_id', 'type_id'], 'integer'],
             [['act_date'], 'string'],
             ['act_date', 'default', 'value' => date('n-Y', strtotime('-1 month'))],
-            [['dateFrom', 'dateTo', 'dateMonth', 'payment_status'], 'safe'],
+            [['dateFrom', 'dateTo', 'dateMonth', 'payment_status', 'client_name', 'client_city'], 'safe'],
         ];
     }
 
@@ -122,6 +124,9 @@ class MonthlyActSearch extends MonthlyAct
             $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' .$this->type_id . ') AND (date_format(FROM_UNIXTIME(act.served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
         }
         //
+
+        $query->andWhere('client.name LIKE "%' . $this->client_name . '%" ');
+        $query->andWhere('client.address LIKE "%' . $this->client_city . '%" ');
 
         return $dataProvider;
     }

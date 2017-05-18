@@ -18,6 +18,7 @@ $GLOBALS['type'] = $type;
 echo GridView::widget([
     'id' => 'monthly-act-grid',
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'showPageSummary' => false,
     'summary' => false,
     'emptyText' => '',
@@ -56,17 +57,20 @@ echo GridView::widget([
             'class' => 'yii\grid\SerialColumn'
         ],
         'client' => [
-            'attribute' => 'client_id',
+            'attribute' => 'client_name',
+            'header' => 'Клиент',
             'value' => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
-            'filter' => false,
+            'filter' => true,
         ],
         'city' => [
+            'attribute' => 'client_city',
             'header' => 'Город',
             'value' => function ($data) {
                 return isset($data->client) ? $data->client->address : 'error';
             },
+            'filter' => true,
         ],
         'profit' => [
             'attribute' => 'profit',

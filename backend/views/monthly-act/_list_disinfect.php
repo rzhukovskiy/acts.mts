@@ -18,6 +18,7 @@ $GLOBALS['type'] = $type;
 echo GridView::widget([
     'id'               => 'monthly-act-grid',
     'dataProvider'     => $dataProvider,
+    'filterModel' => $searchModel,
     'summary'          => false,
     'emptyText'        => '',
     'panel'            => [
@@ -59,7 +60,8 @@ echo GridView::widget([
             'vAlign'      => GridView::ALIGN_TOP,
         ],
         [
-            'attribute'         => 'client_id',
+            'attribute'         => 'client_name',
+            'header' => 'Клиент',
             //'group'             => true,  // enable grouping
             //'options'           => ['class' => 'kv-grouped-header'],
             //'groupedRow'        => true,  // enable grouping
@@ -68,12 +70,15 @@ echo GridView::widget([
             'value'             => function ($data) {
                 return isset($data->client) ? $data->client->name : 'error';
             },
+            'filter' => true,
         ],
         [
+            'attribute' => 'client_city',
             'header' => 'Город',
             'value'  => function ($data) {
                 return isset($data->client) ? $data->client->address : 'error';
             },
+            'filter' => true,
 
         ],
         [
