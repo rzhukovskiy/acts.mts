@@ -60,7 +60,16 @@ class CompanyMemberController extends Controller
         $model = new CompanyMember();
         $model->company_id = $company_id;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $postArr = '';
+
+        $postArr = Yii::$app->request->post();
+
+        // Переводим email в нижний регистр
+        if(isset($postArr['CompanyMember']['email'])) {
+            $postArr['CompanyMember']['email'] = strtolower($postArr['CompanyMember']['email']);
+        }
+
+        if ($model->load($postArr) && $model->save()) {
             return $this->redirect(['company/member', 'id' => $model->company_id]);
         } else {
             return $this->render('create', [

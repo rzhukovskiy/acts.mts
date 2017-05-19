@@ -90,7 +90,16 @@ class ContactController extends Controller
     {
         $model = new Contact();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $postArr = '';
+
+            $postArr = Yii::$app->request->post();
+
+            // Переводим email в нижний регистр
+            if(isset($postArr['Contact']['email'])) {
+                $postArr['Contact']['email'] = strtolower($postArr['Contact']['email']);
+            }
+
+        if ($model->load($postArr) && $model->save()) {
             return $this->redirect(['list', 'type' => $type]);
         } else {
             return $this->redirect(['list', 'type' => $type]);
@@ -107,7 +116,16 @@ class ContactController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $postArr = '';
+
+            $postArr = Yii::$app->request->post();
+
+            // Переводим email в нижний регистр
+            if(isset($postArr['Contact']['email'])) {
+                $postArr['Contact']['email'] = strtolower($postArr['Contact']['email']);
+            }
+
+        if ($model->load($postArr) && $model->save()) {
             return $this->redirect(['list', 'type' => $model->type]);
         } else {
             return $this->render('update',

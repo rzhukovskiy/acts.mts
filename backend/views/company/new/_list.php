@@ -56,6 +56,13 @@ use yii\helpers\Html;
                     }
                 ],
                 [
+                    'attribute' => 'email',
+                    'content' => function ($data) {
+                        return ($data->info->email) ? $data->info->email : 'не задан';
+                    },
+                    'filter' => true,
+                ],
+                [
                     'header' => 'Связь',
                     'attribute' => 'offer.communication_at',
                     'value' => function($model) {

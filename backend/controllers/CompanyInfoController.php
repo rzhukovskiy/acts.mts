@@ -89,9 +89,18 @@ class CompanyInfoController extends Controller
         if ($hasEditable) {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $postArr = '';
+
+            $postArr = Yii::$app->request->post();
+
+            // Переводим email в нижний регистр
+            if(isset($postArr['CompanyInfo']['email'])) {
+                $postArr['CompanyInfo']['email'] = strtolower($postArr['CompanyInfo']['email']);
+            }
+
+            if ($model->load($postArr) && $model->save()) {
                 $output = [];
-                foreach (Yii::$app->request->post('CompanyInfo') as $name => $value) {
+                foreach ($postArr['CompanyInfo'] as $name => $value) {
                     $output[] = $value;
                 }
                 return ['output' => implode(', ', $output), 'message' => ''];

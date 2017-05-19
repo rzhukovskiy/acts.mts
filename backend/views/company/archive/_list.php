@@ -82,7 +82,8 @@ switch ($type) {
                                 3 => ['format' => 'number']
                             ],
                             'contentOptions' => [
-                                2 => ['style' => 'font-weight: bold;']
+                                2 => ['style' => 'color:#8e8366;'],
+                                3 => ['style' => 'color:#8e8366;'],
                             ],
                         ];
                     },
@@ -101,6 +102,13 @@ switch ($type) {
                     'content' => function ($data) {
                         return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
+                ],
+                [
+                    'attribute' => 'email',
+                    'content' => function ($data) {
+                        return ($data->info->email) ? $data->info->email : 'не задан';
+                    },
+                    'filter' => true,
                 ],
                 [
                     'class' => 'kartik\grid\ActionColumn',

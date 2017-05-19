@@ -15,6 +15,8 @@ class CompanySearch extends Company
 {
     public $user_id;
     public $card_number;
+    public $email;
+
     /**
      * @inheritdoc
      */
@@ -25,6 +27,7 @@ class CompanySearch extends Company
             [['user_id'], 'integer'],
             [['services'], 'safe'],
             [['cartypes'], 'safe'],
+            [['email'], 'safe'],
             [['address'], 'safe'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ];
@@ -38,9 +41,9 @@ class CompanySearch extends Company
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_OFFER => [
-                'user_id', 'name', 'address', 'services', 'cartypes', 'fullAddress'
+                'user_id', 'name', 'address', 'services', 'cartypes', 'fullAddress', 'email'
             ],
-            'default' => ['card_number', 'address', 'cartypes', 'services'],
+            'default' => ['card_number', 'address', 'cartypes', 'services', 'email'],
         ];
     }
 
@@ -123,6 +126,11 @@ class CompanySearch extends Company
             case self::SCENARIO_OFFER:
                 $query->andFilterWhere(['like', 'CONCAT_WS(",",info.index,info.city,info.street,info.house)', $this->getFullAddress()]);
                 break;
+        }
+
+        if($this->email) {
+            $query->innerJoin('company_member', 'company_member.company_id = company.id');
+            $query->andFilterWhere(['OR', ['like', 'info.email', $this->email], ['like', 'company_member.email', $this->email]]);
         }
 
         return $dataProvider;

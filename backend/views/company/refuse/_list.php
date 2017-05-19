@@ -55,6 +55,13 @@ use yii\helpers\Html;
                     }
                 ],
                 [
+                    'attribute' => 'email',
+                    'content' => function ($data) {
+                        return ($data->info->email) ? $data->info->email : 'не задан';
+                    },
+                    'filter' => true,
+                ],
+                [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{update}',
                     'contentOptions' => ['style' => 'width: 60px'],

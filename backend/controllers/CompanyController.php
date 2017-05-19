@@ -468,6 +468,9 @@ class CompanyController extends Controller
 
                     $newVal = $arrCompanyMember['email'][$id];
 
+                    // Переводим email в нижний регистр
+                    $newVal = strtolower($newVal);
+
                     $companyMember = CompanyMember::findOne($id);
                     $companyMember->email = $newVal;
 
