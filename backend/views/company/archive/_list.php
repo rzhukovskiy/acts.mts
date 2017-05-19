@@ -59,7 +59,6 @@ switch ($type) {
             'columns' => [
                 [
                     'header' => '№',
-                    'pageSummary' => 'Всего',
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
@@ -73,6 +72,7 @@ switch ($type) {
                     },
                     'groupFooter' => function ($data) {
                         return [
+                            'mergeColumns'=>[[0,2]],
                             'content' => [
                                 2 => "Итого " . $GLOBALS["typeName"],
                                 3 => GridView::F_COUNT
@@ -91,14 +91,15 @@ switch ($type) {
                 [
                     'header' => 'Организация',
                     'attribute' => 'name',
-                    'pageSummary' => true,
-                    'pageSummaryFunc' => GridView::F_COUNT,
+                    'pageSummary' => 'Всего',
                     'contentOptions' => function ($data) {
                         return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'font-weight: bold'] : [];
                     },
                 ],
                 [
                     'attribute' => 'fullAddress',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_COUNT,
                     'content' => function ($data) {
                         return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
