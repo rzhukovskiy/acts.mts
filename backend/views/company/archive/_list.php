@@ -72,7 +72,6 @@ switch ($type) {
                     },
                     'groupFooter' => function ($data) {
                         return [
-                            'mergeColumns'=>[[0,2]],
                             'content' => [
                                 2 => "Итого " . $GLOBALS["typeName"],
                                 3 => GridView::F_COUNT
