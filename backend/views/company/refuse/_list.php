@@ -57,7 +57,17 @@ use yii\helpers\Html;
                 [
                     'attribute' => 'email',
                     'content' => function ($data) {
-                        return ($data->info->email) ? $data->info->email : 'не задан';
+
+                        if(isset($data->info->email)) {
+                            if($data->info->email) {
+                                return $data->info->email;
+                            } else {
+                                return 'не задан';
+                            }
+                        } else {
+                            return 'не задан';
+                        }
+
                     },
                     'filter' => true,
                 ],
