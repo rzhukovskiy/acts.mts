@@ -70,11 +70,11 @@ switch ($type) {
                     'value' => function ($data) {
                         return $data->address;
                     },
-                    'groupFooter' => function ($data) {
+                    /*'groupFooter' => function ($data) {
                         return [
                             'content' => [
                                 2 => "Итого " . $GLOBALS["typeName"],
-                                //3 => GridView::F_COUNT
+                                3 => GridView::F_COUNT
                             ],
                             'contentFormats' => [
                                 2 => ['format' => 'text'],
@@ -85,7 +85,7 @@ switch ($type) {
                                 3 => ['style' => 'color:#8e8366;'],
                             ],
                         ];
-                    },
+                    },*/
                 ],
                 [
                     'header' => 'Организация',

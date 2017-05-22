@@ -33,13 +33,14 @@ use yii\helpers\Html;
             'striped' => false,
             'export' => false,
             'summary' => false,
+            'showPageSummary' => true,
             'emptyText' => '',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
             'columns' => [
                 [
                     'header' => '№',
-                    'class' => 'yii\grid\SerialColumn'
+                    'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
                     'attribute' => 'address',
@@ -47,14 +48,39 @@ use yii\helpers\Html;
                     'groupedRow' => true,
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
+                    'value' => function ($data) {
+                        return $data->address;
+                    },
+                    /*'groupFooter' => function ($data) {
+                        return [
+                            'content' => [
+                                2 => "Итого " . $GLOBALS["typeName"],
+                                3 => GridView::F_COUNT
+                            ],
+                            'contentFormats' => [
+                                2 => ['format' => 'text'],
+                                3 => ['format' => 'number']
+                            ],
+                            'contentOptions' => [
+                                2 => ['style' => 'color:#8e8366;'],
+                                3 => ['style' => 'color:#8e8366;'],
+                            ],
+                        ];
+                    },*/
                 ],
                 [
                     'header' => 'Организация',
                     'attribute' => 'name',
+                    'pageSummary' => 'Всего',
+                    'contentOptions' => function ($data) {
+                        return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'font-weight: bold'] : [];
+                    },
                 ],
                 [
                     'attribute' => 'fullAddress',
-                    'content'   => function ($data) {
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_COUNT,
+                    'content' => function ($data) {
                         return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
                 ],
@@ -76,7 +102,7 @@ use yii\helpers\Html;
                     'filter' => true,
                 ],
                 [
-                    'class' => 'yii\grid\ActionColumn',
+                    'class' => 'kartik\grid\ActionColumn',
                     'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
                     'buttons' => [

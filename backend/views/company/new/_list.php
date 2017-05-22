@@ -8,7 +8,7 @@
  * @var $userData array
  */
 use common\models\Company;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 ?>
@@ -36,23 +36,59 @@ use yii\helpers\Html;
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
+            'hover' => false,
+            'striped' => false,
+            'export' => false,
+            'summary' => false,
+            'showPageSummary' => true,
+            'emptyText' => '',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
-            'emptyText' => '',
             'columns' => [
                 [
                     'header' => '№',
-                    'class' => 'yii\grid\SerialColumn'
+                    'class' => 'kartik\grid\SerialColumn'
                 ],
-                'address',
+                [
+                    'attribute' => 'address',
+                    'group' => true,
+                    'groupedRow' => true,
+                    'groupOddCssClass' => 'kv-group-header',
+                    'groupEvenCssClass' => 'kv-group-header',
+                    'value' => function ($data) {
+                        return $data->address;
+                    },
+                    /*'groupFooter' => function ($data) {
+                        return [
+                            'content' => [
+                                2 => "Итого " . $GLOBALS["typeName"],
+                                3 => GridView::F_COUNT
+                            ],
+                            'contentFormats' => [
+                                2 => ['format' => 'text'],
+                                3 => ['format' => 'number']
+                            ],
+                            'contentOptions' => [
+                                2 => ['style' => 'color:#8e8366;'],
+                                3 => ['style' => 'color:#8e8366;'],
+                            ],
+                        ];
+                    },*/
+                ],
                 [
                     'header' => 'Организация',
                     'attribute' => 'name',
+                    'pageSummary' => 'Всего',
+                    'contentOptions' => function ($data) {
+                        return ($data->status == Company::STATUS_ACTIVE) ? ['style' => 'font-weight: bold'] : [];
+                    },
                 ],
                 [
                     'attribute' => 'fullAddress',
-                    'value'     => function ($model) {
-                        return ($model->fullAddress) ? $model->fullAddress : 'не задан';
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_COUNT,
+                    'content' => function ($data) {
+                        return ($data->fullAddress) ? $data->fullAddress : 'не задан';
                     }
                 ],
                 [
@@ -80,7 +116,7 @@ use yii\helpers\Html;
                     },
                 ],
                 [
-                    'class' => 'yii\grid\ActionColumn',
+                    'class' => 'kartik\grid\ActionColumn',
                     'template' => '{update}',
                     'contentOptions' => ['style' => 'min-width: 70px'],
                     'buttons' => [
