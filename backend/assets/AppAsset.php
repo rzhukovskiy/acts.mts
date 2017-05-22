@@ -17,7 +17,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/main.js',
-        'js/scroll-startstop.events.jquery.js'
+        'js/scroll-startstop.events.jquery.js',
+        'js/sip-0.7.7.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

@@ -98,3 +98,24 @@ function navigationButton() {
 $(document).ready(function () {
     navigationButton();
 });
+
+// Call Phone
+function callNumber(number) {
+    var userAgent = new SIP.UA({
+        uri: '301@cc.mtransservice.ru',
+        wsServers: ['wss://cc.mtransservice.ru:7443'],
+        authorizationUser: '301',
+        password: 'ieza]Qu5ho'
+    });
+
+    var options = {
+        media: {
+            constraints: {
+                audio: true,
+                video: false
+            },
+        }
+    };
+
+    userAgent.invite('sip:' + number + '@cc.mtransservice.ru', options)
+}
