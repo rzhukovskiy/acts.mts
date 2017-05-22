@@ -567,7 +567,7 @@ class ActExporter
             $worksheet->mergeCells($range);
             $worksheet->getStyle($range)->getAlignment()->setWrapText(true);
             $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $company->name);
-            $worksheet->getRowDimension($row)->setRowHeight(24);
+            $worksheet->getRowDimension($row)->setRowHeight(28);
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Марка');
