@@ -8,6 +8,8 @@
  * @var $userData array
  */
 use common\models\Company;
+use common\models\User;
+use common\models\DepartmentCompany;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
@@ -32,6 +34,15 @@ use yii\helpers\Html;
 //                'searchModel' => $searchModel,
 //            ]);
 //        }
+
+        $filters = '';
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $filters = 'Выбор сотрудника: ' . Html::activeDropDownList($searchModel, 'dep_user_id', DepartmentCompany::find()->where(['!=', 'department_company.company_id', 0])
+                    ->innerJoin('user', 'user.id = department_company.user_id')
+                    ->innerJoin('company', 'company.id = department_company.company_id')
+                    ->andWhere(['company.type' => $type])
+                    ->select(['user.username', 'department_company.user_id AS dep_user_id'])->indexBy('dep_user_id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+        }
         
         echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -42,8 +53,31 @@ use yii\helpers\Html;
             'summary' => false,
             'showPageSummary' => true,
             'emptyText' => '',
+            'filterSelector' => '.ext-filter',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $filters,
+                            'options' => ['colspan' => 7, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                        ],
+                    ],
+                    'options' => ['class' => 'filters extend-header'],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'content' => '&nbsp',
+                            'options' => [
+                                'colspan' => 7,
+                            ]
+                        ]
+                    ],
+                    'options' => ['class' => 'kv-group-header'],
+                ],
+            ],
             'columns' => [
                 [
                     'header' => '№',

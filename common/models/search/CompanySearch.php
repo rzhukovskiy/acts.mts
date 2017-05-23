@@ -16,6 +16,7 @@ class CompanySearch extends Company
     public $user_id;
     public $card_number;
     public $email;
+    public $dep_user_id;
 
     /**
      * @inheritdoc
@@ -95,6 +96,14 @@ class CompanySearch extends Company
 
                     if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
                         $query->leftJoin('department_company', 'department_company.company_id = company.id');
+
+                        if(isset($params['CompanySearch']['dep_user_id'])) {
+                            if($params['CompanySearch']['dep_user_id'] > 0) {
+                                $this->dep_user_id = $params['CompanySearch']['dep_user_id'];
+                                $query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
+                            }
+                        }
+
                         $query->leftJoin('user', 'department_company.user_id = user.id');
                         $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
                     } else {
