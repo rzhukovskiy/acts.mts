@@ -15,6 +15,7 @@ use common\models\CompanyInfo;
 use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
+use common\models\DepartmentCompany;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
@@ -107,6 +108,22 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        //
+        $arrComp = Company::find()->where(['status' => 1])->select('id')->all();
+        for ($i = 0; $i < count($arrComp); $i++) {
+            $arrDep = DepartmentCompany::find()->where(['company_id' => $arrComp[$i]['id']])->select('id')->column();
+            if(isset($arrDep[0])) {
+            } else {
+                $DepartmentCompany = new DepartmentCompany();
+                $DepartmentCompany->company_id = $arrComp[$i]['id'];
+                $DepartmentCompany->user_id = 0;
+                $DepartmentCompany->save();
+            }
+
+        }
+        //
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'created_at' => SORT_DESC,
@@ -387,6 +404,12 @@ class CompanyController extends Controller
         $model->address = 'Неизвестный';
 
         if ($model->load(Yii::$app->request->get()) && $model->save()) {
+
+            $DepartmentCompany = new DepartmentCompany();
+            $DepartmentCompany->company_id = $model->id;
+            $DepartmentCompany->user_id = Yii::$app->user->identity->id;
+            $DepartmentCompany->save();
+
             return $this->redirect(['company/update', 'id' => $model->id]);
         } else {
             return $this->goBack();
@@ -598,6 +621,14 @@ class CompanyController extends Controller
     public function actionStatus($id, $status)
     {
         $model = $this->findModel($id);
+
+        // Удалить запись имени пользователя добавившего заявку
+        if ($model->status == Company::STATUS_NEW) {
+            DepartmentCompany::deleteAll([
+                'company_id' => $id
+            ]);
+        }
+
         $model->status = $status;
         $model->save();
 
@@ -840,6 +871,14 @@ class CompanyController extends Controller
     {
         $model = $this->findModel($id);
         $status = Company::$listStatus[$model->status]['en'];
+
+        // Удалить запись имени пользователя добавившего заявку
+        if($model->status == Company::STATUS_NEW) {
+            DepartmentCompany::deleteAll([
+                'company_id' => $id
+            ]);
+        }
+
         $model->delete();
 
         return $this->redirect(['company/' . $status, 'type' => $model->type]);

@@ -50,14 +50,11 @@ use yii\helpers\Html;
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
-                    'attribute' => 'address',
+                    'attribute' => 'depart_user_name',
                     'group' => true,
                     'groupedRow' => true,
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
-                    'value' => function ($data) {
-                        return $data->address;
-                    },
                     /*'groupFooter' => function ($data) {
                         return [
                             'content' => [

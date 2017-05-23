@@ -3,6 +3,7 @@ namespace common\models;
 
 use common\components\DateHelper;
 use common\models\query\CompanyQuery;
+use common\models\DepartmentCompany;
 use common\models\search\CarSearch;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -63,6 +64,7 @@ class Company extends ActiveRecord
     private $workTime;
     private $serviceList;
     private $fullAddress;
+    private $depart_user_name;
 
     const STATUS_DELETED = 0;
     const STATUS_NEW = 1;
@@ -227,6 +229,7 @@ class Company extends ActiveRecord
             'director'    => 'Директор',
             'serviceList' => 'Сервисы',
             'fullAddress' => 'Адрес',
+            'depart_user_name' => 'ID сотрудника',
             'expensive' => 'Стоимость',
             'workTime'    => 'Время работы',
         ];
@@ -256,6 +259,22 @@ class Company extends ActiveRecord
         }
 
         return $this->fullAddress;
+    }
+
+    // имя сотрудника, который добавил компанию
+    public function getdepart_user_name()
+    {
+
+        if (!$this->depart_user_name) {
+            $userName = DepartmentCompany::find()->where(['`department_company`.`company_id`' => $this->id])->andWhere(['!=', '`department_company`.`user_id`', 0])->leftJoin('`user`', '`user`.`id` = `department_company`.`user_id`')->select('`user`.`username`')->column();
+
+            if(isset($userName[0])) {
+                $this->depart_user_name = $userName[0];
+            }
+
+        }
+
+        return $this->depart_user_name;
     }
 
     public function setFullAddress($value)

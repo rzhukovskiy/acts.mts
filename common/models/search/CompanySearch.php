@@ -92,7 +92,19 @@ class CompanySearch extends Company
                     }
                 }
                 if ($this->status == Company::STATUS_NEW) {
-                    $query->orderBy('communication_at ASC');
+
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        $query->leftJoin('department_company', 'department_company.company_id = company.id');
+                        $query->leftJoin('user', 'department_company.user_id = user.id');
+                        $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
+                    } else {
+                        $query->leftJoin('department_company', 'department_company.company_id = company.id');
+                        $query->leftJoin('user', 'department_company.user_id = user.id');
+                        $query->andWhere(['OR', ['department_company.user_id' => Yii::$app->user->identity->id], ['department_company.user_id' => 0]]);
+                        $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
+                    }
+
+                    $query->orderBy('department_company.user_id DESC, communication_at ASC');
                 } else {
                     $query->orderBy('address ASC');
                 }

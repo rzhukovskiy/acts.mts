@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%act_export}}".
@@ -15,7 +16,7 @@ use Yii;
  * @property string $name
  * @property string $data_load
  */
-class ActExport extends \yii\db\ActiveRecord
+class ActExport extends ActiveRecord
 {
     /**
      * @inheritdoc
