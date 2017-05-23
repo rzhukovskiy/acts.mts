@@ -109,21 +109,6 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        //
-        $arrComp = Company::find()->where(['status' => 1])->select('id')->all();
-        for ($i = 0; $i < count($arrComp); $i++) {
-            $arrDep = DepartmentCompany::find()->where(['company_id' => $arrComp[$i]['id']])->select('id')->column();
-            if(isset($arrDep[0])) {
-            } else {
-                $DepartmentCompany = new DepartmentCompany();
-                $DepartmentCompany->company_id = $arrComp[$i]['id'];
-                $DepartmentCompany->user_id = 0;
-                $DepartmentCompany->save();
-            }
-
-        }
-        //
-
         $dataProvider->sort = [
             'defaultOrder' => [
                 'created_at' => SORT_DESC,
