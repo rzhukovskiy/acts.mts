@@ -12,6 +12,54 @@ use yii\helpers\Html;
 use common\models\ActExport;
 use common\models\Company;
 
+$script = <<< JS
+
+    // Заполнение таблицы с информацией
+    
+    // Общая сумма
+    var totalPayed = 0;
+    $('td[data-col-seq=profit]').each(function() {
+        totalPayed += Number($(this).text());
+    });
+
+    $(".totalSum").text(totalPayed);
+    // Общая сумма
+    
+    // Не оплачено
+    var arrDataKey = [];
+    var i = 0;
+    
+    $('td select[data-paymentstatus=0]').each(function() {
+        arrDataKey[i] = $(this).parent().parent().attr("data-key");
+        i++;
+    });
+    
+    var noPayed = 0;
+    for (var j=0; j < arrDataKey.length; j++) {
+        noPayed += Number($("tr[data-key=" + arrDataKey[j] + "] td[data-col-seq=profit]").text());
+    }
+
+    $(".toPay").text(noPayed);
+    // Не оплачено
+    
+    // оплатили
+    var payedSum = totalPayed - noPayed;
+    $(".payed").text(payedSum);
+    // оплатили
+
+
+    $(".totalActs").text($('tr[data-key]').length);
+    $(".noSigned").text($('td[data-col-seq=act_status] select[data-actstatus=0]').length);
+    $(".sendedScan").text($('td[data-col-seq=act_status] select[data-actstatus=1]').length);
+    $(".signedScan").text($('td[data-col-seq=act_status] select[data-actstatus=2]').length);
+    $(".sendedOriginal").text($('td[data-col-seq=act_status] select[data-actstatus=3]').length);
+    $(".signed").text($('td[data-col-seq=act_status] select[data-actstatus=4]').length);
+    $(".noAct").text($('td[data-col-seq=act_status] select[data-actstatus=5]').length);
+    // Заполнение таблицы с информацией
+    
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
 $GLOBALS['company'] = $company;
 $GLOBALS['type'] = $type;
 
@@ -262,3 +310,54 @@ echo GridView::widget([
         ],
     ],
 ]);
+?>
+<div class="grid-view hide-resize"><div class="panel panel-primary" style='padding: 10px;'>
+        <table border="1" bordercolor="#dddddd">
+            <tr style="background: #428bca; color: #fff;">
+                <td colspan="2" style="padding: 3px 5px 3px 5px">Статус оплаты:</td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Итоговая сумма</td>
+                <td class="totalSum" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Заплатили</td>
+                <td class="payed" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 5px 3px 5px">К оплате</td>
+                <td class="toPay" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr style="background: #428bca; color: #fff;">
+                <td colspan="2" colspan="2" style="padding: 3px 5px 3px 5px">Статус актов:</td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Итого</td>
+                <td class="totalActs" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Без акта</td>
+                <td class="noAct" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Подписано</td>
+                <td class="signed" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Отправлен оригинал</td>
+                <td class="sendedOriginal" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Подписан скан</td>
+                <td class="signedScan" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td width="200px" style="padding: 3px 5px 3px 5px">Отправлен скан</td>
+                <td class="sendedScan" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+            <tr>
+                <td style="padding: 3px 5px 3px 5px">Не подписано</td>
+                <td class="noSigned" style="padding: 3px 5px 3px 5px"></td>
+            </tr>
+        </table>
+    </div></div>
