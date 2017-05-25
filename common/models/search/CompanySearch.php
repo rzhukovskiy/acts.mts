@@ -94,7 +94,7 @@ class CompanySearch extends Company
                 }
                 if ($this->status == Company::STATUS_NEW) {
 
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                    /*if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
                         $query->leftJoin('department_company', 'department_company.company_id = company.id');
 
                         if(isset($params['CompanySearch']['dep_user_id'])) {
@@ -111,7 +111,19 @@ class CompanySearch extends Company
                         $query->leftJoin('user', 'department_company.user_id = user.id');
                         $query->andWhere(['OR', ['department_company.user_id' => Yii::$app->user->identity->id], ['department_company.user_id' => 0]]);
                         $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
+                    }*/
+
+                    $query->leftJoin('department_company', 'department_company.company_id = company.id');
+
+                    if(isset($params['CompanySearch']['dep_user_id'])) {
+                        if($params['CompanySearch']['dep_user_id'] > 0) {
+                            $this->dep_user_id = $params['CompanySearch']['dep_user_id'];
+                            $query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
+                        }
                     }
+
+                    $query->leftJoin('user', 'department_company.user_id = user.id');
+                    $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
 
                     $query->orderBy('department_company.user_id DESC, communication_at ASC');
                 } else {
