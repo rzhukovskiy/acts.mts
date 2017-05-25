@@ -35,15 +35,12 @@ use yii\helpers\Html;
 //            ]);
 //        }
 
-        $filters = '';
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $filters = 'Выбор сотрудника: ' . Html::activeDropDownList($searchModel, 'dep_user_id', DepartmentCompany::find()->where(['!=', 'department_company.company_id', 0])
-                    ->innerJoin('user', 'user.id = department_company.user_id')
-                    ->innerJoin('company', 'company.id = department_company.company_id')
-                    ->andWhere(['company.type' => $type])
-                    ->select(['user.username', 'department_company.user_id AS dep_user_id'])->indexBy('dep_user_id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
-        }
-        
+        $filters = 'Выбор сотрудника: ' . Html::activeDropDownList($searchModel, 'dep_user_id', DepartmentCompany::find()->where(['!=', 'department_company.company_id', 0])
+                ->innerJoin('user', 'user.id = department_company.user_id')
+                ->innerJoin('company', 'company.id = department_company.company_id')
+                ->andWhere(['company.type' => $type])
+                ->select(['user.username', 'department_company.user_id AS dep_user_id'])->indexBy('dep_user_id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
