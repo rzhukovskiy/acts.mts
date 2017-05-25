@@ -21,8 +21,11 @@ $script = <<< JS
     $('td[data-col-seq=profit]').each(function() {
         totalPayed += Number($(this).text());
     });
+    
+    var totalPayedText = totalPayed.toString();
+    totalPayedText = totalPayedText.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
 
-    $(".totalSum").text(totalPayed);
+    $(".totalSum").text(totalPayedText);
     // Общая сумма
     
     // Не оплачено
@@ -38,13 +41,20 @@ $script = <<< JS
     for (var j=0; j < arrDataKey.length; j++) {
         noPayed += Number($("tr[data-key=" + arrDataKey[j] + "] td[data-col-seq=profit]").text());
     }
+    
+    var noPayedText = noPayed.toString();
+    noPayedText = noPayedText.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
 
-    $(".toPay").text(noPayed);
+    $(".toPay").text(noPayedText);
     // Не оплачено
     
     // оплатили
     var payedSum = totalPayed - noPayed;
-    $(".payed").text(payedSum);
+    
+    var payedSumText = payedSum.toString();
+    payedSumText = payedSumText.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+    
+    $(".payed").text(payedSumText);
     // оплатили
 
 
