@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Act;
+use common\models\Car;
 use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\User;
@@ -23,12 +24,12 @@ class ErrorController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'numberlist'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -111,6 +112,99 @@ class ErrorController extends Controller
         $model->save();
 
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionNumberlist($number, $mark, $type, $card, $actType)
+    {
+
+        $arrRes = [];
+        $resType = 0;
+
+        if($card > 0) {
+
+            if(mb_strlen($number) >= 8) {
+
+                $likeString = '(`car`.`number` LIKE \'%' . $number . '%\')';
+
+                for($j = 0; $j <= mb_strlen($number); $j++) {
+
+                    $tmpNumber = mb_substr($number, 0, $j) . '%' . mb_substr($number, ($j + 1), (mb_strlen($number) - ($j + 1)));
+
+                    if ($j == mb_strlen($number)) {
+                    } else {
+                        $likeString .= ' OR (`car`.`number` LIKE \'' . $tmpNumber . '\')';
+                    }
+
+                }
+
+                $carRes = Car::find()->innerJoin('card', 'card.company_id = car.company_id')->where(['card.number' => $card])->andWhere($likeString)->andWhere(['car.mark_id' => $mark])->andWhere(['car.type_id' => $type])->select('car.number')->all();
+
+                for($i = 0; $i < count($carRes); $i++) {
+                    $arrRes[] = $carRes[$i]['number'];
+                }
+
+            } else {
+
+                $carRes = Car::find()->innerJoin('card', 'card.company_id = car.company_id')->where(['card.number' => $card])->andWhere(['like', 'car.number', $number])->andWhere(['car.mark_id' => $mark])->andWhere(['car.type_id' => $type])->select('car.number')->all();
+
+                for($i = 0; $i < count($carRes); $i++) {
+                    $arrRes[] = $carRes[$i]['number'];
+                }
+
+            }
+
+            if(count($arrRes) == 0) {
+                $resType = 1;
+                $carRes = Act::find()->innerJoin('card', 'card.id = act.card_id')->where(['card.number' => $card])->andWhere(['act.mark_id' => $mark])->andWhere(['act.type_id' => $type])->andWhere(['act.service_type' => $actType])->select('act.car_number')->all();
+
+                $maxI = count($carRes);
+
+                if($maxI > 3) {
+                    $maxI = 3;
+                }
+
+                for($i = 0; $i < $maxI; $i++) {
+                    $arrRes[] = $carRes[$i]['car_number'];
+                }
+
+            }
+
+        } else {
+
+            if(mb_strlen($number) >= 8) {
+
+                $likeString = '(`car`.`number` LIKE \'%' . $number . '%\')';
+
+                for($j = 0; $j <= mb_strlen($number); $j++) {
+
+                    $tmpNumber = mb_substr($number, 0, $j) . '%' . mb_substr($number, ($j + 1), (mb_strlen($number) - ($j + 1)));
+
+                    if ($j == mb_strlen($number)) {
+                    } else {
+                        $likeString .= ' OR (`car`.`number` LIKE \'' . $tmpNumber . '\')';
+                    }
+
+                }
+
+                $carRes = Car::find()->where($likeString)->andWhere(['mark_id' => $mark])->andWhere(['type_id' => $type])->select('number')->all();
+
+                for($i = 0; $i < count($carRes); $i++) {
+                    $arrRes[] = $carRes[$i]['number'];
+                }
+
+            } else {
+
+                $carRes = Car::find()->where(['like', 'number', $number])->andWhere(['mark_id' => $mark])->andWhere(['type_id' => $type])->select('number')->all();
+
+                for($i = 0; $i < count($carRes); $i++) {
+                    $arrRes[] = $carRes[$i]['number'];
+                }
+
+            }
+
+        }
+
+        echo json_encode(['success' => 'true', 'listCar' => $arrRes, 'resType' => $resType]);
     }
 
     /**
