@@ -97,15 +97,17 @@ class MonthlyActSearch extends MonthlyAct
             'company.type_id'                          => $this->type_id,
             'DATE_FORMAT(`act_date`, "%c-%Y")' => $this->act_date,
             'company.is_partner'                       => $this->is_partner,
-            'company.payment_status'                   => $this->payment_status,
             'company.created_at'                       => $this->created_at,
             'company.updated_at'                       => $this->updated_at,
         ]);
 
-        // фильтр не подписанные
-        if($this->act_status == 15) {
-            $query->andFilterWhere(['!=', 'company.act_status', 5]);
-            $query->andFilterWhere(['!=', 'company.act_status', 4]);
+        $query->andFilterWhere(['company.act_status' => $this->act_status]);
+
+        // фильтр оплачено
+        if($this->payment_status == 15) {
+            $query->andFilterWhere(['>', 'company.payment_status', 0]);
+        } else {
+            $query->andFilterWhere(['company.payment_status' => $this->payment_status]);
         }
 
         //

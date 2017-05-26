@@ -251,6 +251,139 @@ if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
 $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')));
 // Кнопки не оплачен и не подписан
 
+
+// Таблица детализации
+if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
+    $filters .= '
+            <table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
+                <tr style="background: #428bca; color: #fff;">
+                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">Статус оплаты</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Итоговая сумма</td>
+                    <td width="400px" class="totalSum" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;"></td>
+                </tr>
+                <tr class="monthly-act-success" style="font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Заплатили</td>
+                    <td class="payed" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 3);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 3);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr class="monthly-act-danger" style="font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">К оплате</td>
+                    <td class="toPay" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 1);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 1);;
+    }
+
+    $filters .= '</td>
+                </tr>
+            </table>
+
+            <table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 0px 0px;">
+                <tr style="background: #428bca; color: #fff;">
+                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">Статус актов</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Итого</td>
+                    <td width="400px" class="totalActs" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;"></td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Без акта</td>
+                    <td class="noAct" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 4);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 4);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr class="monthly-act-success" style="font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Подписано</td>
+                    <td class="signed" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 5);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 5);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Отправлен оригинал</td>
+                    <td class="sendedOriginal" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 6);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 6);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Подписан скан</td>
+                    <td class="signedScan" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 7);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 7);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Отправлен скан</td>
+                    <td class="sendedScan" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 8);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 8);;
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr class="monthly-act-danger" style="font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Не подписано</td>
+                    <td class="noSigned" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 2);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 2);;
+    }
+
+    $filters .= '</td>
+                </tr>
+            </table>
+';
+}
+// Таблица детализации
+
 if (Yii::$app->user->can(User::ROLE_ADMIN)) {
     $visibleButton = [];
 } else {

@@ -64,7 +64,19 @@ class MonthlyActController extends Controller
             if($params['filterStatus'] == 1) {
                 $searchModel->payment_status = 0;
             } else if($params['filterStatus'] == 2) {
-                $searchModel->act_status = 15;
+                $searchModel->act_status = 0;
+            } else if($params['filterStatus'] == 3) {
+                $searchModel->payment_status = 15;
+            } else if($params['filterStatus'] == 4) {
+                $searchModel->act_status = 5;
+            } else if($params['filterStatus'] == 5) {
+                $searchModel->act_status = 4;
+            } else if($params['filterStatus'] == 6) {
+                $searchModel->act_status = 2;
+            } else if($params['filterStatus'] == 7) {
+                $searchModel->act_status = 3;
+            } else if($params['filterStatus'] == 8) {
+                $searchModel->act_status = 1;
             }
 
         }

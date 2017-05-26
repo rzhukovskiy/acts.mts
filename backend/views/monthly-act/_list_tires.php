@@ -61,8 +61,8 @@ $script = <<< JS
     $(".totalActs").text($('tr[data-key]').length);
     $(".noSigned").text($('td[data-col-seq=act_status] select[data-actstatus=0]').length);
     $(".sendedScan").text($('td[data-col-seq=act_status] select[data-actstatus=1]').length);
-    $(".signedScan").text($('td[data-col-seq=act_status] select[data-actstatus=2]').length);
-    $(".sendedOriginal").text($('td[data-col-seq=act_status] select[data-actstatus=3]').length);
+    $(".signedScan").text($('td[data-col-seq=act_status] select[data-actstatus=3]').length);
+    $(".sendedOriginal").text($('td[data-col-seq=act_status] select[data-actstatus=2]').length);
     $(".signed").text($('td[data-col-seq=act_status] select[data-actstatus=4]').length);
     $(".noAct").text($('td[data-col-seq=act_status] select[data-actstatus=5]').length);
     // Заполнение таблицы с информацией
@@ -321,66 +321,3 @@ echo GridView::widget([
     ],
 ]);
 ?>
-<div class="grid-view hide-resize"><div class="panel panel-primary" style='padding: 10px;'>
-
-        <table border="0">
-            <tr><td valign="top">
-
-                    <table border="1" bordercolor="#dddddd">
-                        <tr style="background: #428bca; color: #fff;">
-                            <td colspan="2" colspan="2" style="padding: 3px 5px 3px 5px" align="center">Статус актов</td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Итого</td>
-                            <td class="totalActs" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Без акта</td>
-                            <td class="noAct" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr class="monthly-act-success">
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Подписано</td>
-                            <td class="signed" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Отправлен оригинал</td>
-                            <td class="sendedOriginal" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Подписан скан</td>
-                            <td class="signedScan" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Отправлен скан</td>
-                            <td class="sendedScan" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr class="monthly-act-danger">
-                            <td style="padding: 3px 5px 3px 5px">Не подписано</td>
-                            <td class="noSigned" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                    </table>
-
-                </td><td valign="top" style="padding-left: 20px;">
-
-                    <table border="1" bordercolor="#dddddd">
-                        <tr style="background: #428bca; color: #fff;">
-                            <td colspan="2" style="padding: 3px 5px 3px 5px" align="center">Статус оплаты</td>
-                        </tr>
-                        <tr>
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Итоговая сумма</td>
-                            <td class="totalSum" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr class="monthly-act-success">
-                            <td width="200px" style="padding: 3px 5px 3px 5px">Заплатили</td>
-                            <td class="payed" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                        <tr class="monthly-act-danger">
-                            <td style="padding: 3px 5px 3px 5px">К оплате</td>
-                            <td class="toPay" style="padding: 3px 5px 3px 5px"></td>
-                        </tr>
-                    </table>
-
-                </td></tr>
-        </table>
-
-    </div></div>
