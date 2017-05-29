@@ -139,7 +139,13 @@ class ErrorController extends Controller
 
                 $carRes = Car::find()->innerJoin('card', 'card.company_id = car.company_id')->where(['card.number' => $card])->andWhere($likeString)->andWhere(['car.mark_id' => $mark])->andWhere(['car.type_id' => $type])->select('car.number')->all();
 
-                for($i = 0; $i < count($carRes); $i++) {
+                $maxI = count($carRes);
+
+                if($maxI > 3) {
+                    $maxI = 3;
+                }
+
+                for($i = 0; $i < $maxI; $i++) {
                     $arrRes[] = $carRes[$i]['number'];
                 }
 
@@ -147,7 +153,13 @@ class ErrorController extends Controller
 
                 $carRes = Car::find()->innerJoin('card', 'card.company_id = car.company_id')->where(['card.number' => $card])->andWhere(['like', 'car.number', $number])->andWhere(['car.mark_id' => $mark])->andWhere(['car.type_id' => $type])->select('car.number')->all();
 
-                for($i = 0; $i < count($carRes); $i++) {
+                $maxI = count($carRes);
+
+                if($maxI > 3) {
+                    $maxI = 3;
+                }
+
+                for($i = 0; $i < $maxI; $i++) {
                     $arrRes[] = $carRes[$i]['number'];
                 }
 
@@ -188,7 +200,13 @@ class ErrorController extends Controller
 
                 $carRes = Car::find()->where($likeString)->andWhere(['mark_id' => $mark])->andWhere(['type_id' => $type])->select('number')->all();
 
-                for($i = 0; $i < count($carRes); $i++) {
+                $maxI = count($carRes);
+
+                if($maxI > 3) {
+                    $maxI = 3;
+                }
+
+                for($i = 0; $i < $maxI; $i++) {
                     $arrRes[] = $carRes[$i]['number'];
                 }
 
@@ -196,7 +214,13 @@ class ErrorController extends Controller
 
                 $carRes = Car::find()->where(['like', 'number', $number])->andWhere(['mark_id' => $mark])->andWhere(['type_id' => $type])->select('number')->all();
 
-                for($i = 0; $i < count($carRes); $i++) {
+                $maxI = count($carRes);
+
+                if($maxI > 3) {
+                    $maxI = 3;
+                }
+
+                for($i = 0; $i < $maxI; $i++) {
                     $arrRes[] = $carRes[$i]['number'];
                 }
 
