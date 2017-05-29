@@ -186,7 +186,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             <?= $model->service_type == Service::TYPE_WASH ? $form->field($model, 'check')->error(false) : '' ?>
         </td>
         <td>
-            <?
+            <?php
 
             // выводим форму загрузки чеков для моек и превью
             if($model->service_type == Service::TYPE_WASH) {
