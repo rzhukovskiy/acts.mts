@@ -52,10 +52,17 @@ class OrderController extends Controller
         $searchModel = new CompanySearch();
         $searchModel->type = $type;
         $searchModel->status = [Company::STATUS_ACTIVE, Company::STATUS_ARCHIVE];
-        $dataProvider = $searchModel->searchWithCard(Yii::$app->request->queryParams);
+
+        $params = Yii::$app->request->queryParams;
+
+        if(!isset($params['CompanySearch']['address'])) {
+            $params['CompanySearch']['address'] = 'Архангельск';
+        }
+
+        $dataProvider = $searchModel->searchWithCard($params);
 
         $entrySearchModel = new EntrySearch();
-        $entrySearchModel->load(Yii::$app->request->queryParams);
+        $entrySearchModel->load($params);
         if (empty($entrySearchModel->day)) {
             $entrySearchModel->day = date('d-m-Y');
         }
