@@ -11,6 +11,35 @@ use kartik\date\DatePicker;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
+$selCity = '';
+
+if(isset(Yii::$app->request->queryParams['CompanySearch']['address'])) {
+
+    if(Yii::$app->request->queryParams['CompanySearch']['address'] != '') {
+        $selCity = Yii::$app->request->queryParams['CompanySearch']['address'];
+    } else {
+        $selCity = 'Архангельск';
+    }
+
+} else {
+    $selCity = 'Архангельск';
+}
+
+$script = <<< JS
+
+$('#companysearch-card_number').on('change', function () {
+    
+    if(($(this).val() != '') && ($(this).val().length > 0)) {
+        $('#companysearch-address').val("");
+    } else {
+        $('#companysearch-address').val("$selCity");
+    }
+    
+});
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
