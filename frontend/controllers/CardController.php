@@ -67,7 +67,7 @@ class CardController extends Controller
             $dataProvider->query->groupBy(['company_id']);
         }
         $dataProvider = CardSearch::addCarToSearch($dataProvider);
-        $companyDropDownData = Company::dataDropDownList();
+        $companyDropDownData = Company::dataDropDownList(1);
 
         return $this->render('list',
         [
@@ -124,7 +124,7 @@ class CardController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $companyDropDownData = Company::dataDropDownList();
+        $companyDropDownData = Company::dataDropDownList(1);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->goBack();
