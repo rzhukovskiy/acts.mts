@@ -186,7 +186,33 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             <?= $model->service_type == Service::TYPE_WASH ? $form->field($model, 'check')->error(false) : '' ?>
         </td>
         <td>
-            <?= $model->service_type == Service::TYPE_WASH ? $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) : '' ?>
+            <?
+
+            // выводим форму загрузки чеков для моек и превью
+            if($model->service_type == Service::TYPE_WASH) {
+                echo '<table border="0">';
+                echo '<tr><td valign="middle">';
+
+                $linkCheck = $model->getImageLink();
+
+                if (isset($linkCheck)) {
+
+                    $pathLink = dirname(__FILE__);
+                    $pathLink = str_replace('views/error', '', $pathLink);
+                    $pathLink .= 'web' . $model->getImageLink();
+
+                    if ((file_exists($pathLink)) && (mb_strlen($model->getImageLink()) > 0)) {
+                        echo '<a href="' . $linkCheck . '" target="_blank"><img width="70px" src="' . $linkCheck . '" style="margin-left:3px; margin-right:10px;" /></a>';
+                    }
+
+                }
+
+                echo '</td><td>';
+                echo $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false);
+                echo '</td></tr></table>';
+            }
+
+            ?>
         </td>
             </tr>
             <tr>
