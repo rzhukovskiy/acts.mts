@@ -264,7 +264,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
                     <td width="400px" class="totalSum" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;"></td>
                 </tr>
-                <tr class="monthly-act-success" style="font-weight: normal;">
+                <tr style="font-weight: normal; background: #bbeab9; color: #116b0c;">
                     <td style="padding: 3px 5px 3px 5px">Заплатили</td>
                     <td class="payed" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
@@ -277,7 +277,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
 
     $filters .= '</td>
                 </tr>
-                <tr class="monthly-act-danger" style="font-weight: normal;">
+                <tr style="font-weight: normal; background: #edb4b4; color:#7f0b0b;">
                     <td style="padding: 3px 5px 3px 5px">К оплате</td>
                     <td class="toPay" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
@@ -314,7 +314,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
 
     $filters .= '</td>
                 </tr>
-                <tr class="monthly-act-success" style="font-weight: normal;">
+                <tr style="font-weight: normal; background: #bbeab9; color: #116b0c;">
                     <td style="padding: 3px 5px 3px 5px">Подписано</td>
                     <td class="signed" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
@@ -366,7 +366,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
 
     $filters .= '</td>
                 </tr>
-                <tr class="monthly-act-danger" style="font-weight: normal;">
+                <tr style="font-weight: normal; background: #edb4b4; color:#7f0b0b;">
                     <td style="padding: 3px 5px 3px 5px">Не подписано</td>
                     <td class="noSigned" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
