@@ -35,4 +35,6 @@ echo $this->render('_form', [
     'serviceList' => $serviceList,
     'clientScopes' => $clientScopes,
     'partnerScopes' => $partnerScopes,
+    'partsClientScopes' => $partsClientScopes,
+    'partsPartnerScopes' => $partsPartnerScopes,
 ]);

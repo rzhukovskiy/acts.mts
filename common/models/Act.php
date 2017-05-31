@@ -593,6 +593,13 @@ class Act extends ActiveRecord
                         $scope->description = $serviceData['description'];
                     }
                     $scope->amount = $serviceData['amount'];
+
+                    if(isset($serviceData['parts'])) {
+                        $scope->parts = $serviceData['parts'];
+                    } else {
+                        $scope->parts = 0;
+                    }
+
                     $scope->save();
                     $totalExpense += $scope->price * $scope->amount;
                 }
@@ -639,6 +646,13 @@ class Act extends ActiveRecord
                         $scope->description = $serviceData['description'];
                     }
                     $scope->amount = $serviceData['amount'];
+
+                    if(isset($serviceData['parts'])) {
+                        $scope->parts = $serviceData['parts'];
+                    } else {
+                        $scope->parts = 0;
+                    }
+
                     $scope->save();
                     $totalIncome += $scope->price * $scope->amount;
                 }
@@ -689,6 +703,13 @@ class Act extends ActiveRecord
                         $clientScope->description = ArrayHelper::getValue($serviceData, 'description', 'Нет описания');
                     }
                     $clientScope->amount = $serviceData['amount'];
+
+                    if(isset($serviceData['parts'])) {
+                        $clientScope->parts = $serviceData['parts'];
+                    } else {
+                        $clientScope->parts = 0;
+                    }
+
                     $clientScope->save();
 
                     $partnerScope = new ActScope();
@@ -714,6 +735,13 @@ class Act extends ActiveRecord
                         $partnerScope->description = $serviceData['description'];
                     }
                     $partnerScope->amount = $serviceData['amount'];
+
+                    if(isset($serviceData['parts'])) {
+                        $partnerScope->parts = $serviceData['parts'];
+                    } else {
+                        $partnerScope->parts = 0;
+                    }
+
                     $partnerScope->save();
                 }
             }

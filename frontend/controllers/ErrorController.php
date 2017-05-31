@@ -72,8 +72,16 @@ class ErrorController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(Yii::$app->request->post('__returnUrl'));
         } else {
-            $clientScopes = $model->getClientScopes()->all();
-            $partnerScopes = $model->getPartnerScopes()->all();
+            $clientScopes = $model->getClientScopes()->where(['parts' => 0])->all();
+            $partnerScopes = $model->getPartnerScopes()->where(['parts' => 0])->all();
+
+            $partsClientScopes = '';
+            $partsPartnerScopes = '';
+
+            if($model->service_type == 3) {
+                $partsClientScopes = $model->getClientScopes()->where(['!=', 'parts', 0])->all();
+                $partsPartnerScopes = $model->getPartnerScopes()->where(['!=', 'parts', 0])->all();
+            }
 
             $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
             return $this->render('update', [
@@ -81,6 +89,8 @@ class ErrorController extends Controller
                 'serviceList' => $serviceList,
                 'clientScopes' => $clientScopes,
                 'partnerScopes' => $partnerScopes,
+                'partsClientScopes' => $partsClientScopes,
+                'partsPartnerScopes' => $partsPartnerScopes,
             ]);
         }
     }

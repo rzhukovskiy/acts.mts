@@ -21,6 +21,7 @@ use yii\db\ActiveRecord;
  * @property integer $service_id
  * @property integer $price
  * @property integer $amount
+ * @property integer $parts
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $description
@@ -37,6 +38,7 @@ class ActScope extends ActiveRecord
     public $address;
     public $client_id;
     public $partner_id;
+    private $parts;
 
     /**
      * @inheritdoc
@@ -53,6 +55,7 @@ class ActScope extends ActiveRecord
     {
         return [
             'actsCount'    => 'Выполнений',
+            'parts'    => 'Запасные части',
         ];
     }
 
@@ -72,6 +75,8 @@ class ActScope extends ActiveRecord
     public function rules()
     {
         return [
+            [['parts'], 'safe'],
+            [['parts'], 'default', 'value' => 0],
             ['price', 'default', 'value' => 0],
         ];
     }

@@ -25,32 +25,111 @@
                 <td><?= $model->partner->address ?></td>
             </tr>
 
-            <tr class="header">
-                <td colspan="3">Вид услуг</td>
-                <td>Кол-во</td>
-                <td>Стоимость</td>
-                <td>Сумма</td>
-            </tr>
-
-            <?php $num = 1;
-            $total = 0;
-            foreach ($model->getClientScopes()->all() as $scope) { ?>
-                <tr>
-                    <td colspan="3"><?= $num . '. ' . $scope->description ?></td>
-                    <td><?= $scope->amount ?></td>
-                    <td><?= $scope->price ?></td>
-                    <td><?= $scope->price * $scope->amount ?></td>
+            <?php if($model->service_type == 3) { ?>
+                <tr class="header">
+                    <td colspan="3">Запасные части</td>
+                    <td>Стоимость</td>
+                    <td>Кол-во</td>
+                    <td>Сумма</td>
                 </tr>
-                <?php $num++;
-                $total += $scope->price * $scope->amount;
-            } ?>
 
-            <tr class="strong">
-                <td colspan="3">Итого</td>
-                <td><?= --$num ?></td>
-                <td></td>
-                <td><?= $total ?></td>
-            </tr>
+                <?php $num = 1;
+                $numAmount = 0;
+                $total = 0;
+                foreach ($model->getClientScopes()->all() as $scope) { ?>
+
+                    <?php if($scope->parts == 1) { ?>
+                        <tr>
+                            <td colspan="3"><?= $num . '. ' . $scope->description ?></td>
+                            <td><?= $scope->price ?></td>
+                            <td><?= $scope->amount ?></td>
+                            <td><?= $scope->price * $scope->amount ?></td>
+                        </tr>
+                        <?php $num++; $numAmount += $scope->amount;
+                        $total += $scope->price * $scope->amount;
+                    } ?>
+                <?php } ?>
+
+                <tr class="strong">
+                    <td colspan="3">Всего</td>
+                    <td></td>
+                    <td><?php
+
+                        if($model->service_type == 3) {
+                            echo $numAmount;
+                        } else {
+                            echo --$num;
+                        }
+
+                        ?></td>
+                    <td><?= $total ?></td>
+                </tr>
+
+                <tr class="header">
+                    <td colspan="3">Услуги</td>
+                    <td>Стоимость</td>
+                    <td>Кол-во</td>
+                    <td>Сумма</td>
+                </tr>
+
+                <?php $num = 1;
+                $numAmountService = 0;
+                $totalService = 0;
+                foreach ($model->getClientScopes()->all() as $scope) { ?>
+
+                    <?php if($scope->parts == 0) { ?>
+                        <tr>
+                            <td colspan="3"><?= $num . '. ' . $scope->description ?></td>
+                            <td><?= $scope->price ?></td>
+                            <td><?= $scope->amount ?></td>
+                            <td><?= $scope->price * $scope->amount ?></td>
+                        </tr>
+                        <?php $num++; $numAmountService += $scope->amount;
+                        $totalService += $scope->price * $scope->amount;
+                    } ?>
+                <?php } ?>
+
+                <tr class="strong">
+                    <td colspan="3">Всего</td>
+                    <td></td>
+                    <td><?= $numAmountService ?></td>
+                    <td><?= $totalService ?></td>
+                </tr>
+                <tr class="strong">
+                    <td colspan="3">Итого</td>
+                    <td></td>
+                    <td><?= ($numAmount + $numAmountService) ?></td>
+                    <td><?= ($total + $totalService) ?></td>
+                </tr>
+            <?php } else { ?>
+                <tr class="header">
+                    <td colspan="3">Вид услуг</td>
+                    <td>Кол-во</td>
+                    <td>Стоимость</td>
+                    <td>Сумма</td>
+                </tr>
+
+                <?php $num = 1;
+                $total = 0;
+                foreach ($model->getClientScopes()->all() as $scope) { ?>
+                    <tr>
+                        <td colspan="3"><?= $num . '. ' . $scope->description ?></td>
+                        <td><?= $scope->amount ?></td>
+                        <td><?= $scope->price ?></td>
+                        <td><?= $scope->price * $scope->amount ?></td>
+                    </tr>
+                    <?php $num++;
+                    $total += $scope->price * $scope->amount;
+                } ?>
+
+                <tr class="strong">
+                    <td colspan="3">Итого</td>
+                    <td><?= --$num ?></td>
+                    <td></td>
+                    <td><?= $total ?></td>
+                </tr>
+            <?php } ?>
+
         </table>
 
         <div class="form-group" style="margin-top: 20px;">

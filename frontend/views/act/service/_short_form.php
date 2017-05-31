@@ -62,9 +62,382 @@ if (!empty($serviceList)) {
         
     });
     
+    // Итоговая сумму
+    var allPageTotalInput = $('.all_page_total');
+    var allPageTotal = 0;
+    
+    function updateTotalPage() {
+    allPageTotal = 0;
+    var alltotalInputParts = $('.parts_all_total');
+    var alltotalInput = $('.all_total');
+        
+    allPageTotal = Number(alltotalInputParts.val()) + Number(alltotalInput.val());
+    allPageTotalInput.val(allPageTotal);
+    }
+    
+    // Итоговая сумму
+    
 JS;
-    $this->registerJs($script, View::POS_READY);
+} else {
+    $script = <<< JS
+    
+    // Итоговая сумму
+    var allPageTotalInput = $('.all_page_total');
+    var allPageTotal = 0;
+    
+    function updateTotalPage() {
+    allPageTotal = 0;
+    var alltotalInputParts = $('.parts_all_total');
+    var alltotalInput = $('.all_total');
+        
+    allPageTotal = Number(alltotalInputParts.val()) + Number(alltotalInput.val());
+    allPageTotalInput.val(allPageTotal);
+    }
+    
+    // Итоговая сумму
+    
+JS;
+
 }
+
+$script .= <<< JS
+    
+    // Запасные части  - Итоговая сумма расчет
+    var totalSumParts = 0;
+    var allTotalParts = 0;
+    var priceScopeParts = $('.parts-price');
+    var numScopeParts = $('.parts-num');
+    var totalInputParts = $('.parts_total_sum');
+    var alltotalInputParts = $('.parts_all_total');
+
+    if(totalInputParts.length == 1) {
+        
+    if((Number(priceScopeParts.val()) > 0) && (Number(numScopeParts.val()) > 0)) {
+        totalSumParts = Number(priceScopeParts.val()) * Number(numScopeParts.val());
+    }
+
+    totalInputParts.val(totalSumParts);
+    alltotalInputParts.val(totalSumParts);
+    
+    } else {
+        
+       allTotalParts = 0;
+            
+            for(var z = 0; z < totalInputParts.length; z++) {
+                
+                totalSumParts = 0;
+                
+                if((Number(priceScopeParts.eq(z).val()) > 0) && (Number(numScopeParts.eq(z).val()) > 0)) {
+                    totalSumParts = Number(priceScopeParts.eq(z).val()) * Number(numScopeParts.eq(z).val());
+                }
+
+                totalInputParts.eq(z).val(totalSumParts);
+                
+                allTotalParts += totalSumParts;
+                
+            }
+            
+            alltotalInputParts.val(allTotalParts); 
+        
+    }
+    
+    $(document).on('change', '.parts-price', function () {
+        
+        priceScopeParts = $('.parts-price');
+        numScopeParts = $('.parts-num');
+        totalInputParts = $('.parts_total_sum');
+        
+        if(totalInputParts.length == 1) {
+        
+            totalSumParts = 0;
+            
+            if((Number(priceScopeParts.val()) > 0) && (Number(numScopeParts.val()) > 0)) {
+               totalSumParts = Number(priceScopeParts.val()) * Number(numScopeParts.val());
+            }
+
+            totalInputParts.val(totalSumParts);
+            alltotalInputParts.val(totalSumParts);
+        
+        } else {
+            
+            allTotalParts = 0;
+            
+            for(var z = 0; z < totalInputParts.length; z++) {
+                
+                totalSumParts = 0;
+                
+                if((Number(priceScopeParts.eq(z).val()) > 0) && (Number(numScopeParts.eq(z).val()) > 0)) {
+                    totalSumParts = Number(priceScopeParts.eq(z).val()) * Number(numScopeParts.eq(z).val());
+                }
+
+                totalInputParts.eq(z).val(totalSumParts);
+                
+                allTotalParts += totalSumParts;
+                
+            }
+            
+            alltotalInputParts.val(allTotalParts);
+            
+        }
+        updateTotalPage();
+    });
+    
+    $(document).on('change', '.parts-num', function () {
+
+        priceScopeParts = $('.parts-price');
+        numScopeParts = $('.parts-num');
+        totalInputParts = $('.parts_total_sum');
+        
+        if(totalInputParts.length == 1) {
+        
+            totalSumParts = 0;
+            
+            if((Number(priceScopeParts.val()) > 0) && (Number(numScopeParts.val()) > 0)) {
+                totalSumParts = Number(priceScopeParts.val()) * Number(numScopeParts.val());
+            }
+
+            totalInputParts.val(totalSumParts);
+            alltotalInputParts.val(totalSumParts);
+        
+        } else {
+            
+            allTotalParts = 0;
+            
+            for(var z = 0; z < totalInputParts.length; z++) {
+                
+                totalSumParts = 0;
+                
+                if((Number(priceScopeParts.eq(z).val()) > 0) && (Number(numScopeParts.eq(z).val()) > 0)) {
+                    totalSumParts = Number(priceScopeParts.eq(z).val()) * Number(numScopeParts.eq(z).val());
+                }
+
+                totalInputParts.eq(z).val(totalSumParts);
+                
+                allTotalParts += totalSumParts;
+                
+            }
+            
+            alltotalInputParts.val(allTotalParts);
+            
+        }
+        updateTotalPage();
+    });
+    
+    $('.table-bordered tbody tr:eq(2) td[colspan=5]').bind("DOMSubtreeModified",function(){
+
+        priceScopeParts = $('.parts-price');
+        numScopeParts = $('.parts-num');
+        totalInputParts = $('.parts_total_sum');
+        
+        if(totalInputParts.length == 1) {
+        
+            totalSumParts = 0;
+            
+            if((Number(priceScopeParts.val()) > 0) && (Number(numScopeParts.val()) > 0)) {
+                totalSumParts = Number(priceScopeParts.val()) * Number(numScopeParts.val());
+            }
+
+            totalInputParts.val(totalSumParts);
+            alltotalInputParts.val(totalSumParts);
+        
+        } else {
+            
+            allTotalParts = 0;
+            
+            for(var z = 0; z < totalInputParts.length; z++) {
+                
+                totalSumParts = 0;
+                
+                if((Number(priceScopeParts.eq(z).val()) > 0) && (Number(numScopeParts.eq(z).val()) > 0)) {
+                    totalSumParts = Number(priceScopeParts.eq(z).val()) * Number(numScopeParts.eq(z).val());
+                }
+
+                totalInputParts.eq(z).val(totalSumParts);
+                
+                allTotalParts += totalSumParts;
+                
+            }
+            
+            alltotalInputParts.val(allTotalParts);
+            
+        }
+        updateTotalPage();
+    });
+    
+    // Запасные части  - Итоговая сумма расчет
+    
+    // Услуги  - Итоговая сумма расчет
+    var totalSum = 0;
+    var allTotal = 0;
+    var priceScope = $('.scope-price');
+    var numScope = $('.scope-num');
+    var totalInput = $('.total_sum');
+    var alltotalInput = $('.all_total');
+
+    if(totalInput.length == 1) {
+        
+    if((Number(priceScope.val()) > 0) && (Number(numScope.val()) > 0)) {
+        totalSum = Number(priceScope.val()) * Number(numScope.val());
+    }
+
+    totalInput.val(totalSum);
+    alltotalInput.val(totalSum);
+    
+    } else {
+        
+       allTotal = 0;
+            
+            for(var z = 0; z < totalInput.length; z++) {
+                
+                totalSum = 0;
+                
+                if((Number(priceScope.eq(z).val()) > 0) && (Number(numScope.eq(z).val()) > 0)) {
+                    totalSum = Number(priceScope.eq(z).val()) * Number(numScope.eq(z).val());
+                }
+
+                totalInput.eq(z).val(totalSum);
+                
+                allTotal += totalSum;
+                
+            }
+            
+            alltotalInput.val(allTotal); 
+        
+    }
+    
+    $(document).on('change', '.scope-price', function () {
+        
+        priceScope = $('.scope-price');
+        numScope = $('.scope-num');
+        totalInput = $('.total_sum');
+        
+        if(totalInput.length == 1) {
+        
+            totalSum = 0;
+            
+            if((Number(priceScope.val()) > 0) && (Number(numScope.val()) > 0)) {
+               totalSum = Number(priceScope.val()) * Number(numScope.val());
+            }
+
+            totalInput.val(totalSum);
+            alltotalInput.val(totalSum);
+        
+        } else {
+            
+            allTotal = 0;
+            
+            for(var z = 0; z < totalInput.length; z++) {
+                
+                totalSum = 0;
+                
+                if((Number(priceScope.eq(z).val()) > 0) && (Number(numScope.eq(z).val()) > 0)) {
+                    totalSum = Number(priceScope.eq(z).val()) * Number(numScope.eq(z).val());
+                }
+
+                totalInput.eq(z).val(totalSum);
+                
+                allTotal += totalSum;
+                
+            }
+            
+            alltotalInput.val(allTotal);
+            
+        }
+        updateTotalPage();
+    });
+    
+    $(document).on('change', '.scope-num', function () {
+
+        priceScope = $('.scope-price');
+        numScope = $('.scope-num');
+        totalInput = $('.total_sum');
+        
+        if(totalInput.length == 1) {
+        
+            totalSum = 0;
+            
+            if((Number(priceScope.val()) > 0) && (Number(numScope.val()) > 0)) {
+                totalSum = Number(priceScope.val()) * Number(numScope.val());
+            }
+
+            totalInput.val(totalSum);
+            alltotalInput.val(totalSum);
+        
+        } else {
+            
+            allTotal = 0;
+            
+            for(var z = 0; z < totalInput.length; z++) {
+                
+                totalSum = 0;
+                
+                if((Number(priceScope.eq(z).val()) > 0) && (Number(numScope.eq(z).val()) > 0)) {
+                    totalSum = Number(priceScope.eq(z).val()) * Number(numScope.eq(z).val());
+                }
+
+                totalInput.eq(z).val(totalSum);
+                
+                allTotal += totalSum;
+                
+            }
+            
+            alltotalInput.val(allTotal);
+            
+        }
+        updateTotalPage();
+    });
+    
+    $('.table-bordered tbody tr:eq(4) td[colspan=5]').bind("DOMSubtreeModified",function(){
+
+        priceScope = $('.scope-price');
+        numScope = $('.scope-num');
+        totalInput = $('.total_sum');
+        
+        if(totalInput.length == 1) {
+        
+            totalSum = 0;
+            
+            if((Number(priceScope.val()) > 0) && (Number(numScope.val()) > 0)) {
+                totalSum = Number(priceScope.val()) * Number(numScope.val());
+            }
+
+            totalInput.val(totalSum);
+            alltotalInput.val(totalSum);
+        
+        } else {
+            
+            allTotal = 0;
+            
+            for(var z = 0; z < totalInput.length; z++) {
+                
+                totalSum = 0;
+                
+                if((Number(priceScope.eq(z).val()) > 0) && (Number(numScope.eq(z).val()) > 0)) {
+                    totalSum = Number(priceScope.eq(z).val()) * Number(numScope.eq(z).val());
+                }
+
+                totalInput.eq(z).val(totalSum);
+                
+                allTotal += totalSum;
+                
+            }
+            
+            alltotalInput.val(allTotal);
+            
+        }
+        updateTotalPage();
+    });
+    
+    // Услуги  - Итоговая сумма расчет
+    
+    // Итоговая сумму    
+    allPageTotal = totalSumParts + totalSum;
+    allPageTotalInput.val(allPageTotal);
+    // Итоговая сумму
+    
+JS;
+
+$this->registerJs($script, View::POS_READY);
 
 ?>
 
@@ -137,20 +510,147 @@ JS;
                         ->error(false) ?>
                 </td>
             </tr>
+            <tr><td colspan="5" style="color:#000; font-size:14px; padding-left:22px;"><label class="control-label">Запасные части</label></td></tr>
             <tr>
                 <td colspan="5">
+
+                    <div class="form-group" style="height: 5px;">
+                        <div class="col-xs-6">
+                            <label class="control-label">Наименование</label>
+                        </div>
+                        <div class="col-xs-1">
+                            <label class="control-label">Стоимость</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <label class="control-label">Количество</label>
+                        </div>
+                        <div class="col-xs-1"><label class="control-label">Итого</label></div>
+                        <div class="col-xs-1"></div>
+                    </div>
+
+                    <?php if(isset($partsPartnerScopes)) {
+                        $ipS = 0;
+                        foreach ($partsPartnerScopes as $scope) {?>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-6">
+                                    <?php if (!empty($serviceList)) { ?>
+                                        <?= Html::dropDownList("Act[serviceList][$scope->id][service_id]", (isset($scope->service_id)) ? $scope->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-parts', 'prompt' => 'выберите наименование']) ?>
+                                    <?php } else { ?>
+                                        <?= Html::textInput("Act[serviceList][$scope->id][description]", (isset($scope->description)) ? $scope->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Наименование']) ?>
+                                    <?php } ?>
+                                </div>
+                                <div class="col-xs-1">
+                                    <?= Html::input('number', "Act[serviceList][$scope->id][price]", (isset($scope->price)) ? $scope->price : 0, ['class' => 'form-control input-sm parts-price', 'placeholder' => 'Цена']) ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <?= Html::input('text', "Act[serviceList][$scope->id][amount]", (isset($scope->amount)) ? $scope->amount : 1, ['class' => 'not-null form-control input-sm parts-num', 'placeholder' => 'Количество']) ?>
+                                </div>
+                                <div class="col-xs-1">
+                                    <?= Html::input('text', 'total', '0', ['class' => 'form-control input-sm parts_total_sum', 'placeholder' => 'Итого', 'disabled' => 'disabled']) ?>
+                                </div>
+                                <div class="col-xs-1" style="display: none;">
+                                    <?= Html::input('text', "Act[serviceList][$scope->id][parts]", '1', ['class' => 'not-null form-control input-sm']) ?>
+                                </div>
+                                <div class="col-xs-1">
+
+                                    <?php
+                                    if(($ipS + 1) == count($partsPartnerScopes)) {
+                                        ?>
+
+                                        <button type="button" class="btn btn-primary input-sm addButton"><i
+                                                    class="glyphicon glyphicon-plus"></i></button>
+
+                                    <?php } else { ?>
+
+                                        <button type="button" class="btn btn-primary input-sm removeButton">
+                                            <i class="glyphicon glyphicon-minus"></i>
+                                        </button>
+
+                                    <?php } ?>
+
+                                </div>
+                            </div>
+
+                            <?php
+
+                            $ipS++;
+
+                        } ?>
+
+                        <div style="height: 30px;">
+                            <div class="col-xs-6">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2" align="right" style="padding-top: 8px; font-size: 13px;"><label class="control-label">Всего:</label></div>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', 'parts_all_total', '0', ['class' => 'form-control input-sm parts_all_total', 'placeholder' => 'Всего', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+
+                    <?php } else { ?>
+
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[serviceList][71][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-parts', 'prompt' => 'выберите наименование']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[serviceList][71][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Наименование']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', "Act[serviceList][71][price]", 0, ['class' => 'form-control input-sm parts-price', 'placeholder' => 'Цена']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('text', "Act[serviceList][71][amount]", 1, ['class' => 'not-null form-control input-sm parts-num', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                                <?= Html::input('text', 'total', '0', ['class' => 'form-control input-sm parts_total_sum', 'placeholder' => 'Итого', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1" style="display: none;">
+                                <?= Html::input('text', 'Act[serviceList][71][parts]', '1', ['class' => 'not-null form-control input-sm']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                                <button type="button" class="btn btn-primary input-sm addButton"><i
+                                            class="glyphicon glyphicon-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="height: 30px;">
+                            <div class="col-xs-6">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2" align="right" style="padding-top: 8px; font-size: 13px;"><label class="control-label">Всего:</label></div>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', 'parts_all_total', '0', ['class' => 'form-control input-sm parts_all_total', 'placeholder' => 'Всего', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+
+                    <?php } ?>
+
+                </td>
+            </tr>
+            <tr><td colspan="5" style="color:#000; font-size:14px; padding-left:22px;"><label class="control-label">Услуги</label></td></tr>
+            <tr>
+                <td colspan="5">
+
                     <div class="form-group" style="height: 5px;">
                         <div class="col-xs-6">
                             <label class="control-label">Услуга</label>
                         </div>
                         <div class="col-xs-1">
-                            <label class="control-label">Количество</label>
+                            <label class="control-label">Стоимость н/ч</label>
                         </div>
-                        <div class="col-xs-1">
-                            <label class="control-label">Цена</label>
+                        <div class="col-xs-2">
+                            <label class="control-label">Кол-во н/ч</label>
                         </div>
-                        <div class="col-xs-1">
-                        </div>
+                        <div class="col-xs-1"><label class="control-label">Итого</label></div>
+                        <div class="col-xs-1"></div>
                     </div>
 
                     <?php if(isset($partnerScopes)) {
@@ -164,13 +664,19 @@ JS;
                                         <?= Html::textInput("Act[serviceList][$scope->id][description]", (isset($scope->description)) ? $scope->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
                                 </div>
-                                <div class="col-xs-2">
-                                    <?= Html::input('number', "Act[serviceList][$scope->id][amount]", (isset($scope->amount)) ? $scope->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                <div class="col-xs-1">
+                                    <?= Html::input('number', "Act[serviceList][$scope->id][price]", (isset($scope->price)) ? $scope->price : 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Стоимость']) ?>
                                 </div>
                                 <div class="col-xs-2">
-                                    <?= Html::input('text', "Act[serviceList][$scope->id][price]", (isset($scope->price)) ? $scope->price : 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                                    <?= Html::dropDownList("Act[serviceList][$scope->id][amount]", (isset($scope->amount)) ? $scope->amount : '1.0', ['1.0' => '1.0', '1.5' => '1.5', '2.0' => '2.0', '2.5' => '2.5', '3.0' => '3.0', '3.5' => '3.5', '4.0' => '4.0', '4.5' => '4.5', '5.0' => '5.0'], ['class' => 'form-control input-sm scope-num', 'prompt' => 'выберите кол-во н/ч']) ?>
                                 </div>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
+                                    <?= Html::input('text', 'total', '0', ['class' => 'form-control input-sm total_sum', 'placeholder' => 'Итого', 'disabled' => 'disabled']) ?>
+                                </div>
+                                <div class="col-xs-1" style="display: none;">
+                                    <?= Html::input('text', "Act[serviceList][$scope->id][parts]", '0', ['class' => 'form-control input-sm']) ?>
+                                </div>
+                                <div class="col-xs-1">
 
                                     <?php
                                     if(($ipS + 1) == count($partnerScopes)) {
@@ -196,6 +702,19 @@ JS;
 
                         } ?>
 
+                        <div style="height: 30px;">
+                            <div class="col-xs-6">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2" align="right" style="padding-top: 8px; font-size: 13px;"><label class="control-label">Всего:</label></div>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', 'all_total', '0', ['class' => 'form-control input-sm all_total', 'placeholder' => 'Всего', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                        </div>
+
                     <?php } else { ?>
 
                         <div class="form-group" style="height: 25px;">
@@ -206,15 +725,34 @@ JS;
                                     <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
                             </div>
-                            <div class="col-xs-2">
-                                <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Стоимость']) ?>
                             </div>
                             <div class="col-xs-2">
-                                <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                                <?= Html::dropDownList("Act[serviceList][0][amount]", '1.0', ['1.0' => '1.0', '1.5' => '1.5', '2.0' => '2.0', '2.5' => '2.5', '3.0' => '3.0', '3.5' => '3.5', '4.0' => '4.0', '4.5' => '4.5', '5.0' => '5.0'], ['class' => 'form-control input-sm scope-num', 'prompt' => 'выберите кол-во н/ч']) ?>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
+                                <?= Html::input('text', 'total', '0', ['class' => 'form-control input-sm total_sum', 'placeholder' => 'Итого', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1" style="display: none;">
+                                <?= Html::input('text', 'Act[serviceList][0][parts]', '0', ['class' => 'form-control input-sm']) ?>
+                            </div>
+                            <div class="col-xs-1">
                                 <button type="button" class="btn btn-primary input-sm addButton"><i
                                             class="glyphicon glyphicon-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <div style="height: 30px;">
+                            <div class="col-xs-6">
+                            </div>
+                            <div class="col-xs-1">
+                            </div>
+                            <div class="col-xs-2" align="right" style="padding-top: 8px; font-size: 13px;"><label class="control-label">Всего:</label></div>
+                            <div class="col-xs-1">
+                                <?= Html::input('number', 'all_total', '0', ['class' => 'form-control input-sm all_total', 'placeholder' => 'Всего', 'disabled' => 'disabled']) ?>
+                            </div>
+                            <div class="col-xs-1">
                             </div>
                         </div>
 
@@ -224,8 +762,20 @@ JS;
             </tr>
             <tr>
                 <td colspan="7">
-                    <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
-                    <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+                    <div style="height: 30px;">
+                        <div class="col-xs-6">
+                            <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+                        </div>
+                        <div class="col-xs-1">
+                            <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
+                        </div>
+                        <div class="col-xs-2" align="right" style="padding-top: 8px; font-size: 13px;"><label class="control-label">Итого:</label></div>
+                        <div class="col-xs-1">
+                            <?= Html::input('number', 'all_page_total', '0', ['class' => 'form-control input-sm all_page_total', 'placeholder' => 'Всего', 'disabled' => 'disabled']) ?>
+                        </div>
+                        <div class="col-xs-1">
+                        </div>
+                    </div>
                 </td>
             </tr>
 
