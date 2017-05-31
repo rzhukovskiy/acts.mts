@@ -164,6 +164,7 @@ class Act extends ActiveRecord
                     'clientServiceList',
                     'mark_id',
                     'type_id', 
+                    'parts',
                     'card_number'
                 ],
                 'safe'
@@ -201,6 +202,7 @@ class Act extends ActiveRecord
             'day'          => 'День',
             'time_str'     => 'Дата',
             'image'        => 'Загрузка чека',
+            'parts'        => 'Запасные части',
             'actsCount'    => 'Обслуживания',
         ];
     }
