@@ -97,6 +97,16 @@ class ActScope extends ActiveRecord
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
+    public function getParts()
+    {
+        return $this->parts;
+    }
+
+    public function setParts($value)
+    {
+        $this->parts = $value;
+    }
+
     /**
      * @return ActiveQuery
      */
