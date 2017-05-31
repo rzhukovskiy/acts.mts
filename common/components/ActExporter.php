@@ -597,6 +597,8 @@ class ActExporter
 
             $row++;
 
+            $worksheet->getRowDimension($row)->setRowHeight(7);
+
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Генеральный Директор');
 
