@@ -7,6 +7,7 @@
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 use yii\helpers\Html;
+use common\models\Company;
 
 $script = <<< JS
 
@@ -186,6 +187,33 @@ $this->registerJs($script);
                     ]); ?>
                 </td>
             </tr>
+
+            <?php
+            // Выводим какие услуги компания у нас покупает, а какие нет
+            if(($model->type == 1) && (($model->status == Company::STATUS_ARCHIVE) || ($model->status == Company::STATUS_ACTIVE))) {
+
+                $resPurchasedService = \backend\controllers\CompanyController::getPurchasedService($model->id);
+
+                if(isset($resPurchasedService)) {
+                    echo '<tr><td class="list-label-md">Купленные услуги</td><td>';
+
+                    if(isset($resPurchasedService[0])) {
+                        echo $resPurchasedService[0];
+                    }
+
+                    echo '</td></tr><tr><td class="list-label-md">Не купленные услуги</td><td>';
+
+                    if(isset($resPurchasedService[1])) {
+                        echo $resPurchasedService[1];
+                    }
+
+                    echo '</td></tr>';
+
+                }
+
+            }
+            ?>
+
         </table>
     </div>
 </div>

@@ -12,5 +12,6 @@ echo $this->render('_update_tabs', [
 ]);
 
 echo $this->render('form/_info', [
+    'model' => $model,
     'modelCompanyInfo' => $modelCompanyInfo,
 ]);

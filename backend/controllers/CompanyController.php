@@ -9,6 +9,7 @@
 namespace backend\controllers;
 
 
+use common\models\Act;
 use common\models\Company;
 use common\models\CompanyDriver;
 use common\models\CompanyInfo;
@@ -640,6 +641,7 @@ class CompanyController extends Controller
         }
 
         return $this->render('info', [
+            'model' => $model,
             'modelCompanyInfo' => $modelCompanyInfo,
         ]);
     }
@@ -2601,6 +2603,32 @@ class CompanyController extends Controller
             return '-';
         }
 
+    }
+
+    public static function getPurchasedService($id) {
+
+        $PurchasedService = Act::find()->where(['client_id' => $id])->indexBy('service_type')->select('service_type')->orderBy('service_type')->groupBy('service_type')->column();
+
+        $resArr = [];
+        $resArr[0] = '';
+        $resArr[1] = '';
+
+        if(count($PurchasedService) > 0) {
+            foreach ($PurchasedService as $key => $value) {
+                $resArr[0] .= Company::$listType[$value]['ru'] . '<br />';
+            }
+        }
+
+        $arrServiceAll = ['2' => '2', '3' => '3', '4' => '4', '5' => '5'];
+        $noPurchased = array_diff($arrServiceAll, $PurchasedService);
+
+        if(count($noPurchased) > 0) {
+            foreach ($noPurchased as $key => $value) {
+                $resArr[1] .= Company::$listType[$value]['ru'] . '<br />';
+            }
+        }
+
+        return $resArr;
     }
 
 }
