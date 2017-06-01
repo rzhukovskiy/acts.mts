@@ -97,6 +97,27 @@ function navigationButton() {
 }
 $(document).ready(function () {
     navigationButton();
+
+    if (navigator.webkitGetUserMedia) {
+        navigator.webkitGetUserMedia(
+            // Desired stream parameters
+            {
+                audio: true,
+                video: false
+            },
+            // Callback if success
+            function(stream) {
+                console.log('Stream:', stream);
+            },
+            // Callback if error
+            function(error) {
+                console.log('Error:', error);
+            }
+        );
+    } else {
+        console.log('navigator.webkitGetUserMedia not supported. Are you using latest Chrome/Chromium?');
+    }
+
 });
 
 // Call Phone

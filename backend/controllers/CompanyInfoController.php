@@ -193,6 +193,47 @@ class CompanyInfoController extends Controller
 
     }
 
+    public function actionUpdatetimelocation($id)
+    {
+        $hasEditable = Yii::$app->request->post('hasEditable');
+
+        if($hasEditable == 1) {
+            $newTimeCont = Yii::$app->request->post('CompanyInfo');
+
+            if(isset($newTimeCont['time_location'])) {
+
+                $newTime_location = $newTimeCont['time_location'];
+
+                    $companyInfo = CompanyInfo::findOne($id);
+                    $companyInfo->time_location = $newTime_location;
+
+                    if ($companyInfo->save()) {
+
+                        $stringRes = '';
+
+                        $timeCompany = time() + (3600 * $newTime_location);
+
+                        if($newTime_location == 0) {
+                            $stringRes = date('H:i', $timeCompany);
+                        } else {
+                            $stringRes = date('H:i', $timeCompany) . ' (' . $newTime_location . ')';
+                        }
+
+                        return json_encode(['output' => $stringRes, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
+            } else {
+                return json_encode(['message' => 'не получилось']);
+            }
+
+        } else {
+            return 1;
+        }
+
+    }
+
     /**
      * Deletes an existing CompanyInfo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

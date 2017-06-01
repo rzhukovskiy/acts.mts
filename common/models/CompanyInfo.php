@@ -36,6 +36,8 @@ class CompanyInfo extends ActiveRecord
     public $payDay;
     public $prePaid;
     private $comment;
+    private $time_location;
+    private $website;
 
     /**
      * @inheritdoc
@@ -52,7 +54,8 @@ class CompanyInfo extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'contract_date'], 'integer'],
+            [['website'], 'safe'],
+            [['company_id', 'contract_date', 'time_location'], 'integer'],
             [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'comment'], 'string', 'max' => 255],        ];
     }
 
@@ -77,6 +80,8 @@ class CompanyInfo extends ActiveRecord
             'payTypeDay' => 'Тип дней',
             'payDay' => 'Количество дней',
             'prePaid' => 'Аванс',
+            'time_location' => 'Разница с Москвой',
+            'website' => 'Веб-сайт',
         ];
     }
 
