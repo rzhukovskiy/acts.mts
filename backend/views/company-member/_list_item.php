@@ -73,6 +73,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('phone')?></td>
         <td class="phoneBody">
+            <video id="remoteVideo"></video>
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;

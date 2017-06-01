@@ -95,48 +95,30 @@ function navigationButton() {
         );
     });
 }
+
 $(document).ready(function () {
     navigationButton();
-
-    if (navigator.webkitGetUserMedia) {
-        navigator.webkitGetUserMedia(
-            // Desired stream parameters
-            {
-                audio: true,
-                video: false
-            },
-            // Callback if success
-            function(stream) {
-                console.log('Stream:', stream);
-            },
-            // Callback if error
-            function(error) {
-                console.log('Error:', error);
-            }
-        );
-    } else {
-        console.log('navigator.webkitGetUserMedia not supported. Are you using latest Chrome/Chromium?');
-    }
-
-});
-
-// Call Phone
-function callNumber(number) {
-    var userAgent = new SIP.UA({
+    userAgent = new SIP.UA({
         uri: '301@cc.mtransservice.ru',
         wsServers: ['wss://cc.mtransservice.ru:7443'],
         authorizationUser: '301',
         password: 'ieza]Qu5ho'
     });
 
-    var options = {
+    options = {
         media: {
             constraints: {
                 audio: true,
-                video: false
+                video: true
             },
+            render: {
+                remote: document.getElementById('remoteVideo'),
+            }
         }
     };
+});
 
-    userAgent.invite('sip:' + number + '@cc.mtransservice.ru', options)
+// Call Phone
+function callNumber(number) {
+    session = userAgent.invite('sip:' + number + '@cc.mtransservice.ru', options)
 }
