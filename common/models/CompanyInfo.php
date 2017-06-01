@@ -159,6 +159,26 @@ class CompanyInfo extends ActiveRecord
         $this->comment = $value;
     }
 
+    public function getTime_location()
+    {
+        return $this->time_location;
+    }
+
+    public function setTime_location($value)
+    {
+        $this->time_location = $value;
+    }
+
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    public function setWebsite($value)
+    {
+        $this->website = $value;
+    }
+
     /**
      * @return ActiveQuery
      */
