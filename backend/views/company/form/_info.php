@@ -8,6 +8,7 @@ use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 use yii\helpers\Html;
 use common\models\Company;
+use yii\web\View;
 
 $script = <<< JS
 
@@ -34,9 +35,46 @@ $('.typeDay').on('change', function (e) {
     }
     
 });
+
+    // Скрыть иконку ссылки если поле ссылки пустое
+    if(($('#companyinfo-website-targ').text() == '') || ($('#companyinfo-website-targ').text() == 'не задано')) {
+        $('.glyphicon-new-window').hide();
+    }
+    // Скрыть иконку ссылки если поле ссылки пустое
+    
+    // Отобразить иконку ссылки если данное поле изменили
+    var websiteCompanyOld = $('#companyinfo-website-targ').text();
+    $('#companyinfo-website-targ').bind("DOMSubtreeModified",function() {
+        var websiteCompanyNew = $('#companyinfo-website-targ').text();
+        if((websiteCompanyOld != websiteCompanyNew) && (websiteCompanyNew != '')) {
+        websiteCompanyOld = websiteCompanyNew;
+        
+        if((websiteCompanyNew.length > 0) && (websiteCompanyNew != 'не задано')) {
+        if(websiteCompanyNew.indexOf('http') + 1) {
+            $('.glyphicon-new-window').show();
+        }
+        }
+        
+        } else {
+          $('.glyphicon-new-window').hide();  
+        }
+    });
+    // Отобразить иконку ссылки если данное поле изменили
+
+    // Клик по ссылке website
+    $('table tbody tr td').on('click', '.glyphicon-new-window', function() {
+        var websiteCompany = $('#companyinfo-website-targ').text();
+        
+        if((websiteCompany.length > 0) && (websiteCompany != 'не задано')) {
+        if(websiteCompany.indexOf('http') + 1) {
+            window.open(websiteCompany, '_blank');
+        }
+        }
+    });
+    // Клик по ссылке website
     
 JS;
-$this->registerJs($script);
+$this->registerJs($script, View::POS_READY);
 
 ?>
 
@@ -101,12 +139,13 @@ $this->registerJs($script);
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите адрес'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта (с http://)'],
                         'formOptions' => [
                             'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
+                    <?= '<span class="glyphicon glyphicon-new-window"></span>' ?>
                 </td>
             </tr>
             <tr>
