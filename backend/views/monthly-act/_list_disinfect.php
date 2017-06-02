@@ -149,7 +149,7 @@ echo GridView::widget([
         [
             'attribute'       => 'profit',
             'value'           => function ($data) {
-                return $data->profit;
+                return (int) $data->profit;
             },
             'pageSummary'     => true,
             'pageSummaryFunc' => GridView::F_SUM,
