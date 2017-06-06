@@ -14,7 +14,7 @@ class m170602_143251_new_table_company_state extends Migration
             'type' => "tinyint(1) NOT NULL",
             'comment' => $this->text()->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci')->notNull(),
             'date' => 'varchar(20) NOT NULL',
-        ], 'CHARACTER SET utf8 COLLATE utf8_unicode_ci');
+        ]);
     }
 
     public function down()
