@@ -110,7 +110,9 @@ $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
-$filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+$filters = 'Поиск компании: ' . Html::activeInput('text', $searchModel, "client_name", ['class' => 'form-control ext-filter']);
+
+$filters .= 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
         ->andWhere(['type' => Company::TYPE_OWNER])
         ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 

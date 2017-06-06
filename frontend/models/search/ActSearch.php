@@ -21,6 +21,7 @@ class ActSearch extends Act
     public $dateTo;
     public $createDay;
     public $period;
+    public $client_name;
 
     public $ssoom;
 
@@ -31,7 +32,7 @@ class ActSearch extends Act
     public function rules()
     {
         $rules = [
-            [['dateFrom', 'dateTo', 'service_type', 'client_id', 'ssoom', 'dateMonth'], 'safe'],
+            [['dateFrom', 'dateTo', 'service_type', 'client_id', 'client_name', 'ssoom', 'dateMonth'], 'safe'],
         ];
 
         return array_merge(parent::rules(), $rules);
@@ -47,7 +48,8 @@ class ActSearch extends Act
                 'service_type',
                 'countServe',
                 'ssoom',
-                'client_id'
+                'client_id',
+                'client_name'
             ],
             'statistic_client_filter'  => [
                 'dateMonth',
@@ -56,9 +58,10 @@ class ActSearch extends Act
                 'service_type',
                 'countServe',
                 'ssoom',
-                'client_id'
+                'client_id',
+                'client_name'
             ],
-            'statistic_filter'         => ['dateFrom', 'dateTo', 'service_type', 'client_id'],
+            'statistic_filter'         => ['dateFrom', 'dateTo', 'service_type', 'client_id', 'client_name'],
         ];
 
         return array_merge(parent::scenarios(), $scenarios);

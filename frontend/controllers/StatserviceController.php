@@ -101,6 +101,11 @@ class StatserviceController extends Controller
             $dataProvider->query ->andWhere(['>', '`act`.`client_id`', '0']);
         }
 
+        if(isset(Yii::$app->request->queryParams['ActSearch']['client_name'])) {
+            $searchModel->client_name = Yii::$app->request->queryParams['ActSearch']['client_name'];
+            $dataProvider->query ->andWhere(['LIKE', '`company`.`name`', $searchModel->client_name]);
+        }
+
         $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
 
         $dataProvider->query->groupBy('`client_id`, `description`');
@@ -161,6 +166,11 @@ class StatserviceController extends Controller
             }
         } else {
             $dataProvider->query ->andWhere(['>', '`act`.`partner_id`', '0']);
+        }
+
+        if(isset(Yii::$app->request->queryParams['ActSearch']['client_name'])) {
+            $searchModel->client_name = Yii::$app->request->queryParams['ActSearch']['client_name'];
+            $dataProvider->query ->andWhere(['LIKE', '`company`.`name`', $searchModel->client_name]);
         }
 
         $dataProvider->query ->andWhere(['between', '`act`.`served_at`', $dateFrom, $dateTo]);
