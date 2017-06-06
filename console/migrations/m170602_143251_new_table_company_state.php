@@ -12,8 +12,8 @@ class m170602_143251_new_table_company_state extends Migration
             'member_id' => $this->integer(11)->notNull(),
             'author_id' => $this->integer(11)->notNull(),
             'type' => "tinyint(1) NOT NULL",
-            'comment' => $this->text()->notNull(),
-            'date' => 'varchar(20) NOT NULL',
+            'comment' => $this->text()->append('CHARACTER SET utf8 COLLATE utf8_unicode_ci')->notNull(),
+            'date' => 'varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL',
         ]);
     }
 
