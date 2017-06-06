@@ -10,7 +10,7 @@ use kartik\datetime\DateTimePicker;
  */
 $form = ActiveForm::begin([
     'action' => $model->isNewRecord ? ['/company/newstate', 'id' => $id] : ['/company/updatestate', 'id' => $model->id],
-    'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+    'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
     'fieldConfig' => [
         'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
         'labelOptions' => ['class' => 'col-sm-3 control-label'],
