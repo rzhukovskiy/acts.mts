@@ -239,13 +239,13 @@ $filters = 'Период: ' . DatePicker::widget([
 if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
     $filters .= Html::a('<span class="btn btn-danger btn-sm" style="margin-left: 15px;">Не оплаченные</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')) . '&filterStatus=' . 1);
 } else {
-    $filters .= Html::a('<span class="btn btn-danger btn-sm" style="margin-left: 15px;">Не оплаченные</span>', Yii::$app->request->url . '&filterStatus=' . 1);;
+    $filters .= Html::a('<span class="btn btn-danger btn-sm" style="margin-left: 15px;">Не оплаченные</span>', Yii::$app->request->url . '&filterStatus=' . 1);
 }
 
 if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
     $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')) . '&filterStatus=' . 2);
 } else {
-    $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', Yii::$app->request->url . '&filterStatus=' . 2);;
+    $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', Yii::$app->request->url . '&filterStatus=' . 2);
 }
 
 $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')));
@@ -272,7 +272,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 3);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 3);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 3);
     }
 
     $filters .= '</td>
@@ -285,7 +285,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 1);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 1);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 1);
     }
 
     $filters .= '</td>
@@ -309,7 +309,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 4);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 4);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 4);
     }
 
     $filters .= '</td>
@@ -322,7 +322,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 5);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 5);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 5);
     }
 
     $filters .= '</td>
@@ -335,7 +335,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 6);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 6);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 6);
     }
 
     $filters .= '</td>
@@ -348,7 +348,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 7);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 7);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 7);
     }
 
     $filters .= '</td>
@@ -361,7 +361,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 8);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 8);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 8);
     }
 
     $filters .= '</td>
@@ -374,7 +374,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 2);
     } else {
-        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 2);;
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 2);
     }
 
     $filters .= '</td>
