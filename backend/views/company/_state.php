@@ -258,13 +258,15 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                 ],
                 'value' => function ($data) {
 
-                    if(mb_strlen($data->comment) > 530) {
+                    $commText = mb_convert_encoding($data->comment, "utf-8");
 
-                        $comment = mb_substr(nl2br($data->comment), 0, 528) . '.. ' . '<div class="showFullComment" data-comment="' . $data->id . '">Подробнее</div>';
+                    if(mb_strlen($commText) > 530) {
+
+                        $comment = mb_substr(nl2br($commText), 0, 528) . '.. ' . '<div class="showFullComment" data-comment="' . $data->id . '">Подробнее</div>';
                         return $comment;
 
                     } else {
-                        return nl2br($data->comment);
+                        return nl2br($commText);
                     }
 
                 },
