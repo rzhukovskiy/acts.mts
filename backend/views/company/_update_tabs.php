@@ -19,6 +19,11 @@ $items = [
         'active' => \Yii::$app->controller->action->id == 'update',
     ],
     [
+        'label'  => 'Статус клиента',
+        'url'    => ['company/state', 'id' => $model->id],
+        'active' => \Yii::$app->controller->action->id == 'state',
+    ],
+    [
         'label'  => 'Инфо',
         'url'    => ['company/info', 'id' => $model->id],
         'active' => \Yii::$app->controller->action->id == 'info',

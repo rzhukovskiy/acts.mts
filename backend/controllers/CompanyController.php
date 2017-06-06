@@ -16,7 +16,13 @@ use common\models\CompanyInfo;
 use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
+use common\models\CompanyState;
+use common\models\Department;
+use yii\helpers\Url;
+use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
 use common\models\DepartmentCompany;
+use common\models\DepartmentUserCompanyType;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
@@ -26,6 +32,7 @@ use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\Type;
 use common\models\User;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii;
 use yii\filters\AccessControl;
@@ -46,17 +53,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'member', 'driver', 'delete', 'attribute', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'delete', 'attribute', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -644,6 +651,151 @@ class CompanyController extends Controller
             'model' => $model,
             'modelCompanyInfo' => $modelCompanyInfo,
         ]);
+    }
+
+    // Раздел статус клиента
+    public function actionState($id)
+    {
+        $model = $this->findModel($id);
+
+        $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
+        $modelCompanyInfo->company_id = $model->id;
+        if ($modelCompanyInfo->isNewRecord) {
+            $modelCompanyInfo->save();
+        }
+
+        $modelCompanyOffer = $model->offer ? $model->offer : new CompanyOffer();
+        $modelCompanyOffer->company_id = $model->id;
+        if ($modelCompanyOffer->isNewRecord) {
+            $modelCompanyOffer->save();
+        }
+
+        $searchModel = CompanyState::find()->where(['company_id' => $id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'date'    => SORT_ASC,
+            ]
+        ];
+
+        $companyMembers = CompanyMember::find()->where(['company_id' => $id])->select('name')->indexBy('id')->column();
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        return $this->render('state', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'model' => $model,
+            'modelCompanyInfo' => $modelCompanyInfo,
+            'modelCompanyOffer' => $modelCompanyOffer,
+            'companyMembers' => $companyMembers,
+            'authorMembers' => $authorMembers,
+        ]);
+
+    }
+
+    public function actionNewstate($id)
+    {
+        $model = new CompanyState();
+        $model->company_id = $id;
+
+        $companyMembers = CompanyMember::find()->where(['company_id' => $id])->select('name')->indexBy('id')->column();
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        // Загрузка файлов
+
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            $model->files = UploadedFile::getInstances($model, 'files');
+
+            if ($model->upload()) {
+                // file is uploaded successfully
+            } else {
+            }
+
+            return $this->redirect(['company/state', 'id' => $model->company_id]);
+
+        } else {
+            return $this->render('form/newstate', [
+                'id' => $id,
+                'model' => $model,
+                'companyMembers' => $companyMembers,
+                'authorMembers' => $authorMembers,
+            ]);
+        }
+    }
+
+    public function actionAttaches($id)
+    {
+
+        if($id > 0) {
+
+            $pathfolder = \Yii::getAlias('@webroot/files/attaches/' . $id . '/');
+            $patharchive = \Yii::getAlias('@webroot/files/attaches/attaches.zip');
+
+            if (file_exists($pathfolder)) {
+
+                if (file_exists($patharchive)) {
+                    unlink($patharchive);
+                }
+
+                $zip = new \ZipArchive;
+                if ($zip->open($patharchive, \ZIPARCHIVE::CREATE) === TRUE) {
+
+                    foreach (FileHelper::findFiles($pathfolder) as $file) {
+                        $zip->addFile($pathfolder . basename($file), basename($file));
+                    }
+
+                    $zip->close();
+
+                    chmod($patharchive, 0755);
+
+                    header("Content-Type: application/octet-stream");
+                    header("Accept-Ranges: bytes");
+                    header("Content-Length: ".filesize($patharchive));
+                    header("Content-Disposition: attachment; filename=attaches.zip");
+                    readfile($patharchive);
+
+                }
+
+            }
+
+        }
+
+        return $this->redirect(['company/state', 'id' => $id]);
+
+    }
+
+    public function actionGetcomment()
+    {
+        $stateID = (int) Yii::$app->request->post('state');
+
+        if($stateID > 0) {
+
+            $stateArr = CompanyState::find()->where(['id' => $stateID])->select('comment')->column();
+
+            $fullComment = '';
+
+            if(isset($stateArr)) {
+                if(isset($stateArr[0])) {
+                    $fullComment = nl2br($stateArr[0]);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+            echo json_encode(['success' => 'true', 'comment' => $fullComment]);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
     public function actionOffer($type)

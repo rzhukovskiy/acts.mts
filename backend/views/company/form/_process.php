@@ -196,7 +196,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     if($modelCompanyInfo->time_location == 0) {
                         $showTimeLocation = date('H:i', $timeCompany);
                     } else {
-                        $showTimeLocation = date('H:i', $timeCompany) . ' (' . $modelCompanyInfo->time_location . ')';
+                        $showTimeLocation = date('H:i', $timeCompany) . ' (' . ($modelCompanyInfo->time_location > 0) ? '+' : '' . $modelCompanyInfo->time_location . ')';
                     }
 
                     $editableForm = Editable::begin([
@@ -309,37 +309,6 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             }
             ?>
 
-            <tr>
-                <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('communication_str') ?></td>
-                <td>
-                    <?= Editable::widget([
-                        'model' => $modelCompanyOffer,
-                        'buttonsTemplate' => '{submit}',
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'communication_str',
-                        'displayValue' => $modelCompanyOffer->communication_str,
-                        'inputType' => Editable::INPUT_DATETIME,
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'options' => [
-                            'class' => 'form-control',
-                            'removeButton' => false,
-                            'pluginOptions' => [
-                                'format' => 'dd-mm-yyyy hh:ii',
-                                'autoclose' => true,
-                                'pickerPosition' => 'top-right',
-                            ],
-                        ],
-                        'formOptions' => [
-                            'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
-                </td>
-            </tr>
         </table>
     </div>
 </div>
