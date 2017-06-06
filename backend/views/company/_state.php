@@ -93,7 +93,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                     if($modelCompanyInfo->time_location == 0) {
                         $showTimeLocation = date('H:i', $timeCompany);
                     } else {
-                        $showTimeLocation = date('H:i', $timeCompany) . ' (' . ($modelCompanyInfo->time_location > 0) ? '+' : '' . $modelCompanyInfo->time_location . ')';
+                        $showTimeLocation = date('H:i', $timeCompany) . ' (' . ($modelCompanyInfo->time_location > 0) ? '+' . $modelCompanyInfo->time_location : '' . $modelCompanyInfo->time_location . ')';
                     }
 
                     $editableForm = Editable::begin([
