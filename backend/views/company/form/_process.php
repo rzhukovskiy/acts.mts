@@ -196,7 +196,11 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     if($modelCompanyInfo->time_location == 0) {
                         $showTimeLocation = date('H:i', $timeCompany);
                     } else {
-                        $showTimeLocation = date('H:i', $timeCompany) . ' (' . ($modelCompanyInfo->time_location > 0) ? '+' . $modelCompanyInfo->time_location : '' . $modelCompanyInfo->time_location . ')';
+                        if($modelCompanyInfo->time_location > 0) {
+                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . '+' . $modelCompanyInfo->time_location . ')';
+                        } else {
+                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . $modelCompanyInfo->time_location . ')';
+                        }
                     }
 
                     $editableForm = Editable::begin([
