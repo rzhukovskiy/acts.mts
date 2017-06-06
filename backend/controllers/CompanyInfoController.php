@@ -216,7 +216,11 @@ class CompanyInfoController extends Controller
                         if($newTime_location == 0) {
                             $stringRes = date('H:i', $timeCompany);
                         } else {
-                            $stringRes = date('H:i', $timeCompany) . ' (' . $newTime_location . ')';
+                            if($newTime_location > 0) {
+                                $stringRes = date('H:i', $timeCompany) . ' (' . '+' . $newTime_location . ')';
+                            } else {
+                                $stringRes = date('H:i', $timeCompany) . ' (' . $newTime_location . ')';
+                            }
                         }
 
                         return json_encode(['output' => $stringRes, 'message' => '']);
