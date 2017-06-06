@@ -31,13 +31,13 @@ $form = ActiveForm::begin([
     ]
 ]) ?>
 
-<?= $form->field($model, 'member_id')->dropDownList($companyMembers, ['class' => 'form-control', 'prompt' => 'выберите сотрудника']) ?>
+<?= $form->field($model, 'member_id')->dropDownList($companyMembers, ['class' => 'form-control', 'prompt' => 'Выберите сотрудника']) ?>
 
-<?= $form->field($model, 'author_id')->dropDownList($authorMembers, ['class' => 'form-control', 'prompt' => 'выберите сотрудника']) ?>
+<?= $form->field($model, 'author_id')->dropDownList($authorMembers, ['class' => 'form-control', 'prompt' => 'Выберите сотрудника']) ?>
 
-<?= $form->field($model, 'type')->dropDownList(['0' => 'Исходящий звонок' , '1' => 'Входящий звонок', '2' => 'Исходящее письмо', '3' => 'Входящее письмо'], ['class' => 'form-control', 'prompt' => 'выберите формат']) ?>
+<?= $form->field($model, 'type')->dropDownList(['0' => 'Исходящий звонок' , '1' => 'Входящий звонок', '2' => 'Исходящее письмо', '3' => 'Входящее письмо'], ['class' => 'form-control', 'prompt' => 'Выберите формат']) ?>
 
-<?= $form->field($model, 'comment')->textarea(['maxlength' => true]) ?>
+<?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'placeholder' => 'Введите комментарий']) ?>
 
 <?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
