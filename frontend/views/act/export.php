@@ -105,6 +105,8 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
         <?php
 
+        mb_internal_encoding('UTF-8');
+
         $arrListFiles = [];
         $arrDopListFiles = [];
         $arrStatusFile = [];
@@ -117,11 +119,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         foreach (FileHelper::findFiles($path) as $file) {
 
             $fileName = basename($file);
-            $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));
+            $fileName = mb_convert_encoding($fileName, 'utf-8');
             $fileName = str_replace('__', '_', $fileName);
 
             $file_name_search = basename($file);
-            $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
+            $file_name_search = mb_convert_encoding($file_name_search, 'utf-8');
             $statusFile = 0;
 
             if (mb_strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
