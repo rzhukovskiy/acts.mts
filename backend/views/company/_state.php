@@ -338,7 +338,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
         foreach (FileHelper::findFiles($pathfolder) as $file) {
             if((basename($file) != 'attaches.zip') && (basename($file) != '.DS_Store')) {
                 $arrStateID = explode('-', basename($file));
-                $resLinksFiles .= '<span class="attachDate" data-id="' . $arrStateID[0] . '" style="color:#757575; margin-right:10px;"></span>' . Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                $resLinksFiles .= '<span class="attachDate" data-id="' . $arrStateID[0] . '" style="color:#757575; margin-right:10px;"></span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
                 $numFiles++;
             }
         }
