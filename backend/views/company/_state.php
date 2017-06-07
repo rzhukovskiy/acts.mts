@@ -238,8 +238,30 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             ],
             [
                 'attribute' => 'member_id',
+                'format' => 'raw',
                 'value' => function ($data) {
-                    return $GLOBALS['companyMembers'][$data->member_id];
+
+                $arrMemberList = explode(', ', $data->member_id);
+                $memberText = '';
+
+                if(count($arrMemberList) > 1) {
+
+                    for($i = 0; $i < count($arrMemberList); $i++) {
+                        $memberText .= $GLOBALS['companyMembers'][$arrMemberList[$i]] . '<br />';
+                    }
+
+                } else {
+
+                    try {
+                        $memberText = $GLOBALS['companyMembers'][$data->member_id];
+                    } catch (\Exception $e) {
+                        $memberText = '-';
+                    }
+
+                }
+
+                return $memberText;
+
                 },
             ],
             [

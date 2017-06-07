@@ -31,7 +31,7 @@ $form = ActiveForm::begin([
     ]
 ]) ?>
 
-<?= $form->field($model, 'member_id')->dropDownList($companyMembers, ['class' => 'form-control', 'prompt' => 'Выберите сотрудника']) ?>
+<?= $form->field($model, 'member_id')->dropDownList($companyMembers, ['class' => 'form-control', 'multiple' => 'true', 'size' => '4'/*, 'prompt' => 'Выберите сотрудника'*/]) ?>
 
 <?= $form->field($model, 'author_id')->dropDownList($authorMembers, ['class' => 'form-control', 'prompt' => 'Выберите сотрудника']) ?>
 

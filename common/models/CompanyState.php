@@ -41,8 +41,9 @@ class CompanyState extends ActiveRecord
     {
         return [
             [['company_id', 'member_id', 'author_id', 'type', 'comment', 'date'], 'required'],
-            [['company_id', 'member_id', 'author_id', 'type'], 'integer'],
+            [['company_id', 'author_id', 'type'], 'integer'],
             [['comment', 'date'], 'string'],
+            ['member_id', 'safe'],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
         ];
     }
@@ -68,6 +69,28 @@ class CompanyState extends ActiveRecord
     {
         // переводим дату в нужный формат
         $this->date = strtotime($this->date);
+
+        // запись в базу нескольких клиентов id
+        if(is_array($this->member_id)) {
+
+            $arrMembers = $this->member_id;
+
+            if(count($arrMembers) > 0) {
+                $stringMembers = '';
+
+                for ($i = 0; $i < count($arrMembers); $i++) {
+                    if($i == 0){
+                        $stringMembers .= $arrMembers[$i];
+                    } else {
+                        $stringMembers .= ', ' . $arrMembers[$i];
+                    }
+                }
+
+                $this->member_id = $stringMembers;
+
+            }
+
+        }
 
         return parent::beforeSave($insert);
     }
