@@ -192,7 +192,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                             'pluginOptions' => [
                                 'format' => 'dd-mm-yyyy hh:ii',
                                 'autoclose' => true,
-                                'pickerPosition' => 'top-right',
+                                'pickerPosition' => 'bottom-right',
                             ],
                         ],
                         'formOptions' => [
