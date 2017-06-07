@@ -131,14 +131,57 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             <tr>
                 <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('communication_str') ?></td>
                 <td>
-                    <?= Editable::widget([
+                    <?php
+
+                    $wekCommunicDate = '';
+
+                    if(isset($modelCompanyOffer->communication_str)) {
+
+                        try {
+                            $CommunicDate = strtotime($modelCompanyOffer->communication_str);
+                            $wekCommunicDate = date("w", $CommunicDate);
+
+                            switch ($wekCommunicDate) {
+                                case 1:
+                                    $wekCommunicDate = 'Пн.';
+                                    break;
+                                case 2:
+                                    $wekCommunicDate = 'Вт.';
+                                    break;
+                                case 3:
+                                    $wekCommunicDate = 'Ср.';
+                                    break;
+                                case 4:
+                                    $wekCommunicDate = 'Чт.';
+                                    break;
+                                case 5:
+                                    $wekCommunicDate = 'Пт.';
+                                    break;
+                                case 6:
+                                    $wekCommunicDate = 'Сб.';
+                                    break;
+                                case 7:
+                                    $wekCommunicDate = 'Вс.';
+                                    break;
+                            }
+
+                            $wekCommunicDate = $modelCompanyOffer->communication_str . ' (' . $wekCommunicDate . ')';
+                        } catch (\Exception $e) {
+                            $wekCommunicDate = $modelCompanyOffer->communication_str;
+                        }
+
+                    } else {
+                        $wekCommunicDate = $modelCompanyOffer->communication_str;
+                    }
+
+                    echo Editable::widget([
                         'model' => $modelCompanyOffer,
                         'buttonsTemplate' => '{submit}',
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'communication_str',
-                        'displayValue' => $modelCompanyOffer->communication_str,
+                        'displayValue' => $wekCommunicDate,
                         'inputType' => Editable::INPUT_DATETIME,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,

@@ -109,6 +109,52 @@ class CompanyOfferController extends Controller
                 foreach (Yii::$app->request->post('CompanyOffer') as $name => $value) {
                     if ($name == 'process') {
                         $output[] = $model->getProcessHtml();
+                    } elseif($name == 'communication_str') {
+
+                        // вычечляем день недели даты след. связи
+                        $wekCommunicDate = '';
+
+                        if (isset($value)) {
+
+                            try {
+                                $CommunicDate = strtotime($value);
+                                $wekCommunicDate = date("w", $CommunicDate);
+
+                                switch ($wekCommunicDate) {
+                                    case 1:
+                                        $wekCommunicDate = 'Пн.';
+                                        break;
+                                    case 2:
+                                        $wekCommunicDate = 'Вт.';
+                                        break;
+                                    case 3:
+                                        $wekCommunicDate = 'Ср.';
+                                        break;
+                                    case 4:
+                                        $wekCommunicDate = 'Чт.';
+                                        break;
+                                    case 5:
+                                        $wekCommunicDate = 'Пт.';
+                                        break;
+                                    case 6:
+                                        $wekCommunicDate = 'Сб.';
+                                        break;
+                                    case 7:
+                                        $wekCommunicDate = 'Вс.';
+                                        break;
+                                }
+
+                                $wekCommunicDate = $value . ' (' . $wekCommunicDate . ')';
+                            } catch (\Exception $e) {
+                                $wekCommunicDate = $value;
+                            }
+
+                        } else {
+                            $wekCommunicDate = $value;
+                        }
+
+                        $output[] = $wekCommunicDate;
+
                     } else {
                         $output[] = $value;
                     }
