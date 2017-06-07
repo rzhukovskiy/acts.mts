@@ -115,7 +115,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         $arrDopSpravki = [];
 
         foreach (FileHelper::findFiles($path) as $file) {
-            print_r(mb_internal_encoding()); die;
+
             $fileName = basename($file);
             $fileName = mb_convert_encoding($fileName, 'utf-8', mb_detect_encoding($fileName));
             $fileName = str_replace('__', '_', $fileName);
