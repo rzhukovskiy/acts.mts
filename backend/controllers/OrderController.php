@@ -73,7 +73,7 @@ class OrderController extends Controller
             $entryModel = Entry::findOne($entryData['id']);
         }
 
-        $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+        $listCity = Company::find()->where(['OR', ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_ARCHIVE]])->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
 
         // Убираем пробел у Оренбурга
         $newListCity = [];
