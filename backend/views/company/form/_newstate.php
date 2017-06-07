@@ -22,7 +22,7 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'date')->widget(DateTimePicker::className(), [
     'type' => DateTimePicker::TYPE_INPUT,
-    'options' => ['placeholder' => 'Выберите дату общения'],
+    'options' => ['placeholder' => 'Выберите дату общения', 'value' => date('d.m.Y H:i')],
     'pluginOptions' => [
         'format' => 'dd.mm.yyyy hh:i',
         'autoclose'=>true,
@@ -33,9 +33,9 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'member_id')->dropDownList($companyMembers, ['class' => 'form-control', 'multiple' => 'true', 'size' => '4'/*, 'prompt' => 'Выберите сотрудника'*/]) ?>
 
-<?= $form->field($model, 'author_id')->dropDownList($authorMembers, ['class' => 'form-control', 'prompt' => 'Выберите сотрудника']) ?>
+<?= $form->field($model, 'author_id')->dropDownList($authorMembers, ['class' => 'form-control', 'options' =>[Yii::$app->user->identity->id => ['Selected' => true]], 'prompt' => 'Выберите сотрудника']) ?>
 
-<?= $form->field($model, 'type')->dropDownList(['0' => 'Исходящий звонок' , '1' => 'Входящий звонок', '2' => 'Исходящее письмо', '3' => 'Входящее письмо'], ['class' => 'form-control', 'prompt' => 'Выберите формат']) ?>
+<?= $form->field($model, 'type')->dropDownList(['0' => 'Исходящий звонок' , '1' => 'Входящий звонок', '2' => 'Исходящее письмо', '3' => 'Входящее письмо'], ['class' => 'form-control'/*, 'prompt' => 'Выберите формат'*/]) ?>
 
 <?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'placeholder' => 'Введите комментарий']) ?>
 

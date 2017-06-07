@@ -232,6 +232,9 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
         'columns' => [
             [
                 'attribute' => 'date',
+                'options' => [
+                    'style' => 'width: 135px',
+                ],
                 'value' => function ($data) {
                     return date('H:i d.m.Y', $data->date);
                 },
@@ -239,6 +242,9 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             [
                 'attribute' => 'member_id',
                 'format' => 'raw',
+                'options' => [
+                    'style' => 'width: 250px',
+                ],
                 'value' => function ($data) {
 
                 $arrMemberList = explode(', ', $data->member_id);
@@ -266,12 +272,18 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             ],
             [
                 'attribute' => 'author_id',
+                'options' => [
+                    'style' => 'width: 120px',
+                ],
                 'value' => function ($data) {
                     return $GLOBALS['authorMembers'][$data->author_id];
                 },
             ],
             [
                 'attribute' => 'type',
+                'options' => [
+                    'style' => 'width: 155px',
+                ],
                 'value' => function ($data) {
                     return $GLOBALS['types'][$data->type];
                 },
@@ -318,9 +330,6 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             [
                 'attribute' => 'comment',
                 'format' => 'raw',
-                'options' => [
-                    'style' => 'width: 630px',
-                ],
                 'value' => function ($data) {
 
                     $commText = mb_convert_encoding($data->comment, "utf-8");
