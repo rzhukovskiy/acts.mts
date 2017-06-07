@@ -134,14 +134,14 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $pref = '';
-                if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
-                    if($fileName[mb_strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[mb_strlen($fileName) - 6];
+                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
+                    if($fileName[strlen($fileName) - 7] == '-') {
+                        $pref = $fileName[strlen($fileName) - 6];
                     } else {
-                        $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
+                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
                     }
-                } else if(($fileName[mb_strlen($fileName) - 12] . $fileName[mb_strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
+                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
+                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
                 }
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
@@ -319,14 +319,14 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $pref = '';
-                if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
-                    if($fileName[mb_strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[mb_strlen($fileName) - 6];
+                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
+                    if($fileName[strlen($fileName) - 7] == '-') {
+                        $pref = $fileName[strlen($fileName) - 6];
                     } else {
-                        $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
+                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
                     }
-                } else if(($fileName[mb_strlen($fileName) - 12] . $fileName[mb_strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
+                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
+                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
                 }
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
