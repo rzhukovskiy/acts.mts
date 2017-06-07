@@ -151,7 +151,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -230,7 +230,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -273,7 +273,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -327,7 +327,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -406,7 +406,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -449,7 +449,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -491,7 +491,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -532,7 +532,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -574,7 +574,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -616,7 +616,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -657,7 +657,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
