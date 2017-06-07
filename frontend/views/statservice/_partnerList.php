@@ -112,9 +112,9 @@ $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-prima
 
 $filters = 'Поиск компании: ' . Html::activeInput('text', $searchModel, "client_name", ['class' => 'form-control ext-filter']);
 
-$filters .= 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'partner_id', Company::find()->active()
+/*$filters .= 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'partner_id', Company::find()->active()
         ->andWhere(['type' => $type])
-        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+        ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);*/
 
 $filters .= 'Выбор периода: ' . $periodForm;
 
