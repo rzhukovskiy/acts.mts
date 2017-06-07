@@ -124,22 +124,22 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             $file_name_search = mb_convert_encoding($file_name_search, 'utf-8', mb_detect_encoding($file_name_search));
             $statusFile = 0;
 
-            if (strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
+            if (mb_strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'доп._дезинфекция_Справка_') + 45));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Справка_') + 25));
 
                 $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
+                if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
+                    if($fileName[mb_strlen($fileName) - 7] == '-') {
+                        $pref = $fileName[mb_strlen($fileName) - 6];
                     } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
+                        $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
                     }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
+                } else if(($fileName[mb_strlen($fileName) - 12] . $fileName[mb_strlen($fileName) - 11]) == '20') {
+                    $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
                 }
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -151,7 +151,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -177,19 +177,19 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $premfp =  '';
 
-                    if(strpos($tmpStrint, 'МФП 1') > 0) {
+                    if(mb_strpos($tmpStrint, 'МФП 1') > 0) {
                         $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 1";
-                    } else if(strpos($tmpStrint, 'МФП 2') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 2') > 0) {
                         $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 2";
-                    } else if(strpos($tmpStrint, 'МФП 3') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 3') > 0) {
                         $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 3";
-                    } else if(strpos($tmpStrint, 'МФП 4') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 4') > 0) {
                         $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 4";
-                    } else if(strpos($tmpStrint, 'МФП 5') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 5') > 0) {
                         $tmpStrint = " ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 5";
                     } else {
@@ -214,11 +214,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'оп._дезинфекция_Счет_') > 0) {
+            } else if (mb_strpos($fileName, 'оп._дезинфекция_Счет_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'доп._дезинфекция_Счет_') + 39));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Счет_') + 22));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -230,7 +230,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -257,11 +257,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'оп._дезинфекция_Акт_') > 0) {
+            } else if (mb_strpos($fileName, 'оп._дезинфекция_Акт_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'доп._дезинфекция_Акт_') + 37));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Акт_') + 21));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -273,7 +273,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -300,22 +300,22 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'езинфекция_Справка_') > 0) {
+            } else if (mb_strpos($fileName, 'езинфекция_Справка_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'дезинфекция_Справка_') + 38));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Справка_') + 20));
 
                 $pref = '';
-                if(($fileName[strlen($fileName) - 11] . $fileName[strlen($fileName) - 10]) == '20') {
-                    if($fileName[strlen($fileName) - 7] == '-') {
-                        $pref = $fileName[strlen($fileName) - 6];
+                if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
+                    if($fileName[mb_strlen($fileName) - 7] == '-') {
+                        $pref = $fileName[mb_strlen($fileName) - 6];
                     } else {
-                        $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
+                        $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
                     }
-                } else if(($fileName[strlen($fileName) - 12] . $fileName[strlen($fileName) - 11]) == '20') {
-                    $pref = $fileName[strlen($fileName) - 7] . $fileName[strlen($fileName) - 6];
+                } else if(($fileName[mb_strlen($fileName) - 12] . $fileName[mb_strlen($fileName) - 11]) == '20') {
+                    $pref = $fileName[mb_strlen($fileName) - 7] . $fileName[mb_strlen($fileName) - 6];
                 }
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -327,7 +327,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -353,19 +353,19 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $premfp =  '';
 
-                    if(strpos($tmpStrint, 'МФП 1') > 0) {
+                    if(mb_strpos($tmpStrint, 'МФП 1') > 0) {
                         $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 1";
-                    } else if(strpos($tmpStrint, 'МФП 2') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 2') > 0) {
                         $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 2";
-                    } else if(strpos($tmpStrint, 'МФП 3') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 3') > 0) {
                         $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 3";
-                    } else if(strpos($tmpStrint, 'МФП 4') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 4') > 0) {
                         $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 4";
-                    } else if(strpos($tmpStrint, 'МФП 5') > 0) {
+                    } else if(mb_strpos($tmpStrint, 'МФП 5') > 0) {
                         $tmpStrint = "ООО Агро-Авто (Москва ЮГ - МФП)";
                         $premfp = "Справка №$pref МФП 5";
                     } else {
@@ -390,11 +390,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'езинфекция_Счет_') > 0) {
+            } else if (mb_strpos($fileName, 'езинфекция_Счет_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'дезинфекция_Счет_') + 32));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Счет_') + 17));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -406,7 +406,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -433,11 +433,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'езинфекция_Акт_') > 0) {
+            } else if (mb_strpos($fileName, 'езинфекция_Акт_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'дезинфекция_Акт_') + 30));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Акт_') + 16));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -449,7 +449,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -476,10 +476,10 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
                 $idD++;
 
-            } else if (strpos($fileName, 'кт_') > 0) {
+            } else if (mb_strpos($fileName, 'кт_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Акт_') + 7));
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Акт_') + 4));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -491,7 +491,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -516,11 +516,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $tmpStrint = '';
 
                 $iA++;
-            } else if (strpos($fileName, 'татистика_анализ_мо') > 0) {
+            } else if (mb_strpos($fileName, 'татистика_анализ_мо') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_мо') + 45));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_мо') + 25));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -532,7 +532,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -558,11 +558,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $iA++;
 
-            } else if (strpos($fileName, 'татистика_анализ_сервис_') > 0) {
+            } else if (mb_strpos($fileName, 'татистика_анализ_сервис_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_сервис_') + 47));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_сервис_') + 25));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -574,7 +574,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -600,11 +600,11 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $iA++;
 
-            } else if (strpos($fileName, 'татистика_анализ_шиномонтаж_') > 0) {
+            } else if (mb_strpos($fileName, 'татистика_анализ_шиномонтаж_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Статистика_анализ_шиномонтаж_') + 55));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_шиномонтаж_') + 29));
 
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -616,7 +616,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
@@ -642,10 +642,10 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                 $iA++;
 
-            } else if (strpos($fileName, 'чет_') > 0) {
+            } else if (mb_strpos($fileName, 'чет_') > 0) {
 
-                $tmpStrint = substr($fileName, (strpos($fileName, 'Счет_') + 9));
-                $tmpStrint = substr($tmpStrint, 0, ((strpos($tmpStrint, '_от'))));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Счет_') + 5));
+                $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
                 // Проверяем статус файла
@@ -657,7 +657,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
 
                     $dataExplArr = explode('-', $dataExpl);
 
-                    if (($dataExplArr[0] < 10) && (mb_strlen($dataExplArr[0]) == 1)) {
+                    if (($dataExplArr[0] < 10) && (mb_mb_strlen($dataExplArr[0]) == 1)) {
                         $dataExpl = 0 . $dataExpl;
                     }
 
