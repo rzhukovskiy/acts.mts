@@ -129,6 +129,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             if (mb_strpos($fileName, 'оп._дезинфекция_Справка_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Справка_') + 25));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $pref = '';
                 if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
@@ -219,6 +222,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'оп._дезинфекция_Счет_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Счет_') + 22));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -262,6 +268,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'оп._дезинфекция_Акт_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'доп._дезинфекция_Акт_') + 21));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -305,6 +314,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'езинфекция_Справка_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Справка_') + 20));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $pref = '';
                 if(($fileName[mb_strlen($fileName) - 11] . $fileName[mb_strlen($fileName) - 10]) == '20') {
@@ -395,6 +407,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'езинфекция_Счет_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Счет_') + 17));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -438,6 +453,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'езинфекция_Акт_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'дезинфекция_Акт_') + 16));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -481,6 +499,10 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'кт_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Акт_') + 4));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
+
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
@@ -520,7 +542,10 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 $iA++;
             } else if (mb_strpos($fileName, 'татистика_анализ_мо') > 0) {
 
-                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_мо') + 25));
+                $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_мо') + 24));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -563,6 +588,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'татистика_анализ_сервис_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_сервис_') + 25));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -605,6 +633,9 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'татистика_анализ_шиномонтаж_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Статистика_анализ_шиномонтаж_') + 29));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
 
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
@@ -647,6 +678,10 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
             } else if (mb_strpos($fileName, 'чет_') > 0) {
 
                 $tmpStrint = mb_substr($fileName, (mb_strpos($fileName, 'Счет_') + 5));
+                $tmpStrint = str_replace('_', ' ', $tmpStrint);
+                $tmpStrint = trim($tmpStrint);
+                $tmpStrint = str_replace(' ', '_', $tmpStrint);
+
                 $tmpStrint = mb_substr($tmpStrint, 0, ((mb_strpos($tmpStrint, '_от'))));
                 $tmpStrint = str_replace('_', ' ', $tmpStrint);
 
