@@ -282,7 +282,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             [
                 'attribute' => 'type',
                 'options' => [
-                    'style' => 'width: 155px',
+                    'style' => 'width: 100px',
                 ],
                 'value' => function ($data) {
                     return $GLOBALS['types'][$data->type];
@@ -291,6 +291,9 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             [
                 'header' => 'Вложения',
                 'format' => 'raw',
+                'options' => [
+                    'style' => 'width: 270px',
+                ],
                 'value' => function ($data) {
 
                     $pathfolder = \Yii::getAlias('@webroot/files/attaches/' . $data->company_id . '/');
