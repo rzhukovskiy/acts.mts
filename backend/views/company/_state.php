@@ -143,25 +143,25 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
 
                             switch ($wekCommunicDate) {
                                 case 1:
-                                    $wekCommunicDate = 'Пн.';
+                                    $wekCommunicDate = 'Понедельник';
                                     break;
                                 case 2:
-                                    $wekCommunicDate = 'Вт.';
+                                    $wekCommunicDate = 'Вторник';
                                     break;
                                 case 3:
-                                    $wekCommunicDate = 'Ср.';
+                                    $wekCommunicDate = 'Среда';
                                     break;
                                 case 4:
-                                    $wekCommunicDate = 'Чт.';
+                                    $wekCommunicDate = 'Четверг';
                                     break;
                                 case 5:
-                                    $wekCommunicDate = 'Пт.';
+                                    $wekCommunicDate = 'Пятница';
                                     break;
                                 case 6:
-                                    $wekCommunicDate = 'Сб.';
+                                    $wekCommunicDate = 'Суббота';
                                     break;
                                 case 7:
-                                    $wekCommunicDate = 'Вс.';
+                                    $wekCommunicDate = 'Воскресение';
                                     break;
                             }
 
