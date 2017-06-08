@@ -17,6 +17,7 @@ use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
+use yii\base\DynamicModel;
 use common\models\Department;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
@@ -53,17 +54,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'delete', 'attribute', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'delete', 'attribute', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'getcomment', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -727,6 +728,56 @@ class CompanyController extends Controller
                 'authorMembers' => $authorMembers,
             ]);
         }
+    }
+
+    public function actionNewattach($id)
+    {
+
+        $modelAddAttach = new DynamicModel(['files']);
+        $modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+        $filesArr = UploadedFile::getInstances($modelAddAttach, 'files');
+
+        $filePath = \Yii::getAlias('@webroot/files/attaches/' . $id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/attaches/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/attaches/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/attaches/' . $id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/attaches/' . $id . '/'), 0775);
+        }
+
+        foreach ($filesArr as $file) {
+
+            if($file->baseName != 'attaches.zip') {
+
+                if (!file_exists($filePath . $this->id . '-' . $file->baseName . '.' . $file->extension)) {
+                    $file->saveAs($filePath . $this->id . '-' . $file->baseName . '.' . $file->extension);
+                } else {
+
+                    $filename = $filePath . $this->id . '-' . $file->baseName . '.' . $file->extension;
+                    $i = 1;
+
+                    while (file_exists($filename)) {
+                        $filename = $filePath . $this->id . '-' . $file->baseName . '(' . $i . ').' . $file->extension;
+                        $i++;
+                    }
+
+                    $file->saveAs($filename);
+
+                }
+
+            }
+
+        }
+
+        return $this->redirect(['company/state', 'id' => $id]);
+
     }
 
     public function actionAttaches($id)

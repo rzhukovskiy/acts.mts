@@ -6,7 +6,9 @@
  */
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
+use yii\widgets\ActiveForm;
 use kartik\grid\GridView;
+use yii\base\DynamicModel;
 use yii\helpers\Html;
 use yii\helpers\FileHelper;
 use yii\helpers\Url;
@@ -62,6 +64,13 @@ $('tbody tr td[data-col-seq=5]').on('click', '.showFullComment', function(){
 $('.showAttachButt').on('click', function(){
 $('#showModalAttach').modal('show');
 });
+
+// открываем модальное окно добавить вложения
+$('.showFormAttachButt').on('click', function(){
+$('#showFormAttach').modal('show');
+});
+
+$('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
 
 JS;
 $this->registerJs($script, View::POS_READY);
@@ -215,7 +224,10 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             <?= Html::a('Добавить', ['company/newstate', 'id' => $model->id], ['class' => 'btn btn-success btn-sm']) ?>
         </div>
         <div class="header-btn pull-right">
-            <span class="pull-right btn btn-warning btn-sm showAttachButt" style="margin-right:15px;">Просмотр всех вложений</span>
+            <span class="pull-right btn btn-warning btn-sm showFormAttachButt" style="margin-right:15px;">Добавить вложение</span>
+        </div>
+        <div class="header-btn pull-right">
+            <span class="pull-right btn btn-danger btn-sm showAttachButt" style="margin-right:15px;">Просмотр всех вложений</span>
         </div>
     </div>
     <div class="panel-body">
@@ -396,6 +408,40 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
     echo "<div id='allAttach' style='font-size: 15px;'>" . $resLinksFiles . "</div>";
     Modal::end();
     // Модальное окно показать все вложения
+
+    // Модальное окно добавить вложения
+    $pathfolder = \Yii::getAlias('@webroot/files/attaches/' . $model->id . '/');
+    $shortPath = '/files/attaches/' . $model->id . '/';
+
+    $modalAttach = Modal::begin([
+        'header' => '<h5>Добавить вложения</h5>',
+        'id' => 'showFormAttach',
+        'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
+        'size'=>'modal-lg',
+    ]);
+
+    echo "<div style='font-size: 15px; margin-left:15px;'>Выберите файлы:</div>";
+
+    $modelAddAttach = new DynamicModel(['files']);
+    $modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+    $form = ActiveForm::begin([
+        'action' => ['/company/newattach', 'id' => $model->id],
+        'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+        'fieldConfig' => [
+            'template' => '<div class="col-sm-6">{input}</div>',
+            'inputOptions' => ['class' => 'form-control input-sm'],
+        ],
+    ]);
+
+    echo $form->field($modelAddAttach, 'files[]')->fileInput(['multiple' => true]);
+
+    echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']);
+
+    ActiveForm::end();
+
+    Modal::end();
+    // Модальное окно добавить вложения
 
     ?>
     </div>
