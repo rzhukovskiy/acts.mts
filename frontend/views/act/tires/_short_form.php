@@ -136,7 +136,7 @@ JS;
                 </td>
                 <td style="width: 20%">
                     <?= $form->field($model, 'type_id')
-                        ->dropdownList(Type::getTypeList(), ['max-width', 'style' => 'display:none'])
+                        ->dropdownList(Type::find()->innerJoin('company_service', '`company_service`.`type_id` = `type`.`id` AND `company_service`.`company_id` = ' . Yii::$app->user->identity->company_id)->select(['name', '`type`.`id`'])->groupBy('`name`')->orderBy('type.id ASC')->indexBy('id')->column(), ['max-width', 'style' => 'display:none'])
                         ->error(false) ?>
                 </td>
             </tr>
