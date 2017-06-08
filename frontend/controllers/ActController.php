@@ -137,81 +137,87 @@ class ActController extends Controller
             } else {
 
                 $companyName = '';
+                $tmpName = $name;
+                $tmpName = mb_convert_encoding($tmpName, 'utf-8');
+                $tmpName = str_replace('__', '_', $tmpName);
 
                 // получаем название компании
-                if (strpos($name, 'оп._дезинфекция_Справка_') > 0) {
+                if (mb_strpos($tmpName, 'оп._дезинфекция_Справка_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Справка_') + 45));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'доп._дезинфекция_Справка_') + 25));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'оп._дезинфекция_Счет_') > 0) {
+                } else if (mb_strpos($tmpName, 'оп._дезинфекция_Счет_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Счет_') + 39));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'доп._дезинфекция_Счет_') + 22));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'оп._дезинфекция_Акт_') > 0) {
+                } else if (mb_strpos($tmpName, 'оп._дезинфекция_Акт_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'доп._дезинфекция_Акт_') + 37));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'доп._дезинфекция_Акт_') + 21));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'езинфекция_Справка_') > 0) {
+                } else if (mb_strpos($tmpName, 'езинфекция_Справка_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'дезинфекция_Справка_') + 38));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'дезинфекция_Справка_') + 20));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'езинфекция_Счет_') > 0) {
+                } else if (mb_strpos($tmpName, 'езинфекция_Счет_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'дезинфекция_Счет_') + 32));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'дезинфекция_Счет_') + 17));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'езинфекция_Акт_') > 0) {
+                } else if (mb_strpos($tmpName, 'езинфекция_Акт_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'дезинфекция_Акт_') + 30));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'дезинфекция_Акт_') + 16));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'кт_') > 0) {
+                } else if (mb_strpos($tmpName, 'кт_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'Акт_') + 7));
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'Акт_') + 4));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'татистика_анализ_мо') > 0) {
+                } else if (mb_strpos($tmpName, 'татистика_анализ_мо') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_мо') + 45));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'Статистика_анализ_мо') + 24));
+                    $companyName = str_replace('_', ' ', $companyName);
+                    $companyName = trim($companyName);
+                    $companyName = str_replace(' ', '_', $companyName);
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'татистика_анализ_сервис_') > 0) {
+                } else if (mb_strpos($tmpName, 'татистика_анализ_сервис_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_сервис_') + 47));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'Статистика_анализ_сервис_') + 25));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'татистика_анализ_шиномонтаж_') > 0) {
+                } else if (mb_strpos($tmpName, 'татистика_анализ_шиномонтаж_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'Статистика_анализ_шиномонтаж_') + 55));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'Статистика_анализ_шиномонтаж_') + 29));
 
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
-                } else if (strpos($name, 'чет_') > 0) {
+                } else if (mb_strpos($tmpName, 'чет_') > 0) {
 
-                    $companyName = substr($name, (strpos($name, 'Счет_') + 9));
-                    $companyName = substr($companyName, 0, ((strpos($companyName, '_от'))));
+                    $companyName = mb_substr($tmpName, (mb_strpos($tmpName, 'Счет_') + 5));
+                    $companyName = mb_substr($companyName, 0, ((mb_strpos($companyName, '_от'))));
                     $companyName = str_replace('_', ' ', $companyName);
 
                 }
