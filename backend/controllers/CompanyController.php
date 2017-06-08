@@ -756,15 +756,15 @@ class CompanyController extends Controller
 
             if($file->baseName != 'attaches.zip') {
 
-                if (!file_exists($filePath . $this->id . '-' . $file->baseName . '.' . $file->extension)) {
-                    $file->saveAs($filePath . $this->id . '-' . $file->baseName . '.' . $file->extension);
+                if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                    $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
                 } else {
 
-                    $filename = $filePath . $this->id . '-' . $file->baseName . '.' . $file->extension;
+                    $filename = $filePath . $file->baseName . '.' . $file->extension;
                     $i = 1;
 
                     while (file_exists($filename)) {
-                        $filename = $filePath . $this->id . '-' . $file->baseName . '(' . $i . ').' . $file->extension;
+                        $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
                         $i++;
                     }
 
