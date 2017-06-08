@@ -321,9 +321,11 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
 
                             $arrStateID = explode('-', basename($file));
 
-                            if($arrStateID[0] == $data->id) {
-                                $resLinksFiles .= Html::a(str_replace($data->id . '-', '', basename($file)), $shortPath . basename($file), ['target'=>'_blank']) . '<br />';
-                                $numFiles++;
+                            if(is_numeric($arrStateID[0])) {
+                                if ($arrStateID[0] == $data->id) {
+                                    $resLinksFiles .= Html::a(str_replace($data->id . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                                    $numFiles++;
+                                }
                             }
 
                             $arrStateID = [];
