@@ -226,6 +226,8 @@ class MonthlyActController extends Controller
 
                     if(count($arrActData) > 0) {
 
+                        if((isset($arrActData[0]['type'])) && (isset($arrActData[0]['company'])) && (isset($arrActData[0]['period']))) {
+
                         $resLink .= $arrActData[0]['type'];
 
                         if($arrActData[0]['company'] == 1) {
@@ -241,6 +243,10 @@ class MonthlyActController extends Controller
                         }
 
                         $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                        } else {
+                            echo json_encode(['success' => 'false']);
+                        }
 
                     } else {
                         echo json_encode(['success' => 'false']);
@@ -252,6 +258,8 @@ class MonthlyActController extends Controller
 
                     if(count($arrActData) > 0) {
 
+                        if((isset($arrActData[0]['type'])) && (isset($arrActData[0]['company'])) && (isset($arrActData[0]['period'])) && (isset($arrActData[0]['number']))) {
+
                         $resLink .= $arrActData[0]['type'];
 
                         if($arrActData[0]['company'] == 1) {
@@ -267,6 +275,10 @@ class MonthlyActController extends Controller
                         }
 
                         $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                        } else {
+                            echo json_encode(['success' => 'false']);
+                        }
 
                     } else {
                         echo json_encode(['success' => 'false']);
