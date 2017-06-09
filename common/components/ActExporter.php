@@ -18,6 +18,7 @@ use PHPExcel_Worksheet;
 use PHPExcel_Writer_IWriter;
 use yii;
 use ZipArchive;
+use common\models\ActData;
 
 class ActExporter
 {
@@ -43,6 +44,10 @@ class ActExporter
 
     // Проверка на статус акта (без акта)
     private $noActArr = [];
+
+    // Массив содержащий номера актов и счетов
+    private $arrActNumbers = [];
+    private $checkDoQueryNumber = false;
 
     /**
      * @param ActSearch $searchModel
@@ -733,6 +738,80 @@ class ActExporter
         date_add($date, date_interval_create_from_date_string("1 month"));
         $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
 
+        // Высчитываем номер для акта и счета
+        $fileNameCheck = '';
+        $numberAct = '';
+        $dataExpl = '';
+
+        if ($this->serviceType == Company::TYPE_SERVICE) {
+            $firstCheck = $dataList[0];
+            $fileNameCheck = "Акт {$company->name} - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
+            $dataExpl = date('m-Y', $firstCheck->served_at);
+        } else {
+            $fileNameCheck = $serviceDescription. " Акт $company->name от " . date('m-Y', $this->time) . ".xls";;
+            $dataExpl = date('m-Y', $this->time);
+        }
+        $fileNameCheck = str_replace('"', '', $fileNameCheck);
+        $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+
+        $companyInt = 0;
+
+        if($this->company) {
+            $companyInt = 1;
+        }
+
+        if($this->checkDoQueryNumber == false) {
+            $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
+            $this->checkDoQueryNumber = true;
+        }
+
+        if (count($this->arrActNumbers) > 0) {
+
+            for($i = 0; $i < count($this->arrActNumbers); $i++) {
+                if($this->arrActNumbers[$i]['name'] == $fileNameCheck) {
+                    $numberAct = $this->arrActNumbers[$i]['number'];
+                }
+            }
+
+        }
+
+        if($numberAct == '') {
+            $newActData = new ActData();
+            $newActData->type = $this->serviceType;
+            $newActData->company = $companyInt;
+            $newActData->period = $dataExpl;
+            $newActData->name = $fileNameCheck;
+
+            if($newActData->save()) {
+
+                if($serviceDescription == 'доп. дезинфекция') {
+                    $numberAct = 'DD' . $newActData->id;
+                } else {
+                    switch ($this->serviceType) {
+                        case 2:
+                            $numberAct = 'M' . $newActData->id;
+                            break;
+                        case 3:
+                            $numberAct = 'S' . $newActData->id;
+                            break;
+                        case 4:
+                            $numberAct = 'T' . $newActData->id;
+                            break;
+                        case 5:
+                            $numberAct = 'D' . $newActData->id;
+                            break;
+                    }
+                }
+
+                $newActData->number = $numberAct;
+                $newActData->save();
+
+            }
+
+        }
+
+        // Высчитываем номер для акта и счета
+
         if ($this->serviceType == Company::TYPE_DISINFECT) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
                 'alignment' => array(
@@ -740,7 +819,7 @@ class ActExporter
                 )
             ));
             $companyWorkSheet->mergeCells('B2:F2');
-            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:F3');
             $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
@@ -789,7 +868,7 @@ class ActExporter
             if($company->is_split) {
                 $companyWorkSheet->mergeCells('B2:J2');
             }
-            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:I3');
             $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
@@ -1690,20 +1769,62 @@ class ActExporter
                 )
             )
         );
+
+        // Высчитываем номер для акта и счета
+        $fileNameCheck = '';
+
+        if ($this->serviceType == Company::TYPE_SERVICE) {
+            $firstCheck = $dataList[0];
+            $fileNameCheck = "Счет {$company->name} - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
+        } else {
+            $fileNameCheck = $serviceDescription . " Счет $company->name от " . date('m-Y', $this->time) . ".xls";
+        }
+        $fileNameCheck = str_replace('"', '', $fileNameCheck);
+        $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+
+        if($this->checkDoQueryNumber == false) {
+            $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
+            $this->checkDoQueryNumber = true;
+        }
+
+        $checkHaveAct = false;
+
+        if (count($this->arrActNumbers) > 0) {
+
+            for($i = 0; $i < count($this->arrActNumbers); $i++) {
+                if($this->arrActNumbers[$i]['name'] == $fileNameCheck) {
+                    $checkHaveAct = true;
+                }
+            }
+
+        }
+
+        if($checkHaveAct == false) {
+            $newActData = new ActData();
+            $newActData->type = $this->serviceType;
+            $newActData->company = $companyInt;
+            $newActData->period = $dataExpl;
+            $newActData->name = $fileNameCheck;
+            $newActData->number = $numberAct;
+            $newActData->save();
+        }
+
+        // Высчитываем номер для акта и счета
+
         if (in_array($this->serviceType, [Company::TYPE_SERVICE])) {
             $first = $dataList[0];
-            $text = "СЧЕТ б/н от " . date("d ", $first->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
+            $text = "СЧЕТ" . " № " . $numberAct . " от " . date("d ", $first->served_at) . ' ' . $monthName[1] . date(' Y', $this->time);
         } else {
             if ($this->serviceType == Company::TYPE_DISINFECT) {
 
                 if($serviceDescription == 'дезинфекция') {
-                    $text = "СЧЕТ б/н от 01" . ' ' . $monthName[1] . date(' Y', $this->time);
+                    $text = "СЧЕТ" . " № " . $numberAct . " от 01" . ' ' . $monthName[1] . date(' Y', $this->time);
                 } else {
-                    $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+                    $text = "СЧЕТ" . " № " . $numberAct . " от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
                 }
 
             } else {
-                $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+                $text = "СЧЕТ" . " № " . $numberAct . " от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
             }
 
         }
@@ -2696,6 +2817,73 @@ class ActExporter
         date_add($date, date_interval_create_from_date_string("1 month"));
         $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
 
+        // Высчитываем номер для акта и счета
+        $fileNameCheck = '';
+        $numberAct = '';
+        $dataExpl = date('m-Y', $this->time);
+
+        $fileNameCheck = $fileNamePre . " Акт ООО Агро-Авто (Москва ЮГ - МФП) от " . date('m-Y', $this->time) . ".xls";
+        $fileNameCheck = str_replace('"', '', $fileNameCheck);
+        $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+
+        $companyInt = 0;
+
+        if($this->company) {
+            $companyInt = 1;
+        }
+
+        if($this->checkDoQueryNumber == false) {
+            $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
+            $this->checkDoQueryNumber = true;
+        }
+
+        if (count($this->arrActNumbers) > 0) {
+
+            for($i = 0; $i < count($this->arrActNumbers); $i++) {
+                if($this->arrActNumbers[$i]['name'] == $fileNameCheck) {
+                    $numberAct = $this->arrActNumbers[$i]['number'];
+                }
+            }
+
+        }
+
+        if($numberAct == '') {
+            $newActData = new ActData();
+            $newActData->type = $this->serviceType;
+            $newActData->company = $companyInt;
+            $newActData->period = $dataExpl;
+            $newActData->name = $fileNameCheck;
+
+            if($newActData->save()) {
+
+                if($fileNamePre == 'доп. дезинфекция') {
+                    $numberAct = 'DD' . $newActData->id;
+                } else {
+                    switch ($this->serviceType) {
+                        case 2:
+                            $numberAct = 'M' . $newActData->id;
+                            break;
+                        case 3:
+                            $numberAct = 'S' . $newActData->id;
+                            break;
+                        case 4:
+                            $numberAct = 'T' . $newActData->id;
+                            break;
+                        case 5:
+                            $numberAct = 'D' . $newActData->id;
+                            break;
+                    }
+                }
+
+                $newActData->number = $numberAct;
+                $newActData->save();
+
+            }
+
+        }
+
+        // Высчитываем номер для акта и счета
+
         if ($this->serviceType == Company::TYPE_DISINFECT) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
                 'alignment' => array(
@@ -2703,7 +2891,7 @@ class ActExporter
                 )
             ));
             $companyWorkSheet->mergeCells('B2:F2');
-            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:F3');
             $text = "по договору на оказание услуг " . $companyMain->getRequisitesByType($this->serviceType, 'contract');
@@ -2752,7 +2940,7 @@ class ActExporter
             if($companyMain->is_split) {
                 $companyWorkSheet->mergeCells('B2:J2');
             }
-            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)";
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
             $companyWorkSheet->setCellValue('B2', $text);
             $companyWorkSheet->mergeCells('B3:I3');
             $text = "по договору на оказание услуг " . $companyMain->getRequisitesByType($this->serviceType, 'contract');
@@ -6337,16 +6525,51 @@ class ActExporter
             )
         );
 
+        // Высчитываем номер для акта и счета
+
+        $fileNameCheck = $fileNamePre . " Счет ООО Агро-Авто (Москва ЮГ - МФП) от " . date('m-Y', $this->time) . ".xls";
+        $fileNameCheck = str_replace('"', '', $fileNameCheck);
+        $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+
+        if($this->checkDoQueryNumber == false) {
+            $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
+            $this->checkDoQueryNumber = true;
+        }
+
+        $checkHaveAct = false;
+
+        if (count($this->arrActNumbers) > 0) {
+
+            for($i = 0; $i < count($this->arrActNumbers); $i++) {
+                if($this->arrActNumbers[$i]['name'] == $fileNameCheck) {
+                    $checkHaveAct = true;
+                }
+            }
+
+        }
+
+        if($checkHaveAct == false) {
+            $newActData = new ActData();
+            $newActData->type = $this->serviceType;
+            $newActData->company = $companyInt;
+            $newActData->period = $dataExpl;
+            $newActData->name = $fileNameCheck;
+            $newActData->number = $numberAct;
+            $newActData->save();
+        }
+
+        // Высчитываем номер для акта и счета
+
         if ($this->serviceType == Company::TYPE_DISINFECT) {
 
             if($fileNamePre == 'дезинфекция') {
-                $text = "СЧЕТ б/н от 01" . ' ' . $monthName[1] . date(' Y', $this->time);
+                $text = "СЧЕТ" . " № " . $numberAct . " от 01" . ' ' . $monthName[1] . date(' Y', $this->time);
             } else {
-                $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+                $text = "СЧЕТ" . " № " . $numberAct . " от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
             }
 
         } else {
-            $text = "СЧЕТ б/н от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
+            $text = "СЧЕТ" . " № " . $numberAct . " от " . date("t", $this->time) . ' ' . $monthName[1] . date(' Y', $this->time);
         }
 
         $companyWorkSheet->setCellValue("B$row", $text);
