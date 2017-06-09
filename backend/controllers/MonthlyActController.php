@@ -14,6 +14,7 @@ use common\models\MonthlyAct;
 use common\models\search\MonthlyActSearch;
 use common\models\Service;
 use common\models\User;
+use common\models\ActData;
 use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -32,12 +33,12 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['update', 'detail', 'list', 'archive'],
+                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -209,6 +210,78 @@ class MonthlyActController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionSearchact()
+    {
+
+        if(Yii::$app->request->post('number')) {
+            if(mb_strlen(Yii::$app->request->post('number')) > 0) {
+
+                $number = Yii::$app->request->post('number');
+                $resLink = '/monthly-act/list?type=';
+
+                if(is_numeric($number[0])) {
+                    $arrActData = ActData::find()->where(['id' => $number])->select('type, company, period')->all();
+
+                    if(count($arrActData) > 0) {
+
+                        $resLink .= $arrActData[0]['type'];
+
+                        if($arrActData[0]['company'] == 1) {
+                            $resLink .= '&company=1';
+                        }
+
+                        $period = explode('-', $arrActData[0]['period']);
+
+                        if($period[0][0] == 0) {
+                            $period = mb_substr($arrActData[0]['period'], 1);
+                        } else {
+                            $period = $arrActData[0]['period'];
+                        }
+
+                        $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                    } else {
+                        echo json_encode(['success' => 'false']);
+                    }
+
+                } else {
+
+                    $arrActData = ActData::find()->where(['number' => $number])->select('type, company, period, number')->all();
+
+                    if(count($arrActData) > 0) {
+
+                        $resLink .= $arrActData[0]['type'];
+
+                        if($arrActData[0]['company'] == 1) {
+                            $resLink .= '&company=1';
+                        }
+
+                        $period = explode('-', $arrActData[0]['period']);
+
+                        if($period[0][0] == 0) {
+                            $period = mb_substr($arrActData[0]['period'], 1);
+                        } else {
+                            $period = $arrActData[0]['period'];
+                        }
+
+                        $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                    } else {
+                        echo json_encode(['success' => 'false']);
+                    }
+
+                }
+
+                echo json_encode(['success' => 'true', 'link' => $resLink]);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
     /**

@@ -7,9 +7,10 @@
  */
 use common\models\MonthlyAct;
 use common\models\Service;
-use yii\helpers\Html;
+use yii\bootstrap\Html;
 use common\models\User;
 use kartik\date\DatePicker;
+use yii\helpers\Url;
 
 $isAdmin = $admin ? 1 : 0;
 
@@ -19,6 +20,8 @@ if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
     $idDataCol = 5;
     $numSelVal = 6;
 }
+
+$actionLinkSearch = Url::to('@web/monthly-act/searchact');
 
 $script = <<< JS
     $('.change-payment_status').change(function(){
@@ -210,6 +213,38 @@ readyToSort = 1;
     
     // Сортировка по дням до оплаты
     
+    // Поиск по номеру акта или счета
+$('#searchActNumButt').on('click', function(){
+    var textSearch = $('#searchActNum').val();
+    
+    if(textSearch.length > 0) {
+        
+            $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'number=' + textSearch,
+                url  : '$actionLinkSearch',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                document.location.href = response.link;
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+            });
+        
+    }
+    
+});
+    // Поиск по номеру акта или счета
+    
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
@@ -251,6 +286,12 @@ if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
 $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')));
 // Кнопки не оплачен и не подписан
 
+// Поиск по номеру
+$filters .= 'Поиск по номеру:';
+
+$filters .= Html::textInput("act_number", '',['id' => 'searchActNum', 'class' => 'form-control', 'style' => 'margin-left:10px;', 'placeholder' => 'номер акта или счета']);
+$filters .= Html::buttonInput("Поиск", ['id' => 'searchActNumButt', 'class' => 'btn btn-primary', 'style' => 'padding:7px 16px 6px 16px;']);
+// Поиск по номеру
 
 // Таблица детализации
 if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
