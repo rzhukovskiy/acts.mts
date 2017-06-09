@@ -228,21 +228,27 @@ class MonthlyActController extends Controller
 
                         if((isset($arrActData[0]['type'])) && (isset($arrActData[0]['company'])) && (isset($arrActData[0]['period']))) {
 
-                        $resLink .= $arrActData[0]['type'];
+                            if ((($arrActData[0]['type'] == 2) || ($arrActData[0]['type'] == 3) || ($arrActData[0]['type'] == 4) || ($arrActData[0]['type'] == 5)) && (($arrActData[0]['company'] == 0) || ($arrActData[0]['company'] == 1))) {
 
-                        if($arrActData[0]['company'] == 1) {
-                            $resLink .= '&company=1';
-                        }
+                                $resLink .= $arrActData[0]['type'];
 
-                        $period = explode('-', $arrActData[0]['period']);
+                                if ($arrActData[0]['company'] == 1) {
+                                    $resLink .= '&company=1';
+                                }
 
-                        if($period[0][0] == 0) {
-                            $period = mb_substr($arrActData[0]['period'], 1);
-                        } else {
-                            $period = $arrActData[0]['period'];
-                        }
+                                $period = explode('-', $arrActData[0]['period']);
 
-                        $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+                                if ($period[0][0] == 0) {
+                                    $period = mb_substr($arrActData[0]['period'], 1);
+                                } else {
+                                    $period = $arrActData[0]['period'];
+                                }
+
+                                $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                            } else {
+                                echo json_encode(['success' => 'false']);
+                            }
 
                         } else {
                             echo json_encode(['success' => 'false']);
@@ -260,21 +266,27 @@ class MonthlyActController extends Controller
 
                         if((isset($arrActData[0]['type'])) && (isset($arrActData[0]['company'])) && (isset($arrActData[0]['period'])) && (isset($arrActData[0]['number']))) {
 
-                        $resLink .= $arrActData[0]['type'];
+                            if ((($arrActData[0]['type'] == 2) || ($arrActData[0]['type'] == 3) || ($arrActData[0]['type'] == 4) || ($arrActData[0]['type'] == 5)) && (($arrActData[0]['company'] == 0) || ($arrActData[0]['company'] == 1))) {
 
-                        if($arrActData[0]['company'] == 1) {
-                            $resLink .= '&company=1';
-                        }
+                                $resLink .= $arrActData[0]['type'];
 
-                        $period = explode('-', $arrActData[0]['period']);
+                                if ($arrActData[0]['company'] == 1) {
+                                    $resLink .= '&company=1';
+                                }
 
-                        if($period[0][0] == 0) {
-                            $period = mb_substr($arrActData[0]['period'], 1);
-                        } else {
-                            $period = $arrActData[0]['period'];
-                        }
+                                $period = explode('-', $arrActData[0]['period']);
 
-                        $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+                                if ($period[0][0] == 0) {
+                                    $period = mb_substr($arrActData[0]['period'], 1);
+                                } else {
+                                    $period = $arrActData[0]['period'];
+                                }
+
+                                $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+
+                            } else {
+                                echo json_encode(['success' => 'false']);
+                            }
 
                         } else {
                             echo json_encode(['success' => 'false']);
