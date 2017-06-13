@@ -29,11 +29,7 @@ if($('.attachDate').length > 0) {
        
        var dateText = $('tbody tr[data-key=' + $(this).data("id") + '] td[data-col-seq=0]').text();
        
-       if(dateText.length > 0) {
-         $(this).text(dateText);
-       } else {
-         $(this).text('-');  
-       }
+       $(this).text(dateText);
        
        dateText = '';
    });
