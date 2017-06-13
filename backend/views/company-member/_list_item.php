@@ -67,6 +67,19 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
 // Call Phone
 $('.callNumber').on('click', function() {
 session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
+$('.showCallNumber').text($(this).text());
+$('#showModalCall').modal('show');
+});
+
+// Кнопка завершения звонка
+$('.cancelCall').on('click', function() {
+    $('#showModalCall').modal('hide');
+    session.bye();
+});
+
+// Завершаем звонок если модальное окно закрыли
+$('#showModalCall').on('hidden.bs.modal', function () {
+    session.bye();
 });
 
 JS;
@@ -197,3 +210,23 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         </td>
     </tr>
 </table>
+
+<?php
+
+
+// Модальное окно показать все вложения
+$modalAttach = Modal::begin([
+    'header' => '<h4>Звонок клиенту</h4>',
+    'id' => 'showModalCall',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonModal', 'style' => 'display:none;'],
+    'size'=>'modal-sm',
+]);
+
+echo "<div style='font-size: 15px;' align='center'>
+<span class='showCallNumber' style='font-size:27px; color:#767d87;'></span>
+<span class='btn btn-danger cancelCall' style='margin-top:10px;'>Завершить звонок</span>
+</div>";
+Modal::end();
+// Модальное окно показать все вложения
+
+?>
