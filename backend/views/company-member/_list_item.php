@@ -42,7 +42,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_RIGHT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите фио'],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите фио', 'value' => $model->name],
                 'formOptions' => [
                     'action' => ['/company/updatemember', 'id' => $model->id],
                 ],
@@ -64,7 +64,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_RIGHT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите должность'],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите должность', 'value' => $model->position],
                 'formOptions' => [
                     'action' => ['/company/updatemember', 'id' => $model->id],
                 ],
@@ -114,7 +114,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_RIGHT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите электронную почту'],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите электронную почту', 'value' => $model->email],
                 'formOptions' => [
                     'action' => ['/company/updatemember', 'id' => $model->id],
                 ],
