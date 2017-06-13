@@ -29,7 +29,11 @@ if($('.attachDate').length > 0) {
        
        var dateText = $('tbody tr[data-key=' + $(this).data("id") + '] td[data-col-seq=0]').text();
        
-       $(this).text(dateText);
+       if(dateText.length > 0) {
+         $(this).text(dateText);
+       } else {
+         $(this).text(' - ');  
+       }
        
        dateText = '';
    });
@@ -394,7 +398,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                 $arrStateID = explode('-', basename($file));
 
                 if(is_numeric($arrStateID[0])) {
-                    $resLinksFiles .= '<span class="attachDate" data-id="' . $arrStateID[0] . '" style="color:#757575; margin-right:10px;"> - </span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                    $resLinksFiles .= '<span class="attachDate" data-id="' . $arrStateID[0] . '" style="color:#757575; margin-right:10px;"></span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
                 } else {
                     $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;"></span>' . Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
                 }
