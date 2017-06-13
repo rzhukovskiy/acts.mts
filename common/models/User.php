@@ -24,6 +24,7 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $code
+ * @property string $code_pass
  * @property string $password write-only password
  *
  * @property Company $company
@@ -41,6 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_WATCHER  = 3;
     const ROLE_MANAGER  = 4;
     const ROLE_ACCOUNT  = 5;
+
     /**
      * @inheritdoc
      */
@@ -68,7 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['username', 'unique'],
             ['email', 'email'],
             [['role', 'company_id', 'code'], 'integer'],
-            [['is_account', 'email'], 'safe'],
+            [['is_account', 'email', 'code_pass'], 'safe'],
             ['is_account', 'default', 'value' => 0],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -91,6 +93,7 @@ class User extends ActiveRecord implements IdentityInterface
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
             'code' => 'Номер в телефонии',
+            'code_pass' => 'Пароль телефонии',
         ];
     }
 

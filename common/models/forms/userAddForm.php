@@ -13,6 +13,7 @@ class userAddForm extends Model
 {
     public $username;
     public $code;
+    public $code_pass;
     public $password;
     public $role;
     public $email;
@@ -25,7 +26,7 @@ class userAddForm extends Model
             [['username', 'password', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
             ['password', 'string', 'min' => 4, 'tooShort' => 'Длинна пароля должна быть более {min, number} символов'],
             ['password', 'string', 'max' => 24, 'tooLong' => 'Максимальная длинна пароля {max, number} символа.'],
-            [['code', 'is_account', 'role'], 'safe'],
+            [['code', 'code_pass', 'is_account', 'role'], 'safe'],
             ['email', 'email', 'message' => 'Пожалуйста укажите реальный адрес электронной почты, на него будут отпарвленны письма.'],
             ['username', 'unique', 'targetClass' => User::className(), 'targetAttribute' => 'username', 'comboNotUnique' => 'Попробуйте другое имя. Такой логин уже используется.']
         ];
@@ -36,6 +37,7 @@ class userAddForm extends Model
         return [
             'username' => 'Имя пользователя',
             'code' => 'Номер телефонии',
+            'code_pass' => 'Пароль телефонии',
             'password' => 'Пароль',
             'email' => 'Почта',
             'company_id' => 'Компания',

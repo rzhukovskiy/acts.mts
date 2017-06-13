@@ -10,6 +10,7 @@ class userUpdateForm extends Model
 {
     public $username;
     public $code;
+    public $code_pass;
     public $newPassword;
     public $role;
     public $email;
@@ -23,7 +24,7 @@ class userUpdateForm extends Model
             [['username', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
             ['newPassword', 'string', 'min' => 4, 'tooShort' => 'Длинна пароля должна быть более {min, number} символов'],
             ['newPassword', 'string', 'max' => 24, 'tooLong' => 'Максимальная длинна пароля {max, number} символа.'],
-            [['code', 'is_account', 'role'], 'safe'],
+            [['code', 'code_pass', 'is_account', 'role'], 'safe'],
             ['username', 'unique', 'targetClass' => User::className(), 'targetAttribute' => 'username', 'comboNotUnique' => 'Попробуйте другое имя. Такой логин уже используется.']
         ];
     }
@@ -33,6 +34,7 @@ class userUpdateForm extends Model
         return [
             'username' => 'Имя пользователя',
             'code' => 'Номер телефонии',
+            'code_pass' => 'Пароль телефонии',
             'newPassword' => 'Пароль',
             'email' => 'Почта',
             'company_id' => 'Компания',

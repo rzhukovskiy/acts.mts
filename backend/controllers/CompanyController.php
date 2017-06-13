@@ -54,17 +54,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'delete', 'attribute', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -995,6 +995,17 @@ class CompanyController extends Controller
                 'listCar' => $listCar,
                 'listService' => $listService,
                 'listCity' => $listCity]);
+        }
+
+    }
+
+    public function actionGetcall()
+    {
+
+        if((mb_strlen(Yii::$app->user->identity->code) > 0) && (mb_strlen(Yii::$app->user->identity->code_pass) > 0)) {
+            echo json_encode(['success' => 'true', 'code' => Yii::$app->user->identity->code, 'cipher' => Yii::$app->user->identity->code_pass]);
+        } else {
+            echo json_encode(['success' => 'false']);
         }
 
     }

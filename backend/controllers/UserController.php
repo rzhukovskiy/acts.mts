@@ -115,6 +115,7 @@ class UserController extends Controller
             'username' => $userModel->username,
             'role' => $userModel->role,
             'code' => $userModel->code,
+            'code_pass' => $userModel->code_pass,
             'is_account' => $userModel->is_account,
             'company_id' => $userModel->company_id,
             'oldPassword' => $userModel->password_hash,
