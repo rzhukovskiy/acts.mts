@@ -235,6 +235,9 @@ $('#searchActNumButt').on('click', function(){
                 
                 } else {
                 // Неудачно
+                
+                alert('Документ не найден.');
+                
                 }
                 
                 }

@@ -146,36 +146,42 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
 
                     if(isset($modelCompanyOffer->communication_str)) {
 
-                        try {
-                            $CommunicDate = strtotime($modelCompanyOffer->communication_str);
-                            $wekCommunicDate = date("w", $CommunicDate);
+                        if (mb_strlen($modelCompanyOffer->communication_str) > 1) {
 
-                            switch ($wekCommunicDate) {
-                                case 1:
-                                    $wekCommunicDate = 'Понедельник';
-                                    break;
-                                case 2:
-                                    $wekCommunicDate = 'Вторник';
-                                    break;
-                                case 3:
-                                    $wekCommunicDate = 'Среда';
-                                    break;
-                                case 4:
-                                    $wekCommunicDate = 'Четверг';
-                                    break;
-                                case 5:
-                                    $wekCommunicDate = 'Пятница';
-                                    break;
-                                case 6:
-                                    $wekCommunicDate = 'Суббота';
-                                    break;
-                                case 7:
-                                    $wekCommunicDate = 'Воскресение';
-                                    break;
+                            try {
+                                $CommunicDate = strtotime($modelCompanyOffer->communication_str);
+                                $wekCommunicDate = date("w", $CommunicDate);
+
+                                switch ($wekCommunicDate) {
+                                    case 1:
+                                        $wekCommunicDate = 'Понедельник';
+                                        break;
+                                    case 2:
+                                        $wekCommunicDate = 'Вторник';
+                                        break;
+                                    case 3:
+                                        $wekCommunicDate = 'Среда';
+                                        break;
+                                    case 4:
+                                        $wekCommunicDate = 'Четверг';
+                                        break;
+                                    case 5:
+                                        $wekCommunicDate = 'Пятница';
+                                        break;
+                                    case 6:
+                                        $wekCommunicDate = 'Суббота';
+                                        break;
+                                    case 7:
+                                        $wekCommunicDate = 'Воскресение';
+                                        break;
+                                }
+
+                                $wekCommunicDate = $modelCompanyOffer->communication_str . ' (' . $wekCommunicDate . ')';
+                            } catch (\Exception $e) {
+                                $wekCommunicDate = $modelCompanyOffer->communication_str;
                             }
 
-                            $wekCommunicDate = $modelCompanyOffer->communication_str . ' (' . $wekCommunicDate . ')';
-                        } catch (\Exception $e) {
+                        } else {
                             $wekCommunicDate = $modelCompanyOffer->communication_str;
                         }
 

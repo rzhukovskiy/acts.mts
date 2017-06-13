@@ -127,7 +127,7 @@ switch ($type) {
                     'buttons' => [
                         'update' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                                ['/company/update', 'id' => $model->id]);
+                                ['/company/state', 'id' => $model->id]);
                         },
                     ],
                 ],

@@ -116,36 +116,42 @@ class CompanyOfferController extends Controller
 
                         if (isset($value)) {
 
-                            try {
-                                $CommunicDate = strtotime($value);
-                                $wekCommunicDate = date("w", $CommunicDate);
+                            if (mb_strlen($value) > 1) {
 
-                                switch ($wekCommunicDate) {
-                                    case 1:
-                                        $wekCommunicDate = 'Понедельник';
-                                        break;
-                                    case 2:
-                                        $wekCommunicDate = 'Вторник';
-                                        break;
-                                    case 3:
-                                        $wekCommunicDate = 'Среда';
-                                        break;
-                                    case 4:
-                                        $wekCommunicDate = 'Четверг';
-                                        break;
-                                    case 5:
-                                        $wekCommunicDate = 'Пятница';
-                                        break;
-                                    case 6:
-                                        $wekCommunicDate = 'Суббота';
-                                        break;
-                                    case 7:
-                                        $wekCommunicDate = 'Воскресение';
-                                        break;
+                                try {
+                                    $CommunicDate = strtotime($value);
+                                    $wekCommunicDate = date("w", $CommunicDate);
+
+                                    switch ($wekCommunicDate) {
+                                        case 1:
+                                            $wekCommunicDate = 'Понедельник';
+                                            break;
+                                        case 2:
+                                            $wekCommunicDate = 'Вторник';
+                                            break;
+                                        case 3:
+                                            $wekCommunicDate = 'Среда';
+                                            break;
+                                        case 4:
+                                            $wekCommunicDate = 'Четверг';
+                                            break;
+                                        case 5:
+                                            $wekCommunicDate = 'Пятница';
+                                            break;
+                                        case 6:
+                                            $wekCommunicDate = 'Суббота';
+                                            break;
+                                        case 7:
+                                            $wekCommunicDate = 'Воскресение';
+                                            break;
+                                    }
+
+                                    $wekCommunicDate = $value . ' (' . $wekCommunicDate . ')';
+                                } catch (\Exception $e) {
+                                    $wekCommunicDate = $value;
                                 }
 
-                                $wekCommunicDate = $value . ' (' . $wekCommunicDate . ')';
-                            } catch (\Exception $e) {
+                            } else {
                                 $wekCommunicDate = $value;
                             }
 
