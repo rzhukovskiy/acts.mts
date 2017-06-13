@@ -20,7 +20,7 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
 });
 
     // Получаем данные для звонка
-
+    var session;
     var codeCall, callCipher = '';
 
     $.ajax({
@@ -73,8 +73,8 @@ $('#showModalCall').modal('show');
 
 // Кнопка завершения звонка
 $('.cancelCall').on('click', function() {
-    $('#showModalCall').modal('hide');
     session.bye();
+    $('#showModalCall').modal('hide');
 });
 
 // Завершаем звонок если модальное окно закрыли
