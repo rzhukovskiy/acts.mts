@@ -8,6 +8,8 @@ use yii\bootstrap\Modal;
 
 $script = <<< JS
 
+$('.phoneBody a').css('cursor', 'pointer');
+
 // Обновляем страницу если был изменен номер сотрудника
 var numPencil = $(".phoneBody .glyphicon-pencil").length;
 
@@ -73,7 +75,6 @@ $this->registerJs($script, \yii\web\View::POS_READY);
     <tr>
         <td class="list-label-sm"><?= $model->getAttributeLabel('phone')?></td>
         <td class="phoneBody">
-            <video id="remoteVideo"></video>
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;
@@ -90,12 +91,13 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 'displayValue' => isset($model->phone) ? '<span class="glyphicon glyphicon-pencil"></span>' : '',
                 'placement' => PopoverX::ALIGN_RIGHT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер телефона'],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер телефона', 'value' => $model->phone],
                 'formOptions' => [
                     'action' => ['/company/updatemember', 'id' => $model->id],
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
+            <video id="remoteVideo" style="width: 0px; height: 0px;"></video>
         </td>
     </tr>
     <tr>
