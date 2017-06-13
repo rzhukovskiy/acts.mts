@@ -97,56 +97,5 @@ function navigationButton() {
 }
 
 $(document).ready(function () {
-
-    // Получаем данные для звонка
-
-    var codeCall, callCipher = '';
-
-    $.ajax({
-        type     :'POST',
-        cache    : false,
-        url  : '/company/getcall',
-        success  : function(data) {
-
-            var response = $.parseJSON(data);
-
-            if (response.success == 'true') {
-
-                // Удачно
-                codeCall = response.code;
-                callCipher = response.cipher;
-
-                userAgent = new SIP.UA({
-                    uri: codeCall + '@cc.mtransservice.ru',
-                    wsServers: ['wss://cc.mtransservice.ru:7443'],
-                    authorizationUser: codeCall,
-                    password: callCipher
-                });
-
-                options = {
-                    media: {
-                        constraints: {
-                            audio: true,
-                            video: true
-                        },
-                        render: {
-                            remote: document.getElementById('remoteVideo'),
-                        }
-                    }
-                };
-
-            } else {
-                // Неудачно
-            }
-
-        }
-    });
-    // Получаем данные для звонка
-
     navigationButton();
 });
-
-// Call Phone
-function callNumber(number) {
-    session = userAgent.invite('sip:' + number + '@cc.mtransservice.ru', options);
-}

@@ -19,6 +19,56 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
     }
 });
 
+    // Получаем данные для звонка
+
+    var codeCall, callCipher = '';
+
+    $.ajax({
+        type     :'POST',
+        cache    : false,
+        url  : '/company/getcall',
+        success  : function(data) {
+
+            var response = $.parseJSON(data);
+
+            if (response.success == 'true') {
+
+                // Удачно
+                codeCall = response.code;
+                callCipher = response.cipher;
+
+                userAgent = new SIP.UA({
+                    uri: codeCall + '@cc.mtransservice.ru',
+                    wsServers: ['wss://cc.mtransservice.ru:7443'],
+                    authorizationUser: codeCall,
+                    password: callCipher
+                });
+
+                options = {
+                    media: {
+                        constraints: {
+                            audio: true,
+                            video: true
+                        },
+                        render: {
+                            remote: document.getElementById('remoteVideo'),
+                        }
+                    }
+                };
+
+            } else {
+                // Неудачно
+            }
+
+        }
+    });
+    // Получаем данные для звонка
+
+// Call Phone
+$('.callNumber').on('click', function() {
+session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
+});
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
@@ -78,7 +128,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;
-                echo "<a onclick='callNumber(" .$phone . ");return false;'>$phone</a><br />";
+                echo "<a class='callNumber'>$phone</a><br />";
             } ?>
             <?= Editable::widget([
                 'model' => $model,
