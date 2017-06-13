@@ -48,7 +48,7 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
                     media: {
                         constraints: {
                             audio: true,
-                            video: true
+                            video: false
                         },
                         render: {
                             remote: document.getElementById('remoteVideo'),
