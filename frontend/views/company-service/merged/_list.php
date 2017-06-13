@@ -58,7 +58,7 @@ foreach (Service::findAll(['type' => $type]) as $service) {
             'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
             'options'=>[
                 'pluginOptions'=>['min' => 0, 'max' => 99999],
-                'value' => $data->price
+                'value' => $data->getPriceForService($service->id)
             ]
         ];},
     ];
