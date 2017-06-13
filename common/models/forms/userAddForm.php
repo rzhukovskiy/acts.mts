@@ -96,16 +96,6 @@ class userAddForm extends Model
         return false;
     }
 
-    public function getCode_pass()
-    {
-        return $this->code_pass;
-    }
-
-    public function setCode_pass($value)
-    {
-        $this->code_pass = $value;
-    }
-
     /**
      * @param $departmentId
      * @param $user

@@ -43,6 +43,8 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_MANAGER  = 4;
     const ROLE_ACCOUNT  = 5;
 
+    private $code_pass;
+
     /**
      * @inheritdoc
      */
