@@ -262,6 +262,16 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    public function getCode_pass()
+    {
+        return $this->code_pass;
+    }
+
+    public function setCode_pass($value)
+    {
+        $this->code_pass = $value;
+    }
+
     /**
      * @return bool|int|string
      */
