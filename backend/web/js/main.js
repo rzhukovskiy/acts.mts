@@ -116,6 +116,25 @@ $(document).ready(function () {
                 codeCall = response.code;
                 callCipher = response.cipher;
 
+                userAgent = new SIP.UA({
+                    uri: codeCall + '@cc.mtransservice.ru',
+                    wsServers: ['wss://cc.mtransservice.ru:7443'],
+                    authorizationUser: codeCall,
+                    password: callCipher
+                });
+
+                options = {
+                    media: {
+                        constraints: {
+                            audio: true,
+                            video: true
+                        },
+                        render: {
+                            remote: document.getElementById('remoteVideo'),
+                        }
+                    }
+                };
+
             } else {
                 // Неудачно
             }
@@ -125,24 +144,6 @@ $(document).ready(function () {
     // Получаем данные для звонка
 
     navigationButton();
-    userAgent = new SIP.UA({
-        uri: codeCall + '@cc.mtransservice.ru',
-        wsServers: ['wss://cc.mtransservice.ru:7443'],
-        authorizationUser: codeCall,
-        password: callCipher
-    });
-
-    options = {
-        media: {
-            constraints: {
-                audio: true,
-                video: true
-            },
-            render: {
-                remote: document.getElementById('remoteVideo'),
-            }
-        }
-    };
 });
 
 // Call Phone
