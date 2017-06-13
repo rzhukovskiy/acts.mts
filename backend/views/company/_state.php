@@ -32,7 +32,7 @@ if($('.attachDate').length > 0) {
        if(dateText.length > 0) {
          $(this).text(dateText);
        } else {
-         $(this).text(' - ');  
+         $(this).text('-');  
        }
        
        dateText = '';
