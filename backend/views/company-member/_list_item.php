@@ -73,13 +73,13 @@ $('#showModalCall').modal('show');
 
 // Кнопка завершения звонка
 $('.cancelCall').on('click', function() {
-    session.bye();
+    session.terminate();
     $('#showModalCall').modal('hide');
 });
 
 // Завершаем звонок если модальное окно закрыли
 $('#showModalCall').on('hidden.bs.modal', function () {
-    session.bye();
+    session.terminate();
 });
 
 JS;
