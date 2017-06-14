@@ -65,7 +65,7 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
     // Получаем данные для звонка
 
 // Звуки
-var audio = new Audio();
+var audio;
 
 // Call Phone
 var muteCall = false;
@@ -79,16 +79,16 @@ var callTimer = $('.showCallTimer');
 function updCallPr() {
     
     if(statusTimer == 0) {
-        callTimer.text('Набор номера.');
+        callTimer.text('Вызов.');
         statusTimer = 1;
     } else if(statusTimer == 1) {
-        callTimer.text('Набор номера..');
+        callTimer.text('Вызов..');
         statusTimer = 2;
     } else if(statusTimer == 2) {
-        callTimer.text('Набор номера...');
+        callTimer.text('Вызов...');
         statusTimer = 3;
     } else {
-        callTimer.text('Набор номера..');
+        callTimer.text('Вызов..');
         statusTimer = 0;
     }
 
@@ -98,23 +98,52 @@ function updCallPr() {
 
 $('.callNumber').on('click', function() {
 
-muteCall = false;
-holdCall = false;
-callTimer.text('Набор номера.');
-timerMetaText = setTimeout(updCallPr, 1200);
+    muteCall = false;
+    holdCall = false;
+    callTimer.text('Вызов.');
+    timerMetaText = setTimeout(updCallPr, 1200);
 
-session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
+    session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
 
-var callName = $('#companymember-name-' + $(this).data("id") + '-targ').text();
-$('.showCallName').text(callName);
-$('.showCallNumber').text($(this).text());
-$('#showModalCall').modal('show');
+    var callName = $('#companymember-name-' + $(this).data("id") + '-targ').text();
+    $('.showCallName').text(callName);
+    $('.showCallNumber').text($(this).text());
+    $('#showModalCall').modal('show');
+
+    // Звук гудков
+    audio = new Audio();
+    audio.controls = true;
+    audio.src = '/files/sounds/horn.wav';
+    audio.loop = true;
+    audio.play();
+    
+    // Отключаем гудки если трубку подняли
+    session.on('accepted', function () {
+        audio.pause();
+        audio.currentTime = 0.0;
+        
+        clearTimeout(timerMetaText);
+        statusTimer = 1;
+        callTimer.text('00:00:00');
+        
+    });
+    
+    // Если звонок завершен
+    session.on('accepted', function () {
+        audio.pause();
+        audio.currentTime = 0.0;
+        
+        clearTimeout(timerMetaText);
+        statusTimer = 1;
+        callTimer.text('Звонок завершен'); 
+        
+    });
 
 });
 
 // Кнопка завершения звонка
 $('.cancelCall').on('click', function() {
-    $('#showModalCall').modal('hide');    
+    $('#showModalCall').modal('hide');
 });
 
 $('.muteCall').on('click', function() {
@@ -126,6 +155,11 @@ $('.muteCall').on('click', function() {
         $(this).addClass('btn-success');
         muteCall = true;
         session.mute();
+        
+        clearTimeout(timerMetaText);
+        statusTimer = 1;
+        callTimer.text('Микрофон выкл.');
+        
     } else {
         muteButtIco.removeClass('glyphicon glyphicon-volume-off');
         muteButtIco.addClass('glyphicon glyphicon-volume-up');
@@ -133,6 +167,9 @@ $('.muteCall').on('click', function() {
         $(this).addClass('btn-warning');
         muteCall = false;
         session.unmute();
+        
+        callTimer.text('00:00:00');
+        
     }
 
 });
@@ -146,6 +183,11 @@ $('.holdCall').on('click', function() {
         $(this).addClass('btn-success');
         holdCall = true;
         session.hold();
+        
+        clearTimeout(timerMetaText);
+        statusTimer = 1;
+        callTimer.text('Звонок на паузе');
+        
     } else {
         holdButtIco.removeClass('glyphicon glyphicon-pause');
         holdButtIco.addClass('glyphicon glyphicon-play');
@@ -153,6 +195,9 @@ $('.holdCall').on('click', function() {
         $(this).addClass('btn-warning');
         holdCall = false;
         session.unhold();
+        
+        callTimer.text('00:00:00');
+        
     }
 
 });
@@ -165,9 +210,14 @@ $('#showModalCall').on('hidden.bs.modal', function () {
     statusTimer = 1;
     
     // Звук завершения вызова
-    audio.src = '/files/sounds/cancel.wav';
-    audio.loop = false;
-    audio.play();
+    audio.pause();
+    audio.currentTime = 0.0;
+    
+    var audioClose = new Audio();
+    audioClose.controls = true;
+    audioClose.src = '/files/sounds/cancel.wav';
+    audioClose.loop = false;
+    audioClose.play();
     
 });
 
@@ -314,7 +364,7 @@ $modalAttach = Modal::begin([
 echo "<div style='font-size: 15px;' align='center'>
 <span class='showCallName' style='font-size:23px; color:#484e58; display:block;'></span>
 <span class='showCallNumber' style='font-size:21px; color:#549d53; display:block; margin-top: 10px;'></span>
-<span class='showCallTimer' style='font-size:17px; color:#676d77; display:block; margin-top: 5px;'>00:00:00</span>
+<span class='showCallTimer' style='font-size:17px; color:#676d77; display:block; margin-top: 5px;'></span>
 <span class='btn btn-warning muteCall' style='margin-top: 10px;'><span class='glyphicon glyphicon-volume-up' style='font-size: 18px;'></span></span>
 <span class='btn btn-warning holdCall' style='margin-top: 10px; margin-left: 5px;'><span class='glyphicon glyphicon-play' style='font-size: 18px;'></span></span>
 <span class='btn btn-danger cancelCall' style='margin:15px 0px 10px 0px;'>Завершить звонок</span>
