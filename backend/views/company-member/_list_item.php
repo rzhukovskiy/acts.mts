@@ -129,7 +129,7 @@ $('.callNumber').on('click', function() {
     });
     
     // Если звонок завершен
-    session.on('accepted', function () {
+    session.on('cancel', function () {
         audio.pause();
         audio.currentTime = 0.0;
         
