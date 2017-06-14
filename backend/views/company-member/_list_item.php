@@ -78,7 +78,8 @@ var cancelCall = $('.cancelCall');
 var muteCallButt = $('.muteCall');
 var holdCallButt = $('.holdCall');
 
-var selNumber;
+var selNumberCont = '';
+var extNumber = '';
 
 function updCallPr() {
     
@@ -107,8 +108,14 @@ function doCall() {
     callTimer.text('Вызов.');
     timerMetaText = setTimeout(updCallPr, 1200);
 
-    session = userAgent.invite('sip:' + selNumber.text() + '@cc.mtransservice.ru', options);
+    session = userAgent.invite('sip:' + selNumberCont + '@cc.mtransservice.ru', options);
 
+    if(extNumber) {
+    if(extNumber.length > 0) {
+        session.dtmf(extNumber + '#');
+    }
+    }
+    
     var callName = $('#companymember-name-' + selNumber.data("id") + '-targ').text();
     $('.showCallName').text(callName);
     $('.showCallNumber').text(selNumber.text());
@@ -183,6 +190,13 @@ function doCall() {
 
 $('.callNumber').on('click', function() {
     selNumber = $(this);
+    
+    // Получаем номер и добавочный номер
+    selNumberCont = selNumber.text().split(':');
+    extNumber = selNumberCont[1];
+    selNumberCont = selNumberCont[0];
+    // Получаем номер и добавочный номер
+    
     doCall();
 });
 
