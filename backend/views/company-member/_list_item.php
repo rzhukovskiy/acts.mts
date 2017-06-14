@@ -119,6 +119,7 @@ $('.callNumber').on('click', function() {
     
     // Отключаем гудки если трубку подняли
     session.on('accepted', function () {
+        alert(1);
         audio.pause();
         audio.currentTime = 0.0;
         
@@ -130,6 +131,7 @@ $('.callNumber').on('click', function() {
     
     // Если звонок завершен
     session.on('cancel', function () {
+        alert(2);
         audio.pause();
         audio.currentTime = 0.0;
         
