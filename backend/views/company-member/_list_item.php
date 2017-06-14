@@ -64,22 +64,111 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
     });
     // Получаем данные для звонка
 
+// Звуки
+var audio = new Audio();
+
 // Call Phone
+var muteCall = false;
+var holdCall = false;
+var timerMetaText;
+var statusTimer = 1;
+var muteButtIco = $('.muteCall span');
+var holdButtIco = $('.holdCall span');
+var callTimer = $('.showCallTimer');
+
+function updCallPr() {
+    
+    if(statusTimer == 0) {
+        callTimer.text('Набор номера.');
+        statusTimer = 1;
+    } else if(statusTimer == 1) {
+        callTimer.text('Набор номера..');
+        statusTimer = 2;
+    } else if(statusTimer == 2) {
+        callTimer.text('Набор номера...');
+        statusTimer = 3;
+    } else {
+        callTimer.text('Набор номера..');
+        statusTimer = 0;
+    }
+
+    timerMetaText = setTimeout(updCallPr, 1200);
+
+}
+
 $('.callNumber').on('click', function() {
+
+muteCall = false;
+holdCall = false;
+callTimer.text('Набор номера.');
+timerMetaText = setTimeout(updCallPr, 1200);
+
 session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
+
+var callName = $('#companymember-name-' + $(this).data("id") + '-targ').text();
+$('.showCallName').text(callName);
 $('.showCallNumber').text($(this).text());
 $('#showModalCall').modal('show');
+
 });
 
 // Кнопка завершения звонка
 $('.cancelCall').on('click', function() {
-    session.terminate();
-    $('#showModalCall').modal('hide');
+    $('#showModalCall').modal('hide');    
+});
+
+$('.muteCall').on('click', function() {
+    
+    if(muteCall == false) {
+        muteButtIco.removeClass('glyphicon glyphicon-volume-up');
+        muteButtIco.addClass('glyphicon glyphicon-volume-off');
+        $(this).removeClass('btn-warning');
+        $(this).addClass('btn-success');
+        muteCall = true;
+        session.mute();
+    } else {
+        muteButtIco.removeClass('glyphicon glyphicon-volume-off');
+        muteButtIco.addClass('glyphicon glyphicon-volume-up');
+        $(this).removeClass('btn-success');
+        $(this).addClass('btn-warning');
+        muteCall = false;
+        session.unmute();
+    }
+
+});
+
+$('.holdCall').on('click', function() {
+    
+    if(holdCall == false) {
+        holdButtIco.removeClass('glyphicon glyphicon-play');
+        holdButtIco.addClass('glyphicon glyphicon-pause');
+        $(this).removeClass('btn-warning');
+        $(this).addClass('btn-success');
+        holdCall = true;
+        session.hold();
+    } else {
+        holdButtIco.removeClass('glyphicon glyphicon-pause');
+        holdButtIco.addClass('glyphicon glyphicon-play');
+        $(this).removeClass('btn-success');
+        $(this).addClass('btn-warning');
+        holdCall = false;
+        session.unhold();
+    }
+
 });
 
 // Завершаем звонок если модальное окно закрыли
 $('#showModalCall').on('hidden.bs.modal', function () {
     session.terminate();
+    
+    clearTimeout(timerMetaText);
+    statusTimer = 1;
+    
+    // Звук завершения вызова
+    audio.src = '/files/sounds/cancel.wav';
+    audio.loop = false;
+    audio.play();
+    
 });
 
 JS;
@@ -141,7 +230,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
                 $code = Yii::$app->user->identity->code;
-                echo "<a class='callNumber'>$phone</a><br />";
+                echo "<a class='callNumber' data-id='" . $model->id . "'>$phone</a><br />";
             } ?>
             <?= Editable::widget([
                 'model' => $model,
@@ -223,8 +312,12 @@ $modalAttach = Modal::begin([
 ]);
 
 echo "<div style='font-size: 15px;' align='center'>
-<span class='showCallNumber' style='font-size:27px; color:#767d87;'></span>
-<span class='btn btn-danger cancelCall' style='margin-top:10px;'>Завершить звонок</span>
+<span class='showCallName' style='font-size:23px; color:#484e58; display:block;'></span>
+<span class='showCallNumber' style='font-size:21px; color:#549d53; display:block; margin-top: 10px;'></span>
+<span class='showCallTimer' style='font-size:17px; color:#676d77; display:block; margin-top: 5px;'>00:00:00</span>
+<span class='btn btn-warning muteCall' style='margin-top: 10px;'><span class='glyphicon glyphicon-volume-up' style='font-size: 18px;'></span></span>
+<span class='btn btn-warning holdCall' style='margin-top: 10px; margin-left: 5px;'><span class='glyphicon glyphicon-play' style='font-size: 18px;'></span></span>
+<span class='btn btn-danger cancelCall' style='margin:15px 0px 10px 0px;'>Завершить звонок</span>
 </div>";
 Modal::end();
 // Модальное окно показать все вложения
