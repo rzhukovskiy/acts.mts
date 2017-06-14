@@ -307,11 +307,13 @@ $('#showModalCall').on('hidden.bs.modal', function () {
     audio.pause();
     audio.currentTime = 0.0;
     
+    if(statusCall == 1) {
     var audioClose = new Audio();
     audioClose.controls = true;
     audioClose.src = '/files/sounds/cancel.wav';
     audioClose.loop = false;
     audioClose.play();
+    }
     
     cancelCall.text('Завершить звонок');
     statusCall = 1;
