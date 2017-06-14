@@ -109,12 +109,6 @@ function doCall() {
     timerMetaText = setTimeout(updCallPr, 1200);
 
     session = userAgent.invite('sip:' + selNumberCont + '@cc.mtransservice.ru', options);
-
-    if(extNumber) {
-    if(extNumber.length > 0) {
-        session.dtmf(extNumber + '#');
-    }
-    }
     
     var callName = $('#companymember-name-' + selNumber.data("id") + '-targ').text();
     $('.showCallName').text(callName);
@@ -135,6 +129,14 @@ function doCall() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
+        
+        // добавочный номер
+        if(extNumber) {
+            if(extNumber.length > 0) {
+                session.dtmf(extNumber + '#');
+            }
+        }
+        
         callTimer.text('00:00:00');
         
     });
