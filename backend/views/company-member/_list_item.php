@@ -20,7 +20,6 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
 });
 
     // Получаем данные для звонка
-    var session;
     var codeCall, callCipher = '';
 
     $.ajax({
@@ -63,11 +62,10 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
         }
     });
     // Получаем данные для звонка
-
-// Звуки
-var audio;
-
+    
 // Call Phone
+var session;
+var audio;
 var muteCall = false;
 var holdCall = false;
 var timerMetaText;
@@ -77,6 +75,8 @@ var muteButtIco = $('.muteCall span');
 var holdButtIco = $('.holdCall span');
 var callTimer = $('.showCallTimer');
 var cancelCall = $('.cancelCall');
+var muteCallButt = $('.muteCall');
+var holdCallButt = $('.holdCall');
 
 var selNumber;
 
@@ -219,13 +219,27 @@ cancelCall.on('click', function() {
         cancelCall.removeClass('btn-success');
         cancelCall.addClass('btn-danger');
         
+        muteButtIco.removeClass('glyphicon glyphicon-volume-off');
+        muteButtIco.addClass('glyphicon glyphicon-volume-up');
+        muteCallButt.removeClass('btn-success');
+        muteCallButt.addClass('btn-warning');
+        muteCall = false;
+        
+        holdButtIco.removeClass('glyphicon glyphicon-pause');
+        holdButtIco.addClass('glyphicon glyphicon-play');
+        holdCallButt.removeClass('btn-success');
+        holdCallButt.addClass('btn-warning');
+        holdCall = false;
+        
+        callTimer.text('00:00:00');
+        
         doCall();
         
     }
     
 });
 
-$('.muteCall').on('click', function() {
+muteCallButt.on('click', function() {
     
     if(muteCall == false) {
         muteButtIco.removeClass('glyphicon glyphicon-volume-up');
@@ -253,7 +267,7 @@ $('.muteCall').on('click', function() {
 
 });
 
-$('.holdCall').on('click', function() {
+holdCallButt.on('click', function() {
     
     if(holdCall == false) {
         holdButtIco.removeClass('glyphicon glyphicon-play');
@@ -298,6 +312,23 @@ $('#showModalCall').on('hidden.bs.modal', function () {
     audioClose.src = '/files/sounds/cancel.wav';
     audioClose.loop = false;
     audioClose.play();
+    
+    cancelCall.text('Завершить звонок');
+    statusCall = 1;
+    cancelCall.removeClass('btn-success');
+    cancelCall.addClass('btn-danger');
+
+    muteButtIco.removeClass('glyphicon glyphicon-volume-off');
+    muteButtIco.addClass('glyphicon glyphicon-volume-up');
+    muteCallButt.removeClass('btn-success');
+    muteCallButt.addClass('btn-warning');
+    muteCall = false;
+
+    holdButtIco.removeClass('glyphicon glyphicon-pause');
+    holdButtIco.addClass('glyphicon glyphicon-play');
+    holdCallButt.removeClass('btn-success');
+    holdCallButt.addClass('btn-warning');
+    holdCall = false;
     
 });
 
