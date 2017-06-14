@@ -72,9 +72,13 @@ var muteCall = false;
 var holdCall = false;
 var timerMetaText;
 var statusTimer = 1;
+var statusCall = 1;
 var muteButtIco = $('.muteCall span');
 var holdButtIco = $('.holdCall span');
 var callTimer = $('.showCallTimer');
+var cancelCall = $('.cancelCall');
+
+var selNumber;
 
 function updCallPr() {
     
@@ -96,18 +100,18 @@ function updCallPr() {
 
 }
 
-$('.callNumber').on('click', function() {
-
+function doCall() {
+    
     muteCall = false;
     holdCall = false;
     callTimer.text('Вызов.');
     timerMetaText = setTimeout(updCallPr, 1200);
 
-    session = userAgent.invite('sip:' + $(this).text() + '@cc.mtransservice.ru', options);
+    session = userAgent.invite('sip:' + selNumber.text() + '@cc.mtransservice.ru', options);
 
-    var callName = $('#companymember-name-' + $(this).data("id") + '-targ').text();
+    var callName = $('#companymember-name-' + selNumber.data("id") + '-targ').text();
     $('.showCallName').text(callName);
-    $('.showCallNumber').text($(this).text());
+    $('.showCallNumber').text(selNumber.text());
     $('#showModalCall').modal('show');
 
     // Звук гудков
@@ -135,7 +139,12 @@ $('.callNumber').on('click', function() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()'); 
+        callTimer.text('Звонок завершен ()');
+        
+        cancelCall.text('Позвонить заново');
+        statusCall = 0;
+        cancelCall.removeClass('btn-danger');
+        cancelCall.addClass('btn-success');
         
     });
     
@@ -145,7 +154,13 @@ $('.callNumber').on('click', function() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()'); 
+        callTimer.text('Звонок завершен ()');
+        
+        cancelCall.text('Позвонить заново');
+        statusCall = 0;
+        cancelCall.removeClass('btn-danger');
+        cancelCall.addClass('btn-success');
+        
     });
     
     session.on('failed', function () {
@@ -154,15 +169,60 @@ $('.callNumber').on('click', function() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()'); 
+        callTimer.text('Звонок завершен ()');
+        
+        cancelCall.text('Позвонить заново');
+        statusCall = 0;
+        cancelCall.removeClass('btn-danger');
+        cancelCall.addClass('btn-success');
+        
     });
     // Если звонок завершен
+    
+}
 
+$('.callNumber').on('click', function() {
+    selNumber = $(this);
+    doCall();
 });
 
 // Кнопка завершения звонка
-$('.cancelCall').on('click', function() {
-    $('#showModalCall').modal('hide');
+cancelCall.on('click', function() {
+    
+    if(statusCall == 1) {
+    
+    //$('#showModalCall').modal('hide');
+    
+    session.terminate();
+    
+    clearTimeout(timerMetaText);
+    statusTimer = 1;
+    
+    // Звук завершения вызова
+    audio.pause();
+    audio.currentTime = 0.0;
+    
+    var audioClose = new Audio();
+    audioClose.controls = true;
+    audioClose.src = '/files/sounds/cancel.wav';
+    audioClose.loop = false;
+    audioClose.play();
+    
+    cancelCall.text('Позвонить заново');
+    statusCall = 0;
+    cancelCall.removeClass('btn-danger');
+    cancelCall.addClass('btn-success');
+    
+    } else {
+        cancelCall.text('Завершить звонок');
+        statusCall = 1;
+        cancelCall.removeClass('btn-success');
+        cancelCall.addClass('btn-danger');
+        
+        doCall();
+        
+    }
+    
 });
 
 $('.muteCall').on('click', function() {
@@ -223,6 +283,7 @@ $('.holdCall').on('click', function() {
 
 // Завершаем звонок если модальное окно закрыли
 $('#showModalCall').on('hidden.bs.modal', function () {
+    
     session.terminate();
     
     clearTimeout(timerMetaText);
