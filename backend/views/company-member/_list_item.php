@@ -296,6 +296,8 @@ cancelCall.on('click', function() {
     //$('#showModalCall').modal('hide');
     
     session.terminate();
+    callTimer.text('Звонок завершен (' + showTimerCont() + ')');
+    callTimeNum = 0;
     
     clearTimeout(timerMetaText);
     statusTimer = 1;
