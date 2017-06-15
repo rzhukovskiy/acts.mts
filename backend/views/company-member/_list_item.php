@@ -287,6 +287,22 @@ function doCall() {
         cancelCall.addClass('btn-success');
         
     });
+    
+    session.on('refer', function () {
+        audio.pause();
+        audio.currentTime = 0.0;
+        
+        clearTimeout(timerMetaText);
+        clearTimeout(timerShowTime);
+        statusTimer = 1;
+        callTimer.text('Звонок завершен (' + showTimerCont() + ')');
+        
+        cancelCall.text('Позвонить заново');
+        statusCall = 0;
+        cancelCall.removeClass('btn-danger');
+        cancelCall.addClass('btn-success');
+        
+    });
     // Если звонок завершен
     
 }
