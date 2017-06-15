@@ -68,7 +68,7 @@ var session;
 var audio;
 var muteCall = false;
 var holdCall = false;
-var timerMetaText;
+var timerMetaText, timerShowTime;
 var statusTimer = 1;
 var callTimeNum = 0;
 var statusCall = 1;
@@ -177,7 +177,7 @@ function updCountTimer() {
     
     callTimer.text(showTimerCont());
 
-    timerMetaText = setTimeout(updCountTimer, 1000);
+    timerShowTime = setTimeout(updCountTimer, 1000);
 
 }
 
@@ -216,7 +216,7 @@ function doCall() {
         // Засекаем время начала разговора
         callTimer.text('00:00:00');
         callTimeNum = new Date;
-        timerMetaText = setTimeout(updCountTimer, 1000);
+        timerShowTime = setTimeout(updCountTimer, 1000);
         
         // добавочный номер
         if(extNumber) {
@@ -233,6 +233,7 @@ function doCall() {
         audio.currentTime = 0.0;
         
         clearTimeout(timerMetaText);
+        clearTimeout(timerShowTime);
         statusTimer = 1;
         callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
@@ -248,6 +249,7 @@ function doCall() {
         audio.currentTime = 0.0;
         
         clearTimeout(timerMetaText);
+        clearTimeout(timerShowTime);
         statusTimer = 1;
         callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
@@ -263,6 +265,7 @@ function doCall() {
         audio.currentTime = 0.0;
         
         clearTimeout(timerMetaText);
+        clearTimeout(timerShowTime);
         statusTimer = 1;
         callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
@@ -300,6 +303,7 @@ cancelCall.on('click', function() {
     callTimeNum = 0;
     
     clearTimeout(timerMetaText);
+    clearTimeout(timerShowTime);
     statusTimer = 1;
     
     // Звук завершения вызова
@@ -401,6 +405,7 @@ $('#showModalCall').on('hidden.bs.modal', function () {
     session.terminate();
     
     clearTimeout(timerMetaText);
+    clearTimeout(timerShowTime);
     statusTimer = 1;
     
     // Звук завершения вызова
