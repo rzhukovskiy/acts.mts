@@ -316,6 +316,8 @@ cancelCall.on('click', function() {
     cancelCall.addClass('btn-success');
     
     } else {
+        callTimeNum = 0;
+        
         cancelCall.text('Завершить звонок');
         statusCall = 1;
         cancelCall.removeClass('btn-success');
