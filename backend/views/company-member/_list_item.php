@@ -21,7 +21,7 @@ $('.phoneBody').bind("DOMSubtreeModified",function(){
 
 // Проверка на HTTPS
 if (window.location.protocol == 'http:') {
-    var toHTTPS = confirm("Для работы звонков через сайт необходимо использовать безопасный протокол связи");
+    var toHTTPS = confirm("Для корректной работы звонков через сайт необходимо использовать безопасный протокол связи.");
     
     if(toHTTPS == true) {
         location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
