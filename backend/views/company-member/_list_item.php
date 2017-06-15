@@ -204,7 +204,7 @@ function doCall() {
     
     var callName = $('#companymember-name-' + selNumber.data("id") + '-targ').text();
     $('.showCallName').text(callName);
-    $('.showCallNumber').text(selNumber.text());
+    $('.showCallNumber').text(selNumberCont);
     $('#showModalCall').modal('show');
 
     // Звук гудков
@@ -298,6 +298,18 @@ $('.callNumber').on('click', function() {
     selNumberCont = selNumber.text().split(':');
     extNumber = selNumberCont[1];
     selNumberCont = selNumberCont[0];
+    
+    selNumberCont = String(selNumberCont);
+    selNumberCont = selNumberCont.replace(' ', '');
+    selNumberCont = selNumberCont.replace('+', '');
+    selNumberCont = selNumberCont.replace('(', '');
+    selNumberCont = selNumberCont.replace(')', '');
+    
+    extNumber = String(extNumber);
+    extNumber = extNumber.replace(' ', '');
+    extNumber = extNumber.replace('+', '');
+    extNumber = extNumber.replace('(', '');
+    extNumber = extNumber.replace(')', '');
     // Получаем номер и добавочный номер
     
     doCall();
@@ -509,7 +521,6 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         <td class="phoneBody">
             <?php foreach (explode(',', $model->phone) as $phone) {
                 $phone = trim($phone);
-                $code = Yii::$app->user->identity->code;
                 echo "<a class='callNumber' data-id='" . $model->id . "'>$phone</a><br />";
             } ?>
             <?= Editable::widget([
@@ -583,7 +594,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 <?php
 
 
-// Модальное окно показать все вложения
+// Модальное окно зновонк клиенту
 $modalAttach = Modal::begin([
     'header' => '<h4>Звонок клиенту</h4>',
     'id' => 'showModalCall',
@@ -600,6 +611,6 @@ echo "<div style='font-size: 15px;' align='center'>
 <span class='btn btn-danger cancelCall' style='margin:15px 0px 10px 0px;'>Завершить звонок</span>
 </div>";
 Modal::end();
-// Модальное окно показать все вложения
+// Модальное окно зновонк клиенту
 
 ?>
