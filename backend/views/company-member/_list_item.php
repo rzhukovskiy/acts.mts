@@ -363,8 +363,6 @@ muteCallButt.on('click', function() {
         muteCall = false;
         session.unmute();
         
-        callTimer.text('00:00:00');
-        
     }
     
     }
@@ -390,8 +388,6 @@ holdCallButt.on('click', function() {
         $(this).addClass('btn-warning');
         holdCall = false;
         session.unhold();
-        
-        callTimer.text('00:00:00');
         
     }
     
