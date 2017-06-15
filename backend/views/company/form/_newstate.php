@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'type')->dropDownList(['0' => 'Исходящий звонок' , '1' => 'Входящий звонок', '2' => 'Исходящее письмо', '3' => 'Входящее письмо'], ['class' => 'form-control'/*, 'prompt' => 'Выберите формат'*/]) ?>
 
-<?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'placeholder' => 'Введите комментарий']) ?>
+<?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий']) ?>
 
 <?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
