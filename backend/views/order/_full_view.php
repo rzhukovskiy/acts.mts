@@ -301,6 +301,12 @@ function doCall() {
 }
 
 $('.callNumber').on('click', function() {
+    
+    cancelCall.text('Завершить звонок');
+    statusCall = 1;
+    cancelCall.removeClass('btn-success');
+    cancelCall.addClass('btn-danger');
+    
     selNumber = $(this);
     
     // Получаем номер и добавочный номер
