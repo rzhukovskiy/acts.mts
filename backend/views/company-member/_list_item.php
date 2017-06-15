@@ -105,37 +105,37 @@ function updCallPr() {
 function showTimerCont() {
     
     if(callTimeNum) {
-    var timeLost = new Date - callTimeNum;
     
-    if(timeLost > 999) {
+    if((new Date - callTimeNum) >= 1000) {
+        var timeLost = new Date - callTimeNum;
         
-        timeLost = timeLost / 1000;
+        timeLost = Math.floor(timeLost / 1000);
         var showData = "";
 
-        if((timeLost / 3600) > 0) {
+        if((Math.floor(timeLost / 3600)) > 0) {
 
-            if((timeLost / 3600) > 9) {
-                showData = (timeLost / 3600) + ":";
+            if((Math.floor(timeLost / 3600)) > 9) {
+                showData = (Math.floor(timeLost / 3600)) + ":";
             } else {
-                showData = "0" + (timeLost / 3600) + ":";
+                showData = "0" + (Math.floor(timeLost / 3600)) + ":";
             }
 
         } else {
             showData = "00:";
         }
 
-        if ((timeLost / 60) > 0) {
+        if ((Math.floor(timeLost / 60)) > 0) {
 
-            if ((timeLost / 60) > 9) {
+            if ((Math.floor(timeLost / 60)) > 9) {
 
-                if ((timeLost / 60) < 60) {
-                    showData += (timeLost / 60) + ":";
+                if ((Math.floor(timeLost / 60)) < 60) {
+                    showData += (Math.floor(timeLost / 60)) + ":";
                 } else {
                     showData += "59:";
                 }
 
             } else {
-                showData += "0" + (timeLost / 60) + ":";
+                showData += "0" + (Math.floor(timeLost / 60)) + ":";
             }
 
         } else {
@@ -144,8 +144,8 @@ function showTimerCont() {
 
         var numMin;
 
-        if((timeLost / 60) > 0) {
-            numMin = timeLost - (60 * (timeLost / 60));
+        if((Math.floor(timeLost / 60)) > 0) {
+            numMin = timeLost - (60 * (Math.floor(timeLost / 60)));
         } else {
             numMin = timeLost;
         }
