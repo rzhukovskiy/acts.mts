@@ -70,6 +70,7 @@ var muteCall = false;
 var holdCall = false;
 var timerMetaText;
 var statusTimer = 1;
+var callTimeNum = 0;
 var statusCall = 1;
 var muteButtIco = $('.muteCall span');
 var holdButtIco = $('.holdCall span');
@@ -101,6 +102,85 @@ function updCallPr() {
 
 }
 
+function showTimerCont() {
+    
+    if(callTimeNum) {
+    var timeLost = new Date - callTimeNum;
+    
+    if(timeLost > 999) {
+        
+        timeLost = timeLost / 1000;
+        var showData = "";
+
+        if((timeLost / 3600) > 0) {
+
+            if((timeLost / 3600) > 9) {
+                showData = (timeLost / 3600) + ":";
+            } else {
+                showData = "0" + (timeLost / 3600) + ":";
+            }
+
+        } else {
+            showData = "00:";
+        }
+
+        if ((timeLost / 60) > 0) {
+
+            if ((timeLost / 60) > 9) {
+
+                if ((timeLost / 60) < 60) {
+                    showData += (timeLost / 60) + ":";
+                } else {
+                    showData += "59:";
+                }
+
+            } else {
+                showData += "0" + (timeLost / 60) + ":";
+            }
+
+        } else {
+            showData += "00:";
+        }
+
+        var numMin;
+
+        if((timeLost / 60) > 0) {
+            numMin = timeLost - (60 * (timeLost / 60));
+        } else {
+            numMin = timeLost;
+        }
+
+        if(numMin > 9) {
+
+            if(numMin < 60) {
+                showData += numMin;
+            } else {
+                showData += "59";
+            }
+
+        } else {
+            showData += "0" + numMin;
+        }
+
+        return showData;
+        
+    } else {
+        return '00:00:00';
+    }
+} else {
+        return '00:00:00';
+}
+
+}
+
+function updCountTimer() {
+    
+    callTimer.text(showTimerCont());
+
+    timerMetaText = setTimeout(updCountTimer, 1000);
+
+}
+
 function doCall() {
     
     muteCall = false;
@@ -124,11 +204,19 @@ function doCall() {
     
     // Отключаем гудки если трубку подняли
     session.on('accepted', function () {
+        
+        statusCall = 2;
+        
         audio.pause();
         audio.currentTime = 0.0;
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
+        
+        // Засекаем время начала разговора
+        callTimer.text('00:00:00');
+        callTimeNum = new Date;
+        timerMetaText = setTimeout(updCountTimer, 1000);
         
         // добавочный номер
         if(extNumber) {
@@ -136,8 +224,6 @@ function doCall() {
                 session.dtmf(extNumber + '#');
             }
         }
-        
-        callTimer.text('00:00:00');
         
     });
     
@@ -148,7 +234,7 @@ function doCall() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()');
+        callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
         cancelCall.text('Позвонить заново');
         statusCall = 0;
@@ -163,7 +249,7 @@ function doCall() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()');
+        callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
         cancelCall.text('Позвонить заново');
         statusCall = 0;
@@ -178,7 +264,7 @@ function doCall() {
         
         clearTimeout(timerMetaText);
         statusTimer = 1;
-        callTimer.text('Звонок завершен ()');
+        callTimer.text('Звонок завершен (' + showTimerCont() + ')');
         
         cancelCall.text('Позвонить заново');
         statusCall = 0;
@@ -205,7 +291,7 @@ $('.callNumber').on('click', function() {
 // Кнопка завершения звонка
 cancelCall.on('click', function() {
     
-    if(statusCall == 1) {
+    if(statusCall > 0) {
     
     //$('#showModalCall').modal('hide');
     
@@ -247,8 +333,6 @@ cancelCall.on('click', function() {
         holdCallButt.addClass('btn-warning');
         holdCall = false;
         
-        callTimer.text('00:00:00');
-        
         doCall();
         
     }
@@ -257,6 +341,8 @@ cancelCall.on('click', function() {
 
 muteCallButt.on('click', function() {
     
+    if(statusCall == 2) {
+    
     if(muteCall == false) {
         muteButtIco.removeClass('glyphicon glyphicon-volume-up');
         muteButtIco.addClass('glyphicon glyphicon-volume-off');
@@ -264,10 +350,6 @@ muteCallButt.on('click', function() {
         $(this).addClass('btn-success');
         muteCall = true;
         session.mute();
-        
-        clearTimeout(timerMetaText);
-        statusTimer = 1;
-        callTimer.text('Микрофон выкл.');
         
     } else {
         muteButtIco.removeClass('glyphicon glyphicon-volume-off');
@@ -280,10 +362,14 @@ muteCallButt.on('click', function() {
         callTimer.text('00:00:00');
         
     }
+    
+    }
 
 });
 
 holdCallButt.on('click', function() {
+    
+    if(statusCall == 2) {
     
     if(holdCall == false) {
         holdButtIco.removeClass('glyphicon glyphicon-play');
@@ -292,10 +378,6 @@ holdCallButt.on('click', function() {
         $(this).addClass('btn-success');
         holdCall = true;
         session.hold();
-        
-        clearTimeout(timerMetaText);
-        statusTimer = 1;
-        callTimer.text('Звонок на паузе');
         
     } else {
         holdButtIco.removeClass('glyphicon glyphicon-pause');
@@ -307,6 +389,8 @@ holdCallButt.on('click', function() {
         
         callTimer.text('00:00:00');
         
+    }
+    
     }
 
 });
