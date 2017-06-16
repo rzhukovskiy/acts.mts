@@ -705,6 +705,9 @@ class CompanyController extends Controller
         $model = new CompanyState();
         $model->company_id = $id;
 
+        $modelOff = $this->findModel($id);
+        $modelCompanyOffer = $modelOff->offer;
+
         $companyMembers = CompanyMember::find()->where(['company_id' => $id])->select('name')->indexBy('id')->column();
         $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
 
@@ -727,6 +730,7 @@ class CompanyController extends Controller
                 'model' => $model,
                 'companyMembers' => $companyMembers,
                 'authorMembers' => $authorMembers,
+                'modelCompanyOffer' => $modelCompanyOffer,
             ]);
         }
     }

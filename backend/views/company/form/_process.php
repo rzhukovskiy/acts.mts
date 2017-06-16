@@ -135,6 +135,51 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md">Местное время</td>
+                <td>
+                    <?php
+
+                    $showTimeLocation = '';
+                    $timeCompany = time() + (3600 * $modelCompanyInfo->time_location);
+
+                    if($modelCompanyInfo->time_location == 0) {
+                        $showTimeLocation = date('H:i', $timeCompany);
+                    } else {
+                        if($modelCompanyInfo->time_location > 0) {
+                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . '+' . $modelCompanyInfo->time_location . ')';
+                        } else {
+                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . $modelCompanyInfo->time_location . ')';
+                        }
+                    }
+
+                    $editableForm = Editable::begin([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'time_location',
+                        'displayValue' => $showTimeLocation,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Местное время', 'style' => 'display:none;'],
+                        'formOptions' => [
+                            'action' => ['/company-info/updatetimelocation', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+
+                    $form = $editableForm->getForm();
+                    echo Html::hiddenInput('kv-complex', '1');
+
+                    $editableForm->afterInput = '' . $form->field($modelCompanyInfo, 'time_location')->dropDownList(['-12' => -12, '-11' => -11, '-10' => -10, '-9' => -9, '-8' => -8, '-7' => -7, '-6' => -6, '-5' => -5, '-4' => -4, '-3' => -3, '-2' => -2, '-1' => -1, 0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12], ['class' => 'form-control', 'options'=>[$modelCompanyInfo->time_location => ['Selected'=>true]]]) . '';
+                    Editable::end();
+
+                    ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md">
                     <?= $modelCompany->type == Company::TYPE_WASH ? 'Телефон для записи на мойку' : $modelCompanyInfo->getAttributeLabel('phone') ?></td>
                 <td>
@@ -182,76 +227,6 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                         'footer' => '{buttons}'
-                    ]); ?>
-                </td>
-            </tr>
-            <tr>
-                <td class="list-label-md">Местное время</td>
-                <td>
-                    <?php
-
-                    $showTimeLocation = '';
-                    $timeCompany = time() + (3600 * $modelCompanyInfo->time_location);
-
-                    if($modelCompanyInfo->time_location == 0) {
-                        $showTimeLocation = date('H:i', $timeCompany);
-                    } else {
-                        if($modelCompanyInfo->time_location > 0) {
-                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . '+' . $modelCompanyInfo->time_location . ')';
-                        } else {
-                            $showTimeLocation = date('H:i', $timeCompany) . ' (' . $modelCompanyInfo->time_location . ')';
-                        }
-                    }
-
-                    $editableForm = Editable::begin([
-                        'model' => $modelCompanyInfo,
-                        'buttonsTemplate' => '{submit}',
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'time_location',
-                        'displayValue' => $showTimeLocation,
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Местное время', 'style' => 'display:none;'],
-                        'formOptions' => [
-                            'action' => ['/company-info/updatetimelocation', 'id' => $modelCompanyInfo->id],
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]);
-
-                    $form = $editableForm->getForm();
-                    echo Html::hiddenInput('kv-complex', '1');
-
-                    $editableForm->afterInput = '' . $form->field($modelCompanyInfo, 'time_location')->dropDownList(['-12' => -12, '-11' => -11, '-10' => -10, '-9' => -9, '-8' => -8, '-7' => -7, '-6' => -6, '-5' => -5, '-4' => -4, '-3' => -3, '-2' => -2, '-1' => -1, 0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12], ['class' => 'form-control', 'options'=>[$modelCompanyInfo->time_location => ['Selected'=>true]]]) . '';
-                    Editable::end();
-
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('process') ?></td>
-                <td>
-                    <?= Editable::widget([
-                        'model' => $modelCompanyOffer,
-                        'buttonsTemplate' => '{submit}',
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'submitOnEnter' => false,
-                        'attribute' => 'process',
-                        'displayValue' => $modelCompanyOffer->processHtml,
-                        'inputType' => Editable::INPUT_TEXTAREA,
-                        'asPopover' => true,
-                        'size' => 'lg',
-                        'editableValueOptions' => ['style' => 'text-align: left'],
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарии', 'style' => 'text-align: left', 'rows' => 10],
-                        'formOptions' => [
-                            'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
                 </td>
             </tr>

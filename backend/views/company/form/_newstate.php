@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
+use kartik\editable\Editable;
+use kartik\popover\PopoverX;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyMember
@@ -42,9 +44,122 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
     <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-6">
+        <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
 
 <?php ActiveForm::end(); ?>
+
+<div class="form-horizontal col-sm-10">
+<div class="form-group">
+    <label class="col-sm-3 control-label" for="companystate-files">
+        <?= $modelCompanyOffer->getAttributeLabel('communication_str') ?>
+    </label><div class="col-sm-6" style="margin-top: 7px;">
+        <?php
+
+        $wekCommunicDate = '';
+
+        if(isset($modelCompanyOffer->communication_str)) {
+
+            if (mb_strlen($modelCompanyOffer->communication_str) > 1) {
+
+                try {
+                    $CommunicDate = strtotime($modelCompanyOffer->communication_str);
+                    $wekCommunicDate = date("w", $CommunicDate);
+
+                    switch ($wekCommunicDate) {
+                        case 1:
+                            $wekCommunicDate = 'Понедельник';
+                            break;
+                        case 2:
+                            $wekCommunicDate = 'Вторник';
+                            break;
+                        case 3:
+                            $wekCommunicDate = 'Среда';
+                            break;
+                        case 4:
+                            $wekCommunicDate = 'Четверг';
+                            break;
+                        case 5:
+                            $wekCommunicDate = 'Пятница';
+                            break;
+                        case 6:
+                            $wekCommunicDate = 'Суббота';
+                            break;
+                        case 7:
+                            $wekCommunicDate = 'Воскресение';
+                            break;
+                    }
+
+                    $wekCommunicDate = $modelCompanyOffer->communication_str . ' (' . $wekCommunicDate . ')';
+                } catch (\Exception $e) {
+                    $wekCommunicDate = $modelCompanyOffer->communication_str;
+                }
+
+            } else {
+                $wekCommunicDate = $modelCompanyOffer->communication_str;
+            }
+
+        } else {
+            $wekCommunicDate = $modelCompanyOffer->communication_str;
+        }
+
+        echo Editable::widget([
+            'model' => $modelCompanyOffer,
+            'buttonsTemplate' => '{submit}',
+            'submitButton' => [
+                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+            ],
+            'attribute' => 'communication_str',
+            'displayValue' => $wekCommunicDate,
+            'inputType' => Editable::INPUT_DATETIME,
+            'asPopover' => true,
+            'placement' => PopoverX::ALIGN_RIGHT,
+            'size' => 'lg',
+            'options' => [
+                'class' => 'form-control',
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'format' => 'dd-mm-yyyy hh:ii',
+                    'autoclose' => true,
+                    'pickerPosition' => 'top-right',
+                ],
+            ],
+            'formOptions' => [
+                'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
+            ],
+            'valueIfNull' => '<span class="text-danger">не задано</span>',
+        ]); ?>
+    </div>
+</div>
+</div>
+
+<div class="form-horizontal col-sm-10">
+<div class="form-group">
+    <label class="col-sm-3 control-label" for="companystate-files">
+        <?= $modelCompanyOffer->getAttributeLabel('process') ?>
+    </label><div class="col-sm-6" style="margin-top: 7px;">
+        <?= Editable::widget([
+            'model' => $modelCompanyOffer,
+            'buttonsTemplate' => '{submit}',
+            'submitButton' => [
+                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+            ],
+            'placement' => PopoverX::ALIGN_RIGHT,
+            'submitOnEnter' => false,
+            'attribute' => 'process',
+            'displayValue' => $modelCompanyOffer->processHtml,
+            'inputType' => Editable::INPUT_TEXTAREA,
+            'asPopover' => true,
+            'size' => 'lg',
+            'editableValueOptions' => ['style' => 'text-align: left'],
+            'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий', 'style' => 'text-align: left', 'rows' => 7],
+            'formOptions' => [
+                'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
+            ],
+            'valueIfNull' => '<span class="text-danger">не задано</span>',
+        ]); ?>
+    </div>
+</div>
+</div>

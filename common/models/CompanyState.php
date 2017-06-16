@@ -42,7 +42,8 @@ class CompanyState extends ActiveRecord
         return [
             [['company_id', 'member_id', 'author_id', 'type', 'comment', 'date'], 'required'],
             [['company_id', 'author_id', 'type'], 'integer'],
-            [['comment', 'date'], 'string'],
+            ['comment', 'string', 'max' => 5000],
+            ['date', 'string'],
             ['member_id', 'safe'],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
         ];

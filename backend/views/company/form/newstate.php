@@ -12,6 +12,7 @@ $this->title = 'Новый статус клиента';
             'model' => $model,
             'companyMembers' => $companyMembers,
             'authorMembers' => $authorMembers,
+            'modelCompanyOffer' => $modelCompanyOffer,
         ]);
         ?>
     </div>

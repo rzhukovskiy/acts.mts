@@ -54,7 +54,7 @@ class CompanyOffer extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'communication_at', 'created_at', 'updated_at'], 'integer'],
-            [['process'], 'string', 'max' => 5000],
+            [['process'], 'string', 'max' => 2500],
             [['communication_str'], 'string', 'max' => 1000],
             [['mail_number'], 'string', 'max' => 255],
         ];
@@ -68,7 +68,7 @@ class CompanyOffer extends ActiveRecord
         return [
             'id' => 'ID',
             'company_id' => 'Компания',
-            'process' => 'Статус клиента',
+            'process' => 'Комментарий к дате след. связи',
             'mail_number' => 'Номер почтового отправления',
             'communication_at' => 'Дата следующей связи',
             'communication_str' => 'Дата следующей связи',
@@ -113,12 +113,6 @@ class CompanyOffer extends ActiveRecord
     {
         if (!empty($this->communication_str)) {
             $this->communication_at = \DateTime::createFromFormat('d-m-Y H:i', $this->communication_str)->getTimestamp();
-        }
-
-        $newProcessLength = strlen(trim($this->process));
-        $oldProcessLength = strlen(trim($this->getOldAttribute('process')));
-        if ($this->process && ($newProcessLength > $oldProcessLength)) {
-            $this->process .= ' ' . (new \DateTime())->format('d-m-Y H:i');
         }
 
         return parent::beforeSave($insert);

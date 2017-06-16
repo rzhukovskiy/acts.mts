@@ -222,6 +222,32 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                 </td>
             </tr>
 
+            <tr>
+                <td class="list-label-md"><?= $modelCompanyOffer->getAttributeLabel('process') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyOffer,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'submitOnEnter' => false,
+                        'attribute' => 'process',
+                        'displayValue' => $modelCompanyOffer->processHtml,
+                        'inputType' => Editable::INPUT_TEXTAREA,
+                        'asPopover' => true,
+                        'size' => 'lg',
+                        'editableValueOptions' => ['style' => 'text-align: left'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий', 'style' => 'text-align: left', 'rows' => 7],
+                        'formOptions' => [
+                            'action' => ['/company-offer/update', 'id' => $modelCompanyOffer->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+
         </table>
     </div>
 
