@@ -657,6 +657,59 @@ class CompanyController extends Controller
     // Раздел статус клиента
     public function actionState($id)
     {
+
+        //
+        $offerArr = CompanyOffer::find()->where(['!=', 'process', ''])->andWhere(['!=', 'process', ' '])->andWhere(['not', ['process' => null]])->select('id, company_id, process')->all();
+
+        $numMobe = 0;
+
+        for ($i = 0; $i < count($offerArr); $i++) {
+
+            if(isset($offerArr[$i])) {
+                if((isset($offerArr[$i]['process'])) && (isset($offerArr[$i]['id'])) && (isset($offerArr[$i]['company_id']))) {
+
+                    $statusComm = $offerArr[$i]['process'];
+                    $company_id = $offerArr[$i]['company_id'];
+                    $pr_id = $offerArr[$i]['id'];
+
+                    if(mb_strlen($statusComm) > 2) {
+
+                        $modelNewState = new CompanyState();
+                        $modelNewState->company_id = $company_id;
+                        $modelNewState->member_id = 0;
+                        $modelNewState->author_id = 0;
+                        $modelNewState->type = 0;
+                        $modelNewState->comment = '' . $statusComm;
+                        $modelNewState->date = date("d.m.Y H:i", "1497616346");
+
+                        if ($modelNewState->save()) {
+
+                            $updOffer = CompanyOffer::findOne(['id' => $pr_id]);
+                            $updOffer->process = '';
+                            $updOffer->save();
+
+                            $numMobe++;
+                        } else {
+                            echo 'error'; die;
+                        }
+
+                    } else {
+                        $updOffer = CompanyOffer::findOne(['id' => $pr_id]);
+                        $updOffer->process = '';
+                        $updOffer->save();
+
+                        $numMobe++;
+                    }
+
+
+                }
+            }
+
+        }
+
+        print_r($numMobe); die;
+        //
+
         $model = $this->findModel($id);
 
         $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();

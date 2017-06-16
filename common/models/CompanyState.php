@@ -16,7 +16,7 @@ use yii\web\UploadedFile;
  * @property integer $author_id
  * @property integer $type
  * @property string $comment
- * @property integer $date
+ * @property string $date
  */
 class CompanyState extends ActiveRecord
 {

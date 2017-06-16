@@ -269,26 +269,32 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                 ],
                 'value' => function ($data) {
 
-                $arrMemberList = explode(', ', $data->member_id);
-                $memberText = '';
+    if($data->member_id == 0) {
+        return '-';
+    } else {
 
-                if(count($arrMemberList) > 1) {
+        $arrMemberList = explode(', ', $data->member_id);
+        $memberText = '';
 
-                    for($i = 0; $i < count($arrMemberList); $i++) {
-                        $memberText .= $GLOBALS['companyMembers'][$arrMemberList[$i]] . '<br />';
-                    }
+        if (count($arrMemberList) > 1) {
 
-                } else {
+            for ($i = 0; $i < count($arrMemberList); $i++) {
+                $memberText .= $GLOBALS['companyMembers'][$arrMemberList[$i]] . '<br />';
+            }
 
-                    try {
-                        $memberText = $GLOBALS['companyMembers'][$data->member_id];
-                    } catch (\Exception $e) {
-                        $memberText = '-';
-                    }
+        } else {
 
-                }
+            try {
+                $memberText = $GLOBALS['companyMembers'][$data->member_id];
+            } catch (\Exception $e) {
+                $memberText = '-';
+            }
 
-                return $memberText;
+        }
+
+        return $memberText;
+
+    }
 
                 },
             ],
@@ -298,7 +304,11 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                     'style' => 'width: 120px',
                 ],
                 'value' => function ($data) {
-                    return $GLOBALS['authorMembers'][$data->author_id];
+    if($data->author_id == 0) {
+        return '-';
+    } else {
+        return $GLOBALS['authorMembers'][$data->author_id];
+    }
                 },
             ],
             [
@@ -307,6 +317,13 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                     'style' => 'width: 100px',
                 ],
                 'value' => function ($data) {
+
+        if($data->type == 0) {
+            return '-';
+        } else {
+            return $GLOBALS['types'][$data->type];
+        }
+
                     return $GLOBALS['types'][$data->type];
                 },
             ],
