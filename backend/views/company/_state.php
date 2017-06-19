@@ -434,20 +434,66 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
 
     if (file_exists($pathfolder)) {
 
+        $arrFilesList = [];
+
+        // заполняем массив
         foreach (FileHelper::findFiles($pathfolder) as $file) {
             if((basename($file) != 'attaches.zip') && (basename($file) != '.DS_Store')) {
-                $arrStateID = explode('-', basename($file));
-
                 $time_file = filemtime($pathfolder . basename($file));
 
-                if(is_numeric($arrStateID[0])) {
-                    $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
-                } else {
-                    $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
-                }
+                $arrFilesList[$numFiles][0] = $time_file;
+                $arrFilesList[$numFiles][1] = date('H:i d.m.Y', $time_file);
+                $arrFilesList[$numFiles][2] = basename($file);
 
                 $numFiles++;
             }
+        }
+
+        // сортируем массив
+        for($iFiles = 0; $iFiles < $numFiles; $iFiles++) {
+
+            $min_i = $iFiles;
+            $min = $arrFilesList[$iFiles][0];
+
+            for($jFiles = $iFiles + 1; $jFiles < $numFiles; $jFiles++) {
+
+                if($arrFilesList[$jFiles][0] < $min) {
+                    $min_i = $jFiles;
+                    $min = $arrFilesList[$jFiles][0];
+                }
+
+            }
+
+            if($iFiles != $min_i) {
+                $tmpFIle[0] = $arrFilesList[$iFiles][0];
+                $tmpFIle[1] = $arrFilesList[$iFiles][1];
+                $tmpFIle[2] = $arrFilesList[$iFiles][2];
+
+                $arrFilesList[$iFiles][0] = $arrFilesList[$min_i][0];
+                $arrFilesList[$iFiles][1] = $arrFilesList[$min_i][1];
+                $arrFilesList[$iFiles][2] = $arrFilesList[$min_i][2];
+
+                $arrFilesList[$min_i][0] = $tmpFIle[0];
+                $arrFilesList[$min_i][1] = $tmpFIle[1];
+                $arrFilesList[$min_i][2] = $tmpFIle[2];
+
+            }
+
+        }
+
+        // выводим полный список файлов
+        for($iFiles = 0; $iFiles < $numFiles; $iFiles++) {
+
+            $arrStateID = explode('-', $arrFilesList[$iFiles][2]);
+
+            $time_file = filemtime($pathfolder . $arrFilesList[$iFiles][2]);
+
+            if(is_numeric($arrStateID[0])) {
+                $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a(str_replace($arrStateID[0] . '-', '', $arrFilesList[$iFiles][2]), $shortPath . $arrFilesList[$iFiles][2], ['target' => '_blank']) . '<br />';
+            } else {
+                $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a($arrFilesList[$iFiles][2], $shortPath . $arrFilesList[$iFiles][2], ['target' => '_blank']) . '<br />';
+            }
+
         }
 
     }
