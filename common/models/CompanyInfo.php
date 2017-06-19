@@ -100,13 +100,42 @@ class CompanyInfo extends ActiveRecord
     public function getFullAddress()
     {
         if (!$this->fullAddress) {
-            $this->fullAddress = implode(', ',
+
+            $arrFullAddress = [];
+
+            if (isset($this->city)) {
+                if(mb_strlen($this->city) > 0) {
+                    $arrFullAddress[] = $this->city;
+                }
+            }
+
+            if (isset($this->street)) {
+                if(mb_strlen($this->street) > 0) {
+                    $arrFullAddress[] = $this->street;
+                }
+            }
+
+            if (isset($this->house)) {
+                if(mb_strlen($this->house) > 0) {
+                    $arrFullAddress[] = $this->house;
+                }
+            }
+
+            if (isset($this->index)) {
+                if(mb_strlen($this->index) > 0) {
+                    $arrFullAddress[] = $this->index;
+                }
+            }
+
+            $this->fullAddress = implode(', ', $arrFullAddress);
+
+            /*$this->fullAddress = implode(', ',
                 [
                     $this->city ? $this->city : $this->getAttributeLabel('city'),
                     $this->street ? $this->street : $this->getAttributeLabel('street'),
                     $this->house ? $this->house : $this->getAttributeLabel('house'),
                     $this->index ? $this->index : $this->getAttributeLabel('index'),
-                ]);
+                ]);*/
         }
 
         return $this->fullAddress;

@@ -248,17 +248,55 @@ class Company extends ActiveRecord
      */
     public function getFullAddress()
     {
+
         if (!$this->fullAddress) {
-            $this->fullAddress = $this->info ? implode(', ',
-                [
-                    $this->info->city,
-                    $this->info->street,
-                    $this->info->house,
-                    $this->info->index,
-                ]) : false;
+
+            if ($this->info) {
+
+                $arrFullAddress = [];
+
+                if (isset($this->info->city)) {
+                    if (mb_strlen($this->info->city) > 0) {
+                        $arrFullAddress[] = $this->info->city;
+                    }
+                }
+
+                if (isset($this->info->street)) {
+                    if (mb_strlen($this->info->street) > 0) {
+                        $arrFullAddress[] = $this->info->street;
+                    }
+                }
+
+                if (isset($this->info->house)) {
+                    if (mb_strlen($this->info->house) > 0) {
+                        $arrFullAddress[] = $this->info->house;
+                    }
+                }
+
+                if (isset($this->info->index)) {
+                    if (mb_strlen($this->info->index) > 0) {
+                        $arrFullAddress[] = $this->info->index;
+                    }
+                }
+
+                $this->fullAddress = implode(', ', $arrFullAddress);
+
+                /*$this->fullAddress = $this->info ? implode(', ',
+                    [
+                        $this->info->city,
+                        $this->info->street,
+                        $this->info->house,
+                        $this->info->index,
+                    ]) : false;*/
+
+            } else {
+                return false;
+            }
+
         }
 
         return $this->fullAddress;
+
     }
 
     // имя сотрудника, который добавил компанию
