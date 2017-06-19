@@ -120,6 +120,7 @@ echo GridView::widget([
         [
             'attribute'         => 'client_name',
             'header' => 'Клиент',
+            'contentOptions' => ['class' => 'showStatus'],
             //'group'             => true,  // enable grouping
             //'options'           => ['class' => 'kv-grouped-header'],
             //'groupedRow'        => true,  // enable grouping

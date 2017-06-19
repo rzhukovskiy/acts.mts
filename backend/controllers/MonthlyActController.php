@@ -33,12 +33,12 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact', 'getcomments'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact'],
+                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact', 'getcomments'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -291,6 +291,31 @@ class MonthlyActController extends Controller
             } else {
                 echo json_encode(['success' => 'false']);
             }
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    public function actionGetcomments()
+    {
+
+        if(Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+            $resComm = '';
+
+            $model = MonthlyAct::findOne(['id' => $id]);
+
+            $resComm .= "<u style='color:#757575;'>Комментарии к акту:</u> " . $model->act_comment . "<br />";
+            $resComm .= "<u style='color:#757575;'>Дата отправления акта по почте:</u> " . $model->act_send_date . "<br />";
+            $resComm .= "<u style='color:#757575;'>Дата получения акта клиентом:</u> " . $model->act_client_get_date . "<br /><br />";
+            $resComm .= "<u style='color:#757575;'>Комментарии к оплате:</u> " . $model->payment_comment . "<br />";
+            $resComm .= "<u style='color:#757575;'>Дата получения акта нами:</u> " . $model->act_we_get_date . "<br />";
+            $resComm .= "<u style='color:#757575;'>Дата предполагаемой оплаты:</u> " . $model->payment_estimate_date . "<br />";
+
+            echo json_encode(['success' => 'true', 'comment' => $resComm]);
+
         } else {
             echo json_encode(['success' => 'false']);
         }

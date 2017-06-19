@@ -37,7 +37,7 @@ use yii\helpers\Html;
                 ],
                 'options'       => [
                     'class' => 'form-control',
-                    'value' => date('d-m-Y'),
+                    'value' => $model->act_send_date ? $model->act_send_date : '',
                 ]
             ])->error(false) ?>
         <?= $form->field($model, 'act_client_get_date')->widget(DatePicker::classname(),
@@ -50,7 +50,7 @@ use yii\helpers\Html;
                 ],
                 'options'       => [
                     'class' => 'form-control',
-                    'value' => date('d-m-Y'),
+                    'value' => $model->act_client_get_date ? $model->act_client_get_date : '',
                 ]
             ])->error(false) ?>
         <?= $form->field($model, 'post_number')->input('text', ['class' => 'form-control'])->label() ?>
@@ -74,7 +74,7 @@ use yii\helpers\Html;
                 ],
                 'options'       => [
                     'class' => 'form-control',
-                    'value' => date('d-m-Y'),
+                    'value' => $model->act_we_get_date ? $model->act_we_get_date : '',
                 ]
             ])->error(false) ?>
 
@@ -88,7 +88,7 @@ use yii\helpers\Html;
                 ],
                 'options'       => [
                     'class' => 'form-control',
-                    'value' => date('d-m-Y'),
+                    'value' => $model->payment_estimate_date ? $model->payment_estimate_date : '',
                 ]
             ])->error(false) ?>
 

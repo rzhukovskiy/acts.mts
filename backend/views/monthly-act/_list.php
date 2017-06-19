@@ -22,6 +22,18 @@ if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
 }
 
 $actionLinkSearch = Url::to('@web/monthly-act/searchact');
+$actionLinkGetComments = Url::to('@web/monthly-act/getcomments');
+
+$css = "#previewStatus {
+background:#fff;
+padding:12px;
+position:fixed;
+font-size:14px;
+z-index:50;
+border-radius:3px;
+border:1px solid #069;
+}";
+$this->registerCss($css);
 
 $script = <<< JS
     $('.change-payment_status').change(function(){
@@ -248,6 +260,55 @@ $('#searchActNumButt').on('click', function(){
 });
     // Поиск по номеру акта или счета
     
+// При наведении на название показывается статус актов
+var showStatusVar = $(".showStatus");
+    showStatusVar.hover(function() {
+        
+            if($("#previewStatus")) {
+                $("#previewStatus").remove(); 
+            }
+            
+            var companyName = $(this).text();
+            
+                if($(this).parent().data("key") > 0) {
+        
+                $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'id=' + $(this).parent().data("key"),
+                url  : '$actionLinkGetComments',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                if($("#previewStatus")) {
+                $("#previewStatus").html("<b>" + companyName + "</b><br /><br />" + response.comment);
+                }
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+        
+                }
+                
+            this.t = this.title;
+            this.title = "";
+            var c = (this.t != "") ? "<br/>" + this.t : "";
+            $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
+
+            $("#previewStatus").css("top", (window.event.clientY - 45) + "px")
+            .css("left", (window.event.clientX + document.body.scrollLeft) + "px")
+            .fadeIn("fast");
+        },
+        function() {
+            $("#previewStatus").remove();
+        });
+// При наведении на название показывается статус актов
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
