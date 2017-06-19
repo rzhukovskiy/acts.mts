@@ -23,7 +23,7 @@ $script = <<< JS
 $('.hideButtonComment').remove();
 
 // Добавляем дату к файлам в модальном окне
-if($('.attachDate').length > 0) {
+/*if($('.attachDate').length > 0) {
 
    $('.attachDate').each(function(){
        
@@ -31,13 +31,11 @@ if($('.attachDate').length > 0) {
        
        if(dateText.length > 0) {
            $(this).text(dateText);
-       } else {
-           $(this).text('Вложение -');
        }
        
        dateText = '';
    });
-}
+}*/
 
 // открываем модальное окно полный комментарий
 $('tbody tr td[data-col-seq=5]').on('click', '.showFullComment', function(){
@@ -440,10 +438,12 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
             if((basename($file) != 'attaches.zip') && (basename($file) != '.DS_Store')) {
                 $arrStateID = explode('-', basename($file));
 
+                $time_file = filemtime($pathfolder . basename($file));
+
                 if(is_numeric($arrStateID[0])) {
-                    $resLinksFiles .= '<span class="attachDate" data-id="' . $arrStateID[0] . '" style="color:#757575; margin-right:10px;"></span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                    $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a(str_replace($arrStateID[0] . '-', '', basename($file)), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
                 } else {
-                    $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;"></span>' . Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                    $resLinksFiles .= '<span class="attachDate" style="color:#757575; margin-right:10px;">' . date('H:i d.m.Y', $time_file) . '</span>' . Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
                 }
 
                 $numFiles++;
