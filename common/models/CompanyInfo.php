@@ -56,7 +56,8 @@ class CompanyInfo extends ActiveRecord
             [['company_id'], 'required'],
             [['website'], 'safe'],
             [['company_id', 'contract_date', 'time_location'], 'integer'],
-            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email', 'comment'], 'string', 'max' => 255],        ];
+            ['comment', 'string', 'max' => 2500],
+            [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
     }
 
     /**
