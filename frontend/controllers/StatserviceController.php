@@ -30,6 +30,7 @@ class StatserviceController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
+                        'actions' => ['list', 'company'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN]
                     ],
@@ -39,7 +40,7 @@ class StatserviceController extends Controller
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
-                        'actions' => ['view', 'company'],
+                        'actions' => ['list', 'company'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],

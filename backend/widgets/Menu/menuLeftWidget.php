@@ -146,6 +146,11 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'order' &&
                         Yii::$app->controller->action->id == 'archive',
                 ],
+                [
+                    'label' => 'Почтовые шаблоны',
+                    'url' => ['/email/list'],
+                    'active' => Yii::$app->controller->id == 'email'
+                ],
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
