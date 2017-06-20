@@ -117,15 +117,22 @@ class EmailController extends Controller
 
         if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text'))) {
 
-            Yii::$app->mailer->compose()
-                ->setFrom('test@mtransservice.ru')
-                ->setTo(Yii::$app->request->post('email'))
-                ->setSubject(Yii::$app->request->post('title'))
-                ->setHtmlBody(Yii::$app->request->post('text'))
-                //->setHtmlBody('Please go to  <a href="http://google.com/">GOOGLE</a>')
-                ->send();
+            $plainTextContent = Yii::$app->request->post('text');
+            $subject = Yii::$app->request->post('title');
+            $toEmail = Yii::$app->request->post('email');
 
-            echo json_encode(['success' => 'true']);
+            $headers  = 'From: info@mtransservice.ru' . "\r\n";
+            $headers .= 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+            $headers .= "To: $toEmail <$toEmail>" . "\r\n";
+
+            $resSend = mail($toEmail, $subject, $plainTextContent, $headers);
+
+            if($resSend) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
 
         } else {
             echo json_encode(['success' => 'false']);
