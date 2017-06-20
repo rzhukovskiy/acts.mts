@@ -105,7 +105,6 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'title')->textInput(['maxlength' => 255, 'placeholder' => 'Введите заголовок письма']) ?>
 
 <?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '13', 'placeholder' => 'Введите комментарий']) ?>
-подсказки
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
