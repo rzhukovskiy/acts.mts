@@ -117,9 +117,15 @@ echo GridView::widget([
         'client' => [
             'attribute' => 'client_name',
             'header' => 'Клиент',
-            'contentOptions' => ['class' => 'showStatus'],
+            'format' => 'raw',
             'value' => function ($data) {
-                return isset($data->client) ? $data->client->name : 'error';
+
+                if(isset($data->client)) {
+                    return '<span class="showStatus">' . $data->client->name . "</span>";
+                } else {
+                    return 'error';
+                }
+
             },
             'filter' => true,
         ],

@@ -120,14 +120,20 @@ echo GridView::widget([
         [
             'attribute'         => 'client_name',
             'header' => 'Клиент',
-            'contentOptions' => ['class' => 'showStatus'],
+            'format' => 'raw',
             //'group'             => true,  // enable grouping
             //'options'           => ['class' => 'kv-grouped-header'],
             //'groupedRow'        => true,  // enable grouping
             //'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
             //'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
-            'value'             => function ($data) {
-                return isset($data->client) ? $data->client->name : 'error';
+            'value' => function ($data) {
+
+                if(isset($data->client)) {
+                    return '<span class="showStatus">' . $data->client->name . "</span>";
+                } else {
+                    return 'error';
+                }
+
             },
             'filter' => true,
         ],
