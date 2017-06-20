@@ -38,7 +38,7 @@ use common\models\Company;
                         }
                     },
                 ],
-                'title',
+                //'title',
                 [
                     'class' => 'kartik\grid\ActionColumn',
                     'template' => '{update}{delete}',
