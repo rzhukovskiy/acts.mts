@@ -342,20 +342,19 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
                 ],
                 'value' => function ($data) {
 
-        if($data->type == 0) {
+        if($data->type == -1) {
             return '-';
         } else {
             return $GLOBALS['types'][$data->type];
         }
 
-                    return $GLOBALS['types'][$data->type];
                 },
             ],
             [
                 'header' => 'Вложения',
                 'format' => 'raw',
                 'options' => [
-                    'style' => 'width: 270px',
+                    'style' => 'width: 220px',
                 ],
                 'value' => function ($data) {
 
