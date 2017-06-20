@@ -117,7 +117,7 @@ class EmailController extends Controller
 
         if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text'))) {
 
-            $plainTextContent = Yii::$app->request->post('text');
+            /*$plainTextContent = Yii::$app->request->post('text');
             $subject = Yii::$app->request->post('title');
             $toEmail = Yii::$app->request->post('email');
 
@@ -127,6 +127,19 @@ class EmailController extends Controller
             $headers .= "To: $toEmail <$toEmail>" . "\r\n";
 
             $resSend = mail($toEmail, $subject, $plainTextContent, $headers);
+
+            if($resSend) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }*/
+
+            $resSend = Yii::$app->mailer->compose()
+                ->setFrom('test@mtransservice.ru')
+                ->setTo(Yii::$app->request->post('email'))
+                ->setSubject(Yii::$app->request->post('title'))
+                ->setHtmlBody(Yii::$app->request->post('text'))
+                ->send();
 
             if($resSend) {
                 echo json_encode(['success' => 'true']);

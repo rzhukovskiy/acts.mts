@@ -23,10 +23,7 @@ use common\models\Company;
             'emptyText' => '',
             'layout' => '{items}',
             'columns' => [
-                [
-                    'header' => '№',
-                    'class' => 'kartik\grid\SerialColumn'
-                ],
+                'id',
                 'name',
                 [
                     'attribute' => 'type',
@@ -42,14 +39,14 @@ use common\models\Company;
                 [
                     'class' => 'kartik\grid\ActionColumn',
                     'template' => '{update}{delete}',
-                    'contentOptions' => ['style' => 'min-width: 90px'],
+                    'contentOptions' => ['style' => 'min-width: 100px'],
                     'buttons' => [
                         'update' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-pencil"></span>',
                                 ['/email/update', 'id' => $model->id]);
                         },
                         'delete' => function ($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon glyphicon-trash" style="margin-left:10px;"></span>',
+                            return Html::a('<span class="glyphicon glyphicon glyphicon-trash" style="margin:0px 5px 0px 15px;"></span>',
                                 ['/email/delete', 'id' => $model->id]);
                         },
                     ],
