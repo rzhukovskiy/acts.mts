@@ -17,6 +17,7 @@ class DepartmentCompany extends ActiveRecord
 {
 
     public $companyNum;
+    private $remove_date;
 
     /**
      * @inheritdoc
