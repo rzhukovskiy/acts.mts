@@ -51,6 +51,16 @@ class DepartmentCompany extends ActiveRecord
         ];
     }
 
+    public function getRemove_date()
+    {
+        return $this->remove_date;
+    }
+
+    public function setRemove_date($value)
+    {
+        $this->remove_date = $value;
+    }
+
     public function getCompany()
     {
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
