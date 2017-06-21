@@ -304,7 +304,7 @@ class Company extends ActiveRecord
     {
 
         if (!$this->depart_user_name) {
-            $userName = DepartmentCompany::find()->where(['`department_company`.`company_id`' => $this->id])->andWhere(['!=', '`department_company`.`user_id`', 0])->leftJoin('`user`', '`user`.`id` = `department_company`.`user_id`')->select('`user`.`username`')->column();
+            $userName = DepartmentCompany::find()->where(['`department_company`.`company_id`' => $this->id])->andWhere(['`department_company`.`remove_date`' => null])->andWhere(['!=', '`department_company`.`user_id`', 0])->leftJoin('`user`', '`user`.`id` = `department_company`.`user_id`')->select('`user`.`username`')->column();
 
             if(isset($userName[0])) {
                 $this->depart_user_name = $userName[0];

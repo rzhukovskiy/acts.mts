@@ -616,11 +616,11 @@ class CompanyController extends Controller
     {
         $model = $this->findModel($id);
 
-        // Удалить запись имени пользователя добавившего заявку
+        // Записываем дату переноса из заявок
         if ($model->status == Company::STATUS_NEW) {
-            DepartmentCompany::deleteAll([
-                'company_id' => $id
-            ]);
+            $modelDepartmentCompany = DepartmentCompany::findOne(['company_id' => $id]);
+            $modelDepartmentCompany->remove_date = time();
+            $modelDepartmentCompany->save();
         }
 
         $model->status = $status;

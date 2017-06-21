@@ -30,7 +30,7 @@ class ActivityController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['new', 'shownew'],
+                        'actions' => ['new', 'shownew', 'archive', 'showarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -52,7 +52,7 @@ class ActivityController extends Controller
     public function actionNew($type)
     {
 
-        $searchModel = DepartmentCompany::find()->where(['>', '`department_company`.`user_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+        $searchModel = DepartmentCompany::find()->where(['>', '`department_company`.`user_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`department_company`.`remove_date`' => null])->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $searchModel,
@@ -69,7 +69,7 @@ class ActivityController extends Controller
 
         $listType = Company::$listType;
 
-        return $this->render('new', [
+        return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
             'authorMembers' => $authorMembers,
@@ -82,7 +82,7 @@ class ActivityController extends Controller
     public function actionShownew($user_id, $type)
     {
 
-        $searchModel = DepartmentCompany::find()->with('company')->where(['`department_company`.`user_id`' => $user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
+        $searchModel = DepartmentCompany::find()->with('company')->where(['`department_company`.`user_id`' => $user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`department_company`.`remove_date`' => null])->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $searchModel,
@@ -93,7 +93,61 @@ class ActivityController extends Controller
 
         $listType = Company::$listType;
 
-        return $this->render('new', [
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+
+    public function actionArchive($type)
+    {
+
+        $searchModel = DepartmentCompany::find()->where(['>', '`department_company`.`user_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'user_id'    => SORT_DESC,
+            ]
+        ];
+
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+
+    public function actionShowarchive($user_id, $type)
+    {
+
+        $searchModel = DepartmentCompany::find()->with('company')->where(['`department_company`.`user_id`' => $user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
             'authorMembers' => $authorMembers,

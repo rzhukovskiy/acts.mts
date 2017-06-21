@@ -9,7 +9,7 @@
 if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew')) {
     $this->title = 'Статистика заявок';
 } else if((Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'showarchive')) {
-    $this->title = 'Статистика архивов';
+    $this->title = 'Статистика архива';
 }
 
 ?>
@@ -18,7 +18,7 @@ if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->actio
     </div>
 
 <?php
-echo $this->render('_new', [
+echo $this->render('_list', [
     'dataProvider' => $dataProvider,
     'searchModel'  => $searchModel,
     'authorMembers' => $authorMembers,

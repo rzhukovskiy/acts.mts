@@ -27,7 +27,7 @@ if(($action == 'new') || ($action == 'archive')) {
     ];
     $items[] = [
         'label' => 'Подробная статистика',
-        'active' => $action == 'shownew',
+        'active' => $action == 'shownew' || $action == 'showarchive',
     ];
 }
 

@@ -19,7 +19,7 @@ CanvasJsAsset::register($this);
         $GLOBALS['authorMembers'] = $authorMembers;
         $GLOBALS['type'] = $type;
 
-        if(Yii::$app->controller->action->id == 'new') {
+        if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'archive')) {
 
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -39,6 +39,7 @@ CanvasJsAsset::register($this);
                     ],
                     [
                         'attribute' => 'companyNum',
+                        'header' => ((Yii::$app->controller->action->id == 'new') ? 'Количество' : 'Перенесено в архив'),
                         'contentOptions' => ['class' => 'value_1', 'style' => 'width: 300px'],
                     ],
                     [
@@ -48,7 +49,7 @@ CanvasJsAsset::register($this);
                         'buttons' => [
                             'view' => function ($url, $model, $key) {
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                                    ['/activity/shownew', 'user_id' => $model->user_id, 'type' => $GLOBALS['type']]);
+                                    ['/activity/show' . Yii::$app->controller->action->id, 'user_id' => $model->user_id, 'type' => $GLOBALS['type']]);
                             },
                         ],
                     ],
@@ -93,6 +94,102 @@ CanvasJsAsset::register($this);
                         'contentOptions' => ['class' => 'value_0'],
                         'value' => function ($data) {
                             return date('H:i d.m.Y', $data->company->created_at);
+                        },
+                    ],
+                    [
+                        'class' => 'kartik\grid\ActionColumn',
+                        'template' => '{view}',
+                        'contentOptions' => ['style' => 'min-width: 80px'],
+                        'buttons' => [
+                            'view' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                    ['/company/state', 'id' => $model->company_id]);
+                            },
+                        ],
+                    ],
+                ],
+            ]);
+
+        } elseif(Yii::$app->controller->action->id == 'showarchive') {
+
+            $GLOBALS['name'] = '';
+
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'summary' => false,
+                'emptyText' => '',
+                'layout' => '{items}',
+                'columns' => [
+                    [
+                        'attribute' => 'user_id',
+                        'group' => true,
+                        'groupedRow' => true,
+                        'groupOddCssClass' => 'kv-group-header',
+                        'groupEvenCssClass' => 'kv-group-header',
+                        'value' => function ($data) {
+                            $GLOBALS['name'] = $GLOBALS['authorMembers'][$data->user_id];
+                            return $GLOBALS['authorMembers'][$data->user_id];
+                        },
+                    ],
+                    [
+                        'header' => '№',
+                        'class' => 'kartik\grid\SerialColumn'
+                    ],
+                    [
+                        'attribute' => 'company_id',
+                        'value' => function ($data) {
+                            return $data->company->name;
+                        },
+                    ],
+                    [
+                        'header' => 'Дата создания',
+                        'value' => function ($data) {
+                            return date('H:i d.m.Y', $data->company->created_at);
+                        },
+                    ],
+                    [
+                        'header' => 'Дата переноса',
+                        'contentOptions' => ['class' => 'value_0'],
+                        'value' => function ($data) {
+                            return date('H:i d.m.Y', $data->remove_date);
+                        },
+                    ],
+                    [
+                        'header' => 'Потрачено времени',
+                        'format' => 'raw',
+                        'value' => function ($data) {
+
+                            $lostDateText = '';
+                            $lostDate = $data->remove_date - $data->company->created_at;
+
+                            $days = (round($lostDate / 86400));
+                            $lostDate -= (round($lostDate / 86400) * 86400);
+
+                            if($days < 0) {
+                                $days = 0;
+                            }
+
+                            $hours = (round($lostDate / 3600));
+                            $lostDate -= (round($lostDate / 3600) * 3600);
+
+                            if($hours < 0) {
+                                $hours = 0;
+                            }
+
+                            $minutes = (round($lostDate / 60));
+
+                            if($minutes < 0) {
+                                $minutes = 0;
+                            }
+
+                            $lostDateText .= 'Дней: ' . $days;
+                            $lostDateText .= ', часов: ' . $hours;
+                            $lostDateText .= ', минут: ' . $minutes;
+
+                            return $lostDateText;
                         },
                     ],
                     [

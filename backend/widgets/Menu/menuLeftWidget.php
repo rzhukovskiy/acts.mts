@@ -158,7 +158,7 @@ class menuLeftWidget extends Widget
                                 ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew'))),
                         ],
                         [
-                            'label'  => 'Статистика<br />архивов',
+                            'label'  => 'Статистика<br />архива',
                             'url' => ['/activity/archive', 'type' => Service::TYPE_WASH],
                             'active' => ((Yii::$app->controller->id == 'activity') &&
                                 ((Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'showarchive'))),
@@ -242,8 +242,7 @@ class menuLeftWidget extends Widget
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE3]['en'], 'type' => $currentUser->getFirstCompanyType()],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE3]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ACTIVE)
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3)
                     ),
                 ],
                 [
