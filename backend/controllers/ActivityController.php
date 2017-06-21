@@ -52,7 +52,7 @@ class ActivityController extends Controller
     public function actionNew($type)
     {
 
-        $searchModel = DepartmentCompany::find()->where(['>', '`department_company`.`user_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`department_company`.`remove_date`' => null])->andWhere(['`company`.`type`' => $type])->andWhere(['`company`.`status`' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+        $searchModel = DepartmentCompany::find()->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->where(['OR', ['AND', '`department_company`.`remove_date` IS NULL', '`company`.`status` = 1'], ['AND', '`department_company`.`remove_date` IS NOT NULL', '`company`.`status` = 2']])->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $type])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $searchModel,
