@@ -147,7 +147,26 @@ class menuLeftWidget extends Widget
                         Yii::$app->controller->action->id == 'archive',
                 ],
                 [
-                    'label' => 'Почтовые шаблоны',
+                    'label'  => 'Активность<br />сотрудников',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'activity',
+                    'items'  => [
+                        [
+                            'label'  => 'Статистика<br />заявок',
+                            'url' => ['/activity/new', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew'))),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />архивов',
+                            'url' => ['/activity/archive', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'showarchive'))),
+                        ],
+                    ],
+                ],
+                [
+                    'label' => 'Почтовые<br />шаблоны',
                     'url' => ['/email/list'],
                     'active' => Yii::$app->controller->id == 'email'
                 ],

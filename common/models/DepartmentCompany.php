@@ -14,6 +14,9 @@ use yii\db\ActiveRecord;
  */
 class DepartmentCompany extends ActiveRecord
 {
+
+    public $companyNum;
+
     /**
      * @inheritdoc
      */
@@ -39,8 +42,15 @@ class DepartmentCompany extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'company_id' => 'Company ID',
-            'user_id' => 'User ID',
+            'company_id' => 'Компания',
+            'user_id' => 'Сотрудник',
+            'companyNum' => 'Количество',
         ];
     }
+
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
 }

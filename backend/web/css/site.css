@@ -44,20 +44,24 @@ body {
 .menu-left {
     font-weight: bold;
     position: fixed;
-    }
-    .menu-left a {
-        display: block;
-        padding: 7px 15px;
-        }
-    .menu-left .list-group-item {
-        padding: 0;
-        }
-    .list-group-item:hover {
-        background: #eee;
-        }
-    .menu-left .list-group-item.active a {
-        color: white;
-        }
+}
+
+.menu-left a {
+    display: block;
+    padding: 7px 15px;
+}
+
+.menu-left .list-group-item {
+    padding: 0;
+}
+
+.list-group-item:hover {
+    background: #eee;
+}
+
+.menu-left .list-group-item.active a {
+    color: white;
+}
 
 /* panels */
 .panel-body {
@@ -423,4 +427,14 @@ table.sign {
 .kv-editable-link{
     border: none!important;
     text-align: left;
+}
+.list-group-sub{
+    padding: 3px;
+    margin: 0;
+}
+.menu-left .list-group-item.active .list-group-sub a{
+    color: #069;
+}
+.list-group-sub .list-group-item.active a{
+    color: #ffffff!important;
 }
