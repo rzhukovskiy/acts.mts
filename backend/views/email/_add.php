@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
 use yii\web\View;
 use yii\helpers\Url;
+use yii\helpers\FileHelper;
 
 $actionLinkEmail = Url::to('@web/email/test');
 
@@ -44,6 +45,48 @@ $('.btn-warning').on('click', function(){
     
     $('#showModalPreview').modal('show');
 });
+
+    // Вложения
+    
+    var FormPreviewLoad = $('.FormPreviewLoad');
+    var previewEmailLoaded = $('.previewEmailLoaded');
+    var filesPreview = $('.previewEmailFiles');
+    var inputFiles = $('#email-files');
+    
+    function readPreviewImages(input) {
+
+    if (input.files && input.files[0]) {
+        
+        if(input.files.length > 0) {
+            
+            for(var i = 0; i < input.files.length; i++) {
+
+                if((input.files[i].type.indexOf('image') + 1) > 0) {
+                    filesPreview.html(filesPreview.html() + '<br /><img src="' + URL.createObjectURL(input.files[i]) + '" height="45px" />');
+                } else {
+                    filesPreview.html(filesPreview.html() + '<br /><u style="color:#069;">' + input.files[i].name + '</u>');
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    FormPreviewLoad.html(previewEmailLoaded.html() + '<br />' + filesPreview.html());
+    
+    }
+    
+    inputFiles.change(function(){
+    filesPreview.html('');
+    readPreviewImages(this);
+    });
+    
+    //
+
+    //
+    
+    // Вложения
 
 // отправляем тестовое письмо администратору
 $('.btn-success').on('click', function(){
@@ -90,7 +133,7 @@ $this->registerJs($script, View::POS_READY);
  */
 $form = ActiveForm::begin([
     'action' => $model->isNewRecord ? ['/email/add'] : ['/email/update', 'id' => $model->id],
-    'options' => ['accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+    'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
     'fieldConfig' => [
         'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
         'labelOptions' => ['class' => 'col-sm-3 control-label'],
@@ -104,7 +147,46 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'title')->textInput(['maxlength' => 255, 'placeholder' => 'Введите заголовок письма']) ?>
 
-<?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '13', 'placeholder' => 'Введите комментарий']) ?>
+<?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '13', 'placeholder' => 'Введите текст письма']) ?>
+
+<?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
+
+<?php
+
+$numFiles = 0;
+$filesEmail = '';
+
+if(!$model->isNewRecord) {
+    $pathFolderEmail = \Yii::getAlias('@webroot/files/email/' . $model->id . '/');
+
+    if (file_exists($pathFolderEmail)) {
+        foreach (FileHelper::findFiles($pathFolderEmail) as $file) {
+
+            if(mb_strpos('_' . mime_content_type($pathFolderEmail . basename($file)), 'image') == 1) {
+                $filesEmail .= '<br /><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank"><img src="' . '/files/email/' . $model->id . '/' . basename($file) . '" height="45px" /></a>';
+            } else {
+                $filesEmail .= '<br /><u><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank">' . basename($file) . '</a></u>';
+            }
+
+            $numFiles++;
+
+        }
+    }
+}
+
+if($numFiles > 0) {
+    $filesEmail = '<b>Вложения:</b>' . $filesEmail;
+} else {
+    $filesEmail = '<b>Вложения:</b>';
+}
+
+echo "<div class=\"form-group\">
+        <div class=\"col-sm-offset-3 col-sm-6\" style=\"padding-bottom: 10px;\">
+            <div class='FormPreviewLoad' style='font-size:14px; color:#000;'>" . $filesEmail . "</div>
+        </div>
+    </div>";
+
+?>
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
@@ -121,8 +203,11 @@ $modal = Modal::begin([
     'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonPreview', 'style' => 'display:none;'],
     'size'=>'modal-lg',
 ]);
-echo "<div class='previewEmailTitle' style='font-size:16px; color:#000;'></div>";
-echo "<div class='previewEmailText' style='font-size:14px; color:#000; margin-top: 10px;'></div>";
-echo '<span class="btn btn-success btn-sm" style="margin-top:15px;">Отправить тестовое письмо администратору</span>';
+
+echo "<div class='previewEmailTitle' style='font-size:21px; color:#069; word-wrap: break-word;'></div>";
+echo "<div class='previewEmailText' style='font-size:14px; color:#000; margin-top: 10px; word-wrap: break-word;'><b>Вложения:</b></div>";
+echo "<div class='previewEmailLoaded' style='font-size:14px; color:#000; margin-top: 20px;'>" . $filesEmail . "</div>";
+echo "<div class='previewEmailFiles' style='font-size:14px; color:#000;'></div>";
+echo '<span class="btn btn-success btn-sm" style="margin-top:20px;">Отправить тестовое письмо администратору</span>';
 Modal::end();
 ?>

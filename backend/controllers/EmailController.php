@@ -14,6 +14,8 @@ use yii\data\ActiveDataProvider;
 use yii;
 use yii\filters\AccessControl;
 use common\models\User;
+use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
 
 class EmailController extends Controller
 {
@@ -79,6 +81,13 @@ class EmailController extends Controller
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
 
+            $model->files = UploadedFile::getInstances($model, 'files');
+
+            if ($model->upload()) {
+                // file is uploaded successfully
+            } else {
+            }
+
             return $this->redirect(['email/list']);
 
         } else {
@@ -95,6 +104,14 @@ class EmailController extends Controller
         $model = Email::findOne(['id' => $id]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            $model->files = UploadedFile::getInstances($model, 'files');
+
+            if ($model->upload()) {
+                // file is uploaded successfully
+            } else {
+            }
+
             return $this->redirect(['email/list']);
         } else {
             return $this->render('add', [
@@ -108,6 +125,17 @@ class EmailController extends Controller
     {
         $model = Email::findOne(['id' => $id]);
         $model->delete();
+
+        $pathFolderEmail = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+        if (file_exists($pathFolderEmail)) {
+            foreach (FileHelper::findFiles($pathFolderEmail) as $file) {
+
+                unlink($pathFolderEmail . basename($file));
+
+            }
+            rmdir($pathFolderEmail);
+        }
 
         return $this->redirect(['email/list']);
     }

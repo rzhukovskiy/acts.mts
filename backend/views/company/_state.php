@@ -421,7 +421,7 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
         'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
         'size'=>'modal-lg',
     ]);
-    echo "<div id='fullComment'></div>";
+    echo "<div id='fullComment' style='word-wrap: break-word;'></div>";
     Modal::end();
 
     // Модальное окно показать все вложения
