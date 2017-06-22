@@ -19,6 +19,8 @@ class DepartmentCompany extends ActiveRecord
     public $companyNum;
     private $remove_date;
 
+    public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год'];
+
     /**
      * @inheritdoc
      */

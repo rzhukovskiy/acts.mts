@@ -17,6 +17,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/main.js',
+        'js/form.js',
         'js/scroll-startstop.events.jquery.js',
         'js/sip-0.7.7.min.js'
     ];
