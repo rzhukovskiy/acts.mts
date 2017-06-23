@@ -30,7 +30,7 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'add', 'update', 'test'],
+                        'actions' => ['list', 'add', 'update', 'delete', 'test', 'deletefile'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -138,6 +138,25 @@ class EmailController extends Controller
         }
 
         return $this->redirect(['email/list']);
+    }
+
+    public function actionDeletefile()
+    {
+
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('name'))) {
+
+            $id = Yii::$app->request->post('id');
+            $name = Yii::$app->request->post('name');
+
+            $pathFolderEmail = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+            unlink($pathFolderEmail . $name);
+            echo json_encode(['success' => 'true']);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
     public function actionTest()

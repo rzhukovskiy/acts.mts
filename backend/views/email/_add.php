@@ -8,6 +8,30 @@ use yii\helpers\Url;
 use yii\helpers\FileHelper;
 
 $actionLinkEmail = Url::to('@web/email/test');
+$actionLinkDelete = Url::to('@web/email/deletefile');
+$idEmail = $model->id;
+
+$css = ".deleteFile {
+color:#b21515;
+font-size:13px;
+text-decoration:underline;
+}
+.deleteFile:hover {
+color:#d60c0c;
+text-decoration:none;
+cursor:pointer;
+}
+.noSaveFile {
+color:#757575;
+font-size:13px;
+text-decoration:none;
+}
+.noSaveFile:hover {
+color:#757575;
+text-decoration:none;
+cursor:default;
+}";
+$this->registerCss($css);
 
 $script = <<< JS
 
@@ -48,7 +72,7 @@ $('.btn-warning').on('click', function(){
 
     // Вложения
     
-    var FormPreviewLoad = $('.FormPreviewLoad');
+    var FormPreviewNoLoad = $('.FormPreviewNoLoad');
     var previewEmailLoaded = $('.previewEmailLoaded');
     var filesPreview = $('.previewEmailFiles');
     var inputFiles = $('#email-files');
@@ -62,9 +86,9 @@ $('.btn-warning').on('click', function(){
             for(var i = 0; i < input.files.length; i++) {
 
                 if((input.files[i].type.indexOf('image') + 1) > 0) {
-                    filesPreview.html(filesPreview.html() + '<br /><img src="' + URL.createObjectURL(input.files[i]) + '" height="45px" />');
+                    filesPreview.html(filesPreview.html() + '<br /><img src="' + URL.createObjectURL(input.files[i]) + '" height="45px" /> - <span class="noSaveFile">Не сохранено</span>');
                 } else {
-                    filesPreview.html(filesPreview.html() + '<br /><u style="color:#069;">' + input.files[i].name + '</u>');
+                    filesPreview.html(filesPreview.html() + '<br /><u style="color:#069;">' + input.files[i].name + '</u> - <span class="noSaveFile">Не сохранено</span>');
                 }
                 
             }
@@ -73,7 +97,7 @@ $('.btn-warning').on('click', function(){
         
     }
     
-    FormPreviewLoad.html(previewEmailLoaded.html() + '<br />' + filesPreview.html());
+    FormPreviewNoLoad.html(filesPreview.html());
     
     }
     
@@ -87,6 +111,40 @@ $('.btn-warning').on('click', function(){
     //
     
     // Вложения
+    
+    // Удаление вложения
+    $('.deleteFile').on('click', function(){
+
+        if($(this).data("name")) {
+            
+                var dataName = $(this).data("name");
+                
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'id=' + '$idEmail' + '&name=' + dataName,
+                url  : '$actionLinkDelete',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                $(this).parent().remove();
+                $('[data-prename="' + dataName + '"]').remove();
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+                    
+        }
+        
+    });
+    // Удаление вложения
 
 // отправляем тестовое письмо администратору
 $('.btn-success').on('click', function(){
@@ -163,9 +221,9 @@ if(!$model->isNewRecord) {
         foreach (FileHelper::findFiles($pathFolderEmail) as $file) {
 
             if(mb_strpos('_' . mime_content_type($pathFolderEmail . basename($file)), 'image') == 1) {
-                $filesEmail .= '<br /><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank"><img src="' . '/files/email/' . $model->id . '/' . basename($file) . '" height="45px" /></a>';
+                $filesEmail .= '<div class="placeFile" style="display:block;" data-prename="' . basename($file) . '"><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank"><img src="' . '/files/email/' . $model->id . '/' . basename($file) . '" height="45px" /></a> - <span class="deleteFile" data-name="' . basename($file) . '">Удалить</span></div>';
             } else {
-                $filesEmail .= '<br /><u><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank">' . basename($file) . '</a></u>';
+                $filesEmail .= '<div class="placeFile" style="display:block;" data-prename="' . basename($file) . '"><u><a href="' . '/files/email/' . $model->id . '/' . basename($file) .  '" target="_blank">' . basename($file) . '</a></u> - <span class="deleteFile" data-name="' . basename($file) . '">Удалить</span></div>';
             }
 
             $numFiles++;
@@ -181,8 +239,14 @@ if($numFiles > 0) {
 }
 
 echo "<div class=\"form-group\">
-        <div class=\"col-sm-offset-3 col-sm-6\" style=\"padding-bottom: 10px;\">
+        <div class=\"col-sm-offset-3 col-sm-6\">
             <div class='FormPreviewLoad' style='font-size:14px; color:#000;'>" . $filesEmail . "</div>
+        </div>
+    </div>";
+
+echo "<div class=\"form-group\">
+        <div class=\"col-sm-offset-3 col-sm-6\" style=\"padding-bottom: 10px;\">
+            <div class='FormPreviewNoLoad' style='font-size:14px; color:#000;'></div>
         </div>
     </div>";
 
