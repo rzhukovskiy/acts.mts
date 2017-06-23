@@ -35,12 +35,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -604,6 +604,52 @@ class ActController extends Controller
             'model' => $model,
             'company' => $company,
         ]);
+    }
+
+    public function actionRotate()
+    {
+
+        if((Yii::$app->request->post('name')) && (Yii::$app->request->post('type'))) {
+
+            $imagePath = \Yii::getAlias('@webroot' . Yii::$app->request->post('name'));
+
+            if (file_exists($imagePath)) {
+                chmod($imagePath, 0775);
+
+                $img = '';
+
+                if(mime_content_type($imagePath) == 'image/gif') {
+                    $img = imagecreatefromgif($imagePath);
+                } else if(mime_content_type($imagePath) == 'image/png') {
+                    $img = imagecreatefrompng($imagePath);
+                } else if(mime_content_type($imagePath) == 'image/jpeg') {
+                    $img = imagecreatefromjpeg($imagePath);
+                }
+
+                $rotation = 0;
+
+                if(Yii::$app->request->post('type') == 1) {
+                    $rotation = 90;
+                } else {
+                    $rotation = -90;
+                }
+
+                $imgRotated = imagerotate($img, $rotation, 0);
+
+                unlink($imagePath);
+
+                imagejpeg($imgRotated, $imagePath, 90);
+                chmod($imagePath, 0775);
+
+                echo json_encode(['success' => 'true', 'link' => $imagePath]);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
     /**

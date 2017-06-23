@@ -16,6 +16,8 @@ use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
+use yii\web\View;
+use yii\helpers\Url;
 
 ?>
 
@@ -70,7 +72,61 @@ use yii\jui\AutoComplete;
                             $pathLink .= 'web' . $model->getImageLink();
 
                             if ((file_exists($pathLink)) && (mb_strlen($model->getImageLink()) > 0)) {
-                                echo '<a href="' . $linkCheck . '" target="_blank"><img width="70px" src="' . $linkCheck . '" style="margin-left:3px; margin-right:10px;" /></a>';
+
+$css = ".glyphicon-arrow-left {
+cursor:pointer;
+}
+.glyphicon-arrow-right {
+cursor:pointer;
+}";
+$this->registerCSS($css);
+
+
+$actionLinkRotate = Url::to('@web/act/rotate');
+
+$script = <<< JS
+
+function rotateImg(type) {
+  
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'name=' + '$linkCheck' + '&type=' + type,
+                url  : '$actionLinkRotate',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                var d = new Date();
+                $('.previewCheck').attr('src', '$linkCheck' + '?' + d.getTime());
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+    
+}
+
+// Клик повернуть налево
+$('.glyphicon-arrow-left').on('click', function(){
+    rotateImg(1);
+});
+// Клик повернуть налево
+
+// Клик повернуть направо
+$('.glyphicon-arrow-right').on('click', function(){
+    rotateImg(2);
+});
+// Клик повернуть направо
+JS;
+$this->registerJs($script, View::POS_READY);
+                                
+                                echo '<a href="' . $linkCheck . '" target="_blank"><img class="previewCheck" width="70px" src="' . $linkCheck . '" style="margin-left:3px; margin-right:10px;" /></a><div align="center" style="margin-top:10px;"><span class="glyphicon glyphicon-arrow-left"></span><span class="glyphicon glyphicon-arrow-right" style="margin-left:10px;"></span></div>';
                             }
 
                         }
