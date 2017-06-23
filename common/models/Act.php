@@ -797,18 +797,6 @@ class Act extends ActiveRecord
                 mkdir(\Yii::getAlias('@webroot/files/checks/'), 0775);
             }
 
-            $fileHaveName = '';
-
-            foreach (glob("files/checks/" . $this->id . ".*") as $filename) {
-                $fileHaveName = $filename;
-            }
-
-            if($fileHaveName != '') {
-                if (file_exists(\Yii::getAlias('@webroot/' . $fileHaveName))) {
-                    unlink(\Yii::getAlias('@webroot/' . $fileHaveName));
-                }
-            }
-
             return $image->resize(self::ACT_WIDTH, self::ACT_HEIGHT)->save($imagePath);
 
 //            $imagePath = \Yii::getAlias('@webroot/files/checks/' . $this->id . '.' . $this->image->extension);
