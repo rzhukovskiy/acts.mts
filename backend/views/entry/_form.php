@@ -31,6 +31,7 @@ $form = ActiveForm::begin([
                 'options' => [
                     'class' => 'form-control datepicker',
                     'readonly' =>'true',
+                    'placeholder' => $model->isNewRecord ? '' : date('H:i', $model->start_at),
                 ]
             ])->error(false) ?>
         </td>

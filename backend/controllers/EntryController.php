@@ -77,10 +77,8 @@ class EntryController extends Controller
                 'EntrySearch[day]' => date('d-m-Y', $model->start_at),
             ]);
         } else {
-            return $this->redirect([
-                'order/view',
-                'id' => $model->company->id,
-                'Entry[day]' => date('d-m-Y', $model->start_at),
+            return $this->render('update', [
+                'model' => $model,
             ]);
         }
     }
