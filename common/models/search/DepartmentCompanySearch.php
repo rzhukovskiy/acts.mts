@@ -21,7 +21,7 @@ class DepartmentCompanySearch extends DepartmentCompany
     {
         return [
             [['type', 'user_id'], 'integer'],
-            [['dateFrom', 'dateFrom', 'period'], 'safe'],
+            [['dateFrom', 'dateTo', 'period'], 'safe'],
         ];
     }
 

@@ -61,15 +61,26 @@ class menuLeftWidget extends Widget
             $items = [
                 [
                     'label'  => 'Компании',
-                    'url'    => ['/company/list?type=' . Company::TYPE_OWNER],
+                    'url'    => '#',
                     'active' => (Yii::$app->controller->id == 'company' &&
-                        (Yii::$app->request->get('type') == Company::TYPE_OWNER ||
-                            ($company && $company->type == Company::TYPE_OWNER))),
+                        (Yii::$app->request->get('type') == Company::TYPE_OWNER || Yii::$app->controller->action->id == 'history')),
+                    'items'  => [
+                        [
+                            'label'  => 'Все компании',
+                            'url'    => ['/company/list?type=' . Company::TYPE_OWNER],
+                            'active' => Yii::$app->controller->id == 'company' && Yii::$app->request->get('type') == Company::TYPE_OWNER,
+                        ],
+                        [
+                            'label'  => 'История<br />перемещений ТС',
+                            'url'    => ['/company/history'],
+                            'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'history'),
+                        ],
+                    ],
                 ],
                 [
                     'label'  => 'Партнеры',
                     'url'    => '#',
-                    'active' => Yii::$app->controller->id == 'company'&&Yii::$app->request->get('type') != Company::TYPE_OWNER,
+                    'active' => Yii::$app->controller->id == 'company'&&Yii::$app->request->get('type') != Company::TYPE_OWNER && Yii::$app->controller->action->id != 'history',
                     'items'  => [
                         [
                             'label'  => Company::$listType[Company::TYPE_WASH]['ru'],

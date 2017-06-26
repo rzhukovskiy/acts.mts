@@ -20,6 +20,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
+use common\models\CarHistory;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -163,6 +164,18 @@ class CarController extends Controller
         $model = new Car();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            // Добавляем в историю кто добавил машину
+            $modelHistory = new CarHistory();
+            $modelHistory->from = $model->company_id;
+            $modelHistory->user_id = Yii::$app->user->identity->id;
+            $modelHistory->car_id = $model->id;
+            $modelHistory->car_number = $model->number;
+            $modelHistory->type = 0;
+            $modelHistory->date = (string) time();
+            $modelHistory->save();
+            // Добавляем в историю кто добавил машину
+
             if (!Yii::$app->request->isAjax) {
                 if ($returnUrl = Yii::$app->request->post('_returnUrl', false)) {
                     return $this->redirect([$returnUrl]);
@@ -218,6 +231,42 @@ class CarController extends Controller
             $model->file = UploadedFile::getInstance($model, 'file');
 
             if ($model->save()) {  // загрузка прошла успешно
+
+                // Добавляем в историю кто добавил машину
+                $user_dep_id = Yii::$app->user->identity->id;
+                $dateCreate = (string) time();
+
+                if(count($model->updatedIds) > 0) {
+
+                    $arrCars = Car::find()->where(['in', 'id', $model->updatedIds])->select('company_id, id, number')->all();
+
+                    for($iCar = 0; $iCar < count($arrCars); $iCar++) {
+
+                        $findCarHistory = CarHistory::find()->where(['car_id' => $arrCars[$iCar]['id']])->count();
+
+                        if($findCarHistory == 0) {
+
+                            $modelHistory = new CarHistory();
+                            $modelHistory->from = $arrCars[$iCar]['company_id'];
+                            $modelHistory->user_id = $user_dep_id;
+                            $modelHistory->car_id = $arrCars[$iCar]['id'];
+                            $modelHistory->car_number = $arrCars[$iCar]['number'];
+                            $modelHistory->type = 0;
+                            $modelHistory->date = $dateCreate;
+                            $modelHistory->save();
+
+                            $modelHistory = '';
+
+                        }
+
+                        $findCarHistory = '';
+
+                    }
+
+                }
+
+                // Добавляем в историю кто добавил машину
+
                 $query = Car::find()
                     ->andWhere(['in', 'id', $model->updatedIds]);
 
@@ -252,6 +301,22 @@ class CarController extends Controller
      */
     public function actionDelete($id)
     {
+
+        $modelCar = Car::find()->where(['id' => $id])->select('company_id, number')->all();
+
+        if(count($modelCar) > 0) {
+            // Добавляем в историю кто добавил машину
+            $modelHistory = new CarHistory();
+            $modelHistory->from = $modelCar[0]['company_id'];
+            $modelHistory->user_id = Yii::$app->user->identity->id;
+            $modelHistory->car_id = 0;
+            $modelHistory->car_number = $modelCar[0]['number'];
+            $modelHistory->type = 1;
+            $modelHistory->date = (string) time();
+            $modelHistory->save();
+            // Добавляем в историю кто добавил машину
+        }
+
         $this->findModel($id)->delete();
 
         return $this->redirect(Yii::$app->getRequest()->referrer);
