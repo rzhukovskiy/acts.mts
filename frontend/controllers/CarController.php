@@ -21,6 +21,8 @@ use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
 use common\models\CarHistory;
+use common\models\search\CarHistorySearch;
+use common\models\DepartmentUserCompanyType;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -47,7 +49,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra'],
+                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra', 'history'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -320,6 +322,42 @@ class CarController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(Yii::$app->getRequest()->referrer);
+    }
+
+    public function actionHistory()
+    {
+
+        $searchModel = new CarHistorySearch();
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if(!isset($params['CarHistorySearch']['dateFrom'])) {
+            $params['CarHistorySearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+            $searchModel->dateFrom = $params['CarHistorySearch']['dateFrom'];
+        }
+
+        if(!isset($params['CarHistorySearch']['dateTo'])) {
+            $params['CarHistorySearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
+            $searchModel->dateTo = $params['CarHistorySearch']['dateTo'];
+        }
+
+        if(!isset($params['CarHistorySearch']['type'])) {
+            $params['CarHistorySearch']['type'] = 2;
+            $searchModel->type = $params['CarHistorySearch']['type'];
+        }
+        // Если не выбран период то показываем только текущий год
+
+        $dataProvider = $searchModel->search($params);
+
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        return $this->render('history', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'authorMembers' => $authorMembers,
+        ]);
+
     }
 
     /**

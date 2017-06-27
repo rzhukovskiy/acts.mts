@@ -164,7 +164,7 @@ class EmailController extends Controller
 
         if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text'))) {
 
-            /*$plainTextContent = Yii::$app->request->post('text');
+            $plainTextContent = Yii::$app->request->post('text');
             $subject = Yii::$app->request->post('title');
             $toEmail = Yii::$app->request->post('email');
 
@@ -179,10 +179,10 @@ class EmailController extends Controller
                 echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
-            }*/
+            }
 
-            $resSend = Yii::$app->mailer->compose()
-                ->setFrom('test@mtransservice.ru')
+            /*$resSend = Yii::$app->mailer->compose()
+                ->setFrom('info@mtransservice.ru')
                 ->setTo(Yii::$app->request->post('email'))
                 ->setSubject(Yii::$app->request->post('title'))
                 ->setHtmlBody(Yii::$app->request->post('text'))
@@ -192,7 +192,7 @@ class EmailController extends Controller
                 echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
-            }
+            }*/
 
         } else {
             echo json_encode(['success' => 'false']);

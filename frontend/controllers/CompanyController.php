@@ -8,18 +8,15 @@
 
 namespace frontend\controllers;
 
+
 use common\models\Company;
 use common\models\CompanyDuration;
-use common\models\CarHistory;
 use common\models\CompanyService;
 use common\models\PartnerExclude;
-use common\models\search\CarHistorySearch;
 use common\models\search\CompanySearch;
 use common\models\Service;
-use common\models\DepartmentUserCompanyType;
 use common\models\Type;
 use common\models\User;
-use yii\data\ActiveDataProvider;
 use yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
@@ -37,17 +34,17 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view','editprice', 'history'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view','editprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view','editprice', 'history'],
+                        'actions' => ['list', 'view','editprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'history'],
+                        'actions' => ['list', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -166,42 +163,6 @@ class CompanyController extends Controller
         $model->delete();
 
         return $this->redirect(['list', 'type' => $type]);
-    }
-
-    public function actionHistory()
-    {
-
-        $searchModel = new CarHistorySearch();
-
-        $params = Yii::$app->request->queryParams;
-
-        // Если не выбран период то показываем только текущий год
-        if(!isset($params['CarHistorySearch']['dateFrom'])) {
-            $params['CarHistorySearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
-            $searchModel->dateFrom = $params['CarHistorySearch']['dateFrom'];
-        }
-
-        if(!isset($params['CarHistorySearch']['dateTo'])) {
-            $params['CarHistorySearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
-            $searchModel->dateTo = $params['CarHistorySearch']['dateTo'];
-        }
-
-        if(!isset($params['CarHistorySearch']['type'])) {
-            $params['CarHistorySearch']['type'] = 2;
-            $searchModel->type = $params['CarHistorySearch']['type'];
-        }
-        // Если не выбран период то показываем только текущий год
-
-        $dataProvider = $searchModel->search($params);
-
-        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
-
-        return $this->render('history', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            'authorMembers' => $authorMembers,
-        ]);
-
     }
 
     public function actionAddPrice($id)
