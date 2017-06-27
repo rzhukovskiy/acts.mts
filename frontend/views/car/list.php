@@ -213,7 +213,7 @@ echo GridView::widget([
                         if($data->car_id == 8294) {
 
                             if(isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299, 'ActSearch[dateFrom]' => Yii::$app->request->queryParams['ActSearch']['dateFrom'], 'ActSearch[dateTo]' => Yii::$app->request->queryParams['ActSearch']['dateTo']]);
                             } else {
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299]);
                             }
@@ -221,7 +221,7 @@ echo GridView::widget([
                         } else {
 
                             if(isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id, 'ActSearch[dateFrom]' => Yii::$app->request->queryParams['ActSearch']['dateFrom'], 'ActSearch[dateTo]' => Yii::$app->request->queryParams['ActSearch']['dateTo']]);
                             } else {
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
                             }
