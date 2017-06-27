@@ -156,7 +156,7 @@ $('.btn-success').on('click', function(){
                 $.ajax({
                 type     :'POST',
                 cache    : true,
-                data:'email=' + emailCheck + '&title=' + textTitle + '&text=' + textMail,
+                data:'email=' + emailCheck + '&title=' + textTitle + '&text=' + textMail + '&id=' + '$idEmail',
                 url  : '$actionLinkEmail',
                 success  : function(data) {
                     
