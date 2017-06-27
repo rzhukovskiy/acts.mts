@@ -176,8 +176,22 @@ class EmailController extends Controller
             $headers .= 'MIME-Version: 1.0' . "\r\n";
 
             $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+            $checkFiles = false;
 
-            if (!file_exists($pathfolder)) {
+            if (file_exists($pathfolder)) {
+                $numFiles = 0;
+
+                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                    $numFiles++;
+                }
+
+                if($numFiles > 0) {
+                    $checkFiles = true;
+                }
+
+            }
+
+            if ($checkFiles == false) {
                 $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
                 $plainText = $plainTextContent;
             } else {
