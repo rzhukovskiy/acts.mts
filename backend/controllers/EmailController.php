@@ -220,7 +220,7 @@ class EmailController extends Controller
             $resSend = mail($toEmail, $subject, $plainText, $headers);
 
             if($resSend) {
-                echo json_encode(['success' => 'true']);
+                echo json_encode(['success' => 'true', 'text' => $checkFiles]);
             } else {
                 echo json_encode(['success' => 'false']);
             }
