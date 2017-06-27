@@ -162,17 +162,48 @@ class EmailController extends Controller
     public function actionTest()
     {
 
-        if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text'))) {
+        if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text')) && (Yii::$app->request->post('id'))) {
+
+            $un = strtoupper(uniqid(time()));
 
             $plainTextContent = Yii::$app->request->post('text');
             $subject = Yii::$app->request->post('title');
             $toEmail = Yii::$app->request->post('email');
+            $id = Yii::$app->request->post('id');
+            $plainText = '';
 
             $headers  = 'From: info@mtransservice.ru' . "\r\n";
             $headers .= 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
 
-            $resSend = mail($toEmail, $subject, $plainTextContent, $headers);
+            $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+            if (!file_exists($pathfolder)) {
+                $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+                $plainText = $plainTextContent;
+            } else {
+
+                $headers .= "Content-Type:multipart/mixed;";
+                $headers .= "boundary=\"----------".$un."\"\n\n";
+                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\n";
+                $plainText .= "Content-Transfer-Encoding: 8bit\n\n$plainTextContent\n\n";
+
+                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                    $filename = $pathfolder . basename($file);
+
+                    $f = fopen($filename,"rb");
+
+                    $plainTextContent .= "------------".$un."\n";
+                    $plainTextContent .= "Content-Type: application/octet-stream;";
+                    $plainTextContent .= "name=\"".basename($file)."\"\n";
+                    $plainTextContent .= "Content-Transfer-Encoding:base64\n";
+                    $plainTextContent .= "Content-Disposition:attachment;";
+                    $plainTextContent .= "filename=\"".basename($file)."\"\n\n";
+                    $plainTextContent .= chunk_split(base64_encode(fread($f,filesize($filename))))."\n";
+
+                }
+            }
+
+            $resSend = mail($toEmail, $subject, $plainText, $headers);
 
             if($resSend) {
                 echo json_encode(['success' => 'true']);
