@@ -197,22 +197,28 @@ class EmailController extends Controller
             } else {
 
                 $headers .= "Content-Type:multipart/mixed;";
-                $headers .= "boundary=\"----------".$un."\"\n\n";
-                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\n";
-                $plainText .= "Content-Transfer-Encoding: 8bit\n\n$plainTextContent\n\n";
+                $headers .= "boundary=\"----------".$un."\"\r\n";
+                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\r\n";
+                $plainText .= "Content-Transfer-Encoding: base64\r\n\r\n";
+                $plainText .= chunk_split(base64_encode($plainTextContent));
 
                 foreach (FileHelper::findFiles($pathfolder) as $file) {
                     $filename = $pathfolder . basename($file);
 
                     $f = fopen($filename,"rb");
+                    $data = fread($f,  filesize( $filename ));
+                    fclose($f);
+
+                    $NameFile = basename($file);
+                    $File = $data;
 
                     $plainTextContent .= "------------".$un."\n";
                     $plainTextContent .= "Content-Type: application/octet-stream;";
-                    $plainTextContent .= "name=\"".basename($filename)."\"\n";
+                    $plainTextContent .= "name=\"".$NameFile."\"\n";
                     $plainTextContent .= "Content-Transfer-Encoding:base64\n";
                     $plainTextContent .= "Content-Disposition:attachment;";
-                    $plainTextContent .= "filename=\"".basename($filename)."\"\n\n";
-                    $plainTextContent .= chunk_split(base64_encode(fread($f,filesize($filename))))."\n";
+                    $plainTextContent .= "filename=\"".$NameFile."\"\n\n";
+                    $plainTextContent .= chunk_split(base64_encode($File))."\n";
 
                 }
             }
@@ -220,7 +226,7 @@ class EmailController extends Controller
             $resSend = mail($toEmail, $subject, $plainText, $headers);
 
             if($resSend) {
-                echo json_encode(['success' => 'true', 'text' => $checkFiles]);
+                echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
             }
