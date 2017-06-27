@@ -208,10 +208,10 @@ class EmailController extends Controller
 
                     $plainTextContent .= "------------".$un."\n";
                     $plainTextContent .= "Content-Type: application/octet-stream;";
-                    $plainTextContent .= "name=\"".basename($file)."\"\n";
+                    $plainTextContent .= "name=\"".basename($filename)."\"\n";
                     $plainTextContent .= "Content-Transfer-Encoding:base64\n";
                     $plainTextContent .= "Content-Disposition:attachment;";
-                    $plainTextContent .= "filename=\"".basename($file)."\"\n\n";
+                    $plainTextContent .= "filename=\"".basename($filename)."\"\n\n";
                     $plainTextContent .= chunk_split(base64_encode(fread($f,filesize($filename))))."\n";
 
                 }
