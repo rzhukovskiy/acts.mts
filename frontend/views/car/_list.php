@@ -8,6 +8,15 @@ use yii\grid\GridView;
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel common\models\search\CarSearch
  */
+
+$css = ".glyphicon-sort {
+font-size:17px;
+}
+.glyphicon-sort:hover {
+cursor:pointer;
+}";
+$this->registerCSS($css);
+
 \yii\widgets\Pjax::begin();
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -45,11 +54,14 @@ echo GridView::widget([
         ],
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{update} {delete}',
+            'template' => '{remove} {update} {delete}',
             'options' => [
-                'style' => 'width: 70px',
+                'style' => 'width: 120px',
             ],
             'buttons' => [
+                'remove' => function ($url, $model, $key) {
+                    return '<span class="glyphicon glyphicon-sort" data-id="' . $model->id . '"></span>';
+                },
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
                 },
