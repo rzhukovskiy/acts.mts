@@ -164,12 +164,13 @@ class EmailController extends Controller
 
         if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text')) && (Yii::$app->request->post('id'))) {
 
-            $un = strtoupper(uniqid(time()));
-
             $plainTextContent = Yii::$app->request->post('text');
             $subject = Yii::$app->request->post('title');
             $toEmail = Yii::$app->request->post('email');
             $id = Yii::$app->request->post('id');
+
+            /*$un = strtoupper(uniqid(time()));
+
             $plainText = '';
 
             $headers  = 'From: info@mtransservice.ru' . "\r\n";
@@ -196,8 +197,9 @@ class EmailController extends Controller
                 $plainText = $plainTextContent;
             } else {
 
-                $headers .= "Content-Type:multipart/mixed; boundary=\"--".$un."\"\r\n";
-                $plainText = "--".$un."\nContent-type: text/html; charset=utf-8;\r\n";
+                $headers .= "Content-Type:multipart/mixed;";
+                $headers .= "boundary=\"----------".$un."\"\r\n";
+                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\r\n";
                 $plainText .= "Content-Transfer-Encoding: base64\r\n\r\n";
                 $plainText .= chunk_split(base64_encode($plainTextContent));
 
@@ -211,10 +213,10 @@ class EmailController extends Controller
                     $NameFile = basename($file);
                     $File = $data;
 
-                    $plainText .= "\r\n--".$un."\r\n";
+                    $plainText .= "------------".$un."\r\n";
                     $plainText .= "Content-Type: application/octet-stream; name=\"$NameFile\"\r\n";
                     $plainText .= "Content-Transfer-Encoding: base64 \r\n";
-                    $plainText .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n\r\n";
+                    $plainText .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n";
                     $plainText .= chunk_split(base64_encode($File));
                     $plainText .= "\r\n--$un--\r\n";
 
@@ -227,20 +229,31 @@ class EmailController extends Controller
                 echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
+            }*/
+
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom('info@mtransservice.ru')
+                ->setTo($toEmail)
+                ->setSubject($subject)
+                ->setHtmlBody($plainTextContent);
+
+            $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+            if (file_exists($pathfolder)) {
+
+                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                    $mailCont->attach($pathfolder . basename($file));
+                }
+
             }
 
-            /*$resSend = Yii::$app->mailer->compose()
-                ->setFrom('info@mtransservice.ru')
-                ->setTo(Yii::$app->request->post('email'))
-                ->setSubject(Yii::$app->request->post('title'))
-                ->setHtmlBody(Yii::$app->request->post('text'))
-                ->send();
+            $resSend = $mailCont->send();
 
             if($resSend) {
                 echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
-            }*/
+            }
 
         } else {
             echo json_encode(['success' => 'false']);
