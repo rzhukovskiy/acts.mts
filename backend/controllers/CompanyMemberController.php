@@ -39,7 +39,7 @@ class CompanyMemberController extends Controller
         $toName = $model->name;
 
         /** @var SwiftMailer $SwiftMailer */
-        $headers  = 'From: info@mtransservice.ru' . "\r\n";
+        $headers  = 'From: Международный Транспортный Сервис <info@mtransservice.ru>' . "\r\n";
         $headers .= 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
         $headers .= "To: $toName <$toEmail>" . "\r\n";
