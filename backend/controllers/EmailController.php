@@ -82,11 +82,12 @@ class EmailController extends Controller
         $NameFile = basename($filename);
         $File = $data;
 
-        $plainTextContent .= "------------".$un."\r\n";
-        $plainTextContent .= "Content-Type: application/octet-stream; name=\"$NameFile\"\r\n";
-        $plainTextContent .= "Content-Transfer-Encoding: base64 \r\n";
-        $plainTextContent .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n";
-        $plainTextContent .= chunk_split(base64_encode($File))."\n";
+        $plainText .= "------------".$un."\r\n";
+        $plainText .= "Content-Type: application/octet-stream; name=\"$NameFile\"\r\n";
+        $plainText .= "Content-Transfer-Encoding: base64 \r\n";
+        $plainText .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n";
+        $plainText .= chunk_split(base64_encode($File));
+        $plainText .= "\r\n--$un--\r\n";
 
         $resSend = mail($toEmail, $subject, $plainText, $headers);
 
