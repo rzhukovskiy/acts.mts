@@ -206,7 +206,7 @@ class EmailController extends Controller
                     $filename = $pathfolder . basename($file);
 
                     $f = fopen($filename,"rb");
-                    $data = fread($f,  filesize( $filename ));
+                    $data = fread($f, filesize( $filename ));
                     fclose($f);
 
                     $NameFile = basename($file);
