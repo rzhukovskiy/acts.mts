@@ -232,7 +232,7 @@ class EmailController extends Controller
             }*/
 
             $mailCont = Yii::$app->mailer->compose()
-                ->setFrom('info@mtransservice.ru')
+                ->setFrom(['info@mtransservice.ru' => 'Международный транспортный сервис'])
                 ->setTo($toEmail)
                 ->setSubject($subject)
                 ->setHtmlBody($plainTextContent);

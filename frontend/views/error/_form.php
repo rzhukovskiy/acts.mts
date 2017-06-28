@@ -204,10 +204,16 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
                     if ((file_exists($pathLink)) && (mb_strlen($model->getImageLink()) > 0)) {
 
-                        $css = ".glyphicon-arrow-left {
-cursor:pointer;
+$css = ".glyphicon-arrow-left {
+font-size:16px;
 }
 .glyphicon-arrow-right {
+font-size:16px;
+}
+.glyphicon-arrow-left:hover {
+cursor:pointer;
+}
+.glyphicon-arrow-right:hover {
 cursor:pointer;
 }";
                         $this->registerCSS($css);
