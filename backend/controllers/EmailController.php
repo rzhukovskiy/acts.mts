@@ -82,12 +82,10 @@ class EmailController extends Controller
         $NameFile = basename($filename);
         $File = $data;
 
-        $plainTextContent .= "------------".$un."\n";
-        $plainTextContent .= "Content-Type: application/octet-stream;";
-        $plainTextContent .= "name=\"".$NameFile."\"\n";
-        $plainTextContent .= "Content-Transfer-Encoding:base64\n";
-        $plainTextContent .= "Content-Disposition:attachment;";
-        $plainTextContent .= "filename=\"".$NameFile."\"\n\n";
+        $plainTextContent .= "------------".$un."\r\n";
+        $plainTextContent .= "Content-Type: application/octet-stream; name=\"$NameFile\"\r\n";
+        $plainTextContent .= "Content-Transfer-Encoding: base64 \r\n";
+        $plainTextContent .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n";
         $plainTextContent .= chunk_split(base64_encode($File))."\n";
 
         $resSend = mail($toEmail, $subject, $plainText, $headers);
@@ -246,8 +244,8 @@ class EmailController extends Controller
             } else {
 
                 $headers .= "Content-Type:multipart/mixed;";
-                $headers .= "boundary=\"----------".$un."\"\r\n";
-                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\r\n";
+                $headers .= "boundary=\"--".$un."\"\r\n";
+                $plainText = "--".$un."\nContent-type: text/html; charset=utf-8;\r\n";
                 $plainText .= "Content-Transfer-Encoding: base64\r\n\r\n";
                 $plainText .= chunk_split(base64_encode($plainTextContent));
 
@@ -261,13 +259,14 @@ class EmailController extends Controller
                     $NameFile = basename($file);
                     $File = $data;
 
-                    $plainTextContent .= "------------".$un."\n";
-                    $plainTextContent .= "Content-Type: application/octet-stream;";
-                    $plainTextContent .= "name=\"".$NameFile."\"\n";
-                    $plainTextContent .= "Content-Transfer-Encoding:base64\n";
-                    $plainTextContent .= "Content-Disposition:attachment;";
-                    $plainTextContent .= "filename=\"".$NameFile."\"\n\n";
-                    $plainTextContent .= chunk_split(base64_encode($File))."\n";
+                    $plainText .= "--".$un."\n";
+                    $plainText .= "Content-Type: application/octet-stream;";
+                    $plainText .= "name=\"".$NameFile."\"\n";
+                    $plainText .= "Content-Transfer-Encoding:base64\n";
+                    $plainText .= "Content-Disposition:attachment;";
+                    $plainText .= "filename=\"".$NameFile."\"\n\n";
+                    $plainText .= chunk_split(base64_encode($File));
+                    $plainText .= "\r\n--$un--\r\n";
 
                 }
             }
