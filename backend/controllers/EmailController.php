@@ -212,7 +212,7 @@ class EmailController extends Controller
                     $NameFile = basename($file);
                     $File = $data;
 
-                    $plainText .= "--".$un."\r\n";
+                    $plainText .= "------------".$un."\r\n";
                     $plainText .= "Content-Type: application/octet-stream; name=\"$NameFile\"\r\n";
                     $plainText .= "Content-Transfer-Encoding: base64 \r\n";
                     $plainText .= "Content-Disposition: attachment; filename=\"$NameFile\"\r\n";
