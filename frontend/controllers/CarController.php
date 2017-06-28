@@ -49,7 +49,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra', 'history'],
+                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra', 'history', 'movecar'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -388,4 +388,32 @@ class CarController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionMovecar()
+    {
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_id'))) {
+
+            $id = Yii::$app->request->post('id');
+            $company_id = Yii::$app->request->post('company_id');
+
+            $modelCar = Car::findOne(['id' => $id]);
+
+            if($modelCar->company_id != $company_id) {
+                $modelCar->company_id = $company_id;
+
+                if($modelCar->save()) {
+                    echo json_encode(['success' => 'true']);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+    }
+
 }

@@ -55,6 +55,7 @@ use common\models\Type;
             [
                 'dataProvider' => $companyModel->getCarDataProvider(),
                 'searchModel'  => $companyModel->getCarSearchModel(),
+                'companyModel'  => $companyModel,
             ]) : '' ?>
         </div>
     </div>

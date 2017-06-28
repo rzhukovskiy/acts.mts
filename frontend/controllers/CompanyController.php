@@ -262,4 +262,28 @@ class CompanyController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public static function getCompanyParents($id) {
+
+        $arrParentId = Company::find()->where(['id' => $id])->select('parent_id')->column();
+
+        if(isset($arrParentId[0])) {
+            $arrParentId = $arrParentId[0];
+
+            $arrCompany = Company::find()->where(['parent_id' => $arrParentId])->select('name')->indexBy('id')->orderBy('id ASC')->column();
+
+            if(isset($arrCompany)) {
+
+                if(count($arrCompany) > 0) {
+                    return $arrCompany;
+                }
+
+            }
+
+        }
+
+        return [];
+
+    }
+
 }
