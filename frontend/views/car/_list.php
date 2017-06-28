@@ -52,7 +52,7 @@ $('#save_new_company').on('click', function(){
                 $.ajax({
                 type     :'POST',
                 cache    : false,
-                data:'id=' + car_id + '&company_id=' + $('#new_company').val(),
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val(),
                 url  : '$actionLink',
                 success  : function(data) {
                     

@@ -391,17 +391,31 @@ class CarController extends Controller
 
     public function actionMovecar()
     {
-        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_id'))) {
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id'))) {
 
             $id = Yii::$app->request->post('id');
+            $company_from = Yii::$app->request->post('company_from');
             $company_id = Yii::$app->request->post('company_id');
 
             $modelCar = Car::findOne(['id' => $id]);
 
-            if($modelCar->company_id != $company_id) {
+            if(($modelCar->company_id != $company_id) && ($company_from == $modelCar->company_id)) {
                 $modelCar->company_id = $company_id;
 
                 if($modelCar->save()) {
+
+                    // Добавляем в историю кто добавил машину
+                    $modelHistory = new CarHistory();
+                    $modelHistory->from = $company_from;
+                    $modelHistory->to = $company_id;
+                    $modelHistory->user_id = Yii::$app->user->identity->id;
+                    $modelHistory->car_id = $id;
+                    $modelHistory->car_number = $modelCar->number;
+                    $modelHistory->type = 2;
+                    $modelHistory->date = (string) time();
+                    $modelHistory->save();
+                    // Добавляем в историю кто добавил машину
+
                     echo json_encode(['success' => 'true']);
                 } else {
                     echo json_encode(['success' => 'false']);
