@@ -197,8 +197,8 @@ class EmailController extends Controller
             } else {
 
                 $headers .= "Content-Type:multipart/mixed;";
-                $headers .= "boundary=\"--".$un."\"\r\n";
-                $plainText = "--".$un."\nContent-type: text/html; charset=utf-8;\r\n";
+                $headers .= "boundary=\"----------".$un."\"\r\n";
+                $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\r\n";
                 $plainText .= "Content-Transfer-Encoding: base64\r\n\r\n";
                 $plainText .= chunk_split(base64_encode($plainTextContent));
 
