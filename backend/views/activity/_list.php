@@ -507,8 +507,9 @@ if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->actio
                 $('.table tbody tr').each(function (id, value) {
                 if($(this).find('.value_0').text() != '') {
                 
-                var arrLable = $(this).find('.value_0').text().split('.');
-                arrLable = arrLable[1] + '.' + arrLable[2];
+                /*var arrLable = $(this).find('.value_0').text().split('.');
+                arrLable = arrLable[1] + '.' + arrLable[2];*/
+                var arrLable = $(this).find('.value_0').text();
                 
                 var checkHave = false;
                 for(var i = 0; i < labelArr.length; i++) {
@@ -553,7 +554,7 @@ if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->actio
                     },
                     subtitles: [
                         {
-                            text: 'По месяцам',
+                            text: 'По дням',
                             horizontalAlign: 'left',
                             fontSize: 14,
                             fontColor: '#069',
@@ -567,7 +568,7 @@ if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->actio
                         }
                     ],
                     axisX: {
-                        title: 'Месяц',
+                        title: 'Дни',
                         titleFontSize: 14,
                         titleFontColor: '#069',
                         titleFontWeight: 'bol',
