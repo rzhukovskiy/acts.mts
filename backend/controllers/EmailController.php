@@ -54,6 +54,56 @@ class EmailController extends Controller
 
         $searchModel = Email::find();
 
+
+
+
+        $un = strtoupper(uniqid(time()));
+
+        $plainTextContent = 'Тестовый текст';
+        $subject = 'Тестовый заголовок';
+        $toEmail = 'roman92@mfeed.ru';
+        $plainText = '';
+
+        $headers  = 'From: info@mtransservice.ru' . "\r\n";
+        $headers .= 'MIME-Version: 1.0' . "\r\n";
+
+        $filename = 'http://offer.mtransservice.ru/files/email/2/%D0%A1%D0%B2%D0%B8%D0%B4%D0%B5%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%B0%20%D0%BD%D0%B0%20%D0%BC%D0%BE%D0%B9%D0%BA%D1%83.pdf';
+
+
+        $headers .= "Content-Type:multipart/mixed;";
+        $headers .= "boundary=\"----------".$un."\"\r\n";
+        $plainText = "------------".$un."\nContent-type: text/html; charset=utf-8;\r\n";
+        $plainText .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $plainText .= chunk_split(base64_encode($plainTextContent));
+
+        $f = fopen($filename,"rb");
+        $data = fread($f,  filesize( $filename ));
+        fclose($f);
+
+        $NameFile = basename($filename);
+        $File = $data;
+
+        $plainTextContent .= "------------".$un."\n";
+        $plainTextContent .= "Content-Type: application/octet-stream;";
+        $plainTextContent .= "name=\"".$NameFile."\"\n";
+        $plainTextContent .= "Content-Transfer-Encoding:base64\n";
+        $plainTextContent .= "Content-Disposition:attachment;";
+        $plainTextContent .= "filename=\"".$NameFile."\"\n\n";
+        $plainTextContent .= chunk_split(base64_encode($File))."\n";
+
+        $resSend = mail($toEmail, $subject, $plainText, $headers);
+
+        if($resSend) {
+            echo 111;
+        } else {
+            echo 2222;
+        }
+
+
+
+
+
+
         $dataProvider = new ActiveDataProvider([
             'query' => $searchModel,
             'pagination' => false,
