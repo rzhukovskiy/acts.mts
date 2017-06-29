@@ -20,6 +20,7 @@ use yii\helpers\Html;
 use kartik\select2\Select2;
 use yii\jui\AutoComplete;
 use yii\web\View;
+use yii\bootstrap\Modal;
 
 $actionLink = Url::to('@web/error/numberlist');
 
@@ -292,6 +293,68 @@ JS;
         </td>
         <td>
             <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
+            <?php
+
+$css = ".moveCarButt:hover {
+cursor:pointer;
+}";
+$this->registerCSS($css);
+
+            $actionLinkMove = Url::to('@web/car/movecar');
+            $company_id = $model->car->company_id;
+
+            $script = <<< JS
+
+var car_id = 0;
+
+// Удаляем ненужную кнопку открыть модальное окно
+$('.hideButtonRemove').remove();
+
+// открываем модальное окно перенести тс
+$('.moveCarButt').on('click', function(){
+car_id = $(this).data('id');
+
+$('.removeList').html('<b>Номер ТС:</b> ' + $(this).data('number'));
+
+$('#showModal').modal('show');
+});
+
+$('#save_new_company').on('click', function(){
+
+                if(($('#new_company').val() > 0) && ($('#new_company').val() != $company_id) && (car_id > 0)) {
+
+                $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val(),
+                url  : '$actionLinkMove',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                car_id = 0;
+                alert('Успешно');
+                window.location.reload();
+                } else {
+                // Неудачно
+                car_id = 0;
+                alert('Ошибка переноса');
+                }
+                
+                }
+                });
+                
+                }
+    
+});
+
+JS;
+            $this->registerJs($script, View::POS_READY);
+
+            ?>
+            <?= '<div class="moveCarButt" data-id="' . $model->car->id . '" data-number="' . $model->car->number . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>'?>
         </td>
         <td>
             <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
@@ -714,3 +777,22 @@ JS;
         <?php ActiveForm::end() ?>
     </div>
 </div>
+<?php
+
+$modal = Modal::begin([
+    'header' => '<h4>Перенести машину в другой филиал</h4>',
+    'id' => 'showModal',
+    'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonRemove', 'style' => 'display:none;'],
+    'size' => 'modal-lg',
+]);
+
+$arrCompany = \frontend\controllers\CompanyController::getCompanyParents($model->client_id);
+
+echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
+
+echo Html::dropDownList("new_company", $model->car->company_id, $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
+echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+Modal::end();
+
+?>
