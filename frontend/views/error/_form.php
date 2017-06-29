@@ -314,9 +314,14 @@ $('.hideButtonRemove').remove();
 $('.moveCarButt').on('click', function(){
 car_id = $(this).data('id');
 
+if(($company_id > 0) && (car_id > 0)) {
+
 $('.removeList').html('<b>Номер ТС:</b> ' + $(this).data('number'));
 
 $('#showModal').modal('show');
+
+}
+
 });
 
 $('#save_new_company').on('click', function(){
