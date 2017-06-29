@@ -430,9 +430,11 @@ var member_to = $('#member_to').val();
                 
                 if (response.success == 'true') { 
                 // Удачно
+                $('#showModalQuery').modal('hide');
                 alert('Письмо успешно отправлено');
                 } else {
                 // Неудачно
+                $('#showModalQuery').modal('hide');
                 alert('Ошибка при отправке письма');
                 }
                 
