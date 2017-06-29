@@ -297,13 +297,21 @@ class ErrorController extends Controller
                     $userID = 8;
                     break;
                 default:
-                    $userID = 1;
+                    $userID = 0;
             }
 
-            $contactModel = Contact::findOne(['id' => $userID]);
+            $emailFrom = '';
+            $nameFrom = '';
 
-            $emailFrom = $contactModel->email;
-            $nameFrom = $contactModel->name;
+            if($userID > 0) {
+                $contactModel = Contact::findOne(['id' => $userID]);
+
+                $emailFrom = $contactModel->email;
+                $nameFrom = $contactModel->name;
+            } else {
+                $emailFrom = 'mtransservice@mail.ru';
+                $nameFrom = 'Gerbert Romberg';
+            }
 
             $mailCont = Yii::$app->mailer->compose()
                 ->setFrom([$emailFrom => $nameFrom])
