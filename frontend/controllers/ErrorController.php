@@ -306,7 +306,7 @@ class ErrorController extends Controller
             $nameFrom = $contactModel->name;
 
             $mailCont = Yii::$app->mailer->compose()
-                ->setFrom([$emailFrom => $nameFrom . ' Международный Транспортный Сервис'])
+                ->setFrom([$emailFrom => $nameFrom])
                 ->setTo($toEmail)
                 ->setSubject($subject)
                 ->setHtmlBody($plainTextContent);
