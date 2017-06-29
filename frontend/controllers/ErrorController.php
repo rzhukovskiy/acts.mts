@@ -281,7 +281,7 @@ class ErrorController extends Controller
             $subject = $emailCont->title;
 
             // Получаем контакты отправителя
-            $userID = Yii::$app->user->identity;
+            $userID = Yii::$app->user->identity->id;
 
             switch ($userID) {
                 case 238:
