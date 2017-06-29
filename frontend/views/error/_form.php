@@ -354,7 +354,7 @@ JS;
             $this->registerJs($script, View::POS_READY);
 
             ?>
-            <?= '<div class="moveCarButt" data-id="' . $model->car->id . '" data-number="' . $model->car->number . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>'?>
+            <?= '<div class="moveCarButt" data-id="' . (isset($model->car->id) ? $model->car->id : 0) . '" data-number="' . (isset($model->car->number) ? $model->car->number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>'?>
         </td>
         <td>
             <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
