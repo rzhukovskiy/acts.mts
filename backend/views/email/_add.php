@@ -164,6 +164,7 @@ $('.btn-success').on('click', function(){
                 
                 if (response.success == 'true') { 
                 // Удачно
+                $('#showModalPreview').modal('hide');
                 alert('Письмо успешно отправлено администратору');
                 } else {
                 // Неудачно
