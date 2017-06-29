@@ -790,7 +790,7 @@ $arrCompany = \frontend\controllers\CompanyController::getCompanyParents($model-
 
 echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
 
-echo Html::dropDownList("new_company", $model->car->company_id, $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
+echo Html::dropDownList("new_company", (isset($model->car->company_id) ? $model->car->company_id : 0), $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
 echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
 
 Modal::end();
