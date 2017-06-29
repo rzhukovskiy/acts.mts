@@ -324,7 +324,7 @@ class ErrorController extends Controller
             $resSend = $mailCont->send();
 
             if($resSend) {
-                echo json_encode(['success' => 'true', 'emailFrom' => $emailFrom]);
+                echo json_encode(['success' => 'true']);
             } else {
                 echo json_encode(['success' => 'false']);
             }
