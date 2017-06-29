@@ -301,7 +301,7 @@ cursor:pointer;
 $this->registerCSS($css);
 
             $actionLinkMove = Url::to('@web/car/movecar');
-            $company_id = $model->car->company_id;
+            $company_id = isset($model->car->company_id) ? $model->car->company_id : 0;
 
             $script = <<< JS
 
