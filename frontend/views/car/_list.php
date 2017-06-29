@@ -12,6 +12,7 @@ use yii\web\View;
  * @var $searchModel common\models\search\CarSearch
  */
 
+// Перемещение ТС в другой филиал
 $GLOBALS['MoveCheck'] = false;
 
 if(isset($companyModel->parent_id)) {
@@ -81,6 +82,7 @@ JS;
 
     }
 }
+// Перемещение ТС в другой филиал
 
 \yii\widgets\Pjax::begin();
 echo GridView::widget([
@@ -125,11 +127,13 @@ echo GridView::widget([
             ],
             'buttons' => [
                 'remove' => function ($url, $model, $key) {
+                    // Перемещение ТС в другой филиал
                     if($GLOBALS['MoveCheck'] == true) {
                         return '<span class="glyphicon glyphicon-sort" data-id="' . $model->id . '" data-number="' . $model->number . '"></span>';
                     } else {
                         return '';
                     }
+                    // Перемещение ТС в другой филиал
                 },
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
@@ -148,6 +152,7 @@ echo GridView::widget([
 
 \yii\widgets\Pjax::end();
 
+// Перемещение ТС в другой филиал
 if($GLOBALS['MoveCheck'] == true) {
     $modal = Modal::begin([
         'header' => '<h4>Перенести машину в другой филиал</h4>',
@@ -165,3 +170,4 @@ if($GLOBALS['MoveCheck'] == true) {
 
     Modal::end();
 }
+// Перемещение ТС в другой филиал

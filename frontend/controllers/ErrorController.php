@@ -11,6 +11,9 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use common\models\Email;
+use common\models\Contact;
+use yii\helpers\FileHelper;
 
 class ErrorController extends Controller
 {
@@ -24,17 +27,17 @@ class ErrorController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'numberlist'],
+                        'actions' => ['list', 'view', 'numberlist', 'querycar'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'querycar'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -263,4 +266,73 @@ class ErrorController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionQuerycar()
+    {
+
+        if((Yii::$app->request->post('email')) && (Yii::$app->request->post('id'))) {
+
+            $id = Yii::$app->request->post('id');
+            $emailCont = Email::findOne(['id' => $id]);
+
+            // Получаем шаблон письма
+            $toEmail = Yii::$app->request->post('email');
+            $plainTextContent = $emailCont->text;
+            $subject = $emailCont->title;
+
+            // Получаем контакты отправителя
+            $userID = Yii::$app->user->identity;
+
+            switch ($userID) {
+                case 238:
+                    $userID = 1;
+                    break;
+                case 176:
+                    $userID = 2;
+                    break;
+                case 364:
+                    $userID = 7;
+                    break;
+                case 379:
+                    $userID = 8;
+                    break;
+                default:
+                    $userID = 1;
+            }
+
+            $contactModel = Contact::findOne(['id' => $userID]);
+
+            $emailFrom = $contactModel->email;
+            $nameFrom = $contactModel->name;
+
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom([$emailFrom => $nameFrom . ' Международный Транспортный Сервис'])
+                ->setTo($toEmail)
+                ->setSubject($subject)
+                ->setHtmlBody($plainTextContent);
+
+            $pathfolder = \Yii::getAlias('@backend/web/files/email/' . $id . '/');
+
+            if (file_exists($pathfolder)) {
+
+                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                    $mailCont->attach($pathfolder . basename($file));
+                }
+
+            }
+
+            $resSend = $mailCont->send();
+
+            if($resSend) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
 }

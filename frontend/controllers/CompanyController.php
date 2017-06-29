@@ -10,6 +10,7 @@ namespace frontend\controllers;
 
 
 use common\models\Company;
+use common\models\CompanyMember;
 use common\models\CompanyDuration;
 use common\models\CompanyService;
 use common\models\PartnerExclude;
@@ -278,6 +279,37 @@ class CompanyController extends Controller
                     return $arrCompany;
                 }
 
+            }
+
+        }
+
+        return [];
+
+    }
+
+    public static function getCompanyMembers($id)
+    {
+
+        $memberCont = CompanyMember::find()->where(['company_id' => $id])->andWhere(['!=', 'email', ''])->select('name, email')->orderBy('id ASC')->all();
+
+        $resArr = [];
+
+        if (isset($memberCont)) {
+
+            if (count($memberCont) > 0) {
+
+                for($i = 0; $i < count($memberCont); $i++) {
+                    if(isset($memberCont[$i]['email'])) {
+                        if($memberCont[$i]['email'] != '') {
+                            $email = strtolower(trim($memberCont[$i]['email']));
+                            $resArr[$email] = $memberCont[$i]['name'] . ' (' . $email . ')';
+
+                            $email = '';
+                        }
+                    }
+                }
+
+                return $resArr;
             }
 
         }

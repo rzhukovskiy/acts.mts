@@ -9,6 +9,7 @@
 
 use common\models\Card;
 use common\models\Company;
+use common\models\CompanyMember;
 use common\models\Mark;
 use yii\helpers\Url;
 use common\models\Service;
@@ -21,6 +22,8 @@ use kartik\select2\Select2;
 use yii\jui\AutoComplete;
 use yii\web\View;
 use yii\bootstrap\Modal;
+use common\models\Email;
+use common\models\Act;
 
 $actionLink = Url::to('@web/error/numberlist');
 
@@ -28,6 +31,7 @@ $css = ".varNumber {text-decoration:underline; font-size:13px;} .varNumber:hover
 $this->registerCss($css);
 
 $serviceType = $model->service_type;
+$mailTemplateID = 4;
 
 $script = <<< JS
 
@@ -145,6 +149,13 @@ if((errorMessage.text().indexOf('Некорректный номер ТС') + 1)
     
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
+
+// Перемещение ТС в другой филиал
+$MoveCheck = false;
+if(((isset($model->car->id) ? $model->car->id : 0) > 0) && ((isset($model->car->number) ? $model->car->number : '') != '')) {
+    $MoveCheck = true;
+}
+// Перемещение ТС в другой филиал
 
 ?>
 
@@ -295,32 +306,31 @@ JS;
             <?= $form->field($model, 'mark_id')->dropdownList(Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
             <?php
 
-$css = ".moveCarButt:hover {
+if($MoveCheck == true) {
+    $css = ".moveCarButt:hover {
 cursor:pointer;
 }";
-$this->registerCSS($css);
+    $this->registerCSS($css);
 
-            $actionLinkMove = Url::to('@web/car/movecar');
-            $company_id = isset($model->car->company_id) ? $model->car->company_id : 0;
+    $actionLinkMove = Url::to('@web/car/movecar');
+    $company_id = isset($model->car->company_id) ? $model->car->company_id : 0;
 
-            $script = <<< JS
+    $script = <<< JS
 
 var car_id = 0;
 
 // Удаляем ненужную кнопку открыть модальное окно
+if($('.hideButtonRemove')) {
 $('.hideButtonRemove').remove();
+}
 
 // открываем модальное окно перенести тс
 $('.moveCarButt').on('click', function(){
 car_id = $(this).data('id');
 
-if(($company_id > 0) && (car_id > 0)) {
-
 $('.removeList').html('<b>Номер ТС:</b> ' + $(this).data('number'));
 
 $('#showModal').modal('show');
-
-}
 
 });
 
@@ -356,17 +366,94 @@ $('#save_new_company').on('click', function(){
 });
 
 JS;
-            $this->registerJs($script, View::POS_READY);
+    $this->registerJs($script, View::POS_READY);
+}
 
             ?>
             <?php
-            if(((isset($model->car->id) ? $model->car->id : 0) > 0) && ((isset($model->car->number) ? $model->car->number : '') != '')) {
+            if($MoveCheck == true) {
                 echo '<div class="moveCarButt" data-id="' . (isset($model->car->id) ? $model->car->id : 0) . '" data-number="' . (isset($model->car->number) ? $model->car->number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>';
             }
             ?>
         </td>
         <td>
             <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
+            <?php
+
+$css = ".glyphicon-envelope {
+margin-left:1px;
+font-size:12px;
+}
+.queryButt:hover {
+cursor:pointer;
+}";
+            $this->registerCSS($css);
+
+            $actionLinkEmail = Url::to('@web/error/querycar');
+
+            $script = <<< JS
+
+// функция проверки email
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+// Запрос клиента по номеру ТС
+
+// Удаляем ненужную кнопку открыть модальное окно
+if($('.hideButtonRemove')) {
+$('.hideButtonRemove').remove();
+}
+
+// открываем модальное окно запроса ТС
+$('.queryButt').on('click', function(){
+
+$('#showModalQuery').modal('show');
+
+});
+
+$('#send_query').on('click', function(){
+
+var member_to = $('#member_to').val();
+
+        if(validateEmail(member_to)) {
+            
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'email=' + member_to + '&id=' + '$mailTemplateID',
+                url  : '$actionLinkEmail',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                alert('Письмо успешно отправлено');
+                } else {
+                // Неудачно
+                alert('Ошибка при отправке письма');
+                }
+                
+                }
+                });
+            
+        } else {
+            alert('Некорректный Email получателя');
+        }
+    
+});
+
+// Запрос клиента по номеру ТС
+
+JS;
+            $this->registerJs($script, View::POS_READY);
+
+            if ($model->hasError(Act::ERROR_CAR) && empty($model->car->company_id)) {
+                echo '<div class="queryButt">Запрос клиента по номеру ТС <span class="glyphicon glyphicon-envelope"></span></div>';
+            }
+            ?>
         </td>
             </tr>
 
@@ -788,20 +875,56 @@ JS;
 </div>
 <?php
 
-$modal = Modal::begin([
-    'header' => '<h4>Перенести машину в другой филиал</h4>',
-    'id' => 'showModal',
-    'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonRemove', 'style' => 'display:none;'],
-    'size' => 'modal-lg',
-]);
+if($MoveCheck == true) {
 
-$arrCompany = \frontend\controllers\CompanyController::getCompanyParents($model->client_id);
+    // Перемещение ТС в другой филиал
+    $modal = Modal::begin([
+        'header' => '<h4>Перенести машину в другой филиал</h4>',
+        'id' => 'showModal',
+        'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonRemove', 'style' => 'display:none;'],
+        'size' => 'modal-lg',
+    ]);
 
-echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
+    $arrCompany = \frontend\controllers\CompanyController::getCompanyParents($model->client_id);
 
-echo Html::dropDownList("new_company", (isset($model->car->company_id) ? $model->car->company_id : 0), $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
-echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+    echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
 
-Modal::end();
+    echo Html::dropDownList("new_company", (isset($model->car->company_id) ? $model->car->company_id : 0), $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
+    echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+    Modal::end();
+    // Перемещение ТС в другой филиал
+
+}
+
+if ($model->hasError(Act::ERROR_CAR) && empty($model->car->company_id)) {
+// Запрос клиента по номеру ТС - получаем шаблон
+    $emailCont = Email::findOne(['id' => $mailTemplateID]);
+
+// Запрос клиента по номеру ТС
+    if (isset($emailCont)) {
+
+        $modal = Modal::begin([
+            'header' => '<h4>Запрос клиента по номеру ТС</h4>',
+            'id' => 'showModalQuery',
+            'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonRemove', 'style' => 'display:none;'],
+            'size' => 'modal-lg',
+        ]);
+
+        echo "<div class='emailTo' style='margin-bottom:15px; font-size:15px; color:#000;'><b>Получатель:</b></div>";
+
+        $arrMembers = \frontend\controllers\CompanyController::getCompanyMembers($model->client_id);
+        echo Html::dropDownList("member_to", 0, $arrMembers, ['id' => 'member_to', 'class' => 'form-control']);
+
+        echo "<div style='margin-top:20px; margin-bottom:20px; font-size:16px;'><b>" . (isset($emailCont->title) ? $emailCont->title : "error") . "</b></div>";
+
+        echo "<div style='word-wrap: break-word; font-size:13px; color:#000;'>" . (isset($emailCont->text) ? nl2br($emailCont->text) : "error") . "</div>";
+        echo Html::buttonInput("Отправить запрос", ['id' => 'send_query', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+        Modal::end();
+
+    }
+// Запрос клиента по номеру ТС
+}
 
 ?>
