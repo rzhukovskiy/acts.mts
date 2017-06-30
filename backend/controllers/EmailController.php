@@ -95,18 +95,8 @@ class EmailController extends Controller
                 $userID = 0;
         }
 
-        $emailFrom = '';
-        $nameFrom = '';
-
-        if($userID > 0) {
-            $contactModel = Contact::findOne(['id' => $userID]);
-
-            $emailFrom = $contactModel->email;
-            $nameFrom = $contactModel->name;
-        } else {
-            $emailFrom = 'mtransservice@mail.ru';
-            $nameFrom = 'Gerbert Romberg';
-        }
+        $emailFrom = 'mtransservice@mail.ru';
+        $nameFrom = 'Gerbert Romberg';
 
         $mailCont = Yii::$app->mailer->compose()
             ->setFrom([$emailFrom => $nameFrom])
