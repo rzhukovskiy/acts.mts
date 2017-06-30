@@ -71,29 +71,9 @@ class EmailController extends Controller
         $emailCont = Email::findOne(['id' => $id]);
 
         // Получаем шаблон письма
-        $toEmail = 'artem.mtransservice@mail.ru';
+        $toEmail = 'roman92@mfeed.ru';
         $plainTextContent = $emailCont->text;
         $subject = $emailCont->title;
-
-        // Получаем контакты отправителя
-        $userID = Yii::$app->user->identity->id;
-
-        switch ($userID) {
-            case 238:
-                $userID = 1;
-                break;
-            case 176:
-                $userID = 2;
-                break;
-            case 364:
-                $userID = 7;
-                break;
-            case 379:
-                $userID = 8;
-                break;
-            default:
-                $userID = 0;
-        }
 
         $emailFrom = 'mtransservice@mail.ru';
         $nameFrom = 'Gerbert Romberg';
