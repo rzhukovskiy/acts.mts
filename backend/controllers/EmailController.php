@@ -65,6 +65,22 @@ class EmailController extends Controller
             ]
         ];
 
+        //
+        $mailCont = Yii::$app->mailer->compose()
+            ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+            ->setTo('roman92@mfeed.ru')
+            ->setSubject('Тестовое письмо')
+            ->setHtmlBody('Текст тестового письма');
+
+        $resSend = $mailCont->send();
+
+        if($resSend) {
+            echo 111; die;
+        } else {
+            echo 222; die;
+        }
+        //
+
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
