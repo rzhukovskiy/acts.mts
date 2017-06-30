@@ -277,7 +277,7 @@ class ErrorController extends Controller
 
             // Получаем шаблон письма
             $toEmail = Yii::$app->request->post('email');
-            $plainTextContent = $emailCont->text;
+            $plainTextContent = nl2br($emailCont->text);
             $subject = $emailCont->title;
 
             // Получаем контакты отправителя
