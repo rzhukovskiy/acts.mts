@@ -309,8 +309,13 @@ class ErrorController extends Controller
                 $emailFrom = 'info@mtransservice.ru';
                 $nameFrom = $contactModel->name;
             } else {
-                $emailFrom = 'info@mtransservice.ru';
-                $nameFrom = 'Gerbert Romberg';
+                if(Yii::$app->user->identity->id == 1) {
+                    $emailFrom = 'info@mtransservice.ru';
+                    $nameFrom = 'Gerbert Romberg';
+                } else {
+                    $emailFrom = 'info@mtransservice.ru';
+                    $nameFrom = 'Международный Транспортный Сервис';
+                }
             }
 
             $mailCont = Yii::$app->mailer->compose()
