@@ -44,6 +44,11 @@ class EmailController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
+                    [
+                        'actions' => ['cronmailer'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
                 ],
             ],
         ];
@@ -258,6 +263,50 @@ class EmailController extends Controller
         } else {
             echo json_encode(['success' => 'false']);
         }
+
+    }
+
+    public function actionCronmailer()
+    {
+
+       // Рассылка 2 раза в неделю для партреров
+        if(isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+
+            $numError = 0;
+            $numTemplate = 0;
+
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo('roman92@mfeed.ru')
+                ->setSubject('Тестовое письмо')
+                ->setHtmlBody('Тестовое письмо ' . ((string) date('H:i d.m.Y')));
+
+            $resSend = $mailCont->send();
+
+            if($resSend) {
+            } else {
+                $numError++;
+            }
+
+            if($numError > 0) {
+
+                Yii::$app->mailer->compose()
+                    ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                    ->setTo('roman92@mfeed.ru')
+                    ->setSubject('Ошибка при отправке рассылок')
+                    ->setHtmlBody("Неудалось отправить $numError писем рассылки №$numTemplate")->send();
+
+                return "Неудалось отправить $numError писем рассылки №$numTemplate";
+            } else {
+                return 'Письма удачно отправлены';
+            }
+
+            //echo \Yii::getAlias('@webroot/email/cronmailer');;
+
+        }
+       // Рассылка 2 раза в неделю для партреров
 
     }
 
