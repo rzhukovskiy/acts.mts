@@ -462,6 +462,78 @@ class EmailController extends Controller
 
                     }
 
+                    // Копия
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('margarita.mtransservice@mail.ru')
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent);
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('anna.mtransservice@mail.ru')
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent);
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('merkulova.mtransservice@mail.ru')
+                        ->setSubject($subjectWash)
+                        ->setHtmlBody($plainTextContentWash);
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplateWash . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailCont->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('oksana.mtransservice@mail.ru')
+                        ->setSubject($subjectWash)
+                        ->setHtmlBody($plainTextContentWash);
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplateWash . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailCont->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    // Копия
+
                     if(($numError + $numErrorWash) > 0) {
 
                         if(($numError) > 0) {
