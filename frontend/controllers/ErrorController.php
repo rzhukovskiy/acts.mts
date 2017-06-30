@@ -306,10 +306,10 @@ class ErrorController extends Controller
             if($userID > 0) {
                 $contactModel = Contact::findOne(['id' => $userID]);
 
-                $emailFrom = $contactModel->email;
+                $emailFrom = 'info@mtransservice.ru';
                 $nameFrom = $contactModel->name;
             } else {
-                $emailFrom = 'mtransservice@mail.ru';
+                $emailFrom = 'info@mtransservice.ru';
                 $nameFrom = 'Gerbert Romberg';
             }
 
