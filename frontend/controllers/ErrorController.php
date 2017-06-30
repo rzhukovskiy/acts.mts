@@ -178,7 +178,7 @@ class ErrorController extends Controller
 
             }
 
-            if(count($arrRes) == 0) {
+            /*if(count($arrRes) == 0) {
                 $resType = 1;
                 $carRes = Act::find()->innerJoin('card', 'card.id = act.card_id')->where(['card.number' => $card])->andWhere(['act.mark_id' => $mark])->andWhere(['act.type_id' => $type])->andWhere(['act.service_type' => $actType])->select('act.car_number')->all();
 
@@ -192,7 +192,7 @@ class ErrorController extends Controller
                     $arrRes[] = $carRes[$i]['car_number'];
                 }
 
-            }
+            }*/
 
         } else {
 
