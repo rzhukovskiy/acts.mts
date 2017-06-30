@@ -72,8 +72,8 @@ class EmailController extends Controller
 
         // Получаем шаблон письма
         $toEmail = 'roman92@mfeed.ru';
-        $plainTextContent = (string) $emailCont->text;
-        $subject = (string) $emailCont->title;
+        $plainTextContent = (string) 'Текст тестового письма';
+        $subject = (string) 'Тестовое письмо';
 
         $emailFrom = 'mtransservice@mail.ru';
         $nameFrom = 'Gerbert Romberg';
