@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use common\models\Contact;
 
 class EmailController extends Controller
 {
@@ -64,6 +65,73 @@ class EmailController extends Controller
                 'id'    => SORT_ASC,
             ]
         ];
+
+        //
+        $id = 4;
+        $emailCont = Email::findOne(['id' => $id]);
+
+        // Получаем шаблон письма
+        $toEmail = 'artem.mtransservice@mail.ru';
+        $plainTextContent = $emailCont->text;
+        $subject = $emailCont->title;
+
+        // Получаем контакты отправителя
+        $userID = Yii::$app->user->identity->id;
+
+        switch ($userID) {
+            case 238:
+                $userID = 1;
+                break;
+            case 176:
+                $userID = 2;
+                break;
+            case 364:
+                $userID = 7;
+                break;
+            case 379:
+                $userID = 8;
+                break;
+            default:
+                $userID = 0;
+        }
+
+        $emailFrom = '';
+        $nameFrom = '';
+
+        if($userID > 0) {
+            $contactModel = Contact::findOne(['id' => $userID]);
+
+            $emailFrom = $contactModel->email;
+            $nameFrom = $contactModel->name;
+        } else {
+            $emailFrom = 'mtransservice@mail.ru';
+            $nameFrom = 'Gerbert Romberg';
+        }
+
+        $mailCont = Yii::$app->mailer->compose()
+            ->setFrom([$emailFrom => $nameFrom])
+            ->setTo($toEmail)
+            ->setSubject($subject)
+            ->setHtmlBody($plainTextContent);
+
+        $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+        if (file_exists($pathfolder)) {
+
+            foreach (FileHelper::findFiles($pathfolder) as $file) {
+                $mailCont->attach($pathfolder . basename($file));
+            }
+
+        }
+
+        $resSend = $mailCont->send();
+
+        if($resSend) {
+            echo 123; die;
+        } else {
+            echo 222; die;
+        }
+        //
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
