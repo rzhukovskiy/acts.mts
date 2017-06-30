@@ -75,7 +75,8 @@ class EmailController extends Controller
         $plainTextContent = (string) $emailCont->text;
         $subject = (string) $emailCont->title;
 
-        $arrFrom = ['mtransservice@mail.ru' => 'Gerbert Romberg'];
+        $emailFrom = 'mtransservice@mail.ru';
+        $nameFrom = 'Gerbert Romberg';
 
         /*$mailCont = Yii::$app->mailer->compose()
             ->setFrom([$emailFrom => $nameFrom])
@@ -84,7 +85,7 @@ class EmailController extends Controller
             ->setHtmlBody($plainTextContent);*/
 
         $mailCont = Yii::$app->mailer->compose()
-            ->setFrom($arrFrom)
+            ->setFrom(['mtransservice@mail.ru' => 'Gerbert Romberg'])
             ->setTo($toEmail)
             ->setSubject('Тестовое письмо')
             ->setHtmlBody('Тестовое письмо');
