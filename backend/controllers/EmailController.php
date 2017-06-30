@@ -84,6 +84,16 @@ class EmailController extends Controller
             ->setSubject($subject)
             ->setHtmlBody($plainTextContent);
 
+        $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
+
+        if (file_exists($pathfolder)) {
+
+            foreach (FileHelper::findFiles($pathfolder) as $file) {
+                $mailCont->attach($pathfolder . basename($file));
+            }
+
+        }
+
         $resSend = $mailCont->send();
 
         if($resSend) {
