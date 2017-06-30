@@ -16,7 +16,6 @@ use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
-use common\models\Contact;
 
 class EmailController extends Controller
 {
@@ -65,33 +64,6 @@ class EmailController extends Controller
                 'id'    => SORT_ASC,
             ]
         ];
-
-        //
-        $id = 4;
-        $emailCont = Email::findOne(['id' => $id]);
-
-        // Получаем шаблон письма
-        $toEmail = 'roman92@mfeed.ru';
-        $plainTextContent = 'Тестовое сообщение';
-        $subject = 'Тестовый заголовок';
-
-        $emailFrom = 'mtransservice@mail.ru';
-        $nameFrom = 'Gerbert Romberg';
-
-        $mailCont = Yii::$app->mailer->compose()
-            ->setFrom($emailFrom)
-            ->setTo($toEmail)
-            ->setSubject($subject)
-            ->setHtmlBody($plainTextContent);
-
-        $resSend = $mailCont->send();
-
-        if($resSend) {
-            echo 123; die;
-        } else {
-            echo 222; die;
-        }
-        //
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
