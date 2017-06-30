@@ -65,50 +65,6 @@ class EmailController extends Controller
             ]
         ];
 
-        //
-
-        $id = (int) 4;
-        $emailCont = Email::findOne(['id' => $id]);
-
-        // Получаем шаблон письма
-        $toEmail = 'roman92@mfeed.ru';
-        $plainTextContent = (string) $emailCont->text;
-        $subject = (string) $emailCont->title;
-
-        $emailFrom = 'mtransservice@mail.ru';
-        $nameFrom = 'Gerbert Romberg';
-
-        /*$mailCont = Yii::$app->mailer->compose()
-            ->setFrom([$emailFrom => $nameFrom])
-            ->setTo($toEmail)
-            ->setSubject($subject)
-            ->setHtmlBody($plainTextContent);*/
-
-        $mailCont = Yii::$app->mailer->compose()
-            ->setFrom(['info@mtransservice.ru' => 'Gerbert Romberg'])
-            ->setTo($toEmail)
-            ->setSubject('Тестовое письмо')
-            ->setHtmlBody('Тестовое письмо');
-
-        $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
-
-        if (file_exists($pathfolder)) {
-
-            foreach (FileHelper::findFiles($pathfolder) as $file) {
-                $mailCont->attach($pathfolder . basename($file));
-            }
-
-        }
-
-        $resSend = $mailCont->send();
-
-        if($resSend) {
-            echo 111; die;
-        } else {
-            echo 111; die;
-        }
-        //
-
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
