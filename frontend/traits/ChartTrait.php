@@ -36,6 +36,12 @@ trait ChartTrait
             case User::ROLE_ADMIN :
                 $chartData = $this->chartByMonth($models);
                 break;
+            case User::ROLE_WATCHER :
+                $chartData = $this->chartByMonth($models);
+                break;
+            case User::ROLE_MANAGER :
+                $chartData = $this->chartByMonth($models);
+                break;
             default:
                 $chartData = [];
         }

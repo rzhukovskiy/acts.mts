@@ -6,6 +6,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use common\models\DepartmentUserCompanyType;
 
 /**
  * User model
@@ -284,6 +285,25 @@ class User extends ActiveRecord implements IdentityInterface
         }
         
         return false;
+    }
+
+    public function getFirstCompanyTypeMenu($status)
+    {
+
+        $DepartmentUserCompany = DepartmentUserCompanyType::find()->where(['user_id' => Yii::$app->user->identity->id])->andWhere(['company_status' => $status])->select('company_type')->orderBy('company_type ASC')->limit('1')->column();
+
+        if(count($DepartmentUserCompany) > 0) {
+
+            if(isset($DepartmentUserCompany[0])) {
+                return $DepartmentUserCompany[0];
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
     }
 
     /**
