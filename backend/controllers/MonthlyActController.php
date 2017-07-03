@@ -33,12 +33,12 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact', 'getcomments'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact', 'getcomments', 'gettrack'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact', 'getcomments'],
+                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact', 'getcomments', 'gettrack'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -402,6 +402,32 @@ class MonthlyActController extends Controller
     protected function removeSessionDate()
     {
         Yii::$app->session->remove($this->id . "_act_date");
+    }
+
+    public function actionGettrack($trackID) {
+
+        $ResTrack = json_decode(file_get_contents('https://api.track24.ru/tracking.json.php?apiKey=a5edc8e48db79d1aec6891cb2ebe0cf2&domain=mtransservice.ru&code=' . $trackID));
+        $trackCont = 'Нет информации по отслеживанию';
+
+        if(isset($ResTrack->data->events)) {
+
+            $DataTrack = $ResTrack->data->events;
+            $trackCont = '';
+
+            for ($iTrack = 0; $iTrack < count($DataTrack); $iTrack++) {
+                if (($iTrack + 1) < count($DataTrack)) {
+                    $trackCont .= $DataTrack[$iTrack]->operationDateTime . ' - ' . $DataTrack[$iTrack]->operationType . ' - ' . $DataTrack[$iTrack]->operationPlacePostalCode . ', ' . $DataTrack[$iTrack]->operationPlaceName . '<br />';
+                } else {
+                    $trackCont .= $DataTrack[$iTrack]->operationDateTime . ' - ' . $DataTrack[$iTrack]->operationType . ' - ' . $DataTrack[$iTrack]->operationPlacePostalCode . ', ' . $DataTrack[$iTrack]->operationPlaceName;
+                }
+            }
+
+            echo json_encode(['success' => 'true', 'trackCont' => $trackCont]);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
 }

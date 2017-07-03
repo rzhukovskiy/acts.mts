@@ -17,6 +17,7 @@ use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use yii\helpers\Html;
 
 class EmailController extends Controller
 {
@@ -31,7 +32,7 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'add', 'update', 'delete', 'test', 'deletefile'],
+                        'actions' => ['list', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -168,6 +169,8 @@ class EmailController extends Controller
     public function actionTest()
     {
 
+        // Отправка тестового письма
+
         if((Yii::$app->request->post('email')) && (Yii::$app->request->post('title')) && (Yii::$app->request->post('text')) && (Yii::$app->request->post('id'))) {
 
             $plainTextContent = Yii::$app->request->post('text');
@@ -257,6 +260,98 @@ class EmailController extends Controller
 
             if($resSend) {
                 echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    public function actionSendemail()
+    {
+
+        // Универсальная отправка писем по заданному шаблону
+
+        if((Yii::$app->request->post('email')) && (Yii::$app->request->post('id')) && (Yii::$app->request->post('data'))) {
+
+            $toEmail = Yii::$app->request->post('email');
+            $idTemplate = Yii::$app->request->post('id');
+            $dataArr = json_decode(Yii::$app->request->post('data'));
+
+            // Почтовый шаблон для уведомления
+            $emailCont = Email::findOne(['id' => $idTemplate]);
+
+            if (isset($emailCont)) {
+
+                if ((isset($emailCont->title)) && (isset($emailCont->text))) {
+
+                    $subject = $emailCont->title;
+                    $plainTextContent = nl2br($emailCont->text);
+
+                    if(count($dataArr) > 0) {
+                        for ($iData = 0; $iData < count($dataArr); $iData++) {
+
+                            if($dataArr[$iData][0] == '{TRACKLINK}') {
+                                $plainTextContent = str_replace($dataArr[$iData][0], Html::a($dataArr[$iData][1], $dataArr[$iData][1], ['target' => 'blank']), $plainTextContent);
+                            } else if($dataArr[$iData][0] == '{TRACKLIST}') {
+
+                                // Запрос отслеживания
+                                $ResTrack = json_decode(file_get_contents('https://api.track24.ru/tracking.json.php?apiKey=a5edc8e48db79d1aec6891cb2ebe0cf2&domain=mtransservice.ru&code=' . $dataArr[$iData][1]));
+                                $trackCont = 'Нет информации по отслеживанию';
+
+                                if(isset($ResTrack->data->events)) {
+
+                                    $DataTrack = $ResTrack->data->events;
+                                    $trackCont = '';
+
+                                    for ($iTrack = 0; $iTrack < count($DataTrack); $iTrack++) {
+                                        if (($iTrack + 1) < count($DataTrack)) {
+                                            $trackCont .= $DataTrack[$iTrack]->operationDateTime . ' - ' . $DataTrack[$iTrack]->operationType . ' - ' . $DataTrack[$iTrack]->operationPlacePostalCode . ', ' . $DataTrack[$iTrack]->operationPlaceName . '<br />';
+                                        } else {
+                                            $trackCont .= $DataTrack[$iTrack]->operationDateTime . ' - ' . $DataTrack[$iTrack]->operationType . ' - ' . $DataTrack[$iTrack]->operationPlacePostalCode . ', ' . $DataTrack[$iTrack]->operationPlaceName;
+                                        }
+                                    }
+
+                                }
+
+                                $plainTextContent = str_replace($dataArr[$iData][0], $trackCont, $plainTextContent);
+
+                            }
+
+                        }
+                    }
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($toEmail)
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent);
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/email/' . $idTemplate . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailCont->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $resSend = $mailCont->send();
+
+                    if ($resSend) {
+                        echo json_encode(['success' => 'true']);
+                    } else {
+                        echo json_encode(['success' => 'false']);
+                    }
+
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
             } else {
                 echo json_encode(['success' => 'false']);
             }
