@@ -185,39 +185,49 @@ class StatController extends Controller
 
             if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
-                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+                $companyID = $companyModel->id;
 
-                $arrParParIds = '';
-                $numArrPar = 0;
+                if((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->role == User::ROLE_MANAGER) || (Yii::$app->user->identity->role == User::ROLE_WATCHER)) {
+                    $dataProvider->query
+                        ->andWhere('`client_id`=' . $companyID)
+                        ->joinWith('client client');
+                } else {
 
-                for ($i = 0; $i < count($queryPar); $i++) {
+                    $queryPar = Company::find()->where(['parent_id' => $companyID])->all();
 
-                    if($numArrPar == 0) {
-                        $arrParParIds .= $queryPar[$i]['id'];
-                    } else {
-                        $arrParParIds .= ', ' . $queryPar[$i]['id'];
-                    }
+                    $arrParParIds = '';
+                    $numArrPar = 0;
 
-                    $numArrPar++;
+                    for ($i = 0; $i < count($queryPar); $i++) {
 
-                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
-
-                    for ($j = 0; $j < count($queryParPar); $j++) {
-
-                        if($numArrPar == 0) {
-                            $arrParParIds .= $queryParPar[$j]['id'];
+                        if ($numArrPar == 0) {
+                            $arrParParIds .= $queryPar[$i]['id'];
                         } else {
-                            $arrParParIds .= ', ' . $queryParPar[$j]['id'];
+                            $arrParParIds .= ', ' . $queryPar[$i]['id'];
                         }
 
                         $numArrPar++;
+
+                        $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+                        for ($j = 0; $j < count($queryParPar); $j++) {
+
+                            if ($numArrPar == 0) {
+                                $arrParParIds .= $queryParPar[$j]['id'];
+                            } else {
+                                $arrParParIds .= ', ' . $queryParPar[$j]['id'];
+                            }
+
+                            $numArrPar++;
+                        }
+
                     }
 
-                }
+                    $dataProvider->query
+                        ->andWhere('(`client`.`parent_id`=' . $companyModel->id . ') OR (`client_id`=' . $companyModel->id . ') OR (`client_id` IN  (' . $arrParParIds . '))')
+                        ->joinWith('client client');
 
-                $dataProvider->query
-                    ->andWhere('(`client`.`parent_id`=' . $companyModel->id . ') OR (`client_id`=' . $companyModel->id . ') OR (`client_id` IN  (' . $arrParParIds . '))')
-                    ->joinWith('client client');
+                }
 
             } else {
                 $dataProvider->query
@@ -288,7 +298,9 @@ class StatController extends Controller
 
             if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
-                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+                $companyID = $companyModel->id;
+
+                $queryPar = Company::find()->where(['parent_id' => $companyID])->all();
 
                 $arrParParIds = [];
 
@@ -378,7 +390,9 @@ class StatController extends Controller
 
             if(($companyModel->id == 59) || ($companyModel->id == 154)) {
 
-                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+                $companyID = $companyModel->id;
+
+                $queryPar = Company::find()->where(['parent_id' => $companyID])->all();
 
                 $arrParParIds = [];
 
@@ -484,7 +498,9 @@ class StatController extends Controller
 
             if(($identity->company_id == 59) || ($identity->company_id == 154)) {
 
-                $queryPar = Company::find()->where(['parent_id' => 154])->all();
+                $companyID = $identity->company_id;
+
+                $queryPar = Company::find()->where(['parent_id' => $companyID])->all();
 
                 $arrParParIds = [];
 

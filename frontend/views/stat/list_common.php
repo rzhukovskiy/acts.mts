@@ -53,14 +53,21 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
         <hr>
         <div id="chart_div" style="width:100%;height:500px;">
             <? if (empty($data)) {
-                echo "Нет данных за выбранный период";
+                if (count($data) == 0) {
+                    echo "<span style='padding: 0px 20px;'>Нет данных за выбранный период</span>";
+                }
             } ?>
 
         </div>
 
         <?php
-        // TODO: refactor it, plz, move collecting data into controller
-        $js = "
+
+        if (!empty($data)) {
+
+            if (count($data) > 0) {
+
+                // TODO: refactor it, plz, move collecting data into controller
+                $js = "
         CanvasJS.addCultureInfo('ru',
         {
             shortMonths: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -114,8 +121,8 @@ $filters = 'Выбор компании: ' . Html::activeDropDownList($searchMod
           }
         });
            chart.render();";
-        if (!empty($data)) {
-            $this->registerJs($js);
+                $this->registerJs($js);
+            }
         }
         ?>
     </div>

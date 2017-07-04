@@ -94,6 +94,12 @@ trait ChartTrait
             case User::ROLE_ADMIN :
                 $chartData = $this->chartDataByDay($models, $date);
                 break;
+            case User::ROLE_WATCHER :
+                $chartData = $this->chartDataByDay($models, $date);
+                break;
+            case User::ROLE_MANAGER :
+                $chartData = $this->chartDataByDay($models, $date);
+                break;
             default:
                 $chartData = [];
         }
