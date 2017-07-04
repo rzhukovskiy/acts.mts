@@ -156,7 +156,8 @@ JS;
             ],
         ]) ?>
         <?= $form->field($model, 'act_comment')->textarea(['class' => 'form-control']) ?>
-        <?= $form->field($model, 'act_send_date')->widget(DatePicker::classname(),
+
+        <?php /*echo $form->field($model, 'act_send_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,
                 'language'      => 'ru',
@@ -168,8 +169,9 @@ JS;
                     'class' => 'form-control',
                     'value' => $model->act_send_date ? $model->act_send_date : '',
                 ]
-            ])->error(false) ?>
-        <?= $form->field($model, 'act_client_get_date')->widget(DatePicker::classname(),
+            ])->error(false);
+
+        echo $form->field($model, 'act_client_get_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,
                 'language'      => 'ru',
@@ -181,7 +183,8 @@ JS;
                     'class' => 'form-control',
                     'value' => $model->act_client_get_date ? $model->act_client_get_date : '',
                 ]
-            ])->error(false) ?>
+            ])->error(false);*/ ?>
+
         <?= $form->field($model, 'post_number')->input('text', ['class' => 'form-control'])->label() ?>
         <div class="form-group">
             <div class="col-sm-offset-4 col-sm-6">
@@ -199,7 +202,7 @@ JS;
 
         <?= $form->field($model, 'payment_comment')->textarea(['class' => 'form-control']) ?>
 
-        <?= $form->field($model, 'act_we_get_date')->widget(DatePicker::classname(),
+        <?php /*echo $form->field($model, 'act_we_get_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,
                 'language'      => 'ru',
@@ -211,9 +214,9 @@ JS;
                     'class' => 'form-control',
                     'value' => $model->act_we_get_date ? $model->act_we_get_date : '',
                 ]
-            ])->error(false) ?>
+            ])->error(false);
 
-        <?= $form->field($model, 'payment_estimate_date')->widget(DatePicker::classname(),
+        echo $form->field($model, 'payment_estimate_date')->widget(DatePicker::classname(),
             [
                 'type'          => DatePicker::TYPE_INPUT,
                 'language'      => 'ru',
@@ -225,7 +228,7 @@ JS;
                     'class' => 'form-control',
                     'value' => $model->payment_estimate_date ? $model->payment_estimate_date : '',
                 ]
-            ])->error(false) ?>
+            ])->error(false);*/ ?>
 
         <div class="form-group">
             <div class="col-sm-offset-4 col-sm-6">

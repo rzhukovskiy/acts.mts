@@ -308,11 +308,11 @@ class MonthlyActController extends Controller
             $model = MonthlyAct::findOne(['id' => $id]);
 
             $resComm .= "<u style='color:#757575;'>Комментарии к акту:</u> " . $model->act_comment . "<br />";
-            $resComm .= "<u style='color:#757575;'>Дата отправления акта по почте:</u> " . $model->act_send_date . "<br />";
-            $resComm .= "<u style='color:#757575;'>Дата получения акта клиентом:</u> " . $model->act_client_get_date . "<br /><br />";
+            //$resComm .= "<u style='color:#757575;'>Дата отправления акта по почте:</u> " . $model->act_send_date . "<br />";
+            //$resComm .= "<u style='color:#757575;'>Дата получения акта клиентом:</u> " . $model->act_client_get_date . "<br /><br />";
             $resComm .= "<u style='color:#757575;'>Комментарии к оплате:</u> " . $model->payment_comment . "<br />";
-            $resComm .= "<u style='color:#757575;'>Дата получения акта нами:</u> " . $model->act_we_get_date . "<br />";
-            $resComm .= "<u style='color:#757575;'>Дата предполагаемой оплаты:</u> " . $model->payment_estimate_date . "<br />";
+            //$resComm .= "<u style='color:#757575;'>Дата получения акта нами:</u> " . $model->act_we_get_date . "<br />";
+            //$resComm .= "<u style='color:#757575;'>Дата предполагаемой оплаты:</u> " . $model->payment_estimate_date . "<br />";
 
             echo json_encode(['success' => 'true', 'comment' => $resComm]);
 
