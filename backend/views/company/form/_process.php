@@ -11,12 +11,25 @@ use common\models\Company;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 use yii\helpers\Html;
+use yii\web\View;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
+use common\models\CompanyInfo;
+use common\models\Email;
 
 echo $this->render('_modal', [
     'modelCompany' => $modelCompany,
 ]);
 
 $workTime = $modelCompany->getWorkTimeArray();
+
+// получаем email назначения
+$email = '';
+$actionLinkEmail = Url::to('@web/email/sendemail');
+$actionGetTrack = Url::to('@web/monthly-act/gettrack');
+$mailTemplateID = 6;
+$tracklink = '';
+$trackID = '';
 
 $script = <<< JS
     $('#company-worktime-targ').click(function() {
@@ -42,6 +55,123 @@ $script = <<< JS
     
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
+
+if($modelCompanyOffer->mail_number) {
+    $email = 'Email не указан! ' . Html::a('Указать', Url::to('@web/company/info?id=') . $modelCompanyOffer->company_id, ['target' => 'blank']);
+
+    // Ссылка на отслеживание
+    $trackID = $modelCompanyOffer->mail_number;
+    $tracklink = 'https://www.pochta.ru/tracking#' . $trackID;
+
+    // Получаем почту назначения
+    $modelInfo = CompanyInfo::findOne(['company_id' => $modelCompanyOffer->company_id]);
+
+    if (isset($modelInfo->email)) {
+        if ($modelInfo->email) {
+            if (filter_var($modelInfo->email, FILTER_VALIDATE_EMAIL)) {
+                $email = $modelInfo->email;
+            }
+        }
+    }
+
+    $script = <<< JS
+
+// функция проверки email
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+// Отправка уведомления
+
+// Удаляем ненужную кнопку открыть модальное окно
+if($('.hideButtonRemove')) {
+$('.hideButtonRemove').remove();
+}
+
+var loadTrackInfo = false;
+
+// открываем модальное окно уведомления
+$('.showModalTracher').on('click', function(){
+
+                if(loadTrackInfo == false) {
+                // Заполняем информацию о трекере в тексте письма
+                var emailContent = $('.emailContent');
+                var htmlTextCont = emailContent.html();
+
+                $.ajax({
+                type     :'GET',
+                cache    : true,
+                data:'trackID=' + '$trackID',
+                url  : '$actionGetTrack',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                    // Удачно
+                    htmlTextCont = htmlTextCont.replace('{TRACKLIST}', response.trackCont);
+                    emailContent.html(htmlTextCont);
+                    loadTrackInfo = true;
+                } else {
+                // Неудачно
+                    htmlTextCont = htmlTextCont.replace('{TRACKLIST}', 'Нет информации по отслеживанию');
+                    emailContent.html(htmlTextCont);
+                }
+                
+                }
+                });
+                }
+    
+$('#showModalNotific').modal('show');
+
+});
+
+$('#send_track').on('click', function() {
+    
+// Отправляем уведомление
+if(validateEmail('$email')) {
+
+    var arrData = [];
+    arrData[0] = ['{TRACKLINK}', '$tracklink'];
+    arrData[1] = ['{TRACKLIST}', '$trackID'];
+    
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'email=' + '$email' + '&id=' + '$mailTemplateID' + '&data=' + JSON.stringify(arrData),
+                url  : '$actionLinkEmail',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                $('#showModalNotific').modal('hide');
+                alert('Письмо успешно отправлено');
+                } else {
+                // Неудачно
+                $('#showModalNotific').modal('hide');
+                alert('Ошибка при отправке письма');
+                }
+                
+                }
+                });
+    
+} else {
+    alert('Указан некорректный Email получателя');
+}
+
+    
+});
+
+// Запрос клиента по номеру ТС
+
+JS;
+    $this->registerJs($script, View::POS_READY);
+
+}
+
 ?>
 
 <div class="panel panel-primary">
@@ -251,9 +381,15 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     ]); ?>
                     <div class="form-group" style="display: inline">
 
-                            <?= Html::a('Проверить почтовое отправление',
-                                'https://www.pochta.ru/tracking#' . $modelCompanyOffer->mail_number,
-                                ['target' => 'blank', 'class' => 'btn btn-primary']) ?>
+                            <?php
+
+                            if($trackID) {
+                                echo Html::a('Проверить почтовое отправление',
+                                    $tracklink,
+                                    ['target' => 'blank', 'class' => 'btn btn-primary'])  . '<span class="btn btn-danger btn-sm showModalTracher" style="font-size: 15px; padding:8px 10px 8px 10px; margin-left: 15px;">Отправить уведомление</span>';
+                            }
+
+                            ?>
 
                     </div>
                 </td>
@@ -291,3 +427,34 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         </table>
     </div>
 </div>
+<?php
+if($trackID) {
+
+    // Почтовый шаблон для уведомления
+    $emailCont = Email::findOne(['id' => $mailTemplateID]);
+
+    // модальное окно, уведомление о почтовом отправлении
+    if (isset($emailCont)) {
+        $modal = Modal::begin([
+            'header' => '<h4>Отправление уведомления</h4>',
+            'id' => 'showModalNotific',
+            'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonRemove', 'style' => 'display:none;'],
+            'size' => 'modal-lg',
+        ]);
+
+        echo "<div style='margin-bottom:15px; font-size:15px; color:#000;'><b>Получатель:</b> $email</div>";
+
+        echo "<div style='margin-top:20px; margin-bottom:20px; font-size:16px;'><b>" . (isset($emailCont->title) ? $emailCont->title : "error") . "</b></div>";
+
+        // Формуриуем текст письма
+        $textMail = isset($emailCont->text) ? nl2br($emailCont->text) : "error";
+        $textMail = str_replace('{TRACKLINK}', Html::a($tracklink, $tracklink, ['target' => 'blank']), $textMail);
+
+        echo "<div class='emailContent' style='word-wrap: break-word; font-size:13px; color:#000;'>" . $textMail . "</div>";
+        echo Html::buttonInput("Отправить уведомление", ['id' => 'send_track', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+        Modal::end();
+    }
+
+}
+?>
