@@ -306,7 +306,7 @@ class ErrorController extends Controller
             if($userID > 0) {
                 $contactModel = Contact::findOne(['id' => $userID]);
 
-                $emailFrom = 'notice@mtransservice.ru';
+                $emailFrom = $contactModel->email;
                 $nameFrom = $contactModel->name;
             } else {
                 if(Yii::$app->user->identity->id == 1) {

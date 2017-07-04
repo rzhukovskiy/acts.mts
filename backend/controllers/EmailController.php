@@ -561,7 +561,7 @@ class EmailController extends Controller
 
                     $mailCont = Yii::$app->mailer->compose()
                         ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                        ->setTo('margarita.mtransservice@mail.ru')
+                        ->setTo('margarita@mtransservice.ru')
                         ->setSubject($subject)
                         ->setHtmlBody($plainTextContent);
 
@@ -573,7 +573,7 @@ class EmailController extends Controller
 
                     $mailCont = Yii::$app->mailer->compose()
                         ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                        ->setTo('anna.mtransservice@mail.ru')
+                        ->setTo('anna@mtransservice.ru')
                         ->setSubject($subject)
                         ->setHtmlBody($plainTextContent);
 
@@ -585,7 +585,7 @@ class EmailController extends Controller
 
                     $mailCont = Yii::$app->mailer->compose()
                         ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                        ->setTo('merkulova.mtransservice@mail.ru')
+                        ->setTo('merkulova@mtransservice.ru')
                         ->setSubject($subjectWash)
                         ->setHtmlBody($plainTextContentWash);
 
@@ -607,7 +607,7 @@ class EmailController extends Controller
 
                     $mailCont = Yii::$app->mailer->compose()
                         ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                        ->setTo('oksana.mtransservice@mail.ru')
+                        ->setTo('oksana@mtransservice.ru')
                         ->setSubject($subjectWash)
                         ->setHtmlBody($plainTextContentWash);
 
@@ -634,13 +634,13 @@ class EmailController extends Controller
                         if(($numError) > 0) {
                             Yii::$app->mailer->compose()
                                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                                ->setTo('margarita.mtransservice@mail.ru')
+                                ->setTo('margarita@mtransservice.ru')
                                 ->setSubject('Ошибка при отправке рассылок')
                                 ->setHtmlBody("Неудалось отправить $numError из " . ($numError + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmail)->send();
 
                             Yii::$app->mailer->compose()
                                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                                ->setTo('anna.mtransservice@mail.ru')
+                                ->setTo('anna@mtransservice.ru')
                                 ->setSubject('Ошибка при отправке рассылок')
                                 ->setHtmlBody("Неудалось отправить $numError из " . ($numError + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmail)->send();
                         }
@@ -648,13 +648,13 @@ class EmailController extends Controller
                         if(($numErrorWash) > 0) {
                             Yii::$app->mailer->compose()
                                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                                ->setTo('merkulova.mtransservice@mail.ru')
+                                ->setTo('merkulova@mtransservice.ru')
                                 ->setSubject('Ошибка при отправке рассылок')
                                 ->setHtmlBody("Неудалось отправить $numErrorWash из " . ($numErrorWash + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmailWash)->send();
 
                             Yii::$app->mailer->compose()
                                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                                ->setTo('oksana.mtransservice@mail.ru')
+                                ->setTo('oksana@mtransservice.ru')
                                 ->setSubject('Ошибка при отправке рассылок')
                                 ->setHtmlBody("Неудалось отправить $numErrorWash из " . ($numErrorWash + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmailWash)->send();
                         }
@@ -664,25 +664,25 @@ class EmailController extends Controller
 
                         Yii::$app->mailer->compose()
                             ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                            ->setTo('margarita.mtransservice@mail.ru')
+                            ->setTo('margarita@mtransservice.ru')
                             ->setSubject('Рассылка успешно отправлена')
                             ->setHtmlBody("Список получателей: ($numEmailSend)<br /><br />" . $stringSendEmail)->send();
 
                         Yii::$app->mailer->compose()
                             ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                            ->setTo('anna.mtransservice@mail.ru')
+                            ->setTo('anna@mtransservice.ru')
                             ->setSubject('Рассылка успешно отправлена')
                             ->setHtmlBody("Список получателей: ($numEmailSend)<br /><br />" . $stringSendEmail)->send();
 
                         Yii::$app->mailer->compose()
                             ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                            ->setTo('merkulova.mtransservice@mail.ru')
+                            ->setTo('merkulova@mtransservice.ru')
                             ->setSubject('Рассылка успешно отправлена')
                             ->setHtmlBody("Список получателей: ($numEmailSendWash)<br /><br />" . $stringSendEmailWash)->send();
 
                         Yii::$app->mailer->compose()
                             ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                            ->setTo('oksana.mtransservice@mail.ru')
+                            ->setTo('oksana@mtransservice.ru')
                             ->setSubject('Рассылка успешно отправлена')
                             ->setHtmlBody("Список получателей: ($numEmailSendWash)<br /><br />" . $stringSendEmailWash)->send();
 
