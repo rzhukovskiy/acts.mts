@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\ArrayHelper;
 use common\models\Act;
+use common\models\ActScope;
 use common\models\Car;
 use common\models\Company;
 use common\models\search\ActSearch;
@@ -403,6 +404,54 @@ class CarController extends Controller
                 $modelCar->company_id = $company_id;
 
                 if($modelCar->save()) {
+
+                    // Меняем client id в актах и акт скоуп
+                    $dataFrom = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
+                    $dataTo = date("Y-m-t") . 'T21:00:00.000Z';
+
+                    $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $dataFrom, $dataTo])->select('id')->all();
+
+                    $arrIdActs = [];
+
+                    if(isset($arrActs)) {
+                        if(count($arrActs) > 0) {
+                            for ($i = 0; $i < count($arrActs); $i++) {
+                                if(isset($arrActs[$i])) {
+                                    $modelAct = Act::findOne(['id' => $arrActs[$i]]);
+
+                                    $modelAct->client_id = $company_id;
+
+                                    if($modelAct->save()) {
+                                        $arrIdActs[] = $arrActs[$i];
+                                    }
+
+                                    $modelAct = '';
+
+                                }
+                            }
+
+                            if(count($arrIdActs) > 0) {
+
+                                $arrActScope = ActScope::find()->where(['act_id' => $arrIdActs])->andWhere(['company_id' => $company_from])->select('id')->all();
+
+                                if(isset($arrActScope)) {
+                                    if (count($arrActScope) > 0) {
+                                        for ($i = 0; $i < count($arrActScope); $i++) {
+                                            if (isset($arrActScope[$i])) {
+                                                $modelActScope = ActScope::findOne(['id' => $arrActScope[$i]]);
+                                                $modelActScope->company_id = $company_id;
+                                                $modelActScope->save();
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+
+                    // Меняем client id в актах и акт скоуп
 
                     // Добавляем в историю кто добавил машину
                     $modelHistory = new CarHistory();
