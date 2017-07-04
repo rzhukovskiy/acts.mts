@@ -306,14 +306,14 @@ class ErrorController extends Controller
             if($userID > 0) {
                 $contactModel = Contact::findOne(['id' => $userID]);
 
-                $emailFrom = 'info@mtransservice.ru';
+                $emailFrom = 'notice@mtransservice.ru';
                 $nameFrom = $contactModel->name;
             } else {
                 if(Yii::$app->user->identity->id == 1) {
-                    $emailFrom = 'info@mtransservice.ru';
+                    $emailFrom = 'notice@mtransservice.ru';
                     $nameFrom = 'Gerbert Romberg';
                 } else {
-                    $emailFrom = 'info@mtransservice.ru';
+                    $emailFrom = 'notice@mtransservice.ru';
                     $nameFrom = 'Международный Транспортный Сервис';
                 }
             }

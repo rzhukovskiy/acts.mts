@@ -182,7 +182,7 @@ class EmailController extends Controller
 
             $plainText = '';
 
-            $headers  = 'From: info@mtransservice.ru' . "\r\n";
+            $headers  = 'From: notice@mtransservice.ru' . "\r\n";
             $headers .= 'MIME-Version: 1.0' . "\r\n";
 
             $pathfolder = \Yii::getAlias('@webroot/files/email/' . $id . '/');
@@ -241,7 +241,7 @@ class EmailController extends Controller
             }*/
 
             $mailCont = Yii::$app->mailer->compose()
-                ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                 ->setTo($toEmail)
                 ->setSubject($subject)
                 ->setHtmlBody($plainTextContent);
@@ -325,7 +325,7 @@ class EmailController extends Controller
                     }
 
                     $mailCont = Yii::$app->mailer->compose()
-                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo($toEmail)
                         ->setSubject($subject)
                         ->setHtmlBody($plainTextContent);
@@ -426,7 +426,7 @@ class EmailController extends Controller
                                         if($partnerArr[$iCompany]['type'] == 2) {
 
                                             $mailCont = Yii::$app->mailer->compose()
-                                                ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                                                 ->setTo($emailContent)
                                                 ->setSubject($subjectWash)
                                                 ->setHtmlBody($plainTextContentWash);
@@ -459,7 +459,7 @@ class EmailController extends Controller
                                         } else {
 
                                             $mailCont = Yii::$app->mailer->compose()
-                                                ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                                                 ->setTo($emailContent)
                                                 ->setSubject($subject)
                                                 ->setHtmlBody($plainTextContent);
@@ -495,7 +495,7 @@ class EmailController extends Controller
                                     if($partnerArr[$iCompany]['type'] == 2) {
 
                                         $mailCont = Yii::$app->mailer->compose()
-                                            ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                                             ->setTo($toEmail)
                                             ->setSubject($subjectWash)
                                             ->setHtmlBody($plainTextContentWash);
@@ -527,7 +527,7 @@ class EmailController extends Controller
                                     } else {
 
                                         $mailCont = Yii::$app->mailer->compose()
-                                            ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                                             ->setTo($toEmail)
                                             ->setSubject($subject)
                                             ->setHtmlBody($plainTextContent);
@@ -557,10 +557,10 @@ class EmailController extends Controller
 
                     }
 
-                    // Копия
+                    /*// Копия
 
                     $mailCont = Yii::$app->mailer->compose()
-                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo('margarita.mtransservice@mail.ru')
                         ->setSubject($subject)
                         ->setHtmlBody($plainTextContent);
@@ -572,7 +572,7 @@ class EmailController extends Controller
                     $toEmail = '';
 
                     $mailCont = Yii::$app->mailer->compose()
-                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo('anna.mtransservice@mail.ru')
                         ->setSubject($subject)
                         ->setHtmlBody($plainTextContent);
@@ -584,7 +584,7 @@ class EmailController extends Controller
                     $toEmail = '';
 
                     $mailCont = Yii::$app->mailer->compose()
-                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo('merkulova.mtransservice@mail.ru')
                         ->setSubject($subjectWash)
                         ->setHtmlBody($plainTextContentWash);
@@ -606,7 +606,7 @@ class EmailController extends Controller
                     $toEmail = '';
 
                     $mailCont = Yii::$app->mailer->compose()
-                        ->setFrom(['info@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo('oksana.mtransservice@mail.ru')
                         ->setSubject($subjectWash)
                         ->setHtmlBody($plainTextContentWash);
@@ -627,7 +627,7 @@ class EmailController extends Controller
                     $resSend = '';
                     $toEmail = '';
 
-                    // Копия
+                    // Копия*/
 
                     if(($numError + $numErrorWash) > 0) {
 
