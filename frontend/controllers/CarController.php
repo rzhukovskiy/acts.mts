@@ -392,12 +392,21 @@ class CarController extends Controller
 
     public function actionMovecar()
     {
-        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id')) && (Yii::$app->request->post('act_appy'))) {
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id'))) {
 
             $id = Yii::$app->request->post('id');
             $company_from = Yii::$app->request->post('company_from');
             $company_id = Yii::$app->request->post('company_id');
-            $actAppy = Yii::$app->request->post('act_appy');
+            $actAppy = 1;
+            $actData = false;
+
+            if(Yii::$app->request->post('act_appy')) {
+                $actAppy = Yii::$app->request->post('act_appy');
+            }
+
+            if(Yii::$app->request->post('act_data')) {
+                $actData = Yii::$app->request->post('act_data');
+            }
 
             $modelCar = Car::findOne(['id' => $id]);
 
@@ -408,11 +417,14 @@ class CarController extends Controller
 
                     if($actAppy == 1) {
                         // Меняем client id в актах и акт скоуп
-                        /*$dataFrom = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
-                        $dataTo = date("Y-m-t") . 'T21:00:00.000Z';*/
 
-                        $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->select('id')->all();
-                        //$arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $dataFrom, $dataTo])->select('id')->all();
+                        if($actData == false) {
+                            $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->select('id')->all();
+                        } else {
+                            $dataFrom = date("Y-m-", $actData) . '01T21:00:00.000Z';
+                            $dataTo = date("Y-m-t", $actData) . 'T21:00:00.000Z';
+                            $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->andWhere(['between', "DATE(FROM_UNIXTIME(served_at))", $dataFrom, $dataTo])->select('id')->all();
+                        }
 
                         $arrIdActs = [];
 

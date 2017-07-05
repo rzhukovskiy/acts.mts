@@ -314,6 +314,7 @@ cursor:pointer;
 
     $actionLinkMove = Url::to('@web/car/movecar');
     $company_id = isset($model->car->company_id) ? $model->car->company_id : 0;
+    $act_data = $model->served_at;
 
     $script = <<< JS
 
@@ -349,7 +350,7 @@ $('#save_new_company').on('click', function(){
                 $.ajax({
                 type     :'POST',
                 cache    : false,
-                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy,
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy + '&act_data=' + '$act_data',
                 url  : '$actionLinkMove',
                 success  : function(data) {
                     

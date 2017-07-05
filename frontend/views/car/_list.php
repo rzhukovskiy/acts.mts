@@ -30,7 +30,7 @@ cursor:pointer;
         $actionLink = Url::to('@web/car/movecar');
         $company_id = $companyModel->id;
 
-$script = <<< JS
+/*$script = <<< JS
 
 var car_id = 0;
 
@@ -86,7 +86,7 @@ $('#save_new_company').on('click', function(){
 });
 
 JS;
-        $this->registerJs($script, View::POS_READY);
+        $this->registerJs($script, View::POS_READY);*/
 
     }
 }
@@ -129,12 +129,12 @@ echo GridView::widget([
         ],
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{remove} {update} {delete}',
+            'template' => '{update} {delete}',
             'options' => [
                 'style' => 'width: 120px',
             ],
             'buttons' => [
-                'remove' => function ($url, $model, $key) {
+                /*'remove' => function ($url, $model, $key) {
                     // Перемещение ТС в другой филиал
                     if($GLOBALS['MoveCheck'] == true) {
                         return '<span class="glyphicon glyphicon-sort" data-id="' . $model->id . '" data-number="' . $model->number . '"></span>';
@@ -142,7 +142,7 @@ echo GridView::widget([
                         return '';
                     }
                     // Перемещение ТС в другой филиал
-                },
+                },*/
                 'update' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/car/update', 'id' => $model->id]);
                 },
@@ -161,7 +161,7 @@ echo GridView::widget([
 \yii\widgets\Pjax::end();
 
 // Перемещение ТС в другой филиал
-if($GLOBALS['MoveCheck'] == true) {
+/*if($GLOBALS['MoveCheck'] == true) {
     $modal = Modal::begin([
         'header' => '<h4>Перенести машину в другой филиал</h4>',
         'id' => 'showModal',
@@ -178,5 +178,5 @@ if($GLOBALS['MoveCheck'] == true) {
     echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
 
     Modal::end();
-}
+}*/
 // Перемещение ТС в другой филиал
