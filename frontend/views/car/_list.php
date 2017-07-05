@@ -50,10 +50,18 @@ $('#save_new_company').on('click', function(){
 
                 if(($('#new_company').val() > 0) && ($('#new_company').val() != $company_id) && (car_id > 0)) {
 
+                var checkboxAppy = 1;
+                    
+                if($('#appyAct').prop('checked')) {
+                  checkboxAppy = 1;
+                } else {
+                    checkboxAppy = 2;
+                }
+                    
                 $.ajax({
                 type     :'POST',
                 cache    : false,
-                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val(),
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy,
                 url  : '$actionLink',
                 success  : function(data) {
                     
@@ -166,6 +174,7 @@ if($GLOBALS['MoveCheck'] == true) {
     echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
 
     echo Html::dropDownList("new_company", $companyModel->id, $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
+    echo '<div style="margin-top:10px; font-size:13px; color:#000;">Отразить изменения на актах (возможно появление ошибочных актов) ' . Html::checkbox("appy_act", true, ['id' => 'appyAct', 'style' => 'margin-left:10px;']) . '</div>';
     echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
 
     Modal::end();

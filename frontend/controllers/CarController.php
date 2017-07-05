@@ -392,11 +392,12 @@ class CarController extends Controller
 
     public function actionMovecar()
     {
-        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id'))) {
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id')) && (Yii::$app->request->post('act_appy'))) {
 
             $id = Yii::$app->request->post('id');
             $company_from = Yii::$app->request->post('company_from');
             $company_id = Yii::$app->request->post('company_id');
+            $actAppy = Yii::$app->request->post('act_appy');
 
             $modelCar = Car::findOne(['id' => $id]);
 
@@ -405,53 +406,61 @@ class CarController extends Controller
 
                 if($modelCar->save()) {
 
-                    // Меняем client id в актах и акт скоуп
-                    $dataFrom = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
-                    $dataTo = date("Y-m-t") . 'T21:00:00.000Z';
+                    if($actAppy == 1) {
+                        // Меняем client id в актах и акт скоуп
+                        /*$dataFrom = date("Y-m-t", strtotime("-2 month")) . 'T21:00:00.000Z';
+                        $dataTo = date("Y-m-t") . 'T21:00:00.000Z';*/
 
-                    $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $dataFrom, $dataTo])->select('id')->all();
+                        $arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->select('id')->all();
+                        //$arrActs = Act::find()->where(['AND', ['client_id' => $company_from], ['car_number' => $modelCar->number]])->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $dataFrom, $dataTo])->select('id')->all();
 
-                    $arrIdActs = [];
+                        $arrIdActs = [];
 
-                    if(isset($arrActs)) {
-                        if(count($arrActs) > 0) {
-                            for ($i = 0; $i < count($arrActs); $i++) {
-                                if(isset($arrActs[$i])) {
-                                    $modelAct = Act::findOne(['id' => $arrActs[$i]]);
+                        if (isset($arrActs)) {
+                            if (count($arrActs) > 0) {
+                                for ($i = 0; $i < count($arrActs); $i++) {
+                                    if (isset($arrActs[$i]['id'])) {
+                                        $modelAct = Act::findOne(['id' => $arrActs[$i]['id']]);
 
-                                    $modelAct->client_id = $company_id;
+                                        $modelAct->client_id = $company_id;
 
-                                    if($modelAct->save()) {
-                                        $arrIdActs[] = $arrActs[$i];
+                                        if ($modelAct->save(false) && $modelAct->validate()) {
+
+                                            // Жестко переносим клиент ид чтобы он был и в ошибочных актах но и перенесся
+                                            Yii::$app->db->createCommand()->update('{{%act}}', ['client_id' => $company_id], 'id = ' . $arrActs[$i]['id'])->execute();
+                                            // Жестко переносим клиент ид чтобы он был и в ошибочных актах но и перенесся
+
+                                            $arrIdActs[] = $arrActs[$i]['id'];
+                                        }
+
+                                        $modelAct = '';
+
                                     }
-
-                                    $modelAct = '';
-
                                 }
-                            }
 
-                            if(count($arrIdActs) > 0) {
+                                if (count($arrIdActs) > 0) {
 
-                                $arrActScope = ActScope::find()->where(['act_id' => $arrIdActs])->andWhere(['company_id' => $company_from])->select('id')->all();
+                                    $arrActScope = ActScope::find()->where(['act_id' => $arrIdActs])->andWhere(['company_id' => $company_from])->select('id')->all();
 
-                                if(isset($arrActScope)) {
-                                    if (count($arrActScope) > 0) {
-                                        for ($i = 0; $i < count($arrActScope); $i++) {
-                                            if (isset($arrActScope[$i])) {
-                                                $modelActScope = ActScope::findOne(['id' => $arrActScope[$i]]);
-                                                $modelActScope->company_id = $company_id;
-                                                $modelActScope->save();
+                                    if (isset($arrActScope)) {
+                                        if (count($arrActScope) > 0) {
+                                            for ($i = 0; $i < count($arrActScope); $i++) {
+                                                if (isset($arrActScope[$i]['id'])) {
+                                                    $modelActScope = ActScope::findOne(['id' => $arrActScope[$i]['id']]);
+                                                    $modelActScope->company_id = $company_id;
+                                                    $modelActScope->save();
+                                                }
                                             }
                                         }
                                     }
+
                                 }
 
                             }
-
                         }
-                    }
 
-                    // Меняем client id в актах и акт скоуп
+                        // Меняем client id в актах и акт скоуп
+                    }
 
                     // Добавляем в историю кто добавил машину
                     $modelHistory = new CarHistory();
