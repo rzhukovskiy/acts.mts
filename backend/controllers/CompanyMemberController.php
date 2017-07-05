@@ -136,6 +136,19 @@ class CompanyMemberController extends Controller
                 $footerMail .= 'Эл. Адрес: ' . Html::mailto('mtransservice@mail.ru', 'mtransservice@mail.ru') . '<br />';
                 $footerMail .= 'Сайт: ' . Html::a('mtransservice.ru', 'http://mtransservice.ru/', ['target' => 'blank']);
 
+            } else if(Yii::$app->user->identity->id == 256) {
+                $emailFrom = 'denis@mtransservice.ru';
+                $nameFrom = 'Митрофанов Денис';
+
+                $footerMail = 'С Уважением,<br /><br />';
+                $footerMail .= 'Митрофанов Денис<br />';
+                $footerMail .= 'Региональный менеджер B2B<br />';
+                $footerMail .= 'Международный Транспортный Сервис<br />';
+                $footerMail .= 'Моб.: 8 960 127 70 55<br />';
+                $footerMail .= 'Гор. линия: 8 800 55 008 55<br />';
+                $footerMail .= 'Эл. Адрес: ' . Html::mailto('denis@mtransservice.ru', 'denis@mtransservice.ru') . '<br />';
+                $footerMail .= 'Сайт: ' . Html::a('mtransservice.ru', 'http://mtransservice.ru/', ['target' => 'blank']);
+
             } else {
                 $emailFrom = 'notice@mtransservice.ru';
                 $nameFrom = 'Международный Транспортный Сервис';

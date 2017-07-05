@@ -315,6 +315,9 @@ class ErrorController extends Controller
                 if(Yii::$app->user->identity->id == 1) {
                     $emailFrom = 'notice@mtransservice.ru';
                     $nameFrom = 'Герберт Ромберг';
+                } else if(Yii::$app->user->identity->id == 256) {
+                    $emailFrom = 'denis@mtransservice.ru';
+                    $nameFrom = 'Митрофанов Денис';
                 } else {
                     $emailFrom = 'notice@mtransservice.ru';
                     $nameFrom = 'Международный Транспортный Сервис';
