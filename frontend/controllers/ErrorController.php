@@ -293,6 +293,9 @@ class ErrorController extends Controller
                 case 364:
                     $userID = 7;
                     break;
+                case 222:
+                    $userID = 9;
+                    break;
                 case 379:
                     $userID = 8;
                     break;
@@ -311,7 +314,7 @@ class ErrorController extends Controller
             } else {
                 if(Yii::$app->user->identity->id == 1) {
                     $emailFrom = 'notice@mtransservice.ru';
-                    $nameFrom = 'Gerbert Romberg';
+                    $nameFrom = 'Герберт Ромберг';
                 } else {
                     $emailFrom = 'notice@mtransservice.ru';
                     $nameFrom = 'Международный Транспортный Сервис';
