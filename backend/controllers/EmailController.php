@@ -384,7 +384,7 @@ class EmailController extends Controller
 
             // Получаем партнеров
 
-            $dateFrom = date("Y-m-t", strtotime("-6 month")) . 'T21:00:00.000Z';
+            $dateFrom = date("Y-m-t", strtotime("-3 month")) . 'T21:00:00.000Z';
             $dateTo = date("Y-m-t") . 'T21:00:00.000Z';
 
             $partnerArr = Company::find()->where(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['OR', ['`company`.`type`' => '2'], ['`company`.`type`' => '4']])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->innerJoin('act', '`act`.`partner_id` = `company`.`id`')->andWhere(['not', ['`company_info`.`email`' => null]])->andWhere(['!=', '`company_info`.`email`', ''])->andWhere(['between', "DATE(FROM_UNIXTIME(`act`.`created_at`))", $dateFrom, $dateTo])->select('`company_info`.`email`, `company`.`type`, `company`.`id`, `company`.`name`')->groupBy('`company`.`id`')->asArray()->all();

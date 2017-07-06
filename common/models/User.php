@@ -290,18 +290,23 @@ class User extends ActiveRecord implements IdentityInterface
     public function getFirstCompanyTypeMenu($status)
     {
 
-        $DepartmentUserCompany = DepartmentUserCompanyType::find()->where(['user_id' => Yii::$app->user->identity->id])->andWhere(['company_status' => $status])->select('company_type')->orderBy('company_type ASC')->limit('1')->column();
+        if($this->id == 364) {
+            return 4;
+        } else {
 
-        if(count($DepartmentUserCompany) > 0) {
+            $DepartmentUserCompany = DepartmentUserCompanyType::find()->where(['user_id' => Yii::$app->user->identity->id])->andWhere(['company_status' => $status])->select('company_type')->orderBy('company_type ASC')->limit('1')->column();
 
-            if(isset($DepartmentUserCompany[0])) {
-                return $DepartmentUserCompany[0];
+            if (count($DepartmentUserCompany) > 0) {
+
+                if (isset($DepartmentUserCompany[0])) {
+                    return $DepartmentUserCompany[0];
+                } else {
+                    return false;
+                }
+
             } else {
                 return false;
             }
-
-        } else {
-            return false;
         }
 
     }
