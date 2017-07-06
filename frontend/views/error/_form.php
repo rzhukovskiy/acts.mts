@@ -152,7 +152,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
 // Перемещение ТС в другой филиал
 $MoveCheck = false;
-if(((isset($model->car->id) ? $model->car->id : 0) > 0) && ((isset($model->car->number) ? $model->car->number : '') != '')) {
+if(((isset($model->car_number) ? $model->car_number : '') != '') && ($model->hasError(Act::ERROR_CAR))) {
     $MoveCheck = true;
 }
 // Перемещение ТС в другой филиал
@@ -337,20 +337,25 @@ $('#showModal').modal('show');
 
 $('#save_new_company').on('click', function(){
 
-                if(($('#new_company').val() > 0) && ($('#new_company').val() != $company_id) && (car_id > 0)) {
+                if(($('#new_company').val() > 0) && ($('#new_company').val() != $company_id)) {
 
                 var checkboxAppy = 1;
+                var number = $('.moveCarButt').data('number');
                     
                 if($('#appyAct').prop('checked')) {
                   checkboxAppy = 1;
                 } else {
                     checkboxAppy = 2;
                 }
+                
+                if(car_id === null) {
+                 car_id = 0;   
+                }
                     
                 $.ajax({
                 type     :'POST',
                 cache    : false,
-                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy + '&act_data=' + '$act_data',
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy + '&act_data=' + '$act_data' + '&number=' + number,
                 url  : '$actionLinkMove',
                 success  : function(data) {
                     
@@ -381,7 +386,7 @@ JS;
             ?>
             <?php
             if($MoveCheck == true) {
-                echo '<div class="moveCarButt" data-id="' . (isset($model->car->id) ? $model->car->id : 0) . '" data-number="' . (isset($model->car->number) ? $model->car->number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>';
+                echo '<div class="moveCarButt" data-id="' . (isset($model->car_id) ? $model->car_id : 0) . '" data-number="' . (isset($model->car_number) ? $model->car_number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>';
             }
             ?>
         </td>
@@ -900,7 +905,7 @@ if($MoveCheck == true) {
 
     echo "<div class='removeList' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
 
-    echo Html::dropDownList("new_company", (isset($model->car->company_id) ? $model->car->company_id : 0), $arrCompany, ['id' => 'new_company', 'class' => 'form-control']);
+    echo Html::dropDownList("new_company", (isset($model->car->company_id) ? $model->car->company_id : 0), $arrCompany, ['id' => 'new_company', 'class' => 'form-control', 'prompt' => 'Филиалы']);
     echo '<div style="margin-top:10px; font-size:13px; color:#000;">Отразить изменения на актах (возможно появление ошибочных актов) ' . Html::checkbox("appy_act", true, ['id' => 'appyAct', 'style' => 'margin-left:10px;']) . '</div>';
     echo Html::buttonInput("Сохранить", ['id' => 'save_new_company', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
 
