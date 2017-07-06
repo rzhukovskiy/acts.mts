@@ -24,6 +24,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\db\Expression;
+use kartik\grid\GridView;
 
 class LoadController extends Controller
 {
@@ -37,12 +38,12 @@ class LoadController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact', 'stickers'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact', 'stickers'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -516,4 +517,95 @@ class LoadController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionStickers($type, $company = 0)
+    {
+        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
+        $searchModel->service_type = $type;
+        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $role = Yii::$app->user->identity->role;
+
+        $locked = Lock::checkLocked($searchModel->period, $type);
+
+        $dataFilter = explode('-', $searchModel->period);
+
+        if($dataFilter[0] > 10) {
+            $dataFilter = $dataFilter[1] . '-' . $dataFilter[0] . '-00';
+        } else {
+            $dataFilter = $dataFilter[1] . '-0' . $dataFilter[0] . '-00';
+        }
+
+        if($company == 0) {
+            $dataProvider->query->select('SUM(expense) as expense, partner.address, partner_id');
+            $dataProvider->query->groupBy('partner_id');
+            $dataProvider->query->andWhere('(expense > 0) AND (service_type=' . $type . ') AND (date_format(FROM_UNIXTIME(served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
+
+        } else {
+            $dataProvider->query->select('SUM(income) as expense, client.*');
+            $dataProvider->query->groupBy('client_id');
+            $dataProvider->query->andWhere('(income > 0) AND (service_type=' . $type . ') AND (date_format(FROM_UNIXTIME(served_at), \'%Y-%m-00\') = \'' . $dataFilter . '\')');
+        }
+
+        // отображаем информацию для печати
+        $GLOBALS['company'] = $company;
+
+        $columns = [
+            [
+                'header' => '',
+                'class' => 'kartik\grid\SerialColumn'
+            ],
+            [
+                'header' => '',
+                'options' => [
+                    'style' => 'width: 450px',
+                ],
+                'value' => function ($data) {
+                    if($GLOBALS['company'] == 1) {
+
+                        $model = Company::findOne(['id' => $data->id]);
+
+                        return $model->name;
+                    } else {
+                        return $data->partner->name;
+                    }
+                },
+            ],
+            [
+                'header' => '',
+                'value' => function ($data) {
+                    if($GLOBALS['company'] == 1) {
+                        $model = Company::findOne(['id' => $data->id]);
+
+                        return $model->getFullAddress();
+                    } else {
+                        return $data->partner->fullAddress;
+                    }
+                },
+            ],
+        ];
+
+        echo GridView::widget([
+            'id' => 'act-grid',
+            'dataProvider' => $dataProvider,
+            'summary' => false,
+            'emptyText' => '',
+            'panel' => [
+                'type' => 'primary',
+                'before' => false,
+                'footer' => false,
+                'after' => false,
+            ],
+            'resizableColumns' => false,
+            'hover' => false,
+            'striped' => false,
+            'export' => false,
+            'showPageSummary' => false,
+            'filterSelector' => '.ext-filter',
+            'columns' => $columns,
+        ]);
+        // отображаем информацию для печати
+    }
+
 }

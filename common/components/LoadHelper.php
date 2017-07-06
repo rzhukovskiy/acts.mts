@@ -41,7 +41,7 @@ class LoadHelper
                 'pageSummary' => 'Всего',
                 'mergeHeader' => false,
                 'width' => '30px',
-                'vAlign' => GridView::ALIGN_TOP,
+                'vAlign' => GridView::ALIGN_BOTTOM,
             ],
             'clientParent' => [
                 'attribute' => 'parent_id',
