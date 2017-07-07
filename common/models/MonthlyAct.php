@@ -212,7 +212,11 @@ class MonthlyAct extends ActiveRecord
 
     public function dateFix()
     {
-        return \DateTime::createFromFormat('Y-m-d', $this->act_date)->modify('+1 month')->format('Y-m-01');
+
+        // переводим на первый день месяца
+        $dataInt = $this->act_date;
+        $dataInt = str_replace('00', '01', $dataInt);
+        return \DateTime::createFromFormat('Y-m-d', $dataInt)/*->modify('+1 month')*/->format('Y-m-01');
     }
 
     /**

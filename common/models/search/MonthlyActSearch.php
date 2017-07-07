@@ -199,6 +199,7 @@ class MonthlyActSearch extends MonthlyAct
 
         $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
         $query->orderBy(['client.name' => SORT_ASC, 'type_id' => SORT_ASC, 'act_date' => SORT_DESC]);
+        $query->andWhere('client.name LIKE "%' . $this->client_name . '%" ');
 
         return $dataProvider;
     }
