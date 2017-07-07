@@ -89,13 +89,13 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'archive':
 
-                $query->where(['>', '`department_company`.`user_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+                $query->where(['>', '`department_company`.`remove_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`remove_id`');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $this->dateFrom, $this->dateTo]);
 
                 $dataProvider->sort = [
                     'defaultOrder' => [
-                        'user_id'    => SORT_DESC,
+                        'remove_id'    => SORT_DESC,
                     ]
                 ];
 
