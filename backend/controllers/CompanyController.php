@@ -620,6 +620,7 @@ class CompanyController extends Controller
         if ($model->status == Company::STATUS_NEW) {
             $modelDepartmentCompany = DepartmentCompany::findOne(['company_id' => $id]);
             $modelDepartmentCompany->remove_date = time();
+            $modelDepartmentCompany->remove_id = Yii::$app->user->identity->id;
             $modelDepartmentCompany->save();
         }
 

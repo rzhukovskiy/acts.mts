@@ -12,12 +12,14 @@ use yii\db\ActiveRecord;
  * @property integer $company_id
  * @property integer $user_id
  * @property string $remove_date
+ * @property integer $remove_id
  */
 class DepartmentCompany extends ActiveRecord
 {
 
     public $companyNum;
     private $remove_date;
+    private $remove_id;
 
     public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год'];
 
@@ -35,7 +37,7 @@ class DepartmentCompany extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'user_id'], 'integer'],
+            [['company_id', 'user_id', 'remove_id'], 'integer'],
             [['remove_date'], 'safe'],
         ];
     }
@@ -49,6 +51,7 @@ class DepartmentCompany extends ActiveRecord
             'id' => 'ID',
             'company_id' => 'Компания',
             'user_id' => 'Сотрудник',
+            'remove_id' => 'Сотрудник',
             'companyNum' => 'Количество',
             'remove_date' => 'Дата переноса',
         ];

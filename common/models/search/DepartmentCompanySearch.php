@@ -103,7 +103,7 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'showarchive':
 
-                $query->with('company')->where(['`department_company`.`user_id`' => $this->user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
+                $query->with('company')->where(['`department_company`.`remove_id`' => $this->user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $this->dateFrom, $this->dateTo]);
 

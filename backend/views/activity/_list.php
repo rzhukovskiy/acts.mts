@@ -154,10 +154,14 @@ CanvasJsAsset::register($this);
                 ],
                 'columns' => [
                     [
-                        'attribute' => 'user_id',
+                        'attribute' => (Yii::$app->controller->action->id == 'new' ? 'user_id' : 'remove_id'),
                         'contentOptions' => ['class' => 'value_0', 'style' => 'min-width: 300px'],
                         'value' => function ($data) {
-                            return $GLOBALS['authorMembers'][$data->user_id];
+                            if(Yii::$app->controller->action->id == 'new') {
+                                return $GLOBALS['authorMembers'][$data->user_id];
+                            } else {
+                                return $GLOBALS['authorMembers'][$data->remove_id];
+                            }
                         },
                     ],
                     [
@@ -171,8 +175,17 @@ CanvasJsAsset::register($this);
                         'contentOptions' => ['style' => 'width: 120px'],
                         'buttons' => [
                             'view' => function ($url, $model, $key) {
+
+                                $toId = 0;
+
+                                if(Yii::$app->controller->action->id == 'new') {
+                                    $toId = $model->user_id;
+                                } else {
+                                    $toId = $model->remove_id;
+                                }
+
                                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                                    ['/activity/show' . Yii::$app->controller->action->id, 'user_id' => $model->user_id, 'type' => $GLOBALS['type'],
+                                    ['/activity/show' . Yii::$app->controller->action->id, 'user_id' => $toId, 'type' => $GLOBALS['type'],
                                         'DepartmentCompanySearch[dateFrom]' => $GLOBALS['dateFrom'],
                                         'DepartmentCompanySearch[dateTo]' => $GLOBALS['dateTo']]);
                             },
@@ -303,14 +316,14 @@ CanvasJsAsset::register($this);
                 ],
                 'columns' => [
                     [
-                        'attribute' => 'user_id',
+                        'attribute' => 'remove_id',
                         'group' => true,
                         'groupedRow' => true,
                         'groupOddCssClass' => 'kv-group-header',
                         'groupEvenCssClass' => 'kv-group-header',
                         'value' => function ($data) {
                             $GLOBALS['name'] = $GLOBALS['authorMembers'][$data->user_id];
-                            return $GLOBALS['authorMembers'][$data->user_id];
+                            return $GLOBALS['authorMembers'][$data->remove_id];
                         },
                     ],
                     [
