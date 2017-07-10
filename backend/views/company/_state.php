@@ -303,13 +303,21 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
         if (count($arrMemberList) > 1) {
 
             for ($i = 0; $i < count($arrMemberList); $i++) {
-                $memberText .= $GLOBALS['companyMembers'][$arrMemberList[$i]] . '<br />';
+                if(isset($GLOBALS['companyMembers'][$arrMemberList[$i]])) {
+                    $memberText .= $GLOBALS['companyMembers'][$arrMemberList[$i]] . '<br />';
+                } else {
+                    $memberText .= 'Сотрудник удален<br />';
+                }
             }
 
         } else {
 
             try {
-                $memberText = $GLOBALS['companyMembers'][$data->member_id];
+                if(isset($GLOBALS['companyMembers'][$data->member_id])) {
+                    $memberText = $GLOBALS['companyMembers'][$data->member_id];
+                } else {
+                    $memberText .= 'Сотрудник удален';
+                }
             } catch (\Exception $e) {
                 $memberText = '-';
             }
