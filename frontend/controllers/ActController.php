@@ -22,6 +22,7 @@ use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
+use common\models\CompanyOffer;
 
 class ActController extends Controller
 {
@@ -426,6 +427,14 @@ class ActController extends Controller
         $model = new Act();
         $model->service_type = $type;
         $model->partner_id = Yii::$app->user->identity->company_id;
+
+        // Возобновляем рассылку
+        $modelOffer = CompanyOffer::findOne(['company_id' => Yii::$app->user->identity->company_id]);
+        if(isset($modelOffer)) {
+            $modelOffer->email_status = 1;
+            $modelOffer->save();
+        }
+        // Возобновляем рассылку
 
         $showError = '';
 

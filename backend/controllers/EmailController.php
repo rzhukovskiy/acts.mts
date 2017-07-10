@@ -32,17 +32,17 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => [],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => [],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -73,6 +73,29 @@ class EmailController extends Controller
         ];
 
         return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+        ]);
+
+    }
+
+    public function actionNotification()
+    {
+
+        $searchModel = Company::find()->where(['OR', ['type' => 2], ['type' => 4]])->andWhere(['OR', ['status' => 2], ['status' => 10]])->with('info')->with('offer');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'type'    => SORT_ASC,
+            ]
+        ];
+
+        return $this->render('notific', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
         ]);
@@ -409,7 +432,7 @@ class EmailController extends Controller
 
                         if((isset($partnerArr[$iCompany]['email'])) && (isset($partnerArr[$iCompany]['type'])) && (isset($partnerArr[$iCompany]['name']))) {
 
-                            $toEmail = $partnerArr[$iCompany]['email'];
+                            $toEmail = strtolower(trim($partnerArr[$iCompany]['email']));
 
                             if(count(explode(',', $toEmail)) > 1) {
 

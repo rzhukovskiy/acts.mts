@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property integer $communication_at
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $email_status
  *
  * @property Company $company
  *
@@ -28,6 +29,7 @@ class CompanyOffer extends ActiveRecord
 {
     private $communication_str;
     private $processHtml;
+    private $email_status;
     /**
      * @inheritdoc
      */
@@ -53,7 +55,7 @@ class CompanyOffer extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'communication_at', 'created_at', 'updated_at'], 'integer'],
+            [['company_id', 'communication_at', 'created_at', 'updated_at', 'email_status'], 'integer'],
             [['process'], 'string', 'max' => 2500],
             [['communication_str'], 'string', 'max' => 1000],
             [['mail_number'], 'string', 'max' => 255],
@@ -72,6 +74,7 @@ class CompanyOffer extends ActiveRecord
             'mail_number' => 'Номер почтового отправления',
             'communication_at' => 'Дата следующей связи',
             'communication_str' => 'Дата следующей связи',
+            'email_status' => 'Рассылка',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

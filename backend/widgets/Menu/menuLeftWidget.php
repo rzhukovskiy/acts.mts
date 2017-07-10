@@ -265,6 +265,11 @@ class menuLeftWidget extends Widget
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
                 ],
+                [
+                    'label' => 'Почтовые<br />шаблоны',
+                    'url' => ['/email/list'],
+                    'active' => Yii::$app->controller->id == 'email'
+                ],
             ];
             if ($currentUser->is_account) {
                 $items[] = [

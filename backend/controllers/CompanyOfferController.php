@@ -242,4 +242,31 @@ class CompanyOfferController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionMailstatus()
+    {
+        if(Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+            $value = 1;
+
+            if((Yii::$app->request->post('value') == 0) || (Yii::$app->request->post('value') == 1)) {
+                $value = Yii::$app->request->post('value');
+            }
+
+            $model = CompanyOffer::findOne(['company_id' => $id]);
+
+            $model->email_status = $value;
+
+            if($model->save()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+    }
+
 }

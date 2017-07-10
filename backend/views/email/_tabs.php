@@ -18,5 +18,6 @@ echo Tabs::widget([
     'items' => [
         ['label' => 'Шаблоны', 'url' => ['list'], 'active' => Yii::$app->controller->action->id == 'list'],
         ['label' => $nameUpdTab, 'url' => ['add'], 'active' => ((Yii::$app->controller->action->id == 'add') || (Yii::$app->controller->action->id == 'update'))],
+        ['label' => 'Настройка рассылки для партнеров', 'url' => ['notification'], 'active' => Yii::$app->controller->action->id == 'notification'],
     ],
 ]);
