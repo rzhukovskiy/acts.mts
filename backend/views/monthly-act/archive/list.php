@@ -237,6 +237,7 @@ if(!$searchModel->client_id) {
 
     $GLOBALS['dateFrom'] = $searchModel->dateFrom;
     $GLOBALS['dateTo'] = $searchModel->dateTo;
+    $GLOBALS['comopany'] = $company;
 
     $columns[] = [
         'label'     => '',
@@ -246,6 +247,7 @@ if(!$searchModel->client_id) {
                 \yii\helpers\Url::to([
                     '/monthly-act/archive',
                     'type'                        => $type,
+                    'company'                        => $GLOBALS['comopany'],
                     'MonthlyActSearch[client_id]' => $data->client_id,
                     'MonthlyActSearch[dateFrom]' => $GLOBALS['dateFrom'],
                     'MonthlyActSearch[dateTo]' => $GLOBALS['dateTo']

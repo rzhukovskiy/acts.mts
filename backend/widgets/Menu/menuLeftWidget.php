@@ -118,7 +118,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив актов',
-                    'url' => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
+                    'url' => ['/monthly-act/archive?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id == 'archive'),
                 ],
                 [
@@ -252,7 +252,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Архив актов',
-                    'url' => ['/monthly-act/archive?type=' . Company::TYPE_OWNER],
+                    'url' => ['/monthly-act/archive?type=' . Company::TYPE_WASH],
                     'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id == 'archive'),
                 ],
                 [

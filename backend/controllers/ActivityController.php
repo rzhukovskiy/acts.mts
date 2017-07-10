@@ -131,7 +131,7 @@ class ActivityController extends Controller
 
         $params = Yii::$app->request->queryParams;
 
-        // Если не выбран период то показываем только текущий год
+        // Если не выбран период то
         if(!isset($params['ActSearch']['dateFrom'])) {
             $params['ActSearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
             $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
@@ -141,7 +141,7 @@ class ActivityController extends Controller
             $params['ActSearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
             $searchModel->dateTo = $params['ActSearch']['dateTo'];
         }
-        // Если не выбран период то показываем только текущий год
+        // Если не выбран период то
 
         $dataProvider = $searchModel->search($params);
 

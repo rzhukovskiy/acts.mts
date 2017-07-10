@@ -110,23 +110,37 @@ class MonthlyActController extends Controller
             ]);
     }
 
-    public function actionArchive($type)
+    public function actionArchive($type, $company = 0)
     {
         $searchModel = new MonthlyActSearch();
         $searchModel->type_id = $type;
         // $searchModel->scenario = 'statistic_filter';
-        $searchModel->period = Yii::$app->request->get('period');
-        $dataProvider = $searchModel->searchArchive(Yii::$app->request->queryParams);
+        //$searchModel->period = Yii::$app->request->get('period');
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то
+        if(!isset($params['MonthlyActSearch']['dateFrom'])) {
+            $params['MonthlyActSearch']['dateFrom'] = date("Y", strtotime("-1 year")) . '-12-31T21:00:00.000Z';
+            $searchModel->dateFrom = $params['MonthlyActSearch']['dateFrom'];
+        }
+
+        if(!isset($params['MonthlyActSearch']['dateTo'])) {
+            $params['MonthlyActSearch']['dateTo'] = date("Y") . '-12-31T21:00:00.000Z';
+            $searchModel->dateTo = $params['MonthlyActSearch']['dateTo'];
+        }
+        // Если не выбран период то
+
+        $dataProvider = $searchModel->searchArchive($params);
 
         $models = $dataProvider->getModels();
         $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
+
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            $listType = Company::$listType;
-            array_pop($listType);
+            $listType = Service::$listType;
         } else {
             $listType = Yii::$app->user->identity->getAllServiceType(Company::STATUS_ACTIVE);
         }
-
 
         return $this->render('archive/list',
             [
@@ -134,6 +148,7 @@ class MonthlyActController extends Controller
                 'searchModel'  => $searchModel,
                 'totalProfit'  => $totalProfit,
                 'listType'     => $listType,
+                'company'      => $company,
                 'type'         => $type
             ]);
     }
