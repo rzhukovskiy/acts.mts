@@ -402,6 +402,7 @@ class CompanyController extends Controller
             $DepartmentCompany = new DepartmentCompany();
             $DepartmentCompany->company_id = $model->id;
             $DepartmentCompany->user_id = Yii::$app->user->identity->id;
+            $DepartmentCompany->remove_id = 0;
             $DepartmentCompany->save();
 
             return $this->redirect(['company/update', 'id' => $model->id]);
