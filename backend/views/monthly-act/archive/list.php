@@ -253,7 +253,7 @@ if($searchModel->client_id) {
         'contentOptions' => function ($model) {
             return [
                 'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
-                'style' => 'min-width: 130px'
+                'style' => 'width: 200px'
             ];
         },
     ];
@@ -272,7 +272,7 @@ if($searchModel->client_id) {
                 ]);
         },
         'contentOptions' => function ($model) {
-            return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 190px'];
+            return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'width: 240px'];
         },
         'filter' => false,
         'format' => 'raw',
