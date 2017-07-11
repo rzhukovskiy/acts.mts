@@ -443,7 +443,14 @@ if (strpos(Yii::$app->request->url, '&filterStatus=') > 0) {
     $filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Не подписанные</span>', Yii::$app->request->url . '&filterStatus=' . 2);
 }
 
-$filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus=')));
+$clearLink = substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, '&filterStatus='));
+
+if(!$clearLink) {
+    $clearLink = Yii::$app->request->url;
+}
+$clearLink = substr($clearLink, 0, strpos($clearLink, '&search_number='));
+
+$filters .= Html::a('<span class="btn btn-primary btn-sm" style="margin-left: 15px;">Сбросить</span>', $clearLink);
 // Кнопки не оплачен и не подписан
 
 // Поиск по номеру
