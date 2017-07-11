@@ -5,6 +5,7 @@ use common\models\Company;
 use yii\bootstrap\Html;
 use kartik\grid\GridView;
 use common\models\DepartmentCompany;
+use common\models\MonthlyAct;
 
 /**
  * @var $this yii\web\View
@@ -231,6 +232,53 @@ if($searchModel->client_id) {
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
     ];
+
+    $columns[] = [
+        'attribute' => 'payment_status',
+        'value' => function ($model, $key, $index, $column) {
+            return Html::activeDropDownList($model,
+                'payment_status',
+                MonthlyAct::$paymentStatus,
+                [
+                    'class'              => 'form-control change-payment_status',
+                    'data-id'            => $model->id,
+                    'data-paymentStatus' => $model->payment_status,
+                    'disabled'           => MonthlyAct::payDis($model->payment_status) ? 'disabled' : false,
+                ]
+
+            );
+        },
+        'filter' => false,
+        'format' => 'raw',
+        'contentOptions' => function ($model) {
+            return [
+                'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
+                'style' => 'min-width: 130px'
+            ];
+        },
+    ];
+
+    $columns[] = [
+        'attribute' => 'act_status',
+        'value' => function ($model, $key, $index, $column) {
+            return Html::activeDropDownList($model,
+                'act_status',
+                MonthlyAct::passActStatus($model->act_status),
+                [
+                    'class'          => 'form-control change-act_status',
+                    'data-id'        => $model->id,
+                    'data-actStatus' => $model->act_status,
+                    'disabled'       => MonthlyAct::actDis($model->act_status) ? 'disabled' : false,
+                ]);
+        },
+        'contentOptions' => function ($model) {
+            return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 190px'];
+        },
+        'filter' => false,
+        'format' => 'raw',
+
+    ];
+
 }
 
 if(!$searchModel->client_id) {
