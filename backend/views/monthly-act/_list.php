@@ -24,6 +24,17 @@ if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
 $actionLinkSearch = Url::to('@web/monthly-act/searchact');
 $actionLinkGetComments = Url::to('@web/monthly-act/getcomments');
 
+// Выделение номера акта
+$numFind = 0;
+
+if(isset(Yii::$app->request->queryParams['search_number'])) {
+    if (Yii::$app->request->queryParams['search_number']) {
+        $numFind = Yii::$app->request->queryParams['search_number'];
+    }
+}
+
+// Выделение номера акта
+
 $css = "#previewStatus {
 background:#fff;
 padding:12px;
@@ -264,6 +275,27 @@ $('#searchActNumButt').on('click', function(){
     
 });
     // Поиск по номеру акта или счета
+    
+    // Выделение выбранного номера акта
+    if('$numFind'.length > 1) {
+        
+        $('#searchActNum').val('$numFind');
+        
+        $('.numberAct').each(function(i,elem) {
+            if($(this).text() == '$numFind') {
+                
+               // выделение
+               $(this).parent().addClass('kv-page-summary warning');
+               // выделение
+               
+               // Прокрутка страницы
+               $('html, body').animate({scrollTop: parseInt($(this).offset().top)}, 800);
+               // Прокрутка страницы
+                              
+            }
+        });
+    }
+    // Выделение выбранного номера акта
     
 // При наведении на название показывается статус актов
 var margTop = 0;

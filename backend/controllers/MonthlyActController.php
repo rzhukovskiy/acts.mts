@@ -237,7 +237,7 @@ class MonthlyActController extends Controller
                 $resLink = '/monthly-act/list?type=';
 
                 if(is_numeric($number[0])) {
-                    $arrActData = ActData::find()->where(['id' => $number])->select('type, company, period')->all();
+                    $arrActData = ActData::find()->where('(number LIKE "_' . $number . '") OR (number = "DD' . $number . '")')->select('type, company, period, number')->limit(1)->all();
 
                     if(count($arrActData) > 0) {
 
@@ -258,6 +258,7 @@ class MonthlyActController extends Controller
                         }
 
                         $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+                        $resLink .= '&search_number=' . $arrActData[0]['number'];
                         echo json_encode(['success' => 'true', 'link' => $resLink]);
 
                         } else {
@@ -270,7 +271,7 @@ class MonthlyActController extends Controller
 
                 } else {
 
-                    $arrActData = ActData::find()->where(['number' => $number])->select('type, company, period, number')->all();
+                    $arrActData = ActData::find()->where(['number' => $number])->select('type, company, period, number')->limit(1)->all();
 
                     if(count($arrActData) > 0) {
 
@@ -291,6 +292,7 @@ class MonthlyActController extends Controller
                         }
 
                         $resLink .= '&MonthlyActSearch%5Bact_date%5D=' . $period;
+                        $resLink .= '&search_number=' . $arrActData[0]['number'];
                         echo json_encode(['success' => 'true', 'link' => $resLink]);
 
                         } else {

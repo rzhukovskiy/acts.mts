@@ -11,6 +11,7 @@ use common\models\CompanyInfo;
 use yii\helpers\Html;
 use common\models\ActExport;
 use common\models\Company;
+use common\models\ActData;
 
 $script = <<< JS
 
@@ -99,7 +100,7 @@ echo GridView::widget([
                     'content' => $filters,
                     'options' => [
                         'style'   => 'vertical-align: middle',
-                        'colspan' => 8,
+                        'colspan' => 10,
                         'class'   => 'kv-grid-group-filter',
                     ],
                 ]
@@ -180,7 +181,7 @@ echo GridView::widget([
             },
         ],
         [
-            'header' => 'Дни до оплаты',
+            'header' => 'Дни до<br />оплаты',
             //'attribute' => 'payment_date',
             'value' => function ($data) {
 
@@ -280,6 +281,54 @@ echo GridView::widget([
                 }
 
             },
+        ],
+        [
+            'header' => 'Номер',
+            'contentOptions' => ['class' => 'numberAct'],
+            'value' => function ($data) {
+
+                $type = $GLOBALS['type'];
+                $company = $GLOBALS['company'];
+
+                $name = $data->client->name;
+                $name = trim($name);
+                $name = str_replace('+', '', $name);
+                $name = str_replace('_', '\_', $name);
+                $name = str_replace(' ', '\_', $name);
+                $name = str_replace('"', '', $name);
+                $name = str_replace('"', '', $name);
+                $name = str_replace('«', '', $name);
+                $name = str_replace('»', '', $name);
+
+                $period = '';
+
+                if(isset(Yii::$app->request->queryParams['MonthlyActSearch']['act_date'])) {
+                    $period = '0' . Yii::$app->request->queryParams['MonthlyActSearch']['act_date'];
+                } else {
+                    $period = date("m-Y", strtotime("-1 month"));
+                }
+
+                $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->select('number')->column();
+
+                if(isset($numAct)) {
+
+                    if(count($numAct) > 0) {
+
+                        if(isset($numAct[0])) {
+                            return $numAct[0];
+                        } else {
+                            return '-';
+                        }
+
+                    } else {
+                        return '-';
+                    }
+
+                } else {
+                    return '-';
+                }
+
+            }
         ],
         'act_status'     => [
             'attribute'      => 'act_status',
