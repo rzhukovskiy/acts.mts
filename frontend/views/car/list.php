@@ -210,23 +210,23 @@ echo GridView::widget([
             'buttons' => [
                 'view' => function ($url, $data, $key) {
                     if (!is_null($data->car_id)) { // появился акт для машины призрака
-                        if($data->car_id == 8294) {
 
-                            if(isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299, 'ActSearch[dateFrom]' => Yii::$app->request->queryParams['ActSearch']['dateFrom'], 'ActSearch[dateTo]' => Yii::$app->request->queryParams['ActSearch']['dateTo']]);
+                        $number = $data->car_number;
+
+                        $resCar = \common\models\Car::find()->where(['number' => $number])->select('id')->column();
+
+                        if(count($resCar) > 0) {
+                            $car_id = $resCar[0];
+
+                            if (isset(Yii::$app->request->queryParams['ActSearch'])) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $car_id, 'ActSearch[dateFrom]' => Yii::$app->request->queryParams['ActSearch']['dateFrom'], 'ActSearch[dateTo]' => Yii::$app->request->queryParams['ActSearch']['dateTo']]);
                             } else {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => 8299]);
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $car_id]);
                             }
-
                         } else {
-
-                            if(isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id, 'ActSearch[dateFrom]' => Yii::$app->request->queryParams['ActSearch']['dateFrom'], 'ActSearch[dateTo]' => Yii::$app->request->queryParams['ActSearch']['dateTo']]);
-                            } else {
-                                return Html::a('<span class="glyphicon glyphicon-search"></span>', ['view', 'id' => $data->car_id]);
-                            }
-
+                            return Html::tag('span', 'Нет машины', ['class' => 'label label-danger']);
                         }
+
 
                     } else {
                         return Html::tag('span', 'Нет машины', ['class' => 'label label-danger']);
