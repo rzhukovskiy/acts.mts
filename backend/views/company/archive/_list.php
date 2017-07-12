@@ -8,6 +8,15 @@ use common\models\Company;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
+// Подкатегории для сервиса
+$requestSupType = 0;
+if($searchModel->type == 3) {
+    if(Yii::$app->request->get('sub')) {
+        $requestSupType = Yii::$app->request->get('sub');
+    }
+}
+// Подкатегории для сервиса
+
 $GLOBALS["typeName"] = '';
 
 switch ($type) {
@@ -36,11 +45,18 @@ switch ($type) {
     <div class="panel-heading">
         Список
         <div class="header-btn pull-right">
-            <?= Html::a('Добавить', [
+            <?php
+
+            if(($searchModel->type != 3) || ($requestSupType > 0)) {
+                echo Html::a('Добавить', [
                 'company/create',
                 'Company[type]' => $searchModel->type,
+                'Company[sub_type]' => $requestSupType,
                 'Company[status]' => Company::STATUS_ARCHIVE
-            ], ['class' => 'btn btn-danger btn-sm']) ?>
+            ], ['class' => 'btn btn-danger btn-sm']);
+            }
+
+            ?>
         </div>
     </div>
     <div class="panel-body">

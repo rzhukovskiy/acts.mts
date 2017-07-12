@@ -22,6 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property string $address
  * @property string $director
  * @property integer $type
+ * @property integer $sub_type
  * @property integer $is_nested
  * @property integer $status
  * @property integer $is_split
@@ -110,6 +111,29 @@ class Company extends ActiveRecord
         self::TYPE_UNIVERSAL => [
             'en' => 'universal',
             'ru' => 'Универсальная',
+        ],
+    ];
+
+    static $subTypeService = [
+        self::TYPE_OWNER => [
+            'en' => 'service',
+            'ru' => 'Сервис',
+        ],
+        self::TYPE_WASH => [
+            'en' => 'evacuator',
+            'ru' => 'Эвакуатор',
+        ],
+        self::TYPE_SERVICE => [
+            'en' => 'shop',
+            'ru' => 'Магазин запчастей',
+        ],
+        self::TYPE_TIRES => [
+            'en' => 'refrigeration',
+            'ru' => 'Холодильное оборудование',
+        ],
+        self::TYPE_DISINFECT => [
+            'en' => 'repair',
+            'ru' => 'Ремонт жестянки',
         ],
     ];
 
@@ -207,6 +231,7 @@ class Company extends ActiveRecord
             ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
+            ['sub_type', 'default', 'value' => 0],
             ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ARCHIVE3, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }

@@ -9,11 +9,12 @@
  * @var $admin null|bool
  */
 $this->title = \common\models\Company::$listType[$type]['ru'];
-if ($admin) {
+if (($admin) && (($type != 3) || ($sub_type > 0))) {
     echo $this->render(\common\models\Company::$listType[$type]['en'] . '/_form',
     [
         'model' => $model,
         'type'  => $type,
+        'sub_type' => $sub_type,
     ]);
 }
 

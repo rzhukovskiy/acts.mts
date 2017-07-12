@@ -18,7 +18,7 @@ use common\models\Requisites;
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([
-            'action' => $model->isNewRecord ? ['company/create', 'type' => $type] : ['company/update', 'id' => $model->id],
+            'action' => $model->isNewRecord ? ['company/create', 'type' => $type, 'sub' => $sub_type] : ['company/update', 'id' => $model->id],
             'id' => 'company-form',
             'options' => ['class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [

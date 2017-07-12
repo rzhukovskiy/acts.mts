@@ -66,15 +66,33 @@ class CompanyController extends Controller
         $searchModel->status = Company::STATUS_ACTIVE;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        $requestSupType = 0;
+        if($type == 3) {
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort->defaultOrder=['parent_key' => SORT_ASC];
 
         $model = new Company();
         $model->type = $type;
+        $model->sub_type = $requestSupType;
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'type' => $type,
+            'sub_type' => $requestSupType,
             'model' => $model,
             'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
         ]);
@@ -85,13 +103,20 @@ class CompanyController extends Controller
      * @param integer $type
      * @return mixed
      */
-    public function actionCreate($type)
+    public function actionCreate($type, $sub = 0)
     {
         $model = new Company();
         $model->type = $type;
+        $model->sub_type = $sub;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['company/list', 'type' => $type]);
+
+            if($sub == 0) {
+                return $this->redirect(['company/list', 'type' => $type]);
+            } else {
+                return $this->redirect(['company/list', 'type' => $type, 'sub' => $sub]);
+            }
+
         } else {
             return $this->goBack();
         }

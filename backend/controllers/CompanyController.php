@@ -118,6 +118,21 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'created_at' => SORT_DESC,
@@ -192,6 +207,22 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,
@@ -246,6 +277,22 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,
@@ -300,6 +347,22 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,
@@ -354,6 +417,22 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $dataProvider->sort = [
             'defaultOrder' => [
                 'address'    => SORT_ASC,
