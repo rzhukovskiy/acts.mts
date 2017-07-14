@@ -711,6 +711,9 @@ class ActController extends Controller
     {
         $this->findModel($id)->delete();
 
+        // Удаляем цены из удаленного акта
+        Yii::$app->db->createCommand()->delete('{{%act_scope}}', ['act_id' => $id])->execute();
+
         return $this->redirect(Yii::$app->request->referrer);
     }
 

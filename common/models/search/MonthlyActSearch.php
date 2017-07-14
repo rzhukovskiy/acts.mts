@@ -182,14 +182,24 @@ class MonthlyActSearch extends MonthlyAct
 
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'company.id'                               => $this->id,
-            'company.client_id'                        => $this->client_id,
-            'company.type_id'                          => $this->type_id,
-            'company.is_partner'                       => $this->is_partner,
-            'company.created_at'                       => $this->created_at,
-            'company.updated_at'                       => $this->updated_at,
-        ]);
+        if($this->type_id) {
+            $query->andFilterWhere([
+                'company.id' => $this->id,
+                'company.client_id' => $this->client_id,
+                'company.type_id' => $this->type_id,
+                'company.is_partner' => $this->is_partner,
+                'company.created_at' => $this->created_at,
+                'company.updated_at' => $this->updated_at,
+            ]);
+        } else {
+            $query->andFilterWhere([
+                'company.id' => $this->id,
+                'company.client_id' => $this->client_id,
+                'company.is_partner' => $this->is_partner,
+                'company.created_at' => $this->created_at,
+                'company.updated_at' => $this->updated_at,
+            ]);
+        }
 
         $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
 
@@ -200,7 +210,11 @@ class MonthlyActSearch extends MonthlyAct
         if ($this->is_partner == self::PARTNER) {
             $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
         } else {
-            $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+            if ($this->type_id) {
+                $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+            } else {
+                $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+            }
         }
         //
 
@@ -208,7 +222,17 @@ class MonthlyActSearch extends MonthlyAct
         $query->andWhere('client.address LIKE "%' . $this->client_city . '%" ');
 
         if(!$this->client_id) {
-            $query->groupBy('company.client_id');
+            if ($this->type_id) {
+                $query->groupBy('company.client_id');
+            } else {
+                $query->groupBy('company.client_id');
+                $query->orderBy('company.type_id');
+            }
+        } else {
+            if (!$this->type_id) {
+                $query->groupBy('company.type_id, company.id');
+                $query->orderBy('company.type_id, company.act_date');
+            }
         }
 
         return $dataProvider;

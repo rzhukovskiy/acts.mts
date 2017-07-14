@@ -29,6 +29,14 @@ foreach ($listType as $type_id => $typeData) {
     ];
 }
 
+$items[] = [
+    'label'  => 'Должники',
+    'url'    => ['archive', 'type' => 1, 'company' => true,
+        'MonthlyActSearch[dateFrom]' => $searchModel->dateFrom,
+        'MonthlyActSearch[dateTo]' => $searchModel->dateTo],
+    'active' => $type == 1 && Yii::$app->request->get('company'),
+];
+
 
 echo Tabs::widget([
     'items' => $items,

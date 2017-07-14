@@ -113,7 +113,11 @@ class MonthlyActController extends Controller
     public function actionArchive($type, $company = 0)
     {
         $searchModel = new MonthlyActSearch();
-        $searchModel->type_id = $type;
+
+        if(!($type == 1)) {
+            $searchModel->type_id = $type;
+        }
+
         // $searchModel->scenario = 'statistic_filter';
         //$searchModel->period = Yii::$app->request->get('period');
 

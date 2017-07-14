@@ -183,7 +183,7 @@ if($searchModel->client_id) {
     ];
 }
 
-if($searchModel->client_id && $searchModel->type_id == Company::TYPE_OWNER) {
+if($searchModel->client_id && (!$searchModel->type_id)) {
     $columns[] = [
         'attribute'         => 'type_id',
         'label'             => 'Услуга',
@@ -225,7 +225,7 @@ if($searchModel->client_id) {
     $columns[] = [
         'attribute'     => 'profit',
         'value'         => function ($data) {
-            return $data->profit;
+            return (int) $data->profit;
         },
         'format'        => 'html',
         'filter'    => false,
