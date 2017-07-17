@@ -312,6 +312,18 @@ class MonthlyAct extends ActiveRecord
         }
         */
 
+        // Добавлять дату при изменении комментариев
+        $newAct_comment = strlen(trim($this->act_comment));
+        if ($this->act_comment && (mb_strlen($newAct_comment) > 0)) {
+            $this->act_comment .= ' ' . (new \DateTime())->format('d-m-Y H:i');
+        }
+
+        $newPayment_comment = strlen(trim($this->payment_comment));
+        if ($this->payment_comment && (mb_strlen($newPayment_comment) > 0)) {
+            $this->payment_comment .= ' ' . (new \DateTime())->format('d-m-Y H:i');
+        }
+        // Добавлять дату при изменении комментариев
+
         return parent::beforeSave($insert);
     }
 
