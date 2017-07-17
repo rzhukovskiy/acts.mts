@@ -613,7 +613,8 @@ class ActExporter
             $row++; $row++; $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Петросян А.Р.___________');
             $objDrawing = null;
-            if($company->is_act_sign){
+            if($company->is_act_sign == 1) {
+                //печать
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setPath('images/post-small.png');
                 $objDrawing->setName($act->car_number);
@@ -622,6 +623,18 @@ class ActExporter
                 $objDrawing->setWorksheet($worksheet);
                 $objDrawing->setOffsetX(-40);
                 $objDrawing = null;
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName($act->car_number);
+                $objDrawing->setPath('images/sign.png');
+                $range = $cols[$startCol + 1] . ($row - 2);
+                $objDrawing->setCoordinates($range);
+                $objDrawing->setWorksheet($worksheet);
+                $objDrawing->setOffsetY(-10);
+                $objDrawing->setOffsetX(-30);
+                $objDrawing = null;
+            } else if($company->is_act_sign == 2) {
+                //подпись
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setName($act->car_number);
                 $objDrawing->setPath('images/sign.png');
@@ -1432,7 +1445,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("E$row", "Заказчик");
 
             $row++;
-            if($company->is_act_sign){
+            if($company->is_act_sign == 1) {
                 //подпись
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setPath('images/sign.png');
@@ -1445,6 +1458,13 @@ class ActExporter
                 $objDrawing->setCoordinates("C$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(100);
+            } else if($company->is_act_sign == 2) {
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/sign.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(50);
             }
 
             $row++;
@@ -1530,7 +1550,7 @@ class ActExporter
 
             $row++;
             //подпись
-            if ($company->is_act_sign) {
+            if ($company->is_act_sign == 1) {
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setName('Sample image');
                 $objDrawing->setDescription('Sample image');
@@ -1551,6 +1571,21 @@ class ActExporter
                 $objDrawing->setCoordinates("D$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(30);
+            } else if ($company->is_act_sign == 2) {
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName('Sample image');
+                $objDrawing->setDescription('Sample image');
+                $objDrawing->setPath('images/sign.png');
+
+                if ($this->serviceType == Company::TYPE_WASH) {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(50);
+                } else {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(10);
+                }
             }
             $row++;
             $companyWorkSheet->mergeCells("B$row:E$row");
@@ -1856,7 +1891,7 @@ class ActExporter
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
-        if ($company->is_act_sign) {
+        if ($company->is_act_sign == 1) {
             //печать
             $objDrawing = new \PHPExcel_Worksheet_Drawing();
             $objDrawing->setName('Sample image');
@@ -1866,6 +1901,17 @@ class ActExporter
             $objDrawing->setWorksheet($companyWorkSheet);
             $objDrawing->setOffsetX(30);
             $row++;
+            $row++;
+            //подпись
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setName('Sample image');
+            $objDrawing->setDescription('Sample image');
+            $objDrawing->setPath('images/sign.png');
+            $objDrawing->setCoordinates("B{$row}");
+            $objDrawing->setWorksheet($companyWorkSheet);
+            $objDrawing->setOffsetX(70);
+            $row++;
+        } else if ($company->is_act_sign == 2) {
             $row++;
             //подпись
             $objDrawing = new \PHPExcel_Worksheet_Drawing();
@@ -6190,7 +6236,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("E$row", "Заказчик");
 
             $row++;
-            if($companyMain->is_act_sign){
+            if($companyMain->is_act_sign == 1) {
                 //подпись
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setPath('images/sign.png');
@@ -6203,6 +6249,13 @@ class ActExporter
                 $objDrawing->setCoordinates("C$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(100);
+            } else if($companyMain->is_act_sign == 2) {
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/sign.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(50);
             }
 
             $row++;
@@ -6288,7 +6341,7 @@ class ActExporter
 
             $row++;
             //подпись
-            if ($companyMain->is_act_sign) {
+            if ($companyMain->is_act_sign == 1) {
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setName('Sample image');
                 $objDrawing->setDescription('Sample image');
@@ -6309,6 +6362,21 @@ class ActExporter
                 $objDrawing->setCoordinates("D$row");
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(30);
+            } else if ($companyMain->is_act_sign == 2) {
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName('Sample image');
+                $objDrawing->setDescription('Sample image');
+                $objDrawing->setPath('images/sign.png');
+
+                if ($this->serviceType == Company::TYPE_WASH) {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(50);
+                } else {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(10);
+                }
             }
             $row++;
             $companyWorkSheet->mergeCells("B$row:E$row");
@@ -6600,7 +6668,7 @@ class ActExporter
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
-        if ($companyMain->is_act_sign) {
+        if ($companyMain->is_act_sign == 1) {
             //печать
             $objDrawing = new \PHPExcel_Worksheet_Drawing();
             $objDrawing->setName('Sample image');
@@ -6620,7 +6688,18 @@ class ActExporter
             $objDrawing->setWorksheet($companyWorkSheet);
             $objDrawing->setOffsetX(70);
             $row++;
-        }else{
+        } else if ($companyMain->is_act_sign == 2) {
+            $row++;
+            //подпись
+            $objDrawing = new \PHPExcel_Worksheet_Drawing();
+            $objDrawing->setName('Sample image');
+            $objDrawing->setDescription('Sample image');
+            $objDrawing->setPath('images/sign.png');
+            $objDrawing->setCoordinates("B{$row}");
+            $objDrawing->setWorksheet($companyWorkSheet);
+            $objDrawing->setOffsetX(70);
+            $row++;
+        } else {
             $row++;
             $row++;
             $row++;

@@ -43,7 +43,11 @@ use common\models\Requisites;
 
         <div id="details" class="collapse">
             <?= $form->field($model, 'is_split')->checkbox([], false) ?>
-            <?= $form->field($model, 'is_act_sign')->checkbox([], false) ?>
+            <?= $form->field($model, 'is_act_sign')->radioList([
+                '0' => 'Нет',
+                '1' => 'Подпись и печать',
+                '2' => 'Только подпись',
+            ]); ?>
             <?= $form->field($model, 'cardList') ?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">

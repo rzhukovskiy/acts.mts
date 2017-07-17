@@ -44,7 +44,11 @@ use yii\helpers\ArrayHelper;
         </div>
 
         <div id="details" class="collapse">
-            <?= $form->field($model, 'is_act_sign')->checkbox([], false) ?>
+            <?= $form->field($model, 'is_act_sign')->radioList([
+                '0' => 'Нет',
+                '1' => 'Подпись и печать',
+                '2' => 'Только подпись',
+            ]); ?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">
                     <strong>Для актов</strong>
