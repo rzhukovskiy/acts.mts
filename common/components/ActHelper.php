@@ -158,7 +158,14 @@ class ActHelper
                     foreach ($data->clientScopes as $scope) {
                         $services[] = $scope->description;
                     }
-                    return implode('+', $services);
+                    $showServiceName = implode('+', $services);
+
+                    // заменяем внутри+снаружи на снаружи+внутри
+                    if(mb_strpos($showServiceName, 'внутри+снаружи')  !==  false) {
+                        $showServiceName = str_replace('внутри+снаружи', 'снаружи+внутри', $showServiceName);
+                    }
+
+                    return $showServiceName;
                 },
                 'width' => '140px',
             ],
@@ -170,7 +177,15 @@ class ActHelper
                     foreach ($data->partnerScopes as $scope) {
                         $services[] = $scope->description;
                     }
-                    return implode('+', $services);
+
+                    $showServiceName = implode('+', $services);
+
+                    // заменяем внутри+снаружи на снаружи+внутри
+                    if(mb_strpos($showServiceName, 'внутри+снаружи') !== false) {
+                        $showServiceName = str_replace('внутри+снаружи', 'снаружи+внутри', $showServiceName);
+                    }
+
+                    return $showServiceName;
                 },
                 'width' => '140px',
             ],
