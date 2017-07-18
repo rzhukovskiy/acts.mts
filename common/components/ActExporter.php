@@ -1274,7 +1274,15 @@ class ActExporter
                         foreach ($data->clientScopes as $scope) {
                             $services[] = $scope->description;
                         }
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . implode('+', $services));
+
+                        $showServiceName = implode('+', $services);
+
+                        // заменяем внутри+снаружи на снаружи+внутри
+                        if(mb_strpos($showServiceName, 'внутри+снаружи') !== false) {
+                            $showServiceName = str_replace('внутри+снаружи', 'снаружи+внутри', $showServiceName);
+                        }
+
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . $showServiceName);
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->income);
                         $total += $data->income;
                     } else {
@@ -1282,7 +1290,15 @@ class ActExporter
                         foreach ($data->partnerScopes as $scope) {
                             $services[] = $scope->description;
                         }
-                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . implode('+', $services));
+
+                        $showServiceName = implode('+', $services);
+
+                        // заменяем внутри+снаружи на снаружи+внутри
+                        if(mb_strpos($showServiceName, 'внутри+снаружи') !== false) {
+                            $showServiceName = str_replace('внутри+снаружи', 'снаружи+внутри', $showServiceName);
+                        }
+
+                        $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 'Мойка ' . $showServiceName);
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->expense);
                         $total += $data->expense;
                     }
