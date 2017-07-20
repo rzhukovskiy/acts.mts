@@ -322,7 +322,6 @@ CanvasJsAsset::register($this);
                         'groupOddCssClass' => 'kv-group-header',
                         'groupEvenCssClass' => 'kv-group-header',
                         'value' => function ($data) {
-                            $GLOBALS['name'] = $GLOBALS['authorMembers'][$data->user_id];
                             return $GLOBALS['authorMembers'][$data->remove_id];
                         },
                     ],
