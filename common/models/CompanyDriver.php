@@ -33,7 +33,7 @@ class CompanyDriver extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'car_id'], 'required'],
+            [['company_id', 'car_id', 'phone', 'name'], 'required'],
             [['company_id', 'car_id'], 'integer'],
             [['phone', 'name'], 'string', 'max' => 255],
         ];
