@@ -7,7 +7,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
-$this->title = 'Редактирование ' . $model->company->name;
+$this->title = 'Водители ' . $model->company->name;
 
 echo $this->render('_update_tabs', [
     'model' => $model->company,
@@ -17,4 +17,6 @@ echo $this->render('/company-driver/_list', [
     'model' => $model,
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
+    'arrTypes' => $arrTypes,
+    'arrMarks' => $arrMarks,
 ]);

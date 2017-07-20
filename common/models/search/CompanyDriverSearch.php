@@ -18,8 +18,8 @@ class CompanyDriverSearch extends CompanyDriver
     public function rules()
     {
         return [
-            [['id', 'company_id', 'mark_id', 'type_id'], 'integer'],
-            [['phone', 'name'], 'safe'],
+            [['id', 'company_id'], 'integer'],
+            [['phone', 'name', 'number'], 'safe'],
         ];
     }
 
@@ -41,12 +41,13 @@ class CompanyDriverSearch extends CompanyDriver
      */
     public function search($params)
     {
-        $query = CompanyDriver::find();
+        $query = CompanyDriver::find()->with('car');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
@@ -64,9 +65,9 @@ class CompanyDriverSearch extends CompanyDriver
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'phone', $this->phone])
-            ->andFilterWhere(['mark_id' => $this->mark_id])
-            ->andFilterWhere(['type_id' => $this->type_id]);
+            ->andFilterWhere(['like', 'phone', $this->phone]);
+
+        $query->orderBy('car_id ASC');
 
         return $dataProvider;
     }

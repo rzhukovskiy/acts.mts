@@ -32,6 +32,7 @@ use common\models\search\TypeSearch;
 use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\Type;
+use common\models\Mark;
 use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -1141,10 +1142,16 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // Массив Типов ТС и Марок ТС
+        $arrTypes = Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+        $arrMarks = Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+
         return $this->render('driver', [
             'model' => $modelCompanyMember,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'arrTypes' => $arrTypes,
+            'arrMarks' => $arrMarks,
         ]);
     }
 

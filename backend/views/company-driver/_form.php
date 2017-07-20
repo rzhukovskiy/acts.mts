@@ -1,7 +1,6 @@
 <?php
 
-use common\models\Mark;
-use common\models\Type;
+use common\models\Car;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -25,13 +24,9 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
 
-<?= $form->field($model, 'mark_id')->dropDownList(
-    Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
+<?= $form->field($model, 'car_id')->dropDownList(
+    Car::find()->select(['number', 'id'])->where(['company_id' => $model->company_id])->orderBy('id ASC')->indexBy('id')->column(),
     ['prompt' => 'выберите марку ТС']
-) ?>
-<?= $form->field($model, 'type_id')->dropDownList(
-    Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
-    ['prompt' => 'выберите тип ТС']
 ) ?>
 
     <div class="form-group">

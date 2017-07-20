@@ -12,12 +12,10 @@ use yii\db\ActiveRecord;
  * @property integer $company_id
  * @property string $name
  * @property string $phone
- * @property integer $mark_id
- * @property integer $type_id
- * 
+ * @property integer $car_id
+ *
  * @property Company $company
- * @property Mark $mark
- * @property Type $type
+ * @property Car $car
  */
 class CompanyDriver extends ActiveRecord
 {
@@ -35,8 +33,8 @@ class CompanyDriver extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id'], 'required'],
-            [['company_id', 'mark_id', 'type_id'], 'integer'],
+            [['company_id', 'car_id'], 'required'],
+            [['company_id', 'car_id'], 'integer'],
             [['phone', 'name'], 'string', 'max' => 255],
         ];
     }
@@ -50,9 +48,8 @@ class CompanyDriver extends ActiveRecord
             'id'         => 'ID',
             'company_id' => 'Company ID',
             'name'       => 'Фио',
-            'phone'      => 'Телефон',
-            'type_id'    => 'Тип ТС',
-            'mark_id'    => 'Марка ТС',
+            'phone'       => 'Номер телефона',
+            'car_id'       => 'ТС',
         ];
     }
 
@@ -64,13 +61,9 @@ class CompanyDriver extends ActiveRecord
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
     }
 
-    public function getMark(  )
+    public function getCar()
     {
-        return $this->hasOne(Mark::className(), ['id' => 'mark_id']);
+        return $this->hasOne(Car::className(), ['id' => 'car_id']);
     }
 
-    public function getType()
-    {
-        return $this->hasOne(Type::className(), ['id' => 'type_id']);
-    }
 }

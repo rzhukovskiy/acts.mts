@@ -10,10 +10,12 @@ use yii\widgets\ListView;
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
+$this->title = $model->isNewRecord ? 'Добавление водителя' : 'Изменение водителя';
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Добавление водителя
+        <?= $model->isNewRecord ? 'Добавление водителя' : 'Изменение водителя' ?>
     </div>
     <div class="panel-body">
         <?= $this->render('_form', [
