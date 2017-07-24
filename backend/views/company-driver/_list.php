@@ -9,12 +9,37 @@ use kartik\grid\GridView;
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
+$script = <<< JS
+
+$('.uploadPhonesButt').on('click', function(){
+// Инициируем нажатие на форму выбора файла
+$(".uploadPhones").trigger("click");
+});
+
+// Отправляем файл если он был выбран
+form = $(".uploadPhonesForm"), upload = $(".uploadPhones");
+upload.change(function(){
+form.submit();
+});
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= $searchModel->company->name ?> :: Водители
         <div class="header-btn pull-right">
-            <?= Html::a('Добавить', ['company-driver/create', 'company_id' => $searchModel->company_id], ['class' => 'btn btn-danger btn-sm']) ?>
+            <?= Html::a('Выгрузить список ТС', ['company-driver/carsexcel', 'id' => $searchModel->company_id], ['class' => 'btn btn-success btn-sm']) ?>
+
+            <!-- Форма загрузки файла со списком-->
+            <?= '<span class="btn btn-warning btn-sm uploadPhonesButt">Загрузить заполненный список</span>' ?>
+            <?= Html::beginForm(['company-driver/upload', 'company_id' => $searchModel->company_id], 'post', ['enctype' => 'multipart/form-data', 'class' => 'uploadPhonesForm', 'style' => 'display:none;']); ?>
+            <?= Html::fileInput("uploadPhones", '',['accept' => '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel', 'class' => 'uploadPhones', 'style' => 'display:none;']); ?>
+            <?= Html::endForm(); ?>
+            <!-- END Форма загрузки файла со списком-->
+
+            <?= Html::a('Добавить водителя', ['company-driver/create', 'company_id' => $searchModel->company_id], ['class' => 'btn btn-danger btn-sm']) ?>
         </div>
     </div>
 
