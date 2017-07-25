@@ -28,7 +28,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= isset($searchModel->company->name) ? $searchModel->company->name : $model->name ?> :: <?= \Yii::$app->controller->action->id == 'driver' ? 'Водители' : 'ТС без водителей' ?>
+        <?= \Yii::$app->controller->action->id == 'driver' ? $searchModel->company->name : $model->name ?> :: <?= \Yii::$app->controller->action->id == 'driver' ? 'Водители' : 'ТС без водителей' ?>
         <div class="header-btn pull-right">
             <?php
 
