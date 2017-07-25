@@ -101,10 +101,10 @@ class CompanyDriverController extends Controller
     }
 
     // Скачиваем файл Excel с ТС для заполнения водителей
-    public function actionCarsexcel($id)
+    public function actionCarsexcel($id, $undriver = false)
     {
 
-        $resExcel = self::createExcelCars($id);
+        $resExcel = self::createExcelCars($id, $undriver);
 
         if($resExcel == false) {
         } else {
@@ -123,14 +123,20 @@ class CompanyDriverController extends Controller
     }
 
     // Формирование Excel файла со списком ТС для заполнения водителей
-    public static function createExcelCars($id) {
+    public static function createExcelCars($id, $undriver) {
 
         // Название компании
         $company = Company::findOne($id);
         $companyName = $company->name;
 
         // Список ТС
-        $arrCars = Car::find()->where(['company_id' => $id])->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->asArray()->all();
+        $arrCars = [];
+
+        if($undriver == true) {
+            $arrCars = Car::find()->leftJoin('company_driver', '`company_driver`.`car_id` = `car`.`id`')->where(['`car`.`company_id`' => $id])->andWhere('`company_driver`.`id` IS NULL')->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->orderBy('car.type_id ASC, car.number ASC')->asArray()->all();
+        } else {
+            $arrCars = Car::find()->where(['company_id' => $id])->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->asArray()->all();
+        }
 
         $objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -290,6 +296,7 @@ class CompanyDriverController extends Controller
 
                 if ($firstPage == false) {
                     $tables[] = $worksheet->toArray();
+                    $firstPage = true;
                 }
 
             }
@@ -338,7 +345,7 @@ class CompanyDriverController extends Controller
                                                     if(count($arrDriver) == 0) {
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
-                                                        $modelDriver->name = $tables[$i][3];
+                                                        $modelDriver->name = (String) $tables[$i][3];
                                                         $modelDriver->phone = (String) $tables[$i][4];
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();
@@ -358,7 +365,7 @@ class CompanyDriverController extends Controller
                                                     if(count($arrDriver) == 0) {
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
-                                                        $modelDriver->name = $tables[$i][5];
+                                                        $modelDriver->name = (String) $tables[$i][5];
                                                         $modelDriver->phone = (String) $tables[$i][6];
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();
@@ -379,7 +386,7 @@ class CompanyDriverController extends Controller
                                                     if(count($arrDriver) == 0) {
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
-                                                        $modelDriver->name = $tables[$i][7];
+                                                        $modelDriver->name = (String) $tables[$i][7];
                                                         $modelDriver->phone = (String) $tables[$i][8];
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();

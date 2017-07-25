@@ -10,6 +10,7 @@ namespace backend\controllers;
 
 
 use common\models\Act;
+use common\models\Car;
 use common\models\Company;
 use common\models\CompanyDriver;
 use common\models\CompanyInfo;
@@ -55,17 +56,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -1141,6 +1142,38 @@ class CompanyController extends Controller
         $searchModel->company_id = $model->id;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Массив Типов ТС и Марок ТС
+        $arrTypes = Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+        $arrMarks = Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+
+        return $this->render('driver', [
+            'model' => $modelCompanyMember,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'arrTypes' => $arrTypes,
+            'arrMarks' => $arrMarks,
+        ]);
+    }
+
+    public function actionUndriver($id)
+    {
+
+        $modelCompanyMember = Company::findOne(['id' => $id]);
+
+        $searchModel = Car::find()->leftJoin('company_driver', '`company_driver`.`car_id` = `car`.`id`')->where(['`car`.`company_id`' => $id])->andWhere('`company_driver`.`id` IS NULL');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'type_id'    => SORT_ASC,
+                'number'    => SORT_ASC,
+            ]
+        ];
 
         // Массив Типов ТС и Марок ТС
         $arrTypes = Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();

@@ -7,10 +7,14 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
-$this->title = 'Водители ' . $model->company->name;
+if(\Yii::$app->controller->action->id == 'driver') {
+    $this->title = 'Водители ' . $model->company->name;
+} else if(\Yii::$app->controller->action->id == 'undriver') {
+    $this->title = 'ТС без водителей ' . $model->name;
+}
 
 echo $this->render('_update_tabs', [
-    'model' => $model->company,
+    'model' => isset($model->company) ? $model->company : $model,
 ]);
 
 echo $this->render('/company-driver/_list', [
