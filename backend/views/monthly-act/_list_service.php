@@ -15,12 +15,23 @@ use common\models\ActData;
 
 $script = <<< JS
 
+    // проверка нужен ли пересчет
+    var checkRemoveRows = false;
+
     // Заполнение таблицы с информацией
     
     // Общая сумма
     var totalPayed = 0;
     $('td[data-col-seq=4]').each(function() {
+        
+        // Удаляем строки с нулевыми ценами
+        if($(this).text() == '' || $(this).text() == '0') {
+            $(this).parent().remove();
+            checkRemoveRows = true;
+        } else {
         totalPayed += Number($(this).text());
+        }
+        
     });
 
     var totalPayedText = totalPayed.toString();
@@ -68,6 +79,19 @@ $script = <<< JS
     $(".noAct").text($('td[data-col-seq=act_status] select[data-actstatus=5]').length);
     // Заполнение таблицы с информацией
     
+    // пересчет нумерации
+    if(checkRemoveRows == true) {
+        var indexNumbers = 1;
+        
+        $('td[data-col-seq=0]').each(function() {
+        
+            $(this).text(indexNumbers);
+            indexNumbers++;
+        
+        });
+        
+    }
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
