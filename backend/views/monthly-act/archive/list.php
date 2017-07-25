@@ -19,6 +19,54 @@ use common\models\MonthlyAct;
  * @var $title string
  */
 
+$colNum = 0;
+
+if(!$searchModel->type_id) {
+    $colNum = 4;
+} else {
+
+    if($searchModel->type_id == Company::TYPE_DISINFECT) {
+        $colNum = 4;
+    } else if($searchModel->type_id == Company::TYPE_SERVICE) {
+        $colNum = 4;
+    } else {
+        $colNum = 3;
+    }
+
+}
+
+$script = <<< JS
+
+    // проверка нужен ли пересчет
+    var checkRemoveRows = false;
+
+    if($('td[data-col-seq=$colNum]')) {
+    $('td[data-col-seq=$colNum]').each(function() {
+        
+        // Удаляем строки с нулевыми ценами
+        if($(this).text() == '' || $(this).text() == '0') {
+            $(this).parent().remove();
+            checkRemoveRows = true;
+        }
+        
+    });
+    }
+    
+    // пересчет нумерации
+    if(checkRemoveRows == true) {
+        var indexNumbers = 1;
+        
+        $('td[data-col-seq=0]').each(function() {
+        
+            $(this).text(indexNumbers);
+            indexNumbers++;
+        
+        });
+        
+    }
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 
 $this->title = "Архив актов";
 
