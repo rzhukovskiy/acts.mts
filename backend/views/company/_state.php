@@ -94,6 +94,58 @@ $GLOBALS['types'] = ['0' => 'Исходящий звонок' , '1' => 'Вход
         <table class="table table-bordered list-data">
 
             <tr>
+                <td class="list-label-md"><?= $model->getAttributeLabel('name') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'name',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите название'],
+                        'formOptions' => [
+                            'action' => ['/company/update', 'id' => $model->id],
+                        ],
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">Адрес организации</td>
+                <td>
+                    <?php
+                    $editable = Editable::begin([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'city',
+                        'displayValue' => $modelCompanyInfo->fullAddress,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите город'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+                    $form = $editable->getForm();
+                    echo Html::hiddenInput('kv-complex', '1');
+                    $editable->afterInput =
+                        $form->field($modelCompanyInfo, 'street') .
+                        $form->field($modelCompanyInfo, 'house') .
+                        $form->field($modelCompanyInfo, 'index');
+                    Editable::end();
+                    ?>
+                </td>
+            </tr>
+
+            <tr>
                 <td class="list-label-md">Местное время</td>
                 <td>
                     <?php
