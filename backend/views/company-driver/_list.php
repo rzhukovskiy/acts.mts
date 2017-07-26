@@ -28,7 +28,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= \Yii::$app->controller->action->id == 'driver' ? $searchModel->company->name : $model->name ?> :: <?= \Yii::$app->controller->action->id == 'driver' ? 'Водители' : 'ТС без водителей' ?>
+        <?= \Yii::$app->controller->action->id == 'driver' ? $searchModel->company->name : $model->name ?><!-- :: --><?php/*= \Yii::$app->controller->action->id == 'driver' ? 'Водители' : 'ТС без водителей' */?>
         <div class="header-btn pull-right">
             <?php
 
@@ -37,15 +37,15 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             if(\Yii::$app->controller->action->id == 'driver') {
                 $company_id = $searchModel->company_id;
                 echo Html::a('ТС без водителей', ['company/undriver', 'id' => $company_id], ['class' => 'btn btn-danger btn-sm', 'style' => 'margin-right:10px;']);
-                echo Html::a('Выгрузить список', ['company-driver/carsexcel', 'id' => $company_id], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:10px;']);
+                echo Html::a('Выгрузить', ['company-driver/carsexcel', 'id' => $company_id], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:10px;']);
             } else {
                 $company_id = $model->id;
                 echo Html::a('Водители', ['company/driver', 'id' => $company_id], ['class' => 'btn btn-danger btn-sm', 'style' => 'margin-right:10px;']);
-                echo Html::a('Выгрузить список', ['company-driver/carsexcel', 'id' => $company_id, 'undriver' => true], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:10px;']);
+                echo Html::a('Выгрузить', ['company-driver/carsexcel', 'id' => $company_id, 'undriver' => true], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:10px;']);
             }
 
             // Форма загрузки файла со списком
-            echo '<span class="btn btn-warning btn-sm uploadPhonesButt" style="margin-right:10px;">Загрузить список</span>';
+            echo '<span class="btn btn-warning btn-sm uploadPhonesButt" style="margin-right:10px;">Загрузить</span>';
             echo Html::beginForm(['company-driver/upload', 'company_id' => $company_id], 'post', ['enctype' => 'multipart/form-data', 'class' => 'uploadPhonesForm', 'style' => 'display:none;']);
             echo Html::fileInput("uploadPhones", '',['accept' => '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel', 'class' => 'uploadPhones', 'style' => 'display:none;']);
             echo Html::endForm();
