@@ -450,7 +450,7 @@ class EmailController extends Controller
 
                     if(isset($model->text)) {
 
-                        $textSMS = strip_tags($model->text);
+                        $textSMS = strip_tags(trim($model->text));
                         include_once (\Yii::getAlias('@backend/models/sms.php'));
 
                         for ($i = 0; $i < count($arrDrivers); $i++) {
