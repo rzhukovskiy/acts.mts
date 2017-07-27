@@ -9,6 +9,7 @@
 namespace backend\controllers;
 
 use common\models\Company;
+use common\models\CompanyDriver;
 use common\models\Email;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -32,17 +33,17 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -384,6 +385,153 @@ class EmailController extends Controller
         }
 
     }
+
+    // Получаем список смс шаблонов
+    public static function getSmsTemplates()
+    {
+
+        $arrEmailList = Email::find()->where(['like', 'name', 'смс'])->orWhere(['like', 'name', 'СМС'])->select('name')->indexBy('id')->column();
+
+        if(count($arrEmailList) > 0) {
+            return $arrEmailList;
+        } else {
+            return [];
+        }
+
+    }
+    // Получаем список смс шаблонов
+
+    // Получаем текст выбранного смс шаблона для просмотра
+    public function actionSmstext()
+    {
+
+        if(Yii::$app->request->post('id')) {
+            $id = Yii::$app->request->post('id');
+
+            if(($id > 0) && ($id != '')) {
+            $model = Email::findOne(['id' => $id]);
+
+            if(isset($model->text)) {
+                echo json_encode(['success' => 'true', 'text' => nl2br($model->text), 'id' => $id]);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+    // Получаем текст выбранного смс шаблона для просмотра
+
+    // Отправляем смс шаблон по водителям компании
+    public function actionSendsms()
+    {
+
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_id'))) {
+            $id = Yii::$app->request->post('id');
+            $company_id = Yii::$app->request->post('company_id');
+
+            if(($id > 0) && ($id != '') && ($company_id > 0) && ($company_id != '')) {
+
+                $arrDrivers = CompanyDriver::find()->where(['AND', ['company_id' => $company_id], ['>', 'car_id', 0]])->select('phone')->asArray()->column();
+
+                if(count($arrDrivers) > 0) {
+
+                    // проверяем на повторные номера
+                    $arrSendSms = [];
+
+                    // Получаем почтовый шаблон
+                    $model = Email::findOne(['id' => $id]);
+
+                    if(isset($model->text)) {
+
+                        $textSMS = strip_tags($model->text);
+                        include_once (\Yii::getAlias('@backend/models/sms.php'));
+
+                        for ($i = 0; $i < count($arrDrivers); $i++) {
+                            if (isset($arrDrivers[$i])) {
+                                $number = $arrDrivers[$i];
+
+                                $number = trim($number);
+                                $number = str_replace('  ', '', $number);
+                                $number = str_replace(' ', '', $number);
+                                $number = str_replace('--', '', $number);
+                                $number = str_replace('-', '', $number);
+                                $number = str_replace('+7', '7', $number);
+
+                                if ($number[0] == '8') {
+                                    $number[0] = '7';
+                                }
+
+                                $haveNumber = false;
+
+                                // проверка на повторный номер
+                                for ($j = 0; $j < count($arrSendSms); $j++) {
+                                    if ($number == $arrSendSms[$j]) {
+                                        $haveNumber = true;
+                                    }
+                                }
+
+                                if ($haveNumber == false) {
+
+                                    // Отправка смс
+                                    $key = '5499Pf110SP094weDdjgG88d';
+                                    $phone = $number;
+                                    $text = $textSMS;
+                                    $sender_name = "OOO MTS";
+                                    $resultSMS = smsapi_push_msg_nologin_key($key, $phone, $text, array("sender_name"=>$sender_name));
+
+                                    //Далее, пример обработки полученных данных
+                                    if (isset($resultSMS['response'])) {
+
+                                        if ($resultSMS['response']['msg']['err_code'] > 0) {
+                                            /*// Получили ошибку
+                                            print $resultSMS['response']['msg']['err_code']; // код ошибки
+                                            print $resultSMS['response']['msg']['text']; // текстовое описание ошибки*/
+                                        } else {
+                                            $arrSendSms[] = $number;
+                                            // Запрос прошел без ошибок, получаем нужные данные
+                                            /*print $resultSMS['response']['data']['id']; // id SMS
+                                            $resultSMS['response']['data']['credits']; // Стоимость
+                                            $resultSMS['response']['data']['n_raw_sms']; // Количество сегментов SMS
+                                            $resultSMS['response']['data']['sender_name']; // Отправитель*/
+                                        }
+
+                                    }
+                                    // Отправка смс
+                                }
+
+                                $number = '';
+                                $haveNumber = false;
+
+                            }
+                        }
+
+                        echo json_encode(['success' => 'true', 'num' => count($arrSendSms)]);
+
+                    } else {
+                        echo json_encode(['success' => 'false']);
+                    }
+
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+    // Отправляем смс шаблон по водителям компании
 
     public function actionCronmailer()
     {

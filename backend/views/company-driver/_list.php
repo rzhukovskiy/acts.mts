@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\bootstrap\Modal;
+use \yii\web\View;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyDriver
@@ -23,7 +26,7 @@ form.submit();
 });
 
 JS;
-$this->registerJs($script, \yii\web\View::POS_READY);
+$this->registerJs($script, View::POS_READY);
 
 ?>
 <div class="panel panel-primary">
@@ -45,13 +48,11 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             }
 
             // Форма загрузки файла со списком
-            echo '<span class="btn btn-warning btn-sm uploadPhonesButt" style="margin-right:10px;">Загрузить</span>';
+            echo '<span class="btn btn-warning btn-sm uploadPhonesButt">Загрузить</span>';
             echo Html::beginForm(['company-driver/upload', 'company_id' => $company_id], 'post', ['enctype' => 'multipart/form-data', 'class' => 'uploadPhonesForm', 'style' => 'display:none;']);
             echo Html::fileInput("uploadPhones", '',['accept' => '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel', 'class' => 'uploadPhones', 'style' => 'display:none;']);
             echo Html::endForm();
             // Форма загрузки файла со списком
-
-            echo Html::a('Новый водитель', ['company-driver/create', 'company_id' => $company_id], ['class' => 'btn btn-danger btn-sm']);
 
             ?>
 
@@ -65,6 +66,94 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
     if(\Yii::$app->controller->action->id == 'driver') {
 
+        $actionLinkEmail = Url::to('@web/email/smstext');
+        $actionSendSms = Url::to('@web/email/sendsms');
+
+        $script = <<< JS
+        if($('.hideButtonModal')) {
+        $('.hideButtonModal').remove();
+        }
+
+        // открываем модальное окно перенести тс
+        $('.showModalSms').on('click', function() {
+            $('#showModal').modal('show');
+        });
+
+        var emailText = $('.emailText');
+        var selID = 0;
+        
+        // Если почтовый шаблон был изменен
+        $('#emailID').on('change', function() {
+            if($(this).val() != '') {
+            emailText.text('Загрузка..');
+            selID = 0;
+            
+            $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'id=' + $(this).val(),
+                url  : '$actionLinkEmail',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                emailText.html(response.text);
+                selID = response.id;
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+            
+            } else {
+            emailText.text('Выберите смс шаблон рассылки');
+            }
+        });
+        
+        $('#send_sms').on('click', function() {
+            
+            if(selID > 0) {
+                
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'id=' + selID + '&company_id=' + '$company_id',
+                url  : '$actionSendSms',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                selID = 0;
+                $('#emailID').val('');
+                alert('Успешно отправлкено: ' + response.num + ' смс');
+                $('#showModal').modal('hide');
+                } else {
+                // Неудачно
+                alert('Ошибка при отправке смс');
+                }
+                
+                }
+                });
+                
+            } else {
+                alert('Выберите смс шаблон рассылки');
+            }
+            
+        });
+        
+JS;
+
+        $this->registerJs($script, View::POS_READY);
+
+        // Кнопки рассылки
+        $filters = '<span class="btn btn-primary btn-sm showModalSms">Отправить СМС рассылку</span>';
+        $filters .= Html::a('Добавить водителя', ['company-driver/create', 'company_id' => $company_id], ['class' => 'btn btn-danger btn-sm']);
+
         echo GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
@@ -75,6 +164,22 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             'emptyText' => '',
             'layout' => '{items}',
             'filterSelector' => '.ext-filter',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $filters,
+                            'options' => [
+                                'style' => 'vertical-align: middle; text-align:right;',
+                                'colspan' => 7,
+                                'class' => 'kv-grid-group-filter',
+                            ],
+                        ]
+                    ],
+                    'options' => ['class' => 'extend-header'],
+                ],
+
+            ],
             'columns' => [
                 [
                     'header' => '№',
@@ -132,7 +237,27 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             ],
         ]);
 
+        $modal = Modal::begin([
+            'header' => '<h4>Создание СМС рассылки</h4>',
+            'id' => 'showModal',
+            'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default hideButtonModal', 'style' => 'display:none;'],
+            'size' => 'modal-lg',
+        ]);
+
+        echo "<div style='margin-bottom:15px; font-size:15px; color:#000;'><b>Почтовый шаблон:</b></div>";
+
+        $arrTemplates = \backend\controllers\EmailController::getSmsTemplates();
+        echo Html::dropDownList("emailID", 0, $arrTemplates, ['id' => 'emailID', 'class' => 'form-control', 'prompt' => 'Выберите смс шаблон рассылки']);
+
+        echo "<div style='margin-bottom:10px; font-size:15px; color:#000; margin-top:20px;'><b>Текст рассылки:</b></div>";
+        echo "<div class='emailText' style='word-wrap: break-word; font-size:13px; color:#000;'>Выберите смс шаблон рассылки</div>";
+        echo Html::buttonInput("Отправить рассылку", ['id' => 'send_sms', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+        Modal::end();
+
     } else {
+
+        $filters = Html::a('Добавить водителя', ['company-driver/create', 'company_id' => $company_id], ['class' => 'btn btn-danger btn-sm']);
 
         echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -143,6 +268,22 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             'emptyText' => '',
             'layout' => '{items}',
             'filterSelector' => '.ext-filter',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $filters,
+                            'options' => [
+                                'style' => 'vertical-align: middle; text-align:right;',
+                                'colspan' => 4,
+                                'class' => 'kv-grid-group-filter',
+                            ],
+                        ]
+                    ],
+                    'options' => ['class' => 'extend-header'],
+                ],
+
+            ],
             'columns' => [
                 [
                     'header' => '№',
