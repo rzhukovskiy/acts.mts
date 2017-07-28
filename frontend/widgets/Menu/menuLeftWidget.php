@@ -345,7 +345,7 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'История ТС',
                     'url'    => ['/car/list'],
-                    'active' => Yii::$app->controller->id == 'car',
+                    'active' => Yii::$app->controller->id == 'car' && !(Yii::$app->controller->action->id == 'drivers'),
                 ],
 //                [
 //                    'label'  => 'Список ТС',
@@ -365,6 +365,11 @@ class menuLeftWidget extends Widget
                     'active' =>
                         Yii::$app->controller->id == 'car-count' &&
                         Yii::$app->controller->action->id != 'list-full',
+                ],
+                [
+                    'label'  => 'Водители',
+                    'url'    => ['/car/drivers'],
+                    'active' => Yii::$app->controller->id == 'car' && Yii::$app->controller->action->id == 'drivers',
                 ],
                 [
                     'label'  => 'Расходы',

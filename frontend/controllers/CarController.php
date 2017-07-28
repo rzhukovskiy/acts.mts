@@ -24,6 +24,9 @@ use yii\web\UploadedFile;
 use common\models\CarHistory;
 use common\models\search\CarHistorySearch;
 use common\models\DepartmentUserCompanyType;
+use common\models\CompanyDriver;
+use common\models\Mark;
+use common\models\search\CompanyDriverSearch;
 
 /**
  * CarController implements the CRUD actions for Car model.
@@ -55,7 +58,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'act-view'],
+                        'actions' => ['list', 'view', 'act-view', 'drivers'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
@@ -359,6 +362,34 @@ class CarController extends Controller
             'authorMembers' => $authorMembers,
         ]);
 
+    }
+
+    // Водители
+    public function actionDrivers()
+    {
+
+        $id = Yii::$app->user->identity->company_id;
+
+        $model = Company::findOne(['id' => $id]);
+        $modelCompanyMember = new CompanyDriver();
+        $modelCompanyMember->company_id = $id;
+
+        $searchModel = new CompanyDriverSearch();
+        $searchModel->company_id = $id;
+
+        $dataProvider = $searchModel->searchClient(Yii::$app->request->queryParams);
+
+        // Массив Типов ТС и Марок ТС
+        $arrTypes = Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+        $arrMarks = Mark::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column();
+
+        return $this->render('drivers', [
+            'model' => $modelCompanyMember,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'arrTypes' => $arrTypes,
+            'arrMarks' => $arrMarks,
+        ]);
     }
 
     /**

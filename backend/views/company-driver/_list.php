@@ -186,16 +186,6 @@ JS;
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
-                    'attribute' => 'name',
-                ],
-                [
-                    'attribute' => 'phone',
-                ],
-                [
-                    'header' => 'Номер ТС',
-                    'attribute' => 'car.number',
-                ],
-                [
                     'header' => 'Марка ТС',
                     'value' => function ($data) {
 
@@ -207,6 +197,10 @@ JS;
                     },
                 ],
                 [
+                    'header' => 'Номер ТС',
+                    'attribute' => 'car.number',
+                ],
+                [
                     'header' => 'Тип ТС',
                     'value' => function ($data) {
 
@@ -216,6 +210,12 @@ JS;
                         }
 
                     },
+                ],
+                [
+                    'attribute' => 'name',
+                ],
+                [
+                    'attribute' => 'phone',
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
@@ -290,14 +290,14 @@ JS;
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
-                    'header' => 'Номер ТС',
-                    'attribute' => 'number',
-                ],
-                [
                     'header' => 'Марка ТС',
                     'value' => function ($data) {
                         return $GLOBALS['arrMarks'][$data->mark_id];
                     },
+                ],
+                [
+                    'header' => 'Номер ТС',
+                    'attribute' => 'number',
                 ],
                 [
                     'header' => 'Тип ТС',
