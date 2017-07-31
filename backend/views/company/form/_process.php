@@ -421,6 +421,31 @@ JS;
                         'type' => 2,
                     ], ['class' => 'btn btn-primary']) . "</td>
             </tr>";
+            } else if($modelCompany->type == 3) {
+
+                // Вывод подтипов сервисов
+
+                echo "<tr><td class=\"list-label-md\">Типы сервиса</td><td style='font-size:13px;'>";
+                echo Html::beginForm(['company/subtype', 'id' => $modelCompany->id, 'type' => $modelCompany->type], 'post', ['class' => 'uploadPhonesForm']);
+
+                // Получаем список подтипов сервиса
+                $arrServiceSubTypes = \backend\controllers\CompanyController::getSubTypes($modelCompany->id);
+
+                foreach (Company::$subTypeService as $key => $value) {
+                    echo Html::checkbox('sub_type[' . $key . ']', isset($arrServiceSubTypes[$key]) ? 1 : 0, [
+                        'label' => $value['ru'],
+                        'labelOptions' => [
+                            'class' => 'checkbox-inline',
+                            'style' => 'margin-right: 10px;'
+                        ]
+                    ]);
+                }
+
+                echo "<br />" .Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm', 'style' => 'margin-top:10px;']);
+
+                echo Html::endForm();
+                echo "</td></tr>";
+                // Вывод подтипов сервисов
             }
             ?>
 

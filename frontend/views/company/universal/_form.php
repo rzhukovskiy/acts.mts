@@ -44,7 +44,13 @@ use yii\helpers\ArrayHelper;
         </div>
 
         <div id="details" class="collapse">
-            <?= $form->field($model, 'is_act_sign')->radioList([
+            <?php
+
+            if($model->isNewRecord) {
+                $model->is_act_sign = 1;
+            }
+
+            echo $form->field($model, 'is_act_sign')->radioList([
                 '0' => 'Нет',
                 '1' => 'Подпись и печать',
                 '2' => 'Только подпись',

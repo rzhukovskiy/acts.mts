@@ -22,7 +22,6 @@ use yii\helpers\ArrayHelper;
  * @property string $address
  * @property string $director
  * @property integer $type
- * @property integer $sub_type
  * @property integer $is_nested
  * @property integer $status
  * @property integer $is_split
@@ -231,7 +230,6 @@ class Company extends ActiveRecord
             ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
-            ['sub_type', 'default', 'value' => 0],
             ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ARCHIVE3, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }

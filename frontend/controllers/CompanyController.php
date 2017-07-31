@@ -13,6 +13,7 @@ use common\models\Company;
 use common\models\CompanyMember;
 use common\models\CompanyDuration;
 use common\models\CompanyService;
+use common\models\CompanySubType;
 use common\models\PartnerExclude;
 use common\models\search\CompanySearch;
 use common\models\Service;
@@ -76,7 +77,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -86,7 +87,6 @@ class CompanyController extends Controller
 
         $model = new Company();
         $model->type = $type;
-        $model->sub_type = $requestSupType;
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,
@@ -107,13 +107,20 @@ class CompanyController extends Controller
     {
         $model = new Company();
         $model->type = $type;
-        $model->sub_type = $sub;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             if($sub == 0) {
                 return $this->redirect(['company/list', 'type' => $type]);
             } else {
+
+                // Подкатегории для сервиса
+                $modelSub = new CompanySubType();
+                $modelSub->company_id = $model->id;
+                $modelSub->sub_type = $sub;
+                $modelSub->save();
+                // Подкатегории для сервиса
+
                 return $this->redirect(['company/list', 'type' => $type, 'sub' => $sub]);
             }
 

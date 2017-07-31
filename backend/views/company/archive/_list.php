@@ -48,12 +48,22 @@ switch ($type) {
             <?php
 
             if(($searchModel->type != 3) || ($requestSupType > 0)) {
-                echo Html::a('Добавить', [
-                'company/create',
-                'Company[type]' => $searchModel->type,
-                'Company[sub_type]' => $requestSupType,
-                'Company[status]' => Company::STATUS_ARCHIVE
-            ], ['class' => 'btn btn-danger btn-sm']);
+                if($requestSupType > 0) {
+                    echo Html::a('Добавить', [
+                        'company/create',
+                        'Company[type]' => $searchModel->type,
+                        'sub' => $requestSupType,
+                        'Company[sub_type]' => $requestSupType,
+                        'Company[status]' => Company::STATUS_ARCHIVE
+                    ], ['class' => 'btn btn-danger btn-sm']);
+                } else {
+                    echo Html::a('Добавить', [
+                        'company/create',
+                        'Company[type]' => $searchModel->type,
+                        'Company[sub_type]' => $requestSupType,
+                        'Company[status]' => Company::STATUS_ARCHIVE
+                    ], ['class' => 'btn btn-danger btn-sm']);
+                }
             }
 
             ?>

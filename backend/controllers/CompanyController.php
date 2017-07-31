@@ -8,7 +8,6 @@
 
 namespace backend\controllers;
 
-
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
@@ -19,6 +18,7 @@ use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
 use yii\base\DynamicModel;
+use common\models\CompanySubType;
 use common\models\Department;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
@@ -56,17 +56,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -129,7 +129,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -219,7 +219,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -289,7 +289,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -359,7 +359,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -429,7 +429,7 @@ class CompanyController extends Controller
             }
 
             if($requestSupType > 0) {
-                $dataProvider->query->andWhere(['sub_type' => $requestSupType]);
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
         }
@@ -471,7 +471,7 @@ class CompanyController extends Controller
      * Creates Company model.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($sub = 0)
     {
         $model = new Company();
         $model->status = Company::STATUS_NEW;
@@ -485,6 +485,15 @@ class CompanyController extends Controller
             $DepartmentCompany->user_id = Yii::$app->user->identity->id;
             $DepartmentCompany->remove_id = 0;
             $DepartmentCompany->save();
+
+            if($sub > 0) {
+                // Подкатегории для сервиса
+                $modelSub = new CompanySubType();
+                $modelSub->company_id = $model->id;
+                $modelSub->sub_type = $sub;
+                $modelSub->save();
+                // Подкатегории для сервиса
+            }
 
             return $this->redirect(['company/update', 'id' => $model->id]);
         } else {
@@ -1225,6 +1234,32 @@ class CompanyController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    // Получаем список подтипов
+    public static function getSubTypes($id) {
+        return CompanySubType::find()->where(['company_id' => $id])->indexBy('sub_type')->select('sub_type')->column();
+    }
+
+    // Сохраняем подтипы
+    public function actionSubtype($id, $type)
+    {
+
+        if(($id > 0) && ($type == 3)) {
+            CompanySubType::deleteAll(['company_id' => $id]);
+
+            if(Yii::$app->request->post('sub_type')) {
+                foreach (Yii::$app->request->post('sub_type') as $key => $value) {
+                    $modelSub = new CompanySubType();
+                    $modelSub->company_id = $id;
+                    $modelSub->sub_type = $key;
+                    $modelSub->save();
+                }
+            }
+
+        }
+
+        return $this->redirect(['/company/update', 'id' => $id]);
     }
 
     public static function getPriceFilter($data) {
