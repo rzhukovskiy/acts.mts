@@ -517,7 +517,9 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 foreach ($phoneArr as $phone) {
                     $phone = trim($phone);
 
-                    $showPhone .= "<a class='callNumber' data-id='" . $model->info->id . "-" . $iPhone . "'>$phone</a>";
+                    if(isset($model->info->id)) {
+                        $showPhone .= "<a class='callNumber' data-id='" . $model->info->id . "-" . $iPhone . "'>$phone</a>";
+                    }
 
                     if(($iPhone + 1) < count($phoneArr)) {
                         $showPhone .= ", ";

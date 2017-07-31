@@ -61,6 +61,21 @@ class OrderController extends Controller
 
         $dataProvider = $searchModel->searchWithCard($params);
 
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
+            }
+
+        }
+        // Подкатегории для сервиса
+
         $entrySearchModel = new EntrySearch();
         $entrySearchModel->load($params);
         if (empty($entrySearchModel->day)) {

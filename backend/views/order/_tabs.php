@@ -1,5 +1,6 @@
 <?php
 use common\models\Service;
+use common\models\Company;
 use yii\bootstrap\Tabs;
 
 /**
@@ -23,3 +24,44 @@ foreach ($serviceList as $type_id) {
 echo Tabs::widget([
     'items' => $items,
 ]);
+
+// Подкатегории для сервиса
+if($requestType == 3) {
+
+    $requestSupType = 0;
+
+    if(Yii::$app->request->get('sub')) {
+        $requestSupType = Yii::$app->request->get('sub');
+    }
+
+    $items = [];
+
+    $items[] = [
+        'label' => 'Все',
+        'url' => ["/order/$action", 'type' => 3,
+            'CompanySearch[card_number]' => Yii::$app->request->get('CompanySearch')['card_number'] ? Yii::$app->request->get('CompanySearch')['card_number'] : '',
+            'CompanySearch[address]' => Yii::$app->request->get('CompanySearch')['address'] ? Yii::$app->request->get('CompanySearch')['address'] : '',
+            'EntrySearch[day]' => Yii::$app->request->get('EntrySearch')['day'] ? Yii::$app->request->get('EntrySearch')['day'] : ''],
+        'active' => Yii::$app->controller->id == 'order' && $requestType == 3 && $requestSupType == 0,
+    ];
+
+    foreach (Company::$subTypeService as $type_id => $typeData) {
+        $items[] = [
+            'label' => Company::$subTypeService[$type_id]['ru'],
+            'url' => ["/order/$action",
+                'type' => 3,
+                'sub' => $type_id,
+                'CompanySearch[card_number]' => Yii::$app->request->get('CompanySearch')['card_number'] ? Yii::$app->request->get('CompanySearch')['card_number'] : '',
+                'CompanySearch[address]' => Yii::$app->request->get('CompanySearch')['address'] ? Yii::$app->request->get('CompanySearch')['address'] : '',
+                'EntrySearch[day]' => Yii::$app->request->get('EntrySearch')['day'] ? Yii::$app->request->get('EntrySearch')['day'] : ''],
+            'active' => Yii::$app->controller->id == 'order' && $requestType == 3 && $requestSupType == $type_id,
+        ];
+    }
+
+    echo Tabs::widget([
+        'encodeLabels' => false,
+        'options' => ['style' => 'margin-top:5px;'],
+        'items' => $items,
+    ]);
+}
+// Подкатегории для сервиса
