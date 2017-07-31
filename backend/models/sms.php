@@ -2,17 +2,6 @@
 
 // Api для отправки смс
 
-/**
- * Sends request to API
- * @param $request - associative array to pass to API, "format" 
- * key will be overridden
- * @param $cookie - cookies string to be passed
- * @return
- * * NULL - communication to API failed
- * * ($err_code, $data) if response was OK, $data is an associative
- * array, $err_code is an error numeric code 
- */
-
 function _smsapi_communicate($request, $cookie=NULL) {
 	$request['format'] = "json";
 	$curl = curl_init();
@@ -36,20 +25,6 @@ function _smsapi_communicate($request, $cookie=NULL) {
 	return array("err_code" => 0, "data" => $js);
 }
 
-
-/**
- * Sends a message via ssms_su api, combining authenticating and sending
- * message in one request.
- * @param $email, $passwrod - login info
- * @param $phone - recipient phone number in international format (like 7xxxyyyzzzz)
- * @param $text - message text, ASCII or UTF-8.
- * @param $params - additional parameters as key => value array, see API doc.
- * @return 
- * * NULL if API communication went a wrong way
- * * array(>0) - if an error has occurred (see API error codes)
- * * array(0, n_raw_sms, credits) - number of SMS parts in message and 
- * price for a single part
- */
 function smsapi_push_msg_nologin($email, $password, $phone, $text, $params = NULL){
 	$req = array(
 		"method" => "push_msg",
