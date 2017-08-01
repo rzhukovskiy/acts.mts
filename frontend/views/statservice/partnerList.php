@@ -1,7 +1,7 @@
 <?php
-use yii\grid\GridView;
-use yii\helpers\Html;
-use yii\widgets\Pjax;
+use yii\bootstrap\Tabs;
+use common\models\Service;
+use yii\helpers\ArrayHelper;
 
 /**
  * @var $this yii\web\View
@@ -13,6 +13,23 @@ use yii\widgets\Pjax;
  */
 
 $this->title = 'Статистика услуг партнеров';
+
+// Вкладки
+$items = [];
+foreach (Service::$listType as $type_id => $typeData) {
+    if($type_id != 5) {
+        $items[] = [
+            'label' => $typeData['ru'],
+            'url' => ['list', 'type' => $type_id],
+            'active' => ArrayHelper::getValue(Yii::$app->request->get(), 'type') == $type_id,
+        ];
+    }
+}
+
+echo Tabs::widget([
+    'items' => $items,
+]);
+// Вкладки
 
 ?>
 

@@ -119,24 +119,24 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'statservice',
                     'items'  => [
                         [
-                            'label'  => 'Компании',
+                            'label'  => 'Услуги по компаниям',
                             'url'    => ['/statservice/company?type=' . Company::TYPE_WASH],
                             'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'company')),
                         ],
                         [
-                            'label'  => Company::$listType[Company::TYPE_WASH]['ru'],
+                            'label'  => 'Услуги по партнерам',
                             'url'    => ['/statservice/list?type=' . Company::TYPE_WASH],
-                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_WASH)),
+                            'active' => (Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list'),
                         ],
                         [
-                            'label'  => Company::$listType[Company::TYPE_SERVICE]['ru'],
-                            'url'    => ['/statservice/list?type=' . Company::TYPE_SERVICE],
-                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_SERVICE)),
+                            'label'  => 'Обслуживание<br />клиентов',
+                            'url'    => ['/statservice/service?type=' . Company::TYPE_WASH . '&company=1'],
+                            'active' => (Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'service') && (Yii::$app->request->get('company') == 1),
                         ],
                         [
-                            'label'  => Company::$listType[Company::TYPE_TIRES]['ru'],
-                            'url'    => ['/statservice/list?type=' . Company::TYPE_TIRES],
-                            'active' => ((Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'list') && (Yii::$app->request->get('type') == Company::TYPE_TIRES)),
+                            'label'  => 'Обслуживание<br />у партнеров',
+                            'url'    => ['/statservice/service?type=' . Company::TYPE_WASH],
+                            'active' => (Yii::$app->controller->id == 'statservice') && (Yii::$app->controller->action->id == 'service') && (Yii::$app->request->get('company') != 1),
                         ],
                     ],
                 ],
