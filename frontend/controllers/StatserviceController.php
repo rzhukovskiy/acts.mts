@@ -254,10 +254,12 @@ class StatserviceController extends Controller
 
         if($company) {
             $dataProvider->query->groupBy('`act`.`client_id`, `act`.`partner_id`');
-            $dataProvider->query->orderBy('`act`.`client_id` ASC, `act`.`partner_id` ASC');
+            //$dataProvider->query->orderBy('`act`.`client_id` ASC, `act`.`partner_id` ASC');
+            $dataProvider->query->orderBy('`act`.`client_id` ASC, `actsCount` DESC');
         } else {
             $dataProvider->query->groupBy('`act`.`partner_id`, `act`.`client_id`');
-            $dataProvider->query->orderBy('`act`.`partner_id` ASC, `act`.`client_id` ASC');
+            //$dataProvider->query->orderBy('`act`.`partner_id` ASC, `act`.`client_id` ASC');
+            $dataProvider->query->orderBy('`act`.`partner_id` ASC, `actsCount` DESC');
         }
 
 
