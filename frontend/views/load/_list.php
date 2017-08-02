@@ -62,8 +62,8 @@ if(("" + numOpenPer.toFixed(2)).split(".")[1] > 0) {
 numOpenPer = numOpenPer.toFixed(2);
 }
 
-textClose.html('Закрыто <b>' + numClose + ' (' + numClosePer + '%)</b> загрузок');
-textOpen.html('Открыто <b>' + numOpen + ' (' + numOpenPer + '%)</b> загрузок');
+textClose.html('Закрыто: <b>' + numClose + ' (' + numClosePer + '%)</b> загрузок');
+textOpen.html('Открыто: <b>' + numOpen + ' (' + numOpenPer + '%)</b> загрузок');
 }
 
 JS;
