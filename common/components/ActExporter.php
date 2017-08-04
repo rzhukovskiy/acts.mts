@@ -535,7 +535,7 @@ class ActExporter
                 $startCol = 6;
             }
             if ($cnt == 3) {
-                $startRow += 26;
+                $startRow += 24;
             }
             $row = $startRow;
 
@@ -682,7 +682,7 @@ class ActExporter
             $range = $cols[$startCol + 2] . $row . ':' . $cols[$startCol + 3] . $row;
             $worksheet->mergeCells($range);
 
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Лицензия № ЛО-36-01-002839)');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Лицензия № ЛО-36-01-002839');
             $worksheet->setCellValueByColumnAndRow($startCol + 2, $row, 'г. ' . (isset($act->client->address) ? $act->client->address : ''));
 
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
@@ -764,8 +764,6 @@ class ActExporter
 
             if ($cnt == 2) {
                 $row += 3;
-                $worksheet->getRowDimension($row)->setRowHeight(20);
-                $row++;
                 $worksheet->getStyle("A$row:K$row")
                     ->applyFromArray([
                             'borders' => [
@@ -777,7 +775,7 @@ class ActExporter
                         ]
                     );
                 $borderStart = $startRow - 7;
-                $borderEnd = $borderStart + 48;
+                $borderEnd = $borderStart + 45;
                 $worksheet->getStyle("E$borderStart:E$borderEnd")
                     ->applyFromArray([
                             'borders' => [
@@ -793,10 +791,10 @@ class ActExporter
             $cnt++;
             $totalCount++;
             if ($cnt == 5) {
-                $row++;
+
                 $cnt = 1;
                 $worksheet->setBreak( "A$row" , PHPExcel_Worksheet::BREAK_ROW );
-                $startRow += 23;
+                $startRow += 22;
             }
 
             if (!($totalCount % 80) || $totalCount == count($dataList)) {
