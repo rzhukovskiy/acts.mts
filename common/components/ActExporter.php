@@ -535,7 +535,7 @@ class ActExporter
                 $startCol = 6;
             }
             if ($cnt == 3) {
-                $startRow += 24;
+                $startRow += 26;
             }
             $row = $startRow;
 
@@ -763,7 +763,7 @@ class ActExporter
             $worksheet->getRowDimension($row)->setRowHeight(38);
 
             if ($cnt == 2) {
-                $row += 3;
+                $row += 4;
                 $worksheet->getStyle("A$row:K$row")
                     ->applyFromArray([
                             'borders' => [
