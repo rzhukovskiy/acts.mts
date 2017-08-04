@@ -6,6 +6,7 @@ use common\models\ActScope;
 use common\models\Company;
 use common\models\MonthlyAct;
 use common\models\Car;
+use common\models\Requisites;
 use common\models\search\ActSearch;
 use common\models\search\ServiceSearch;
 use common\models\Service;
@@ -467,6 +468,17 @@ class ActExporter
         /** @var PHPExcel_Worksheet $worksheet */
         $worksheet = null;
 
+        // Получаем номер договора
+        $arrContract = Requisites::find()->where(['AND', ['company_id' => $company->id], ['type' => 5]])->select('contract')->column();
+
+        $contractNum = '';
+
+        if(count($arrContract) > 0) {
+            $contractNum = $arrContract[0];
+        }
+
+        // Получаем номер договора
+
         $cnt = 1;
         $startRow = 8;
         foreach ($dataList as $act) {
@@ -537,6 +549,7 @@ class ActExporter
             $objDrawing->setWorksheet($worksheet);
             $objDrawing = null;
 
+            $row--;
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
             $worksheet->getStyle($range)->applyFromArray([
                 'alignment' => [
@@ -553,8 +566,7 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
                 ]
             ]);
-            $worksheet->mergeCells($range);
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'о проведении дезинфекции транспорта');
+            $worksheet->getRowDimension($row)->setRowHeight(3);
 
             $row++;
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
@@ -567,15 +579,32 @@ class ActExporter
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Произведена дезинфекция');
 
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Выдана');
+            $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
+            $worksheet->getStyle($range)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                ]
+            ]);
+            $worksheet->mergeCells($range);
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'на основании договора ' . $contractNum);
+
+            $row++;
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Заказчик:');
             $range = $cols[$startCol + 1] . $row . ':' . $cols[$startCol + 3] . $row;
             $worksheet->mergeCells($range);
             $worksheet->getStyle($range)->getAlignment()->setWrapText(true);
             $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $company->name);
             $worksheet->getRowDimension($row)->setRowHeight(28);
 
+            $worksheet->getStyleByColumnAndRow($startCol + 1, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
+
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Марка');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Марка:');
             $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->mark->name);
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
                     'font' => [
@@ -584,33 +613,103 @@ class ActExporter
                 ]
             );
 
-            $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Гос. номер');
-            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->car_number);
-            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+            $worksheet->setCellValueByColumnAndRow($startCol + 2, $row, 'Гос. номер:');
+            $worksheet->setCellValueByColumnAndRow($startCol + 3, $row, $act->car_number);
+            $worksheet->getStyleByColumnAndRow($startCol + 2, $row)->applyFromArray([
                     'font' => [
                         'color' => ['argb' => 'FF006699'],
                     ],
                 ]
             );
+            $worksheet->getStyleByColumnAndRow($startCol + 2, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
+
+            $worksheet->getStyleByColumnAndRow($startCol + 3, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
 
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Срок действия справки 1 (один) месяц');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Срок действия:');
 
-            $text = "C " . $startDate->format('d.m.Y') . " по " . $endDate->format('d.m.Y');
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, $text);
+            $range = $cols[$startCol + 1] . $row . ':' . $cols[$startCol + 3] . $row;
+            $worksheet->mergeCells($range);
+
+            $text = "C " . $startDate->format('d.m.Y') . " по " . $endDate->format('d.m.Y') . " (один месяц)";
+            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $text);
+
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
+
+            $worksheet->getStyleByColumnAndRow($startCol + 1, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
+
+            $row++;
+            $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
+            $worksheet->getStyle($range)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                ]
+            ]);
+            $worksheet->mergeCells($range);
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Дезинфицирующее средство: Демос (рекомендовано Роспотребнадзором)');
+
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 7,
+                    ],
+                ]
+            );
+
+            $row++;
+            $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 1] . $row;
+            $worksheet->mergeCells($range);
+
+            $range = $cols[$startCol + 2] . $row . ':' . $cols[$startCol + 3] . $row;
+            $worksheet->mergeCells($range);
+
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Лицензия № ЛО-36-01-002839)');
+            $worksheet->setCellValueByColumnAndRow($startCol + 2, $row, 'г. ' . (isset($act->client->address) ? $act->client->address : ''));
+
+            $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 9,
+                    ],
+                ]
+            );
+
+            $worksheet->getStyleByColumnAndRow($startCol + 2, $row)->applyFromArray([
+                    'font' => [
+                        'size' => 8,
+                    ],
+                ]
+            );
 
             $row++;
 
             $worksheet->getRowDimension($row)->setRowHeight(7);
 
             $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Генеральный Директор');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Исполнитель');
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'ООО «Международный Транспортный Сервис»');
 
-            $row++; $row++; $row++;
+            $row++; $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Петросян А.Р.___________');
             $objDrawing = null;
             if($company->is_act_sign == 1) {
@@ -645,7 +744,7 @@ class ActExporter
                 $objDrawing->setOffsetX(-30);
                 $objDrawing = null;
             }
-            $row += 2;
+            $row++;
 
             $row++;
             $range = $cols[$startCol] . $row . ':' . $cols[$startCol + 3] . $row;
