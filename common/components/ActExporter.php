@@ -666,11 +666,12 @@ class ActExporter
                 ]
             ]);
             $worksheet->mergeCells($range);
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Дезинфицирующее средство: Демос (рекомендовано Роспотребнадзором)');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, '1% Дезинфицирующее средство: Демос (рекомендовано Роспотребнадзором)');
 
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
                     'font' => [
-                        'size' => 7,
+                        'name' => 'Arial',
+                        'size' => 6,
                     ],
                 ]
             );
@@ -838,7 +839,6 @@ class ActExporter
         $companyWorkSheet->getPageMargins()->setTop(2);
         $companyWorkSheet->getPageMargins()->setLeft(0.5);
         $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
         $companyWorkSheet->getColumnDimension('A')->setWidth(2);
         $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
 
@@ -921,6 +921,7 @@ class ActExporter
         }
 
         // Высчитываем номер для акта и счета
+        $row = 8;
 
         if ($this->serviceType == Company::TYPE_DISINFECT) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
@@ -950,24 +951,37 @@ class ActExporter
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
 
-            $companyWorkSheet->mergeCells('B8:F8');
+            $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
             $companyWorkSheet->mergeCells('B7:F7');
             if ($this->company) {
-                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
                 $companyWorkSheet->setCellValue('B7', "Заказчик: $company->name");
+
+                $row++;
+
+                $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
+                $companyWorkSheet->setCellValue('B' . $row, "Лицензия № ЛО-36-01-002839");
+                $row++;
+
             } else {
                 $companyWorkSheet->setCellValue('B7', "Исполнитель: $company->name");
-                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
+                $row++;
             }
 
-            $companyWorkSheet->mergeCells('B10:F10');
-            $companyWorkSheet->getStyle('B10:F10')->getAlignment()->setWrapText(true);
-            $companyWorkSheet->getStyle('B10:F10')->applyFromArray(array(
+            $row++;
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
+
+            $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
+            $companyWorkSheet->getStyle('B' . $row . ':F' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row . ':F' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
+            $companyWorkSheet->setCellValue('B' . $row, $company->getRequisitesByType($this->serviceType, 'header'));
+
         } else {
             $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -1020,12 +1034,16 @@ class ActExporter
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
+            $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
             $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
+            $row = 10;
         }
 
+        $row++; $row++;
+
+        $rowStarts = $row;
 
         //main values
-        $row = 12;
         $num = 0;
         $total = 0;
         $count = 0;
@@ -1036,7 +1054,6 @@ class ActExporter
                 $first = $dataList[0];
                 $companyWorkSheet->setCellValue('H5', date("d ", $first->served_at) . $monthName[1] . date(' Y', $this->time));
             case Company::TYPE_TIRES:
-                $row = 11;
 
                 $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
                     'alignment' => array(
@@ -1054,7 +1071,6 @@ class ActExporter
 
                 /** @var Act $data */
                 foreach ($dataList as $data) {
-                    $row++;
                     $num = 0;
 
                     $companyWorkSheet->mergeCells("B$row:C$row");
@@ -1170,7 +1186,7 @@ class ActExporter
                             )
                         );
 
-                        $companyWorkSheet->getStyle("B13:I$row")
+                        $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -1295,7 +1311,7 @@ class ActExporter
                             )
                         );
 
-                        $companyWorkSheet->getStyle("B13:I$row")
+                        $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -1408,7 +1424,7 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                 }
 
-                $companyWorkSheet->getStyle('B12:I12')->applyFromArray(array(
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
                         'font' => array(
                             'bold' => true,
                             'color' => array('argb' => 'FF006699'),
@@ -1425,7 +1441,7 @@ class ActExporter
                     );
                 }
 
-                $companyWorkSheet->getStyle("B12:I$row")
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
                     ->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
@@ -1457,7 +1473,7 @@ class ActExporter
                 $companyWorkSheet->getColumnDimension('F')->setWidth(15);
 
                 $headers = ['№', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость'];
-                $companyWorkSheet->fromArray($headers, null, 'B12');
+                $companyWorkSheet->fromArray($headers, null, 'B' . $row);
                 /** @var Act $data */
                 $currentId = 0;
                 $isParent = false;
@@ -1504,7 +1520,7 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow($column, $row, ' ' . $data->check);
                 }
 
-                $companyWorkSheet->getStyle('B12:F12')
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':F' . $rowStarts)
                     ->applyFromArray(array(
                             'font' => array(
                                 'bold' => true,
@@ -1513,7 +1529,7 @@ class ActExporter
                         )
                     );
 
-                $companyWorkSheet->getStyle("B12:F$row")
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":F$row")
                     ->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
@@ -2966,7 +2982,6 @@ class ActExporter
         $companyWorkSheet->getPageMargins()->setTop(2);
         $companyWorkSheet->getPageMargins()->setLeft(0.5);
         $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
-        $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
         $companyWorkSheet->getColumnDimension('A')->setWidth(2);
         $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
 
@@ -3043,6 +3058,8 @@ class ActExporter
 
         // Высчитываем номер для акта и счета
 
+        $row = 8;
+
         if ($this->serviceType == Company::TYPE_DISINFECT) {
             $companyWorkSheet->getStyle('B2:F4')->applyFromArray(array(
                 'alignment' => array(
@@ -3071,24 +3088,35 @@ class ActExporter
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
 
-            $companyWorkSheet->mergeCells('B8:F8');
+            $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
             $companyWorkSheet->mergeCells('B7:F7');
             if ($this->company) {
-                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
                 $companyWorkSheet->setCellValue('B7', "Заказчик: ООО Агро-Авто (Москва ЮГ - МФП)");
+
+                $row++;
+
+                $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
+                $companyWorkSheet->setCellValue('B' . $row, "Лицензия № ЛО-36-01-002839");
+
             } else {
                 $companyWorkSheet->setCellValue('B7', "Исполнитель: ООО Агро-Авто (Москва ЮГ - МФП)");
-                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
             }
 
-            $companyWorkSheet->mergeCells('B10:F10');
-            $companyWorkSheet->getStyle('B10:F10')->getAlignment()->setWrapText(true);
-            $companyWorkSheet->getStyle('B10:F10')->applyFromArray(array(
+            $row++; $row++;
+
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
+
+            $companyWorkSheet->mergeCells('B' . $row . ':F' . $row);
+            $companyWorkSheet->getStyle('B' . $row . ':F' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row . ':F' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $companyMain->getRequisitesByType($this->serviceType, 'header'));
+            $companyWorkSheet->setCellValue('B' . $row, $companyMain->getRequisitesByType($this->serviceType, 'header'));
         } else {
             $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -3124,29 +3152,33 @@ class ActExporter
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
 
-            $companyWorkSheet->mergeCells('B8:I8');
+            $companyWorkSheet->mergeCells('B' . $row . ':I' . $row);
             $companyWorkSheet->mergeCells('B7:I7');
             if ($this->company) {
-                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
                 $companyWorkSheet->setCellValue('B7', "Заказчик: ООО Агро-Авто (Москва ЮГ - МФП)");
             } else {
                 $companyWorkSheet->setCellValue('B7', "Исполнитель: ООО Агро-Авто (Москва ЮГ - МФП)");
-                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
             }
 
-            $companyWorkSheet->mergeCells('B10:I10');
-            $companyWorkSheet->getStyle('B10:I10')->getAlignment()->setWrapText(true);
-            $companyWorkSheet->getStyle('B10:I10')->applyFromArray(array(
+            $row++; $row++;
+
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
+            $companyWorkSheet->mergeCells('B' . $row .':I' . $row);
+            $companyWorkSheet->getStyle('B' . $row .':I' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row .':I' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
             ));
-            $companyWorkSheet->setCellValue('B10', $companyMain->getRequisitesByType($this->serviceType, 'header'));
+            $companyWorkSheet->setCellValue('B' . $row, $companyMain->getRequisitesByType($this->serviceType, 'header'));
         }
 
+        $row++; $row++;
 
         //main values
-        $row = 12;
         $rowStart = 0;
         $num = 0;
         $total = 0;
@@ -3474,6 +3506,8 @@ class ActExporter
                             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         }
 
+                        $rowStart++; $row++;
+
                         $dataList = $dataMfpTmp[154][1];
 
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -3579,6 +3613,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[154][1];
 
@@ -4002,6 +4038,8 @@ class ActExporter
                             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         }
 
+                        $rowStart++; $row++;
+
                         $dataList = $dataMfpTmp[900][1];
 
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -4107,6 +4145,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[900][1];
 
@@ -4532,6 +4572,8 @@ class ActExporter
 
                         $dataList = $dataMfpTmp[849][1];
 
+                        $rowStart++; $row++;
+
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[849][0]->is_split) {
                             $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -4635,6 +4677,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[849][1];
 
@@ -5058,6 +5102,8 @@ class ActExporter
                             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         }
 
+                        $rowStart++; $row++;
+
                         $dataList = $dataMfpTmp[850][1];
 
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -5163,6 +5209,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[850][1];
 
@@ -5586,6 +5634,8 @@ class ActExporter
                             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         }
 
+                        $rowStart++; $row++;
+
                         $dataList = $dataMfpTmp[851][1];
 
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -5691,6 +5741,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[851][1];
 
@@ -6114,6 +6166,8 @@ class ActExporter
                             $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         }
 
+                        $rowStart++; $row++;
+
                         $dataList = $dataMfpTmp[852][1];
 
                         $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
@@ -6219,6 +6273,8 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('D')->setWidth(20);
                         $companyWorkSheet->getColumnDimension('E')->setWidth(26);
                         $companyWorkSheet->getColumnDimension('F')->setWidth(15);
+
+                        $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[852][1];
 
