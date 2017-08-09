@@ -51,12 +51,25 @@ use common\models\Type;
             </div>
             <?php ActiveForm::end() ?>
 
-            <?= $model->isNewRecord ? $this->render('/car/_list',
+            <?php
+
+            // Кнопки дезинфекции
+            echo '<table class="table table-striped table-bordered"><tbody><tr><td align="right">';
+            echo Html::a('Включить дезинфекцию для всех ТС', ['car/desinfect', 'id' => $companyModel->id, 'doDesinfect' => 1], ['data-confirm' => "Вы уверены?",
+                'data-method' => "post",
+                'data-pjax' => "0", 'class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:10px;']);
+            echo Html::a('Отключить дезинфекцию для всех ТС', ['car/desinfect', 'id' => $companyModel->id, 'doDesinfect' => 2], ['data-confirm' => "Вы уверены?",
+                'data-method' => "post",
+                'data-pjax' => "0", 'class' => 'btn btn-danger btn-sm']);
+            echo '</td></tr></tbody></table>';
+            // Кнопки дезинфекции
+
+            echo $model->isNewRecord ? $this->render('/car/_list',
             [
                 'dataProvider' => $companyModel->getCarDataProvider(),
                 'searchModel'  => $companyModel->getCarSearchModel(),
                 'companyModel'  => $companyModel,
-            ]) : '' ?>
+            ]) : ''; ?>
         </div>
     </div>
 </div>

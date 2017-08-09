@@ -53,7 +53,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra', 'history', 'movecar'],
+                        'actions' => ['list', 'view', 'act-view', 'dirty','check-extra', 'history', 'movecar', 'desinfect'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -390,6 +390,23 @@ class CarController extends Controller
             'arrTypes' => $arrTypes,
             'arrMarks' => $arrMarks,
         ]);
+    }
+
+    // Установка дезинфекции для всех или отключение для всех ТС
+    public function actionDesinfect($id, $doDesinfect)
+    {
+
+        if(($id > 0) && ($doDesinfect > 0)) {
+
+            if($doDesinfect == 2) {
+                $doDesinfect = 0;
+            }
+
+            Yii::$app->db->createCommand()->update('{{%car}}', ['is_infected' => $doDesinfect], ['company_id' => $id])->execute();
+
+        }
+
+        return $this->redirect(['company/update', 'id' => $id]);
     }
 
     /**
