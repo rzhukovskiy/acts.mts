@@ -483,7 +483,7 @@ class EmailController extends Controller
                                     $key = '5499Pf110SP094weDdjgG88d';
                                     $phone = $number;
                                     $text = $textSMS;
-                                    $sender_name = "OOO MTS";
+                                    $sender_name = "MTC.";
                                     $resultSMS = smsapi_push_msg_nologin_key($key, $phone, $text, array("sender_name"=>$sender_name));
 
                                     //Далее, пример обработки полученных данных
