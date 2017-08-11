@@ -273,7 +273,13 @@ class AnalyticsController extends Controller
             if(($timeFrom > 0) && ($timeTo > 0)) {
                 $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->andWhere(['>=', 'served_at', $timeFrom])->andWhere(['<', 'served_at', $timeTo])->all();
             } else {
-                $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->all();
+
+                // Если не указан период указываем дату за предыдущий месяц
+
+                $dateFrom = strtotime(date("Y-m-t", strtotime("-2 month")) . 'T20:59:59.000Z');
+                $dateTo = strtotime(date("Y-m-t", strtotime("-1 month")) . 'T20:59:59.000Z');
+
+                $sqlRows = Act::find()->where(['client_id' => $company_id, 'service_type' => $service_type])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->all();
             }
         }
 
