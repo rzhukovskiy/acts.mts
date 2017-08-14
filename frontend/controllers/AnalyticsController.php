@@ -291,6 +291,8 @@ class AnalyticsController extends Controller
                 ->andWhere(['!=', 'type_id', 7])
                 ->andWhere(['!=', 'type_id', 8])->all();
 
+            $numCarCompany = count($sqlCars);
+
             $arrayCars = [];
 
             for ($c = 0; $c < count($sqlCars); $c++) {
@@ -319,9 +321,9 @@ class AnalyticsController extends Controller
                 return count($arrayWorkCars);
             } else {
 
-                if(count($arrayWorkCars) > 0) {
+                if($numCarCompany > 0) {
                     // Получаем среднее количество операций
-                    $averRes = $actsCount / count($arrayWorkCars);
+                    $averRes = $actsCount / $numCarCompany;
 
                     // Отображаем только одно число после запатой
                     //$averRes = round($averRes, 2);
