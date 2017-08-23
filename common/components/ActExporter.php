@@ -605,7 +605,7 @@ class ActExporter
 
             $row++;
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Марка:');
-            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, $act->mark->name);
+            $worksheet->setCellValueByColumnAndRow($startCol + 1, $row, isset($act->mark->name) ? $act->mark->name : '');
             $worksheet->getStyleByColumnAndRow($startCol, $row)->applyFromArray([
                     'font' => [
                         'color' => ['argb' => 'FF006699'],
