@@ -438,9 +438,17 @@ class ActController extends Controller
 
         $showError = '';
 
-        $serviceList = Service::find()->where(['type' => $type])
-            ->orderBy('description')->select(['description', 'id'])
-            ->indexBy('id')->column();
+        $serviceList = '';
+
+        if($type == 2) {
+            $serviceList = Service::find()->innerJoin('company_service', '`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`')->where(['`service`.`type`' => $type])
+                ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
+                ->indexBy('id')->column();
+        } else {
+            $serviceList = Service::find()->where(['type' => $type])
+                ->orderBy('description')->select(['description', 'id'])
+                ->indexBy('id')->column();
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $entryId = Yii::$app->request->post('entry_id', false);

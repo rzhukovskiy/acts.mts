@@ -114,33 +114,33 @@ use yii\jui\AutoComplete;
                                 foreach ($serviceList as $key => $value) {
 
                                     if ($value == 'снаружи') {
-                                        $numcontArr[0] = $key;
+                                        $numcontArr[] = $key;
                                     }
 
                                     if ($value == 'внутри') {
-                                        $numcontArr[1] = $key;
+                                        $numcontArr[] = $key;
                                     }
 
                                     if (($value == 'внутри+снаружи') || ($value == 'снаружи+внутри')) {
-                                        $numcontArr[2] = $key;
+                                        $numcontArr[] = $key;
                                         $serviceList[$key] = 'снаружи+внутри';
                                     }
 
                                     if ($value == 'отогрев') {
-                                        $numcontArr[3] = $key;
+                                        $numcontArr[] = $key;
                                     }
 
                                     if ($value == 'двигатель') {
-                                        $numcontArr[4] = $key;
+                                        $numcontArr[] = $key;
                                     }
 
                                     if ($value == 'химчистка') {
-                                        $numcontArr[5] = $key;
+                                        $numcontArr[] = $key;
                                     }
 
                                 }
 
-                                for($i = 0; $i < 6; $i++) {
+                                for($i = 0; $i < count($numcontArr); $i++) {
                                     $newServiceList[$numcontArr[$i]] = $serviceList[$numcontArr[$i]];
                                 }
 
