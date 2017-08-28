@@ -14,11 +14,15 @@ use yii\helpers\Url;
 
 $isAdmin = $admin ? 1 : 0;
 
-$idDataCol = 1;
+$idDataCol = 2;
 $numSelVal = 5;
 if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
-    $idDataCol = 5;
+    $idDataCol = 6;
     $numSelVal = 6;
+}
+
+if(!$company) {
+    $numSelVal++;
 }
 
 $actionLinkSearch = Url::to('@web/monthly-act/searchact');

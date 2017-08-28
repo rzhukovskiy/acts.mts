@@ -36,6 +36,11 @@ $('.typeDay').on('change', function (e) {
     
 });
 
+// НДС
+if($('#companyinfo-nds')) {
+    $('#companyinfo-nds').remove();
+}
+
     // Скрыть иконку ссылки если поле ссылки пустое
     if(($('#companyinfo-website-targ').text() == '') || ($('#companyinfo-website-targ').text() == 'не задано')) {
         $('.glyphicon-new-window').hide();
@@ -197,6 +202,46 @@ $this->registerJs($script, View::POS_READY);
                     ?>
                 </td>
             </tr>
+
+            <?php if($model->type != Company::TYPE_OWNER) { ?>
+
+                <tr>
+                    <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('nds') ?></td>
+                    <td>
+                        <?php
+
+                        $editableForm = Editable::begin([
+                            'model' => $modelCompanyInfo,
+                            'buttonsTemplate' => '{submit}',
+                            'submitButton' => [
+                                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                            ],
+                            'attribute' => 'nds',
+                            'displayValue' => ($modelCompanyInfo->nds == 0) ? 'Нет' : 'Да',
+                            'asPopover' => true,
+                            'placement' => PopoverX::ALIGN_LEFT,
+                            'size' => 'lg',
+                            'options' => ['class' => 'form-control', 'placeholder' => 'НДС'],
+                            'formOptions' => [
+                                'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                            ],
+                            'valueIfNull' => '<span class="text-danger">не задано</span>',
+                        ]);
+
+                        $form = $editableForm->getForm();
+                        echo Html::hiddenInput('kv-complex', '1');
+
+                        $selectNDS = $modelCompanyInfo->nds;
+
+                        $editableForm->afterInput = $form->field($modelCompanyInfo, 'nds')->dropDownList([0 => 'Нет', 1 => 'Да'], ['class' => 'form-control', 'options'=>[$selectNDS => ['Selected'=>true]]]) . '';
+                        Editable::end();
+
+                        ?>
+                    </td>
+                </tr>
+
+            <?php } ?>
+
             <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('contract') ?></td>
                 <td>

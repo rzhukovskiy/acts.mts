@@ -100,7 +100,7 @@ echo GridView::widget([
                     'content' => $filters,
                     'options' => [
                         'style' => 'vertical-align: middle',
-                        'colspan' => 10,
+                        'colspan' => $GLOBALS['company'] ? 9 : 10,
                         'class' => 'kv-grid-group-filter',
                     ],
                 ]
@@ -169,6 +169,23 @@ echo GridView::widget([
                     'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
                     'style' => 'min-width: 130px'
                 ];
+            },
+        ],
+        [
+            'header' => 'НДС',
+            'visible' => !($GLOBALS['company']),
+            'value' => function ($data) {
+                $CompanyInfo = CompanyInfo::findOne(['company_id' => $data->client->id]);
+
+                $nds = '-';
+
+                if(isset($CompanyInfo->nds)) {
+                    if($CompanyInfo->nds == 1) {
+                        $nds = 'НДС';
+                    }
+                }
+
+                return $nds;
             },
         ],
         [

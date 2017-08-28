@@ -101,7 +101,20 @@ class CompanyInfoController extends Controller
             if ($model->load($postArr) && $model->save()) {
                 $output = [];
                 foreach ($postArr['CompanyInfo'] as $name => $value) {
-                    $output[] = $value;
+
+                    // НДС
+                    if($name == 'nds') {
+
+                        if($value == 0) {
+                            $output[] = 'Нет';
+                        } else {
+                            $output[] = 'Да';
+                        }
+
+                    } else {
+                        $output[] = $value;
+                    }
+
                 }
                 return ['output' => implode(', ', $output), 'message' => ''];
             } else {
