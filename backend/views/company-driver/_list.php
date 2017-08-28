@@ -216,6 +216,15 @@ JS;
                 ],
                 [
                     'attribute' => 'phone',
+                    'value' => function ($data) {
+
+                        $phone = $data->phone;
+                        $phone = str_replace(" ", '', $phone);
+                        $phone = str_replace("-", '', $phone);
+
+                        return $phone;
+
+                    },
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',

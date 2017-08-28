@@ -99,6 +99,15 @@ $this->registerJs($script, View::POS_READY);
             ],
             [
                 'attribute' => 'phone',
+                'value' => function ($data) {
+
+                    $phone = $data->phone;
+                    $phone = str_replace(" ", '', $phone);
+                    $phone = str_replace("-", '', $phone);
+
+                    return $phone;
+
+                },
             ],
         ],
     ]);

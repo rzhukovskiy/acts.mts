@@ -343,10 +343,15 @@ class CompanyDriverController extends Controller
                                                     $arrDriver = CompanyDriver::find()->where(['name' => $tables[$i][3]])->andWhere(['phone' => $tables[$i][4]])->andWhere(['company_id' => $company_id])->andWhere(['car_id' => $carID])->select('id')->column();
 
                                                     if(count($arrDriver) == 0) {
+
+                                                        $phoneVal = (String) $tables[$i][4];
+                                                        $phoneVal = str_replace(" ", '', $phoneVal);
+                                                        $phoneVal = str_replace("-", '', $phoneVal);
+
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
                                                         $modelDriver->name = (String) $tables[$i][3];
-                                                        $modelDriver->phone = (String) $tables[$i][4];
+                                                        $modelDriver->phone = $phoneVal;
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();
                                                     }
@@ -357,16 +362,22 @@ class CompanyDriverController extends Controller
                                             if (isset($tables[$i][5]) && (isset($tables[$i][6]))) {
                                                 if (($tables[$i][5]) && ($tables[$i][6])) {
                                                     $modelDriver = null;
+                                                    $phoneVal = '';
                                                     $arrDriver = [];
 
                                                     // Проверка на повторного водителя
                                                     $arrDriver = CompanyDriver::find()->where(['name' => $tables[$i][5]])->andWhere(['phone' => $tables[$i][6]])->andWhere(['company_id' => $company_id])->andWhere(['car_id' => $carID])->select('id')->column();
 
                                                     if(count($arrDriver) == 0) {
+
+                                                        $phoneVal = (String) $tables[$i][6];
+                                                        $phoneVal = str_replace(" ", '', $phoneVal);
+                                                        $phoneVal = str_replace("-", '', $phoneVal);
+
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
                                                         $modelDriver->name = (String) $tables[$i][5];
-                                                        $modelDriver->phone = (String) $tables[$i][6];
+                                                        $modelDriver->phone = $phoneVal;
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();
                                                     }
@@ -378,16 +389,22 @@ class CompanyDriverController extends Controller
                                             if (isset($tables[$i][7]) && (isset($tables[$i][8]))) {
                                                 if (($tables[$i][7]) && ($tables[$i][8])) {
                                                     $modelDriver = null;
+                                                    $phoneVal = '';
                                                     $arrDriver = [];
 
                                                     // Проверка на повторного водителя
                                                     $arrDriver = CompanyDriver::find()->where(['name' => $tables[$i][7]])->andWhere(['phone' => $tables[$i][8]])->andWhere(['company_id' => $company_id])->andWhere(['car_id' => $carID])->select('id')->column();
 
                                                     if(count($arrDriver) == 0) {
+
+                                                        $phoneVal = (String) $tables[$i][8];
+                                                        $phoneVal = str_replace(" ", '', $phoneVal);
+                                                        $phoneVal = str_replace("-", '', $phoneVal);
+
                                                         $modelDriver = new CompanyDriver();
                                                         $modelDriver->company_id = $company_id;
                                                         $modelDriver->name = (String) $tables[$i][7];
-                                                        $modelDriver->phone = (String) $tables[$i][8];
+                                                        $modelDriver->phone = $phoneVal;
                                                         $modelDriver->car_id = $carID;
                                                         $modelDriver->save();
                                                     }
