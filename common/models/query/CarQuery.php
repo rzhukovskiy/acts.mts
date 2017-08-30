@@ -1,6 +1,8 @@
 <?php
 
 namespace common\models\query;
+use Yii;
+use common\models\Company;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Car]].
@@ -70,7 +72,25 @@ class CarQuery extends \yii\db\ActiveQuery
             ->groupBy('car.type_id');
 
         if (!is_null($companyId))
-            $query->andWhere(['car.company_id' => $companyId])->orWhere(['company.parent_id' => $companyId]);
+
+            // ищем дочерние дочерних
+            $queryPar = Company::find()->where(['parent_id' => $companyId])->select('id')->column();
+
+        $arrParParIds = [];
+
+        for ($i = 0; $i < count($queryPar); $i++) {
+
+            $arrParParIds[] = $queryPar[$i];
+
+            $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+            for ($j = 0; $j < count($queryParPar); $j++) {
+                $arrParParIds[] = $queryParPar[$j];
+            }
+
+        }
+
+        $query->andWhere(['car.company_id' => $companyId])->orWhere(['car.company_id' => $arrParParIds]);
 
         return $query;
     }

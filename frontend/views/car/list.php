@@ -115,8 +115,26 @@ if ($admin) {
             ->andWhere(['type' => Company::TYPE_OWNER])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 } elseif (!empty(Yii::$app->user->identity->company->children)) {
+
+    // ищем дочерние дочерних
+    $queryPar = Company::find()->where(['parent_id' => Yii::$app->user->identity->company_id])->select('id')->column();
+
+    $arrParParIds = [];
+
+    for ($i = 0; $i < count($queryPar); $i++) {
+
+        $arrParParIds[] = $queryPar[$i];
+
+        $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+        for ($j = 0; $j < count($queryParPar); $j++) {
+            $arrParParIds[] = $queryParPar[$j];
+        }
+
+    }
+
     $filters = 'Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
-            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+            ->where(['id' => $arrParParIds])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
 }
 

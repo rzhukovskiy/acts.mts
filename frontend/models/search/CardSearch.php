@@ -75,7 +75,25 @@ class CardSearch extends CommonCardSearch
             'updated_at' => $this->updated_at,
         ]);
         $query->andFilterWhere(['company.status' => Company::STATUS_ACTIVE]);
-        $query->andFilterWhere(['parent_id' => $this->company_id])->orFilterWhere(['company_id' => $this->company_id]);
+
+        // ищем дочерние дочерних
+        $queryPar = Company::find()->where(['parent_id' => $this->company_id])->select('id')->column();
+
+        $arrParParIds = [];
+
+        for ($i = 0; $i < count($queryPar); $i++) {
+
+            $arrParParIds[] = $queryPar[$i];
+
+            $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+            for ($j = 0; $j < count($queryParPar); $j++) {
+                $arrParParIds[] = $queryParPar[$j];
+            }
+
+        }
+
+        $query->andFilterWhere(['company_id' => $this->company_id])->orFilterWhere(['company_id' => $arrParParIds]);
 
         return $dataProvider;
     }

@@ -43,8 +43,26 @@ $filters = 'Период: ' . DatePicker::widget([
     ]);
 
 if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->children)) {
+
+    // ищем дочерние дочерних
+    $queryPar = Company::find()->where(['parent_id' => Yii::$app->user->identity->company_id])->select('id')->column();
+
+    $arrParParIds = [];
+
+    for ($i = 0; $i < count($queryPar); $i++) {
+
+        $arrParParIds[] = $queryPar[$i];
+
+        $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+        for ($j = 0; $j < count($queryParPar); $j++) {
+            $arrParParIds[] = $queryParPar[$j];
+        }
+
+    }
+
     $filters .= ' Выбор филиала: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
-            ->andWhere(['parent_id' => Yii::$app->user->identity->company_id])
+            ->where(['id' => $arrParParIds])
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {

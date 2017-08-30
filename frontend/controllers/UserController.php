@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use api\models\ApiToken;
 use common\models\Company;
 use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
@@ -141,8 +142,12 @@ class UserController extends Controller
             if (!empty($model->password))
                 $userModel->password_hash = md5($userModel->salt . $model->password);
 
-            if ($userModel->save())
+            if ($userModel->save()) {
+                // Удаление токена доступа в приложение
+                ApiToken::deleteAll(['user_id' => $userModel->id]);
+
                 return $this->redirect(['list', 'type' => $type]);
+            }
         }
 
         return $this->render('update', [
