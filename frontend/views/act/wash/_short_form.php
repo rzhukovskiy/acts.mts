@@ -138,6 +138,29 @@ use yii\jui\AutoComplete;
                                         $numcontArr[] = $key;
                                     }
 
+                                    //
+                                    if ($value == 'Стандарт') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Экспресс') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Уборка салона пылесосом') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Влажная уборка салона') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Уборка багажника') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Протирка стёкол') {
+                                        $numcontArr[] = $key;
+                                    }
+                                    if ($value == 'Удаление битума') {
+                                        $numcontArr[] = $key;
+                                    }
+
                                 }
 
                                 for($i = 0; $i < count($numcontArr); $i++) {
@@ -146,7 +169,7 @@ use yii\jui\AutoComplete;
 
                             foreach ($serviceList as $key => $value) {
 
-                                if (($value == 'снаружи') || ($value == 'внутри') || ($value == 'внутри+снаружи') || ($value == 'отогрев') || ($value == 'двигатель') || ($value == 'химчистка')) {
+                                if (($value == 'снаружи') || ($value == 'внутри') || ($value == 'внутри+снаружи') || ($value == 'отогрев') || ($value == 'двигатель') || ($value == 'химчистка') || ($value == 'Стандарт') || ($value == 'Экспресс') || ($value == 'Уборка салона пылесосом') || ($value == 'Влажная уборка салона') || ($value == 'Уборка багажника') || ($value == 'Протирка стёкол') || ($value == 'Удаление битума')) {
                                 } else {
                                     $newServiceList[$key] = $value;
                                 }
