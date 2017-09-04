@@ -71,26 +71,27 @@ class CarQuery extends \yii\db\ActiveQuery
             ->join('INNER JOIN', '{{%type}} type', 'car.type_id = type.id')
             ->groupBy('car.type_id');
 
-        if (!is_null($companyId))
+        if (!is_null($companyId)) {
 
             // ищем дочерние дочерних
             $queryPar = Company::find()->where(['parent_id' => $companyId])->select('id')->column();
 
-        $arrParParIds = [];
+            $arrParParIds = [];
 
-        for ($i = 0; $i < count($queryPar); $i++) {
+            for ($i = 0; $i < count($queryPar); $i++) {
 
-            $arrParParIds[] = $queryPar[$i];
+                $arrParParIds[] = $queryPar[$i];
 
-            $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+                $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
 
-            for ($j = 0; $j < count($queryParPar); $j++) {
-                $arrParParIds[] = $queryParPar[$j];
+                for ($j = 0; $j < count($queryParPar); $j++) {
+                    $arrParParIds[] = $queryParPar[$j];
+                }
+
             }
 
+            $query->andWhere(['car.company_id' => $companyId])->orWhere(['car.company_id' => $arrParParIds]);
         }
-
-        $query->andWhere(['car.company_id' => $companyId])->orWhere(['car.company_id' => $arrParParIds]);
 
         return $query;
     }

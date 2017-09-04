@@ -159,17 +159,17 @@ class CompanyInfo extends ActiveRecord
             $stringRes = '';
 
             if($arrPayData[0] == 4) {
-                $stringRes = 'Аванс ' . $arrPayData[2] . ' руб.';
+                $stringRes = 'Аванс ' . (isset($arrPayData[2]) ? $arrPayData[2] : 0) . ' руб.';
             } else {
 
                 if (count($arrPayData) == 3) {
-                    $stringRes .= $arrPayData[2] . ' руб. + ';
+                    $stringRes .= (isset($arrPayData[2]) ? $arrPayData[2] : 0) . ' руб. + ';
                 }
 
                 if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
-                    $stringRes .= $arrPayData[1] . ' банковских дней';
+                    $stringRes .= (isset($arrPayData[1]) ? $arrPayData[1] : 30) . ' банковских дней';
                 } else {
-                    $stringRes .= $arrPayData[1] . ' календарных дней';
+                    $stringRes .= (isset($arrPayData[1]) ? $arrPayData[1] : 30) . ' календарных дней';
                 }
 
             }

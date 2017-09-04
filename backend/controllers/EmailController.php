@@ -33,17 +33,17 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -427,6 +427,72 @@ class EmailController extends Controller
 
     }
     // Получаем текст выбранного смс шаблона для просмотра
+
+    // Оповещение Арама и Герберта в актах и оплате
+    public function actionNotifdirectors()
+    {
+        if((Yii::$app->request->post('name')) && (Yii::$app->request->post('price')) && (Yii::$app->request->post('period')) && (Yii::$app->request->post('type')) && (Yii::$app->request->post('user_id'))) {
+
+            $name = Yii::$app->request->post('name');
+            $price = Yii::$app->request->post('price');
+            $period = Yii::$app->request->post('period');
+            $type = Yii::$app->request->post('type');
+            $user_id = Yii::$app->request->post('user_id');
+
+            // Получаем почтовый шаблон
+            $model = Email::findOne(['id' => 12]);
+            $userModel = User::findOne(['id' => $user_id]);
+
+            if ((isset($model)) && (isset($userModel))) {
+
+                if ((isset($model->title)) && (isset($model->text)) && (isset($userModel->username))) {
+
+                    $subject = $model->title;
+                    $plainTextContent = nl2br($model->text);
+
+                    // заменяем теги данными
+                    $plainTextContent = str_replace('{COMPANY-NAME}', $name, $plainTextContent);
+                    $plainTextContent = str_replace('{PRICE}', $price . " руб.", $plainTextContent);
+                    $plainTextContent = str_replace('{MONTH}', $period, $plainTextContent);
+                    $plainTextContent = str_replace('{TYPE}', Company::$listType[$type]['ru'], $plainTextContent);
+                    $plainTextContent = str_replace('{USER}', $userModel->username, $plainTextContent);
+
+                    // Арам
+                    if($user_id != 176) {
+                        $toEmail = "aram.mtransservice@mail.ru";
+
+                        $mailCont = Yii::$app->mailer->compose()
+                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo($toEmail)
+                            ->setSubject($subject)
+                            ->setHtmlBody($plainTextContent)->send();
+                    }
+
+                    // Герберт
+                    if($user_id != 1) {
+                        $toEmail = "mtransservice@mail.ru";
+
+                        $mailCont = Yii::$app->mailer->compose()
+                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo($toEmail)
+                            ->setSubject($subject)
+                            ->setHtmlBody($plainTextContent)->send();
+                    }
+
+                    echo json_encode(['success' => 'true']);
+
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+    }
 
     // Отправляем смс шаблон по водителям компании
     public function actionSendsms()

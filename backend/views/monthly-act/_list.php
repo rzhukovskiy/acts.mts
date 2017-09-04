@@ -25,8 +25,17 @@ if(!$company) {
     $numSelVal++;
 }
 
+// Получаем выбранный период
+$period = '';
+if(isset($searchModel->act_date)) {
+    $period = $searchModel->act_date;
+}
+
+$userID = Yii::$app->user->identity->id;
+
 $actionLinkSearch = Url::to('@web/monthly-act/searchact');
 $actionLinkGetComments = Url::to('@web/monthly-act/getcomments');
+$actionNotifDirectors = Url::to('@web/email/notifdirectors');
 
 // Выделение номера акта
 $numFind = 0;
@@ -105,6 +114,40 @@ $script = <<< JS
                         }
             }
 
+            // Оповещение Арама и Герберта
+            if((select.val() == 4) && ($company != 1)) {
+                
+            var companyNameNotific = '';
+            var priceNotific = '';
+            var sendNotific = false;
+                
+            if(($type == 2) || ($type == 4)) {
+            companyNameNotific = select.parent().parent().find('td[data-col-seq=client] span').text();
+            priceNotific = select.parent().parent().find('td[data-col-seq=profit]').text();
+            sendNotific = true;
+            alert(priceNotific);
+            } else if(($type == 3) || ($type == 5)) {
+            companyNameNotific = select.parent().parent().find('td[data-col-seq=1] span').text();
+            priceNotific = select.parent().parent().find('td[data-col-seq=4]').text();
+            sendNotific = true;
+            alert(priceNotific);
+            }
+            
+            if(sendNotific == true) {
+                $.ajax({
+                    type     :'POST',
+                    cache    : false,
+                    data:'name=' + companyNameNotific + '&price=' + priceNotific + '&period=' + '$period' + '&type=' + '$type' + '&user_id=' + '$userID',
+                    url: '$actionNotifDirectors',
+                    success: function(data){
+                        // удачно отправлено уведомление Араму и Герберту
+                        alert('Успешно отправлено Араму');
+                    }
+                });
+            }
+            
+            }
+            
             }
         });
     });

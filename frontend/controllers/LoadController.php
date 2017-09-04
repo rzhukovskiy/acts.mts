@@ -105,26 +105,6 @@ class LoadController extends Controller
         ]);
     }
 
-    public function actionExport($type, $company = false)
-    {
-        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
-        $searchModel->service_type = $type;
-        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
-
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $exporter = new ActExporter();
-        $exporter->exportCSV($searchModel, $company);
-
-        return $this->render('export', [
-            'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
-            'type' => $type,
-            'company' => $company,
-            'role' => Yii::$app->user->identity->role,
-        ]);
-    }
-
     public function actionClose($type, $company, $period)
     {
 
@@ -251,19 +231,6 @@ class LoadController extends Controller
             'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->active()->column(),
             'role' => Yii::$app->user->identity->role,
         ]);
-    }
-
-    public function actionFix($type, $company = false)
-    {
-        $searchModel = new ActSearch(['scenario' => $company ? Act::SCENARIO_CLIENT : Act::SCENARIO_PARTNER]);
-        $searchModel->service_type = $type;
-
-        foreach ($searchModel->search(Yii::$app->request->queryParams)->getModels() as $act) {
-            $act->byAdmin = Yii::$app->user->identity->role == User::ROLE_ADMIN;
-            $act->save();
-        }
-
-        return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**

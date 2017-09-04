@@ -49,11 +49,6 @@ class StatController extends Controller
         return parent::beforeAction($action);
     }
 
-    public function actionError()
-    {
-        return $this->redirect("http://docs.mtransservice.ru/site/index");
-    }
-
     public function actionList()
     {
 
@@ -99,8 +94,14 @@ class StatController extends Controller
             $ressArray = '';
 
             // Фильтр даты Только за текущий год
-            $dateFrom = strtotime((((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z');
-            $dateTo = strtotime(date('Y', time()) . '-12-31T21:00:00.000Z');
+            if(Yii::$app->request->post("period")) {
+                $period = Yii::$app->request->post("period");
+                $dateFrom = strtotime((((int) $period) - 1) . '-12-31T21:00:00.000Z');
+                $dateTo = strtotime($period . '-12-31T21:00:00.000Z');
+            } else {
+                $dateFrom = strtotime((((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z');
+                $dateTo = strtotime(date('Y', time()) . '-12-31T21:00:00.000Z');
+            }
 
             if($type == 1) {
 

@@ -94,9 +94,7 @@ if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->chil
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
-    $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
-    $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
-    $filters .= Html::a('Наклейки', array_merge(['load/stickers'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-warning btn-sm', 'target' => '_blank']);
+    $filters .= Html::a('Наклейки', array_merge(['load/stickers'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm', 'target' => '_blank']);
     $filters .= '<span class="numClose" style="margin-left: 5px; font-weight: normal; color: #2d6f31;"></span>';
     $filters .= '<span class="numOpen" style="margin-left: 15px; font-weight: normal; color: #8e3532;"></span>';
     $filters .= '<span class="numAll" style="margin-left: 15px; font-weight: normal;"></span>';
