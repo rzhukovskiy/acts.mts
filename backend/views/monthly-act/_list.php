@@ -125,12 +125,10 @@ $script = <<< JS
             companyNameNotific = select.parent().parent().find('td[data-col-seq=client] span').text();
             priceNotific = select.parent().parent().find('td[data-col-seq=profit]').text();
             sendNotific = true;
-            alert(priceNotific);
             } else if(($type == 3) || ($type == 5)) {
             companyNameNotific = select.parent().parent().find('td[data-col-seq=1] span').text();
             priceNotific = select.parent().parent().find('td[data-col-seq=4]').text();
             sendNotific = true;
-            alert(priceNotific);
             }
             
             if(sendNotific == true) {
@@ -141,7 +139,6 @@ $script = <<< JS
                     url: '$actionNotifDirectors',
                     success: function(data){
                         // удачно отправлено уведомление Араму и Герберту
-                        alert('Успешно отправлено Араму');
                     }
                 });
             }
