@@ -1069,9 +1069,17 @@ class ActExporter
                 $companyWorkSheet->getColumnDimension('H')->setWidth(11);
                 $companyWorkSheet->getColumnDimension('I')->setWidth(11);
 
+                $iNumTires = 0;
+
                 /** @var Act $data */
                 foreach ($dataList as $data) {
                     $num = 0;
+
+                    // Отступ перед новым ТС шиномонтажа
+                    if($iNumTires > 0) {
+                        $row++;
+                    }
+                    $iNumTires++;
 
                     $companyWorkSheet->mergeCells("B$row:C$row");
                     $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
