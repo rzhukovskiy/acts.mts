@@ -83,12 +83,19 @@ class ActController extends Controller
 
         return json_encode(['result' => json_encode($ressArray)]);*/
 
-        if((Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type")) && (Yii::$app->request->post("month")) && (Yii::$app->request->post("year"))) {
+        if((Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type")) && (Yii::$app->request->post("month")) && (Yii::$app->request->post("year")) && (Yii::$app->request->post("page"))) {
 
             $company_id = Yii::$app->request->post("company_id");
             $type = Yii::$app->request->post("type");
             $monthFilter = Yii::$app->request->post("month");
             $yearFilter = Yii::$app->request->post("year");
+
+            $page = Yii::$app->request->post("page");
+            $startLimit = 0;
+
+            if($page > 1) {
+                $startLimit = (($page - 1) * 50);
+            }
 
             $ressArray = '';
 
@@ -110,9 +117,9 @@ class ActController extends Controller
 
                 }
 
-                $ressArray = Act::find()->leftJoin('type', '`type`.`id` = `act`.`type_id`')->leftJoin('mark', '`mark`.`id` = `act`.`mark_id`')->leftJoin('card', '`card`.`id` = `act`.`card_id`')->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $monthFilter, "YEAR(FROM_UNIXTIME(served_at))" => $yearFilter])->select('service_type, type.name as carType, mark.name as carMark, car_number, card.number as card_number, expense, income, profit, served_at')->orderBy('service_type, served_at')->asArray()->all();
+                $ressArray = Act::find()->leftJoin('type', '`type`.`id` = `act`.`type_id`')->leftJoin('mark', '`mark`.`id` = `act`.`mark_id`')->leftJoin('card', '`card`.`id` = `act`.`card_id`')->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $monthFilter, "YEAR(FROM_UNIXTIME(served_at))" => $yearFilter])->select('service_type, type.name as carType, mark.name as carMark, car_number, card.number as card_number, expense, income, profit, served_at')->orderBy('service_type, served_at')->offset($startLimit)->limit(51)->asArray()->all();
             } else {
-                $ressArray = Act::find()->leftJoin('type', '`type`.`id` = `act`.`type_id`')->leftJoin('mark', '`mark`.`id` = `act`.`mark_id`')->leftJoin('card', '`card`.`id` = `act`.`card_id`')->where(['partner_id' => $company_id, 'service_type' => $type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $monthFilter, "YEAR(FROM_UNIXTIME(served_at))" => $yearFilter])->select('service_type, type.name as carType, mark.name as carMark, car_number, card.number as card_number, expense, income, profit, served_at')->orderBy('service_type, served_at')->asArray()->all();
+                $ressArray = Act::find()->leftJoin('type', '`type`.`id` = `act`.`type_id`')->leftJoin('mark', '`mark`.`id` = `act`.`mark_id`')->leftJoin('card', '`card`.`id` = `act`.`card_id`')->where(['partner_id' => $company_id, 'service_type' => $type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $monthFilter, "YEAR(FROM_UNIXTIME(served_at))" => $yearFilter])->select('service_type, type.name as carType, mark.name as carMark, car_number, card.number as card_number, expense, income, profit, served_at')->orderBy('service_type, served_at')->offset($startLimit)->limit(51)->asArray()->all();
             }
 
             return json_encode(['result' => json_encode($ressArray)]);

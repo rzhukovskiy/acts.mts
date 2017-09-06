@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\Company;
 use common\models\CompanyDriver;
 use common\models\Email;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
 use yii;
@@ -18,7 +19,6 @@ use yii\filters\AccessControl;
 use common\models\User;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
-use yii\helpers\Html;
 
 class EmailController extends Controller
 {
@@ -431,13 +431,14 @@ class EmailController extends Controller
     // Оповещение Арама и Герберта в актах и оплате
     public function actionNotifdirectors()
     {
-        if((Yii::$app->request->post('name')) && (Yii::$app->request->post('price')) && (Yii::$app->request->post('period')) && (Yii::$app->request->post('type')) && (Yii::$app->request->post('user_id'))) {
+        if((Yii::$app->request->post('name')) && (Yii::$app->request->post('price')) && (Yii::$app->request->post('period')) && (Yii::$app->request->post('type')) && (Yii::$app->request->post('user_id')) && (Yii::$app->request->post('url'))) {
 
             $name = Yii::$app->request->post('name');
             $price = Yii::$app->request->post('price');
             $period = Yii::$app->request->post('period');
             $type = Yii::$app->request->post('type');
             $user_id = Yii::$app->request->post('user_id');
+            $url = Yii::$app->request->post('url');
 
             // Получаем почтовый шаблон
             $model = Email::findOne(['id' => 12]);
@@ -456,6 +457,7 @@ class EmailController extends Controller
                     $plainTextContent = str_replace('{MONTH}', $period, $plainTextContent);
                     $plainTextContent = str_replace('{TYPE}', Company::$listType[$type]['ru'], $plainTextContent);
                     $plainTextContent = str_replace('{USER}', $userModel->username, $plainTextContent);
+                    $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', urldecode($url)), $plainTextContent);
 
                     // Арам
                     if($user_id != 176) {

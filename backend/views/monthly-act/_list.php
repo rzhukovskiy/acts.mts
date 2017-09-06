@@ -135,7 +135,7 @@ $script = <<< JS
                 $.ajax({
                     type     :'POST',
                     cache    : false,
-                    data:'name=' + companyNameNotific + '&price=' + priceNotific + '&period=' + '$period' + '&type=' + '$type' + '&user_id=' + '$userID',
+                    data:'name=' + companyNameNotific + '&price=' + priceNotific + '&period=' + '$period' + '&type=' + '$type' + '&user_id=' + '$userID' + '&url=' + encodeURIComponent(window.location.href),
                     url: '$actionNotifDirectors',
                     success: function(data){
                         // удачно отправлено уведомление Араму и Герберту

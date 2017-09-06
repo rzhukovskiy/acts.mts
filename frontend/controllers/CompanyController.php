@@ -303,7 +303,7 @@ class CompanyController extends Controller
         if(isset($arrParentId[0])) {
             $arrParentId = $arrParentId[0];
 
-            $arrCompany = Company::find()->where(['parent_id' => $arrParentId])->select('name')->indexBy('id')->orderBy('id ASC')->column();
+            $arrCompany = Company::find()->where(['OR', ['parent_id' => $id], ['parent_id' => $arrParentId]])->select('name')->indexBy('id')->orderBy('id ASC')->column();
 
             if(isset($arrCompany)) {
 
