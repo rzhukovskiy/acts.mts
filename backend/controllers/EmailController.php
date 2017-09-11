@@ -451,16 +451,29 @@ class EmailController extends Controller
                     $subject = $model->title;
                     $plainTextContent = nl2br($model->text);
 
+                    if(preg_match('~"([^"]*)"~u' , $name , $n)) {
+                        $name = $n[1];
+                    } else {
+                        //net slova v kavychkah
+                    }
+
+                    $name = str_replace('+', '%2B', $name);
+
                     // заменяем теги данными
                     $plainTextContent = str_replace('{COMPANY-NAME}', $name, $plainTextContent);
                     $plainTextContent = str_replace('{PRICE}', $price . " руб.", $plainTextContent);
                     $plainTextContent = str_replace('{MONTH}', $period, $plainTextContent);
                     $plainTextContent = str_replace('{TYPE}', Company::$listType[$type]['ru'], $plainTextContent);
                     $plainTextContent = str_replace('{USER}', $userModel->username, $plainTextContent);
-                    $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', urldecode($url)), $plainTextContent);
+
+                    if((mb_strpos($name, "'") > 0) || (mb_strpos($name, '"') > 0) || (mb_strpos($name, '«') > 0) || (mb_strpos($name, '»') > 0)) {
+                        $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', (urldecode($url) . "/monthly-act/list?MonthlyActSearch%5Bact_date%5D=" . $period . "&type=" . $type)), $plainTextContent);
+                    } else {
+                        $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', (urldecode($url) . "/monthly-act/list?MonthlyActSearch%5Bact_date%5D=" . $period . "&MonthlyActSearch%5Bclient_name%5D=" . urlencode($name) . "&type=" . $type)), $plainTextContent);
+                    }
 
                     // Арам
-                    if($user_id != 176) {
+                    /*if($user_id != 176) {
                         $toEmail = "aram.mtransservice@mail.ru";
 
                         $mailCont = Yii::$app->mailer->compose()
@@ -468,7 +481,7 @@ class EmailController extends Controller
                             ->setTo($toEmail)
                             ->setSubject($subject)
                             ->setHtmlBody($plainTextContent)->send();
-                    }
+                    }*/
 
                     // Герберт
                     if($user_id != 1) {
