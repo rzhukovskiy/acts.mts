@@ -252,11 +252,6 @@ class menuLeftWidget extends Widget
             if (!empty($company->schedule)) {
                 $items = [
                     [
-                        'label'  => 'Доходы',
-                        'url'    => ['/stat/view'],
-                        'active' => Yii::$app->controller->id == 'stat',
-                    ],
-                    [
                         'label'  => 'Добавить машину',
                         'url'    => [
                             '/act/create-entry',
@@ -279,6 +274,11 @@ class menuLeftWidget extends Widget
                         'active' => Yii::$app->controller->id == 'contact',
                     ],
                     [
+                        'label'  => 'Доходы',
+                        'url'    => ['/stat/view'],
+                        'active' => Yii::$app->controller->id == 'stat',
+                    ],
+                    [
                         'label'  => 'Архив',
                         'url'    => [
                             '/act/list',
@@ -294,11 +294,6 @@ class menuLeftWidget extends Widget
                 ];
             } else {
                 $items = [
-                    [
-                        'label'  => 'Доходы',
-                        'url'    => ['/stat/view'],
-                        'active' => Yii::$app->controller->id == 'stat',
-                    ],
                     [
                         'label'  => 'Добавить машину',
                         'url'    => [
@@ -319,6 +314,11 @@ class menuLeftWidget extends Widget
                                 $company->type
                         ],
                         'active' => Yii::$app->controller->id == 'contact',
+                    ],
+                    [
+                        'label'  => 'Доходы',
+                        'url'    => ['/stat/view'],
+                        'active' => Yii::$app->controller->id == 'stat',
                     ],
                     [
                         'label'  => 'Архив',
