@@ -4,6 +4,8 @@ namespace api\controllers;
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
+use common\models\Mark;
+use common\models\Type;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -21,15 +23,15 @@ class CarController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['count'],
+                'only' => ['count', 'getcardata', 'checknumber'],
                 'rules' => [
                     [
-                        'actions' => ['count'],
+                        'actions' => ['count', 'getcardata', 'checknumber'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['count'],
+                        'actions' => ['count', 'getcardata', 'checknumber'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -39,6 +41,8 @@ class CarController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'count' => ['post', 'get'],
+                    'getcardata' => ['post', 'get'],
+                    'checknumber' => ['post', 'get'],
                 ],
             ],
         ];
@@ -128,11 +132,119 @@ class CarController extends Controller
                 // Название компаний
                 $companyArray = Company::find()->innerJoin('car', '`car`.`company_id` = `company`.`id`')->where(['OR', ['company.id' => $company_id], ['company.id' => $arrParParIds]])->select('company.name as name, company.id as id')->orderBy('company.id')->asArray()->all();
 
-                return json_encode(['result' => json_encode($ressArray), 'company' => json_encode($companyArray)]);
+                return json_encode(['result' => json_encode($ressArray), 'company' => json_encode($companyArray), 'error' => 0]);
 
             } else {
                 return json_encode(['error' => 1]);
             }
+
+        } else {
+            return $this->redirect("http://docs.mtransservice.ru/site/index");
+        }
+
+    }
+
+    public function actionGetcardata()
+    {
+
+        /*$company_id = Yii::$app->request->get("company_id");
+        $type = Yii::$app->request->get("type");
+
+        if($type > 1) {
+
+            $markList = Mark::find()->select('id, name')->orderBy('id')->asArray()->all();
+            $typeList = Type::find()->innerJoin('company_service', '`company_service`.`type_id` = `type`.`id` AND `company_service`.`company_id` =' . $company_id)->select('type.id, type.name')->orderBy('type.id')->asArray()->all();
+
+            return json_encode(['mark' => json_encode($markList), 'type' => json_encode($typeList), 'error' => 0]);
+
+        } else {
+            return json_encode(['error' => 1]);
+        }*/
+
+        if((Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type"))) {
+
+            $company_id = Yii::$app->request->post("company_id");
+            $type = Yii::$app->request->post("type");
+
+            // Проверяем отображать ли кнопку для закрытия загрузки
+            $canCloseLoad = 1;
+
+            // Текушая дата
+            $dateNow = time();
+
+            // Текущий день недели
+            $dayNow = date("j", $dateNow);
+
+            if (($dayNow >= 1) && ($dayNow < 15)) {
+                $canCloseLoad = ActController::checkCanCloseLoad($type, $company_id);
+            }
+            // Проверяем отображать ли кнопку для закрытия загрузки
+
+            if($type > 1) {
+
+                $markList = Mark::find()->select('id, name')->orderBy('id')->asArray()->all();
+                $typeList = Type::find()->innerJoin('company_service', '`company_service`.`type_id` = `type`.`id` AND `company_service`.`company_id` =' . $company_id)->select('type.id, type.name')->orderBy('type.id')->asArray()->all();
+
+                return json_encode(['mark' => json_encode($markList), 'type' => json_encode($typeList), 'error' => 0, 'closeButt' => $canCloseLoad]);
+
+            } else {
+                return json_encode(['error' => 1]);
+            }
+
+        } else {
+            return $this->redirect("http://docs.mtransservice.ru/site/index");
+        }
+
+    }
+
+    public function actionChecknumber()
+    {
+
+        /*$number = Yii::$app->request->get("number");
+
+        $carRes = Car::find()->where(['number' => $number])->select('mark_id, type_id')->asArray()->all();
+
+        if(count($carRes) > 0) {
+
+            if((isset($carRes[0]['mark_id'])) && (isset($carRes[0]['type_id']))) {
+
+                if(($carRes[0]['mark_id'] > 0) && ($carRes[0]['type_id'] > 0)) {
+                    return json_encode(['error' => 0, 'mark_id' => $carRes[0]['mark_id'], 'type_id' => $carRes[0]['type_id']]);
+                } else {
+                    return json_encode(['error' => 1]);
+                }
+
+            } else {
+                return json_encode(['error' => 1]);
+            }
+
+        } else {
+            return json_encode(['error' => 1]);
+        }*/
+
+        if(Yii::$app->request->post("number")) {
+
+        $number = Yii::$app->request->post("number");
+
+        $carRes = Car::find()->where(['number' => $number])->select('mark_id, type_id')->asArray()->all();
+
+        if(count($carRes) > 0) {
+
+            if((isset($carRes[0]['mark_id'])) && (isset($carRes[0]['type_id']))) {
+
+                if(($carRes[0]['mark_id'] > 0) && ($carRes[0]['type_id'] > 0)) {
+                    return json_encode(['error' => 0, 'mark_id' => $carRes[0]['mark_id'], 'type_id' => $carRes[0]['type_id']]);
+                } else {
+                    return json_encode(['error' => 1]);
+                }
+
+            } else {
+                return json_encode(['error' => 1]);
+            }
+
+        } else {
+            return json_encode(['error' => 1]);
+        }
 
         } else {
             return $this->redirect("http://docs.mtransservice.ru/site/index");

@@ -263,7 +263,7 @@ JS;
                 if (($dayNow >= 1) && ($dayNow < 15)) {
 
                     // Дата прошлого месяца
-                    $dateYesterday = $dateNow - 1555200;
+                    $dateYesterday = strtotime("-1 month");
 
 
                     $lockedLisk = \common\models\Lock::checkLocked(date('n-Y', $dateYesterday), $model->service_type);

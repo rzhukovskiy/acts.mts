@@ -116,10 +116,20 @@ $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
+$filters = '';
+
 if ($admin) {
-    $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
-            ->andWhere(['type' => Company::TYPE_OWNER])
-            ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+
+    if($group == 'partner') {
+        $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+                ->andWhere(['type' => $type])
+                ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+    } else {
+        $filters = 'Выбор компании: ' . Html::activeDropDownList($searchModel, 'client_id', Company::find()->active()
+                ->andWhere(['type' => Company::TYPE_OWNER])
+                ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']);
+    }
+
 } elseif (!empty(Yii::$app->user->identity->company->children)) {
 
     // ищем дочерние дочерних
