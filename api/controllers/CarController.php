@@ -1,6 +1,7 @@
 <?php
 namespace api\controllers;
 
+use api\models\ApiToken;
 use common\models\Act;
 use common\models\Car;
 use common\models\Company;
@@ -222,29 +223,54 @@ class CarController extends Controller
             return json_encode(['error' => 1]);
         }*/
 
-        if(Yii::$app->request->post("number")) {
+        if ((Yii::$app->request->post("token")) && (Yii::$app->request->post("user_id")) && (Yii::$app->request->post("number"))) {
 
-        $number = Yii::$app->request->post("number");
+            $token = Yii::$app->request->post("token");
+            $user_id = Yii::$app->request->post("user_id");
+            $number = Yii::$app->request->post("number");
 
-        $carRes = Car::find()->where(['number' => $number])->select('mark_id, type_id')->asArray()->all();
+            $token = str_replace('\"', '"', $token);
+            $token = str_replace("\'", "'", $token);
 
-        if(count($carRes) > 0) {
+            $modelToken = ApiToken::findOne(['token' => $token]);
 
-            if((isset($carRes[0]['mark_id'])) && (isset($carRes[0]['type_id']))) {
+            if((isset($modelToken)) && (isset($modelToken->user_id)) && (isset($modelToken->expired_at))) {
 
-                if(($carRes[0]['mark_id'] > 0) && ($carRes[0]['type_id'] > 0)) {
-                    return json_encode(['error' => 0, 'mark_id' => $carRes[0]['mark_id'], 'type_id' => $carRes[0]['type_id']]);
+                $timenow = time();
+
+                if($timenow >= $modelToken->expired_at) {
+                    // Удаление токена
+                    $modelToken->delete();
+                    return json_encode(['error' => 2]);
+                } else if($modelToken->user_id != $user_id) {
+                    return json_encode(['error' => 2]);
                 } else {
-                    return json_encode(['error' => 1]);
+
+                    $carRes = Car::find()->where(['number' => $number])->select('mark_id, type_id')->asArray()->all();
+
+                    if (count($carRes) > 0) {
+
+                        if ((isset($carRes[0]['mark_id'])) && (isset($carRes[0]['type_id']))) {
+
+                            if (($carRes[0]['mark_id'] > 0) && ($carRes[0]['type_id'] > 0)) {
+                                return json_encode(['error' => 0, 'mark_id' => $carRes[0]['mark_id'], 'type_id' => $carRes[0]['type_id']]);
+                            } else {
+                                return json_encode(['error' => 1]);
+                            }
+
+                        } else {
+                            return json_encode(['error' => 1]);
+                        }
+
+                    } else {
+                        return json_encode(['error' => 1]);
+                    }
+
                 }
 
             } else {
-                return json_encode(['error' => 1]);
+                return json_encode(['error' => 2]);
             }
-
-        } else {
-            return json_encode(['error' => 1]);
-        }
 
         } else {
             return $this->redirect("http://docs.mtransservice.ru/site/index");
