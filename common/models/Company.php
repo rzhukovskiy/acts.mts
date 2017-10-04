@@ -62,6 +62,7 @@ class Company extends ActiveRecord
     public $cartypes;
 
     private $workTime;
+    private $car_type;
     private $serviceList;
     private $fullAddress;
     private $depart_user_name;
@@ -571,6 +572,16 @@ class Company extends ActiveRecord
         $dayOfWeek = date('w',strtotime($day));
         $dayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
         return CompanyTime::findOne(['company_id' => $this->id, 'day' => $dayOfWeek]);
+    }
+
+    public function setCar_type($value)
+    {
+        $this->car_type = $value;
+    }
+
+    public function getCar_type()
+    {
+        return $this->car_type;
     }
 
     public function setWorkTime($value)
