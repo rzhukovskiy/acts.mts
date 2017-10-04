@@ -533,6 +533,28 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 ?>
 
             </div>
+            <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
+                Местное время: <?php
+
+                $showTimeLocation = '';
+                $modelCompanyInfo = $model->info ? $model->info : new CompanyInfo();
+                $timeCompany = time() + (3600 * $modelCompanyInfo->time_location);
+
+                if($modelCompanyInfo->time_location == 0) {
+                    $showTimeLocation = '<b>' . date('H:i', $timeCompany) . '</b>';
+                } else {
+                    if($modelCompanyInfo->time_location > 0) {
+                        $showTimeLocation = '<b>' . date('H:i', $timeCompany) . '</b>' . ' (' . '+' . $modelCompanyInfo->time_location . ')';
+                    } else {
+                        $showTimeLocation = '<b>' . date('H:i', $timeCompany) . '</b>' . ' (' . $modelCompanyInfo->time_location . ')';
+                    }
+                }
+
+                echo $showTimeLocation;
+
+                ?>
+
+            </div>
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
                 $arrayFreeTime = $model->getFreeTimeArray($entrySearchModel->day);
