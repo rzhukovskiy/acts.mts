@@ -53,6 +53,7 @@ use yii\helpers\ArrayHelper;
  * @property array $requisitesList
  * @property array $serviceList
  * @property string $workTime
+ * @property string $car_type
  */
 class Company extends ActiveRecord
 {
