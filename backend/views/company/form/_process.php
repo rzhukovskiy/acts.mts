@@ -35,7 +35,7 @@ $script = <<< JS
     $('#company-worktime-targ').click(function() {
         $('#everyday').hide();
         $('#anyday').show();
-        $('.modaltime').appendTo('form#w22');
+        $('.modaltime').appendTo('form#w23');
         $('.modaltime').show();     
     });
     
