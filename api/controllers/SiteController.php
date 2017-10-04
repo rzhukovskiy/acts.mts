@@ -164,7 +164,7 @@ class SiteController extends Controller
 
 
         } else {
-            return $this->redirect("http://docs.mtransservice.ru/site/index");
+            return json_encode(['error' => 1]);
         }
 
     }
