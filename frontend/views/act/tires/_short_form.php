@@ -162,7 +162,7 @@ JS;
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-6">
                                     <?php if (!empty($serviceList)) { ?>
-                                        <?= Html::dropDownList("Act[serviceList][$scope->id][service_id]", (isset($scope->service_id)) ? $scope->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
+                                        <?= Html::dropDownList("Act[serviceList][$scope->id][service_id]", (isset($scope->service_id)) ? $scope->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-service', 'required' => true, 'prompt' => 'выберите услугу']) ?>
                                     <?php } else { ?>
                                         <?= Html::textInput("Act[serviceList][$scope->id][description]", (isset($scope->description)) ? $scope->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                     <?php } ?>
@@ -204,7 +204,7 @@ JS;
                         <div class="form-group" style="height: 25px;">
                             <div class="col-xs-6">
                                 <?php if (!empty($serviceList)) { ?>
-                                    <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'prompt' => 'выберите услугу']) ?>
+                                    <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'required' => true, 'prompt' => 'выберите услугу']) ?>
                                 <?php } else { ?>
                                     <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
                                 <?php } ?>
