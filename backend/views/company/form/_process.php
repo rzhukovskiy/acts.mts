@@ -242,6 +242,50 @@ JS;
             </tr>
             <tr>
                 <td class="list-label-md">
+                    <?= $modelCompany->getAttributeLabel('car_type') ?></td>
+                <td>
+                    <?php
+
+                    $resType = "";
+
+                    if($modelCompany->car_type == 0) {
+                        $resType = "Грузовой транспорт";
+                    } else if($modelCompany->car_type == 1) {
+                        $resType = "Легковой транспорт";
+                    } else if($modelCompany->car_type == 2) {
+                        $resType = "Грузовой и легковой транспорт";
+                    }
+
+                    $editableForm = Editable::begin([
+                        'model' => $modelCompany,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'car_type',
+                        'displayValue' => $resType,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'style' => 'display:none;'],
+                        'formOptions' => [
+                            'action' => ['/company/update', 'id' => $modelCompany->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+
+                    $form = $editableForm->getForm();
+                    echo Html::hiddenInput('kv-complex', '1');
+
+                    $editableForm->afterInput = $form->field($modelCompany, 'car_type')->dropDownList([0 => 'Грузовой транспорт', 1 => 'Легковой транспорт', 2 => 'Грузовой и легковой транспорт'], ['class' => 'form-control', 'options'=>[$modelCompany->car_type => ['Selected'=>true]]]) . '';
+                    Editable::end();
+
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
                     <?= $modelCompanyInfo->getAttributeLabel('comment') ?></td>
                 <td>
                     <?= Editable::widget([

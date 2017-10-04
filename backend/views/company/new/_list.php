@@ -102,6 +102,21 @@ if($searchModel->type == 3) {
                     'options' => ['class' => 'kv-group-header'],
                 ],
             ],
+            'rowOptions' => function ($model) {
+                // Выделяем цветом для каких типов
+
+                if($model->car_type == 0) {
+                    // грузовые оставляем как есть
+                    return '';
+                } else if($model->car_type == 1) {
+                    return ['style' => 'background: #dff1d8;'];
+                } else if($model->car_type == 2) {
+                    return ['style' => 'background: #f9f5e3;'];
+                } else {
+                    return '';
+                }
+
+            },
             'columns' => [
                 [
                     'header' => '№',

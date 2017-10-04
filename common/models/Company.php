@@ -212,7 +212,7 @@ class Company extends ActiveRecord
         return [
             [['name', 'address'], 'required'],
             [['name'], 'unique'],
-            [['is_nested'], 'integer'],
+            [['is_nested', 'car_type'], 'integer'],
             [
                 [
                     'parent_id',
@@ -230,6 +230,7 @@ class Company extends ActiveRecord
             ],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['type', 'default', 'value' => self::TYPE_OWNER],
+            ['car_type', 'default', 'value' => 0],
             ['status', 'in', 'range' => [self::STATUS_REFUSE, self::STATUS_ARCHIVE, self::STATUS_ARCHIVE3, self::STATUS_ACTIVE, self::STATUS_DELETED, self::STATUS_NEW]],
         ];
     }
@@ -255,6 +256,7 @@ class Company extends ActiveRecord
             'depart_user_name' => 'ID сотрудника',
             'expensive' => 'Стоимость',
             'workTime'    => 'Время работы',
+            'car_type'    => 'Тип ТС',
         ];
     }
 

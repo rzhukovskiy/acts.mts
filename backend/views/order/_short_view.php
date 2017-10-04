@@ -492,7 +492,23 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 <?= $companyTime ? $companyTime : 'Выходной' ?>
             </span>
         </div>
-        <div class="panel-body">
+
+        <?php
+
+        // Выделяем цветом для каких типов
+        $colorBGItem = "";
+
+        if($model->car_type == 0) {
+            // грузовые оставляем как есть
+        } else if($model->car_type == 1) {
+            $colorBGItem = ' style="background: #dff1d8;"';
+        } else if($model->car_type == 2) {
+            $colorBGItem = ' style="background: #f9f5e3;"';
+        }
+
+        ?>
+
+        <div class="panel-body"<?=$colorBGItem?>>
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
                 <?= $model->fullAddress ?>
             </div>

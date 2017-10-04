@@ -514,6 +514,17 @@ class CompanyController extends Controller
                 foreach (Yii::$app->request->post('Company') as $name => $value) {
                     if ($name == 'workTime') {
                         $output[] = $model->getWorkTimeHtml();
+                    } else if ($name == 'car_type') {
+                        $resType = "";
+
+                        if($value == 0) {
+                            $resType = "Грузовой транспорт";
+                        } else if($value == 1) {
+                            $resType = "Легковой транспорт";
+                        } else if($value == 2) {
+                            $resType = "Грузовой и легковой транспорт";
+                        }
+                        $output[] = $resType;
                     } else {
                         $output[] = $value;
                     }

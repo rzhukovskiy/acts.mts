@@ -201,6 +201,34 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'options' => ['class' => 'kv-group-header'],
                 ],
             ],
+            'rowOptions' => function ($model) use ($group) {
+                // Выделяем цветом для каких типов
+
+                if ($group == 'partner') {
+                if ($model->partner->car_type == 0) {
+                    // грузовые оставляем как есть
+                    return '';
+                } else if ($model->partner->car_type == 1) {
+                    return ['style' => 'background: #dff1d8;'];
+                } else if ($model->partner->car_type == 2) {
+                    return ['style' => 'background: #f9f5e3;'];
+                } else {
+                    return '';
+                }
+                } else {
+                    if ($model->client->car_type == 0) {
+                        // грузовые оставляем как есть
+                        return '';
+                    } else if ($model->client->car_type == 1) {
+                        return ['style' => 'background: #dff1d8;'];
+                    } else if ($model->client->car_type == 2) {
+                        return ['style' => 'background: #f9f5e3;'];
+                    } else {
+                        return '';
+                    }
+                }
+
+            },
             'columns' => [
                 [
                     'header' => '№',
