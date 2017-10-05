@@ -14,11 +14,11 @@ use yii\helpers\Url;
 
 $isAdmin = $admin ? 1 : 0;
 
-$idDataCol = 2;
-$numSelVal = 5;
+$idDataCol = 3;
+$numSelVal = 6;
 if (($type == Service::TYPE_DISINFECT) || ($type == Service::TYPE_SERVICE)) {
-    $idDataCol = 6;
-    $numSelVal = 6;
+    $idDataCol = 7;
+    $numSelVal = 7;
 }
 
 if(!$company) {

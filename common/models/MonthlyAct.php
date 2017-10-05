@@ -40,6 +40,7 @@ use yii\web\UploadedFile;
  * @property string $act_we_get_date
  * @property string $payment_comment
  * @property string $payment_estimate_date
+ * @property integer $prepayment
  *
  * @property Company $client
  */
@@ -119,7 +120,8 @@ class MonthlyAct extends ActiveRecord
                     'act_status',
                     'is_partner',
                     'created_at',
-                    'updated_at'
+                    'updated_at',
+                    'prepayment'
                 ],
                 'integer'
             ],
@@ -176,6 +178,7 @@ class MonthlyAct extends ActiveRecord
             'post_number' => 'Номер почтового отправления',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'prepayment' => 'Предоплата',
         ];
     }
 
@@ -413,7 +416,15 @@ class MonthlyAct extends ActiveRecord
 
     }
 
+    public function setPrepayment($value)
+    {
+        $this->prepayment = $value;
+    }
 
+    public function getPrepayment()
+    {
+        return $this->prepayment;
+    }
     /**
      * Список изображений для галереи
      * @return string

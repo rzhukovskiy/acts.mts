@@ -124,7 +124,7 @@ echo GridView::widget([
                     'content' => $filters,
                     'options' => [
                         'style'   => 'vertical-align: middle',
-                        'colspan' => $GLOBALS['company'] ? 10 : 11,
+                        'colspan' => $GLOBALS['company'] ? 11 : 12,
                         'class'   => 'kv-grid-group-filter',
                     ],
                 ]
@@ -209,6 +209,16 @@ echo GridView::widget([
                     'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
                     'style' => 'min-width: 100px'
                 ];
+            },
+        ],
+        [
+            'attribute' => 'prepayment',
+            'value' => function ($data) {
+                if($data->prepayment) {
+                    return $data->prepayment;
+                } else {
+                    return '-';
+                }
             },
         ],
         [
