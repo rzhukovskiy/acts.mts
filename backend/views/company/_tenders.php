@@ -32,7 +32,7 @@ use common\models\Company;
             ],
             [
                 'attribute' => 'service_type',
-                'header' => 'Закупаемы<br />услуги',
+                'header' => 'Закупаемые<br />услуги',
                 'format' => 'raw',
                 'vAlign'=>'middle',
                 'value' => function ($data) {
