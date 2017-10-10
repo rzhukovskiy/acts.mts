@@ -49,6 +49,9 @@ class menuLeftWidget extends Widget
         $searchModel->status = Company::STATUS_NEW;
         $countNew = $searchModel->search()->count;
 
+        $searchModel->status = Company::STATUS_TENDER;
+        $countTender = $searchModel->search()->count;
+
         $searchModel->status = [Company::STATUS_ARCHIVE, Company::STATUS_ACTIVE];
         $countArchive = $searchModel->search()->count;
 
@@ -77,6 +80,14 @@ class menuLeftWidget extends Widget
                     'label' => 'Сотрудники',
                     'url' => ['/user/list', 'department' => Department::getFirstId()],
                     'active' => Yii::$app->controller->id == 'user',
+                ],
+                [
+                    'label' => 'Тендеры' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_TENDER]['en'], 'type' => Company::TYPE_WASH],
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')
+                    ),
                 ],
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
@@ -212,6 +223,14 @@ class menuLeftWidget extends Widget
             }
 
             $items = [
+                [
+                    'label' => 'Тендеры' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_TENDER]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_TENDER) > 0 ? $currentUser->getFirstCompanyTypeMenu(Company::STATUS_TENDER) : 2],
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')
+                    ),
+                ],
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_NEW)],

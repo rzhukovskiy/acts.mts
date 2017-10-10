@@ -356,8 +356,8 @@ CanvasJsAsset::register($this);
                             $lostDateText = '';
                             $lostDate = $data->remove_date - $data->company->created_at;
 
-                            $days = (round($lostDate / 86400));
-                            $lostDate -= (round($lostDate / 86400) * 86400);
+                            $days = ((Int) ($lostDate / 86400));
+                            $lostDate -= (((Int) ($lostDate / 86400)) * 86400);
 
                             if($days < 0) {
                                 $days = 0;

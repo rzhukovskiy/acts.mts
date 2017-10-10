@@ -52,6 +52,14 @@ $items[] = [
     'active' => \Yii::$app->controller->action->id == 'price',
 ];
 
+if($model->status == Company::STATUS_TENDER) {
+    $items[] = [
+        'label' => 'Тендеры',
+        'url' => ['company/tenders', 'id' => $model->id],
+        'active' => \Yii::$app->controller->action->id == 'tenders',
+    ];
+}
+
 echo Tabs::widget([
     'items' => $items,
 ]);

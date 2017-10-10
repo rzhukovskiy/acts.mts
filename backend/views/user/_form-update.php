@@ -31,6 +31,22 @@ use common\models\Company;
     echo $form->field($model, 'newPassword')->passwordInput();
     echo $form->field($model, 'is_account')->checkbox([], false);
     ?>
+
+    <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Тендеры</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_TENDER . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_TENDER), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
+        </div>
+    </div>
+
     <div class="form-group field-department-name required">
         <label class="col-sm-2 control-label" for="department-name">Активные</label>
         <div class="col-sm-10">

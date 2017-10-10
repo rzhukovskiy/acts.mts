@@ -13,11 +13,17 @@ $requestType = Yii::$app->request->get('type');
 
 $items = [];
 foreach ($listType as $type_id => $typeData) {
-    $items[] = [
-        'label' => Company::$listType[$type_id]['ru'] . ($typeData['badge'] ? ' <span class="label label-success">' . $typeData['badge'] . '</span>' : ''),
-        'url' => ["/company/$action", 'type' => $type_id],
-        'active' => Yii::$app->controller->id == 'company' && $requestType == $type_id,
-    ];
+
+    if((($type_id == 1) && ($action != 'tender')) || ($type_id != 1)) {
+
+        $items[] = [
+            'label' => Company::$listType[$type_id]['ru'] . ($typeData['badge'] ? ' <span class="label label-success">' . $typeData['badge'] . '</span>' : ''),
+            'url' => ["/company/$action", 'type' => $type_id],
+            'active' => Yii::$app->controller->id == 'company' && $requestType == $type_id,
+        ];
+
+    }
+
 }
 
 echo Tabs::widget([

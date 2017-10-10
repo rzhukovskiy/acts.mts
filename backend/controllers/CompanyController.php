@@ -17,6 +17,8 @@ use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
+use common\models\Tender;
+use common\models\TenderHystory;
 use yii\base\DynamicModel;
 use common\models\CompanySubType;
 use common\models\Department;
@@ -56,17 +58,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -467,6 +469,234 @@ class CompanyController extends Controller
             ]);
     }
 
+    // Раздел тендеры
+    public function actionTender($type)
+    {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_TENDER;
+
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_TENDER);
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if($type == 3) {
+            $requestSupType = 0;
+
+            if(Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if($requestSupType > 0) {
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
+            }
+
+        }
+        // Подкатегории для сервиса
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'address'    => SORT_ASC,
+                'created_at' => SORT_DESC,
+            ]
+        ];
+
+        $model = new Company();
+        $model->type = $type;
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_TENDER;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
+            $typeData['badge'] = $badgeSearch->search()->count;
+        }
+
+        $this->view->title = 'Тендеры - ' . Company::$listType[$type]['ru'];
+
+        return $this->render('list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'model'        => $model,
+                'listType'     => $listType,
+            ]);
+    }
+
+    // Вкладка тендеры
+    public function actionTenders($id)
+    {
+
+        $model = $this->findModel($id);
+
+        $searchModel = Tender::find()->where(['company_id' => $id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'date_request_end'    => SORT_ASC,
+            ]
+        ];
+
+        return $this->render('tenders', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'model' => $model,
+        ]);
+
+    }
+
+    // Новый тендер
+    public function actionNewtender($id)
+    {
+        $model = new Tender();
+        $model->company_id = $id;
+
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            return $this->redirect(['company/tenders', 'id' => $model->company_id]);
+
+        } else {
+            return $this->render('form/newtender', [
+                'id' => $id,
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionFulltender($tender_id)
+    {
+
+        $model = Tender::findOne(['id' => $tender_id]);
+
+        return $this->render('tender/fulltender', [
+            'model' => $model,
+        ]);
+
+    }
+
+    public function actionUpdatetender($id)
+    {
+        $model = Tender::findOne(['id' => $id]);
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+
+            // Списки с данными
+            $stringServicesText = "";
+            $ServicesList = Company::$listType;
+            $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
+            $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
+            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)'];
+            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)'];
+            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД'];
+
+            foreach ($arrUpdate['Tender'] as $name => $value) {
+                if($name == 'date_search') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'service_type') {
+
+                    // запись в базу нескольких услуг
+                    if (is_array($value)) {
+
+                        $arrServices = $value;
+
+                        if (count($arrServices) > 0) {
+                            $stringServices = '';
+
+                            for ($i = 0; $i < count($arrServices); $i++) {
+                                if ($i == 0) {
+                                    $stringServices .= $arrServices[$i];
+                                } else {
+                                    $stringServices .= ', ' . $arrServices[$i];
+                                }
+
+                                if(isset($ServicesList[$arrServices[$i]]['ru'])) {
+                                    $stringServicesText .= $ServicesList[$arrServices[$i]]['ru'] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringServices;
+
+                        }
+
+                    }
+                } else if($name == 'status_request_security') {
+                    $arrUpdate['Tender']['date_status_request'] = (String) time();
+                } else if($name == 'status_contract_security') {
+                    $arrUpdate['Tender']['date_status_contract'] = (String) time();
+                } else if($name == 'date_request_start') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'date_request_end') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'time_request_process') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'time_bidding_start') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'time_bidding_end') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'date_contract') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'term_contract') {
+                    $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                }
+            }
+
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
+                foreach (Yii::$app->request->post('Tender') as $name => $value) {
+
+                    if($name == 'service_type') {
+                        $output[] = $stringServicesText;
+                    } else if($name == 'percent_down') {
+                        $output[] = $value . "%";
+                    } else if($name == 'percent_max') {
+                        $output[] = $value . "%";
+                    } else if($name == 'federal_law') {
+                        $output[] = $arrFZ[$value];
+                    } else if($name == 'method_purchase') {
+                        $output[] = $arrMethods[$value];
+                    } else if($name == 'status_request_security') {
+                        $output[] = $arrStatusRequest[$value];
+                    } else if($name == 'status_contract_security') {
+                        $output[] = $arrStatusContract[$value];
+                    } else if($name == 'key_type') {
+                        $output[] = $arrKeyType[$value];
+                    } else {
+                        $output[] = $value;
+                    }
+
+                }
+                return ['output' => implode(', ', $output), 'message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        } else {
+            return ['message' => 'не получилось'];
+        }
+    }
+
     /**
      * Creates Company model.
      * @return mixed
@@ -480,11 +710,19 @@ class CompanyController extends Controller
 
         if ($model->load(Yii::$app->request->get()) && $model->save()) {
 
-            $DepartmentCompany = new DepartmentCompany();
-            $DepartmentCompany->company_id = $model->id;
-            $DepartmentCompany->user_id = Yii::$app->user->identity->id;
-            $DepartmentCompany->remove_id = 0;
-            $DepartmentCompany->save();
+            if($model->status != Company::STATUS_TENDER) {
+                $DepartmentCompany = new DepartmentCompany();
+                $DepartmentCompany->company_id = $model->id;
+                $DepartmentCompany->user_id = Yii::$app->user->identity->id;
+                $DepartmentCompany->remove_id = 0;
+                $DepartmentCompany->save();
+            } else {
+                $TenderHystory = new TenderHystory();
+                $TenderHystory->company_id = $model->id;
+                $TenderHystory->user_id = Yii::$app->user->identity->id;
+                $TenderHystory->remove_id = 0;
+                $TenderHystory->save();
+            }
 
             if($sub > 0) {
                 // Подкатегории для сервиса

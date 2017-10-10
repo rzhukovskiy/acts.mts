@@ -178,6 +178,8 @@ JS;
     <div class="panel-heading">
         <?= $modelCompany->name ?>
         <div class="header-btn pull-right">
+
+            <?php if($modelCompany->status != Company::STATUS_TENDER) { ?>
             <?= $modelCompany->status != Company::STATUS_ARCHIVE ?
                 Html::a('В архив', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
             <?= $modelCompany->status != Company::STATUS_REFUSE ? 
@@ -187,6 +189,9 @@ JS;
 
             <?= $modelCompany->status != Company::STATUS_ACTIVE ?
                 Html::a('В активные', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ACTIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+
+            <?php } ?>
+
             <?= $admin ? Html::a('Удалить', ['company/delete','id' => $modelCompany->id], ['class' => 'btn btn-danger btn-sm']) : ''?>
         </div>
     </div>
