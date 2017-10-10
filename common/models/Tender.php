@@ -94,7 +94,7 @@ class Tender extends \yii\db\ActiveRecord
             'place' => 'Электронаая площадка',
             'number_purchase' => 'Номер закупки',
             'customer' => 'Заказчик',
-            'service_type' => 'Закупаемы услуги',
+            'service_type' => 'Закупаемые услуги',
             'price_nds' => 'Цена с НДС',
             'pre_income' => 'Предварительная прибыль от контраката',
             'first_price' => 'Первоначальная цена контракта',
