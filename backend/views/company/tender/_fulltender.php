@@ -193,7 +193,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -220,7 +220,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -241,7 +241,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -262,7 +262,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -387,7 +387,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -408,7 +408,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => ['class' => 'form-control', 'type' => 'number'],
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
@@ -733,7 +733,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'date_contract',
-                'displayValue' => date('d.m.Y', $model->date_contract),
+                'displayValue' => ($model->date_contract) ? date('d.m.Y', $model->date_contract) : '',
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
@@ -746,7 +746,7 @@ use common\models\Company;
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
                     ],
-                    'options'=>['value' => date('d.m.Y', $model->date_contract)]
+                    'options'=>['value' => ($model->date_contract) ? date('d.m.Y', $model->date_contract) : '']
                 ],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
@@ -766,7 +766,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'term_contract',
-                'displayValue' => date('d.m.Y', $model->term_contract),
+                'displayValue' => ($model->term_contract) ? date('d.m.Y', $model->term_contract) : '',
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
@@ -779,7 +779,7 @@ use common\models\Company;
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
                     ],
-                    'options'=>['value' => date('d.m.Y', $model->term_contract)]
+                    'options'=>['value' => ($model->term_contract) ? date('d.m.Y', $model->term_contract) : '']
                 ],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
@@ -794,67 +794,69 @@ use common\models\Company;
         <td>
             <?php
 
-            $timeNow = time();
+            if($model->term_contract) {
+                $timeNow = time();
 
-            $showTotal = '';
+                $showTotal = '';
 
-            if($model->term_contract > $timeNow) {
+                if ($model->term_contract > $timeNow) {
 
-                $totalDate = $model->term_contract - $timeNow;
+                    $totalDate = $model->term_contract - $timeNow;
 
-                $days = ((Int) ($totalDate / 86400));
-                $totalDate -= (((Int) ($totalDate / 86400)) * 86400);
+                    $days = ((Int)($totalDate / 86400));
+                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
 
-                if($days < 0) {
-                    $days = 0;
+                    if ($days < 0) {
+                        $days = 0;
+                    }
+
+                    $hours = (round($totalDate / 3600));
+                    $totalDate -= (round($totalDate / 3600) * 3600);
+
+                    if ($hours < 0) {
+                        $hours = 0;
+                    }
+
+                    $minutes = (round($totalDate / 60));
+
+                    if ($minutes < 0) {
+                        $minutes = 0;
+                    }
+
+                    $showTotal .= $days . ' д.';
+                    $showTotal .= ' ' . $hours . ' ч.';
+                    $showTotal .= ' ' . $minutes . ' м.';
+
+                } else {
+                    $totalDate = $timeNow - $model->term_contract;
+
+                    $days = ((Int)($totalDate / 86400));
+                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                    if ($days < 0) {
+                        $days = 0;
+                    }
+
+                    $hours = (round($totalDate / 3600));
+                    $totalDate -= (round($totalDate / 3600) * 3600);
+
+                    if ($hours < 0) {
+                        $hours = 0;
+                    }
+
+                    $minutes = (round($totalDate / 60));
+
+                    if ($minutes < 0) {
+                        $minutes = 0;
+                    }
+
+                    $showTotal .= '- ' . $days . ' д.';
+                    $showTotal .= ' ' . $hours . ' ч.';
+                    $showTotal .= ' ' . $minutes . ' м.';
                 }
 
-                $hours = (round($totalDate / 3600));
-                $totalDate -= (round($totalDate / 3600) * 3600);
-
-                if($hours < 0) {
-                    $hours = 0;
-                }
-
-                $minutes = (round($totalDate / 60));
-
-                if($minutes < 0) {
-                    $minutes = 0;
-                }
-
-                $showTotal .= $days . ' д.';
-                $showTotal .= ' ' . $hours . ' ч.';
-                $showTotal .= ' ' . $minutes . ' м.';
-
-            } else {
-                $totalDate = $timeNow - $model->term_contract;
-
-                $days = ((Int) ($totalDate / 86400));
-                $totalDate -= (((Int) ($totalDate / 86400)) * 86400);
-
-                if($days < 0) {
-                    $days = 0;
-                }
-
-                $hours = (round($totalDate / 3600));
-                $totalDate -= (round($totalDate / 3600) * 3600);
-
-                if($hours < 0) {
-                    $hours = 0;
-                }
-
-                $minutes = (round($totalDate / 60));
-
-                if($minutes < 0) {
-                    $minutes = 0;
-                }
-
-                $showTotal .= '- ' . $days . ' д.';
-                $showTotal .= ' ' . $hours . ' ч.';
-                $showTotal .= ' ' . $minutes . ' м.';
+                echo $showTotal;
             }
-
-            echo $showTotal;
 
             ?>
         </td>

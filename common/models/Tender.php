@@ -17,16 +17,16 @@ use yii\behaviors\TimestampBehavior;
  * @property string $number_purchase
  * @property string $customer
  * @property string $service_type
- * @property integer $price_nds
- * @property integer $pre_income
- * @property integer $first_price
- * @property integer $final_price
+ * @property float $price_nds
+ * @property float $pre_income
+ * @property float $first_price
+ * @property float $final_price
  * @property integer $percent_down
  * @property integer $percent_max
  * @property integer $federal_law
  * @property integer $method_purchase
- * @property integer $contract_security
- * @property integer $participate_price
+ * @property float $contract_security
+ * @property float $participate_price
  * @property integer $status_request_security
  * @property string $date_status_request
  * @property integer $status_contract_security
@@ -71,8 +71,9 @@ class Tender extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'city', 'place', 'number_purchase', 'customer', 'service_type', 'price_nds', 'pre_income', 'first_price', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'notice_eis', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'required'],
-            [['company_id', 'price_nds', 'pre_income', 'first_price', 'final_price', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'contract_security', 'participate_price', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
+            [['company_id', 'city', 'place', 'number_purchase', 'customer', 'service_type', 'price_nds', 'pre_income', 'first_price', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'notice_eis', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end'], 'required'],
+            [['company_id', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
+            [['price_nds', 'pre_income', 'first_price', 'final_price', 'contract_security', 'participate_price'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer', 'competitor'], 'string', 'max' => 255],
             [['service_type'], 'safe'],
@@ -137,8 +138,13 @@ class Tender extends \yii\db\ActiveRecord
             $this->time_request_process = (String) strtotime($this->time_request_process);
             $this->time_bidding_start = (String) strtotime($this->time_bidding_start);
             $this->time_bidding_end = (String) strtotime($this->time_bidding_end);
-            $this->date_contract = (String) strtotime($this->date_contract);
-            $this->term_contract = (String) strtotime($this->term_contract);
+
+            if($this->date_contract) {
+                $this->date_contract = (String) strtotime($this->date_contract);
+            }
+            if($this->term_contract) {
+                $this->term_contract = (String) strtotime($this->term_contract);
+            }
 
             // запись в базу нескольких услуг
             if (is_array($this->service_type)) {
