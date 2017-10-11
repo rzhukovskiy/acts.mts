@@ -16,6 +16,7 @@ class CompanySearch extends Company
     public $user_id;
     public $card_number;
     public $email;
+    public $car_type;
     public $dep_user_id;
 
     /**
@@ -26,6 +27,7 @@ class CompanySearch extends Company
         return [
             [['card_number', 'name'], 'string'],
             [['user_id'], 'integer'],
+            [['car_type'], 'integer'],
             [['services'], 'safe'],
             [['cartypes'], 'safe'],
             [['email'], 'safe'],
@@ -42,9 +44,9 @@ class CompanySearch extends Company
         // bypass scenarios() implementation in the parent class
         return [
             self::SCENARIO_OFFER => [
-                'user_id', 'name', 'address', 'services', 'cartypes', 'fullAddress', 'email'
+                'user_id', 'name', 'address', 'services', 'cartypes', 'fullAddress', 'email', 'car_type'
             ],
-            'default' => ['card_number', 'name', 'address', 'cartypes', 'services', 'email'],
+            'default' => ['card_number', 'name', 'address', 'cartypes', 'services', 'email', 'car_type'],
         ];
     }
 
@@ -164,6 +166,10 @@ class CompanySearch extends Company
         if($this->email) {
             $query->innerJoin('company_member', 'company_member.company_id = company.id');
             $query->andFilterWhere(['OR', ['like', 'info.email', $this->email], ['like', 'company_member.email', $this->email]]);
+        }
+
+        if(($this->car_type == '0') || ($this->car_type == '1') || ($this->car_type == '2')) {
+            $query->andFilterWhere(['car_type' => $this->car_type]);
         }
 
         return $dataProvider;

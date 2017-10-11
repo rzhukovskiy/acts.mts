@@ -29,6 +29,31 @@ if($searchModel->type == 3) {
         <div class="header-btn pull-right">
             <?php
 
+            // Тип ТС
+            echo Html::a('Грузовые', [
+                'company/' . Yii::$app->controller->action->id,
+                'type' => $searchModel->type,
+                'CompanySearch[car_type]' => 0,
+            ], ['class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:15px;']);
+
+            echo Html::a('Легковые', [
+                'company/' . Yii::$app->controller->action->id,
+                'type' => $searchModel->type,
+                'CompanySearch[car_type]' => 1,
+            ], ['class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:15px;']);
+
+            echo Html::a('Универсальные', [
+                'company/' . Yii::$app->controller->action->id,
+                'type' => $searchModel->type,
+                'CompanySearch[car_type]' => 2,
+            ], ['class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:15px;']);
+
+            echo Html::a('Сбросить фильтр', [
+                'company/' . Yii::$app->controller->action->id,
+                'type' => $searchModel->type,
+            ], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:15px;']);
+            // Тип ТС
+
             if(($searchModel->type != 3) || ($requestSupType > 0)) {
                 if($requestSupType > 0) {
                     echo Html::a('Добавить', [
