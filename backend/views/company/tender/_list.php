@@ -80,30 +80,11 @@ if($searchModel->type == 3) {
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
-                    'attribute' => 'address',
+                    'attribute' => 'tender_user_name',
                     'group' => true,
                     'groupedRow' => true,
                     'groupOddCssClass' => 'kv-group-header',
                     'groupEvenCssClass' => 'kv-group-header',
-                    'value' => function ($data) {
-                        return $data->address;
-                    },
-                    /*'groupFooter' => function ($data) {
-                        return [
-                            'content' => [
-                                2 => "Итого " . $GLOBALS["typeName"],
-                                3 => GridView::F_COUNT
-                            ],
-                            'contentFormats' => [
-                                2 => ['format' => 'text'],
-                                3 => ['format' => 'number']
-                            ],
-                            'contentOptions' => [
-                                2 => ['style' => 'color:#8e8366;'],
-                                3 => ['style' => 'color:#8e8366;'],
-                            ],
-                        ];
-                    },*/
                 ],
                 [
                     'header' => 'Организация',

@@ -67,6 +67,7 @@ class Company extends ActiveRecord
     private $serviceList;
     private $fullAddress;
     private $depart_user_name;
+    private $tender_user_name;
 
     const STATUS_DELETED = 0;
     const STATUS_NEW = 1;
@@ -261,6 +262,7 @@ class Company extends ActiveRecord
             'serviceList' => 'Сервисы',
             'fullAddress' => 'Адрес',
             'depart_user_name' => 'ID сотрудника',
+            'tender_user_name' => 'ID сотрудника',
             'expensive' => 'Стоимость',
             'workTime'    => 'Время работы',
             'car_type'    => 'Тип ТС',
@@ -345,6 +347,22 @@ class Company extends ActiveRecord
         }
 
         return $this->depart_user_name;
+    }
+
+    // имя сотрудника, который добавил тендер
+    public function getTender_user_name()
+    {
+
+        if (!$this->tender_user_name) {
+            $userName = TenderHystory::find()->where(['`tender_hystory`.`company_id`' => $this->id])->andWhere(['`tender_hystory`.`remove_date`' => null])->andWhere(['!=', '`tender_hystory`.`user_id`', 0])->leftJoin('`user`', '`user`.`id` = `tender_hystory`.`user_id`')->select('`user`.`username`')->column();
+
+            if(isset($userName[0])) {
+                $this->tender_user_name = $userName[0];
+            }
+
+        }
+
+        return $this->tender_user_name;
     }
 
     public function setFullAddress($value)
