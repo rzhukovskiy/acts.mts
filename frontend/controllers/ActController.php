@@ -272,6 +272,9 @@ class ActController extends Controller
                     }
                 }
 
+                $name = str_replace('«', '', $name);
+                $name = str_replace('»', '', $name);
+
                 // добавляем в базу дату первой выгрузки файла
                 $actExport = new ActExport();
                 $actExport->company_id = $company_id;

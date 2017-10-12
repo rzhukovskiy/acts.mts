@@ -863,6 +863,8 @@ class ActExporter
         }
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
         $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+        $fileNameCheck = str_replace('«', '', $fileNameCheck);
+        $fileNameCheck = str_replace('»', '', $fileNameCheck);
 
         $companyInt = 0;
 
@@ -1953,6 +1955,8 @@ class ActExporter
         }
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
         $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+        $fileNameCheck = str_replace('«', '', $fileNameCheck);
+        $fileNameCheck = str_replace('»', '', $fileNameCheck);
 
         if($this->checkDoQueryNumber == false) {
             $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
@@ -3007,6 +3011,8 @@ class ActExporter
         $fileNameCheck = $fileNamePre . " Акт ООО Агро-Авто (Москва ЮГ - МФП) от " . date('m-Y', $this->time) . ".xls";
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
         $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+        $fileNameCheck = str_replace('«', '', $fileNameCheck);
+        $fileNameCheck = str_replace('»', '', $fileNameCheck);
 
         $companyInt = 0;
 
@@ -6775,6 +6781,8 @@ class ActExporter
         $fileNameCheck = $fileNamePre . " Счет ООО Агро-Авто (Москва ЮГ - МФП) от " . date('m-Y', $this->time) . ".xls";
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
         $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+        $fileNameCheck = str_replace('«', '', $fileNameCheck);
+        $fileNameCheck = str_replace('»', '', $fileNameCheck);
 
         if($this->checkDoQueryNumber == false) {
             $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
