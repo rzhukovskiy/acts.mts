@@ -106,6 +106,13 @@ class menuLeftWidget extends Widget
                                 (Yii::$app->request->get('type') == Company::TYPE_UNIVERSAL ||
                                     ($company && $company->type == Company::TYPE_UNIVERSAL))),
                         ],
+                        [
+                            'label'  => Company::$listType[Company::TYPE_PARKING]['ru'],
+                            'url'    => ['/company/list?type=' . Company::TYPE_PARKING],
+                            'active' => (Yii::$app->controller->id == 'company' &&
+                                (Yii::$app->request->get('type') == Company::TYPE_PARKING ||
+                                    ($company && $company->type == Company::TYPE_PARKING))),
+                        ],
                     ],
                 ],
                 [

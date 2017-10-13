@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'number_purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите номер закупки']) ?>
 <?= $form->field($model, 'customer')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите название заказчика']) ?>
 
-<?= $form->field($model, 'service_type')->dropDownList(['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция'], ['class' => 'form-control', 'multiple' => 'true', /*'prompt' => 'Выберите услуги'*/]) ?>
+<?= $form->field($model, 'service_type')->dropDownList(['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка'], ['class' => 'form-control', 'multiple' => 'true', /*'prompt' => 'Выберите услуги'*/]) ?>
 
 <?= $form->field($model, 'price_nds')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите цену с НДС']) ?>
 <?= $form->field($model, 'first_price')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите первоначальную цену контракта']) ?>

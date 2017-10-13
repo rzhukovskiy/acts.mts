@@ -398,12 +398,14 @@ class LoadHelper
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
             ],
             User::ROLE_WATCHER => [
@@ -412,12 +414,14 @@ class LoadHelper
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -438,12 +442,14 @@ class LoadHelper
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -464,6 +470,7 @@ class LoadHelper
                     Service::TYPE_SERVICE => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons'],
                 ],
             ],
             User::ROLE_CLIENT => [
@@ -473,6 +480,7 @@ class LoadHelper
                     Service::TYPE_SERVICE => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'buttons'],
+                    Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                 ]
             ],
         ];

@@ -202,7 +202,7 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'placeholder' => 'Введите название шаблона']) ?>
 
-<?= $form->field($model, 'type')->dropDownList(['0' => 'Все компании' , '1' => 'Компании', '2' => 'Мойки', '3' => 'Сервисы', '4' => 'Шиномонтажи', '5' => 'Дезинфекции', '6' => 'Универсальные'], ['class' => 'form-control']) ?>
+<?= $form->field($model, 'type')->dropDownList(['0' => 'Все компании' , '1' => 'Компании', '2' => 'Мойки', '3' => 'Сервисы', '4' => 'Шиномонтажи', '5' => 'Дезинфекции', '6' => 'Универсальные', '7' => 'Стоянки'], ['class' => 'form-control']) ?>
 
 <?= $form->field($model, 'title')->textInput(['maxlength' => 255, 'placeholder' => 'Введите заголовок письма']) ?>
 

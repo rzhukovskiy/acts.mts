@@ -12,7 +12,7 @@ $action = \Yii::$app->controller->action->id;
 $requestType = Yii::$app->request->get('type');
 
 $items = [];
-$serviceList = [Service::TYPE_WASH, Service::TYPE_SERVICE, Service::TYPE_TIRES];
+$serviceList = [Service::TYPE_WASH, Service::TYPE_SERVICE, Service::TYPE_TIRES, Service::TYPE_PARKING];
 foreach ($serviceList as $type_id) {
     $items[] = [
         'label' => Service::$listType[$type_id]['ru'],

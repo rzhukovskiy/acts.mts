@@ -21,6 +21,7 @@ class Service extends ActiveRecord
     const TYPE_SERVICE = Company::TYPE_SERVICE;
     const TYPE_TIRES = Company::TYPE_TIRES;
     const TYPE_DISINFECT = Company::TYPE_DISINFECT;
+    const TYPE_PARKING = Company::TYPE_PARKING;
 
     static $listType = [
         self::TYPE_WASH      => [
@@ -46,6 +47,12 @@ class Service extends ActiveRecord
             'en' => 'disinfect',
             'ru' => 'Дезинфекция',
             'in' => 'дезинфекции',
+        ],
+        self::TYPE_PARKING => [
+            'id' => self::TYPE_DISINFECT,
+            'en' => 'parking',
+            'ru' => 'Стоянка',
+            'in' => 'Стоянки',
         ],
     ];
 

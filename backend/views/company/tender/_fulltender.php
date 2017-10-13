@@ -171,7 +171,7 @@ use common\models\Company;
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция'],
+                'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка'],
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]

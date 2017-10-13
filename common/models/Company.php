@@ -89,6 +89,7 @@ class Company extends ActiveRecord
     const TYPE_TIRES = 4;
     const TYPE_DISINFECT = 5;
     const TYPE_UNIVERSAL = 6;
+    const TYPE_PARKING = 7;
 
     static $listType = [
         self::TYPE_OWNER     => [
@@ -114,6 +115,10 @@ class Company extends ActiveRecord
         self::TYPE_UNIVERSAL => [
             'en' => 'universal',
             'ru' => 'Универсальная',
+        ],
+        self::TYPE_PARKING => [
+            'en' => 'parking',
+            'ru' => 'Стоянка',
         ],
     ];
 
