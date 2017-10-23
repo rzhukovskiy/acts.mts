@@ -390,7 +390,7 @@ echo GridView::widget([
         [
             'class'          => 'yii\grid\ActionColumn',
             'template' => '{update}{search}{call}',
-            'contentOptions' => ['style' => 'min-width: 50px'],
+            'contentOptions' => ['style' => 'min-width: 90px'],
             'visibleButtons' => $visibleButton,
             'buttons'        => [
                 'update' => function ($url, $model, $key) {
