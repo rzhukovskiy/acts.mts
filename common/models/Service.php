@@ -49,7 +49,7 @@ class Service extends ActiveRecord
             'in' => 'дезинфекции',
         ],
         self::TYPE_PARKING => [
-            'id' => self::TYPE_DISINFECT,
+            'id' => self::TYPE_PARKING,
             'en' => 'parking',
             'ru' => 'Стоянка',
             'in' => 'Стоянки',
