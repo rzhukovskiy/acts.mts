@@ -392,12 +392,18 @@ echo GridView::widget([
                 },
                 'search' => function ($url, $model, $key) {
 
+                    $prefixHttp = '';
+
+                    if(strpos(Url::to('@frontWeb'), 'http') === false) {
+                        $prefixHttp = 'http://';
+                    }
+
                     if($GLOBALS['company']) {
                         return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                            'http://' . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[client_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'] . '&company=1', ['target' => '_blank']);
+                            $prefixHttp . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[client_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'] . '&company=1', ['target' => '_blank']);
                     } else {
                         return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                            'http://' . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[partner_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'], ['target' => '_blank']);
+                            $prefixHttp . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[partner_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'], ['target' => '_blank']);
                     }
 
                 },
