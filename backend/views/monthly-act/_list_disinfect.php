@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use common\models\ActExport;
 use common\models\Company;
 use common\models\ActData;
+use yii\helpers\Url;
 
 $script = <<< JS
 
@@ -97,6 +98,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
 $GLOBALS['company'] = $company;
 $GLOBALS['type'] = $type;
+$GLOBALS['period'] = $searchModel->act_date;
 
 echo GridView::widget([
     'id'               => 'monthly-act-grid',
@@ -420,13 +422,24 @@ echo GridView::widget([
         */
         [
             'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{update}{call}',
+            'template' => '{update}{search}{call}',
             'contentOptions' => ['style' => 'min-width: 50px'],
             'visibleButtons' => $visibleButton,
             'buttons'        => [
                 'update' => function ($url, $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>',
                         ['/monthly-act/detail', 'id' => $model->id]);
+                },
+                'search' => function ($url, $model, $key) {
+
+                    if($GLOBALS['company']) {
+                        return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                            'http://' . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[client_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'] . '&company=1', ['target' => '_blank']);
+                    } else {
+                        return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                            'http://' . Url::to('@frontWeb') . '/act/list?' . urlencode('ActSearch[period]') . '=' . $GLOBALS['period'] . '&' . urlencode('ActSearch[partner_id]') . '=' . $model->client_id . '&type=' . $GLOBALS['type'], ['target' => '_blank']);
+                    }
+
                 },
                 'call'   => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-earphone"></span>',
