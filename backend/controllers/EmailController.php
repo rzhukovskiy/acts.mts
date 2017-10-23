@@ -48,7 +48,7 @@ class EmailController extends Controller
                         'roles' => [User::ROLE_WATCHER],
                     ],
                     [
-                        'actions' => ['cronmailer'],
+                        'actions' => ['cronmailer', 'cronaddressnew'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -972,7 +972,389 @@ class EmailController extends Controller
             }
 
         }
+
+        return 1;
+
        // Рассылка 2 раза в неделю для партреров
+
+    }
+
+    public function actionCronaddressnew()
+    {
+
+        // Рассылка 1 раза в неделю для партреров о новом адресе
+        if(isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+
+            $numError = 0;
+            $numErrorWash = 0;
+            $numEmailSend = 0;
+            $numEmailSendWash = 0;
+            $stringSendEmail = '';
+            $stringSendEmailWash = '';
+            $stringErrorEmail = '';
+            $stringErrorEmailWash = '';
+
+            $numTemplate = 13;
+
+            // Получаем партнеров
+
+            /*            $dateFrom = date("Y-m-t", strtotime("-3 month")) . 'T21:00:00.000Z';
+                        $dateTo = date("Y-m-t") . 'T21:00:00.000Z';
+
+                        $partnerArr = Company::find()->where(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['OR', ['`company`.`type`' => '2'], ['`company`.`type`' => '4']])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->innerJoin('act', '`act`.`partner_id` = `company`.`id`')->andWhere(['not', ['`company_info`.`email`' => null]])->andWhere(['!=', '`company_info`.`email`', ''])->andWhere(['between', "DATE(FROM_UNIXTIME(`act`.`created_at`))", $dateFrom, $dateTo])->select('`company_info`.`email`, `company`.`type`, `company`.`id`, `company`.`name`')->groupBy('`company`.`id`')->asArray()->all();*/
+            $partnerArr = Company::find()->where(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['OR', ['`company`.`type`' => '2'], ['`company`.`type`' => '4']])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->innerJoin('company_offer', '`company_offer`.`company_id` = `company`.`id`')->andWhere(['not', ['`company_info`.`email`' => null]])->andWhere(['!=', '`company_info`.`email`', ''])->andWhere(['`company_offer`.`email_status`' => 1])->select('`company_info`.`email`, `company`.`type`, `company`.`id`, `company`.`name`')->groupBy('`company`.`id`')->asArray()->all();
+
+            if(isset($partnerArr)) {
+                if(count($partnerArr) > 0) {
+
+                    // Получаем шаблон письма
+                    $emailCont = Email::findOne(['id' => $numTemplate]);
+                    $plainTextContent = nl2br($emailCont->text);
+                    $subject = $emailCont->title;
+
+                    for($iCompany = 0; $iCompany < count($partnerArr); $iCompany++) {
+
+                        $resSend = false;
+                        $mailCont = Yii::$app->mailer->compose();
+
+                        if((isset($partnerArr[$iCompany]['email'])) && (isset($partnerArr[$iCompany]['type'])) && (isset($partnerArr[$iCompany]['name']))) {
+
+                            $toEmail = strtolower(trim($partnerArr[$iCompany]['email']));
+
+                            if(count(explode(',', $toEmail)) > 1) {
+
+                                $arrEmail = explode(',', $toEmail);
+
+                                for($iEmail = 0; $iEmail < count($arrEmail); $iEmail++) {
+
+                                    $emailContent = trim($arrEmail[$iEmail]);
+
+                                    if(filter_var($emailContent, FILTER_VALIDATE_EMAIL)) {
+
+                                        // получаем email назначения и отправляем письмо
+
+                                        if($partnerArr[$iCompany]['type'] == 2) {
+
+                                            $mailCont = Yii::$app->mailer->compose()
+                                                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                                ->setTo($emailContent)
+                                                ->setSubject($subject)
+                                                ->setHtmlBody($plainTextContent);
+
+                                            $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplate . '/');
+
+                                            if (file_exists($pathfolder)) {
+
+                                                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                                                    $mailCont->attach($pathfolder . basename($file));
+                                                }
+
+                                            }
+
+                                            $resSend = $mailCont->send();
+
+                                            if($resSend) {
+                                                $stringSendEmailWash .= $partnerArr[$iCompany]['name'] . ' - ' . $emailContent . '<br />';
+                                                $numEmailSendWash++;
+                                            } else {
+                                                $stringErrorEmailWash .= $partnerArr[$iCompany]['name'] . ' - ' . $emailContent . '<br />';
+                                                $numErrorWash++;
+                                            }
+
+                                            $mailCont = '';
+                                            $resSend = '';
+                                            $toEmail = '';
+                                            $emailContent = '';
+
+                                        } else {
+
+                                            $mailCont = Yii::$app->mailer->compose()
+                                                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                                ->setTo($emailContent)
+                                                ->setSubject($subject)
+                                                ->setHtmlBody($plainTextContent);
+
+                                            $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplate . '/');
+
+                                            if (file_exists($pathfolder)) {
+
+                                                foreach (FileHelper::findFiles($pathfolder) as $file) {
+                                                    $mailCont->attach($pathfolder . basename($file));
+                                                }
+
+                                            }
+
+                                            $resSend = $mailCont->send();
+
+                                            if($resSend) {
+                                                $stringSendEmail .= $partnerArr[$iCompany]['name'] . ' - ' . $emailContent . '<br />';
+                                                $numEmailSend++;
+                                            } else {
+                                                $stringErrorEmail .= $partnerArr[$iCompany]['name'] . ' - ' . $emailContent . '<br />';
+                                                $numError++;
+                                            }
+
+                                            $mailCont = '';
+                                            $resSend = '';
+                                            $toEmail = '';
+                                            $emailContent = '';
+
+                                        }
+
+                                    }
+
+                                    $emailContent = '';
+
+                                }
+
+                            } else {
+                                if(filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+
+                                    // получаем email назначения и отправляем письмо
+
+                                    if($partnerArr[$iCompany]['type'] == 2) {
+
+                                        $mailCont = Yii::$app->mailer->compose()
+                                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                            ->setTo($toEmail)
+                                            ->setSubject($subject)
+                                            ->setHtmlBody($plainTextContent);
+
+                                        $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplate . '/');
+
+                                        if (file_exists($pathfolder)) {
+
+                                            foreach (FileHelper::findFiles($pathfolder) as $file) {
+                                                $mailCont->attach($pathfolder . basename($file));
+                                            }
+
+                                        }
+
+                                        $resSend = $mailCont->send();
+
+                                        if($resSend) {
+                                            $stringSendEmailWash .= $partnerArr[$iCompany]['name'] . ' - ' . $toEmail . '<br />';
+                                            $numEmailSendWash++;
+                                        } else {
+                                            $stringErrorEmailWash .= $partnerArr[$iCompany]['name'] . ' - ' . $toEmail . '<br />';
+                                            $numErrorWash++;
+                                        }
+
+                                        $mailCont = '';
+                                        $resSend = '';
+                                        $toEmail = '';
+
+                                    } else {
+
+                                        $mailCont = Yii::$app->mailer->compose()
+                                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                            ->setTo($toEmail)
+                                            ->setSubject($subject)
+                                            ->setHtmlBody($plainTextContent);
+
+                                        $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplate . '/');
+
+                                        if (file_exists($pathfolder)) {
+
+                                            foreach (FileHelper::findFiles($pathfolder) as $file) {
+                                                $mailCont->attach($pathfolder . basename($file));
+                                            }
+
+                                        }
+
+                                        $resSend = $mailCont->send();
+
+                                        if($resSend) {
+                                            $stringSendEmail .= $partnerArr[$iCompany]['name'] . ' - ' . $toEmail . '<br />';
+                                            $numEmailSend++;
+                                        } else {
+                                            $stringErrorEmail .= $partnerArr[$iCompany]['name'] . ' - ' . $toEmail . '<br />';
+                                            $numError++;
+                                        }
+
+                                        $mailCont = '';
+                                        $resSend = '';
+                                        $toEmail = '';
+
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                        $toEmail = '';
+
+                    }
+
+                    /*// Копия
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('margarita@mtransservice.ru')
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent);
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('anna@mtransservice.ru')
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent);
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('merkulova@mtransservice.ru')
+                        ->setSubject($subjectWash)
+                        ->setHtmlBody($plainTextContentWash);
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplateWash . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailCont->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo('oksana@mtransservice.ru')
+                        ->setSubject($subjectWash)
+                        ->setHtmlBody($plainTextContentWash);
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/email/' . $numTemplateWash . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailCont->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $resSend = $mailCont->send();
+
+                    $mailCont = '';
+                    $resSend = '';
+                    $toEmail = '';
+
+                    // Копия*/
+
+                    if(($numError + $numErrorWash) > 0) {
+
+                        if(($numError) > 0) {
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('margarita@mtransservice.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numError из " . ($numError + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmail)->send();
+
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('anna@mtransservice.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numError из " . ($numError + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmail)->send();
+
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('mtransservice@mail.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numError из " . ($numError + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmail)->send();
+                        }
+
+                        if(($numErrorWash) > 0) {
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('merkulova@mtransservice.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numErrorWash из " . ($numErrorWash + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmailWash)->send();
+
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('oksana@mtransservice.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numErrorWash из " . ($numErrorWash + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmailWash)->send();
+
+                            Yii::$app->mailer->compose()
+                                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                ->setTo('mtransservice@mail.ru')
+                                ->setSubject('Ошибка при отправке рассылок')
+                                ->setHtmlBody("Неудалось отправить $numErrorWash из " . ($numErrorWash + $numEmailSend) . " писем рассылки по партнерам:<br /><br />" . $stringErrorEmailWash)->send();
+                        }
+
+                        return "Неудалось отправить " . ($numError + $numErrorWash) . " из " . ($numError + $numErrorWash + $numEmailSend + $numEmailSendWash) . " писем рассылки по партнерам";
+                    } else {
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('margarita@mtransservice.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSend)<br /><br />" . $stringSendEmail)->send();
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('anna@mtransservice.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSend)<br /><br />" . $stringSendEmail)->send();
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('merkulova@mtransservice.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSendWash)<br /><br />" . $stringSendEmailWash)->send();
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('oksana@mtransservice.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSendWash)<br /><br />" . $stringSendEmailWash)->send();
+
+                        // To Gerbert
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('mtransservice@mail.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSendWash)<br /><br />" . $stringSendEmailWash)->send();
+
+                        Yii::$app->mailer->compose()
+                            ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                            ->setTo('mtransservice@mail.ru')
+                            ->setSubject('Рассылка успешно отправлена')
+                            ->setHtmlBody("Список получателей: ($numEmailSend)<br /><br />" . $stringSendEmail)->send();
+
+                        return "Письма удачно отправлены (" . ($numEmailSend + $numEmailSendWash) . ")";
+                    }
+
+                }
+            }
+
+        }
+
+        return 1;
+
+        // Рассылка 1 раза в неделю для партреров о новом адресе
 
     }
 
