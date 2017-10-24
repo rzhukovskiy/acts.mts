@@ -321,7 +321,7 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('federal_law') ?></td>
         <td>
-            <?
+            <?php
 
             $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
 
@@ -349,7 +349,7 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('method_purchase') ?></td>
         <td>
-            <?
+            <?php
 
             $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
 
@@ -419,7 +419,7 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
         <td>
-            <?
+            <?php
 
             $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)'];
 
@@ -453,7 +453,7 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_contract_security') ?></td>
         <td>
-            <?
+            <?php
 
             $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)'];
 
@@ -508,7 +508,7 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('key_type') ?></td>
         <td>
-            <?
+            <?php
 
             $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД'];
 
