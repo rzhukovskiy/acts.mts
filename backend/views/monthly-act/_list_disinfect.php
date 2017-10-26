@@ -372,9 +372,27 @@ echo GridView::widget([
 
                 // Определение запроса для диз. и доп. диз.
                 if($data->service->id == 4) {
-                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` NOT LIKE "доп._дезинфекция%"')->select('number')->column();
+
+                    // проверяем и выводим мфп
+                    $posMFP = strpos($name, "МФП");
+
+                    if($posMFP === false) {
+                        $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` NOT LIKE "доп._дезинфекция%"')->select('number')->column();
+                    } else {
+                        $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%МФП%"')->andWhere('`name` NOT LIKE "доп._дезинфекция%"')->select('number')->column();
+                    }
+
                 } else if($data->service->id == 5) {
-                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` LIKE "доп._дезинфекция%"')->select('number')->column();
+
+                    // проверяем и выводим мфп
+                    $posMFP = strpos($name, "МФП");
+
+                    if($posMFP === false) {
+                        $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` LIKE "доп._дезинфекция%"')->select('number')->column();
+                    } else {
+                        $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%МФП%"')->andWhere('`name` LIKE "доп._дезинфекция%"')->select('number')->column();
+                    }
+
                 }
 
                 if(isset($numAct)) {

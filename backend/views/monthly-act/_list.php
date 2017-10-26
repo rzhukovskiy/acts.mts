@@ -325,6 +325,9 @@ $('#searchActNumButt').on('click', function(){
         
         $('#searchActNum').val('$numFind');
         
+        // проверяем что мы еще не сделали скролл
+        var checkScrolled = false;
+        
         $('.numberAct').each(function(i,elem) {
             if($(this).text() == '$numFind') {
                 
@@ -333,7 +336,10 @@ $('#searchActNumButt').on('click', function(){
                // выделение
                
                // Прокрутка страницы
+               if(checkScrolled == false) {
                $('html, body').animate({scrollTop: parseInt($(this).offset().top)}, 800);
+               checkScrolled = true;
+               }
                // Прокрутка страницы
                               
             }
