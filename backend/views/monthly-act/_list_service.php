@@ -361,7 +361,16 @@ echo GridView::widget([
                     $period = date("m-Y", strtotime("-1 month"));
                 }
 
-                $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` LIKE "%' . $data->number . '%"')->andWhere('`name` LIKE "%' . $data->act_id . '%"')->select('number')->column();
+                $numAct = '';
+
+                // проверяем и выводим мфп
+                $posMFP = strpos($name, "МФП");
+
+                if($posMFP === false) {
+                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` LIKE "%' . $data->number . '%"')->andWhere('`name` LIKE "%' . $data->act_id . '%"')->select('number')->column();
+                } else {
+                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%МФП%"')->andWhere('`name` LIKE "%' . $data->number . '%"')->andWhere('`name` LIKE "%' . $data->act_id . '%"')->select('number')->column();
+                }
 
                 if(isset($numAct)) {
 
