@@ -368,7 +368,14 @@ echo GridView::widget([
                     $period = date("m-Y", strtotime("-1 month"));
                 }
 
-                $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->select('number')->column();
+                $numAct = '';
+
+                // Определение запроса для диз. и доп. диз.
+                if($data->service->id == 4) {
+                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` NOT LIKE "доп._дезинфекция%"')->select('number')->column();
+                } else if($data->service->id == 5) {
+                    $numAct = ActData::find()->where(['AND', ['type' => $type], ['company' => $company], ['period' => $period]])->andWhere('`name` LIKE "%' . $name . '%"')->andWhere('`name` LIKE "доп._дезинфекция%"')->select('number')->column();
+                }
 
                 if(isset($numAct)) {
 
