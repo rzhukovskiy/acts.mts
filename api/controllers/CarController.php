@@ -125,7 +125,25 @@ class CarController extends Controller
 
                 if(Yii::$app->request->post("filter")) {
                     $company_filter = Yii::$app->request->post("filter");
-                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['car.company_id' => $company_filter])->select('type.name as name, count(car.id) as count')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
+
+                    // подкомпании выбранной компании
+                    $queryPar = Company::find()->where(['parent_id' => $company_filter])->select('id')->column();
+
+                    $arrSubFilter = [];
+
+                    for ($i = 0; $i < count($queryPar); $i++) {
+
+                        $arrSubFilter[] = $queryPar[$i];
+
+                        $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+                        for ($j = 0; $j < count($queryParPar); $j++) {
+                            $arrSubFilter[] = $queryParPar[$j];
+                        }
+
+                    }
+
+                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_filter], ['car.company_id' => $arrSubFilter]])->select('type.name as name, count(car.id) as count')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
                 } else {
                     $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_id], ['car.company_id' => $arrParParIds]])->select('type.name as name, count(car.id) as count')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
                 }
