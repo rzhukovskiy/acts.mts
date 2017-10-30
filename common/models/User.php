@@ -290,7 +290,8 @@ class User extends ActiveRecord implements IdentityInterface
     public function getFirstCompanyTypeMenu($status)
     {
 
-        if($this->id == 364) {
+        // Ануш и Рита по умолчанию вход в шиномонтаж
+        if(($this->id == 222) || ($this->id == 364)) {
             return 4;
         } else {
 
