@@ -119,10 +119,27 @@ class DriversController extends Controller
                 if(Yii::$app->request->post("filter")) {
 
                     $company_filter = Yii::$app->request->post("filter");
-                    $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['company_driver.company_id' => $company_filter])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+
+                    if(Yii::$app->request->post("search")) {
+                        $searchText = Yii::$app->request->post("search");
+
+                        $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['company_driver.company_id' => $company_filter])->andWhere(['OR', ['like', 'company_driver.name', $searchText], ['like', 'car.number', $searchText]])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+
+                    } else {
+                        $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['company_driver.company_id' => $company_filter])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+                    }
 
                 } else {
-                    $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['OR', ['company_driver.company_id' => $company_id], ['company_driver.company_id' => $arrParParIds]])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+
+                    if(Yii::$app->request->post("search")) {
+                        $searchText = Yii::$app->request->post("search");
+
+                        $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['OR', ['company_driver.company_id' => $company_id], ['company_driver.company_id' => $arrParParIds]])->andWhere(['OR', ['like', 'company_driver.name', $searchText], ['like', 'car.number', $searchText]])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+
+                    } else {
+                        $ressArray = CompanyDriver::find()->leftJoin('car', '`car`.`id` = `company_driver`.`car_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['OR', ['company_driver.company_id' => $company_id], ['company_driver.company_id' => $arrParParIds]])->select('company_driver.name as name, phone, company_driver.company_id as company_id, car.number as number, mark.name as mark')->orderBy('company_id')->offset($startLimit)->limit(51)->asArray()->all();
+                    }
+
                 }
 
                 // Название компаний
