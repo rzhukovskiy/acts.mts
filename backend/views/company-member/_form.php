@@ -27,6 +27,8 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
+<?= $form->field($model, 'show_member')->checkbox([], false) ?>
+
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6">
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>

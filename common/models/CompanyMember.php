@@ -14,11 +14,13 @@ use yii\db\ActiveRecord;
  * @property string $position
  * @property string $phone
  * @property string $email
+ * @property string $show_member
  * 
  * @property Company $company
  */
 class CompanyMember extends ActiveRecord
 {
+    private $show_member;
     /**
      * @inheritdoc
      */
@@ -36,6 +38,7 @@ class CompanyMember extends ActiveRecord
             [['company_id'], 'required'],
             [['company_id'], 'integer'],
             [['position', 'phone', 'email', 'name'], 'string', 'max' => 255],
+            [['show_member'], 'integer'],
         ];
     }
 
@@ -51,6 +54,7 @@ class CompanyMember extends ActiveRecord
             'position'   => 'Должность',
             'phone'      => 'Телефон',
             'email'      => 'Email',
+            'show_member'      => 'Выводить в личном кабинете',
         ];
     }
 
@@ -60,5 +64,15 @@ class CompanyMember extends ActiveRecord
     public function getCompany()
     {
         return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
+    public function getShow_member()
+    {
+        return $this->show_member;
+    }
+
+    public function setShow_member($value)
+    {
+        $this->show_member = $value;
     }
 }
