@@ -860,6 +860,26 @@ class CompanyController extends Controller
                     return json_encode(['message' => 'не получилось']);
                 }
 
+            } else if(isset($arrCompanyMember['show_member'][$id])) {
+
+                    $newVal = $arrCompanyMember['show_member'][$id];
+                    $ListValue = '';
+
+                    if ($newVal == 1) {
+                        $ListValue = 'Да';
+                    } else {
+                        $ListValue = 'Нет';
+                    }
+
+                    $companyMember = CompanyMember::findOne($id);
+                    $companyMember->show_member = $newVal;
+
+                    if ($companyMember->save()) {
+                        return json_encode(['output' => $ListValue, 'message' => '']);
+                    } else {
+                        return json_encode(['message' => 'не получилось']);
+                    }
+
             } else if(isset($arrCompanyMember['phone'][$id])) {
 
                 if(mb_strlen($arrCompanyMember['phone'][$id]) > 1) {

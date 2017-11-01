@@ -604,6 +604,35 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         </td>
     </tr>
     <tr>
+        <td class="list-label-sm"><?= $model->getAttributeLabel('show_member')?></td>
+        <td>
+            <?php
+
+
+            $showMemberArreyList = [0 => 'Нет', 1 => 'Да'];
+
+             echo  Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'show_member[' . $model->id . ']',
+                'displayValue' => $showMemberArreyList[$model->show_member],
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_RIGHT,
+                'data' => $showMemberArreyList,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Выводить в личном кабинете', 'value' => $model->show_member],
+                'formOptions' => [
+                    'action' => ['/company/updatemember', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-sm"></td>
         <td>
             <div class="form-group">
