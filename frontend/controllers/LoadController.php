@@ -75,7 +75,7 @@ class LoadController extends Controller
 
         $dataFilter = explode('-', $searchModel->period);
 
-        if($dataFilter[0] > 10) {
+        if($dataFilter[0] > 9) {
             $dataFilter = $dataFilter[1] . '-' . $dataFilter[0] . '-00';
         } else {
             $dataFilter = $dataFilter[1] . '-0' . $dataFilter[0] . '-00';
