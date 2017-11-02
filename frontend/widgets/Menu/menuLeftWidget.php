@@ -374,6 +374,13 @@ class menuLeftWidget extends Widget
                         Yii::$app->controller->action->id != 'list-full',
                 ],
                 [
+                    'label'  => 'Сотрудники',
+                    'url'    => ['/member/memberslist'],
+                    'active' =>
+                        Yii::$app->controller->id == 'member' &&
+                        Yii::$app->controller->action->id = 'memberslist',
+                ],
+                [
                     'label'  => 'Водители',
                     'url'    => ['/car/drivers'],
                     'active' => Yii::$app->controller->id == 'car' && Yii::$app->controller->action->id == 'drivers',

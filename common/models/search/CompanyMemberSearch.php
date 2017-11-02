@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\models\Company;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -19,7 +20,7 @@ class CompanyMemberSearch extends CompanyMember
     {
         return [
             [['id', 'company_id'], 'integer'],
-            [['position', 'phone', 'email'], 'safe'],
+            [['position', 'phone', 'email', 'name'], 'safe'],
         ];
     }
 
@@ -69,4 +70,56 @@ class CompanyMemberSearch extends CompanyMember
 
         return $dataProvider;
     }
+
+    //Вывод дочерних сотрудников
+    public function searchMemberlist($params)
+    {
+        $query = CompanyMember::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $queryPar = Company::find()->where(['parent_id' => $this->company_id])->all();
+
+        $arrParParIds = [];
+
+        for ($i = 0; $i < count($queryPar); $i++) {
+            $arrParParIds[] = $queryPar[$i]['id'];
+
+            $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]['id']])->all();
+
+            for ($j = 0; $j < count($queryParPar); $j++) {
+                $arrParParIds[] = $queryParPar[$j]['id'];
+            }
+
+        }
+
+        $query->where(['OR', ['company_id' => $this->company_id], ['company_id' => $arrParParIds]]);
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id]);
+
+        $query->andFilterWhere(['like', 'position', $this->position])
+            ->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['show_member' => 1]);
+
+
+        return $dataProvider;
+    }
+
 }
