@@ -33,12 +33,6 @@ class MemberController extends Controller
                     [
                         'actions' => ['memberslist'],
                         'allow' => true,
-                        'roles' => [User::ROLE_ADMIN],
-                    ],
-
-                    [
-                        'actions' => ['memberslist'],
-                        'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
 
@@ -51,6 +45,9 @@ class MemberController extends Controller
     public function actionMemberslist()
     {
 
+        //  Раздел сотрудники только для клиентов
+        if (Yii::$app->user->identity->role == User::ROLE_CLIENT) {
+
         $id = Yii::$app->user->identity->company_id;
 
 
@@ -62,12 +59,13 @@ class MemberController extends Controller
 
         $dataProvider = $searchModel->searchMemberlist(Yii::$app->request->queryParams);
 
-
-
         return $this->render( 'memberslist', [
             'model' => $modelCompanyMember,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ]);
+        } else {
+            return $this->redirect("/");
+        }
     }
 }
