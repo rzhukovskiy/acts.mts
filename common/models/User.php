@@ -292,7 +292,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         // Ануш и Рита по умолчанию вход в шиномонтаж
         if($this->id == 222) {
-            return 7;
+            return 4;
         } else if($this->id == 364) {
             return 4;
         } else {
