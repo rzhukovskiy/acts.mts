@@ -18,6 +18,7 @@ use yii\widgets\ListView;
     <div class="panel-body">
         <?= $this->render('_form', [
             'model' => $model,
+            'modelCompany' => $modelCompany,
         ]);
         ?>
     </div>

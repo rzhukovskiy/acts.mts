@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Company;
 use Yii;
 use common\models\CompanyMember;
 use common\models\search\CompanyMemberSearch;
@@ -186,6 +187,8 @@ class CompanyMemberController extends Controller
         $model = new CompanyMember();
         $model->company_id = $company_id;
 
+        $modelCompany = Company::findOne(['id' => $company_id]);
+
         $postArr = '';
 
         $postArr = Yii::$app->request->post();
@@ -200,6 +203,7 @@ class CompanyMemberController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'modelCompany' => $modelCompany,
             ]);
         }
     }
