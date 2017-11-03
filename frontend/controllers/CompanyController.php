@@ -19,10 +19,12 @@ use common\models\search\CompanySearch;
 use common\models\Service;
 use common\models\Type;
 use common\models\User;
+use yii\base\DynamicModel;
 use yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class CompanyController extends Controller
 {
@@ -36,12 +38,12 @@ class CompanyController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view','editprice'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'add-price','update-partner-exclude','add-duration','view','editprice','deletelogo'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view','editprice'],
+                        'actions' => ['list', 'view','editprice','deletelogo'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -138,6 +140,37 @@ class CompanyController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        // Загрузка логотипа компаний
+        $modelAddAttach = new DynamicModel(['logo']);
+        $modelAddAttach->addRule(['logo'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 1, 'extensions' => 'jpg, jpeg', 'maxSize' => 1536000, 'tooBig' => 'Максимальный размер файла 1.5MB']);
+
+        $fileLogo = UploadedFile::getInstances($modelAddAttach, 'logo');
+
+        if(count($fileLogo) > 0) {
+
+            if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+                mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+            }
+
+            if (!file_exists(\Yii::getAlias('@webroot/files/logos/'))) {
+                mkdir(\Yii::getAlias('@webroot/files/logos/'), 0775);
+            }
+
+            $filePath = \Yii::getAlias('@webroot/files/logos/' . $id . '.jpg');
+
+            if (file_exists($filePath)) {
+                // Удаляем старый файл
+                unlink($filePath);
+            }
+
+            $fileLogo[0]->saveAs($filePath);
+
+            chmod($filePath, 0775);
+
+        }
+
+        // Загрузка логотипа компаний
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['update', 'id' => $model->id]);
@@ -347,6 +380,30 @@ class CompanyController extends Controller
         }
 
         return [];
+
+    }
+
+    // Удаление логотипа компании
+    public function actionDeletelogo()
+    {
+
+        if(Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+
+            $filePath = \Yii::getAlias('@webroot/files/logos/' . $id . '.jpg');
+
+            if(file_exists($filePath)) {
+                unlink($filePath);
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
 
     }
 
