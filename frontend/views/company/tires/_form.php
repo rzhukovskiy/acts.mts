@@ -98,7 +98,13 @@ $this->registerJs($script, View::POS_READY);
         // Проверка существования картинки и вывод превью
         $haveLogoCompany = false;
 
-        $linkLogoCompany = 'http://' . \Yii::getAlias('@frontWeb/files/logos/' . $model->id . '.jpg?' . time());
+        $prefixHttp = '';
+
+        if(strpos(Url::to('@frontWeb'), 'http') === false) {
+            $prefixHttp = 'http://';
+        }
+
+        $linkLogoCompany = $prefixHttp . \Yii::getAlias('@frontWeb/files/logos/' . $model->id . '.jpg?' . time());
         $linkLogoPath = \Yii::getAlias('@webroot/files/logos/' . $model->id . '.jpg');
 
         if (file_exists($linkLogoPath)) {
