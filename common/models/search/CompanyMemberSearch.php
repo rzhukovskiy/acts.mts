@@ -91,7 +91,8 @@ class CompanyMemberSearch extends CompanyMember
             return $dataProvider;
         }
 
-        $queryPar = Company::find()->where(['parent_id' => $this->company_id])->all();
+        $queryPar = Company::find()->where(['OR', ['parent_id' => $this->company_id], ['id' => $this->company_id]])
+            ->andWhere(['OR', ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_ARCHIVE]])->all();
 
         $arrParParIds = [];
 
@@ -106,7 +107,7 @@ class CompanyMemberSearch extends CompanyMember
 
         }
 
-        $query->where(['OR', ['company_id' => $this->company_id], ['company_id' => $arrParParIds]]);
+        $query->where(['company_id' => $arrParParIds]);
 
         // grid filtering conditions
         $query->andFilterWhere([
