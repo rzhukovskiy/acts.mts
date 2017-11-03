@@ -317,9 +317,9 @@ $filters .= 'Выбор периода: ' . $periodForm;
                                 }
                             } else {
                                 if (isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch[client_id]' => $model->client_id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
                                 } else {
-                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch[client_id]' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
                                 }
                             }
 
