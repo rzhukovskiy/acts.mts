@@ -24,15 +24,15 @@ class CarController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['count', 'getcardata', 'checknumber'],
+                'only' => ['count', 'getcardata', 'checknumber', 'countdetail'],
                 'rules' => [
                     [
-                        'actions' => ['count', 'getcardata', 'checknumber'],
+                        'actions' => ['count', 'getcardata', 'checknumber', 'countdetail'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['count', 'getcardata', 'checknumber'],
+                        'actions' => ['count', 'getcardata', 'checknumber', 'countdetail'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -44,6 +44,7 @@ class CarController extends Controller
                     'count' => ['post', 'get'],
                     'getcardata' => ['post', 'get'],
                     'checknumber' => ['post', 'get'],
+                    'countdetail' => ['post', 'get'],
                 ],
             ],
         ];
@@ -143,9 +144,9 @@ class CarController extends Controller
 
                     }
 
-                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_filter], ['car.company_id' => $arrSubFilter]])->select('type.name as name, count(car.id) as count')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
+                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_filter], ['car.company_id' => $arrSubFilter]])->select('type.name as name, count(car.id) as count, type.id as type_id')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
                 } else {
-                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_id], ['car.company_id' => $arrParParIds]])->select('type.name as name, count(car.id) as count')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
+                    $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->where(['OR', ['car.company_id' => $company_id], ['car.company_id' => $arrParParIds]])->select('type.name as name, count(car.id) as count, type.id as type_id')->orderBy('car.type_id')->groupBy('car.type_id')->asArray()->all();
                 }
 
                 // Название компаний
@@ -288,6 +289,55 @@ class CarController extends Controller
 
             } else {
                 return json_encode(['error' => 2]);
+            }
+
+        } else {
+            return $this->redirect("http://docs.mtransservice.ru/site/index");
+        }
+
+    }
+
+    public function actionCountdetail()
+    {
+
+        if((Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type")) && (Yii::$app->request->post("car_company")) && (Yii::$app->request->post("car_type")) && (Yii::$app->request->post("page"))) {
+
+            $company_id = Yii::$app->request->post("company_id");
+            $type = Yii::$app->request->post("type");
+            $car_company = Yii::$app->request->post("car_company");
+            $car_type = Yii::$app->request->post("car_type");
+            $page = Yii::$app->request->post("page");
+
+            $startLimit = 0;
+
+            if($page > 1) {
+                $startLimit = (($page - 1) * 50);
+            }
+
+            if($type == 1) {
+
+                $queryPar = Company::find()->where(['parent_id' => $car_company])->select('id')->column();
+
+                $arrParParIds = [];
+
+                for ($i = 0; $i < count($queryPar); $i++) {
+
+                    $arrParParIds[] = $queryPar[$i];
+
+                    $queryParPar = Company::find()->where(['parent_id' => $queryPar[$i]])->select('id')->column();
+
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+                        $arrParParIds[] = $queryParPar[$j];
+                    }
+
+                }
+
+                $ressArray = Car::find()->leftJoin('type', '`type`.`id` = `car`.`type_id`')->leftJoin('mark', '`mark`.`id` = `car`.`mark_id`')->where(['OR', ['car.company_id' => $car_company], ['car.company_id' => $arrParParIds]])->andWhere(['car.type_id' => $car_type])->select('type.name as name, type.id as type_id, car.number as number, mark.name as markName')->orderBy('car.id')->offset($startLimit)->limit(51)->asArray()->all();
+
+                return json_encode(['result' => json_encode($ressArray), 'error' => 0]);
+
+            } else {
+                return json_encode(['error' => 1]);
             }
 
         } else {
