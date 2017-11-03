@@ -33,8 +33,6 @@ $('tr[data-key]').bind("DOMSubtreeModified",function(){
 function getPercentClosed() {
 var allNum = $('tr[data-key]').length;
 $('.numAll').html('Всего: <b>' + allNum + '</b>');
-  
-allNum = allNum / 100;
 
 var textClose = $('.numClose');
 var textOpen = $('.numOpen');
@@ -50,16 +48,38 @@ $('td[data-col-seq=CloseButt] a').each(function () {
     }
 });
 
-var numClosePer = numClose / allNum;
+var numClosePer = 0;
+
+if (numClose == 0) {
+    numClosePer = 0;
+} else if (numClose == allNum) {
+    numClosePer = 100;
+} else {
+    
+var allNumPer = 0;
+allNumPer = allNum / 100;
+    
+numClosePer = numClose / allNumPer;
 
 if(("" + numClosePer.toFixed(2)).split(".")[1] > 0) {
 numClosePer = numClosePer.toFixed(2);
 }
 
-var numOpenPer = 100 - numClosePer;
+}
+var numOpenPer = 0;
 
-if(("" + numOpenPer.toFixed(2)).split(".")[1] > 0) {
-numOpenPer = numOpenPer.toFixed(2);
+if (numOpen == 0) {
+    numOpenPer = 0;
+} else if (numOpen == allNum) {
+    numOpenPer = 100;
+} else {
+    
+    numOpenPer = 100 - numClosePer;
+    
+    if(("" + numOpenPer.toFixed(2)).split(".")[1] > 0) {
+        numOpenPer = numOpenPer.toFixed(2);
+    }
+
 }
 
 textClose.html('Закрыто: <b>' + numClose + ' (' + numClosePer + '%)</b> загрузок');
