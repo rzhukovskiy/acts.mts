@@ -9,6 +9,7 @@ use api\models\LoginForm;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 
 /**
  * Site controller
@@ -102,7 +103,23 @@ class SiteController extends Controller
 
                         if ($company->type) {
 
-                            return json_encode(['error' => 0, 'token' => $token->token, 'id' => $token->user_id, 'company_id' => $user->company_id, 'company_name' => $company->name, 'type' => $company->type, 'status' => $company->status]);
+                            // Проверяем наличие логотипа компании
+                            $linkLogoPath = Url::to('@frontWeb') . '/files/logos/' . $user->company_id . '.jpg';
+
+                            $prefixHttp = '';
+
+                            if(strpos(Url::to('@frontWeb'), 'http') === false) {
+                                $prefixHttp = 'http://';
+                            }
+
+                            $checkLogo = 0;
+
+                            if (getimagesize($prefixHttp . $linkLogoPath) !== false) {
+                                $checkLogo = 1;
+                            }
+                            // Проверяем наличие логотипа компании
+
+                            return json_encode(['error' => 0, 'token' => $token->token, 'id' => $token->user_id, 'company_id' => $user->company_id, 'company_name' => $company->name, 'type' => $company->type, 'status' => $company->status, 'logo' => $checkLogo]);
 
                         } else {
                             // Возвращаем ошибку системы
@@ -155,7 +172,32 @@ class SiteController extends Controller
                     $model->expired_at = (String) (time() + 3600 * 24 * 45);
                     $model->save();
 
-                    return json_encode(['error' => 0, 'id' => $model->user_id]);
+                    $user = User::findOne(['id' => $model->user_id]);
+
+                    if ($user->company_id > 0) {
+
+                        // Проверяем наличие логотипа компании
+                        $linkLogoPath = Url::to('@frontWeb') . '/files/logos/' . $user->company_id . '.jpg';
+
+                        $prefixHttp = '';
+
+                        if(strpos(Url::to('@frontWeb'), 'http') === false) {
+                            $prefixHttp = 'http://';
+                        }
+
+                        $checkLogo = 0;
+
+                        if (getimagesize($prefixHttp . $linkLogoPath) !== false) {
+                            $checkLogo = 1;
+                        }
+                        // Проверяем наличие логотипа компании
+
+                        return json_encode(['error' => 0, 'id' => $model->user_id, 'logo' => $checkLogo]);
+
+                    } else {
+                        return json_encode(['error' => 1]);
+                    }
+
                 }
 
             } else {
