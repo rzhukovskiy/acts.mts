@@ -81,9 +81,21 @@ class CompanyController extends Controller
               }
               //Поиск дочерних филиалов
 
-              $queryPar = CompanyMember::find()->where(['OR', ['company_id' => $company_id], ['company_id' => $arrParParIds]])->andWhere(['show_member' => 1])->select('position, phone, email, name')->orderBy('id')->asArray()->all();
+              $queryPar = "";
 
-              return json_encode(['result' => json_encode($queryPar), 'error' => 0]);
+              if(Yii::$app->request->post("filter")) {
+
+                  $company_filter = Yii::$app->request->post("filter");
+
+                  $queryPar = CompanyMember::find()->where(['company_id' => $company_filter])->andWhere(['show_member' => 1])->select('position, phone, email, name, company_id')->orderBy('company_id')->asArray()->all();
+              } else {
+                  $queryPar = CompanyMember::find()->where(['OR', ['company_id' => $company_id], ['company_id' => $arrParParIds]])->andWhere(['show_member' => 1])->select('position, phone, email, name, company_id')->orderBy('company_id')->asArray()->all();
+              }
+
+              // Название компаний
+              $companyArray = Company::find()->innerJoin('company_member', '`company_member`.`company_id` = `company`.`id` AND `company_member`.`show_member` = 1')->where(['OR', ['company.id' => $company_id], ['company.id' => $arrParParIds]])->select('company.name as name, company.id as id')->orderBy('company.id')->asArray()->all();
+
+              return json_encode(['result' => json_encode($queryPar), 'error' => 0, 'company' => json_encode($companyArray)]);
 
           } else {
 
