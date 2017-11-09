@@ -61,6 +61,23 @@ use yii\behaviors\TimestampBehavior;
  */
 class Tender extends \yii\db\ActiveRecord
 {
+    private $purchase_status;
+    private $comment_status_proc;
+    private $user_id;
+    private $comment_customer;
+    private $inn_customer;
+    private $contacts_resp_customer;
+    private $maximum_purchase_price;
+    private $cost_purchase_completion;
+    private $maximum_purchase_nds;
+    private $maximum_purchase_notnds;
+    private $maximum_agreed_calcnds;
+    private $maximum_agreed_calcnotnds;
+    private $site_fee_participation;
+    private $ensuring_application;
+    private $inn_competitors;
+    private $comment_date_contract;
+
     /**
      * @inheritdoc
      */
