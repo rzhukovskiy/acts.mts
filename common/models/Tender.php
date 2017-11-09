@@ -307,7 +307,7 @@ class Tender extends \yii\db\ActiveRecord
     {
         $this->ndsmaximum_purchase_not = $value;
     }
-    public function getMmaximum_agreed_calcnds()
+    public function getMaximum_agreed_calcnds()
     {
         return $this->maximum_agreed_calcnds;
     }
