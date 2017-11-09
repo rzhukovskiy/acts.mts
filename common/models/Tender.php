@@ -19,14 +19,12 @@ use yii\behaviors\TimestampBehavior;
  * @property string $service_type
  * @property float $price_nds
  * @property float $pre_income
- * @property float $first_price
  * @property float $final_price
  * @property integer $percent_down
  * @property integer $percent_max
  * @property integer $federal_law
  * @property integer $method_purchase
  * @property float $contract_security
- * @property float $participate_price
  * @property integer $status_request_security
  * @property string $date_status_request
  * @property integer $status_contract_security
@@ -44,6 +42,22 @@ use yii\behaviors\TimestampBehavior;
  * @property string $comment
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $purchase_status
+ * @property string $comment_status_proc
+ * @property string $user_id
+ * @property string $comment_customer
+ * @property string $inn_customer
+ * @property string $contacts_resp_customer
+ * @property float $maximum_purchase_price
+ * @property float $cost_purchase_completion
+ * @property float $maximum_purchase_nds
+ * @property float $maximum_purchase_notnds
+ * @property float $maximum_agreed_calcnds
+ * @property float $maximum_agreed_calcnotnds
+ * @property float $site_fee_participation
+ * @property float $ensuring_application
+ * @property string $inn_competitors
+ * @property string $comment_date_contract
  */
 class Tender extends \yii\db\ActiveRecord
 {
@@ -71,14 +85,14 @@ class Tender extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'city', 'place', 'number_purchase', 'customer', 'service_type', 'price_nds', 'pre_income', 'first_price', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'notice_eis', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end'], 'required'],
-            [['company_id', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
-            [['price_nds', 'pre_income', 'first_price', 'final_price', 'contract_security', 'participate_price'], 'safe'],
+            [['company_id'], 'required'],
+            [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
+            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', '$maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer', 'competitor'], 'string', 'max' => 255],
-            [['service_type'], 'safe'],
             [['notice_eis'], 'string', 'max' => 100],
-            ['comment', 'string', 'max' => 5000],
+            [['inn_customer'], 'string', 'max' => 200],
+            [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer', 'inn_competitors'], 'string', 'max' => 10000],
         ];
     }
 
@@ -90,37 +104,51 @@ class Tender extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'company_id' => 'Компания',
-            'date_search' => 'Дата находки тендера',
-            'city' => 'Город',
-            'place' => 'Электронаая площадка',
-            'number_purchase' => 'Номер закупки',
+            'date_search' => 'Дата нахождения закупки',
+            'city' => 'Город, Область поставки',
+            'place' => 'Электронная площадка',
+            'number_purchase' => 'Номер закупки на площадке',
             'customer' => 'Заказчик',
-            'service_type' => 'Закупаемые услуги',
-            'price_nds' => 'Цена с НДС',
-            'pre_income' => 'Предварительная прибыль от контраката',
-            'first_price' => 'Первоначальная цена контракта',
-            'final_price' => 'Окончательная цена контракта',
-            'percent_down' => 'Процентное снижение',
-            'percent_max' => 'Максимальный процент снижения',
+            'service_type' => 'Закупаемые услуги, товары',
+            'price_nds' => 'Максимальная стоимость закупки',
+            'pre_income' => 'Предварительная прибыль от закупки',
+            'final_price' => 'Стоимость закупки по завершению закупки с НДС',
+            'percent_down' => 'Процентное снижение по завершению закупки в процентах',
+            'percent_max' => 'Максимальное согласованное расчетное снижение в процентах',
             'federal_law' => 'ФЗ',
             'method_purchase' => 'Способ закупки',
             'contract_security' => 'Обеспечение контракта',
-            'participate_price' => 'Стоимость участия в торгах',
             'status_request_security' => 'Статус обеспечения заявки',
             'date_status_request' => 'Дата изменения статуса заявки',
             'status_contract_security' => 'Статус обеспечения контракта',
             'date_status_contract' => 'Дата изменения статуса контракта',
             'notice_eis' => 'Номер извещения в ЕИС',
             'key_type' => 'Тип ключа',
-            'competitor' => 'Потенциальный конкурент',
+            'competitor' => 'Потенциальные конкуренты',
             'date_request_start' => 'Начало подачи заявки',
             'date_request_end' => 'Окончание подачи заявки',
             'time_request_process' => 'Дата и время рассмотрения заявок',
             'time_bidding_start' => 'Дата и время начала торгов',
-            'time_bidding_end' => 'Дата и время подведения торгов',
+            'time_bidding_end' => 'Дата и время подведения итогов',
             'date_contract' => 'Дата заключения договора',
-            'term_contract' => 'Срок договора',
+            'term_contract' => 'Дата окончания заключенного договора',
             'comment' => 'Комментарий',
+            'purchase_status' => 'Статус закупки',
+            'comment_status_proc' => 'Комментарий к статусу закупки',
+            'user_id' => 'Сотрудник',
+            'comment_customer' => 'Комментарий к полю "Заказчик"',
+            'inn_customer' => 'ИНН заказчика',
+            'contacts_resp_customer' => 'Контакты ответственных лиц заказчика',
+            'maximum_purchase_price' => 'Максимальная начальная стоимость закупки без НДС',
+            'cost_purchase_completion' => 'Стоимость закупки по завершению закупки без НДС',
+            'maximum_purchase_nds' => 'Снижение от максимальной начальной стоимости закупки по завершению закупки в рублях с НДС',
+            'maximum_purchase_notnds' => 'Снижение от максимальной начальной стоимости закупки по завершению закупки в рублях без НДС',
+            'maximum_agreed_calcnds' => 'Максимальное согласованное расчетное снижение в рублях с НДС',
+            'maximum_agreed_calcnotnds' => 'Максимальное согласованное расчетное снижение в рублях без НДС',
+            'site_fee_participation' => 'Плата площадке за участие',
+            'ensuring_application' => 'Обеспечение заявки',
+            'inn_competitors' => 'ИНН конкурентов',
+            'comment_date_contract' => 'Комментарий к сроку договора',
         ];
     }
 

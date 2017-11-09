@@ -604,12 +604,15 @@ class CompanyController extends Controller
 
             // Списки с данными
             $stringServicesText = "";
-            $ServicesList = Company::$listType;
+            $stringUserTendText = "";
+            $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
             $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
+            $usersList = ['2' => 'Алёна', '3' => 'Денис'];
+            $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
             $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
-            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)'];
-            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)'];
-            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД'];
+            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)', 5 => 'Вернули (выиграли)', 6 => 'Без обеспечения'];
+            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)', 8 => 'Без обеспечения'];
+            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД', 4 => 'Сбербанк УТП', 5 => 'Сбербанк АСТ'];
 
             foreach ($arrUpdate['Tender'] as $name => $value) {
                 if($name == 'date_search') {
@@ -631,13 +634,41 @@ class CompanyController extends Controller
                                     $stringServices .= ', ' . $arrServices[$i];
                                 }
 
-                                if(isset($ServicesList[$arrServices[$i]]['ru'])) {
-                                    $stringServicesText .= $ServicesList[$arrServices[$i]]['ru'] . '<br />';
+                                if(isset($ServicesList[$arrServices[$i]])) {
+                                    $stringServicesText .= $ServicesList[$arrServices[$i]] . '<br />';
                                 }
 
                             }
 
                             $arrUpdate['Tender'][$name] = $stringServices;
+
+                        }
+
+                    }
+                } else if($name == 'user_id') {
+
+                    // запись в базу нескольких услуг
+                    if (is_array($value)) {
+
+                        $arrUserTend = $value;
+
+                        if (count($arrUserTend) > 0) {
+                            $stringUserTend = '';
+
+                            for ($i = 0; $i < count($arrUserTend); $i++) {
+                                if ($i == 0) {
+                                    $stringUserTend .= $arrUserTend[$i];
+                                } else {
+                                    $stringUserTend .= ', ' . $arrUserTend[$i];
+                                }
+
+                                if(isset($usersList[$arrUserTend[$i]])) {
+                                    $stringUserTendText .= $usersList[$arrUserTend[$i]] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringUserTend;
 
                         }
 
@@ -669,12 +700,16 @@ class CompanyController extends Controller
 
                     if($name == 'service_type') {
                         $output[] = $stringServicesText;
+                    } else if($name == 'user_id') {
+                        $output[] = $stringUserTendText;
                     } else if($name == 'percent_down') {
                         $output[] = $value . "%";
                     } else if($name == 'percent_max') {
                         $output[] = $value . "%";
                     } else if($name == 'federal_law') {
                         $output[] = $arrFZ[$value];
+                    } else if($name == 'purchase_status') {
+                        $output[] = $arrPurchstatus[$value];
                     } else if($name == 'method_purchase') {
                         $output[] = $arrMethods[$value];
                     } else if($name == 'status_request_security') {

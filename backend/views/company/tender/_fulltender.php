@@ -13,6 +13,109 @@ use common\models\Company;
 
 <table class="table table-bordered list-data">
     <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('purchase_status') ?></td>
+        <td>
+            <?php
+
+            $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'purchase_status',
+                'displayValue' => $model->purchase_status ? $arrPurchstatus[$model->purchase_status] : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'data' => $arrPurchstatus,
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('comment_status_proc') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'comment_status_proc',
+                'displayValue' => nl2br($model->comment_status_proc),
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий к статусу закупки'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('user_id') ?></td>
+        <td>
+            <?php
+
+            $usersList = ['2' => 'Алёна', '3' => 'Денис'];
+
+            $arrUserTend = explode(', ', $model->user_id);
+            $userText = '';
+
+            if (count($arrUserTend) > 1) {
+
+                for ($i = 0; $i < count($arrUserTend); $i++) {
+                    if(isset($usersList[$arrUserTend[$i]])) {
+                        $userText .= $usersList[$arrUserTend[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($usersList[$model->user_id])) {
+                        $userText = $usersList[$model->user_id];
+                    }
+                } catch (\Exception $e) {
+                    $userText = '-';
+                }
+
+            }
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'user_id',
+                'displayValue' => $userText,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'data' => ['2' => 'Алёна', '3' => 'Денис'],
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('date_search') ?></td>
         <td>
             <?= Editable::widget([
@@ -46,6 +149,292 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('date_request_start') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'date_request_start',
+                'displayValue' => $model->date_request_start ? date('d.m.Y', $model->date_request_start) : '',
+                'inputType' => Editable::INPUT_DATE,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => [
+                    'class' => 'form-control',
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy',
+                        'autoclose' => true,
+                        'pickerPosition' => 'bottom-right',
+                    ],
+                    'options'=>['value' => $model->date_request_start ? date('d.m.Y', $model->date_request_start) : '']
+                ],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('date_request_end') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'date_request_end',
+                'displayValue' => $model->date_request_end ? date('d.m.Y H:i', $model->date_request_end) : '',
+                'inputType' => Editable::INPUT_DATETIME,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => [
+                    'options' => ['value' => $model->date_request_end ? date('d.m.Y H:i', $model->date_request_end) : ''],
+                    'class' => 'form-control',
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy hh:i',
+                        'weekStart'=>1,
+                        'autoclose' => true,
+                        'pickerPosition' => 'bottom-right',
+                    ],
+                ],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('time_request_process') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'time_request_process',
+                'displayValue' => $model->time_request_process ? date('d.m.Y H:i', $model->time_request_process) : '',
+                'inputType' => Editable::INPUT_DATETIME,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => [
+                    'options' => ['value' => $model->time_request_process ? date('d.m.Y H:i', $model->time_request_process) : ''],
+                    'class' => 'form-control',
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy hh:i',
+                        'weekStart'=>1,
+                        'autoclose' => true,
+                        'pickerPosition' => 'bottom-right',
+                    ],
+                ],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('time_bidding_start') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'time_bidding_start',
+                'displayValue' => $model->time_bidding_start ? date('d.m.Y H:i', $model->time_bidding_start) : '',
+                'inputType' => Editable::INPUT_DATETIME,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => [
+                    'options' => ['value' => $model->time_bidding_start ? date('d.m.Y H:i', $model->time_bidding_start) : ''],
+                    'class' => 'form-control',
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy hh:i',
+                        'weekStart'=>1,
+                        'autoclose' => true,
+                        'pickerPosition' => 'bottom-right',
+                    ],
+                ],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('time_bidding_end') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'time_bidding_end',
+                'displayValue' => $model->time_bidding_end ? date('d.m.Y H:i', $model->time_bidding_end) : '',
+                'inputType' => Editable::INPUT_DATETIME,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => [
+                    'options' => ['value' => $model->time_bidding_end ? date('d.m.Y H:i', $model->time_bidding_end): ''],
+                    'class' => 'form-control',
+                    'removeButton' => false,
+                    'pluginOptions' => [
+                        'format' => 'dd.mm.yyyy hh:i',
+                        'weekStart'=>1,
+                        'autoclose' => true,
+                        'pickerPosition' => 'bottom-right',
+                    ],
+                ],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]);
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('customer') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'customer',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('comment_customer') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'comment_customer',
+                'displayValue' => nl2br($model->comment_customer),
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий к полю "Заказчик"'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('inn_customer') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'inn_customer',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    <tr>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('contacts_resp_customer') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'contacts_resp_customer',
+                'displayValue' => nl2br($model->contacts_resp_customer),
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите контакты ответственных лиц заказчика'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('method_purchase') ?></td>
+        <td>
+            <?php
+
+            $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'method_purchase',
+                'displayValue' => $model->method_purchase ? $arrMethods[$model->method_purchase] : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'data' => $arrMethods,
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('city') ?></td>
         <td>
             <?= Editable::widget([
@@ -67,7 +456,86 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('place') ?></td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('service_type') ?></td>
+        <td>
+            <?php
+
+            $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
+
+            $arrServices = explode(', ', $model->service_type);
+            $serviceText = '';
+
+            if (count($arrServices) > 1) {
+
+                for ($i = 0; $i < count($arrServices); $i++) {
+                    if(isset($ServicesList[$arrServices[$i]])) {
+                        $serviceText .= $ServicesList[$arrServices[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($ServicesList[$model->service_type])) {
+                        $serviceText = $ServicesList[$model->service_type];
+                    }
+                } catch (\Exception $e) {
+                    $serviceText = '-';
+                }
+
+            }
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'service_type',
+                'displayValue' => $serviceText,
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'],
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('federal_law') ?></td>
+        <td>
+            <?php
+
+            $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'federal_law',
+                'displayValue' => $model->federal_law ? $arrFZ[$model->federal_law] : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'data' => $arrFZ,
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('notice_eis') ?></td>
         <td>
             <?= Editable::widget([
                 'model' => $model,
@@ -75,7 +543,7 @@ use common\models\Company;
                 'submitButton' => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
-                'attribute' => 'place',
+                'attribute' => 'notice_eis',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -109,7 +577,7 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('customer') ?></td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('place') ?></td>
         <td>
             <?= Editable::widget([
                 'model' => $model,
@@ -117,7 +585,7 @@ use common\models\Company;
                 'submitButton' => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
-                'attribute' => 'customer',
+                'attribute' => 'place',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -130,34 +598,11 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('service_type') ?></td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('key_type') ?></td>
         <td>
             <?php
 
-            $ServicesList = Company::$listType;
-
-            $arrServices = explode(', ', $model->service_type);
-            $serviceText = '';
-
-            if (count($arrServices) > 1) {
-
-                for ($i = 0; $i < count($arrServices); $i++) {
-                    if(isset($ServicesList[$arrServices[$i]]['ru'])) {
-                        $serviceText .= $ServicesList[$arrServices[$i]]['ru'] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($ServicesList[$model->service_type]['ru'])) {
-                        $serviceText = $ServicesList[$model->service_type]['ru'];
-                    }
-                } catch (\Exception $e) {
-                    $serviceText = '-';
-                }
-
-            }
+            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД', 4 => 'Сбербанк УТП', 5 => 'Сбербанк АСТ'];
 
             echo Editable::widget([
                 'model' => $model,
@@ -166,13 +611,13 @@ use common\models\Company;
                 'submitButton' => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
-                'attribute' => 'service_type',
-                'displayValue' => $serviceText,
+                'attribute' => 'key_type',
+                'displayValue' => $model->key_type ? $arrKeyType[$model->key_type] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка'],
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'data' => $arrKeyType,
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -202,30 +647,9 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md">Цена без НДС</td>
+        <td class="list-label-md">Максимальная начальная стоимость закупки без НДС</td>
         <td>
             <?= sprintf("%.2f", ($model->price_nds / 1.18)) ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('first_price') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'first_price',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
         </td>
     </tr>
     <tr>
@@ -238,6 +662,27 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'final_price',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('cost_purchase_completion') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'cost_purchase_completion',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -273,7 +718,17 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('percent_down') ?></td>
         <td>
-            <?= Editable::widget([
+            <?php
+            // Вычисление значиния для вывода Процентное снижение по завершению закупки в процентах
+            $resPerDown = '';
+
+            if($model->percent_down === 0) {
+                $resPerDown = 0 . '%';
+            } else if($model->percent_down > 0) {
+                $resPerDown = $model->percent_down . '%';
+            }
+
+            echo Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
@@ -281,7 +736,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'percent_down',
-                'displayValue' => $model->percent_down . "%",
+                'displayValue' => $resPerDown,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -289,6 +744,48 @@ use common\models\Company;
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_nds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'maximum_purchase_nds',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_notnds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'maximum_purchase_notnds',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
@@ -297,7 +794,17 @@ use common\models\Company;
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('percent_max') ?></td>
         <td>
-            <?= Editable::widget([
+            <?php
+            // Вычисление значиния для вывода Максимальное согласованное расчетное снижение в процентах
+            $resPerMax = '';
+
+            if($model->percent_max === 0) {
+                $resPerMax = 0 . '%';
+            } else if($model->percent_max > 0) {
+                $resPerMax = $model->percent_max . '%';
+            }
+
+            echo Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
@@ -305,7 +812,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'percent_max',
-                'displayValue' => $model->percent_max . "%",
+                'displayValue' => $resPerMax,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -319,11 +826,95 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('federal_law') ?></td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_agreed_calcnds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'maximum_agreed_calcnds',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_agreed_calcnotnds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'maximum_agreed_calcnotnds',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('site_fee_participation') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'site_fee_participation',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('ensuring_application') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'ensuring_application',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
         <td>
             <?php
 
-            $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
+            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)', 5 => 'Вернули (выиграли)', 6 => 'Без обеспечения'];
 
             echo Editable::widget([
                 'model' => $model,
@@ -332,12 +923,12 @@ use common\models\Company;
                 'submitButton' => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
-                'attribute' => 'federal_law',
-                'displayValue' => $arrFZ[$model->federal_law],
+                'attribute' => 'status_request_security',
+                'displayValue' => $model->status_request_security ? $arrStatusRequest[$model->status_request_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'data' => $arrFZ,
+                'data' => $arrStatusRequest,
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
@@ -347,31 +938,9 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('method_purchase') ?></td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('date_status_request') ?></td>
         <td>
-            <?php
-
-            $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'method_purchase',
-                'displayValue' => $arrMethods[$model->method_purchase],
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'data' => $arrMethods,
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
+            <?= ($model->date_status_request) ? date('d.m.Y H:i', $model->date_status_request) : '-' ?>
         </td>
     </tr>
     <tr>
@@ -396,66 +965,11 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('participate_price') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'participate_price',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
-        <td>
-            <?php
-
-            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)'];
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'status_request_security',
-                'displayValue' => $arrStatusRequest[$model->status_request_security],
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'data' => $arrStatusRequest,
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_status_request') ?></td>
-        <td>
-            <?= ($model->date_status_request) ? date('d.m.Y H:i', $model->date_status_request) : '-' ?>
-        </td>
-    </tr>
-    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_contract_security') ?></td>
         <td>
             <?php
 
-            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)'];
+            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)', 8 => 'Без обеспечения'];
 
             echo Editable::widget([
                 'model' => $model,
@@ -465,7 +979,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'status_contract_security',
-                'displayValue' => $arrStatusContract[$model->status_contract_security],
+                'displayValue' => $model->status_contract_security ? $arrStatusContract[$model->status_contract_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -482,55 +996,6 @@ use common\models\Company;
         <td class="list-label-md"><?= $model->getAttributeLabel('date_status_contract') ?></td>
         <td>
             <?= ($model->date_status_contract) ? date('d.m.Y H:i', $model->date_status_contract) : '-' ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('notice_eis') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'notice_eis',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('key_type') ?></td>
-        <td>
-            <?php
-
-            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД'];
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'key_type',
-                'displayValue' => $arrKeyType[$model->key_type],
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'data' => $arrKeyType,
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
         </td>
     </tr>
     <tr>
@@ -555,172 +1020,27 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_request_start') ?></td>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('inn_competitors') ?></td>
         <td>
             <?= Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
                 'submitButton' => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
-                'attribute' => 'date_request_start',
-                'displayValue' => date('d.m.Y', $model->date_request_start),
-                'inputType' => Editable::INPUT_DATE,
+                'attribute' => 'inn_competitors',
+                'displayValue' => nl2br($model->inn_competitors),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
-                'options' => [
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy',
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                    'options'=>['value' => date('d.m.Y', $model->date_request_start)]
-                ],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите ИНН конкурентов'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_request_end') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'date_request_end',
-                'displayValue' => date('d.m.Y H:i', $model->date_request_end),
-                'inputType' => Editable::INPUT_DATETIME,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => [
-                    'options' => ['value' => date('d.m.Y H:i', $model->date_request_end)],
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
-                        'weekStart'=>1,
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                ],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('time_request_process') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'time_request_process',
-                'displayValue' => date('d.m.Y H:i', $model->time_request_process),
-                'inputType' => Editable::INPUT_DATETIME,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => [
-                    'options' => ['value' => date('d.m.Y H:i', $model->time_request_process)],
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
-                        'weekStart'=>1,
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                ],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('time_bidding_start') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'time_bidding_start',
-                'displayValue' => date('d.m.Y H:i', $model->time_bidding_start),
-                'inputType' => Editable::INPUT_DATETIME,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => [
-                    'options' => ['value' => date('d.m.Y H:i', $model->time_bidding_start)],
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
-                        'weekStart'=>1,
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                ],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('time_bidding_end') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'time_bidding_end',
-                'displayValue' => date('d.m.Y H:i', $model->time_bidding_end),
-                'inputType' => Editable::INPUT_DATETIME,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'size' => 'lg',
-                'options' => [
-                    'options' => ['value' => date('d.m.Y H:i', $model->time_bidding_end)],
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
-                        'weekStart'=>1,
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                ],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
+            ]); ?>
         </td>
     </tr>
     <tr>
@@ -790,74 +1110,53 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md">Осталось</td>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('comment_date_contract') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'comment_date_contract',
+                'displayValue' => nl2br($model->comment_date_contract),
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+
+
+
+
+    <tr>
+        <td class="list-label-md">Осталось дней до окончания действия договора</td>
         <td>
             <?php
 
-            if($model->term_contract) {
-                $timeNow = time();
+            if($model->date_contract and $model->term_contract) {
 
-                $showTotal = '';
+                $totalDate = '';
 
-                if ($model->term_contract > $timeNow) {
+                if ($model->term_contract > $model->date_contract) {
 
-                    $totalDate = $model->term_contract - $timeNow;
-
+                    $totalDate = $model->term_contract - $model->date_contract;
                     $days = ((Int)($totalDate / 86400));
-                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
-
-                    if ($days < 0) {
-                        $days = 0;
-                    }
-
-                    $hours = (round($totalDate / 3600));
-                    $totalDate -= (round($totalDate / 3600) * 3600);
-
-                    if ($hours < 0) {
-                        $hours = 0;
-                    }
-
-                    $minutes = (round($totalDate / 60));
-
-                    if ($minutes < 0) {
-                        $minutes = 0;
-                    }
-
-                    $showTotal .= $days . ' д.';
-                    $showTotal .= ' ' . $hours . ' ч.';
-                    $showTotal .= ' ' . $minutes . ' м.';
 
                 } else {
-                    $totalDate = $timeNow - $model->term_contract;
-
-                    $days = ((Int)($totalDate / 86400));
-                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
-
-                    if ($days < 0) {
-                        $days = 0;
-                    }
-
-                    $hours = (round($totalDate / 3600));
-                    $totalDate -= (round($totalDate / 3600) * 3600);
-
-                    if ($hours < 0) {
-                        $hours = 0;
-                    }
-
-                    $minutes = (round($totalDate / 60));
-
-                    if ($minutes < 0) {
-                        $minutes = 0;
-                    }
-
-                    $showTotal .= '- ' . $days . ' д.';
-                    $showTotal .= ' ' . $hours . ' ч.';
-                    $showTotal .= ' ' . $minutes . ' м.';
+                    $totalDate = '-';
                 }
 
-                echo $showTotal;
+                echo $days, ' дней';
             }
-
             ?>
         </td>
     </tr>
