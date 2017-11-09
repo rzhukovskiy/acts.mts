@@ -217,4 +217,148 @@ class Tender extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    public function getPurchase_status()
+    {
+    return $this->purchase_status;
+    }
+
+    public function setPurchase_status($value)
+    {
+        $this->purchase_status = $value;
+    }
+    public function getComment_status_proc()
+    {
+        return $this->comment_status_proc;
+    }
+
+    public function setComment_status_proc($value)
+    {
+        $this->comment_status_proc = $value;
+    }
+    public function getUser_id()
+    {
+        return $this->user_id;
+    }
+
+    public function setUser_id($value)
+    {
+        $this->user_id = $value;
+    }
+    public function getComment_customer()
+    {
+        return $this->comment_customer;
+    }
+
+    public function setComment_customer($value)
+    {
+        $this->comment_customer = $value;
+    }
+    public function getInn_customer()
+    {
+        return $this->inn_customer;
+    }
+
+    public function setInn_customer($value)
+    {
+        $this->inn_customer = $value;
+    }
+    public function getContacts_resp_customer()
+    {
+        return $this->contacts_resp_customer;
+    }
+
+    public function setContacts_resp_customer($value)
+    {
+        $this->contacts_resp_customer = $value;
+    }
+    public function getMaximum_purchase_price()
+    {
+        return $this->maximum_purchase_price;
+    }
+
+    public function setMaximum_purchase_price($value)
+    {
+        $this->maximum_purchase_price = $value;
+    }
+    public function getCost_purchase_completion()
+    {
+        return $this->cost_purchase_completion;
+    }
+
+    public function setCost_purchase_completion($value)
+    {
+        $this->cost_purchase_completion = $value;
+    }
+    public function getMaximum_purchase_nds()
+    {
+        return $this->maximum_purchase_nds;
+    }
+
+    public function setMaximum_purchase_nds($value)
+    {
+        $this->maximum_purchase_nds = $value;
+    }
+    public function getNdsmaximum_purchase_not()
+    {
+        return $this->ndsmaximum_purchase_not;
+    }
+
+    public function setNdsmaximum_purchase_not($value)
+    {
+        $this->ndsmaximum_purchase_not = $value;
+    }
+    public function getMmaximum_agreed_calcnds()
+    {
+        return $this->maximum_agreed_calcnds;
+    }
+
+    public function setMaximum_agreed_calcnds($value)
+    {
+        $this->maximum_agreed_calcnds = $value;
+    }
+    public function getMaximum_agreed_calcnotnds()
+    {
+        return $this->maximum_agreed_calcnotnds;
+    }
+
+    public function setMaximum_agreed_calcnotnds($value)
+    {
+        $this->maximum_agreed_calcnotnds = $value;
+    }
+    public function getSite_fee_participation()
+    {
+        return $this->site_fee_participation;
+    }
+
+    public function setSite_fee_participation($value)
+    {
+        $this->site_fee_participation = $value;
+    }
+    public function getEnsuring_application()
+    {
+        return $this->ensuring_application;
+    }
+
+    public function setEnsuring_application($value)
+    {
+        $this->ensuring_application = $value;
+    }
+    public function getInn_competitors()
+    {
+        return $this->inn_competitors;
+    }
+
+    public function setInn_competitors($value)
+    {
+        $this->inn_competitors = $value;
+    }
+    public function getComment_date_contract()
+    {
+        return $this->comment_date_contract;
+    }
+
+    public function setComment_date_contract($value)
+    {
+        $this->comment_date_contract = $value;
+    }
 }
