@@ -361,4 +361,12 @@ class Tender extends \yii\db\ActiveRecord
     {
         $this->comment_date_contract = $value;
     }
+    public function setMaximum_purchase_notnds($value)
+    {
+        $this->maximum_purchase_notnds = $value;
+    }
+    public function getMaximum_purchase_notnds()
+    {
+        return $this->maximum_purchase_notnds;
+    }
 }
