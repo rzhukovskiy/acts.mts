@@ -105,7 +105,7 @@ class m171107_144425_update_company_tender extends Migration
         $this->alterColumn('{{%tender}}','date_contract', 'varchar(20) DEFAULT NULL');
         $this->alterColumn('{{%tender}}','term_contract', 'varchar(20) DEFAULT NULL');
         $this->alterColumn('{{%tender}}','comment', 'text DEFAULT NULL');
-        $this->dropColumn('{{%tender}}', 'tender_close');
+        //$this->dropColumn('{{%tender}}', 'tender_close');
 
     }
     
