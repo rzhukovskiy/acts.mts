@@ -66,6 +66,84 @@ if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->chil
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
+
+    // Скрипт скрытия актов в филиалы
+    $script = <<< JS
+    
+    var actTR = $('tbody tr');
+    var actTitleCompany = $('tr[class="kv-group-header child"] td');
+    actTitleCompany.css("cursor", "pointer");
+    
+    var arrayStatusHide = [];
+    var arrayChildAct = [];
+    
+    var checkLoadArrays = false;
+    
+    // Скрываем/отображаем акты
+    function hideActs(name) {
+        
+        if(arrayStatusHide[name] == 1) {
+            
+            arrayChildAct[name].forEach(function (value) {
+                $(value).show();
+            });
+            
+
+            arrayStatusHide[name] = 0
+        } else {
+            
+            arrayChildAct[name].forEach(function (value) {
+                $(value).hide();
+            });
+            
+            arrayStatusHide[name] = 1
+        }
+        
+    }
+    
+    // Получаем название филиалов для индекса и задаем по умолчанию скрытие
+    $(actTitleCompany).each(function (id, value) {
+        arrayStatusHide[$(this).text()] = 1;
+    });
+    
+    // Получаем список актов для каждой компании
+    
+    var old_company = "";
+    $(actTR).each(function (id, value) {
+        
+        var thisId = $(this);
+        
+        if((thisId.attr('class') == "kv-group-header child") || (thisId.attr('data-key') > 0)) {
+        //console.log(thisId.attr('class'));
+            
+        if(thisId.attr('class') == "kv-group-header child") {
+            old_company = $(thisId).children('td').text();
+            
+            arrayChildAct[old_company] = [];
+            
+        } else {
+            $(thisId).hide();
+            arrayChildAct[old_company].push(thisId);
+        }
+        
+        //console.log(old_company);
+        
+        }
+        
+    });
+    checkLoadArrays = true;
+   
+    // Нажимаем кнопку скрыть/отобразить акты
+    actTitleCompany.on('click', function(){
+        if(checkLoadArrays == true) {
+        hideActs($(this).text());
+        }
+    });
+
+JS;
+$this->registerJs($script, View::POS_READY);
+    // Скрипт скрытия актов в филиалы
+
     $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
 }
