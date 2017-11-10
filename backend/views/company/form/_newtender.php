@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use \kartik\date\DatePicker;
+use \yii\web\View;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 
@@ -11,6 +12,16 @@ use kartik\popover\PopoverX;
  * @var $model common\models\CompanyMember
  * @var $form yii\widgets\ActiveForm
  */
+
+$script = <<< JS
+// При вводе в поле "максимальная стоимость закупки" вводится в поле ниже с подсчетом стоимости без НДС
+$('#tender-price_nds').bind('input',function(){
+   $('#tender-maximum_purchase_price').val(($(this).val() / 1.18).toFixed(2));
+});
+
+JS;
+$this->registerJs($script, View::POS_READY);
+
 $form = ActiveForm::begin([
     'action' => $model->isNewRecord ? ['/company/newtender', 'id' => $id] : ['/company/updatetender', 'id' => $model->id],
     'options' => ['accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],

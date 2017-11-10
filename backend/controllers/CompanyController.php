@@ -58,17 +58,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -591,6 +591,29 @@ class CompanyController extends Controller
 
     }
 
+    // Закрыть изменения тендера
+    public function actionClosedownload()
+    {
+
+        if(Yii::$app->request->post('tender_id')) {
+
+            $id = Yii::$app->request->post('tender_id');
+
+            $model = Tender::findOne(['id' => $id]);
+            $model->tender_close = 1;
+
+           if($model->save()) {
+               echo json_encode(['success' => 'true']);
+           } else {
+               echo json_encode(['success' => 'false']);
+           }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
     public function actionUpdatetender($id)
     {
         $model = Tender::findOne(['id' => $id]);
@@ -698,26 +721,28 @@ class CompanyController extends Controller
                 $output = [];
                 foreach (Yii::$app->request->post('Tender') as $name => $value) {
 
-                    if($name == 'service_type') {
+                    if ($name == 'service_type') {
                         $output[] = $stringServicesText;
-                    } else if($name == 'user_id') {
+                    } else if ($name == 'user_id') {
                         $output[] = $stringUserTendText;
-                    } else if($name == 'percent_down') {
+                    } else if ($name == 'percent_down') {
                         $output[] = $value . "%";
-                    } else if($name == 'percent_max') {
+                    } else if ($name == 'percent_max') {
                         $output[] = $value . "%";
-                    } else if($name == 'federal_law') {
+                    } else if ($name == 'federal_law') {
                         $output[] = $arrFZ[$value];
-                    } else if($name == 'purchase_status') {
+                    } else if ($name == 'purchase_status') {
                         $output[] = $arrPurchstatus[$value];
-                    } else if($name == 'method_purchase') {
+                    } else if ($name == 'method_purchase') {
                         $output[] = $arrMethods[$value];
-                    } else if($name == 'status_request_security') {
+                    } else if ($name == 'status_request_security') {
                         $output[] = $arrStatusRequest[$value];
-                    } else if($name == 'status_contract_security') {
+                    } else if ($name == 'status_contract_security') {
                         $output[] = $arrStatusContract[$value];
-                    } else if($name == 'key_type') {
+                    } else if ($name == 'key_type') {
                         $output[] = $arrKeyType[$value];
+                    } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application') {
+                        $output[] = $value . " ₽";
                     } else {
                         $output[] = $value;
                     }

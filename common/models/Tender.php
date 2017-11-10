@@ -58,8 +58,9 @@ use yii\behaviors\TimestampBehavior;
  * @property float $ensuring_application
  * @property string $inn_competitors
  * @property string $comment_date_contract
+ * @property integer $tender_close
  */
-class Tender extends \yii\db\ActiveRecord
+class Tender extends ActiveRecord
 {
     private $purchase_status;
     private $comment_status_proc;
@@ -77,6 +78,7 @@ class Tender extends \yii\db\ActiveRecord
     private $ensuring_application;
     private $inn_competitors;
     private $comment_date_contract;
+    private $tender_close;
 
     /**
      * @inheritdoc
@@ -104,7 +106,7 @@ class Tender extends \yii\db\ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
-            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', '$maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id'], 'safe'],
+            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'tender_close'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer', 'competitor'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
@@ -166,6 +168,7 @@ class Tender extends \yii\db\ActiveRecord
             'ensuring_application' => 'Обеспечение заявки',
             'inn_competitors' => 'ИНН конкурентов',
             'comment_date_contract' => 'Комментарий к сроку договора',
+            'tender_close' => 'Закрыть загрузку',
         ];
     }
 
@@ -368,5 +371,13 @@ class Tender extends \yii\db\ActiveRecord
     public function getMaximum_purchase_notnds()
     {
         return $this->maximum_purchase_notnds;
+    }
+    public function getTender_close()
+    {
+        return $this->tender_close;
+    }
+    public function setTender_close($value)
+    {
+        $this->tender_close = $value;
     }
 }

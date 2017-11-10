@@ -6,9 +6,49 @@
  */
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
+use yii\helpers\Html;
 use yii\web\View;
 use common\models\Company;
+use yii\helpers\Url;
 
+$actionLinkCloseDownload = Url::to('@web/company/closedownload');
+$tender_id = $model->id;
+
+$script = <<< JS
+
+// Клик закрыть загрузку в тендере
+$('.btn-danger').on('click', function(){
+    var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
+    
+    if(checkCloseDownload == true) {
+        
+        $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'tender_id=' + '$tender_id',
+                url  : '$actionLinkCloseDownload',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                location.reload();
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+        
+    }
+    
+});
+
+JS;
+$this->registerJs($script, View::POS_READY);
 ?>
 
 <table class="table table-bordered list-data">
@@ -635,6 +675,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'price_nds',
+                'displayValue' => $model->price_nds ? ($model->price_nds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -647,9 +688,25 @@ use common\models\Company;
         </td>
     </tr>
     <tr>
-        <td class="list-label-md">Максимальная начальная стоимость закупки без НДС</td>
+        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_price') ?></td>
         <td>
-            <?= sprintf("%.2f", ($model->price_nds / 1.18)) ?>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'maximum_purchase_price',
+                'displayValue' => $model->maximum_purchase_price ? ($model->maximum_purchase_price . ' ₽') : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
         </td>
     </tr>
     <tr>
@@ -662,6 +719,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'final_price',
+                'displayValue' => $model->final_price ? ($model->final_price . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -683,6 +741,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'cost_purchase_completion',
+                'displayValue' => $model->cost_purchase_completion ? ($model->cost_purchase_completion . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -704,6 +763,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'pre_income',
+                'displayValue' => $model->pre_income ? ($model->pre_income . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -759,6 +819,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'maximum_purchase_nds',
+                'displayValue' => $model->maximum_purchase_nds ? ($model->maximum_purchase_nds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -780,6 +841,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'maximum_purchase_notnds',
+                'displayValue' => $model->maximum_purchase_notnds ? ($model->maximum_purchase_notnds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -835,6 +897,8 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'maximum_agreed_calcnds',
+                'displayValue' => $model->maximum_agreed_calcnds ? ($model->maximum_agreed_calcnds . ' ₽') : '',
+
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -856,6 +920,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'maximum_agreed_calcnotnds',
+                'displayValue' => $model->maximum_agreed_calcnotnds ? ($model->maximum_agreed_calcnotnds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -877,6 +942,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'site_fee_participation',
+                'displayValue' => $model->site_fee_participation ? ($model->site_fee_participation . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -898,6 +964,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'ensuring_application',
+                'displayValue' => $model->ensuring_application ? ($model->ensuring_application . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -953,6 +1020,7 @@ use common\models\Company;
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'contract_security',
+                'displayValue' => $model->contract_security ? ($model->contract_security . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',
@@ -1140,23 +1208,42 @@ use common\models\Company;
     <tr>
         <td class="list-label-md">Осталось дней до окончания действия договора</td>
         <td>
+
             <?php
 
-            if($model->date_contract and $model->term_contract) {
+            if($model->term_contract) {
+                $timeNow = time();
 
-                $totalDate = '';
+                $showTotal = '';
 
-                if ($model->term_contract > $model->date_contract) {
+                if ($model->term_contract > $timeNow) {
 
-                    $totalDate = $model->term_contract - $model->date_contract;
+                    $totalDate = $model->term_contract - $timeNow;
+
                     $days = ((Int)($totalDate / 86400));
+                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                    if ($days < 0) {
+                        $days = 0;
+                    }
+
+                    $showTotal .= $days . ' д.';
 
                 } else {
-                    $totalDate = '-';
+                    $totalDate = $timeNow - $model->term_contract;
+
+                    $days = ((Int)($totalDate / 86400));
+                    $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                    if ($days < 0) {
+                        $days = 0;
+                    }
+                    $showTotal .= '- ' . $days . ' д.';
                 }
 
-                echo $days, ' дней';
+                echo $showTotal;
             }
+
             ?>
         </td>
     </tr>
@@ -1184,4 +1271,9 @@ use common\models\Company;
             ]); ?>
         </td>
     </tr>
+   <?php echo "<tr>
+        <td class=\"list-label-md\">Закрыть загрузку</td>
+        <td> <span class='btn btn-danger'>Закрыть загрузку</span></td>
+    </tr>"
+ ?>
 </table>
