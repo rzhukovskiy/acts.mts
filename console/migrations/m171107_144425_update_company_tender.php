@@ -58,8 +58,8 @@ class m171107_144425_update_company_tender extends Migration
 
     public function down()
     {
-        //$this->addColumn('{{%tender}}','first_price', 'DECIMAL(12,2) DEFAULT NULL');
-        //$this->addColumn('{{%tender}}','participate_price', 'DECIMAL(12,2) DEFAULT NULL');
+        /*$this->addColumn('{{%tender}}','first_price', 'DECIMAL(12,2) DEFAULT NULL');
+        $this->addColumn('{{%tender}}','participate_price', 'DECIMAL(12,2) DEFAULT NULL');
         $this->dropColumn('{{%tender}}', 'purchase_status');
         $this->dropColumn('{{%tender}}', 'comment_status_proc');
         $this->dropColumn('{{%tender}}', 'user_id');
@@ -75,7 +75,7 @@ class m171107_144425_update_company_tender extends Migration
         $this->dropColumn('{{%tender}}', 'site_fee_participation');
         $this->dropColumn('{{%tender}}', 'ensuring_application');
         $this->dropColumn('{{%tender}}', 'inn_competitors');
-        $this->dropColumn('{{%tender}}', 'comment_date_contract');
+        $this->dropColumn('{{%tender}}', 'comment_date_contract');*/
         $this->alterColumn('{{%tender}}','date_search', 'varchar(20) DEFAULT NULL');
         $this->alterColumn('{{%tender}}','city', 'varchar(255) NOT NULL');
         $this->alterColumn('{{%tender}}','place', 'varchar(255) NOT NULL');
