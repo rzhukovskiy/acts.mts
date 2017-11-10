@@ -329,13 +329,23 @@ echo GridView::widget([
                 $name = str_replace('«', '', $name);
                 $name = str_replace('»', '', $name);
 
+                // Период
                 $period = '';
 
                 if(isset(Yii::$app->request->queryParams['MonthlyActSearch']['act_date'])) {
-                    $period = '0' . Yii::$app->request->queryParams['MonthlyActSearch']['act_date'];
+
+                    $dataFilter = explode('-', Yii::$app->request->queryParams['MonthlyActSearch']['act_date']);
+
+                    if($dataFilter[0] > 9) {
+                        $period = Yii::$app->request->queryParams['MonthlyActSearch']['act_date'];
+                    } else {
+                        $period = '0' . Yii::$app->request->queryParams['MonthlyActSearch']['act_date'];
+                    }
+
                 } else {
                     $period = date("m-Y", strtotime("-1 month"));
                 }
+                // Период
 
                 $numAct = '';
 
