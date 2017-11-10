@@ -58,8 +58,8 @@ class m171107_144425_update_company_tender extends Migration
 
     public function down()
     {
-        $this->addColumn('{{%tender}}','first_price', 'DECIMAL(12,2) DEFAULT NULL');
-        $this->addColumn('{{%tender}}','participate_price', 'DECIMAL(12,2) DEFAULT NULL');
+        //$this->addColumn('{{%tender}}','first_price', 'DECIMAL(12,2) DEFAULT NULL');
+        //$this->addColumn('{{%tender}}','participate_price', 'DECIMAL(12,2) DEFAULT NULL');
         $this->dropColumn('{{%tender}}', 'purchase_status');
         $this->dropColumn('{{%tender}}', 'comment_status_proc');
         $this->dropColumn('{{%tender}}', 'user_id');
