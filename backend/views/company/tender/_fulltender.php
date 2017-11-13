@@ -10,6 +10,8 @@ use yii\helpers\Html;
 use yii\web\View;
 use common\models\Company;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\bootstrap\Modal;
 
 $actionLinkCloseDownload = Url::to('@web/company/closedownload');
 $tender_id = $model->id;
@@ -47,6 +49,13 @@ $('.btn-danger').on('click', function(){
     
 });
 
+// открываем модальное окно добавить вложения
+$('.showFormAttachButt').on('click', function(){
+$('#showFormAttach').modal('show');
+});
+
+$('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
+
 JS;
 $this->registerJs($script, View::POS_READY);
 ?>
@@ -70,6 +79,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->purchase_status ? $arrPurchstatus[$model->purchase_status] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrPurchstatus,
                 'options' => ['class' => 'form-control'],
@@ -95,6 +105,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->comment_status_proc),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий к статусу закупки'],
                 'formOptions' => [
@@ -145,6 +156,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $userText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => ['2' => 'Алёна', '3' => 'Денис'],
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
@@ -169,6 +181,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'class' => 'form-control',
@@ -202,6 +215,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'class' => 'form-control',
@@ -235,6 +249,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATETIME,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'options' => ['value' => $model->date_request_end ? date('d.m.Y H:i', $model->date_request_end) : ''],
@@ -269,6 +284,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATETIME,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'options' => ['value' => $model->time_request_process ? date('d.m.Y H:i', $model->time_request_process) : ''],
@@ -303,6 +319,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATETIME,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'options' => ['value' => $model->time_bidding_start ? date('d.m.Y H:i', $model->time_bidding_start) : ''],
@@ -337,6 +354,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATETIME,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'options' => ['value' => $model->time_bidding_end ? date('d.m.Y H:i', $model->time_bidding_end): ''],
@@ -369,6 +387,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'customer',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -393,6 +412,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->comment_customer),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий к полю "Заказчик"'],
                 'formOptions' => [
@@ -414,6 +434,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'inn_customer',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -437,6 +458,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->contacts_resp_customer),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите контакты ответственных лиц заказчика'],
                 'formOptions' => [
@@ -464,6 +486,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->method_purchase ? $arrMethods[$model->method_purchase] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrMethods,
                 'options' => ['class' => 'form-control'],
@@ -486,6 +509,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'city',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -536,6 +560,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $serviceText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'],
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
@@ -564,6 +589,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->federal_law ? $arrFZ[$model->federal_law] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrFZ,
                 'options' => ['class' => 'form-control'],
@@ -586,6 +612,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'notice_eis',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -607,6 +634,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'number_purchase',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -628,6 +656,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'place',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -655,6 +684,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->key_type ? $arrKeyType[$model->key_type] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrKeyType,
                 'options' => ['class' => 'form-control'],
@@ -678,6 +708,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->price_nds ? ($model->price_nds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -700,6 +731,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->maximum_purchase_price ? ($model->maximum_purchase_price . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -722,6 +754,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->final_price ? ($model->final_price . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -744,6 +777,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->cost_purchase_completion ? ($model->cost_purchase_completion . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -766,6 +800,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->pre_income ? ($model->pre_income . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -799,6 +834,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $resPerDown,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => [0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51, 52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65, 66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72, 73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79, 80 => 80, 81 => 81, 82 => 82, 83 => 83, 84 => 84, 85 => 85, 86 => 86, 87 => 87, 88 => 88, 89 => 89, 90 => 90, 91 => 91, 92 => 92, 93 => 93, 94 => 94, 95 => 95, 96 => 96, 97 => 97, 98 => 98, 99 => 99, 100 => 100],
                 'options' => ['class' => 'form-control'],
@@ -822,6 +858,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->maximum_purchase_nds ? ($model->maximum_purchase_nds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -844,6 +881,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->maximum_purchase_notnds ? ($model->maximum_purchase_notnds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -877,6 +915,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $resPerMax,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => [0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51, 52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65, 66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72, 73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79, 80 => 80, 81 => 81, 82 => 82, 83 => 83, 84 => 84, 85 => 85, 86 => 86, 87 => 87, 88 => 88, 89 => 89, 90 => 90, 91 => 91, 92 => 92, 93 => 93, 94 => 94, 95 => 95, 96 => 96, 97 => 97, 98 => 98, 99 => 99, 100 => 100],
                 'options' => ['class' => 'form-control'],
@@ -901,6 +940,7 @@ $this->registerJs($script, View::POS_READY);
 
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -923,6 +963,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->maximum_agreed_calcnotnds ? ($model->maximum_agreed_calcnotnds . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -945,6 +986,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->site_fee_participation ? ($model->site_fee_participation . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -967,6 +1009,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->ensuring_application ? ($model->ensuring_application . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -994,6 +1037,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->status_request_security ? $arrStatusRequest[$model->status_request_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrStatusRequest,
                 'options' => ['class' => 'form-control'],
@@ -1023,6 +1067,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->contract_security ? ($model->contract_security . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -1050,6 +1095,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $model->status_contract_security ? $arrStatusContract[$model->status_contract_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrStatusContract,
                 'options' => ['class' => 'form-control'],
@@ -1078,6 +1124,7 @@ $this->registerJs($script, View::POS_READY);
                 'attribute' => 'competitor',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
@@ -1102,6 +1149,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->inn_competitors),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите ИНН конкурентов'],
                 'formOptions' => [
@@ -1125,6 +1173,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'class' => 'form-control',
@@ -1158,6 +1207,7 @@ $this->registerJs($script, View::POS_READY);
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => [
                     'class' => 'form-control',
@@ -1192,6 +1242,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->comment_date_contract),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
                 'formOptions' => [
@@ -1262,6 +1313,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => nl2br($model->comment),
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
                 'formOptions' => [
@@ -1271,9 +1323,96 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-   <?php echo "<tr>
-        <td class=\"list-label-md\">Закрыть загрузку</td>
-        <td> <span class='btn btn-danger'>Закрыть загрузку</span></td>
-    </tr>"
+    <tr>
+        <td class="list-label-md">
+            <?= $model->getAttributeLabel('files') ?></td>
+        <td>
+            <?php
+
+            $pathfolder = \Yii::getAlias('@webroot/files/tenders/' . $model->id . '/');
+            $shortPath = '/files/tenders/' . $model->id . '/';
+
+            if (file_exists($pathfolder)) {
+
+                $numFiles = 0;
+                $resLinksFiles = '';
+                $arrStateID = [];
+
+                foreach (\yii\helpers\FileHelper::findFiles($pathfolder) as $file) {
+
+                    $resLinksFiles .= Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                    $numFiles++;
+
+                }
+
+                if($numFiles > 0) {
+                    echo $resLinksFiles;
+                } else {
+                    echo '-<br />';
+                }
+
+            } else {
+                echo '-<br />';
+            }
+
+            ?>
+
+            <?php
+            if ($model->tender_close == 1) {
+
+            } else {
+                echo '<br /><span class="btn btn-primary btn-sm showFormAttachButt" style="margin-right:15px;">Добавить вложение</span>';
+            }
+            ?>
+        </td>
+    </tr>
+   <?php
+   if ($model->tender_close == 1) {
+       echo "<tr> 
+        <td class='list-label-md'>Закупка закрыта</td>
+        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span></td>
+        </tr>";
+   } else {
+       echo "<tr>
+        <td class='list-label-md'>Закрыть закупку</td>
+        <td> <span class='btn btn-danger'>Закрыть закупку</span></td>
+        </tr>";
+   }
  ?>
 </table>
+
+<?php
+// Модальное окно добавить вложения
+$pathfolder = \Yii::getAlias('@webroot/files/tenders/' . $model->id . '/');
+$shortPath = '/files/tenders/' . $model->id . '/';
+
+$modalAttach = Modal::begin([
+'header' => '<h5>Добавить вложения</h5>',
+'id' => 'showFormAttach',
+'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
+'size'=>'modal-lg',
+]);
+
+echo "<div style='font-size: 15px; margin-left:15px;'>Выберите файлы:</div>";
+
+$modelAddAttach = new \yii\base\DynamicModel(['files']);
+$modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+$form = ActiveForm::begin([
+'action' => ['/company/newtendattach', 'id' => $model->id],
+'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+'fieldConfig' => [
+'template' => '<div class="col-sm-6">{input}</div>',
+'inputOptions' => ['class' => 'form-control input-sm'],
+],
+]);
+
+echo $form->field($modelAddAttach, 'files[]')->fileInput(['multiple' => true]);
+
+echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']);
+
+ActiveForm::end();
+
+Modal::end();
+// Модальное окно добавить вложения
+?>

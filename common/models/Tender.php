@@ -81,6 +81,11 @@ class Tender extends ActiveRecord
     private $tender_close;
 
     /**
+     * @var UploadedFile
+     */
+    public $files;
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -112,7 +117,8 @@ class Tender extends ActiveRecord
             [['notice_eis'], 'string', 'max' => 100],
             [['inn_customer'], 'string', 'max' => 200],
             [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer', 'inn_competitors'], 'string', 'max' => 10000],
-        ];
+            [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
+            ];
     }
 
     /**
@@ -168,7 +174,8 @@ class Tender extends ActiveRecord
             'ensuring_application' => 'Обеспечение заявки',
             'inn_competitors' => 'ИНН конкурентов',
             'comment_date_contract' => 'Комментарий к сроку договора',
-            'tender_close' => 'Закрыть загрузку',
+            'tender_close' => 'Закрыть закупку',
+            'files' => 'Вложения',
         ];
     }
 
@@ -218,6 +225,44 @@ class Tender extends ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function upload()
+    {
+        $filePath = \Yii::getAlias('@webroot/files/tenders/' . $this->id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tenders/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tenders/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tenders/' . $this->id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tenders/' . $this->id . '/'), 0775);
+        }
+
+        foreach ($this->files as $file) {
+
+                if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                    $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
+                } else {
+
+                    $filename = $filePath . $file->baseName . '.' . $file->extension;
+                    $i = 1;
+
+                    while (file_exists($filename)) {
+                        $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
+                        $i++;
+                    }
+
+                    $file->saveAs($filename);
+
+                }
+
+        }
+
     }
 
     public function getPurchase_status()

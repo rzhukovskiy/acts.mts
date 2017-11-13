@@ -58,17 +58,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -569,6 +569,13 @@ class CompanyController extends Controller
         $model->company_id = $id;
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            $model->files = UploadedFile::getInstances($model, 'files');
+
+            if ($model->upload()) {
+                // file is uploaded successfully
+            } else {
+            }
 
             return $this->redirect(['company/tenders', 'id' => $model->company_id]);
 
@@ -1244,6 +1251,51 @@ class CompanyController extends Controller
         }
 
         return $this->redirect(['company/state', 'id' => $id]);
+
+    }
+
+    public function actionNewtendattach($id)
+    {
+
+        $modelAddAttach = new DynamicModel(['files']);
+        $modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+        $filesArr = UploadedFile::getInstances($modelAddAttach, 'files');
+
+        $filePath = \Yii::getAlias('@webroot/files/tenders/' . $id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tenders/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tenders/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tenders/' . $id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tenders/' . $id . '/'), 0775);
+        }
+
+        foreach ($filesArr as $file) {
+
+                if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                    $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
+                } else {
+
+                    $filename = $filePath . $file->baseName . '.' . $file->extension;
+                    $i = 1;
+
+                    while (file_exists($filename)) {
+                        $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
+                        $i++;
+                    }
+
+                    $file->saveAs($filename);
+
+                }
+        }
+
+        return $this->redirect(['company/fulltender', 'tender_id' => $id]);
 
     }
 

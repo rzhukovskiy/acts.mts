@@ -145,6 +145,7 @@ $form = ActiveForm::begin([
 ]) ?>
 <?= $form->field($model, 'comment_date_contract')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий к сроку договора']) ?>
 <?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий']) ?>
+<?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
 
     <div class="form-group">
