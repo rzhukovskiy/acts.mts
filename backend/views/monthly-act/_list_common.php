@@ -383,7 +383,11 @@ echo GridView::widget([
                     ]);
             },
             'contentOptions' => function ($model) {
-                return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 190px'];
+                if(isset($model->act_status)) {
+                    return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'min-width: 190px'];
+                } else {
+                    return '';
+                }
             },
             'filter' => false,
             'format' => 'raw',
