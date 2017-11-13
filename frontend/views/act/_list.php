@@ -255,7 +255,7 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => '<button class="btn btn-primary show-search">Поиск</button><button class="pull-right btn btn-warning openActs" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Открыть все акты</button>',
+                    'content' => '<button class="btn btn-primary show-search">Поиск</button>' . (($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) ?'<button class="pull-right btn btn-warning openActs" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Открыть все акты</button>' : ''),
                     'options' => [
                         'colspan' => count($columns),
                     ]

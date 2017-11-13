@@ -31,6 +31,11 @@ $items = [
         'active' => $request->get('type') == Company::TYPE_DISINFECT,
     ],
     [
+        'label' => 'Стоянка',
+        'url' => ['/stat/view', 'type' => Company::TYPE_PARKING],
+        'active' => $request->get('type') == Company::TYPE_PARKING,
+    ],
+    [
         'label' => 'Общая',
         'url' => '/stat/total',
         'active' => Yii::$app->controller->action->id == 'total',
