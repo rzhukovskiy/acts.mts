@@ -76,6 +76,7 @@ if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::R
     
     var arrayStatusHide = [];
     var arrayChildAct = [];
+    var closeAllButtStatus = 1;
     
     var checkLoadArrays = false;
     
@@ -137,6 +138,43 @@ if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::R
     actTitleCompany.on('click', function(){
         if(checkLoadArrays == true) {
         hideActs($(this).text());
+        }
+    });
+    
+    // Нажимаем кнопку скрыть/отобразить все акты
+    $('.openActs').on('click', function(){
+        if(checkLoadArrays == true) {
+            
+            if(closeAllButtStatus == 1) {
+                
+                $(actTitleCompany).each(function (id, value) {
+                    arrayStatusHide[$(this).text()] = 0;
+                    
+                    arrayChildAct[$(this).text()].forEach(function (value) {
+                        $(value).show();
+                    });
+                    
+                });
+                
+                closeAllButtStatus = 0;
+                $('.openActs').text('Закрыть все акты');
+                
+            } else {
+                
+                $(actTitleCompany).each(function (id, value) {
+                    arrayStatusHide[$(this).text()] = 1;
+                    
+                    arrayChildAct[$(this).text()].forEach(function (value) {
+                        $(value).hide();
+                    });
+                    
+                });
+                
+                closeAllButtStatus = 1;
+                $('.openActs').text('Открыть все акты');
+                
+            }
+            
         }
     });
 
@@ -217,7 +255,7 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => '<button class="btn btn-primary show-search">Поиск</button>',
+                    'content' => '<button class="btn btn-primary show-search">Поиск</button><button class="pull-right btn btn-warning openActs" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Открыть все акты</button>',
                     'options' => [
                         'colspan' => count($columns),
                     ]
