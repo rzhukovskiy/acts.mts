@@ -17,12 +17,11 @@ use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
+use common\models\search\TenderSearch;
 use common\models\Tender;
 use common\models\TenderHystory;
 use yii\base\DynamicModel;
 use common\models\CompanySubType;
-use common\models\Department;
-use yii\helpers\Url;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use common\models\DepartmentCompany;
@@ -30,15 +29,12 @@ use common\models\DepartmentUserCompanyType;
 use common\models\search\CompanyDriverSearch;
 use common\models\search\CompanyMemberSearch;
 use common\models\search\CompanySearch;
-use common\models\search\ServiceSearch;
-use common\models\search\TypeSearch;
 use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\Type;
 use common\models\Mark;
 use common\models\User;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Html;
 use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -58,17 +54,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -535,6 +531,33 @@ class CompanyController extends Controller
             ]);
     }
 
+    // Все тендеры
+    public function actionTenderlist($type)
+    {
+
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new TenderSearch();
+        $searchModel->type = $type;
+
+        if ($currentUser->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = $currentUser->id;
+            $listType = $currentUser->getAllCompanyType(Company::STATUS_TENDER);
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('tender/tenderlist',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => $type,
+                'listType'     => $listType,
+            ]);
+    }
+
     // Вкладка тендеры
     public function actionTenders($id)
     {
@@ -605,9 +628,15 @@ class CompanyController extends Controller
         if(Yii::$app->request->post('tender_id')) {
 
             $id = Yii::$app->request->post('tender_id');
+            $tender_close = Yii::$app->request->post('tender_close');
 
             $model = Tender::findOne(['id' => $id]);
-            $model->tender_close = 1;
+
+            if($tender_close == 1) {
+                $model->tender_close = 0;
+            } else {
+                $model->tender_close = 1;
+            }
 
            if($model->save()) {
                echo json_encode(['success' => 'true']);

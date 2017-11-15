@@ -15,19 +15,15 @@ use yii\bootstrap\Modal;
 
 $actionLinkCloseDownload = Url::to('@web/company/closedownload');
 $tender_id = $model->id;
+$tender_close = $model->tender_close;
 
 $script = <<< JS
 
-// Клик закрыть загрузку в тендере
-$('.btn-danger').on('click', function(){
-    var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
-    
-    if(checkCloseDownload == true) {
-        
-        $.ajax({
+function sendCloseDownload() {
+          $.ajax({
                 type     :'POST',
                 cache    : true,
-                data: 'tender_id=' + '$tender_id',
+                data: 'tender_id=' + '$tender_id' + '&tender_close=' + '$tender_close',
                 url  : '$actionLinkCloseDownload',
                 success  : function(data) {
                     
@@ -44,9 +40,22 @@ $('.btn-danger').on('click', function(){
                 
                 }
                 });
-        
-    }
+}
+
+// Клик закрыть загрузку в тендере
+$('.btn-danger').on('click', function(){
+    var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
     
+    if(checkCloseDownload == true) {     
+       sendCloseDownload();
+    }
+});
+$('.btn-warning').on('click', function(){
+    var checkCloseDefault = confirm("Вы уверены что хотите открыть загрузку?");
+  
+    if(checkCloseDefault == true) {
+      sendCloseDownload();
+     } 
 });
 
 // открываем модальное окно добавить вложения
@@ -1370,7 +1379,7 @@ $this->registerJs($script, View::POS_READY);
    if ($model->tender_close == 1) {
        echo "<tr> 
         <td class='list-label-md'>Закупка закрыта</td>
-        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span></td>
+        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span> <span class='btn btn-warning' style='display:none'>Открыть закупку</span></td>
         </tr>";
    } else {
        echo "<tr>

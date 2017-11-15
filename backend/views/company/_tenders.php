@@ -109,20 +109,7 @@ use common\models\Company;
 
                 },
             ],
-            [
-                'attribute' => 'customer',
-                'vAlign'=>'middle',
-                'header' => 'Заказчик',
-                'value' => function ($data) {
 
-                    if ($data->customer) {
-                        return $data->customer;
-                    } else {
-                        return '-';
-                    }
-
-                },
-            ],
             [
                 'attribute' => 'method_purchase',
                 'header' => 'Способ<br />закупки',

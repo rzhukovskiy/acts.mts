@@ -160,7 +160,7 @@ class Tender extends ActiveRecord
             'comment' => 'Комментарий',
             'purchase_status' => 'Статус закупки',
             'comment_status_proc' => 'Комментарий к статусу закупки',
-            'user_id' => 'Сотрудник',
+            'user_id' => 'Ответственный сотрудник',
             'comment_customer' => 'Комментарий к полю "Заказчик"',
             'inn_customer' => 'ИНН заказчика',
             'contacts_resp_customer' => 'Контакты ответственных лиц заказчика',
@@ -176,6 +176,7 @@ class Tender extends ActiveRecord
             'comment_date_contract' => 'Комментарий к сроку договора',
             'tender_close' => 'Закрыть закупку',
             'files' => 'Вложения',
+            'companyname' => 'Имя компании',
         ];
     }
 
@@ -222,9 +223,30 @@ class Tender extends ActiveRecord
                 }
 
             }
-        }
+            // запись в базу нескольких сотрудников
+            if (is_array($this->user_id)) {
 
+                $arrUserTend = $this->user_id;
+
+                if (count($arrUserTend) > 0) {
+                    $stringUsers = '';
+
+                    for ($i = 0; $i < count($arrUserTend); $i++) {
+                        if ($i == 0) {
+                            $stringUsers .= $arrUserTend[$i];
+                        } else {
+                            $stringUsers .= ', ' . $arrUserTend[$i];
+                        }
+                    }
+
+                    $this->user_id = $stringUsers;
+
+                }
+
+            }
+        }
         return parent::beforeSave($insert);
+
     }
 
     public function upload()
@@ -263,6 +285,19 @@ class Tender extends ActiveRecord
 
         }
 
+    }
+
+    /* Связь с моделью Company*/
+
+    public function getCompany()
+    {
+        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+    }
+
+    /* Геттер для названия company */
+    public function getCompanyName()
+    {
+        return $this->company->name;
     }
 
     public function getPurchase_status()
