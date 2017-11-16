@@ -20,6 +20,7 @@ use common\models\CompanyState;
 use common\models\search\TenderSearch;
 use common\models\Tender;
 use common\models\TenderHystory;
+use common\models\TenderLists;
 use yii\base\DynamicModel;
 use common\models\CompanySubType;
 use yii\web\UploadedFile;
@@ -54,17 +55,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -643,6 +644,45 @@ class CompanyController extends Controller
            } else {
                echo json_encode(['success' => 'false']);
            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    // Получение списков для изменения в тендерах
+    public function actionListitems()
+    {
+
+        $type = Yii::$app->request->post('type');
+
+        $resArray = TenderLists::find()->where(['type' => $type])->select('id, description, required')->orderBy('id')->asArray()->all();
+
+        echo json_encode(['success' => 'true', 'items' => json_encode($resArray)]);
+
+    }
+
+    // Добавление нового элемента списка
+    public function actionNewitemlist()
+    {
+
+        if(Yii::$app->request->post('name')) {
+
+            $type = Yii::$app->request->post('type');
+            $name = Yii::$app->request->post('name');
+            $required = Yii::$app->request->post('required');
+
+            $model = new TenderLists();
+            $model->description = $name;
+            $model->required = $required;
+            $model->type = $type;
+
+            if($model->save()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
 
         } else {
             echo json_encode(['success' => 'false']);

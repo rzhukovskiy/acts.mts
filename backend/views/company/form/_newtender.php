@@ -5,18 +5,219 @@ use yii\widgets\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use \kartik\date\DatePicker;
 use \yii\web\View;
-use kartik\editable\Editable;
-use kartik\popover\PopoverX;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyMember
  * @var $form yii\widgets\ActiveForm
  */
 
+$actionGetListItems = Url::to('@web/company/listitems');
+$actionSaveNewItem = Url::to('@web/company/newitemlist');
+
 $script = <<< JS
+
+var selectType = 0;
+
 // При вводе в поле "максимальная стоимость закупки" вводится в поле ниже с подсчетом стоимости без НДС
 $('#tender-price_nds').bind('input',function(){
    $('#tender-maximum_purchase_price').val(($(this).val() / 1.18).toFixed(2));
+});
+
+// открываем модальное окно с названиями списков
+$('.listSettings').on('click', function() {
+$('#showListsName').modal('show');
+});
+
+// открываем модальное окно управления списками purchase_status
+$('.purchase_status').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(0);
+
+});
+
+// открываем модальное окно управления списками user_id
+$('.user_id').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(1);
+
+});
+
+// открываем модальное окно управления списками method_purchase
+$('.method_purchase').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(2);
+
+});
+
+// открываем модальное окно управления списками service_type
+$('.service_type').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(3);
+
+});
+
+// открываем модальное окно управления списками federal_law
+$('.federal_law').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(4);
+
+});
+
+// открываем модальное окно управления списками key_type
+$('.key_type').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(5);
+
+});
+
+// открываем модальное окно управления списками status_request_security
+$('.status_request_security').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(6);
+
+});
+
+// открываем модальное окно управления списками status_contract_security
+$('.status_contract_security').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(7);
+
+});
+
+// Загружаем список по заданному типу
+function loadListsItems(type) {
+    
+    selectType = 0;
+    selectType = type;
+    
+    $('.place_list').html();
+    
+              $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'type=' + type,
+                url  : '$actionGetListItems',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                var itemsArr = jQuery.parseJSON(response.items);
+                
+                if(itemsArr.length > 0) {
+                    
+                    var resItems = "";
+                    
+                    // Вывод значений списков
+                    for (var i = 0; i < itemsArr.length; i++) {
+                        resItems = resItems + "<div style='margin-top:5px;'>" + itemsArr[i]['description'];
+                   
+                    if(itemsArr[i]['required'] == 0) {
+                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
+                    } else {
+                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
+                    }
+                    
+                    resItems = resItems + "</div>";
+                   
+                    }
+                    
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div>' + resItems + '');
+                    
+                } else {
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div><br /><div>Нет данных</div>');
+                }
+                
+                } else {
+                // Неудачно
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div><div>Ошибка загрузки</div>');
+                }
+                
+                }
+                });
+    
+}
+
+// кнопка добавить новый пункт в список
+$('.addNewItem').on('click', function() {
+    
+    var newItemName = $('.itemName');
+    var newItemReq = $('.required');
+    var requerVal = 0;
+    
+    if (newItemReq.is(":checked")) {
+        requerVal = 1;
+    }
+    
+    $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'type=' + selectType + '&name=' + newItemName.val() + '&required=' + requerVal,
+                url  : '$actionSaveNewItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                // Обнуление формы
+                requerVal = 0;
+                newItemName.val('');
+                newItemReq.prop('checked', false);
+                loadListsItems(selectType);
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+    
 });
 
 JS;
@@ -150,8 +351,47 @@ $form = ActiveForm::begin([
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) . '<span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span' ?>
         </div>
     </div>
 
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end();
+
+// Модальное окно с названиями списков
+$modalListsName = Modal::begin([
+    'header' => '<h5>Управление списками</h5>',
+    'id' => 'showListsName',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-sm',
+]);
+
+echo "<div class='purchase_status' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('purchase_status') . "</div>";
+echo "<div class='user_id' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('user_id') . "</div>";
+echo "<div class='method_purchase' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('method_purchase') . "</div>";
+echo "<div class='service_type' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('service_type') . "</div>";
+echo "<div class='federal_law' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('federal_law') . "</div>";
+echo "<div class='key_type' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('key_type') . "</div>";
+echo "<div class='status_request_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_request_security') . "</div>";
+echo "<div class='status_contract_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_contract_security') . "</div>";
+
+Modal::end();
+// Модальное окно с названиями списков
+
+// Модальное окно с названиями списков
+$modalListsName = Modal::begin([
+    'header' => '<h5 class="settings_name">Управление списками: </h5>',
+    'id' => 'showSettingsList',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div class='place_list' style='font-size: 15px; margin-left:15px; margin-right:15px;'></div>";
+echo "<br /><div style='font-size: 16px; margin-left:15px; margin-right:15px;'><b>Добавление нового:</b>";
+echo "<br /><div style='margin-top: 15px;'><input type='text' class='form-control itemName' placeholder='Название'></div>";
+echo "<br /><div>Запретить удаление данного пункта: <input type='checkbox' class='required' value='0'></div>";
+echo "<br /><span class='btn btn-primary btn-sm addNewItem'>Добавить</span></div>";
+
+Modal::end();
+// Модальное окно с названиями списков
+
+?>
