@@ -55,17 +55,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -677,6 +677,52 @@ class CompanyController extends Controller
             $model->description = $name;
             $model->required = $required;
             $model->type = $type;
+
+            if($model->save()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    // Удаление элемента списка
+    public function actionDeleteitemlist()
+    {
+
+        if(Yii::$app->request->post('item_id')) {
+
+            $item_id = Yii::$app->request->post('item_id');
+
+            $model = TenderLists::findOne(['id' => $item_id]);
+
+            if($model->delete()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    // Изменение элемента списка
+    public function actionEdititemlist()
+    {
+
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('name'))) {
+
+            $id = Yii::$app->request->post('id');
+            $name = Yii::$app->request->post('name');
+
+            $model = TenderLists::findOne(['id' => $id]);
+            $model->description = $name;
 
             if($model->save()) {
                 echo json_encode(['success' => 'true']);

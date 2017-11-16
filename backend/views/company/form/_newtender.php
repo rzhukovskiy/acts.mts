@@ -15,10 +15,13 @@ use yii\helpers\Url;
 
 $actionGetListItems = Url::to('@web/company/listitems');
 $actionSaveNewItem = Url::to('@web/company/newitemlist');
+$actionDelItem = Url::to('@web/company/deleteitemlist');
+$actionEditItem = Url::to('@web/company/edititemlist');
 
 $script = <<< JS
 
 var selectType = 0;
+var selectID = 0;
 
 // При вводе в поле "максимальная стоимость закупки" вводится в поле ниже с подсчетом стоимости без НДС
 $('#tender-price_nds').bind('input',function(){
@@ -157,9 +160,9 @@ function loadListsItems(type) {
                         resItems = resItems + "<div style='margin-top:5px;'>" + itemsArr[i]['description'];
                    
                     if(itemsArr[i]['required'] == 0) {
-                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
+                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
                     } else {
-                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
+                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
                     }
                     
                     resItems = resItems + "</div>";
@@ -209,6 +212,80 @@ $('.addNewItem').on('click', function() {
                 requerVal = 0;
                 newItemName.val('');
                 newItemReq.prop('checked', false);
+                loadListsItems(selectType);
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+    
+});
+
+// Нажимаем на кнопку изменить пункт меню
+$('.place_list').on('click', '.editItem', function(){
+    $('#showSettingsList').modal('hide');
+    
+    $('.itemNameEdit').val($(this).data("name"));
+    
+    selectID = 0;
+    selectID = $(this).data("id");
+    
+    $('#showEditItem').modal('show');
+});
+
+// Нажимаем на кнопку удалить пункт меню
+$('.place_list').on('click', '.deleteItem', function(){
+    
+    var checkDeleteItem = confirm('Вы уверены что хотите удалить пункт "' + $(this).data("name") + '" из списка?');
+    
+    if(checkDeleteItem == true) {     
+       
+            $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'item_id=' + $(this).data("id"),
+                url  : '$actionDelItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                loadListsItems(selectType);
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+        
+    }
+    
+});
+
+// кнопка сохранить изменение пункта меню
+$('.SaveItem').on('click', function() {
+    
+    var newItemName = $('.itemNameEdit');
+    
+    $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'id=' + selectID + '&name=' + newItemName.val(),
+                url  : '$actionEditItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                newItemName.val("");
+                $('#showEditItem').modal('hide');
+                $('#showSettingsList').modal('show');
+
                 loadListsItems(selectType);
                 
                 } else {
@@ -377,7 +454,7 @@ echo "<div class='status_contract_security' style='font-size: 15px; margin-left:
 Modal::end();
 // Модальное окно с названиями списков
 
-// Модальное окно с названиями списков
+// Модальное окно со списком пунктов
 $modalListsName = Modal::begin([
     'header' => '<h5 class="settings_name">Управление списками: </h5>',
     'id' => 'showSettingsList',
@@ -392,6 +469,20 @@ echo "<br /><div>Запретить удаление данного пункта
 echo "<br /><span class='btn btn-primary btn-sm addNewItem'>Добавить</span></div>";
 
 Modal::end();
-// Модальное окно с названиями списков
+// Модальное окно со списком пунктов
+
+// Модальное окно изменения пункта
+$modalListsName = Modal::begin([
+    'header' => '<h5>Изменение пункта</h5>',
+    'id' => 'showEditItem',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div style='font-size: 16px; margin-left:15px; margin-right:15px;'><div><input type='text' class='form-control itemNameEdit' placeholder='Название'></div>";
+echo "<br /><span class='btn btn-primary btn-sm SaveItem'>Сохранить</span></div>";
+
+Modal::end();
+// Модальное окно редактирования списка
 
 ?>
