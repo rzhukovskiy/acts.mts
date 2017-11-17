@@ -128,7 +128,7 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'purchase_status',
-                'displayValue' => $model->purchase_status ? $arrPurchstatus[$model->purchase_status] : '',
+                'displayValue' => isset($arrPurchstatus[$model->purchase_status]) ? $arrPurchstatus[$model->purchase_status] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
