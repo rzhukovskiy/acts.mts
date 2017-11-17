@@ -85,7 +85,6 @@ class TenderSearch extends Company
             'company_id' => $this->company_id,
             'purchase_status' => $this->purchase_status,
             'user_id' => $this->user_id,
-            'customer' => $this->customer,
             'method_purchase' => $this->method_purchase,
             'service_type' => $this->service_type,
 

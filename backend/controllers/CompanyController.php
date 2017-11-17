@@ -544,7 +544,6 @@ class CompanyController extends Controller
         if ($currentUser->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
         } else {
-            $searchModel->user_id = $currentUser->id;
             $listType = $currentUser->getAllCompanyType(Company::STATUS_TENDER);
         }
 
