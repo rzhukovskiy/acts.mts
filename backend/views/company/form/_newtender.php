@@ -7,11 +7,54 @@ use \kartik\date\DatePicker;
 use \yii\web\View;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use common\models\TenderLists;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyMember
  * @var $form yii\widgets\ActiveForm
  */
+
+// массив списков
+$arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+$arrLists = [];
+$oldType = -1;
+$tmpArray = [];
+
+for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+    if($arrayTenderList[$i]['type'] == $oldType) {
+
+        $index = $arrayTenderList[$i]['id'];
+        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+    } else {
+
+        if($i > 0) {
+
+            $arrLists[$oldType] = $tmpArray;
+            $tmpArray = [];
+
+            $oldType = $arrayTenderList[$i]['type'];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+        } else {
+            $oldType = $arrayTenderList[$i]['type'];
+            $tmpArray = [];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+        }
+    }
+
+    if(($i + 1) == count($arrayTenderList)) {
+        $arrLists[$oldType] = $tmpArray;
+    }
+
+}
+//
 
 $actionGetListItems = Url::to('@web/company/listitems');
 $actionSaveNewItem = Url::to('@web/company/newitemlist');
@@ -149,20 +192,71 @@ function loadListsItems(type) {
                 if (response.success == 'true') { 
                 // Удачно
                 
+                // Очищаем текущий селект
+                var selectObj;
+                
+                switch (type) {
+                    case 0: {
+                        selectObj = $("#tender-purchase_status");
+                        break;
+                    }
+                    case 1: {
+                        selectObj = $("#tender-user_id");
+                        break;
+                    }
+                    case 2: {
+                        selectObj = $("#tender-method_purchase");
+                        break;
+                    }
+                    case 3: {
+                        selectObj = $("#tender-service_type");
+                        break;
+                    }
+                    case 4: {
+                        selectObj = $("#tender-federal_law");
+                        break;
+                    }
+                    case 5: {
+                        selectObj = $("#tender-key_type");
+                        break;
+                    }
+                    case 6: {
+                        selectObj = $("#tender-status_request_security");
+                        break;
+                    }
+                    case 7: {
+                        selectObj = $("#tender-status_contract_security");
+                        break;
+                    }
+                }
+                
+                selectObj.empty();
+                // Очищаем текущий селект
+                    
                 var itemsArr = jQuery.parseJSON(response.items);
                 
                 if(itemsArr.length > 0) {
                     
                     var resItems = "";
                     
+                    // добавляем placeholder
+                    if(type == 0) {
+                        selectObj.append($("<option></option>").text("Выберите статус закупки"));
+                    }
+                    
                     // Вывод значений списков
                     for (var i = 0; i < itemsArr.length; i++) {
-                        resItems = resItems + "<div style='margin-top:5px;'>" + itemsArr[i]['description'];
+                        
+                    // Обновляем селект
+                    
+                    selectObj.append($("<option></option>").attr("value", itemsArr[i]['id']).text(itemsArr[i]['description']));
+                        
+                    resItems = resItems + "<div style='margin-top:5px;'>" + itemsArr[i]['description'];
                    
                     if(itemsArr[i]['required'] == 0) {
-                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
+                        resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
                     } else {
-                    resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
+                        resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
                     }
                     
                     resItems = resItems + "</div>";
@@ -311,9 +405,9 @@ $form = ActiveForm::begin([
 ]); ?>
 
 <?= $form->field($model, 'company_id')->hiddenInput()->label(false) ?>
-<?= $form->field($model, 'purchase_status')->dropDownList([1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'], ['class' => 'form-control', 'prompt' => 'Выберите статус закупки']) ?>
+<?= $form->field($model, 'purchase_status')->dropDownList(isset($arrLists[0]) ? $arrLists[0] : [], ['class' => 'form-control', 'prompt' => 'Выберите статус закупки']) ?>
 <?= $form->field($model, 'comment_status_proc')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий к статусу закупки']) ?>
-<?= $form->field($model, 'user_id')->dropDownList(['2' => 'Алёна', '3' => 'Денис'], ['class' => 'form-control', 'multiple' => 'true', /*'prompt' => 'Выберите услуги'*/]) ?>
+<?= $form->field($model, 'user_id')->dropDownList(isset($arrLists[1]) ? $arrLists[1] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'date_search')->widget(DatePicker::className(), [
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Дата нахождения закупки', 'value' => date('d.m.Y')],
@@ -377,14 +471,14 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'comment_customer')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий к полю "Заказчик"']) ?>
 <?= $form->field($model, 'inn_customer')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ИНН заказчика']) ?>
 <?= $form->field($model, 'contacts_resp_customer')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите контакты ответственных лиц заказчика']) ?>
-<?= $form->field($model, 'method_purchase')->dropDownList([1 => 'Электронный аукцион', 2 => 'Запрос котировок (электронный открытый)', 3 => 'Запрос предложений', 4 => 'Открытый редукцион в электронной форме', 5 => 'Запрос цен', 6 => 'Открытый аукцион', 7 => 'Открытый запрос предложений в электронной форме'], ['class' => 'form-control', 'prompt' => 'Выберите способ закупки']) ?>
+<?= $form->field($model, 'method_purchase')->dropDownList(isset($arrLists[2]) ? $arrLists[2] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'city')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите название города, области поставки']) ?>
-<?= $form->field($model, 'service_type')->dropDownList(['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'], ['class' => 'form-control', 'multiple' => 'true', /*'prompt' => 'Выберите услуги'*/]) ?>
-<?= $form->field($model, 'federal_law')->dropDownList([1 => '44', 2 => '223', 3 => 'Ком'], ['class' => 'form-control', 'prompt' => 'Выберите федеральный закон']) ?>
+<?= $form->field($model, 'service_type')->dropDownList(isset($arrLists[3]) ? $arrLists[3] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
+<?= $form->field($model, 'federal_law')->dropDownList(isset($arrLists[4]) ? $arrLists[4] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'notice_eis')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите номер извещения в ЕИС']) ?>
 <?= $form->field($model, 'number_purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите номер закупки на площадке']) ?>
 <?= $form->field($model, 'place')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта']) ?>
-<?= $form->field($model, 'key_type')->dropDownList([0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД', 4 => 'Сбербанк УТП', 5 => 'Сбербанк АСТ'], ['class' => 'form-control', 'prompt' => 'Выберите тип ключа']) ?>
+<?= $form->field($model, 'key_type')->dropDownList(isset($arrLists[5]) ? $arrLists[5] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'price_nds')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите максимальную стоимость закупки']) ?>
 <?= $form->field($model, 'maximum_purchase_price')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите максимальную начальную стоимость закупки без НДС']) ?>
 <?= $form->field($model, 'final_price')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите стоимость закупки по завершению закупки с НДС']) ?>
@@ -398,9 +492,9 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'maximum_agreed_calcnotnds')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите максимальное согласованное расчетное снижение в рублях без НДС']) ?>
 <?= $form->field($model, 'site_fee_participation')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите плату площадке за участи']) ?>
 <?= $form->field($model, 'ensuring_application')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите обеспечение заявки']) ?>
-<?= $form->field($model, 'status_request_security')->dropDownList([1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)', 5 => 'Вернули (выиграли)', 6 => 'Без обеспечения'], ['class' => 'form-control', 'prompt' => 'Выберите статус обеспечения заявки']) ?>
+<?= $form->field($model, 'status_request_security')->dropDownList(isset($arrLists[6]) ? $arrLists[6] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'contract_security')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите обеспечение контракта']) ?>
-<?= $form->field($model, 'status_contract_security')->dropDownList([1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)', 8 => 'Без обеспечения'], ['class' => 'form-control', 'prompt' => 'Выберите статус обеспечения контракта']) ?>
+<?= $form->field($model, 'status_contract_security')->dropDownList(isset($arrLists[7]) ? $arrLists[7] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'competitor')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите потенциального конкурента']) ?>
 <?= $form->field($model, 'inn_competitors')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите ИНН конкурентов']) ?>
 <?= $form->field($model, 'date_contract')->widget(DatePicker::className(), [
@@ -428,7 +522,7 @@ $form = ActiveForm::begin([
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) . '<span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span' ?>
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) . '<span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span>' ?>
         </div>
     </div>
 

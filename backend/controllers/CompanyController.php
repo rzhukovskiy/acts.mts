@@ -744,20 +744,66 @@ class CompanyController extends Controller
         if ($hasEditable) {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
+            // массив списков
+            $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+            $arrLists = [];
+            $oldType = -1;
+            $tmpArray = [];
+
+            for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+                if($arrayTenderList[$i]['type'] == $oldType) {
+
+                    $index = $arrayTenderList[$i]['id'];
+                    $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+                } else {
+
+                    if($i > 0) {
+
+                        $arrLists[$oldType] = $tmpArray;
+                        $tmpArray = [];
+
+                        $oldType = $arrayTenderList[$i]['type'];
+
+                        $index = $arrayTenderList[$i]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+                    } else {
+                        $oldType = $arrayTenderList[$i]['type'];
+                        $tmpArray = [];
+
+                        $index = $arrayTenderList[$i]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+                    }
+                }
+
+                if(($i + 1) == count($arrayTenderList)) {
+                    $arrLists[$oldType] = $tmpArray;
+                }
+
+            }
+            //
             // Подготовка данных перед сохранением
             $arrUpdate = Yii::$app->request->post();
 
             // Списки с данными
             $stringServicesText = "";
             $stringUserTendText = "";
-            $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
-            $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
-            $usersList = ['2' => 'Алёна', '3' => 'Денис'];
-            $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
-            $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
-            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)', 5 => 'Вернули (выиграли)', 6 => 'Без обеспечения'];
-            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)', 8 => 'Без обеспечения'];
-            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД', 4 => 'Сбербанк УТП', 5 => 'Сбербанк АСТ'];
+            $stringMethodsTendText = "";
+            $stringFZText = "";
+            $stringKeyTypeText = "";
+            $stringStatusRequestText = "";
+            $stringStatusContractText = "";
+            $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
+            $arrFZlist = isset($arrLists[4]) ? $arrLists[4] : [];
+            $usersList = isset($arrLists[1]) ? $arrLists[1] : [];
+            $arrPurchstatus = isset($arrLists[0]) ? $arrLists[0] : [];
+            $arrMethods = isset($arrLists[2]) ? $arrLists[2] : [];
+            $arrStatusRequestlist = isset($arrLists[6]) ? $arrLists[6] : [];
+            $arrStatusContractlist = isset($arrLists[7]) ? $arrLists[7] : [];
+            $arrKeyTypelist = isset($arrLists[5]) ? $arrLists[5] : [];
 
             foreach ($arrUpdate['Tender'] as $name => $value) {
                 if($name == 'date_search') {
@@ -792,7 +838,7 @@ class CompanyController extends Controller
                     }
                 } else if($name == 'user_id') {
 
-                    // запись в базу нескольких услуг
+                    // запись в базу нескольких пользователей
                     if (is_array($value)) {
 
                         $arrUserTend = $value;
@@ -814,6 +860,148 @@ class CompanyController extends Controller
                             }
 
                             $arrUpdate['Tender'][$name] = $stringUserTend;
+
+                        }
+                    }
+                    } else if($name == 'federal_law') {
+
+                // запись в базу нескольких фз
+                if (is_array($value)) {
+
+                    $arrFZ = $value;
+
+                    if (count($arrFZ) > 0) {
+                        $stringFz = '';
+
+                        for ($i = 0; $i < count($arrFZ); $i++) {
+                            if ($i == 0) {
+                                $stringFz .= $arrFZ[$i];
+                            } else {
+                                $stringFz .= ', ' . $arrFZ[$i];
+                            }
+
+                            if(isset($arrFZlist[$arrFZ[$i]])) {
+                                $stringFZText .= $arrFZlist[$arrFZ[$i]] . '<br />';
+                            }
+
+                        }
+
+                        $arrUpdate['Tender'][$name] = $stringFz;
+
+                    }
+
+                }
+
+                } else if($name == 'status_contract_security') {
+
+                    // запись в базу нескольких Статус обеспечения заявки
+                    if (is_array($value)) {
+
+                        $arrStatusContract = $value;
+
+                        if (count($arrStatusContract) > 0) {
+                            $stringStatusContract = '';
+
+                            for ($i = 0; $i < count($arrStatusContract); $i++) {
+                                if ($i == 0) {
+                                    $stringStatusContract .= $arrStatusContract[$i];
+                                } else {
+                                    $stringStatusContract .= ', ' . $arrStatusContract[$i];
+                                }
+
+                                if(isset($arrStatusContractlist[$arrStatusContract[$i]])) {
+                                    $stringStatusContractText .= $arrStatusContractlist[$arrStatusContract[$i]] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringStatusContract;
+
+                        }
+
+                    }
+
+                } else if($name == 'status_request_security') {
+
+                    // запись в базу нескольких Статус обеспечения заявки
+                    if (is_array($value)) {
+
+                        $arrStatusRequest = $value;
+
+                        if (count($arrStatusRequest) > 0) {
+                            $stringStatusRequest = '';
+
+                            for ($i = 0; $i < count($arrStatusRequest); $i++) {
+                                if ($i == 0) {
+                                    $stringStatusRequest .= $arrStatusRequest[$i];
+                                } else {
+                                    $stringStatusRequest .= ', ' . $arrStatusRequest[$i];
+                                }
+
+                                if(isset($arrStatusRequestlist[$arrStatusRequest[$i]])) {
+                                    $stringStatusRequestText .= $arrStatusRequestlist[$arrStatusRequest[$i]] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringStatusRequest;
+
+                        }
+
+                    }
+
+                } else if($name == 'key_type') {
+
+                    // запись в базу нескольких типов ключей
+                    if (is_array($value)) {
+
+                        $arrKeyType = $value;
+
+                        if (count($arrKeyType) > 0) {
+                            $stringKeyType = '';
+
+                            for ($i = 0; $i < count($arrKeyType); $i++) {
+                                if ($i == 0) {
+                                    $stringKeyType .= $arrKeyType[$i];
+                                } else {
+                                    $stringKeyType .= ', ' . $arrKeyType[$i];
+                                }
+
+                                if(isset($arrKeyTypelist[$arrKeyType[$i]])) {
+                                    $stringKeyTypeText .= $arrKeyTypelist[$arrKeyType[$i]] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringKeyType;
+
+                        }
+
+                    }
+                } else if($name == 'method_purchase') {
+
+                    // запись в базу нескольких услуг
+                    if (is_array($value)) {
+
+                        $arrMethodsTend = $value;
+
+                        if (count($arrMethodsTend) > 0) {
+                            $stringMethods = '';
+
+                            for ($i = 0; $i < count($arrMethodsTend); $i++) {
+                                if ($i == 0) {
+                                    $stringMethods .= $arrMethodsTend[$i];
+                                } else {
+                                    $stringMethods .= ', ' . $arrMethodsTend[$i];
+                                }
+
+                                if(isset($arrMethods[$arrMethodsTend[$i]])) {
+                                    $stringMethodsTendText .= $arrMethods[$arrMethodsTend[$i]] . '<br />';
+                                }
+
+                            }
+
+                            $arrUpdate['Tender'][$name] = $stringMethods;
 
                         }
 
@@ -852,17 +1040,17 @@ class CompanyController extends Controller
                     } else if ($name == 'percent_max') {
                         $output[] = $value . "%";
                     } else if ($name == 'federal_law') {
-                        $output[] = $arrFZ[$value];
+                        $output[] = $stringFZText;
                     } else if ($name == 'purchase_status') {
                         $output[] = $arrPurchstatus[$value];
                     } else if ($name == 'method_purchase') {
-                        $output[] = $arrMethods[$value];
+                        $output[] = $stringMethodsTendText;
                     } else if ($name == 'status_request_security') {
-                        $output[] = $arrStatusRequest[$value];
+                        $output[] = $stringStatusRequestText;
                     } else if ($name == 'status_contract_security') {
-                        $output[] = $arrStatusContract[$value];
+                        $output[] = $stringStatusContractText;
                     } else if ($name == 'key_type') {
-                        $output[] = $arrKeyType[$value];
+                        $output[] = $stringKeyTypeText;
                     } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application') {
                         $output[] = $value . " ₽";
                     } else {

@@ -3,7 +3,51 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use common\models\Company;
+use common\models\TenderLists;
 
+// массив списков
+$arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+$arrLists = [];
+$oldType = -1;
+$tmpArray = [];
+
+for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+    if($arrayTenderList[$i]['type'] == $oldType) {
+
+        $index = $arrayTenderList[$i]['id'];
+        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+    } else {
+
+        if($i > 0) {
+
+            $arrLists[$oldType] = $tmpArray;
+            $tmpArray = [];
+
+            $oldType = $arrayTenderList[$i]['type'];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+        } else {
+            $oldType = $arrayTenderList[$i]['type'];
+            $tmpArray = [];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+        }
+    }
+
+    if(($i + 1) == count($arrayTenderList)) {
+        $arrLists[$oldType] = $tmpArray;
+    }
+
+}
+//
+
+$GLOBALS['arrLists'] = $arrLists;
 ?>
 
 <div class="panel panel-primary">
@@ -37,10 +81,8 @@ use common\models\Company;
                 'vAlign'=>'middle',
                 'value' => function ($data) {
 
-                    $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
-
                     if ($data->purchase_status) {
-                        return $arrPurchstatus[$data->purchase_status];
+                        return isset($GLOBALS['arrLists'][0][$data->purchase_status]) ? $GLOBALS['arrLists'][0][$data->purchase_status] : '-';
                     } else {
                         return '-';
                     }
@@ -53,24 +95,25 @@ use common\models\Company;
                 'vAlign'=>'middle',
                 'value' => function ($data) {
 
-                    $userList = ['2' => 'Алёна', '3' => 'Денис'];
-
                     $arrUserTend = explode(', ', $data->user_id);
                     $UserTendText = '';
 
                     if (count($arrUserTend) > 1) {
 
                         for ($i = 0; $i < count($arrUserTend); $i++) {
-                            if(isset($userList[$arrUserTend[$i]])) {
-                                $UserTendText .= $userList[$arrUserTend[$i]] . '<br />';
+
+                            $index = $arrUserTend[$i];
+
+                            if(isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') {
+                                $UserTendText .= (isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') . '<br />';
                             }
                         }
 
                     } else {
 
                         try {
-                            if(isset($userList[$data->user_id])) {
-                                $UserTendText = $userList[$data->user_id];
+                            if(isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-') {
+                                $UserTendText = isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-';
                             }
                         } catch (\Exception $e) {
                             $UserTendText = '-';
@@ -117,13 +160,31 @@ use common\models\Company;
                 'vAlign'=>'middle',
                 'value' => function ($data) {
 
-                    $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
+                    $arrMethodsTend = explode(', ', $data->method_purchase);
+                    $methodsText = '';
 
-                    if ($data->method_purchase) {
-                        return $arrMethods[$data->method_purchase];
+                    if (count($arrMethodsTend) > 1) {
+
+                        for ($i = 0; $i < count($arrMethodsTend); $i++) {
+
+                            $index = $arrMethodsTend[$i];
+
+                            if(isset($GLOBALS['arrLists'][2][$index]) ? $GLOBALS['arrLists'][2][$index] : '-') {
+                                $methodsText .= (isset($GLOBALS['arrLists'][2][$index]) ? $GLOBALS['arrLists'][2][$index] : '-') . '<br />';
+                            }
+                        }
                     } else {
-                        return '-';
+
+                        try {
+                            if(isset($GLOBALS['arrLists'][2]) ? $GLOBALS['arrLists'][2][$data->method_purchase] : '-') {
+                                $methodsText = isset($GLOBALS['arrLists'][2]) ? $GLOBALS['arrLists'][2][$data->method_purchase] : '-';
+                            }
+                        } catch (\Exception $e) {
+                            $methodsText = '-';
+                        }
+
                     }
+                    return $methodsText;
                 },
             ],
             [
@@ -147,24 +208,25 @@ use common\models\Company;
                 'vAlign'=>'middle',
                 'value' => function ($data) {
 
-                    $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
-
                     $arrServices = explode(', ', $data->service_type);
                     $serviceText = '';
 
                     if (count($arrServices) > 1) {
 
                         for ($i = 0; $i < count($arrServices); $i++) {
-                            if(isset($ServicesList[$arrServices[$i]])) {
-                                $serviceText .= $ServicesList[$arrServices[$i]] . '<br />';
+
+                            $index = $arrServices[$i];
+
+                            if(isset($GLOBALS['arrLists'][3][$index]) ? $GLOBALS['arrLists'][3][$index] : '-') {
+                                $serviceText .= (isset($GLOBALS['arrLists'][3][$index]) ? $GLOBALS['arrLists'][3][$index] : '-') . '<br />';
                             }
                         }
 
                     } else {
 
                         try {
-                            if(isset($ServicesList[$data->service_type])) {
-                                $serviceText = $ServicesList[$data->service_type];
+                            if(isset($GLOBALS['arrLists'][3]) ? $GLOBALS['arrLists'][3][$data->service_type] : '-') {
+                                $serviceText = isset($GLOBALS['arrLists'][3]) ? $GLOBALS['arrLists'][3][$data->service_type] : '-';
                             }
                         } catch (\Exception $e) {
                             $serviceText = '-';

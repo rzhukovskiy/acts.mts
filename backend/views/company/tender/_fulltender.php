@@ -12,6 +12,49 @@ use common\models\Company;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
+use common\models\TenderLists;
+
+// массив списков
+$arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+$arrLists = [];
+$oldType = -1;
+$tmpArray = [];
+
+for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+    if($arrayTenderList[$i]['type'] == $oldType) {
+
+        $index = $arrayTenderList[$i]['id'];
+        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+    } else {
+
+        if($i > 0) {
+
+            $arrLists[$oldType] = $tmpArray;
+            $tmpArray = [];
+
+            $oldType = $arrayTenderList[$i]['type'];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+        } else {
+            $oldType = $arrayTenderList[$i]['type'];
+            $tmpArray = [];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+        }
+    }
+
+    if(($i + 1) == count($arrayTenderList)) {
+        $arrLists[$oldType] = $tmpArray;
+    }
+
+}
+//
 
 $actionLinkCloseDownload = Url::to('@web/company/closedownload');
 $tender_id = $model->id;
@@ -75,7 +118,7 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
+            $arrPurchstatus = isset($arrLists[0]) ? $arrLists[0] : [];
 
             echo Editable::widget([
                 'model' => $model,
@@ -129,7 +172,7 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $usersList = ['2' => 'Алёна', '3' => 'Денис'];
+            $usersList = isset($arrLists[1]) ? $arrLists[1] : [];
 
             $arrUserTend = explode(', ', $model->user_id);
             $userText = '';
@@ -167,7 +210,7 @@ $this->registerJs($script, View::POS_READY);
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => ['2' => 'Алёна', '3' => 'Денис'],
+                'data' => $usersList,
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
@@ -482,7 +525,30 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
+            $arrMethods = isset($arrLists[2]) ? $arrLists[2] : [];
+
+            $arrMethodsTend = explode(', ', $model->method_purchase);
+            $methodsText = '';
+
+            if (count($arrMethodsTend) > 1) {
+
+                for ($i = 0; $i < count($arrMethodsTend); $i++) {
+                    if(isset($arrMethods[$arrMethodsTend[$i]])) {
+                        $methodsText .= $arrMethods[$arrMethodsTend[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($arrMethods[$model->method_purchase])) {
+                        $methodsText = $arrMethods[$model->method_purchase];
+                    }
+                } catch (\Exception $e) {
+                    $methodsText = '-';
+                }
+
+            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -492,18 +558,18 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'method_purchase',
-                'displayValue' => $model->method_purchase ? $arrMethods[$model->method_purchase] : '',
+                'displayValue' => $methodsText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrMethods,
-                'options' => ['class' => 'form-control'],
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
+            ]);  ?>
         </td>
     </tr>
     <tr>
@@ -533,7 +599,7 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
+            $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
 
             $arrServices = explode(', ', $model->service_type);
             $serviceText = '';
@@ -571,7 +637,7 @@ $this->registerJs($script, View::POS_READY);
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'],
+                'data' => $ServicesList,
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
@@ -585,7 +651,30 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrFZ = [1 => '44', 2 => '223', 3 => 'Ком'];
+            $arrFZlist = isset($arrLists[4]) ? $arrLists[4] : [];
+
+            $arrFZ = explode(', ', $model->federal_law);
+            $FZText = '';
+
+            if (count($arrFZ) > 1) {
+
+                for ($i = 0; $i < count($arrFZ); $i++) {
+                    if(isset($arrFZlist[$arrFZ[$i]])) {
+                        $FZText .= $arrFZlist[$arrFZ[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($arrFZlist[$model->federal_law])) {
+                        $FZText = $arrFZlist[$model->federal_law];
+                    }
+                } catch (\Exception $e) {
+                    $FZText = '-';
+                }
+
+            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -595,13 +684,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'federal_law',
-                'displayValue' => $model->federal_law ? $arrFZ[$model->federal_law] : '',
+                'displayValue' => $FZText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => $arrFZ,
-                'options' => ['class' => 'form-control'],
+                'data' => $arrFZlist,
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -680,7 +769,30 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrKeyType = [0 => 'Без ключа', 1 => 'Контакт', 2 => 'Роснефть', 3 => 'РЖД', 4 => 'Сбербанк УТП', 5 => 'Сбербанк АСТ'];
+            $arrKeyTypeList = isset($arrLists[5]) ? $arrLists[5] : [];
+
+            $arrKeyType = explode(', ', $model->key_type);
+            $keyTypeText = '';
+
+            if (count($arrKeyType) > 1) {
+
+                for ($i = 0; $i < count($arrKeyType); $i++) {
+                    if(isset($arrKeyTypeList[$arrKeyType[$i]])) {
+                        $keyTypeText .= $arrKeyTypeList[$arrKeyType[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($arrKeyTypeList[$model->key_type])) {
+                        $keyTypeText = $arrKeyTypeList[$model->key_type];
+                    }
+                } catch (\Exception $e) {
+                    $keyTypeText = '-';
+                }
+
+            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -690,18 +802,18 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'key_type',
-                'displayValue' => $model->key_type ? $arrKeyType[$model->key_type] : '',
+                'displayValue' => $keyTypeText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => $arrKeyType,
-                'options' => ['class' => 'form-control'],
+                'data' => $arrKeyTypeList,
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
+            ]);  ?>
         </td>
     </tr>
     <tr>
@@ -1033,7 +1145,30 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrStatusRequest = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Списали (выиграли)', 4 => 'Вернули (проиграли)', 5 => 'Вернули (выиграли)', 6 => 'Без обеспечения'];
+            $arrStatusRequestList = isset($arrLists[6]) ? $arrLists[6] : [];
+
+            $arrStatusRequest = explode(', ', $model->status_request_security);
+            $statusRequestText = '';
+
+            if (count($arrStatusRequest) > 1) {
+
+                for ($i = 0; $i < count($arrStatusRequest); $i++) {
+                    if(isset($arrStatusRequestList[$arrStatusRequest[$i]])) {
+                        $statusRequestText .= $arrStatusRequestList[$arrStatusRequest[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($arrStatusRequestList[$model->status_request_security])) {
+                        $statusRequestText = $arrStatusRequestList[$model->status_request_security];
+                    }
+                } catch (\Exception $e) {
+                    $statusRequestText = '-';
+                }
+
+            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -1043,13 +1178,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'status_request_security',
-                'displayValue' => $model->status_request_security ? $arrStatusRequest[$model->status_request_security] : '',
+                'displayValue' => $statusRequestText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => $arrStatusRequest,
-                'options' => ['class' => 'form-control'],
+                'data' => $arrStatusRequestList,
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -1091,7 +1226,30 @@ $this->registerJs($script, View::POS_READY);
         <td>
             <?php
 
-            $arrStatusContract = [1 => 'Отправил на оплату', 2 => 'Оплатили', 3 => 'Зачислено на счет заказчика', 4 => 'Оплатили БГ', 5 => 'Отправили БГ клиенту', 6 => 'Клиент получил БГ', 7 => 'Обеспечаение вернули (контракт закрыт)', 8 => 'Без обеспечения'];
+            $arrStatusContractList = isset($arrLists[7]) ? $arrLists[7] : [];
+
+            $arrStatusContract = explode(', ', $model->status_contract_security);
+            $statusContractText = '';
+
+            if (count($arrStatusContract) > 1) {
+
+                for ($i = 0; $i < count($arrStatusContract); $i++) {
+                    if(isset($arrStatusContractList[$arrStatusContract[$i]])) {
+                        $statusContractText .= $arrStatusContractList[$arrStatusContract[$i]] . '<br />';
+                    }
+                }
+
+            } else {
+
+                try {
+                    if(isset($arrStatusContractList[$model->status_contract_security])) {
+                        $statusContractText = $arrStatusContractList[$model->status_contract_security];
+                    }
+                } catch (\Exception $e) {
+                    $statusContractText = '-';
+                }
+
+            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -1101,13 +1259,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'status_contract_security',
-                'displayValue' => $model->status_contract_security ? $arrStatusContract[$model->status_contract_security] : '',
+                'displayValue' => $statusContractText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
-                'data' => $arrStatusContract,
-                'options' => ['class' => 'form-control'],
+                'data' => $arrStatusContractList,
+                'options' => ['class' => 'form-control', 'multiple' => 'true'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],

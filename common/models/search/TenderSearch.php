@@ -25,7 +25,9 @@ class TenderSearch extends Company
     public $service_type;
     public $price_nds;
     public $company_id;
-
+    public $dateFrom;
+    public $dateTo;
+    public $period;
     /**
      * @inheritdoc
      */
@@ -36,6 +38,7 @@ class TenderSearch extends Company
             [['purchase_status', 'method_purchase'], 'integer'],
             [['user_id', 'service_type', 'price_nds'], 'safe'],
             [['company_id'], 'integer'],
+            [['dateFrom', 'dateTo', 'period'], 'safe'],
         ];
     }
 
@@ -64,6 +67,7 @@ class TenderSearch extends Company
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         $this->load($params);
@@ -71,25 +75,35 @@ class TenderSearch extends Company
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-            $query->joinWith(['company']);
             return $dataProvider;
         }
 
+        $query->joinWith(['company']);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'company_id' => $this->company_id,
             'purchase_status' => $this->purchase_status,
             'user_id' => $this->user_id,
-            'date_request_end' => $this->date_request_end,
-            'time_bidding_end' => $this->time_bidding_end,
             'customer' => $this->customer,
             'method_purchase' => $this->method_purchase,
-            'city' => $this->city,
             'service_type' => $this->service_type,
-            'price_nds' => $this->price_nds,
 
         ]);
+        $query->andFilterWhere(['like', 'city', $this->city])
+              ->andFilterWhere(['like', 'price_nds', $this->price_nds]);
+
+        // Если период не задан то задаем 10 лет. Выводим если не задан тендеры с пустыми датами, а если задан то которые попадают под фильтр
+        if (((!isset($this->dateFrom)) && (!isset($this->dateTo))) || ((strtotime($this->dateTo) - strtotime($this->dateFrom)) > 157680000)) {
+            $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+            $this->dateTo = date('Y', time()) . '-12-31T21:00:00.000Z';
+            $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
+
+        } else {
+            $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
+        }
+
+        $query->orderby('company.id');
 
         return $dataProvider;
     }

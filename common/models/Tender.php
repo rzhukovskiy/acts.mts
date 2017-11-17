@@ -64,7 +64,6 @@ class Tender extends ActiveRecord
 {
     private $purchase_status;
     private $comment_status_proc;
-    private $user_id;
     private $comment_customer;
     private $inn_customer;
     private $contacts_resp_customer;
@@ -84,6 +83,8 @@ class Tender extends ActiveRecord
      * @var UploadedFile
      */
     public $files;
+
+    public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год'];
 
     /**
      * @inheritdoc
@@ -110,8 +111,8 @@ class Tender extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'key_type'], 'integer'],
-            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'tender_close'], 'safe'],
+            [['company_id', 'purchase_status', 'percent_down', 'percent_max'], 'integer'],
+            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer', 'competitor'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
@@ -135,7 +136,7 @@ class Tender extends ActiveRecord
             'number_purchase' => 'Номер закупки на площадке',
             'customer' => 'Заказчик',
             'service_type' => 'Закупаемые услуги, товары',
-            'price_nds' => 'Максимальная стоимость закупки',
+            'price_nds' => 'Максимальная стоимость закупки с НДС',
             'pre_income' => 'Предварительная прибыль от закупки',
             'final_price' => 'Стоимость закупки по завершению закупки с НДС',
             'percent_down' => 'Процентное снижение по завершению закупки в процентах',
@@ -229,17 +230,122 @@ class Tender extends ActiveRecord
                 $arrUserTend = $this->user_id;
 
                 if (count($arrUserTend) > 0) {
-                    $stringUsers = '';
+                    $stringUserTend = '';
 
                     for ($i = 0; $i < count($arrUserTend); $i++) {
                         if ($i == 0) {
-                            $stringUsers .= $arrUserTend[$i];
+                            $stringUserTend .= $arrUserTend[$i];
                         } else {
-                            $stringUsers .= ', ' . $arrUserTend[$i];
+                            $stringUserTend .= ', ' . $arrUserTend[$i];
                         }
                     }
 
-                    $this->user_id = $stringUsers;
+                    $this->user_id = $stringUserTend;
+
+                }
+
+            }
+            // запись в базу нескольких способов закупки
+            if (is_array($this->method_purchase)) {
+
+                $arrMethodsTend = $this->method_purchase;
+
+                if (count($arrMethodsTend) > 0) {
+                    $stringMethods = '';
+
+                    for ($i = 0; $i < count($arrMethodsTend); $i++) {
+                        if ($i == 0) {
+                            $stringMethods .= $arrMethodsTend[$i];
+                        } else {
+                            $stringMethods .= ', ' . $arrMethodsTend[$i];
+                        }
+                    }
+
+                    $this->method_purchase = $stringMethods;
+
+                }
+
+            }
+            // запись в базу нескольких фз
+            if (is_array($this->federal_law)) {
+
+                $arrFZ = $this->federal_law;
+
+                if (count($arrFZ) > 0) {
+                    $stringFZ = '';
+
+                    for ($i = 0; $i < count($arrFZ); $i++) {
+                        if ($i == 0) {
+                            $stringFZ .= $arrFZ[$i];
+                        } else {
+                            $stringFZ .= ', ' . $arrFZ[$i];
+                        }
+                    }
+
+                    $this->federal_law = $stringFZ;
+
+                }
+
+            }
+            // запись в базу нескольких типов ключа
+            if (is_array($this->key_type)) {
+
+                $arrKeyType = $this->key_type;
+
+                if (count($arrKeyType) > 0) {
+                    $stringKeyType = '';
+
+                    for ($i = 0; $i < count($arrKeyType); $i++) {
+                        if ($i == 0) {
+                            $stringKeyType .= $arrKeyType[$i];
+                        } else {
+                            $stringKeyType .= ', ' . $arrKeyType[$i];
+                        }
+                    }
+
+                    $this->key_type = $stringKeyType;
+
+                }
+
+            }
+            // запись в базу нескольких Статус обеспечения заявки
+            if (is_array($this->status_request_security)) {
+
+                $arrStatusRequest = $this->status_request_security;
+
+                if (count($arrStatusRequest) > 0) {
+                    $stringStatusRequest = '';
+
+                    for ($i = 0; $i < count($arrStatusRequest); $i++) {
+                        if ($i == 0) {
+                            $stringStatusRequest .= $arrStatusRequest[$i];
+                        } else {
+                            $stringStatusRequest .= ', ' . $arrStatusRequest[$i];
+                        }
+                    }
+
+                    $this->status_request_security = $stringStatusRequest;
+
+                }
+
+            }
+            // запись в базу нескольких Статус обеспечения контракта
+            if (is_array($this->status_contract_security)) {
+
+                $arrСontractRequest = $this->status_contract_security;
+
+                if (count($arrСontractRequest) > 0) {
+                    $stringСontractRequest = '';
+
+                    for ($i = 0; $i < count($arrСontractRequest); $i++) {
+                        if ($i == 0) {
+                            $stringСontractRequest .= $arrСontractRequest[$i];
+                        } else {
+                            $stringСontractRequest .= ', ' . $arrСontractRequest[$i];
+                        }
+                    }
+
+                    $this->status_contract_security = $stringСontractRequest;
 
                 }
 
@@ -318,15 +424,7 @@ class Tender extends ActiveRecord
     {
         $this->comment_status_proc = $value;
     }
-    public function getUser_id()
-    {
-        return $this->user_id;
-    }
 
-    public function setUser_id($value)
-    {
-        $this->user_id = $value;
-    }
     public function getComment_customer()
     {
         return $this->comment_customer;

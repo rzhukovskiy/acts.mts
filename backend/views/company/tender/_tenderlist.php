@@ -4,34 +4,151 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use common\models\Company;
 use kartik\date\DatePicker;
+use common\models\TenderLists;
 
 ?>
 
 <?php
-$arrPurchstat = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
-$userL = ['2' => 'Алёна', '3' => 'Денис'];
-$arrMet = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
-$ServicesLis = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
+// массив списков
+$arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+$arrLists = [];
+$oldType = -1;
+$tmpArray = [];
+
+for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+    if($arrayTenderList[$i]['type'] == $oldType) {
+
+        $index = $arrayTenderList[$i]['id'];
+        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+    } else {
+
+        if($i > 0) {
+
+            $arrLists[$oldType] = $tmpArray;
+            $tmpArray = [];
+
+            $oldType = $arrayTenderList[$i]['type'];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+        } else {
+            $oldType = $arrayTenderList[$i]['type'];
+            $tmpArray = [];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+        }
+    }
+
+    if(($i + 1) == count($arrayTenderList)) {
+        $arrLists[$oldType] = $tmpArray;
+    }
+
+}
+//
+
+$GLOBALS['arrLists'] = $arrLists;
 
 //Выбор периода
-$filters = 'Период: ' . DatePicker::widget([
-        'model'         => $searchModel,
-        'attribute'     => 'time_bidding_end',
-        'type'          => DatePicker::TYPE_INPUT,
-        'language'      => 'ru',
-        'pluginOptions' => [
-            'autoclose'       => true,
-            'changeMonth'     => true,
-            'changeYear'      => true,
-            'showButtonPanel' => true,
-            'format'          => 'm-yyyy',
-            'maxViewMode'     => 2,
-            'minViewMode'     => 1,
-        ],
-        'options'       => [
-            'class' => 'form-control ext-filter',
-        ]
-    ]);
+$GLOBALS['dateFrom'] = $searchModel->dateFrom;
+$GLOBALS['dateTo'] = $searchModel->dateTo;
+
+$halfs = [
+    '1е полугодие',
+    '2е полугодие'
+];
+$quarters = [
+    '1й квартал',
+    '2й квартал',
+    '3й квартал',
+    '4й квартал',
+];
+$months = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+];
+
+$ts1 = strtotime($searchModel->dateFrom);
+$ts2 = strtotime($searchModel->dateTo);
+
+$year1 = date('Y', $ts1);
+$year2 = date('Y', $ts2);
+
+$month1 = date('m', $ts1);
+$month2 = date('m', $ts2);
+
+$diff = (($year2 - $year1) * 12) + ($month2 - $month1);
+switch ($diff) {
+    case 1:
+        $period = 1;
+        break;
+    case 3:
+        $period = 2;
+        break;
+    case 6:
+        $period = 3;
+        break;
+    case 12:
+        $period = 4;
+        break;
+    default:
+        $period = 0;
+}
+$rangeYear = range(date('Y') - 10, date('Y'));
+$currentYear = isset($searchModel->dateFrom)
+    ? date('Y', strtotime($searchModel->dateFrom))
+    : date('Y');
+
+$currentMonth = isset($searchModel->dateFrom)
+    ? date('n', strtotime($searchModel->dateFrom))
+    : date('n');
+$currentMonth--;
+
+$filters = '';
+$periodForm = '';
+$periodForm .= Html::dropDownList('period', $period, \common\models\Tender::$periodList, [
+    'class' => 'select-period form-control',
+    'style' => 'margin-right: 10px;'
+]);
+$periodForm .= Html::dropDownList('month', $currentMonth, $months, [
+    'id' => 'month',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 1 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('half', $currentMonth < 5 ? 0 : 1, $halfs, [
+    'id' => 'half',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 6 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters, [
+    'id' => 'quarter',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 3 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
+    'id' => 'year',
+    'class' => 'autoinput form-control',
+    'style' => $diff && $diff <= 12 ? '' : 'display:none'
+]);
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
+
+$filters = 'Выбор периода: ' . $periodForm;
 
 $columns = [
 [
@@ -57,15 +174,13 @@ $columns = [
                 [
                     'attribute' => 'purchase_status',
                     'header' => 'Статус<br />закупки',
-                    'filter' => Html::activeDropDownList($searchModel, 'purchase_status', $arrPurchstat, ['class' => 'form-control', 'prompt' => 'Все статусы']),
+                    'filter' => Html::activeDropDownList($searchModel, 'purchase_status', isset($GLOBALS['arrLists'][0]) ? $GLOBALS['arrLists'][0] : [], ['class' => 'form-control', 'prompt' => 'Все статусы']),
                     'format' => 'raw',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
-                         $arrPurchstatus = [1 => 'Рассматриваем', 2 => 'Отказались', 3 => 'Не успели', 4 => 'Подаёмся', 5 => 'Подались', 6 => 'Отказ заказчика', 7 => 'Победили', 8 => 'Заключен договор', 9 => 'Проиграли'];
-
                         if ($data->purchase_status) {
-                            return $arrPurchstatus[$data->purchase_status];
+                            return isset($GLOBALS['arrLists'][0][$data->purchase_status]) ? $GLOBALS['arrLists'][0][$data->purchase_status] : '-';
                         } else {
                             return '-';
                         }
@@ -74,12 +189,10 @@ $columns = [
                 [
                     'attribute' => 'user_id',
                     'header' => 'Сотрудник',
-                    'filter' => Html::activeDropDownList($searchModel, 'user_id', $userL, ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+                    'filter' => Html::activeDropDownList($searchModel, 'user_id', isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1] : [], ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
                     'format' => 'raw',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
-
-                        $userList = ['2' => 'Алёна', '3' => 'Денис'];
 
                         $arrUserTend = explode(', ', $data->user_id);
                         $UserTendText = '';
@@ -87,16 +200,19 @@ $columns = [
                         if (count($arrUserTend) > 1) {
 
                             for ($i = 0; $i < count($arrUserTend); $i++) {
-                                if(isset($userList[$arrUserTend[$i]])) {
-                                    $UserTendText .= $userList[$arrUserTend[$i]] . '<br />';
+
+                                $index = $arrUserTend[$i];
+
+                                if(isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') {
+                                    $UserTendText .= (isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') . '<br />';
                                 }
                             }
 
                         } else {
 
                             try {
-                                if(isset($userList[$data->user_id])) {
-                                    $UserTendText = $userList[$data->user_id];
+                                if(isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-') {
+                                    $UserTendText = isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-';
                                 }
                             } catch (\Exception $e) {
                                 $UserTendText = '-';
@@ -111,6 +227,7 @@ $columns = [
                     'attribute' => 'date_request_end',
                     'vAlign'=>'middle',
                     'header' => 'Окончание подачи<br /> заявки',
+                    'filter' => false,
                     'value' => function ($data) {
 
                         if ($data->date_request_end) {
@@ -125,6 +242,7 @@ $columns = [
                     'attribute' => 'time_bidding_end',
                     'vAlign'=>'middle',
                     'header' => 'Дата и время<br /> подведения итогов',
+                    'filter' => false,
                     'value' => function ($data) {
 
                         if ($data->time_bidding_end) {
@@ -138,18 +256,37 @@ $columns = [
                 [
                     'attribute' => 'method_purchase',
                     'header' => 'Способ закупки',
-                    'filter' => Html::activeDropDownList($searchModel, 'method_purchase', $arrMet, ['class' => 'form-control', 'prompt' => 'Все способы']),
+                    'filter' => Html::activeDropDownList($searchModel, 'method_purchase', isset($GLOBALS['arrLists'][2]) ? $GLOBALS['arrLists'][2] : [], ['class' => 'form-control', 'prompt' => 'Все способы']),
                     'format' => 'raw',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
-                        $arrMethods = [1 => 'Электронный аукцион (открытый)', 2 => 'Электронный аукцион (закрытый)', 3 => 'Запрос котировок (открытый)', 4 => 'Запрос предложений (открытый)', 5 => 'Открытый редукцион', 6 => 'Запрос цен', 7 => 'Открытый аукцион'];
+                        $arrMethodsTend = explode(', ', $data->method_purchase);
+                        $methodsText = '';
 
-                        if ($data->method_purchase) {
-                            return $arrMethods[$data->method_purchase];
+                        if (count($arrMethodsTend) > 1) {
+
+                            for ($i = 0; $i < count($arrMethodsTend); $i++) {
+
+                                $index = $arrMethodsTend[$i];
+
+                                if(isset($GLOBALS['arrLists'][2][$index]) ? $GLOBALS['arrLists'][2][$index] : '-') {
+                                    $methodsText .= (isset($GLOBALS['arrLists'][2][$index]) ? $GLOBALS['arrLists'][2][$index] : '-') . '<br />';
+                            }
+                            }
                         } else {
-                            return '-';
+
+                            try {
+                                if(isset($GLOBALS['arrLists'][2]) ? $GLOBALS['arrLists'][2][$data->method_purchase] : '-') {
+                                    $methodsText = isset($GLOBALS['arrLists'][2]) ? $GLOBALS['arrLists'][2][$data->method_purchase] : '-';
+                                }
+                            } catch (\Exception $e) {
+                                $methodsText = '-';
+                            }
+
                         }
+                        return $methodsText;
+
                     },
                 ],
                 [
@@ -169,12 +306,10 @@ $columns = [
                 [
                     'attribute' => 'service_type',
                     'header' => 'Закупаемые<br />услуги',
-                    'filter' => Html::activeDropDownList($searchModel, 'service_type', $ServicesLis, ['class' => 'form-control', 'prompt' => 'Все услуги']),
+                    'filter' => Html::activeDropDownList($searchModel, 'service_type', isset($GLOBALS['arrLists'][3]) ? $GLOBALS['arrLists'][3] : [], ['class' => 'form-control', 'prompt' => 'Все услуги']),
                     'format' => 'raw',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
-
-                        $ServicesList = ['2' => 'Мойка', '3' => 'Сервис', '4' => 'Шиномонтаж', '5' => 'Дезинфекция', '7' => 'Стоянка', '8' => 'Эвакуация'];
 
                         $arrServices = explode(', ', $data->service_type);
                         $serviceText = '';
@@ -182,16 +317,19 @@ $columns = [
                         if (count($arrServices) > 1) {
 
                             for ($i = 0; $i < count($arrServices); $i++) {
-                                if(isset($ServicesList[$arrServices[$i]])) {
-                                    $serviceText .= $ServicesList[$arrServices[$i]] . '<br />';
+
+                                $index = $arrServices[$i];
+
+                                if(isset($GLOBALS['arrLists'][3][$index]) ? $GLOBALS['arrLists'][3][$index] : '-') {
+                                    $serviceText .= (isset($GLOBALS['arrLists'][3][$index]) ? $GLOBALS['arrLists'][3][$index] : '-') . '<br />';
                                 }
                             }
 
                         } else {
 
                             try {
-                                if(isset($ServicesList[$data->service_type])) {
-                                    $serviceText = $ServicesList[$data->service_type];
+                                if(isset($GLOBALS['arrLists'][3]) ? $GLOBALS['arrLists'][3][$data->service_type] : '-') {
+                                    $serviceText = isset($GLOBALS['arrLists'][3]) ? $GLOBALS['arrLists'][3][$data->service_type] : '-';
                                 }
                             } catch (\Exception $e) {
                                 $serviceText = '-';
