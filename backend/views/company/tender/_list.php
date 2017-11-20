@@ -8,15 +8,6 @@ use common\models\Company;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
-// Подкатегории для сервиса
-$requestSupType = 0;
-if($searchModel->type == 3) {
-    if(Yii::$app->request->get('sub')) {
-        $requestSupType = Yii::$app->request->get('sub');
-    }
-}
-// Подкатегории для сервиса
-
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -49,24 +40,12 @@ if($searchModel->type == 3) {
             ], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:15px;']);
             // Тип ТС
 
-            if(($searchModel->type != 3) || ($requestSupType > 0)) {
-                if($requestSupType > 0) {
-                    echo Html::a('Добавить', [
-                        'company/create',
-                        'Company[type]' => $searchModel->type,
-                        'sub' => $requestSupType,
-                        'Company[sub_type]' => $requestSupType,
-                        'Company[status]' => Company::STATUS_TENDER
-                    ], ['class' => 'btn btn-danger btn-sm']);
-                } else {
-                    echo Html::a('Добавить', [
-                        'company/create',
-                        'Company[type]' => $searchModel->type,
-                        'Company[sub_type]' => $requestSupType,
-                        'Company[status]' => Company::STATUS_TENDER
-                    ], ['class' => 'btn btn-danger btn-sm']);
-                }
-            }
+            echo Html::a('Добавить', [
+                'company/create',
+                'Company[type]' => $searchModel->type,
+                'Company[sub_type]' => 0,
+                'Company[status]' => Company::STATUS_TENDER
+            ], ['class' => 'btn btn-danger btn-sm']);
 
             ?>
         </div>
@@ -151,7 +130,7 @@ if($searchModel->type == 3) {
                     'buttons' => [
                         'update' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                                ['/company/state', 'id' => $model->id]);
+                                ['/company/tenders', 'id' => $model->id]);
                         },
                     ],
                 ],

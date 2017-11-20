@@ -53,10 +53,20 @@ $items[] = [
 ];
 
 if($model->status == Company::STATUS_TENDER) {
-    $items[] = [
-        'label' => 'Тендеры',
-        'url' => ['company/tenders', 'id' => $model->id],
-        'active' => \Yii::$app->controller->action->id == 'tenders',
+    $items = [
+        [
+            'label' => Company::$listType[$model->type]['ru'],
+            'url'   => [Company::$listStatus[$model->status]['en'], 'type' => $model->type],
+        ],
+        [
+            'label'  => 'Процесс',
+            'url'    => ['company/update', 'id' => $model->id],
+            'active' => \Yii::$app->controller->action->id == 'update',
+        ],[
+            'label' => 'Тендеры',
+            'url' => ['company/tenders', 'id' => $model->id],
+            'active' => \Yii::$app->controller->action->id == 'tenders',
+        ]
     ];
 }
 
