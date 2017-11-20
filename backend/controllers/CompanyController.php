@@ -41,6 +41,10 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Worksheet;
 
 class CompanyController extends Controller
 {
@@ -55,17 +59,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -624,9 +628,11 @@ class CompanyController extends Controller
 
             $model->files = UploadedFile::getInstances($model, 'files');
 
-            if ($model->upload()) {
-                // file is uploaded successfully
-            } else {
+            if ($model->files) {
+
+                if ($model->upload()) {
+                    // file is uploaded successfully
+                }
             }
 
             return $this->redirect(['company/tenders', 'id' => $model->company_id]);
@@ -651,47 +657,38 @@ class CompanyController extends Controller
     }
 
     // Скачиваем файл Excel для заполнения
-   /* public function actionCarsexcel()
+    public function actionTendersexcel()
     {
+            $resExcel = self::createExcelTenders();
+
             $pathFile = \Yii::getAlias('@webroot/files/tenders/filtertender.xls');
 
             header("Content-Type: application/octet-stream");
             header("Accept-Ranges: bytes");
             header("Content-Length: ".filesize($pathFile));
-            header("Content-Disposition: attachment; filename=filtertender.xlsx");
+            header("Content-Disposition: attachment; filename=filtertender.xls");
             readfile($pathFile);
 
     }
 
     // Формирование Excel файла
-    public static function createExcelCars($id) {
+    public static function createExcelTenders() {
 
-        // Название компании
-        $company = Company::findOne($id);
-        $companyName = $company->name;
-
-        // Список ТС
-        $arrCars = [];
-
-        if($undriver == true) {
-            $arrCars = Car::find()->leftJoin('company_driver', '`company_driver`.`car_id` = `car`.`id`')->where(['`car`.`company_id`' => $id])->andWhere('`company_driver`.`id` IS NULL')->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->orderBy('car.type_id ASC, car.number ASC')->asArray()->all();
-        } else {
-            $arrCars = Car::find()->where(['company_id' => $id])->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->asArray()->all();
-        }
+        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, cost_purchase_completion, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
 
         $objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 
         // Creating a workbook
         $objPHPExcel->getProperties()->setCreator('Mtransservice');
-        $objPHPExcel->getProperties()->setTitle('Список ТС');
-        $objPHPExcel->getProperties()->setSubject('Список ТС');
+        $objPHPExcel->getProperties()->setTitle('Список договоров');
+        $objPHPExcel->getProperties()->setSubject('Список договоров');
         $objPHPExcel->getProperties()->setDescription('');
         $objPHPExcel->getProperties()->setCategory('');
         $objPHPExcel->removeSheetByIndex(0);
 
         //adding worksheet
-        $companyWorkSheet = new PHPExcel_Worksheet($objPHPExcel, 'Список ТС');
+        $companyWorkSheet = new PHPExcel_Worksheet($objPHPExcel, 'Список договоров');
         $objPHPExcel->addSheet($companyWorkSheet);
 
         $companyWorkSheet->getPageMargins()->setTop(2);
@@ -701,61 +698,42 @@ class CompanyController extends Controller
         $companyWorkSheet->getColumnDimension('A')->setWidth(2);
         $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
 
-        //headers;
-        $companyWorkSheet->mergeCells('A1:I1');
-        $companyWorkSheet->getStyle('A1:I1')->applyFromArray(array(
-            'alignment' => array(
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-            )
-        ));
-
-        $companyWorkSheet->getStyle("A1:I1")->applyFromArray([
-                'font' => [
-                    'size' => 13,
-                    'name'  => 'Times New Roman'
-                ],
-            ]
-        );
-
-        $companyWorkSheet->getRowDimension(1)->setRowHeight(23);
-
-        $companyWorkSheet->setCellValue('A1', $companyName);
-
-        $row = 2;
+        $row = 1;
 
         // Body
-        if(count($arrCars) > 0) {
+        if(count($arrTenders) > 0) {
 
-            $companyWorkSheet->getColumnDimension('A')->setWidth(14);
-            $companyWorkSheet->getColumnDimension('B')->setWidth(35);
-            $companyWorkSheet->getColumnDimension('C')->setWidth(13);
-            $companyWorkSheet->getColumnDimension('D')->setWidth(20);
-            $companyWorkSheet->getColumnDimension('E')->setWidth(20);
-            $companyWorkSheet->getColumnDimension('F')->setWidth(20);
-            $companyWorkSheet->getColumnDimension('G')->setWidth(20);
-            $companyWorkSheet->getColumnDimension('H')->setWidth(20);
-            $companyWorkSheet->getColumnDimension('I')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('A')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('B')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+            $companyWorkSheet->getColumnDimension('D')->setWidth(25);
+            $companyWorkSheet->getColumnDimension('E')->setWidth(32);
+            $companyWorkSheet->getColumnDimension('F')->setWidth(28);
+            $companyWorkSheet->getColumnDimension('G')->setWidth(40);
+            $companyWorkSheet->getColumnDimension('H')->setWidth(35);
+            $companyWorkSheet->getColumnDimension('I')->setWidth(40);
+            $companyWorkSheet->getColumnDimension('J')->setWidth(40);
 
             // Заголовки
-            $companyWorkSheet->setCellValue('A' . $row, 'Марка ТС');
-            $companyWorkSheet->setCellValue('B' . $row, 'Тип ТС');
-            $companyWorkSheet->setCellValue('C' . $row, 'Номер ТС');
-            $companyWorkSheet->setCellValue('D' . $row, 'ФИО водителя 1');
-            $companyWorkSheet->setCellValue('E' . $row, 'Номер водителя 1');
-            $companyWorkSheet->setCellValue('F' . $row, 'ФИО водителя 2');
-            $companyWorkSheet->setCellValue('G' . $row, 'Номер водителя 2');
-            $companyWorkSheet->setCellValue('H' . $row, 'ФИО водителя 3');
-            $companyWorkSheet->setCellValue('I' . $row, 'Номер водителя 3');
+            $companyWorkSheet->setCellValue('A' . $row, 'Заказчик');
+            $companyWorkSheet->setCellValue('B' . $row, 'ИНН Заказчика');
+            $companyWorkSheet->setCellValue('C' . $row, 'Город, Область поставки');
+            $companyWorkSheet->setCellValue('D' . $row, 'Закупаемые услуги');
+            $companyWorkSheet->setCellValue('E' . $row, 'Номер закупки на площадке');
+            $companyWorkSheet->setCellValue('F' . $row, 'Электронная площадка');
+            $companyWorkSheet->setCellValue('G' . $row, 'Стоимость закупки по завершению закупки без НДС');
+            $companyWorkSheet->setCellValue('H' . $row, 'Дата заключения договора');
+            $companyWorkSheet->setCellValue('I' . $row, 'Дата окончания заключенного договора');
+            $companyWorkSheet->setCellValue('J' . $row, 'Осталось дней до окончания договора');
 
-            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
+            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                     'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
                 )
             ));
 
-            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
+            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'size' => 12,
@@ -768,20 +746,150 @@ class CompanyController extends Controller
 
             $row++;
 
-            for ($i = 0; $i < count($arrCars); $i++) {
-                if((isset($arrCars[$i]['number'])) && (isset($arrCars[$i]['mark'])) && (isset($arrCars[$i]['type']))) {
-                    $companyWorkSheet->setCellValue('A' . $row, $arrCars[$i]['mark']);
-                    $companyWorkSheet->setCellValue('B' . $row, $arrCars[$i]['type']);
-                    $companyWorkSheet->setCellValue('C' . $row, $arrCars[$i]['number']);
 
-                    $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
+            for ($i = 0; $i < count($arrTenders); $i++) {
+
+                // массив списков
+                $arrayTenderList = TenderLists::find()->where(['type' => 3])->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+                $arrLists = [];
+                $oldType = -1;
+                $tmpArray = [];
+
+                for ($j = 0; $j < count($arrayTenderList); $j++) {
+
+                    if($arrayTenderList[$j]['type'] == $oldType) {
+
+                        $index = $arrayTenderList[$j]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$j]['description'];
+
+                    } else {
+
+                        if($j > 0) {
+
+                            $arrLists[$oldType] = $tmpArray;
+                            $tmpArray = [];
+
+                            $oldType = $arrayTenderList[$j]['type'];
+
+                            $index = $arrayTenderList[$j]['id'];
+                            $tmpArray[$index] = $arrayTenderList[$j]['description'];
+
+                        } else {
+                            $oldType = $arrayTenderList[$j]['type'];
+                            $tmpArray = [];
+
+                            $index = $arrayTenderList[$j]['id'];
+                            $tmpArray[$index] = $arrayTenderList[$j]['description'];
+                        }
+                    }
+
+                    if(($j + 1) == count($arrayTenderList)) {
+                        $arrLists[$oldType] = $tmpArray;
+                    }
+
+                }
+
+                $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
+                $stringServText = '';
+
+                //
+                if (isset($arrTenders[$i]['service_type'])) {
+
+                    $serviseVal = explode(', ', $arrTenders[$i]['service_type']);
+
+                    if ((is_array($serviseVal)) && (count($serviseVal) > 0)) {
+
+                            for ($z = 0; $z < count($serviseVal); $z++) {
+
+                                if($z == (count($serviseVal) - 1)) {
+                                    if (isset($ServicesList[$serviseVal[$z]])) {
+                                        $stringServText .= $ServicesList[$serviseVal[$z]];
+                                    } else {
+                                        $stringServText .= "-";
+                                    }
+                                } else {
+                                    if (isset($ServicesList[$serviseVal[$z]])) {
+                                        $stringServText .= $ServicesList[$serviseVal[$z]];
+                                        $stringServText .= ", ";
+                                    } else {
+                                        $stringServText .= "-, ";
+                                    }
+                                }
+
+                            }
+
+                    } else {
+
+                        if ($arrTenders[$i]['service_type'] > 0) {
+                            $index = $arrTenders[$i]['service_type'];
+                            $stringServText = isset($ServicesList[$index]) ? ($ServicesList[$index] . ", ") : '-';
+                        } else {
+                            $stringServText = '-';
+                        }
+
+                    }
+
+                } else {
+                    $stringServText = '-';
+                }
+
+                $showTotal = '';
+
+                if(isset($arrTenders[$i]['term_contract'])) {
+                    $timeNow = time();
+
+
+                    if ($arrTenders[$i]['term_contract'] > $timeNow) {
+
+                        $totalDate = $arrTenders[$i]['term_contract'] - $timeNow;
+
+                        $days = ((Int)($totalDate / 86400));
+                        $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                        if ($days < 0) {
+                            $days = 0;
+                        }
+
+                        $showTotal = $days . ' д.';
+
+                    } else {
+                        if (mb_strlen($arrTenders[$i]['term_contract']) > 3) {
+                            $totalDate = $timeNow - $arrTenders[$i]['term_contract'];
+
+                            $days = ((Int)($totalDate / 86400));
+                            $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                            if ($days < 0) {
+                                $days = 0;
+                            }
+                            $showTotal = '- ' . $days . ' д.';
+                        } else {
+                            $showTotal = '-';
+                        }
+                    }
+
+                }
+
+                   $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? ($arrTenders[$i]['customer']) : '-');
+                    $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? ($arrTenders[$i]['inn_customer']) : '-');
+                    $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? ($arrTenders[$i]['city']) : '-');
+                    $companyWorkSheet->setCellValue('D' . $row, $stringServText);
+                    $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? ($arrTenders[$i]['number_purchase']) : '-');
+                    $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? ($arrTenders[$i]['place']) : '-');
+                    $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
+                    $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
+                    $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
+                    $companyWorkSheet->setCellValue('J' . $row, $showTotal);
+
+                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
                         'alignment' => array(
                             'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                             'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
                         )
                     ));
 
-                    $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
+                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
                             'font' => [
                                 'size' => 12,
                                 'name'  => 'Times New Roman'
@@ -792,30 +900,24 @@ class CompanyController extends Controller
                     $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
 
                     $row++;
-                }
             }
         }
 
         $objPHPExcel->getActiveSheet()->setSelectedCells('A1');
 
         //saving document
-        $pathFile = \Yii::getAlias('@webroot/files/phones/');
+        $pathFile = \Yii::getAlias('@webroot/files/tenders/');
 
         if (!is_dir($pathFile)) {
             mkdir($pathFile, 0755, 1);
         }
 
-        $companyName = trim($companyName);
-        $companyName = str_replace('«', '', $companyName);
-        $companyName = str_replace('»', '', $companyName);
-        $companyName = str_replace('"', '', $companyName);
-        $companyName = str_replace(' ', '_', $companyName);
 
-        $filename = $companyName . '.xls';
+        $filename = 'filtertender.xls';
 
         $objWriter->save($pathFile . $filename);
         return $filename;
-    }*/
+    }
 
     // Закрыть изменения тендера
     public function actionClosedownload()
@@ -1643,9 +1745,11 @@ class CompanyController extends Controller
 
             $model->files = UploadedFile::getInstances($model, 'files');
 
-            if ($model->upload()) {
-                // file is uploaded successfully
-            } else {
+            if ($model->files) {
+
+                if ($model->upload()) {
+                    // file is uploaded successfully
+                }
             }
 
             return $this->redirect(['company/state', 'id' => $model->company_id]);

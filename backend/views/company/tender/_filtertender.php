@@ -69,7 +69,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->customer) {
-                            return $data->inn_customer;
+                            return $data->customer;
                         } else {
                             return '-';
                         }
@@ -178,7 +178,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->cost_purchase_completion) {
-                            return $data->cost_purchase_completion;
+                            return $data->cost_purchase_completion . ' ₽';
                         } else {
                             return '-';
                         }
@@ -288,7 +288,7 @@ echo GridView::widget([
     [
         'columns' => [
             [
-                'content' => '&nbsp',
+                'content' => Html::a('Выгрузить', ['company/tendersexcel'], ['class' => 'pull-right btn btn-warning btn-sm', 'style' => 'margin-right:10px;']),
                 'options' => [
                     'style' => 'vertical-align: middle',
                     'colspan' => count($columns),

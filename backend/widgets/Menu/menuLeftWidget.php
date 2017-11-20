@@ -104,7 +104,7 @@ class menuLeftWidget extends Widget
                                  (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
                         ],
                         [
-                            'label'  => 'Список договоров',
+                            'label'  => 'Список<br />договоров',
                             'url' => ['/company/filtertender'],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'filtertender'),
@@ -268,8 +268,8 @@ class menuLeftWidget extends Widget
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
                         ],
                         [
-                            'label'  => 'Список договоров',
-                            'url' => ['/company/tenderfilter'],
+                            'label'  => 'Список<br />договоров',
+                            'url' => ['/company/filtertender'],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'filtertender'),
                         ],
