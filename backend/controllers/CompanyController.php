@@ -55,17 +55,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -533,13 +533,12 @@ class CompanyController extends Controller
     }
 
     // Все тендеры
-    public function actionTenderlist($type)
+    public function actionTenderlist()
     {
 
         $currentUser = Yii::$app->user->identity;
 
         $searchModel = new TenderSearch();
-        $searchModel->type = $type;
 
         if ($currentUser->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -553,7 +552,37 @@ class CompanyController extends Controller
             [
                 'dataProvider' => $dataProvider,
                 'searchModel'  => $searchModel,
-                'type'         => $type,
+                'listType'     => $listType,
+            ]);
+    }
+
+    // Список договоров по дате окончания
+    public function actionFiltertender()
+    {
+
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new TenderSearch();
+
+        if ($currentUser->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $listType = $currentUser->getAllCompanyType(Company::STATUS_TENDER);
+        }
+
+        $searchModel->purchase_status = 22;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'term_contract'    => SORT_ASC,
+            ]
+        ];
+
+        return $this->render('tender/filtertender',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
                 'listType'     => $listType,
             ]);
     }
@@ -620,6 +649,173 @@ class CompanyController extends Controller
         ]);
 
     }
+
+    // Скачиваем файл Excel для заполнения
+   /* public function actionCarsexcel()
+    {
+            $pathFile = \Yii::getAlias('@webroot/files/tenders/filtertender.xls');
+
+            header("Content-Type: application/octet-stream");
+            header("Accept-Ranges: bytes");
+            header("Content-Length: ".filesize($pathFile));
+            header("Content-Disposition: attachment; filename=filtertender.xlsx");
+            readfile($pathFile);
+
+    }
+
+    // Формирование Excel файла
+    public static function createExcelCars($id) {
+
+        // Название компании
+        $company = Company::findOne($id);
+        $companyName = $company->name;
+
+        // Список ТС
+        $arrCars = [];
+
+        if($undriver == true) {
+            $arrCars = Car::find()->leftJoin('company_driver', '`company_driver`.`car_id` = `car`.`id`')->where(['`car`.`company_id`' => $id])->andWhere('`company_driver`.`id` IS NULL')->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->orderBy('car.type_id ASC, car.number ASC')->asArray()->all();
+        } else {
+            $arrCars = Car::find()->where(['company_id' => $id])->innerJoin('type', '`type`.`id` = `car`.`type_id`')->innerJoin('mark', '`mark`.`id` = `car`.`mark_id`')->select('car.number, type.name as type, mark.name as mark')->asArray()->all();
+        }
+
+        $objPHPExcel = new PHPExcel();
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+        // Creating a workbook
+        $objPHPExcel->getProperties()->setCreator('Mtransservice');
+        $objPHPExcel->getProperties()->setTitle('Список ТС');
+        $objPHPExcel->getProperties()->setSubject('Список ТС');
+        $objPHPExcel->getProperties()->setDescription('');
+        $objPHPExcel->getProperties()->setCategory('');
+        $objPHPExcel->removeSheetByIndex(0);
+
+        //adding worksheet
+        $companyWorkSheet = new PHPExcel_Worksheet($objPHPExcel, 'Список ТС');
+        $objPHPExcel->addSheet($companyWorkSheet);
+
+        $companyWorkSheet->getPageMargins()->setTop(2);
+        $companyWorkSheet->getPageMargins()->setLeft(0.5);
+        $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
+        $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+        $companyWorkSheet->getColumnDimension('A')->setWidth(2);
+        $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
+
+        //headers;
+        $companyWorkSheet->mergeCells('A1:I1');
+        $companyWorkSheet->getStyle('A1:I1')->applyFromArray(array(
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            )
+        ));
+
+        $companyWorkSheet->getStyle("A1:I1")->applyFromArray([
+                'font' => [
+                    'size' => 13,
+                    'name'  => 'Times New Roman'
+                ],
+            ]
+        );
+
+        $companyWorkSheet->getRowDimension(1)->setRowHeight(23);
+
+        $companyWorkSheet->setCellValue('A1', $companyName);
+
+        $row = 2;
+
+        // Body
+        if(count($arrCars) > 0) {
+
+            $companyWorkSheet->getColumnDimension('A')->setWidth(14);
+            $companyWorkSheet->getColumnDimension('B')->setWidth(35);
+            $companyWorkSheet->getColumnDimension('C')->setWidth(13);
+            $companyWorkSheet->getColumnDimension('D')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('E')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('F')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('G')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('H')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('I')->setWidth(20);
+
+            // Заголовки
+            $companyWorkSheet->setCellValue('A' . $row, 'Марка ТС');
+            $companyWorkSheet->setCellValue('B' . $row, 'Тип ТС');
+            $companyWorkSheet->setCellValue('C' . $row, 'Номер ТС');
+            $companyWorkSheet->setCellValue('D' . $row, 'ФИО водителя 1');
+            $companyWorkSheet->setCellValue('E' . $row, 'Номер водителя 1');
+            $companyWorkSheet->setCellValue('F' . $row, 'ФИО водителя 2');
+            $companyWorkSheet->setCellValue('G' . $row, 'Номер водителя 2');
+            $companyWorkSheet->setCellValue('H' . $row, 'ФИО водителя 3');
+            $companyWorkSheet->setCellValue('I' . $row, 'Номер водителя 3');
+
+            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 12,
+                        'name'  => 'Times New Roman'
+                    ],
+                ]
+            );
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
+
+            $row++;
+
+            for ($i = 0; $i < count($arrCars); $i++) {
+                if((isset($arrCars[$i]['number'])) && (isset($arrCars[$i]['mark'])) && (isset($arrCars[$i]['type']))) {
+                    $companyWorkSheet->setCellValue('A' . $row, $arrCars[$i]['mark']);
+                    $companyWorkSheet->setCellValue('B' . $row, $arrCars[$i]['type']);
+                    $companyWorkSheet->setCellValue('C' . $row, $arrCars[$i]['number']);
+
+                    $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
+                        'alignment' => array(
+                            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                        )
+                    ));
+
+                    $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
+                            'font' => [
+                                'size' => 12,
+                                'name'  => 'Times New Roman'
+                            ],
+                        ]
+                    );
+
+                    $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
+
+                    $row++;
+                }
+            }
+        }
+
+        $objPHPExcel->getActiveSheet()->setSelectedCells('A1');
+
+        //saving document
+        $pathFile = \Yii::getAlias('@webroot/files/phones/');
+
+        if (!is_dir($pathFile)) {
+            mkdir($pathFile, 0755, 1);
+        }
+
+        $companyName = trim($companyName);
+        $companyName = str_replace('«', '', $companyName);
+        $companyName = str_replace('»', '', $companyName);
+        $companyName = str_replace('"', '', $companyName);
+        $companyName = str_replace(' ', '_', $companyName);
+
+        $filename = $companyName . '.xls';
+
+        $objWriter->save($pathFile . $filename);
+        return $filename;
+    }*/
 
     // Закрыть изменения тендера
     public function actionClosedownload()
