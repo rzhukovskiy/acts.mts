@@ -381,6 +381,29 @@ echo GridView::widget([
 'footer' => false,
 'after' => false,
 ],
+ 'rowOptions' => function ($model) {
+
+    // Выделяем цветом для каких типов
+     if(isset($model->purchase_status)) {
+         if ($model->purchase_status == 0) {
+             return '';
+         } else if (($model->purchase_status) == 16 || ($model->purchase_status == 20)) {
+             return ['style' => 'background: #e6e6e6;'];
+         } else if (($model->purchase_status) == 17 || ($model->purchase_status == 23)) {
+             return ['style' => 'background: #ffd5d5;'];
+         } else if ($model->purchase_status == 19) {
+             return ['style' => 'background: #add9ff;'];
+         } else if ($model->purchase_status == 21) {
+             return ['style' => 'background: #fffc98;'];
+         } else if ($model->purchase_status == 22) {
+             return ['style' => 'background: #d9ffd8;'];
+         } else {
+             return '';
+         }
+     } else {
+         return '';
+     }
+    },
 'resizableColumns' => false,
 'hover' => false,
 'striped' => false,
