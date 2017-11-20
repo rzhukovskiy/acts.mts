@@ -871,12 +871,12 @@ class CompanyController extends Controller
 
                 }
 
-                   $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? ($arrTenders[$i]['customer']) : '-');
-                    $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? ($arrTenders[$i]['inn_customer']) : '-');
-                    $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? ($arrTenders[$i]['city']) : '-');
+                   $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? (mb_strlen($arrTenders[$i]['customer']) > 0 ? $arrTenders[$i]['customer'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? (mb_strlen($arrTenders[$i]['inn_customer']) > 0 ? $arrTenders[$i]['inn_customer'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? (mb_strlen($arrTenders[$i]['city']) > 0 ? $arrTenders[$i]['city'] : '-') : '-');
                     $companyWorkSheet->setCellValue('D' . $row, $stringServText);
-                    $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? ($arrTenders[$i]['number_purchase']) : '-');
-                    $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? ($arrTenders[$i]['place']) : '-');
+                    $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
                     $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
                     $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
                     $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
