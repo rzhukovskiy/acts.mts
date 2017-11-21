@@ -41,6 +41,10 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Worksheet;
 
 class CompanyController extends Controller
 {
@@ -55,17 +59,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -533,13 +537,12 @@ class CompanyController extends Controller
     }
 
     // Все тендеры
-    public function actionTenderlist($type)
+    public function actionTenderlist()
     {
 
         $currentUser = Yii::$app->user->identity;
 
         $searchModel = new TenderSearch();
-        $searchModel->type = $type;
 
         if ($currentUser->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -553,7 +556,37 @@ class CompanyController extends Controller
             [
                 'dataProvider' => $dataProvider,
                 'searchModel'  => $searchModel,
-                'type'         => $type,
+                'listType'     => $listType,
+            ]);
+    }
+
+    // Список договоров по дате окончания
+    public function actionFiltertender()
+    {
+
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new TenderSearch();
+
+        if ($currentUser->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $listType = $currentUser->getAllCompanyType(Company::STATUS_TENDER);
+        }
+
+        $searchModel->purchase_status = 22;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'term_contract'    => SORT_ASC,
+            ]
+        ];
+
+        return $this->render('tender/filtertender',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
                 'listType'     => $listType,
             ]);
     }
@@ -595,9 +628,11 @@ class CompanyController extends Controller
 
             $model->files = UploadedFile::getInstances($model, 'files');
 
-            if ($model->upload()) {
-                // file is uploaded successfully
-            } else {
+            if ($model->files) {
+
+                if ($model->upload()) {
+                    // file is uploaded successfully
+                }
             }
 
             return $this->redirect(['company/tenders', 'id' => $model->company_id]);
@@ -619,6 +654,269 @@ class CompanyController extends Controller
             'model' => $model,
         ]);
 
+    }
+
+    // Скачиваем файл Excel для заполнения
+    public function actionTendersexcel()
+    {
+            $resExcel = self::createExcelTenders();
+
+            $pathFile = \Yii::getAlias('@webroot/files/tenders/filtertender.xls');
+
+            header("Content-Type: application/octet-stream");
+            header("Accept-Ranges: bytes");
+            header("Content-Length: ".filesize($pathFile));
+            header("Content-Disposition: attachment; filename=filtertender.xls");
+            readfile($pathFile);
+
+    }
+
+    // Формирование Excel файла
+    public static function createExcelTenders() {
+
+        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, cost_purchase_completion, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
+
+        $objPHPExcel = new PHPExcel();
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+        // Creating a workbook
+        $objPHPExcel->getProperties()->setCreator('Mtransservice');
+        $objPHPExcel->getProperties()->setTitle('Список договоров');
+        $objPHPExcel->getProperties()->setSubject('Список договоров');
+        $objPHPExcel->getProperties()->setDescription('');
+        $objPHPExcel->getProperties()->setCategory('');
+        $objPHPExcel->removeSheetByIndex(0);
+
+        //adding worksheet
+        $companyWorkSheet = new PHPExcel_Worksheet($objPHPExcel, 'Список договоров');
+        $objPHPExcel->addSheet($companyWorkSheet);
+
+        $companyWorkSheet->getPageMargins()->setTop(2);
+        $companyWorkSheet->getPageMargins()->setLeft(0.5);
+        $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
+        $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+        $companyWorkSheet->getColumnDimension('A')->setWidth(2);
+        $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
+
+        $row = 1;
+
+        // Body
+        if(count($arrTenders) > 0) {
+
+            $companyWorkSheet->getColumnDimension('A')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('B')->setWidth(20);
+            $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+            $companyWorkSheet->getColumnDimension('D')->setWidth(25);
+            $companyWorkSheet->getColumnDimension('E')->setWidth(32);
+            $companyWorkSheet->getColumnDimension('F')->setWidth(28);
+            $companyWorkSheet->getColumnDimension('G')->setWidth(40);
+            $companyWorkSheet->getColumnDimension('H')->setWidth(35);
+            $companyWorkSheet->getColumnDimension('I')->setWidth(40);
+            $companyWorkSheet->getColumnDimension('J')->setWidth(40);
+
+            // Заголовки
+            $companyWorkSheet->setCellValue('A' . $row, 'Заказчик');
+            $companyWorkSheet->setCellValue('B' . $row, 'ИНН Заказчика');
+            $companyWorkSheet->setCellValue('C' . $row, 'Город, Область поставки');
+            $companyWorkSheet->setCellValue('D' . $row, 'Закупаемые услуги');
+            $companyWorkSheet->setCellValue('E' . $row, 'Номер закупки на площадке');
+            $companyWorkSheet->setCellValue('F' . $row, 'Электронная площадка');
+            $companyWorkSheet->setCellValue('G' . $row, 'Стоимость закупки по завершению закупки без НДС');
+            $companyWorkSheet->setCellValue('H' . $row, 'Дата заключения договора');
+            $companyWorkSheet->setCellValue('I' . $row, 'Дата окончания заключенного договора');
+            $companyWorkSheet->setCellValue('J' . $row, 'Осталось дней до окончания договора');
+
+            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 12,
+                        'name'  => 'Times New Roman'
+                    ],
+                ]
+            );
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
+
+            $row++;
+
+
+            for ($i = 0; $i < count($arrTenders); $i++) {
+
+                // массив списков
+                $arrayTenderList = TenderLists::find()->where(['type' => 3])->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+                $arrLists = [];
+                $oldType = -1;
+                $tmpArray = [];
+
+                for ($j = 0; $j < count($arrayTenderList); $j++) {
+
+                    if($arrayTenderList[$j]['type'] == $oldType) {
+
+                        $index = $arrayTenderList[$j]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$j]['description'];
+
+                    } else {
+
+                        if($j > 0) {
+
+                            $arrLists[$oldType] = $tmpArray;
+                            $tmpArray = [];
+
+                            $oldType = $arrayTenderList[$j]['type'];
+
+                            $index = $arrayTenderList[$j]['id'];
+                            $tmpArray[$index] = $arrayTenderList[$j]['description'];
+
+                        } else {
+                            $oldType = $arrayTenderList[$j]['type'];
+                            $tmpArray = [];
+
+                            $index = $arrayTenderList[$j]['id'];
+                            $tmpArray[$index] = $arrayTenderList[$j]['description'];
+                        }
+                    }
+
+                    if(($j + 1) == count($arrayTenderList)) {
+                        $arrLists[$oldType] = $tmpArray;
+                    }
+
+                }
+
+                $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
+                $stringServText = '';
+
+                //
+                if (isset($arrTenders[$i]['service_type'])) {
+
+                    $serviseVal = explode(', ', $arrTenders[$i]['service_type']);
+
+                    if ((is_array($serviseVal)) && (count($serviseVal) > 0)) {
+
+                            for ($z = 0; $z < count($serviseVal); $z++) {
+
+                                if($z == (count($serviseVal) - 1)) {
+                                    if (isset($ServicesList[$serviseVal[$z]])) {
+                                        $stringServText .= $ServicesList[$serviseVal[$z]];
+                                    } else {
+                                        $stringServText .= "-";
+                                    }
+                                } else {
+                                    if (isset($ServicesList[$serviseVal[$z]])) {
+                                        $stringServText .= $ServicesList[$serviseVal[$z]];
+                                        $stringServText .= ", ";
+                                    } else {
+                                        $stringServText .= "-, ";
+                                    }
+                                }
+
+                            }
+
+                    } else {
+
+                        if ($arrTenders[$i]['service_type'] > 0) {
+                            $index = $arrTenders[$i]['service_type'];
+                            $stringServText = isset($ServicesList[$index]) ? ($ServicesList[$index] . ", ") : '-';
+                        } else {
+                            $stringServText = '-';
+                        }
+
+                    }
+
+                } else {
+                    $stringServText = '-';
+                }
+
+                $showTotal = '';
+
+                if(isset($arrTenders[$i]['term_contract'])) {
+                    $timeNow = time();
+
+
+                    if ($arrTenders[$i]['term_contract'] > $timeNow) {
+
+                        $totalDate = $arrTenders[$i]['term_contract'] - $timeNow;
+
+                        $days = ((Int)($totalDate / 86400));
+                        $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                        if ($days < 0) {
+                            $days = 0;
+                        }
+
+                        $showTotal = $days . ' д.';
+
+                    } else {
+                        if (mb_strlen($arrTenders[$i]['term_contract']) > 3) {
+                            $totalDate = $timeNow - $arrTenders[$i]['term_contract'];
+
+                            $days = ((Int)($totalDate / 86400));
+                            $totalDate -= (((Int)($totalDate / 86400)) * 86400);
+
+                            if ($days < 0) {
+                                $days = 0;
+                            }
+                            $showTotal = '- ' . $days . ' д.';
+                        } else {
+                            $showTotal = '-';
+                        }
+                    }
+
+                }
+
+                   $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? (mb_strlen($arrTenders[$i]['customer']) > 0 ? $arrTenders[$i]['customer'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? (mb_strlen($arrTenders[$i]['inn_customer']) > 0 ? $arrTenders[$i]['inn_customer'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? (mb_strlen($arrTenders[$i]['city']) > 0 ? $arrTenders[$i]['city'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('D' . $row, $stringServText);
+                    $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
+                    $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
+                    $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
+                    $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
+                    $companyWorkSheet->setCellValue('J' . $row, $showTotal);
+
+                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
+                        'alignment' => array(
+                            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                        )
+                    ));
+
+                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+                            'font' => [
+                                'size' => 12,
+                                'name'  => 'Times New Roman'
+                            ],
+                        ]
+                    );
+
+                    $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
+
+                    $row++;
+            }
+        }
+
+        $objPHPExcel->getActiveSheet()->setSelectedCells('A1');
+
+        //saving document
+        $pathFile = \Yii::getAlias('@webroot/files/tenders/');
+
+        if (!is_dir($pathFile)) {
+            mkdir($pathFile, 0755, 1);
+        }
+
+
+        $filename = 'filtertender.xls';
+
+        $objWriter->save($pathFile . $filename);
+        return $filename;
     }
 
     // Закрыть изменения тендера
@@ -1447,9 +1745,11 @@ class CompanyController extends Controller
 
             $model->files = UploadedFile::getInstances($model, 'files');
 
-            if ($model->upload()) {
-                // file is uploaded successfully
-            } else {
+            if ($model->files) {
+
+                if ($model->upload()) {
+                    // file is uploaded successfully
+                }
             }
 
             return $this->redirect(['company/state', 'id' => $model->company_id]);

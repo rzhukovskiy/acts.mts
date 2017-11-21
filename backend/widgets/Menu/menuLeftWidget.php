@@ -86,7 +86,7 @@ class menuLeftWidget extends Widget
                     'label'  => 'Тендеры',
                     'url'    => '#',
                     'active' => ((Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist'),
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender'),
                     'items'  => [
                         [
                             'label'  => 'Компании' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
@@ -99,9 +99,15 @@ class menuLeftWidget extends Widget
 
                         [
                             'label'  => 'Все закупки',
-                            'url' => ['/company/tenderlist', 'type' => Service::TYPE_WASH],
+                            'url' => ['/company/tenderlist'],
                             'active' =>
                                  (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
+                        ],
+                        [
+                            'label'  => 'Список<br />договоров',
+                            'url' => ['/company/filtertender'],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'filtertender'),
                         ],
                     ],
                 ],
@@ -244,7 +250,7 @@ class menuLeftWidget extends Widget
                     'label'  => 'Тендеры',
                     'url'    => '#',
                     'active' => ((Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
-                            ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist'),
+                            ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender'),
                     'items'  => [
                         [
                             'label'  => 'Компании' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
@@ -257,9 +263,15 @@ class menuLeftWidget extends Widget
 
                         [
                             'label'  => 'Все закупки',
-                            'url' => ['/company/tenderlist', 'type' => Service::TYPE_WASH],
+                            'url' => ['/company/tenderlist'],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
+                        ],
+                        [
+                            'label'  => 'Список<br />договоров',
+                            'url' => ['/company/filtertender'],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'filtertender'),
                         ],
                     ],
                 ],
