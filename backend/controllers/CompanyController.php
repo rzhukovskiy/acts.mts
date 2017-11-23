@@ -17,10 +17,12 @@ use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
+use common\models\search\TenderControlSearch;
 use common\models\search\TenderSearch;
 use common\models\Tender;
 use common\models\TenderHystory;
 use common\models\TenderLists;
+use common\models\TenderControl;
 use yii\base\DynamicModel;
 use common\models\CompanySubType;
 use yii\web\UploadedFile;
@@ -59,17 +61,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders'],
+                        'actions' => ['add-price', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -656,12 +658,184 @@ class CompanyController extends Controller
 
     }
 
+    public function actionControltender()
+    {
+
+        $searchModel = new TenderControlSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
+        return $this->render('tender/controltender', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'usersList' => $usersList,
+
+        ]);
+
+    }
+    public function actionNewcontroltender()
+    {
+        $model = new TenderControl();
+
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            return $this->redirect(['company/controltender']);
+
+        } else {
+            return $this->render('form/newcontroltender', [
+                'model' => $model,
+                'usersList' => $usersList,
+            ]);
+        }
+    }
+    public function actionFullcontroltender($id)
+    {
+        $model = TenderControl::findOne(['id' => $id]);
+
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
+        return $this->render('tender/fullcontroltender', [
+            'model' => $model,
+            'usersList' => $usersList,
+        ]);
+
+    }
+
+
+    public function actionUpdatecontroltender($id)
+    {
+        $model = TenderControl::findOne(['id' => $id]);
+
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // массив списков
+            $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+            $arrLists = [];
+            $oldType = -1;
+            $tmpArray = [];
+
+            for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+                if($arrayTenderList[$i]['type'] == $oldType) {
+
+                    $index = $arrayTenderList[$i]['id'];
+                    $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+                } else {
+
+                    if($i > 0) {
+
+                        $arrLists[$oldType] = $tmpArray;
+                        $tmpArray = [];
+
+                        $oldType = $arrayTenderList[$i]['type'];
+
+                        $index = $arrayTenderList[$i]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+                    } else {
+                        $oldType = $arrayTenderList[$i]['type'];
+                        $tmpArray = [];
+
+                        $index = $arrayTenderList[$i]['id'];
+                        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+                    }
+                }
+
+                if(($i + 1) == count($arrayTenderList)) {
+                    $arrLists[$oldType] = $tmpArray;
+                }
+
+            }
+            //
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+
+            // Списки с данными
+            $arrSiteAddress = isset($arrLists[8]) ? $arrLists[8] : [];
+            $arrTypePayment = isset($arrLists[9]) ? $arrLists[9] : [];
+
+            foreach ($arrUpdate['TenderControl'] as $name => $value) {
+                if($name == 'date_send') {
+                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
+                } else if($name == 'date_enlistment') {
+                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
+                } else if($name == 'money_unblocking') {
+                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
+                } else if($name == 'date_return') {
+                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
+                }
+            }
+
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
+                foreach (Yii::$app->request->post('TenderControl') as $name => $value) {
+
+                    if ($name == 'site_address') {
+                        $output[] = $arrSiteAddress[$value];
+                    } else if ($name == 'type_payment') {
+                        $output[] = $arrTypePayment[$value];
+                    } else if ($name == 'user_id') {
+                        $output[] = $usersList[$value];
+                    } else if ($name == 'send' || $name == 'return' || $name == 'balance_work') {
+                        $output[] = $value . " ₽";
+                    } else {
+                        $output[] = $value;
+                    }
+
+                }
+                return ['output' => implode(', ', $output), 'message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        } else {
+            return ['message' => 'не получилось'];
+        }
+    }
+
+    // Закрыть изменения controltender
+    public function actionControlisarchive()
+    {
+
+        if(Yii::$app->request->post('control_id')) {
+
+            $id = Yii::$app->request->post('control_id');
+            $is_archive = Yii::$app->request->post('is_archive');
+
+            $model = TenderControl::findOne(['id' => $id]);
+
+            if($is_archive == 1) {
+                $model->is_archive = 0;
+            } else {
+                $model->is_archive = 1;
+            }
+
+            if($model->save()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
     // Скачиваем файл Excel для заполнения
     public function actionTendersexcel()
     {
             $resExcel = self::createExcelTenders();
 
-            $pathFile = \Yii::getAlias('@webroot/files/tenders/filtertender.xls');
+            $pathFile = Yii::getAlias('@webroot/files/tenders/filtertender.xls');
 
             header("Content-Type: application/octet-stream");
             header("Accept-Ranges: bytes");
