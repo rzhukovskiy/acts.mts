@@ -11,6 +11,7 @@ use common\models\Company;
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $companyDropDownData array
  * @var $admin null|bool
+ * @var $client null|bool
  */
 
 $this->title = 'Машины';
@@ -142,7 +143,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => $admin ? $searchModel : null,
+    'filterModel' => ($admin || (Yii::$app->user->identity->role == \common\models\User::ROLE_CLIENT)) ? $searchModel : null,
     'floatHeader' => $admin,
     'floatHeaderOptions' => ['top' => '0'],
     'hover' => false,
@@ -198,6 +199,7 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'mark_id',
+            'filter' => Html::activeDropDownList($searchModel, 'mark_id', \common\models\Mark::find()->innerJoin('act', '`act`.`mark_id` = `mark`.`id`')->where(['OR', ['`act`.`client_id`' => $arrParParIds], ['`act`.`client_id`' => $searchModel->client_id]])->andWhere(['between', 'served_at', strtotime($searchModel->dateFrom), strtotime($searchModel->dateTo)])->andWhere(['!=', '`act`.`service_type`', 5])->select(['name', 'mark.id'])->groupBy('`name`')->indexBy('id')->column(), ['prompt' => 'все марки','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']),
             'content' => function ($data) {
                 return !empty($data->mark->name) ? Html::encode($data->mark->name) : '';
             },
@@ -205,6 +207,7 @@ echo GridView::widget([
         'car_number',
         [
             'attribute' => 'type_id',
+            'filter' => Html::activeDropDownList($searchModel, 'type_id', \common\models\Type::find()->innerJoin('act', '`act`.`type_id` = `type`.`id`')->where(['OR', ['`act`.`client_id`' => $arrParParIds], ['`act`.`client_id`' => $searchModel->client_id]])->andWhere(['between', 'served_at', strtotime($searchModel->dateFrom), strtotime($searchModel->dateTo)])->select(['name', 'type.id'])->andWhere(['!=', '`act`.`service_type`', 5])->select(['name', 'type.id'])->groupBy('`name`')->indexBy('id')->column(), ['prompt' => 'все типы','class' => 'form-control ext-filter', 'style' => 'width: 200px; margin-right: 10px']),
             'content' => function ($data) {
                 return !empty($data->type->name) ? Html::encode($data->type->name) : '';
             },

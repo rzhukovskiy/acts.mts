@@ -35,6 +35,7 @@ class CarSearch extends Car
             self::SCENARIO_DEFAULT => ['company_id', 'number','mark_id', 'type_id'],
             self::SCENARIO_INFECTED => ['company_id', 'period'],
             self::SCENARIO_OWNER => ['company_id', 'number','mark_id', 'type_id'],
+            'default' => ['company_id', 'number','mark_id', 'type_id'],
         ];
     }
 

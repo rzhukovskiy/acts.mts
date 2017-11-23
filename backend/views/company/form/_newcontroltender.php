@@ -89,17 +89,18 @@ function loadListsItems(type) {
                     
                 var itemsArr = jQuery.parseJSON(response.items);
                 
-                if(itemsArr.length > 0) {
-                    
-                    var resItems = "";
-                    
-                    // добавляем placeholder
+                // добавляем placeholder
                     if(type == 8) {
                         selectObj.append($("<option></option>").text("Выберите адрес площадки"));
                     }
                     if(type == 9) {
                         selectObj.append($("<option></option>").text("Выберите тип платежа"));
                     }
+                
+                if(itemsArr.length > 0) {
+                    
+                    var resItems = "";
+                    
                     // Вывод значений списков
                     for (var i = 0; i < itemsArr.length; i++) {
                         

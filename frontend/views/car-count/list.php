@@ -98,6 +98,7 @@ if ($admin) {
                         'pageSummary' => true,
                         'pageSummaryFunc' => GridView::F_SUM,
                     ],
+
                     [
                         'header' => '',
                         'class' => 'kartik\grid\ActionColumn',

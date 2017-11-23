@@ -235,14 +235,14 @@ function loadListsItems(type) {
                     
                 var itemsArr = jQuery.parseJSON(response.items);
                 
-                if(itemsArr.length > 0) {
-                    
-                    var resItems = "";
-                    
                     // добавляем placeholder
                     if(type == 0) {
                         selectObj.append($("<option></option>").text("Выберите статус закупки"));
                     }
+                    
+                if(itemsArr.length > 0) {
+                    
+                    var resItems = "";
                     
                     // Вывод значений списков
                     for (var i = 0; i < itemsArr.length; i++) {
