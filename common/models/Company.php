@@ -1080,6 +1080,36 @@ class Company extends ActiveRecord
      */
     public function beforeDelete()
     {
+
+        // Контроль штрафов
+        if($this->use_penalty == 1) {
+            $this->use_penalty = 0;
+
+            $modelPenalty = new Penalty();
+            $modelPenalty->createToken();
+
+            // Получаем токен
+            $token = $modelPenalty->createToken();
+            $resToken = json_decode($token[1], true);
+
+            // Сохраняем полученный токен
+            $modelPenalty->setParams(['token' => $resToken['token']]);
+
+            // Удаление клиента
+            $delCliend = $modelPenalty->deleteClient($this->id . '@mtransservice.ru');
+            $resDelClient = json_decode($delCliend[1], true);
+
+            if (isset($resDelClient['errors'])) {
+                // Ошибка
+            } else {
+                // Клиент удален
+
+                Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->id);
+
+            }
+        }
+        // Контроль штрафов
+
         $this->status = self::STATUS_DELETED;
         $this->save();
 
