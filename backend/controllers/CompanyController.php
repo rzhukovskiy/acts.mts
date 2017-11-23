@@ -2365,6 +2365,12 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
         $status = Company::$listStatus[$model->status]['en'];
 
+        // Удаляем тендеры
+        if($model->status == Company::STATUS_TENDER) {
+            Tender::deleteAll(['company_id' => $model->id]);
+        }
+        // Удаляем тендеры
+
         // Удалить запись имени пользователя добавившего заявку
         if($model->status == Company::STATUS_NEW) {
             DepartmentCompany::deleteAll([
