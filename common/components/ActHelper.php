@@ -8,7 +8,6 @@
 
 namespace common\components;
 
-
 use common\models\Act;
 use common\models\Mark;
 use common\models\Service;
@@ -280,6 +279,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -287,6 +287,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                 ]
             ],
             User::ROLE_WATCHER => [
@@ -296,6 +297,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -303,6 +305,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -324,6 +327,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -331,6 +335,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -352,6 +357,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
                 ],
             ],
             User::ROLE_CLIENT => [
@@ -362,6 +368,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'buttons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                 ]
             ],
         ];

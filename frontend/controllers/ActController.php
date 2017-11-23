@@ -16,6 +16,7 @@ use common\models\search\CarSearch;
 use common\models\search\EntrySearch;
 use common\models\Service;
 use common\models\User;
+use frontend\models\Penalty;
 use yii;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
@@ -54,6 +55,11 @@ class ActController extends Controller
                         'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'closeload'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
+                    ],
+                    [
+                        'actions' => ['penaltysearch'],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -751,4 +757,73 @@ class ActController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    // Cron для проверки штрафов
+    public function actionPenaltysearch()
+    {
+
+        // Рассылка 2 раза в неделю для партреров
+        if (isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+
+            $resCompany = Company::find()->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->where(['company.use_penalty' => 1])->andWhere(['not', ['company_info.inn' => null]])->select('company.use_penalty, company.id, company_info.inn')->orderBy('company.id')->asArray()->all();
+
+            if(count($resCompany) > 0) {
+
+                // Штрафы
+                $modelPenalty = new Penalty();
+                $modelPenalty->createToken();
+
+                // Получаем токен
+                $token = $modelPenalty->createToken();
+                $resToken = json_decode($token[1], true);
+
+                // Сохраняем полученный токен
+                $modelPenalty->setParams(['token' => $resToken['token']]);
+
+                $arrCompanyID = [];
+
+                for ($i = 0; $i < count($resCompany); $i++) {
+                    if (mb_strlen($resCompany[$i]['inn']) > 3) {
+                        $arrCompanyID[] = $resCompany[$i]['id'];
+
+                        // Проверка штрафа
+                        $resPenalty = $modelPenalty->getClientFines($resCompany[$i]['id'] . '@mtransservice.ru');
+                        $arrPenalty = json_decode($resPenalty[1], true);
+
+                        if(isset($arrPenalty['fines'])) {
+                            if(count($arrPenalty['fines']) > 0) {
+
+                                $arrPenCont = $arrPenalty['fines'];
+
+                                // Записываем штрафы
+                                for ($z = 0; $z < count($arrPenCont); $z++) {
+
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                if (count($arrCompanyID) > 0) {
+                    $resCar = Car::find()->where(['company_id' => $arrCompanyID])->andWhere(['is_penalty' => 1])->select('company_id, number, cert')->orderBy('company_id')->asArray()->all();
+
+                    for ($j = 0; $j < count($resCar); $j++) {
+
+
+                    }
+
+                }
+
+            }
+
+            die;
+
+            return 1;
+        }
+    }
+
 }

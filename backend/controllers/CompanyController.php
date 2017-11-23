@@ -3977,7 +3977,7 @@ class CompanyController extends Controller
             }
         }
 
-        $arrServiceAll = ['2' => '2', '3' => '3', '4' => '4', '5' => '5'];
+        $arrServiceAll = ['2' => '2', '3' => '3', '4' => '4', '5' => '5', '7' => '7', '8' => '8'];
         $noPurchased = array_diff($arrServiceAll, $PurchasedService);
 
         if(count($noPurchased) > 0) {

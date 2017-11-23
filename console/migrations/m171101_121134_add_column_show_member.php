@@ -6,7 +6,7 @@ class m171101_121134_add_column_show_member extends Migration
 {
     public function Up()
     {
-        $this->addColumn('{{%company_member}}', 'show_member', 'TINYINT(1) NOT NULL DEFAULT 0');
+        $this->addColumn('{{%company_member}}', 'show_member', 'TINYINT(1) NOT NULL DEFAULT 1');
     }
 
     public function Down()

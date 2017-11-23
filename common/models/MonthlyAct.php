@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\monthlyAct\DisinfectMonthlyAct;
 use common\models\monthlyAct\ParkingMonthlyAct;
+use common\models\monthlyAct\PenaltyMonthlyAct;
 use common\models\monthlyAct\ServiceMonthlyAct;
 use common\models\monthlyAct\TiresMonthlyAct;
 use common\models\monthlyAct\WashMonthlyAct;
@@ -352,6 +353,9 @@ class MonthlyAct extends ActiveRecord
                 break;
             case Service::TYPE_PARKING:
                 return new ParkingMonthlyAct();
+                break;
+            case Service::TYPE_PENALTY:
+                return new PenaltyMonthlyAct();
                 break;
         }
 

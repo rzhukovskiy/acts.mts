@@ -132,6 +132,27 @@ $this->registerJs($script, View::POS_READY);
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('inn') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'inn',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'ИНН'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('website') ?></td>
                 <td>
                     <?= Editable::widget([

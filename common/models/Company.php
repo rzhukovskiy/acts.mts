@@ -5,6 +5,7 @@ use common\components\DateHelper;
 use common\models\query\CompanyQuery;
 use common\models\DepartmentCompany;
 use common\models\search\CarSearch;
+use frontend\models\Penalty;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
@@ -33,6 +34,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $old_id
+ * @property integer $use_penalty
  *
  * @property CompanyInfo $info
  * @property CompanyOffer $offer
@@ -90,6 +92,7 @@ class Company extends ActiveRecord
     const TYPE_DISINFECT = 5;
     const TYPE_UNIVERSAL = 6;
     const TYPE_PARKING = 7;
+    const TYPE_PENALTY = 8;
 
     static $listType = [
         self::TYPE_OWNER     => [
@@ -119,6 +122,10 @@ class Company extends ActiveRecord
         self::TYPE_PARKING => [
             'en' => 'parking',
             'ru' => 'Стоянка',
+        ],
+        self::TYPE_PENALTY => [
+            'en' => 'penalty',
+            'ru' => 'Штрафы',
         ],
     ];
 
@@ -225,7 +232,7 @@ class Company extends ActiveRecord
         return [
             [['name', 'address'], 'required'],
             [['name'], 'unique'],
-            [['is_nested', 'car_type'], 'integer'],
+            [['is_nested', 'car_type', 'use_penalty'], 'integer'],
             [
                 [
                     'parent_id',
@@ -271,6 +278,7 @@ class Company extends ActiveRecord
             'expensive' => 'Стоимость',
             'workTime'    => 'Время работы',
             'car_type'    => 'Тип ТС',
+            'use_penalty'    => 'Контроль штрафов',
         ];
     }
 
@@ -781,6 +789,25 @@ class Company extends ActiveRecord
      */
     public function beforeSave($insert)
     {
+
+        // Контроль штрафов
+        if($this->use_penalty == 1) {
+
+            $modelInfo = CompanyInfo::findOne(['company_id' => $this->id]);
+
+            if (isset($modelInfo)) {
+
+                if (mb_strlen($modelInfo->inn) > 3) {
+                } else {
+                    $this->use_penalty = 0;
+                }
+
+            } else {
+                $this->use_penalty = 0;
+            }
+        }
+        // Контроль штрафов
+
         if (!empty($this->parent_id)) {
             $this->is_nested = self::IS_NESTED;
         }
@@ -794,6 +821,97 @@ class Company extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+
+        // Контроль штрафов
+        if($this->use_penalty == 1) {
+
+            $modelInfo = CompanyInfo::findOne(['company_id' => $this->id]);
+
+            if(isset($modelInfo)) {
+
+                if(mb_strlen($modelInfo->inn) > 3) {
+
+                    $modelPenalty = new Penalty();
+                    $modelPenalty->createToken();
+
+                    // Получаем токен
+                    $token = $modelPenalty->createToken();
+                    $resToken = json_decode($token[1], true);
+
+                    // Сохраняем полученный токен
+                    $modelPenalty->setParams(['token' => $resToken['token']]);
+
+                    // Создаем нового клиента
+                    $newClient = $modelPenalty->createClient($this->id . '@mtransservice.ru', $this->name, $modelInfo->inn);
+                    $resNewClient = json_decode($newClient[1], true);
+
+                    if(isset($resNewClient['errors'])) {
+                        // Ошибка
+
+                        if(isset($resNewClient['errors']['email'])) {
+                        } else {
+                            Company::updateAll(['use_penalty' => 0], 'id = ' . $this->id);
+                        }
+
+                    } else {
+
+                        // Клиент создан
+
+                        // Добавление ТС
+                        $resCars = Car::find()->where(['company_id' =>$this->id])->andWhere(['not', ['cert' => null]])->select('number, cert')->orderBy('id')->asArray()->all();
+
+                        for($i = 0; $i < count($resCars); $i++) {
+
+                            $addCars = $modelPenalty->createClientCar($this->id . '@mtransservice.ru', ['name' => '', 'cert' => $resCars[$i]['cert'], 'reg' => $resCars[$i]['number']]);
+                            $resAddCars = json_decode($addCars[1], true);
+
+                            if(isset($resAddCars['errors'])) {
+                                // Ошибка
+                            } else {
+                                Car::updateAll(['is_penalty' => 1], 'company_id = ' . $this->id . ' AND number="' . $resCars[$i]['number'] . '"');
+                            }
+
+                        }
+
+                        // Добавление ТС
+
+                    }
+
+                } else {
+                }
+
+            } else {
+            }
+
+        } else {
+
+            $modelPenalty = new Penalty();
+            $modelPenalty->createToken();
+
+            // Получаем токен
+            $token = $modelPenalty->createToken();
+            $resToken = json_decode($token[1], true);
+
+            // Сохраняем полученный токен
+            $modelPenalty->setParams(['token' => $resToken['token']]);
+
+            // Удаление клиента
+            $delCliend = $modelPenalty->deleteClient($this->id . '@mtransservice.ru');
+            $resDelClient = json_decode($delCliend[1], true);
+
+            if(isset($resDelClient['errors'])) {
+                // Ошибка
+                Company::updateAll(['use_penalty' => 1], 'id = ' . $this->id);
+            } else {
+                // Клиент удален
+
+                Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->id);
+
+            }
+
+        }
+        // Контроль штрафов
+
         //Отмечаем родительскую компанию
         if ($this->is_nested == self::IS_NESTED &&
             !empty($this->parent->children) &&

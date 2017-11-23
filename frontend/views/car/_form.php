@@ -41,7 +41,9 @@ use common\models\Type;
                 Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(),
                 ['prompt' => 'выберите тип ТС']
             ) ?>
+            <?= $form->field($model, 'cert') ?>
             <?= $form->field($model, 'is_infected')->checkbox([], false) ?>
+            <?= $form->field($model, 'is_penalty')->checkbox([], false) ?>
             <?= Html::hiddenInput('Car[company_id]', $companyModel->id) ?>
 
             <div class="form-group">

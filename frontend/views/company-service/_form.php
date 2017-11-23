@@ -20,7 +20,7 @@ use common\models\Company;
     </div>
     <div class="collapse<?= Yii::$app->session->hasFlash('saved') ? ' in' : '' ?>" id="collapsePriceForm_<?= $type ?>">
         <div class="panel-body">
-            <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT, Company::TYPE_PARKING]) ? $this->render('/company-service/merged/_list', [
+            <?= in_array($type, [Company::TYPE_WASH, Company::TYPE_DISINFECT, Company::TYPE_PARKING, Company::TYPE_PENALTY]) ? $this->render('/company-service/merged/_list', [
                 'dataProvider' => $model->getMergedPriceDataProvider($type),
                 'type' => $type,
             ]) : $this->render('/company-service/split/_list', [

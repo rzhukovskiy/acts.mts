@@ -166,6 +166,7 @@ $this->registerJs($script, View::POS_READY);
                 </div>
             </div>
             <?= $form->field($model, 'director') ?>
+            <?= $form->field($model, 'use_penalty')->checkbox([], false) ?>
             <?php foreach(Service::$listType as $id => $type) {
                 $existed = $model->isNewRecord ? null : Requisites::findOne(['company_id' => $model->id, 'type' => $id])
             ?>
