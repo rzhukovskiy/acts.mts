@@ -149,8 +149,7 @@ class CardController extends Controller
         $searchModel = new CardSearch();
         $searchModel->is_lost = 1;
 
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider = CardSearch::addCarToSearch($dataProvider);
+        $dataProvider = $searchModel->searchLost(Yii::$app->request->queryParams);
 
         return $this->render('lost',
             [

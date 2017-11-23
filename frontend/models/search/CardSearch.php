@@ -25,7 +25,7 @@ class CardSearch extends CommonCardSearch
     public function rules()
     {
         return [
-            [['id', 'company_id', 'number', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'company_id', 'number', 'status', 'created_at', 'updated_at', 'is_lost'], 'integer'],
         ];
     }
 
@@ -98,6 +98,33 @@ class CardSearch extends CommonCardSearch
         return $dataProvider;
     }
 
+    public function searchLost($params)
+    {
+        $query = Card::find()->orderBy('company_id');
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->joinWith(['company company']);
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'is_lost' => $this->is_lost,
+        ]);
+
+        return $dataProvider;
+    }
 
     /**
      * Подмешиваем данные о машинах в датпровайдер карт
