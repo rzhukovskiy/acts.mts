@@ -268,7 +268,6 @@ $columns = [
 ];
 echo GridView::widget([
 'dataProvider' => $dataProvider,
-'filterModel' => $searchModel,
 'summary' => false,
 'emptyText' => '',
 'panel' => [
