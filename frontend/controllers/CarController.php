@@ -11,6 +11,7 @@ use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\Type;
 use frontend\models\forms\carUploadXlsForm;
+use frontend\models\Penalty;
 use frontend\models\search\CarSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -467,6 +468,7 @@ class CarController extends Controller
             if((($id == 0) && (Yii::$app->request->post('number'))) || ($id > 0)) {
 
                 $modelCar = null;
+                $checkPenalty = false;
 
                 if (($id == 0) && (Yii::$app->request->post('number'))) {
                     $modelCar = Car::findOne(['number' => Yii::$app->request->post('number')]);
@@ -476,6 +478,12 @@ class CarController extends Controller
 
                 if ($modelCar->company_id != $company_id) {
                     $modelCar->company_id = $company_id;
+
+                    // Отключаем штрафы
+                    if($modelCar->is_penalty == 1) {
+                        $modelCar->is_penalty = 0;
+                        $checkPenalty = true;
+                    }
 
                     if ($modelCar->save()) {
 
@@ -547,6 +555,38 @@ class CarController extends Controller
                         $modelHistory->date = (string)time();
                         $modelHistory->save();
                         // Добавляем в историю кто добавил машину
+
+                        // Контроль штрафов
+                        if($checkPenalty == true) {
+                            $modelPenalty = new Penalty();
+                            $modelPenalty->createToken();
+
+                            // Получаем токен
+                            $token = $modelPenalty->createToken();
+                            $resToken = json_decode($token[1], true);
+
+                            // Сохраняем полученный токен
+                            $modelPenalty->setParams(['token' => $resToken['token']]);
+
+                            $carList = $modelPenalty->getClientCars($company_from . '@mtransservice.ru');
+                            $resCarList = json_decode($carList[1], true);
+
+                            if(isset($resCarList['cars'])) {
+                                $arrCarsList = $resCarList['cars'];
+
+                                for ($i = 0; $i < count($arrCarsList); $i++) {
+                                    if (($arrCarsList[$i]['reg'] == $modelCar->number) || (mb_strtoupper(str_replace(' ', '', $arrCarsList[$i]['reg']), 'UTF-8') == $modelCar->number)) {
+
+                                        $delCar = $modelPenalty->deleteClientCar($company_from . '@mtransservice.ru', $arrCarsList[$i]['id']);
+                                        $resDel = json_decode($delCar[1], true);
+
+                                    }
+                                }
+
+                            }
+
+                        }
+                        // Контроль штрафов
 
                         echo json_encode(['success' => 'true']);
                     } else {
