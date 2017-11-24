@@ -45,6 +45,12 @@ class menuLeftWidget extends Widget
             $searchModel->service_type = $type_id;
             $errorsCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
         }
+        $lossesCount = 0;
+        foreach (Service::$listType as $type_id => $typeData) {
+            $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
+            $searchModel->service_type = $type_id;
+            $lossesCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+        }
 
         $items = [];
         // Admin links
@@ -249,7 +255,14 @@ class menuLeftWidget extends Widget
                         'Ошибочные акты ' .
                         ($errorsCount ? '<span class="label label-danger">' . $errorsCount . '</span>' : ''),
                     'url'    => ['/error/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'error',
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses',
+                ],
+                [
+                    'label'  =>
+                        'Убыточные акты ' .
+                        ($lossesCount ? '<span class="label label-danger">' . $lossesCount . '</span>' : ''),
+                    'url'    => ['/error/losses', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'losses',
                 ],
             ];
         } // Partner links

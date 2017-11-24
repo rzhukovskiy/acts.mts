@@ -9,14 +9,33 @@
  * @var $admin boolean
  */
 
-$this->title = 'Акты';
-
 $request = Yii::$app->request;
 
-echo $this->render('_tabs',
-[
-    'role' => $role,
-]);
+if((Yii::$app->controller->action->id == 'list') && (Yii::$app->controller->id == 'error')) {
+    $this->title = 'Ошибочные акты';
+
+    echo $this->render('_tabs',
+        [
+            'role' => $role,
+        ]);
+
+} elseif((Yii::$app->controller->action->id == 'losses') && (Yii::$app->controller->id == 'error')) {
+    $this->title = 'Убыточные акты';
+
+    echo $this->render('_tabslose',
+        [
+            'role' => $role,
+        ]);
+
+} else {
+    $this->title = 'Акты';
+
+    echo $this->render('_tabs',
+        [
+            'role' => $role,
+        ]);
+
+}
 
 echo $this->render('_list',
 [

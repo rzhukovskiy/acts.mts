@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Act;
+use common\models\ActError;
 use common\models\Car;
 use common\models\search\ActSearch;
 use common\models\Service;
@@ -27,17 +28,17 @@ class ErrorController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar', 'losses', 'dellosses'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'numberlist', 'querycar'],
+                        'actions' => ['list', 'view', 'numberlist', 'querycar', 'losses', 'dellosses'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'querycar'],
+                        'actions' => ['list', 'view', 'querycar', 'losses', 'dellosses'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -49,6 +50,22 @@ class ErrorController extends Controller
     public function actionList($type)
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
+        $searchModel->service_type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'role' => Yii::$app->user->identity->role,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    public function actionLosses($type)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -123,6 +140,13 @@ class ErrorController extends Controller
         $model = $this->findModel($id);
         $model->status = Act::STATUS_FIXED;
         $model->save();
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionDellosses($id)
+    {
+        ActError::deleteAll(['act_id' => $id, 'error_type' => 19]);
 
         return $this->redirect(Yii::$app->request->referrer);
     }

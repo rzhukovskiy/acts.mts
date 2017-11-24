@@ -63,6 +63,7 @@ class Act extends ActiveRecord
     const STATUS_FIXED = 2;
 
     const SCENARIO_ERROR = 'error';
+    const SCENARIO_LOSSES = 'losses';
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
@@ -759,6 +760,14 @@ class Act extends ActiveRecord
             $modelActError = new ActError();
             $modelActError->act_id = $this->id;
             $modelActError->error_type = $errorType;
+            $modelActError->save();
+        }
+
+        // Проверка на убыточный акт
+        if($this->profit < 0) {
+            $modelActError = new ActError();
+            $modelActError->act_id = $this->id;
+            $modelActError->error_type = 19;
             $modelActError->save();
         }
 

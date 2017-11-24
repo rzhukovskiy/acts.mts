@@ -111,12 +111,23 @@ $columns = [
         'contentOptions' => ['style' => 'min-width: 85px'],
         'buttons'        => [
             'delete' => function ($url, $data, $key) {
-                return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
-                    'delete',
-                    'id' => $data->id,
-                ], [
-                    'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
-                ]);
+
+                if(Yii::$app->controller->action->id == 'losses') {
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
+                        'dellosses',
+                        'id' => $data->id,
+                    ], [
+                        'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
+                    ]);
+                } else {
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
+                        'delete',
+                        'id' => $data->id,
+                    ], [
+                        'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
+                    ]);
+                }
+
             },
 
         ],
@@ -134,7 +145,7 @@ echo GridView::widget([
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Ошибочные акты',
+        'heading' => (Yii::$app->controller->action->id == 'losses') ? 'Убыточные акты' : 'Ошибочные акты',
         'before' => false,
         'footer' => false,
         'after' => false,

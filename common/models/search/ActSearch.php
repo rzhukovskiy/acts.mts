@@ -46,6 +46,7 @@ class ActSearch extends Act
             self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
             self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
             self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number'],
+            self::SCENARIO_LOSSES => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number'],
             self::SCENARIO_HISTORY => ['card_number', 'client_id', 'car_number', 'dateFrom', 'dateTo', 'service_type', 'address', 'mark_id', 'type_id'],
             'default' => [],
         ];
@@ -106,9 +107,24 @@ class ActSearch extends Act
                     'actErrors as actErrors',
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
+                $query->andWhere(['!=', 'actErrors.error_type', 19]);
                 $query->orderBy('partner_id, served_at');
                 break;
-
+            case self::SCENARIO_LOSSES:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'car car',
+                    'card as card',
+                    'client as client',
+                    'partner as partner',
+                    'car as car',
+                    'actErrors as actErrors',
+                ]);
+                $query->andWhere(['is NOT', 'actErrors.act_id', null]);
+                $query->andWhere(['actErrors.error_type' => 19]);
+                $query->orderBy('partner_id, served_at');
+                break;
             case self::SCENARIO_CLIENT:
                 $query->joinWith([
                     'type',
