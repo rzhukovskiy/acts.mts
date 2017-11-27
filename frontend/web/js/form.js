@@ -174,6 +174,7 @@ this.addHeaders = function(options) {
     var defaultGroupClass = '.grouped';
 
     var total = [];
+    var totalCount = [];
     var trs = $(tableSelector).find('tbody tr').not('.' + defaultHeaderClass).not('.' + defaultFooterClass);
     trs.each(function(tr_id, row) {
         var previous = trs.eq(tr_id - 1);
@@ -182,6 +183,7 @@ this.addHeaders = function(options) {
         $(row).find('td' + defaultGroupClass).each(function(td_id, td) {
             var col = $(td).attr('data-col-seq');
             var pos = $(row).find('td').not('.hidden').index($(row).find('td.sum'));
+            var posCount = $(row).find('td').not('.hidden').index($(row).find('td.count'));
             var tag = 'td[data-col-seq=' + col + ']';
 
             var currentValue = $(td).text();
@@ -191,7 +193,11 @@ this.addHeaders = function(options) {
             if (!total[col]) {
                 total[col] = 0;
             }
+            if (!totalCount[col]) {
+                totalCount[col] = 0;
+            }
             total[col] += parseInt($(row).find('td.sum').text());
+            totalCount[col]++;
             if (currentValue != nextValue) {
                 var footerTr = $('<tr>').addClass(defaultFooterClass);
                 if ($(td).attr('data-parent')) {
@@ -201,8 +207,11 @@ this.addHeaders = function(options) {
                     if (i == pos) {
                         var footerTd = $('<td>').text(total[col]);
                         footerTr.append(footerTd);
+                    } else if (i == posCount) {
+                        var footerTd = $('<td>').text(totalCount[col]);
+                        footerTr.append(footerTd);
                     } else if (i == 0) {
-                        var footerTd = $('<td>').text($(td).attr('data-footer')).attr("colspan", pos);
+                        var footerTd = $('<td>').text($(td).attr('data-footer')).attr("colspan", posCount);
                         footerTr.append(footerTd);
                     } else if (i > pos) {
                         var footerTd = $('<td>');
@@ -213,6 +222,7 @@ this.addHeaders = function(options) {
                 $(row).after(footerTr);
 
                 total[col] = 0;
+                totalCount[col] = 0;
             }
 
             if (tr_id == 0 || previousValue != currentValue) {
