@@ -4,7 +4,6 @@ namespace frontend\controllers;
 
 use common\components\ArrayHelper;
 use common\models\Act;
-use common\models\ActError;
 use common\models\ActScope;
 use common\models\Car;
 use common\models\Company;
@@ -94,17 +93,6 @@ class CarController extends Controller
             ->groupBy('car_number');
 
         $companyDropDownData = Company::dataDropDownList();
-
-        //
-        $arrAct = Act::find()->where('(profit < 0) OR (expense > income)')->andWhere('(created_at > 1509483600) OR (served_at > 1509483600)')->select('id')->asArray()->column();
-        print_r(count($arrAct));
-        for ($i = 0; $i < count($arrAct); $i++) {
-            $modelActError = new ActError();
-            $modelActError->act_id = $arrAct[$i];
-            $modelActError->error_type = 19;
-            $modelActError->save();
-        } die;
-        //
 
         return $this->render('list', [
             'searchModel' => $searchModel,
