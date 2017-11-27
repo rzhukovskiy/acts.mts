@@ -251,7 +251,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                     'label' => 'Город',
                     'attribute' => 'company_id',
                     'content' => function ($data) {
-                        return !empty($data->partner->address) ? $data->partner->address : '-';
+                        return !empty($data->client->address) ? $data->client->address : '-';
                     }
                 ],
                 [
@@ -311,13 +311,13 @@ $filters .= 'Выбор периода: ' . $periodForm;
 
                             if ($group == 'partner') {
                                 if (isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch' => Yii::$app->request->queryParams['ActSearch'], 'type' => $model->service_type, 'group' => $group, 'id' => $model->partner->id]);
                                 } else {
                                     return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'id' => $model->partner->id, 'type' => $model->service_type, 'group' => $group]);
                                 }
                             } else {
                                 if (isset(Yii::$app->request->queryParams['ActSearch'])) {
-                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch[client_id]' => $model->client_id, 'type' => $model->service_type, 'group' => $group, 'ActSearch' => Yii::$app->request->queryParams['ActSearch']]);
+                                    return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch' => Yii::$app->request->queryParams['ActSearch'], 'type' => $model->service_type, 'group' => $group, 'ActSearch[client_id]' => $model->client_id]);
                                 } else {
                                     return Html::a('<span class="glyphicon glyphicon-search"></span>', ['/stat/view', 'ActSearch[client_id]' => $model->client_id, 'type' => $model->service_type, 'group' => $group]);
                                 }

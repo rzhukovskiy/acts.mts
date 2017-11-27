@@ -176,6 +176,7 @@ $columns = [
                     'header' => 'Статус<br />закупки',
                     'filter' => Html::activeDropDownList($searchModel, 'purchase_status', isset($GLOBALS['arrLists'][0]) ? $GLOBALS['arrLists'][0] : [], ['class' => 'form-control', 'prompt' => 'Все статусы']),
                     'format' => 'raw',
+                    'pageSummary' => 'Всего',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
@@ -344,6 +345,8 @@ $columns = [
                 [
                     'attribute' => 'price_nds',
                     'vAlign'=>'middle',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_SUM,
                     'header' => 'Максимальная<br /> стоимость закупки',
                     'value' => function ($data) {
 
@@ -373,6 +376,7 @@ echo GridView::widget([
 'dataProvider' => $dataProvider,
 'filterModel' => $searchModel,
 'summary' => false,
+'showPageSummary' => true,
 'emptyText' => '',
 'panel' => [
 'type' => 'primary',
