@@ -510,7 +510,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
         <div class="panel-body"<?=$colorBGItem?>>
             <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
-                <?= $model->fullAddress ?>
+                <?= "<b style='color:#b15f05; font-size:18px;'>" . $model->fullAddress . "</b>" ?>
             </div>
 
                 <?php

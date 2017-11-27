@@ -8,6 +8,82 @@ use common\models\Company;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
+$script = <<< JS
+
+// Подсчет кол.
+window.onload=function(){
+var companyTR = $('tbody tr');
+
+    var oldTR = "";
+    var numColumns = 0;
+    var numCount = 0;
+    var i = 0;
+    $(companyTR).each(function (id, value) {
+
+        var thisId = $(this);
+
+        if(!(thisId.find('td div').hasClass('empty'))) {
+
+            if (thisId.attr('class') == "kv-grid-group-row") {
+
+                if (i > 0) {
+                    var trFooter = $('<tr>').addClass('kv-group-footer');
+
+                    var footerTd0 = $('<td>').text("");
+                    var footerTd1 = $('<td>').text("Итого").css('color', '#8e8366').css('font-weight', 'bold');
+                    var footerTd2 = $('<td>').text(numCount).css('color', '#8e8366').css('font-weight', 'bold');
+
+                    var footerTdmerge = $('<td>').text("").attr("colspan", (numColumns - 3));
+                    trFooter.append(footerTd0);
+                    trFooter.append(footerTd1);
+                    trFooter.append(footerTd2);
+                    trFooter.append(footerTdmerge);
+
+                    oldTR.after(trFooter);
+                }
+
+                numCount = 0;
+            } else if (thisId.attr('class') == "kv-page-summary warning") {
+                
+                if (i > 0) {
+                    var trFooter = $('<tr>').addClass('kv-group-footer');
+
+                    var footerTd0 = $('<td>').text("");
+                    var footerTd1 = $('<td>').text("Итого").css('color', '#8e8366').css('font-weight', 'bold');
+                    var footerTd2 = $('<td>').text(numCount).css('color', '#8e8366').css('font-weight', 'bold');
+
+                    var footerTdmerge = $('<td>').text("").attr("colspan", (numColumns - 3));
+                    trFooter.append(footerTd0);
+                    trFooter.append(footerTd1);
+                    trFooter.append(footerTd2);
+                    trFooter.append(footerTdmerge);
+
+                    oldTR.after(trFooter);
+                }
+                
+            } else if (thisId.attr('data-key') > 0) {
+
+                numCount++;
+
+                // Записываем колчество ячеек
+                if (numColumns == 0) {
+                    numColumns = thisId.find('td').length;
+                }
+
+            }
+
+            oldTR = thisId;
+            i++;
+
+        }
+
+    });
+// Подсчет кол.
+};
+
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
 // Подкатегории для сервиса
 $requestSupType = 0;
 if($searchModel->type == 3) {
@@ -80,6 +156,7 @@ if($searchModel->type == 3) {
             'striped' => false,
             'export' => false,
             'summary' => false,
+            'showPageSummary' => true,
             'emptyText' => '',
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',

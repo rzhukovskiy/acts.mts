@@ -151,6 +151,12 @@ class ActHelper
             ],
             'clientService' => [
                 'header' => 'Услуга',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_COUNT,
+                'contentOptions' => function ($data) {
+                    $options['class'] = 'count';
+                    return $options;
+                },
                 'value' => function ($data) {
                     /** @var \common\models\ActScope $scope */
                     $services = [];
@@ -170,6 +176,12 @@ class ActHelper
             ],
             'partnerService' => [
                 'header' => 'Услуга',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_COUNT,
+                'contentOptions' => function ($data) {
+                    $options['class'] = 'count';
+                    return $options;
+                },
                 'value' => function ($data) {
                     /** @var \common\models\ActScope $scope */
                     $services = [];
