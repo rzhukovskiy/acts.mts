@@ -87,6 +87,12 @@ if (isset($arrLists[9])){
                     'vAlign'=>'middle',
                     'class' => 'kartik\grid\SerialColumn'
                 ],
+
+                [
+                    'attribute' => 'id',
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                ],
                 [
                     'attribute' => 'user_id',
                     'header' => 'Сотрудник',

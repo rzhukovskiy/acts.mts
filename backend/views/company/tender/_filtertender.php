@@ -61,6 +61,11 @@ $columns = [
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
+                    'attribute' => 'id',
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                ],
+                [
                     'attribute' => 'customer',
                     'header' => 'Заказчик',
                     'format' => 'raw',

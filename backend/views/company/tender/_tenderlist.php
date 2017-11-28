@@ -172,6 +172,11 @@ $columns = [
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
+                    'attribute' => 'id',
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                ],
+                [
                     'attribute' => 'purchase_status',
                     'header' => 'Статус<br />закупки',
                     'filter' => Html::activeDropDownList($searchModel, 'purchase_status', isset($GLOBALS['arrLists'][0]) ? $GLOBALS['arrLists'][0] : [], ['class' => 'form-control', 'prompt' => 'Все статусы']),

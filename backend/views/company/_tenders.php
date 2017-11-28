@@ -75,6 +75,11 @@ $GLOBALS['arrLists'] = $arrLists;
                 'class' => 'kartik\grid\SerialColumn'
             ],
             [
+                'attribute' => 'id',
+                'format' => 'raw',
+                'vAlign'=>'middle',
+            ],
+            [
                 'attribute' => 'purchase_status',
                 'header' => 'Статус<br />закупки',
                 'format' => 'raw',
