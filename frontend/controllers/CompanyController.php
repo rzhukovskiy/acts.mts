@@ -292,18 +292,17 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
 
         $partnerId = Yii::$app->request->post('partner');
+        PartnerExclude::deleteAll('client_id=:client_id', [':client_id' => $id]);
 
         if (isset($partnerId)) {
-            PartnerExclude::deleteAll('client_id=:client_id', [':client_id' => $id]);
             //Прообегаем все типы, ищем и инвертируем исключаемые компании по всем типам
             foreach (Service::$listType as $type_id => $type) {
                 $partner = yii\helpers\ArrayHelper::getValue($partnerId, $type_id, []);
-                $allExcludeId = $model->getInvertIds($type_id, $partner);
-                if ($allExcludeId) {
-                    foreach ($allExcludeId as $excludeId) {
+                if ($partner) {
+                    foreach ($partner as $key => $value) {
                         $partnerExclude = new PartnerExclude();
                         $partnerExclude->client_id = $id;
-                        $partnerExclude->partner_id = $excludeId;
+                        $partnerExclude->partner_id = $value;
                         $partnerExclude->save();
                     }
                 }

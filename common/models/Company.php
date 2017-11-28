@@ -753,7 +753,7 @@ class Company extends ActiveRecord
      */
     public function getCompanyPartner($type)
     {
-        $partner = Company::find()->select(['id', 'name'])->byType($type)->byAddress($this->address)->all();;
+        $partner = Company::find()->select(['id', 'name'])->byType($type)->byAddress($this->address)->all();
         $partner = ArrayHelper::map($partner, 'id', 'name');
 
         return $partner;
@@ -763,9 +763,9 @@ class Company extends ActiveRecord
      * Исключаемые партнеры
      * @return array
      */
-    public function getExcludedIds()
+    public function getExcludedIds($id)
     {
-        $ids = PartnerExclude::find()->select(['partner_id'])->column();
+        $ids = PartnerExclude::find()->where(['client_id' => $id])->select(['partner_id'])->column();
 
         return $ids;
     }
