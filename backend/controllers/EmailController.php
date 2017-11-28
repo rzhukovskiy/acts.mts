@@ -996,7 +996,7 @@ class EmailController extends Controller
             $stringErrorEmail = '';
             $stringErrorEmailWash = '';
 
-            $numTemplate = 13;
+            $numTemplate = 14;
 
             // Получаем партнеров
 
