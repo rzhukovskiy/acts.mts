@@ -336,7 +336,16 @@ class CompanySearch extends Company
         if ($this->card_number && !$this->address) {
             $modelCard = Card::findOne(['number' => $this->card_number]);
             if ($modelCard) {
-                $query->andWhere(['or', ['act.card_id' => $modelCard->id], ['address' => $modelCard->company->address]]);
+                $query->andWhere(['act.card_id' => $modelCard->id]);
+                $query->select(['company.*', 'COUNT(act.id) as service_count']);
+                $query->groupBy('company.id');
+                $query->orderBy('service_count DESC');
+            }
+        } else if ($this->card_number && $this->address) {
+            $modelCard = Card::findOne(['number' => $this->card_number]);
+            if ($modelCard) {
+                $query->andWhere(['act.card_id' => $modelCard->id]);
+                $query->andWhere(['like', 'address', $this->address]);
                 $query->select(['company.*', 'COUNT(act.id) as service_count']);
                 $query->groupBy('company.id');
                 $query->orderBy('service_count DESC');
