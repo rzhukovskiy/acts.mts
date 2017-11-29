@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\traits\JsonTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -24,9 +25,21 @@ use yii\db\ActiveRecord;
  * @property string $date_return
  * @property string $balance_work
  * @property string $comment
+ * @property string $payment_status
  */
 class TenderControl extends ActiveRecord
 {
+    use JsonTrait;
+
+    const PAYMENT_STATUS_NOT_DONE = 0;
+    const PAYMENT_STATUS_DONE = 1;
+    const PAYMENT_STATUS_CASH = 2;
+
+    public static $paymentStatus = [
+        self::PAYMENT_STATUS_NOT_DONE => '-',
+        self::PAYMENT_STATUS_DONE => '+',
+        self::PAYMENT_STATUS_CASH => '+ -',
+    ];
     /**
      * @inheritdoc
      */
@@ -41,7 +54,7 @@ class TenderControl extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'site_address', 'type_payment', 'is_archive'], 'integer'],
+            [['user_id', 'site_address', 'type_payment', 'payment_status', 'is_archive'], 'integer'],
             [['send', 'return', 'balance_work'], 'safe'],
             [['comment'], 'string', 'max' => 10000],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return'], 'string', 'max' => 20],
@@ -67,11 +80,12 @@ class TenderControl extends ActiveRecord
             'eis_platform' => '№ ЕИС на площадке',
             'type_payment' => 'Тип платежа',
             'money_unblocking' => 'Дата разблокировки денег',
-            'return' => 'Возврат',
+            'return' => 'Вернули',
             'date_return' => 'Дата возврата',
             'balance_work' => 'Остаток в работе',
             'comment' => 'Комментарий',
-            'is_archive' => 'Архив'
+            'is_archive' => 'Архив',
+            'payment_status' => 'Статус',
         ];
     }
 
@@ -95,6 +109,28 @@ class TenderControl extends ActiveRecord
             }
         }
         return parent::beforeSave($insert);
+
+    }
+
+    static function payDis($val)
+    {
+        $currentUser = Yii::$app->user->identity;
+        if (($val == self::PAYMENT_STATUS_DONE || $val == self::PAYMENT_STATUS_CASH) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
+            $disabled = true;
+        } else {
+            $disabled = false;
+        }
+        return $disabled;
+    }
+
+    static function colorForPaymentStatus($status)
+    {
+        $paymentStatus = [
+            self::PAYMENT_STATUS_DONE => 'btn-success',
+            self::PAYMENT_STATUS_NOT_DONE => 'btn-danger',
+            self::PAYMENT_STATUS_CASH => 'btn-warning',
+        ];
+        return $paymentStatus[$status];
 
     }
 }

@@ -165,7 +165,7 @@ $this->registerJs($script, View::POS_READY);
                     'asPopover' => true,
                     'placement' => PopoverX::ALIGN_LEFT,
                     'size' => 'lg',
-                    'disabled' => $model->is_archive == 1 ? true : false,
+                    'disabled' => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? false : true,
                     'options' => ['class' => 'form-control'],
                     'formOptions' => [
                         'action' => ['/company/updatecontroltender', 'id' => $model->id],

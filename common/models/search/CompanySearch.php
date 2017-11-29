@@ -128,6 +128,21 @@ class CompanySearch extends Company
                     $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
 
                     $query->orderBy('department_company.user_id DESC, communication_at ASC');
+
+                } else if ($this->status == Company::STATUS_TENDER) {
+
+                    $query->leftJoin('tender_hystory', 'tender_hystory.company_id = company.id');
+
+                    if(isset($params['CompanySearch']['dep_user_id'])) {
+                        if($params['CompanySearch']['dep_user_id'] > 0) {
+                            $this->dep_user_id = $params['CompanySearch']['dep_user_id'];
+                            $query->andWhere(['tender_hystory.user_id' => $params['CompanySearch']['dep_user_id']]);
+                        }
+                    }
+                    $query->leftJoin('user', 'tender_hystory.user_id = user.id');
+                    $query->select('`company`.*, `tender_hystory`.`user_id`, `tender_hystory`.`company_id`');
+                    $query->orderBy('tender_hystory.user_id DESC, communication_at ASC');
+
                 } else {
                     $query->orderBy('address ASC');
                 }
@@ -345,6 +360,7 @@ class CompanySearch extends Company
         } else if ($this->card_number && $this->address) {
             $modelCard = Card::findOne(['number' => $this->card_number]);
             if ($modelCard) {
+                $query->innerJoin('partner_exclude', 'partner_exclude.client_id=' . $modelCard->company->id . ' AND partner_exclude.partner_id=company.id');
                 $query->andWhere(['act.card_id' => $modelCard->id]);
                 $query->andWhere(['like', 'address', $this->address]);
                 $query->select(['company.*', 'COUNT(act.id) as service_count']);

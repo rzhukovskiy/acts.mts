@@ -6,6 +6,18 @@ use common\models\Company;
 use kartik\date\DatePicker;
 use common\models\TenderLists;
 
+$script = <<< JS
+// формат числа
+window.onload=function(){
+  var formatSum = $('td[data-col-seq="10"]');
+  $(formatSum).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+};
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 ?>
 
 <?php

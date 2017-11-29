@@ -4,7 +4,68 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use common\models\Company;
 use common\models\TenderLists;
+use common\models\TenderControl;
+use yii\helpers\Url;
 
+$isAdmin = (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? 1 : 0;
+$ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
+
+$script = <<< JS
+// формат числа
+window.onload=function(){
+  var formatSum8 = $('td[data-col-seq="8"]');
+  $(formatSum8).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum10 = $('td[data-col-seq="10"]');
+  $(formatSum10).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum12 = $('td[data-col-seq="12"]');
+  $(formatSum12).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum8a = $('.kv-page-summary-container td:eq(8)');
+  $(formatSum8a).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum10a = $('.kv-page-summary-container td:eq(10)');
+  $(formatSum10a).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+    var formatSum12a = $('.kv-page-summary-container td:eq(12)');
+  $(formatSum12a).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+};
+$('.change-payment_status').change(function(){
+       
+     var select=$(this);
+        $.ajax({
+            url: '$ajaxpaymentstatus',
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+                if(($isAdmin!=1)&&(select.data('paymentstatus')!=1)){
+                    select.attr('disabled', 'disabled');
+                }
+            }
+        });
+    });
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
 // массив списков
 $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
 
@@ -110,23 +171,6 @@ if (isset($arrLists[9])){
                     },
                 ],
                 [
-                    'attribute' => 'send',
-                    'header' => 'Отправили',
-                    'pageSummary' => true,
-                    'pageSummaryFunc' => GridView::F_SUM,
-                    'format' => 'raw',
-                    'vAlign'=>'middle',
-                    'value' => function ($data) {
-
-                        if ($data->send) {
-                            return $data->send;
-                        } else {
-                            return '-';
-                        }
-
-                    },
-                ],
-                [
                     'attribute' => 'date_send',
                     'vAlign'=>'middle',
                     'filter' => false,
@@ -160,6 +204,7 @@ if (isset($arrLists[9])){
                     'attribute' => 'customer',
                     'header' => 'Заказчик',
                     'format' => 'raw',
+                    'contentOptions' => ['style' => 'max-width: 300px'],
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
@@ -175,6 +220,7 @@ if (isset($arrLists[9])){
                     'attribute' => 'purchase',
                     'vAlign'=>'middle',
                     'header' => 'Закупка',
+                    'contentOptions' => ['style' => 'max-width: 500px'],
                     'value' => function ($data) {
 
                         if ($data->purchase) {
@@ -202,9 +248,51 @@ if (isset($arrLists[9])){
                     },
                 ],
                 [
+                    'attribute' => 'send',
+                    'header' => 'Отправили',
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_SUM,
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                    'contentOptions' => ['style' => 'min-width: 100px'],
+                    'value' => function ($data) {
+
+                        if ($data->send) {
+                            return $data->send;
+                        } else {
+                            return '-';
+                        }
+
+                    },
+                ],
+                [
+                    'attribute' => 'payment_status',
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                    'value' => function ($model, $key, $index, $column) {
+                        return Html::activeDropDownList($model, 'payment_status', TenderControl::$paymentStatus,
+                            [
+                                'class'              => 'form-control change-payment_status',
+                                'data-id'            => $model->id,
+                                'data-paymentStatus' => $model->payment_status,
+                                'disabled'           => TenderControl::payDis($model->payment_status) ? 'disabled' : false,
+                            ]
+
+                        );
+                    },
+
+                    'contentOptions' => function ($model) {
+                        return [
+                            'class' => TenderControl::colorForPaymentStatus($model->payment_status),
+                            'style' => 'min-width: 50px',
+                        ];
+                    },
+                ],
+                [
                     'attribute' => 'return',
                     'vAlign'=>'middle',
-                    'header' => 'Возврат',
+                    'header' => 'Вернули',
+                    'contentOptions' => ['style' => 'min-width: 100px'],
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,
                     'value' => function ($data) {
@@ -236,6 +324,7 @@ if (isset($arrLists[9])){
                     'attribute' => 'balance_work',
                     'vAlign'=>'middle',
                     'header' => 'Остаток в работе',
+                    'contentOptions' => ['style' => 'min-width: 100px'],
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,
                     'value' => function ($data) {
