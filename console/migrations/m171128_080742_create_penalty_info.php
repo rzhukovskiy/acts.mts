@@ -9,7 +9,9 @@ class m171128_080742_create_penalty_info extends Migration
         $this->createTable('{{%penalty_info}}', [
             'id' => $this->primaryKey(),
             'pen_id' => 'int(11) NOT NULL',
+            'act_id' => 'int(11)',
             'car_id' => 'int(11) NOT NULL',
+            'company_id' => 'int(11) NOT NULL',
             'description' => 'text NOT NULL',
             'postNumber' => 'varchar(30) NOT NULL',
             'postedAt' => 'varchar(20) NOT NULL',
@@ -19,12 +21,12 @@ class m171128_080742_create_penalty_info extends Migration
             'isDiscount' => 'tinyint(1) NOT NULL',
             'discountDate' => 'varchar(30)',
             'discountSize' => 'varchar(5)',
-            'isExpired' => 'tinyint(1) NOT NULL',
+            'isExpired' => 'tinyint(1)',
             'penaltyDate' => 'varchar(30) NOT NULL',
-            'isPaid' => 'tinyint(1) NOT NULL',
-            'docType' => 'varchar(30) NOT NULL',
-            'docNumber' => 'varchar(20) NOT NULL',
-            'enablePics' => 'tinyint(1) NOT NULL',
+            'isPaid' => 'tinyint(1)',
+            'docType' => 'varchar(30)',
+            'docNumber' => 'varchar(20)',
+            'enablePics' => 'tinyint(1)',
             'pics' => 'text'
         ], 'CHARACTER SET utf8 COLLATE utf8_unicode_ci');
     }

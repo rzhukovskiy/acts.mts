@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\PenaltyInfo;
 use common\models\ActExport;
 use common\components\ActExporter;
 use common\components\ActHelper;
@@ -603,7 +604,16 @@ class ActController extends Controller
             $partsPartnerScopes = $model->getPartnerScopes()->where(['!=', 'parts', 0])->all();
         }
 
-        $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
+        $serviceList = [];
+
+        if($model->service_type == 2) {
+            $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $model->service_type])
+                ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
+                ->indexBy('id')->column();
+        } else {
+            $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
+        }
+
         return $this->render('update', [
             'model' => $model,
             'serviceList' => $serviceList,
@@ -767,6 +777,8 @@ class ActController extends Controller
             return $this->redirect('/');
         } else {
 
+            $numCreate = 0;
+
             $resCompany = Company::find()->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->where(['company.use_penalty' => 1])->andWhere(['not', ['company_info.inn' => null]])->select('company.use_penalty, company.id, company_info.inn')->orderBy('company.id')->asArray()->all();
 
             if(count($resCompany) > 0) {
@@ -783,6 +795,8 @@ class ActController extends Controller
                 $modelPenalty->setParams(['token' => $resToken['token']]);
 
                 $arrCompanyID = [];
+                $arrPenaltyValue = [];
+                $arrPenIDs = [];
 
                 for ($i = 0; $i < count($resCompany); $i++) {
                     if (mb_strlen($resCompany[$i]['inn']) > 3) {
@@ -799,6 +813,33 @@ class ActController extends Controller
 
                                 // Записываем штрафы
                                 for ($z = 0; $z < count($arrPenCont); $z++) {
+                                    $arrPenaltyValue[$z]['id'] = $arrPenCont[$z]['id'];
+                                    $arrPenaltyValue[$z]['carCert'] = $arrPenCont[$z]['carCert'];
+                                    $arrPenaltyValue[$z]['carReg'] = $arrPenCont[$z]['carReg'];
+
+                                    if((!isset($arrPenCont[$z]['koapText'])) && (!isset($arrPenCont[$z]['name']))) {
+                                        $arrPenaltyValue[$z]['description'] = $arrPenCont[$z]['wireUsername'];
+                                    } else {
+                                        $arrPenaltyValue[$z]['description'] = isset($arrPenCont[$z]['koapText']) ? $arrPenCont[$z]['koapText'] : $arrPenCont[$z]['name'];
+                                    }
+
+                                    $arrPenaltyValue[$z]['postNumber'] = $arrPenCont[$z]['postNumber'];
+                                    $arrPenaltyValue[$z]['postedAt'] = $arrPenCont[$z]['postedAt'];
+                                    $arrPenaltyValue[$z]['violationAt'] = isset($arrPenCont[$z]['violationAt']) ? $arrPenCont[$z]['violationAt'] : $arrPenCont[$z]['postedAt'];
+                                    $arrPenaltyValue[$z]['amount'] = $arrPenCont[$z]['amount'];
+                                    $arrPenaltyValue[$z]['totalAmount'] = $arrPenCont[$z]['totalAmount'];
+                                    $arrPenaltyValue[$z]['isDiscount'] = $arrPenCont[$z]['isDiscount'];
+                                    $arrPenaltyValue[$z]['discountDate'] = $arrPenCont[$z]['discountDate'];
+                                    $arrPenaltyValue[$z]['discountSize'] = $arrPenCont[$z]['discountSize'];
+                                    $arrPenaltyValue[$z]['isExpired'] = $arrPenCont[$z]['isExpired'];
+                                    $arrPenaltyValue[$z]['penaltyDate'] = $arrPenCont[$z]['penaltyDate'];
+                                    $arrPenaltyValue[$z]['isPaid'] = $arrPenCont[$z]['isPaid'];
+                                    $arrPenaltyValue[$z]['docType'] = $arrPenCont[$z]['docType'];
+                                    $arrPenaltyValue[$z]['docNumber'] = $arrPenCont[$z]['docNumber'];
+                                    $arrPenaltyValue[$z]['enablePics'] = $arrPenCont[$z]['enablePics'];
+                                    $arrPenaltyValue[$z]['pics'] = $arrPenCont[$z]['pics'];
+
+                                    $arrPenIDs[] = $arrPenCont[$z]['id'];
 
                                 }
 
@@ -808,11 +849,102 @@ class ActController extends Controller
                     }
                 }
 
+                $arrPenCheck = PenaltyInfo::find()->where(['pen_id' => $arrPenIDs])->select('pen_id')->asArray()->column();
+
+                $arrPenIDs = [];
+                for ($n = 0; $n < count($arrPenCheck); $n++) {
+                    $index = $arrPenCheck[$n];
+                    $arrPenIDs[$index] = 1;
+                }
+
                 if (count($arrCompanyID) > 0) {
-                    $resCar = Car::find()->where(['company_id' => $arrCompanyID])->andWhere(['is_penalty' => 1])->select('company_id, number, cert')->orderBy('company_id')->asArray()->all();
+                    $resCar = Car::find()->where(['company_id' => $arrCompanyID])->andWhere(['is_penalty' => 1])->andWhere(['not', ['cert' => null]])->select('id, company_id, number, cert, mark_id, type_id')->orderBy('company_id')->asArray()->all();
 
-                    for ($j = 0; $j < count($resCar); $j++) {
+                    for ($n = 0; $n < count($arrPenaltyValue); $n++) {
 
+                        for ($j = 0; $j < count($resCar); $j++) {
+
+                            if((mb_strtoupper(str_replace(' ', '', $arrPenaltyValue[$n]['carReg']), 'UTF-8') == $resCar[$j]['number']) && ($arrPenaltyValue[$n]['carCert'] == $resCar[$j]['cert'])) {
+
+                                $index = $arrPenaltyValue[$n]['id'];
+
+                                if(isset($arrPenIDs[$index]) == false) {
+
+                                    // Записываем информацию о штрафах в базу
+                                    $newPenalty = new PenaltyInfo();
+
+                                    $newPenalty->pen_id = $arrPenaltyValue[$n]['id'];
+                                    $newPenalty->car_id = $resCar[$j]['id'];
+                                    $newPenalty->company_id = $resCar[$j]['company_id'];
+
+                                    $newPenalty->description = $arrPenaltyValue[$n]['description'];
+                                    $newPenalty->postNumber = $arrPenaltyValue[$n]['postNumber'];
+                                    $newPenalty->postedAt = $arrPenaltyValue[$n]['postedAt'];
+                                    $newPenalty->violationAt = $arrPenaltyValue[$n]['violationAt'];
+                                    $newPenalty->amount = $arrPenaltyValue[$n]['amount'];
+                                    $newPenalty->totalAmount = $arrPenaltyValue[$n]['totalAmount'];
+                                    $newPenalty->isDiscount = ($arrPenaltyValue[$n]['isDiscount'] > 0) ? $arrPenaltyValue[$n]['isDiscount'] : 0;
+                                    $newPenalty->discountDate = $arrPenaltyValue[$n]['discountDate'];
+                                    $newPenalty->discountSize = (String)$arrPenaltyValue[$n]['discountSize'];
+                                    $newPenalty->isExpired = ($arrPenaltyValue[$n]['isExpired'] > 0) ? $arrPenaltyValue[$n]['isExpired'] : 0;
+                                    $newPenalty->penaltyDate = $arrPenaltyValue[$n]['penaltyDate'];
+                                    $newPenalty->isPaid = ($arrPenaltyValue[$n]['isPaid'] > 0) ? $arrPenaltyValue[$n]['isPaid'] : 0;
+                                    $newPenalty->docType = $arrPenaltyValue[$n]['docType'];
+                                    $newPenalty->docNumber = $arrPenaltyValue[$n]['docNumber'];
+                                    $newPenalty->enablePics = ($arrPenaltyValue[$n]['enablePics'] > 0) ? $arrPenaltyValue[$n]['enablePics'] : 0;
+
+                                    // Изображения
+                                    $stringPics = "";
+                                    if (($arrPenaltyValue[$n]['enablePics'] == 1) && (count($arrPenaltyValue[$n]['pics']) > 0)) {
+
+                                        $picsArr = $arrPenaltyValue[$n]['pics'];
+
+                                        for ($x = 0; $x < count($picsArr); $x++) {
+
+                                            if ($x == 0) {
+                                                $stringPics .= $picsArr[$x]['url'];
+                                            } else {
+                                                $stringPics .= ', ' . $picsArr[$x]['url'];
+                                            }
+
+                                        }
+
+                                    }
+
+                                    $newPenalty->pics = $stringPics;
+
+                                    // Создание акта
+                                    if($newPenalty->isPaid == 0) {}
+                                    $modelAct = new Act();
+                                    $modelAct->service_type = Company::TYPE_PENALTY;
+                                    $modelAct->partner_id = 80;
+
+                                    $createParams = [];
+                                    $createParams['Act']['time_str'] = date("d-m-Y", time());
+                                    $createParams['Act']['car_number'] = $resCar[$j]['number'];
+                                    $createParams['Act']['extra_car_number'] = "";
+                                    $createParams['Act']['mark_id'] = $resCar[$j]['mark_id'];
+                                    $createParams['Act']['type_id'] = $resCar[$j]['type_id'];
+                                    $createParams['Act']['serviceList'] = [0 => ['description' => $newPenalty->description, 'amount' => 1, 'price' => $newPenalty->totalAmount]];
+
+                                    if ($modelAct->load($createParams)) {
+
+                                        if ($modelAct->save()) {
+                                            $newPenalty->act_id = $modelAct->id;
+
+                                            if ($newPenalty->save()) {
+                                                $numCreate++;
+                                            }
+                                        }
+
+                                    }
+                                    // Создание акта
+
+                                }
+
+                            }
+
+                        }
 
                     }
 
@@ -820,9 +952,7 @@ class ActController extends Controller
 
             }
 
-            die;
-
-            return 1;
+            return $numCreate;
         }
     }
 
