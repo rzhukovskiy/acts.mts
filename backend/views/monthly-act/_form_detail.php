@@ -202,13 +202,7 @@ JS;
         </div>
 
         <?= $form->field($model, 'payment_comment')->textarea(['class' => 'form-control']) ?>
-
-        <?php
-        // Предоплата только для администратора
-        if(Yii::$app->user->identity->role == User::ROLE_ADMIN) {
-            echo $form->field($model, 'prepayment')->input('text', ['class' => 'form-control']);
-        }
-        ?>
+        <?= $form->field($model, 'prepayment')->input('text', ['class' => 'form-control']) ?>
 
         <?php /*echo $form->field($model, 'act_we_get_date')->widget(DatePicker::classname(),
             [
