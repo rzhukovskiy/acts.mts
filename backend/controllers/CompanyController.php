@@ -553,7 +553,7 @@ class CompanyController extends Controller
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere(['OR', ['purchase_status' => 15], ['purchase_status' => 18], ['purchase_status' => 19]]);
+        $dataProvider->query->andWhere(['OR', ['purchase_status' => 15], ['purchase_status' => 18], ['purchase_status' => 19], ['purchase_status' => 57], ['purchase_status' => 58]]);
 
         return $this->render('tender/tenderlist',
             [

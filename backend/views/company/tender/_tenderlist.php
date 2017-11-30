@@ -418,6 +418,10 @@ echo GridView::widget([
              return ['style' => 'background: #fffc98;'];
          } else if ($model->purchase_status == 22) {
              return ['style' => 'background: #d9ffd8;'];
+         } else if ($model->purchase_status == 57) {
+             return ['style' => 'background: #f3dcf3;'];
+         } else if ($model->purchase_status == 58) {
+             return ['style' => 'background: #ffe7c6;'];
          } else {
              return '';
          }
