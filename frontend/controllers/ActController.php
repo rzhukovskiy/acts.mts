@@ -607,7 +607,7 @@ class ActController extends Controller
         $serviceList = [];
 
         if($model->service_type == 2) {
-            $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $model->service_type])
+            $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . $model->client_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $model->service_type])
                 ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
                 ->indexBy('id')->column();
         } else {
