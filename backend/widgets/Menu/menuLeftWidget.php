@@ -98,7 +98,7 @@ class menuLeftWidget extends Widget
                         ],
 
                         [
-                            'label'  => 'Все закупки',
+                            'label'  => 'Закупки',
                             'url' => ['/company/tenderlist'],
                             'active' =>
                                  (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
@@ -117,7 +117,11 @@ class menuLeftWidget extends Widget
                         ],
                     ],
                 ],
-
+                [
+                    'label' => 'Архив тендеров',
+                    'url' => ['/company/archivetender?win=1'],
+                    'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
+                ],
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/new', 'type' => Company::TYPE_WASH],
@@ -268,7 +272,7 @@ class menuLeftWidget extends Widget
                         ],
 
                         [
-                            'label'  => 'Все закупки',
+                            'label'  => 'Закупки',
                             'url' => ['/company/tenderlist'],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderlist'),
@@ -286,6 +290,11 @@ class menuLeftWidget extends Widget
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender'),
                         ],
                     ],
+                ],
+                [
+                    'label' => 'Архив тендеров',
+                    'url' => ['/company/archivetender?win=1'],
+                    'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
                 ],
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
