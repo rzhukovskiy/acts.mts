@@ -117,6 +117,14 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         ];
                     },
                 ],
+                'created_at' => [
+                    'attribute'      => 'created_at',
+                    'header'      => 'Дата записи',
+                    'value'          => function ($data) {
+                        return date('H:i d.m.Y', $data->created_at);
+                    },
+                    'filter'         => false,
+                ],
             ],
         ]); ?>
     </div>
