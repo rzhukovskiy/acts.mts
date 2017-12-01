@@ -6,6 +6,7 @@
  */
 
 use common\models\Entry;
+use common\models\Company;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -53,6 +54,18 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     },
                 ],
                 [
+                    'header'          => 'Компания',
+                    'content'            => function ($data) {
+                        if(!empty($data->card->company_id)) {
+                            $resName = Company::find()->where(['id' => $data->card->company_id])->select('name')->asArray()->column();
+                            return isset($resName[0]) ? $resName[0] : 'error';
+                        } else {
+                            return 'error';
+                        }
+
+                    },
+                ],
+                [
                     'attribute'          => 'card_id',
                     'content'            => function ($data) {
                         return !empty($data->card->number) ? Html::encode($data->card->number) : 'error';
@@ -75,6 +88,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 ],
                 [
                     'attribute'          => 'company_id',
+                    'header'          => 'Партнер',
                     'content'            => function ($data) {
                         return !empty($data->company->name) ? Html::encode($data->company->name) : 'error';
                     },
