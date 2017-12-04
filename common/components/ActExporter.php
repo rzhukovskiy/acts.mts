@@ -1493,6 +1493,185 @@ class ActExporter
                 }
                 break;
 
+            case Company::TYPE_PENALTY:
+
+                $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                    )
+                ));
+                $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                $iNumTires = 0;
+
+                /** @var Act $data */
+                foreach ($dataList as $data) {
+                    $num = 0;
+
+                    // Отступ перед новым ТС шиномонтажа
+                    if($iNumTires > 0) {
+                        $row++;
+                    }
+                    $iNumTires++;
+
+                    $companyWorkSheet->mergeCells("B$row:C$row");
+                    $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                    $companyWorkSheet->mergeCells("D$row:E$row");
+                    $companyWorkSheet->setCellValue("D$row", "");
+                    $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                    if ($this->company) {
+                        $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                        $companyWorkSheet->mergeCells("H$row:I$row");
+                        $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                    } else {
+                        $companyWorkSheet->mergeCells("G$row:I$row");
+                        $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                    }
+                    $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                                'size' => 12,
+                            ),
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+
+                    $row++;
+                    $date = new \DateTime();
+                    $date->setTimestamp($data->served_at);
+                    $companyWorkSheet->mergeCells("B$row:C$row");
+                    $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                    $companyWorkSheet->mergeCells("D$row:E$row");
+                    $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                    $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                    if ($this->company) {
+                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                        $companyWorkSheet->mergeCells("H$row:I$row");
+                        $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                    } else {
+                        $companyWorkSheet->mergeCells("G$row:I$row");
+                        $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                    }
+                    $companyWorkSheet->getStyle("B$row:I$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                                'font' => array(
+                                    'bold' => true,
+                                ),
+                            )
+                        );
+
+                    $row++;
+                    $companyWorkSheet->mergeCells("B$row:F$row");
+                    $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                    $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                    $companyWorkSheet->setCellValue("H$row", "Кол-во суток");
+                    $companyWorkSheet->setCellValue("I$row", "Сумма");
+                    $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                            ),
+                        )
+                    );
+
+                    /** @var ActScope $scope */
+                    $subtotal = 0;
+                    $subcount = 0;
+                    if ($this->company) {
+                        $listScope = $data->clientScopes;
+                    } else {
+                        $listScope = $data->partnerScopes;
+                    }
+                    foreach ($listScope as $scope) {
+                        $row++;
+                        $num++;
+                        $companyWorkSheet->mergeCells("B$row:F$row");
+
+                        $companyWorkSheet->getStyle("B$row:F$row")->applyFromArray(array(
+                                'alignment' => array(
+                                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                )
+                            )
+                        );
+
+                        $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                        $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                        $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                        if (mb_strlen($scope->description) > 30) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                        }
+                        if (mb_strlen($scope->description) > 40) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(50);
+                        }
+                        if (mb_strlen($scope->description) > 50) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(60);
+                        }
+                        if (mb_strlen($scope->description) > 60) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(70);
+                        }
+                        if (mb_strlen($scope->description) > 70) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(80);
+                        }
+                        if (mb_strlen($scope->description) > 80) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(90);
+                        }
+                        if (mb_strlen($scope->description) > 200) {
+                            $companyWorkSheet->getRowDimension($row)->setRowHeight(110);
+                        }
+                        $companyWorkSheet->setCellValue("G$row", $scope->price);
+                        $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                        $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                        $total += $scope->amount * $scope->price;
+                        $subtotal += $scope->amount * $scope->price;
+                        $subcount += $scope->amount;
+                        $count += $scope->amount;
+                    }
+                    $row++;
+                    $companyWorkSheet->mergeCells("B$row:F$row");
+                    $companyWorkSheet->setCellValue("B$row", "Итого:");
+                    $companyWorkSheet->setCellValue("G$row", '');
+                    $companyWorkSheet->setCellValue("H$row", $subcount);
+                    $companyWorkSheet->setCellValue("I$row", $subtotal);
+                    $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                            ),
+                        )
+                    );
+
+                    $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                            )
+                        );
+
+                }
+                break;
+
             case Company::TYPE_WASH:
                 $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                 $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -3838,6 +4017,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[154][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -4371,6 +4698,154 @@ class ActExporter
                         break;
 
                     case Company::TYPE_PARKING:
+
+                        $dataList = $dataMfpTmp[900][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
+                    case Company::TYPE_PENALTY:
 
                         $dataList = $dataMfpTmp[900][1];
 
@@ -5198,6 +5673,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[849][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -5731,6 +6354,154 @@ class ActExporter
                         break;
 
                     case Company::TYPE_PARKING:
+
+                        $dataList = $dataMfpTmp[850][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
+                    case Company::TYPE_PENALTY:
 
                         $dataList = $dataMfpTmp[850][1];
 
@@ -6558,6 +7329,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[851][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -7091,6 +8010,154 @@ class ActExporter
                         break;
 
                     case Company::TYPE_PARKING:
+
+                        $dataList = $dataMfpTmp[852][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
+                    case Company::TYPE_PENALTY:
 
                         $dataList = $dataMfpTmp[852][1];
 
@@ -7918,6 +8985,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[1957][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -8451,6 +9666,154 @@ class ActExporter
                         break;
 
                     case Company::TYPE_PARKING:
+
+                        $dataList = $dataMfpTmp[2073][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
+                    case Company::TYPE_PENALTY:
 
                         $dataList = $dataMfpTmp[2073][1];
 
@@ -9278,6 +10641,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[2074][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -9958,6 +11469,154 @@ class ActExporter
                         }
                         break;
 
+                    case Company::TYPE_PENALTY:
+
+                        $dataList = $dataMfpTmp[2075][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
                     case Company::TYPE_WASH:
                         $companyWorkSheet->getColumnDimension('B')->setWidth(5);
                         $companyWorkSheet->getColumnDimension('C')->setAutoSize(true);
@@ -10491,6 +12150,154 @@ class ActExporter
                         break;
 
                     case Company::TYPE_PARKING:
+
+                        $dataList = $dataMfpTmp[2076][1];
+
+                        $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                            'alignment' => array(
+                                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                            )
+                        ));
+                        $companyWorkSheet->getColumnDimension('B')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('C')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('D')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('E')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('F')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('G')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('H')->setWidth(11);
+                        $companyWorkSheet->getColumnDimension('I')->setWidth(11);
+
+                        /** @var Act $data */
+                        foreach ($dataList as $data) {
+                            $row++;
+                            $num = 0;
+
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValue("B$row", "ЧИСЛО");
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValue("D$row", "№ КАРТЫ");
+                            $companyWorkSheet->setCellValue("F$row", "МАРКА ТС");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValue("H$row", "ГОРОД");
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValue("G$row", "ГОСНОМЕР");
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                        'size' => 12,
+                                    ),
+                                    'borders' => array(
+                                        'allborders' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                            'color' => array('argb' => 'FF000000'),
+                                        ),
+                                    ),
+                                )
+                            );
+
+                            $row++;
+                            $date = new \DateTime();
+                            $date->setTimestamp($data->served_at);
+                            $companyWorkSheet->mergeCells("B$row:C$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(1, $row, $date->format('j'));
+                            $companyWorkSheet->mergeCells("D$row:E$row");
+                            $companyWorkSheet->setCellValueByColumnAndRow(3, $row, isset($data->card) ? $data->card->number : $data->card_id);
+                            $companyWorkSheet->setCellValueByColumnAndRow(5, $row, isset($data->mark) ? $data->mark->name : "");
+                            if ($this->company) {
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                                $companyWorkSheet->mergeCells("H$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(7, $row, $data->partner->address);
+                            } else {
+                                $companyWorkSheet->mergeCells("G$row:I$row");
+                                $companyWorkSheet->setCellValueByColumnAndRow(6, $row, $data->car_number);
+                            }
+                            $companyWorkSheet->getStyle("B$row:I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                        'font' => array(
+                                            'bold' => true,
+                                        ),
+                                    )
+                                );
+
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Вид услуг");
+                            $companyWorkSheet->setCellValue("G$row", "Стоимость");
+                            $companyWorkSheet->setCellValue("H$row", "Кол-во");
+                            $companyWorkSheet->setCellValue("I$row", "Сумма");
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                        'color' => array('argb' => 'FF006699'),
+                                    ),
+                                )
+                            );
+
+                            /** @var ActScope $scope */
+                            $subtotal = 0;
+                            $subcount = 0;
+                            if ($this->company) {
+                                $listScope = $data->clientScopes;
+                            } else {
+                                $listScope = $data->partnerScopes;
+                            }
+                            foreach ($listScope as $scope) {
+                                $row++;
+                                $num++;
+                                $companyWorkSheet->mergeCells("B$row:F$row");
+                                $companyWorkSheet->setCellValue("B$row", "$num. $scope->description");
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+                                if (mb_strlen($scope->description) > 30) {
+                                    $companyWorkSheet->getRowDimension($row)->setRowHeight(40);
+                                }
+                                $companyWorkSheet->setCellValue("G$row", $scope->price);
+                                $companyWorkSheet->setCellValue("H$row", $scope->amount);
+                                $companyWorkSheet->setCellValue("I$row", $scope->price * $scope->amount);
+                                $total += $scope->amount * $scope->price;
+                                $subtotal += $scope->amount * $scope->price;
+                                $subcount += $scope->amount;
+                                $count += $scope->amount;
+                            }
+                            $row++;
+                            $companyWorkSheet->mergeCells("B$row:F$row");
+                            $companyWorkSheet->setCellValue("B$row", "Итого:");
+                            $companyWorkSheet->setCellValue("G$row", '');
+                            $companyWorkSheet->setCellValue("H$row", $subcount);
+                            $companyWorkSheet->setCellValue("I$row", $subtotal);
+                            $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                                    'font' => array(
+                                        'bold' => true,
+                                    ),
+                                )
+                            );
+
+                            $companyWorkSheet->getStyle("B" . ($rowStart + 1) . ":I$row")
+                                ->applyFromArray(array(
+                                        'borders' => array(
+                                            'allborders' => array(
+                                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                                'color' => array('argb' => 'FF000000'),
+                                            ),
+                                        ),
+                                    )
+                                );
+
+                        }
+                        break;
+
+                    case Company::TYPE_PENALTY:
 
                         $dataList = $dataMfpTmp[2076][1];
 
