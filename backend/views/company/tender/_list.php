@@ -201,9 +201,13 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 ],
                 [
                     'class' => 'kartik\grid\ActionColumn',
-                    'template' => '{update}',
+                    'template' => '{map}{update}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
                     'buttons' => [
+                        'map' => function ($url, $model, $key) {
+                            return $model->fullAddress ? Html::a('<span class="glyphicon glyphicon-map-marker" style="font-size:17px;"></span>',
+                                'https://www.google.ru/maps/place/' . $model->fullAddress, ['target' => '_blank']) : '';
+                        },
                         'update' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-search"></span>',
                                 ['/company/tenders', 'id' => $model->id]);
