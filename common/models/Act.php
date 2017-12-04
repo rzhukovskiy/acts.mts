@@ -266,6 +266,14 @@ class Act extends ActiveRecord
     /**
      * @return ActiveQuery
      */
+    public function getPenaltyinfo()
+    {
+        return $this->hasOne(PenaltyInfo::className(), ['act_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
     public function getScopes()
     {
         return $this->hasMany(ActScope::className(), ['act_id' => 'id']);
@@ -359,12 +367,12 @@ class Act extends ActiveRecord
                 $hasError = $this->service_type == Service::TYPE_WASH && (!$this->check || !$this->getImageLink());
                 break;
             case self::ERROR_CARD:
-                $hasError = ($this->service_type != Service::TYPE_DISINFECT && !$this->card_id) ||
+                $hasError = ($this->service_type != Service::TYPE_DISINFECT && $this->service_type != Service::TYPE_PENALTY && !$this->card_id) ||
                         (!empty($this->car) && !empty($this->card) && $this->card->company_id != $this->car->company_id);
                 break;
             case self::ERROR_CAR:
                 $hasError = !($this->car_id) ||
-                    ($this->service_type != Service::TYPE_DISINFECT && !empty($this->car) && $this->car->company_id != $this->client_id);
+                    ($this->service_type != Service::TYPE_DISINFECT && $this->service_type != Service::TYPE_PENALTY && !empty($this->car) && $this->car->company_id != $this->client_id);
                 break;
             case self::ERROR_TRUCK:
                 $hasError = (isset($this->client) && $this->client->is_split && !$this->extra_car_id);
@@ -480,8 +488,10 @@ class Act extends ActiveRecord
             $this->car_number = $car->number;
             $this->mark_id = $car->mark_id;
 
-            if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
-                $this->type_id = $car->type_id;
+            if(Yii::$app->user->isGuest == 0) {
+                if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
+                    $this->type_id = $car->type_id;
+                }
             }
 
             if (empty($this->client_id)) {
@@ -772,6 +782,22 @@ class Act extends ActiveRecord
         }
 
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    /**
+     * Перед удалением
+     *
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+
+        // Контроль штрафов
+        if($this->service_type == Service::TYPE_PENALTY) {
+            PenaltyInfo::deleteAll(['act_id' => $this->id]);
+        }
+
+        return true;
     }
 
     public function getListError()

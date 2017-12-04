@@ -220,6 +220,119 @@ class ActHelper
                     return $options;
                 },
             ],
+            'penaltyinfo.amount' => [
+                'attribute' => 'penaltyinfo.amount',
+                'header' => 'Сумма штрафа',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
+            ],
+            'penaltyinfo.discountSize' => [
+                'attribute' => 'penaltyinfo.discountSize',
+                'header' => 'Скидка',
+                'value' => function ($data) {
+
+                    if(isset($data->penaltyinfo->discountDate)) {
+
+                        if($data->penaltyinfo->discountDate) {
+
+                            if (strtotime($data->penaltyinfo->discountDate) > time()) {
+                                return $data->penaltyinfo->discountSize . '%';
+                            } else {
+                                return '-';
+                            }
+
+                        } else {
+                            return '-';
+                        }
+
+                    } else {
+                        return '-';
+                    }
+
+                }
+            ],
+            'penaltyinfo.totalAmount' => [
+                'attribute' => 'penaltyinfo.totalAmount',
+                'header' => 'Итоговая сумма',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
+                'value' => function ($data) {
+
+                    if(isset($data->penaltyinfo->discountDate)) {
+
+                        if($data->penaltyinfo->discountDate) {
+
+                            if (strtotime($data->penaltyinfo->discountDate) > time()) {
+                                return $data->penaltyinfo->totalAmount;
+                            } else {
+                                return $data->penaltyinfo->amount;
+                            }
+
+                        } else {
+                            return $data->penaltyinfo->amount;
+                        }
+
+                    } else {
+                        return $data->penaltyinfo->amount;
+                    }
+
+                }
+            ],
+            'penaltyinfo.discountDate' => [
+                'attribute' => 'penaltyinfo.discountDate',
+                'header' => 'Окончание скидки',
+                'value' => function ($data) {
+                    if(isset($data->penaltyinfo->discountDate)) {
+
+                        if($data->penaltyinfo->discountDate) {
+
+                            $timenow = time();
+                            $dataDisc = strtotime($data->penaltyinfo->discountDate);
+
+                            if ($dataDisc > $timenow) {
+
+                                $discontDate = '';
+                                $lostDate = $dataDisc - $timenow;
+
+                                $days = ((Int) ($lostDate / 86400));
+                                $lostDate -= (((Int) ($lostDate / 86400)) * 86400);
+
+                                if($days < 0) {
+                                    $days = 0;
+                                }
+
+                                $hours = (round($lostDate / 3600));
+                                $lostDate -= (round($lostDate / 3600) * 3600);
+
+                                if($hours < 0) {
+                                    $hours = 0;
+                                }
+
+                                /*$minutes = (round($lostDate / 60));
+
+                                if($minutes < 0) {
+                                    $minutes = 0;
+                                }*/
+
+                                $discontDate .= 'Дней: ' . $days;
+                                $discontDate .= ', часов: ' . $hours;
+                                //$discontDate .= ', минут: ' . $minutes;
+
+                                return $discontDate;
+
+                            } else {
+                                return '-';
+                            }
+
+                        } else {
+                            return '-';
+                        }
+
+                    } else {
+                        return '-';
+                    }
+                }
+            ],
             'city' => 'partner.address',
             'check' => [
                 'attribute' => 'check',
@@ -265,6 +378,18 @@ class ActHelper
                 ],
                 'width' => '40px',
             ],
+            'penaltyDetail' => [
+                'header' => '',
+                'mergeHeader' => false,
+                'class' => 'kartik\grid\ActionColumn',
+                'template' => '{view}',
+                'width' => '40px',
+                'buttons' => [
+                    'view' => function ($url, $data, $key) use ($company){
+                        return Html::a('<span class="glyphicon glyphicon-comment"></span>', ['penalty', 'id' => $data->penaltyinfo->id], ['target' => '_blank']);
+                    },
+                ],
+            ],
             'viewButtons' => [
                 'header' => '',
                 'mergeHeader' => false,
@@ -291,7 +416,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -299,7 +424,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ]
             ],
             User::ROLE_WATCHER => [
@@ -309,7 +434,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -317,7 +442,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -339,7 +464,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ],
                 [
                     Service::TYPE_WASH => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'income', 'city', 'check', 'updateButtons'],
@@ -347,7 +472,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'updateButtons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'updateButtons', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'updateButtons', 'penaltyDetail', 'viewButtons'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -369,7 +494,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
                     Service::TYPE_DISINFECT => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
                     Service::TYPE_PARKING => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'card', 'expense', 'viewButtons', 'partnerButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'day', 'mark', 'car', 'type', 'expense'],
                 ],
             ],
             User::ROLE_CLIENT => [
@@ -380,7 +505,7 @@ class ActHelper
                     Service::TYPE_TIRES => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
                     Service::TYPE_DISINFECT => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'income', 'buttons'],
                     Service::TYPE_PARKING => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
-                    Service::TYPE_PENALTY => ['row', 'clientParent', 'client', 'day', 'mark', 'car', 'type', 'card', 'income', 'city', 'viewButtons'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'mark', 'car', 'penaltyinfo.amount', 'penaltyinfo.discountSize', 'penaltyinfo.discountDate', 'penaltyinfo.totalAmount', 'penaltyDetail', 'viewButtons'],
                 ]
             ],
         ];

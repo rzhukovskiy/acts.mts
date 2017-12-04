@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
@@ -11,6 +11,8 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $pen_id
  * @property integer $car_id
+ * @property integer $act_id
+ * @property integer $company_id
  * @property string $description
  * @property string $postNumber
  * @property string $postedAt
@@ -35,7 +37,7 @@ class PenaltyInfo extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'penalty_info';
+        return '{{%penalty_info}}';
     }
 
     /**
@@ -44,8 +46,8 @@ class PenaltyInfo extends ActiveRecord
     public function rules()
     {
         return [
-            [['pen_id', 'car_id', 'description', 'postNumber', 'postedAt', 'violationAt', 'amount', 'totalAmount', 'isDiscount', 'isExpired', 'penaltyDate', 'isPaid', 'docType', 'docNumber', 'enablePics'], 'required'],
-            [['pen_id', 'car_id', 'isDiscount', 'isExpired', 'isPaid', 'enablePics'], 'integer'],
+            [['pen_id', 'act_id', 'car_id', 'company_id', 'description', 'postNumber', 'postedAt', 'violationAt', 'amount', 'totalAmount', 'penaltyDate'], 'required'],
+            [['pen_id', 'car_id', 'company_id', 'isDiscount', 'isExpired', 'isPaid', 'enablePics'], 'integer'],
             [['description', 'pics'], 'string'],
             [['amount', 'totalAmount'], 'number'],
             [['postNumber', 'violationAt', 'discountDate', 'penaltyDate', 'docType'], 'string', 'max' => 30],
@@ -62,19 +64,21 @@ class PenaltyInfo extends ActiveRecord
         return [
             'id' => 'ID',
             'pen_id' => 'ID Штрафа',
-            'car_id' => 'ID Транспортного средства',
-            'description' => 'Описание статьи КОАП',
-            'postNumber' => 'УИН',
+            'act_id' => 'ID акта',
+            'car_id' => 'Транспортное средство',
+            'company_id' => 'Владелец ТС',
+            'description' => 'Описание',
+            'postNumber' => 'Номер постановления',
             'postedAt' => 'Дата постановления',
             'violationAt' => 'Дата/время нарушения',
-            'amount' => 'Сумма',
-            'totalAmount' => 'Сумма к оплате',
-            'isDiscount' => 'Доступна скидка?',
+            'amount' => 'Сумма штрафа',
+            'totalAmount' => 'Итоговая сумма',
+            'discountSize' => 'Скидка',
+            'isDiscount' => 'Доступна скидка',
             'discountDate' => 'Дата скидки',
-            'discountSize' => 'Размер скидки',
-            'isExpired' => 'Просрочена оплата?',
+            'isExpired' => 'Оплата просрочена',
             'penaltyDate' => 'Дата окончания оплаты',
-            'isPaid' => 'Оплачен?',
+            'isPaid' => 'Оплачен',
             'docType' => 'Тип документа',
             'docNumber' => 'Номер документа',
             'enablePics' => 'Имеются ли изображения?',

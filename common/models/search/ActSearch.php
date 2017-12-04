@@ -126,14 +126,28 @@ class ActSearch extends Act
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_CLIENT:
-                $query->joinWith([
-                    'type',
-                    'mark',
-                    'card',
-                    'car',
-                    'partner partner',
-                    'client client',
-                ]);
+
+                if($this->service_type == Company::TYPE_PENALTY) {
+                    $query->joinWith([
+                        'type',
+                        'mark',
+                        'card',
+                        'car',
+                        'penaltyinfo',
+                        'partner partner',
+                        'client client',
+                    ]);
+                } else {
+                    $query->joinWith([
+                        'type',
+                        'mark',
+                        'card',
+                        'car',
+                        'partner partner',
+                        'client client',
+                    ]);
+                }
+
                 if (!empty($this->client->children)) {
 
                     if (!isset(Yii::$app->request->queryParams['ActSearch']['client_id'])) {
@@ -199,14 +213,28 @@ class ActSearch extends Act
                 break;
 
             case self::SCENARIO_PARTNER:
-                $query->joinWith([
-                    'type',
-                    'mark',
-                    'card',
-                    'car',
-                    'partner partner',
-                    'client client',
-                ]);
+
+                if($this->service_type == Company::TYPE_PENALTY) {
+                    $query->joinWith([
+                        'type',
+                        'mark',
+                        'card',
+                        'car',
+                        'penaltyinfo',
+                        'partner partner',
+                        'client client',
+                    ]);
+                } else {
+                    $query->joinWith([
+                        'type',
+                        'mark',
+                        'card',
+                        'car',
+                        'partner partner',
+                        'client client',
+                    ]);
+                }
+
                 $query->andFilterWhere(['partner_id' => $this->partner_id]);
                 $query->orderBy('partner.parent_id, act.partner_id, served_at');
                 break;

@@ -38,17 +38,17 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate', 'penalty'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate', 'penalty'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'penalty'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
@@ -58,7 +58,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_PARTNER],
                     ],
                     [
-                        'actions' => ['penaltysearch'],
+                        'actions' => ['penaltysearch', 'penaltyupdate'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -768,6 +768,19 @@ class ActController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    // Детализация штрафа
+    public function actionPenalty($id)
+    {
+
+        $model = PenaltyInfo::findOne($id);
+
+        return $this->render('penalty', [
+            'model' => $model,
+            'id' => $id,
+        ]);
+
+    }
+
     // Cron для проверки штрафов
     public function actionPenaltysearch()
     {
@@ -914,29 +927,30 @@ class ActController extends Controller
                                     $newPenalty->pics = $stringPics;
 
                                     // Создание акта
-                                    if($newPenalty->isPaid == 0) {}
-                                    $modelAct = new Act();
-                                    $modelAct->service_type = Company::TYPE_PENALTY;
-                                    $modelAct->partner_id = 80;
+                                    if($newPenalty->isPaid == 0) {
+                                        $modelAct = new Act();
+                                        $modelAct->service_type = Company::TYPE_PENALTY;
+                                        $modelAct->partner_id = 80;
 
-                                    $createParams = [];
-                                    $createParams['Act']['time_str'] = date("d-m-Y", time());
-                                    $createParams['Act']['car_number'] = $resCar[$j]['number'];
-                                    $createParams['Act']['extra_car_number'] = "";
-                                    $createParams['Act']['mark_id'] = $resCar[$j]['mark_id'];
-                                    $createParams['Act']['type_id'] = $resCar[$j]['type_id'];
-                                    $createParams['Act']['serviceList'] = [0 => ['description' => $newPenalty->description, 'amount' => 1, 'price' => $newPenalty->totalAmount]];
+                                        $createParams = [];
+                                        $createParams['Act']['time_str'] = date("d-m-Y", time());
+                                        $createParams['Act']['car_number'] = $resCar[$j]['number'];
+                                        $createParams['Act']['extra_car_number'] = "";
+                                        $createParams['Act']['mark_id'] = $resCar[$j]['mark_id'];
+                                        $createParams['Act']['type_id'] = $resCar[$j]['type_id'];
+                                        $createParams['Act']['serviceList'] = [0 => ['description' => $newPenalty->description, 'amount' => 1, 'price' => $newPenalty->totalAmount]];
 
-                                    if ($modelAct->load($createParams)) {
+                                        if ($modelAct->load($createParams)) {
 
-                                        if ($modelAct->save()) {
-                                            $newPenalty->act_id = $modelAct->id;
+                                            if ($modelAct->save()) {
+                                                $newPenalty->act_id = $modelAct->id;
 
-                                            if ($newPenalty->save()) {
-                                                $numCreate++;
+                                                if ($newPenalty->save()) {
+                                                    $numCreate++;
+                                                }
                                             }
-                                        }
 
+                                        }
                                     }
                                     // Создание акта
 
@@ -953,6 +967,159 @@ class ActController extends Controller
             }
 
             return $numCreate;
+        }
+    }
+
+    // Cron для для обновления штрафов
+    public function actionPenaltyupdate()
+    {
+
+        // Рассылка 2 раза в неделю для партреров
+        if (isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+
+            $numCreate = 0;
+
+            $resCompany = Company::find()->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->where(['company.use_penalty' => 1])->andWhere(['not', ['company_info.inn' => null]])->select('company.use_penalty, company.id, company_info.inn')->orderBy('company.id')->asArray()->all();
+
+            if(count($resCompany) > 0) {
+
+                // Штрафы
+                $modelPenalty = new Penalty();
+                $modelPenalty->createToken();
+
+                // Получаем токен
+                $token = $modelPenalty->createToken();
+                $resToken = json_decode($token[1], true);
+
+                // Сохраняем полученный токен
+                $modelPenalty->setParams(['token' => $resToken['token']]);
+
+                $arrCompanyID = [];
+                $arrPenaltyValue = [];
+                $arrPenIDs = [];
+
+                for ($i = 0; $i < count($resCompany); $i++) {
+                    if (mb_strlen($resCompany[$i]['inn']) > 3) {
+                        $arrCompanyID[] = $resCompany[$i]['id'];
+
+                        // Проверка штрафа
+                        $resPenalty = $modelPenalty->getClientFines($resCompany[$i]['id'] . '@mtransservice.ru');
+                        $arrPenalty = json_decode($resPenalty[1], true);
+
+                        if(isset($arrPenalty['fines'])) {
+                            if(count($arrPenalty['fines']) > 0) {
+
+                                $arrPenCont = $arrPenalty['fines'];
+
+                                // Записываем штрафы
+                                for ($z = 0; $z < count($arrPenCont); $z++) {
+                                    $arrPenaltyValue[$z]['id'] = $arrPenCont[$z]['id'];
+                                    $arrPenaltyValue[$z]['carCert'] = $arrPenCont[$z]['carCert'];
+                                    $arrPenaltyValue[$z]['carReg'] = $arrPenCont[$z]['carReg'];
+
+                                    if((!isset($arrPenCont[$z]['koapText'])) && (!isset($arrPenCont[$z]['name']))) {
+                                        $arrPenaltyValue[$z]['description'] = $arrPenCont[$z]['wireUsername'];
+                                    } else {
+                                        $arrPenaltyValue[$z]['description'] = isset($arrPenCont[$z]['koapText']) ? $arrPenCont[$z]['koapText'] : $arrPenCont[$z]['name'];
+                                    }
+
+                                    $arrPenaltyValue[$z]['postNumber'] = $arrPenCont[$z]['postNumber'];
+                                    $arrPenaltyValue[$z]['postedAt'] = $arrPenCont[$z]['postedAt'];
+                                    $arrPenaltyValue[$z]['violationAt'] = isset($arrPenCont[$z]['violationAt']) ? $arrPenCont[$z]['violationAt'] : $arrPenCont[$z]['postedAt'];
+                                    $arrPenaltyValue[$z]['amount'] = $arrPenCont[$z]['amount'];
+                                    $arrPenaltyValue[$z]['totalAmount'] = $arrPenCont[$z]['totalAmount'];
+                                    $arrPenaltyValue[$z]['isDiscount'] = $arrPenCont[$z]['isDiscount'];
+                                    $arrPenaltyValue[$z]['discountDate'] = $arrPenCont[$z]['discountDate'];
+                                    $arrPenaltyValue[$z]['discountSize'] = $arrPenCont[$z]['discountSize'];
+                                    $arrPenaltyValue[$z]['isExpired'] = $arrPenCont[$z]['isExpired'];
+                                    $arrPenaltyValue[$z]['penaltyDate'] = $arrPenCont[$z]['penaltyDate'];
+                                    $arrPenaltyValue[$z]['isPaid'] = $arrPenCont[$z]['isPaid'];
+                                    $arrPenaltyValue[$z]['docType'] = $arrPenCont[$z]['docType'];
+                                    $arrPenaltyValue[$z]['docNumber'] = $arrPenCont[$z]['docNumber'];
+                                    $arrPenaltyValue[$z]['enablePics'] = $arrPenCont[$z]['enablePics'];
+                                    $arrPenaltyValue[$z]['pics'] = $arrPenCont[$z]['pics'];
+
+                                    $arrPenIDs[] = $arrPenCont[$z]['id'];
+
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                $arrPenCheck = PenaltyInfo::find()->where(['pen_id' => $arrPenIDs])->select('pen_id')->asArray()->column();
+
+                $arrPenIDs = [];
+                for ($n = 0; $n < count($arrPenCheck); $n++) {
+                    $index = $arrPenCheck[$n];
+                    $arrPenIDs[$index] = 1;
+                }
+
+                if (count($arrCompanyID) > 0) {
+                    $resCar = Car::find()->where(['company_id' => $arrCompanyID])->andWhere(['is_penalty' => 1])->andWhere(['not', ['cert' => null]])->select('id, company_id, number, cert, mark_id, type_id')->orderBy('company_id')->asArray()->all();
+
+                    for ($n = 0; $n < count($arrPenaltyValue); $n++) {
+
+                        for ($j = 0; $j < count($resCar); $j++) {
+
+                            if((mb_strtoupper(str_replace(' ', '', $arrPenaltyValue[$n]['carReg']), 'UTF-8') == $resCar[$j]['number']) && ($arrPenaltyValue[$n]['carCert'] == $resCar[$j]['cert'])) {
+
+                                $index = $arrPenaltyValue[$n]['id'];
+
+                                if(isset($arrPenIDs[$index]) == true) {
+
+                                    // Обновление штрафа
+                                    $localPenaltyModel = PenaltyInfo::findOne(['pen_id' => $index]);
+                                    $localPenaltyModel->isPaid = ($arrPenaltyValue[$n]['isPaid'] > 0) ? $arrPenaltyValue[$n]['isPaid'] : 0;
+
+                                    $localPenaltyModel->isDiscount = ($arrPenaltyValue[$n]['isDiscount'] > 0) ? $arrPenaltyValue[$n]['isDiscount'] : 0;
+                                    $localPenaltyModel->discountDate = ($arrPenaltyValue[$n]['discountDate'] > 0) ? $arrPenaltyValue[$n]['discountDate'] : 0;
+                                    $localPenaltyModel->discountSize = (String)$arrPenaltyValue[$n]['discountSize'];
+                                    $localPenaltyModel->docNumber = $arrPenaltyValue[$n]['docNumber'];
+                                    $localPenaltyModel->enablePics = ($arrPenaltyValue[$n]['enablePics'] > 0) ? $arrPenaltyValue[$n]['enablePics'] : 0;
+
+                                    // Изображения
+                                    $stringPics = "";
+                                    if (($arrPenaltyValue[$n]['enablePics'] == 1) && (count($arrPenaltyValue[$n]['pics']) > 0)) {
+
+                                        $picsArr = $arrPenaltyValue[$n]['pics'];
+
+                                        for ($x = 0; $x < count($picsArr); $x++) {
+
+                                            if ($x == 0) {
+                                                $stringPics .= $picsArr[$x]['url'];
+                                            } else {
+                                                $stringPics .= ', ' . $picsArr[$x]['url'];
+                                            }
+
+                                        }
+
+                                    }
+
+                                    $localPenaltyModel->pics = $stringPics;
+
+                                    if($localPenaltyModel->save()) {
+                                        $numCreate++;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return $numCreate;
+
         }
     }
 
