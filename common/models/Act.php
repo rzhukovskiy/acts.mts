@@ -64,6 +64,7 @@ class Act extends ActiveRecord
 
     const SCENARIO_ERROR = 'error';
     const SCENARIO_LOSSES = 'losses';
+    const SCENARIO_ASYNC = 'async';
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
@@ -778,6 +779,14 @@ class Act extends ActiveRecord
             $modelActError = new ActError();
             $modelActError->act_id = $this->id;
             $modelActError->error_type = 19;
+            $modelActError->save();
+        }
+
+        // Асинхронные акты
+        if(count($this->clientServiceList) != count($this->partnerServiceList)) {
+            $modelActError = new ActError();
+            $modelActError->act_id = $this->id;
+            $modelActError->error_type = 20;
             $modelActError->save();
         }
 

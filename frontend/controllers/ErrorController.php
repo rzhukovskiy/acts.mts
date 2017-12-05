@@ -28,17 +28,17 @@ class ErrorController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar', 'losses', 'dellosses'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'numberlist', 'querycar', 'losses', 'dellosses'],
+                        'actions' => ['list', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'querycar', 'losses', 'dellosses'],
+                        'actions' => ['list', 'view', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -66,6 +66,22 @@ class ErrorController extends Controller
     public function actionLosses($type)
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
+        $searchModel->service_type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'role' => Yii::$app->user->identity->role,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    public function actionAsync($type)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ASYNC]);
         $searchModel->service_type = $type;
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -147,6 +163,12 @@ class ErrorController extends Controller
     public function actionDellosses($id)
     {
         ActError::deleteAll(['act_id' => $id, 'error_type' => 19]);
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+    public function actionDelasync($id)
+    {
+        ActError::deleteAll(['act_id' => $id, 'error_type' => 20]);
 
         return $this->redirect(Yii::$app->request->referrer);
     }

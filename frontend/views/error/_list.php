@@ -119,6 +119,13 @@ $columns = [
                     ], [
                         'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
                     ]);
+                } elseif(Yii::$app->controller->action->id == 'async') {
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
+                        'delasync',
+                        'id' => $data->id,
+                    ], [
+                        'data-confirm' => "Вы уверены, что хотите удалить этот элемент?"
+                    ]);
                 } else {
                     return Html::a('<span class="glyphicon glyphicon-trash"></span>', [
                         'delete',
@@ -145,7 +152,7 @@ echo GridView::widget([
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
-        'heading' => (Yii::$app->controller->action->id == 'losses') ? 'Убыточные акты' : 'Ошибочные акты',
+        'heading' => (Yii::$app->controller->action->id == 'losses') ? 'Убыточные акты' : ((Yii::$app->controller->action->id == 'async') ? 'Асинхронные акты' : 'Ошибочные акты'),
         'before' => false,
         'footer' => false,
         'after' => false,

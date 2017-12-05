@@ -51,6 +51,12 @@ class menuLeftWidget extends Widget
             $searchModel->service_type = $type_id;
             $lossesCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
         }
+        $asyncCount = 0;
+        foreach (Service::$listType as $type_id => $typeData) {
+            $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ASYNC]);
+            $searchModel->service_type = $type_id;
+            $asyncCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+        }
 
         $items = [];
         // Admin links
@@ -255,7 +261,7 @@ class menuLeftWidget extends Widget
                         'Ошибочные акты ' .
                         ($errorsCount ? '<span class="label label-danger">' . $errorsCount . '</span>' : ''),
                     'url'    => ['/error/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses',
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses' && Yii::$app->controller->action->id != 'async',
                 ],
                 [
                     'label'  =>
@@ -263,6 +269,13 @@ class menuLeftWidget extends Widget
                         ($lossesCount ? '<span class="label label-danger">' . $lossesCount . '</span>' : ''),
                     'url'    => ['/error/losses', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'losses',
+                ],
+                [
+                    'label'  =>
+                        'Асинхронные акты ' .
+                        ($asyncCount ? '<span class="label label-danger">' . $asyncCount . '</span>' : ''),
+                    'url'    => ['/error/async', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'async',
                 ],
             ];
         } // Partner links

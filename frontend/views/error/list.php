@@ -27,6 +27,14 @@ if((Yii::$app->controller->action->id == 'list') && (Yii::$app->controller->id =
             'role' => $role,
         ]);
 
+} elseif((Yii::$app->controller->action->id == 'async') && (Yii::$app->controller->id == 'error')) {
+    $this->title = 'Асинхронные акты ';
+
+    echo $this->render('_tabsasync',
+        [
+            'role' => $role,
+        ]);
+
 } else {
     $this->title = 'Акты';
 
