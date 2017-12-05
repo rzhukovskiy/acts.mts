@@ -450,7 +450,8 @@ class ActController extends Controller
 
         $serviceList = '';
 
-        if($type == 2) {
+        /* старый вывод услуг в лк
+         * if($type == 2) {
             $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $type])
                 ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
                 ->indexBy('id')->column();
@@ -458,7 +459,10 @@ class ActController extends Controller
             $serviceList = Service::find()->where(['type' => $type])
                 ->orderBy('description')->select(['description', 'id'])
                 ->indexBy('id')->column();
-        }
+        }*/
+        $serviceList = Service::find()->where(['type' => $type])
+            ->orderBy('description')->select(['description', 'id'])
+            ->indexBy('id')->column();
 
         if ($model->load(Yii::$app->request->post())) {
             $entryId = Yii::$app->request->post('entry_id', false);
@@ -606,13 +610,15 @@ class ActController extends Controller
 
         $serviceList = [];
 
-        if($model->service_type == 2) {
+        /* старый вывод услуг в лк
+         * if($model->service_type == 2) {
             $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . $model->client_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $model->service_type])
                 ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
                 ->indexBy('id')->column();
         } else {
             $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
-        }
+        }*/
+        $serviceList = Service::find()->where(['type' => $model->service_type])->select(['description', 'id'])->indexBy('id')->column();
 
         return $this->render('update', [
             'model' => $model,

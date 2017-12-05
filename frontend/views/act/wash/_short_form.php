@@ -7,12 +7,67 @@
 
 use common\components\ArrayHelper;
 use common\models\Car;
+use common\models\Service;
+use common\models\CompanyService;
 use common\models\Mark;
 use common\models\Type;
 use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
+use yii\web\View;
+
+if (!empty($serviceList)) {
+    $fixedList = json_encode(Service::find()
+        ->andWhere(['type' => $model->service_type])
+        ->select('is_fixed')->indexBy('id')->column());
+
+// получаем значение фиксированных цен
+    $compServList = json_encode(CompanyService::find()->where('`company_id`=' . Yii::$app->user->identity->company_id)->select('price')->indexBy('service_id')->orderBy('service_id ASC')->column());
+
+    $script = <<< JS
+    var serviceList = $fixedList;
+    var compServList = $compServList;
+    //$('.scope-price').hide();
+    
+    for (var i = 0; i < $('.scope-price').length; i++) {
+        
+        var fixed = serviceList[$('.scope-service').eq(i).val()];
+        
+        if(fixed > 0) {
+            $('.scope-price').eq(i).attr('readonly', true);
+        } else {
+        $('.scope-price').eq(i).attr('readonly', false);
+        }
+        
+        fixed = 1;
+        
+    }
+
+    $(document).on('change', '.scope-service', function () {
+        var fixed = serviceList[$(this).val()];
+        if (fixed > 0) {
+            //$(this).parent().parent().find('.scope-price').hide();
+            $(this).parent().parent().find('.scope-price').attr('readonly', true);
+            
+            if ((typeof(compServList[$(this).val()]) != "undefined") && (compServList[$(this).val()] !== null)) {
+            $(this).parent().parent().find('.scope-price').val(compServList[$(this).val()]);
+            } else {
+            $(this).parent().parent().find('.scope-price').val('0');
+            }
+            
+        } else {
+            //$(this).parent().parent().find('.scope-price').show();
+            $(this).parent().parent().find('.scope-price').attr('readonly', false);
+            $(this).parent().parent().find('.scope-price').val('');
+        }
+        
+    });
+
+JS;
+    $this->registerJs($script, View::POS_READY);
+
+}
 
 ?>
 
@@ -96,133 +151,88 @@ use yii\jui\AutoComplete;
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
-                    <div class="form-group row" style="height: 5px;">
-                        <div class="col-xs-12">
+                <td colspan="5">
+                    <div class="form-group" style="height: 5px;">
+                        <div class="col-xs-6">
                             <label class="control-label">Услуга</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <label class="control-label">Количество</label>
+                        </div>
+                        <div class="col-xs-2">
+                            <label class="control-label">Цена</label>
+                        </div>
+                        <div class="col-xs-2">
                         </div>
                     </div>
 
-                    <div class="form-group" style="height: 25px;">
-                        <?php if (!empty($serviceList)) {
+                    <?php if(isset($partnerScopes)) {
+                        $ipS = 0;
+                        foreach ($partnerScopes as $scope) {?>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-6">
+                                    <?php if (!empty($serviceList)) { ?>
+                                        <?= Html::dropDownList("Act[serviceList][$scope->id][service_id]", (isset($scope->service_id)) ? $scope->service_id : '', $serviceList, ['class' => 'form-control input-sm scope-service', 'required' => true, 'prompt' => 'выберите услугу']) ?>
+                                    <?php } else { ?>
+                                        <?= Html::textInput("Act[serviceList][$scope->id][description]", (isset($scope->description)) ? $scope->description : '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                    <?php } ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <?= Html::input('number', "Act[serviceList][$scope->id][amount]", (isset($scope->amount)) ? $scope->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                </div>
+                                <div class="col-xs-2">
+                                    <?= Html::input('text', "Act[serviceList][$scope->id][price]", (isset($scope->price)) ? $scope->price : 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                                </div>
+                                <div class="col-xs-2">
 
-                            $serviceList = ArrayHelper::perMutate($serviceList);
-                            $newServiceList = [];
-                            $checkNewArr = false;
-                            $numcontArr = [];
+                                    <?php
+                                    if(($ipS + 1) == count($partnerScopes)) {
+                                        ?>
 
-                                foreach ($serviceList as $key => $value) {
+                                        <button type="button" class="btn btn-primary input-sm addButton"><i
+                                                    class="glyphicon glyphicon-plus"></i></button>
 
-                                    if ($value == 'снаружи') {
-                                        $numcontArr[] = $key;
-                                    }
+                                    <?php } else { ?>
 
-                                    if ($value == 'внутри') {
-                                        $numcontArr[] = $key;
-                                    }
+                                        <button type="button" class="btn btn-primary input-sm removeButton">
+                                            <i class="glyphicon glyphicon-minus"></i>
+                                        </button>
 
-                                    if (($value == 'внутри+снаружи') || ($value == 'снаружи+внутри')) {
-                                        $numcontArr[] = $key;
-                                        $serviceList[$key] = 'снаружи+внутри';
-                                    }
+                                    <?php } ?>
 
-                                    if ($value == 'отогрев') {
-                                        $numcontArr[] = $key;
-                                    }
+                                </div>
+                            </div>
 
-                                    if ($value == 'двигатель') {
-                                        $numcontArr[] = $key;
-                                    }
-
-                                    if ($value == 'химчистка') {
-                                        $numcontArr[] = $key;
-                                    }
-
-                                    //
-                                    if ($value == 'Стандарт') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Экспресс') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Уборка салона пылесосом') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Влажная уборка салона') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Уборка багажника') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Протирка стёкол') {
-                                        $numcontArr[] = $key;
-                                    }
-                                    if ($value == 'Удаление битума') {
-                                        $numcontArr[] = $key;
-                                    }
-
-                                }
-
-                                for($i = 0; $i < count($numcontArr); $i++) {
-                                    $newServiceList[$numcontArr[$i]] = $serviceList[$numcontArr[$i]];
-                                }
-
-                            foreach ($serviceList as $key => $value) {
-
-                                if (($value == 'снаружи') || ($value == 'внутри') || ($value == 'внутри+снаружи') || ($value == 'отогрев') || ($value == 'двигатель') || ($value == 'химчистка') || ($value == 'Стандарт') || ($value == 'Экспресс') || ($value == 'Уборка салона пылесосом') || ($value == 'Влажная уборка салона') || ($value == 'Уборка багажника') || ($value == 'Протирка стёкол') || ($value == 'Удаление битума')) {
-                                } else {
-                                    $newServiceList[$key] = $value;
-                                }
-
-                            }
-
-                            ?>
                             <?php
-                            $setVal = '';
 
-                            if(isset($partnerScopes)) {
-                                for ($sV = 0; $sV < count($partnerScopes); $sV++) {
+                            $ipS++;
 
-                                    if(($sV + 1) == count($partnerScopes)) {
-                                        $setVal .= $partnerScopes[$sV]->service_id;
-                                    } else {
-                                        $setVal .= $partnerScopes[$sV]->service_id . "+";
-                                    }
+                        } ?>
 
-                                }
-                            }
+                    <?php } else { ?>
 
-                            echo Html::dropDownList("Act[serviceList][0][service_id]", $setVal, $newServiceList, ['class' => 'form-control']); ?>
-                        <?php } else { ?>
-                            <?php
-                            $setVal = '';
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-6">
+                                <?php if (!empty($serviceList)) { ?>
+                                    <?= Html::dropDownList("Act[serviceList][0][service_id]", '', $serviceList, ['class' => 'form-control input-sm scope-service', 'required' => true, 'prompt' => 'выберите услугу']) ?>
+                                <?php } else { ?>
+                                    <?= Html::textInput("Act[serviceList][0][description]", '', ['class' => 'form-control input-sm', 'placeholder' => 'Услуга']) ?>
+                                <?php } ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('number', "Act[serviceList][0][amount]", 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <?= Html::input('text', "Act[serviceList][0][price]", 0, ['class' => 'form-control input-sm scope-price', 'placeholder' => 'Цена']) ?>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-primary input-sm addButton"><i
+                                            class="glyphicon glyphicon-plus"></i></button>
+                            </div>
+                        </div>
 
-                            if(isset($partnerScopes)) {
-                                for ($sV = 0; $sV < count($partnerScopes); $sV++) {
+                    <?php } ?>
 
-                                    if(($sV + 1) == count($partnerScopes)) {
-                                        $setVal .= $partnerScopes[$sV]->description;
-                                    } else {
-                                        $setVal .= $partnerScopes[$sV]->description . "+";
-                                    }
-
-                                }
-                            }
-
-                            echo Html::textInput("Act[serviceList][0][description]", $setVal, ['class' => 'form-control', 'placeholder' => 'Услуга']); ?>
-                        <?php } ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][amount]", (isset($partnerScopes[0]->amount)) ? $partnerScopes[0]->amount : 1, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
-                        <?= Html::hiddenInput("Act[serviceList][0][price]", (isset($partnerScopes[0]->price)) ? $partnerScopes[0]->price : 0, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Цена']) ?>
-                    </div>
-                </td>
-                <td>
-                    <?= $form->field($model, 'check')->error(false) ?>
-                </td>
-                <td>
-                    <label class="control-label" for="act-image">Загрузка чека</label><br />
-                    <label><div class="file-upload">
-                            <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
-                        </div></label>
                 </td>
             </tr>
             <tr>
