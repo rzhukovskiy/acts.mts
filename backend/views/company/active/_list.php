@@ -252,7 +252,7 @@ if($searchModel->type == 3) {
                     'buttons' => [
                         'map' => function ($url, $model, $key) {
                             return $model->fullAddress ? Html::a('<span class="glyphicon glyphicon-map-marker" style="font-size:17px;"></span>',
-                                'https://www.google.ru/maps/place/' . $model->fullAddress, ['target' => '_blank']) : '';
+                                'https://www.google.ru/maps/place/' . urlencode($model->fullAddress), ['target' => '_blank']) : '';
                         },
                         'update' => function ($url, $model, $key) {
                             return Html::a('<span class="glyphicon glyphicon-search"></span>',
