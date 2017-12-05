@@ -236,6 +236,17 @@ JS;
                 </td>
             </tr>
             <tr>
+                <td colspan="2">
+                    <?= $form->field($model, 'check')->error(false) ?>
+                </td>
+                <td colspan="3">
+                    <label class="control-label" for="act-image">Загрузка чека</label><br />
+                    <label><div class="file-upload">
+                            <?= $form->field($model, 'image')->fileInput(['class' => 'form-control'])->error(false) ?>
+                        </div></label>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="7">
                     <?= Html::hiddenInput('__returnUrl', Yii::$app->request->referrer) ?>
                     <?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
