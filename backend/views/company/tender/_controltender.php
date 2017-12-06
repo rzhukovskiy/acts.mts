@@ -321,7 +321,6 @@ if (isset($arrLists[9])){
                     },
                 ],
                 [
-                    'attribute' => 'balance_work',
                     'vAlign'=>'middle',
                     'header' => 'Остаток в работе',
                     'contentOptions' => ['style' => 'min-width: 100px'],
@@ -329,8 +328,8 @@ if (isset($arrLists[9])){
                     'pageSummaryFunc' => GridView::F_SUM,
                     'value' => function ($data) {
 
-                        if ($data->balance_work) {
-                            return $data->balance_work;
+                        if ($data->send || $data->return) {
+                            return $data->send - $data->return;
                         } else {
                             return '-';
                         }

@@ -31,7 +31,6 @@ use yii\behaviors\TimestampBehavior;
  * @property string $date_status_contract
  * @property string $notice_eis
  * @property integer $key_type
- * @property string $competitor
  * @property string $date_request_start
  * @property string $date_request_end
  * @property string $time_request_process
@@ -56,7 +55,6 @@ use yii\behaviors\TimestampBehavior;
  * @property float $maximum_agreed_calcnotnds
  * @property float $site_fee_participation
  * @property float $ensuring_application
- * @property string $inn_competitors
  * @property string $comment_date_contract
  * @property integer $tender_close
  */
@@ -75,7 +73,6 @@ class Tender extends ActiveRecord
     private $maximum_agreed_calcnotnds;
     private $site_fee_participation;
     private $ensuring_application;
-    private $inn_competitors;
     private $comment_date_contract;
     private $tender_close;
 
@@ -114,10 +111,10 @@ class Tender extends ActiveRecord
             [['company_id', 'purchase_status', 'percent_down', 'percent_max'], 'integer'],
             [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
-            [['city', 'place', 'number_purchase', 'customer', 'competitor'], 'string', 'max' => 255],
+            [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
             [['inn_customer'], 'string', 'max' => 200],
-            [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer', 'inn_competitors'], 'string', 'max' => 10000],
+            [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer'], 'string', 'max' => 10000],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
             ];
     }
@@ -150,7 +147,6 @@ class Tender extends ActiveRecord
             'date_status_contract' => 'Дата изменения статуса контракта',
             'notice_eis' => 'Номер извещения в ЕИС',
             'key_type' => 'Тип ключа',
-            'competitor' => 'Потенциальные конкуренты',
             'date_request_start' => 'Начало подачи заявки',
             'date_request_end' => 'Окончание подачи заявки',
             'time_request_process' => 'Дата и время рассмотрения заявок',
@@ -173,7 +169,6 @@ class Tender extends ActiveRecord
             'maximum_agreed_calcnotnds' => 'Максимальное согласованное расчетное снижение в рублях без НДС',
             'site_fee_participation' => 'Плата площадке за участие',
             'ensuring_application' => 'Обеспечение заявки',
-            'inn_competitors' => 'ИНН конкурентов',
             'comment_date_contract' => 'Комментарий к сроку договора',
             'tender_close' => 'Закрыть закупку',
             'files' => 'Вложения',
@@ -524,15 +519,7 @@ class Tender extends ActiveRecord
     {
         $this->ensuring_application = $value;
     }
-    public function getInn_competitors()
-    {
-        return $this->inn_competitors;
-    }
 
-    public function setInn_competitors($value)
-    {
-        $this->inn_competitors = $value;
-    }
     public function getComment_date_contract()
     {
         return $this->comment_date_contract;

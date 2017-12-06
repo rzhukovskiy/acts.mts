@@ -96,14 +96,14 @@ function sendControlisarchive() {
 }
 
 // Клик закрыть загрузку в тендере
-$('.btn-danger').on('click', function(){
+$('.closeTender').on('click', function(){
     var checkisarchive = confirm("Вы уверены что хотите закрыть?");
     
     if(checkisarchive == true) {     
        sendControlisarchive();
     }
 });
-$('.btn-warning').on('click', function(){
+$('.openTender').on('click', function(){
     var checkisarchiveDefault = confirm("Вы уверены что хотите открыть?");
   
     if(checkisarchiveDefault == true) {
@@ -477,26 +477,15 @@ $this->registerJs($script, View::POS_READY);
             </td>
         </tr>
         <tr>
-            <td class="list-label-md"><?= $model->getAttributeLabel('balance_work') ?></td>
+            <td class="list-label-md">Остаток в работе</td>
             <td>
-                <?= Editable::widget([
-                    'model' => $model,
-                    'buttonsTemplate' => '{submit}',
-                    'submitButton' => [
-                        'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                    ],
-                    'attribute' => 'balance_work',
-                    'displayValue' => $model->balance_work ? ($model->balance_work . ' ₽') : '',
-                    'asPopover' => true,
-                    'placement' => PopoverX::ALIGN_LEFT,
-                    'size' => 'lg',
-                    'disabled' => $model->is_archive == 1 ? true : false,
-                    'options' => ['class' => 'form-control'],
-                    'formOptions' => [
-                        'action' => ['/company/updatecontroltender', 'id' => $model->id],
-                    ],
-                    'valueIfNull' => '<span class="text-danger">не задано</span>',
-                ]); ?>
+                <?php
+                if($model->send || $model->return) {
+                    echo ($model->send - $model->return) . ' ₽';
+                } else {
+                    echo "-";
+                }
+                ?>
             </td>
         </tr>
         <tr>
@@ -528,12 +517,12 @@ $this->registerJs($script, View::POS_READY);
         if ($model->is_archive == 1) {
             echo "<tr> 
         <td class='list-label-md'>Закрыто</td>
-        <td><span style='color:#BA0006'>Вносить изменения невозможно</span> <span class='btn btn-warning' style='display:none'>Открыть</span></td>
+        <td><span style='color:#BA0006'>Вносить изменения невозможно</span> <span class='btn btn-warning openTender' style='display:none'>Открыть</span></td>
         </tr>";
         } else {
             echo "<tr>
         <td class='list-label-md'>Закрыть</td>
-        <td> <span class='btn btn-danger'>Закрыть</span></td>
+        <td> <span class='btn btn-danger closeTender'>Закрыть</span></td>
         </tr>";
         }
         ?>
