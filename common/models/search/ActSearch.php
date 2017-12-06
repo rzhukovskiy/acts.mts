@@ -108,7 +108,12 @@ class ActSearch extends Act
                     'actErrors as actErrors',
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
-                $query->andWhere(['!=', 'actErrors.error_type', 19]);
+                $query->andWhere(['AND', ['!=', 'actErrors.error_type', 19], ['!=', 'actErrors.error_type', 20]]);
+
+                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
+                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_LOSSES:
@@ -124,6 +129,11 @@ class ActSearch extends Act
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['actErrors.error_type' => 19]);
+
+                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
+                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_ASYNC:
@@ -139,6 +149,11 @@ class ActSearch extends Act
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['actErrors.error_type' => 20]);
+
+                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
+                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_CLIENT:
