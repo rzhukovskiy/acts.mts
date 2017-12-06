@@ -91,6 +91,13 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         <div class="header-btn pull-right">
             <?php
 
+            // Карта
+            echo Html::a('Карта', [
+                'company/map',
+                'status' => $searchModel->status,
+                'type' => $searchModel->type,
+            ], ['class' => 'btn btn-success btn-sm', 'style' => 'margin-right:15px;', 'target' => '_blank']);
+
             // Тип ТС
             echo Html::a('Грузовые', [
                 'company/' . Yii::$app->controller->action->id,

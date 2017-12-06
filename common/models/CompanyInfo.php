@@ -23,6 +23,8 @@ use yii\db\ActiveRecord;
  * @property string $pay
  * @property string $contract
  * @property string $inn
+ * @property string $lat
+ * @property string $lng
  * @property integer $contract_date
  * @property integer $comment
  *
@@ -56,7 +58,7 @@ class CompanyInfo extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['website', 'inn'], 'safe'],
+            [['website', 'inn', 'lat', 'lng'], 'safe'],
             [['company_id', 'contract_date', 'time_location', 'nds'], 'integer'],
             ['comment', 'string', 'max' => 2500],
             [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
@@ -87,6 +89,8 @@ class CompanyInfo extends ActiveRecord
             'website' => 'Веб-сайт',
             'nds' => 'НДС',
             'inn' => 'ИНН',
+            'lat' => 'Широта',
+            'lng' => 'Долгота',
         ];
     }
 
