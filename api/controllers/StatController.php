@@ -146,17 +146,20 @@ class StatController extends Controller
 
                     }
 
-                    $ressArray = Act::find()->where(['OR', ['client_id' => $client], ['client_id' => $arrParParIds]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
+                    //$ressArray = Act::find()->where(['OR', ['client_id' => $client], ['client_id' => $arrParParIds]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
+                    $ressArray = Act::find()->where(['OR', ['client_id' => $client], ['client_id' => $arrParParIds]])->andWhere(['AND', ['!=', 'service_type', 6], ['!=', 'service_type', 7], ['!=', 'service_type', 8]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
 
                 } else {
-                    $ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
+                    //$ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
+                    $ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['AND', ['!=', 'service_type', 6], ['!=', 'service_type', 7], ['!=', 'service_type', 8]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, service_type, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['service_type', 'DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->orderBy('service_type, served_at')->asArray()->all();
                 }
 
                 return json_encode(['result' => json_encode($ressArray), 'company' => json_encode($companyArray)]);
 
             } else {
 
-                $ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $type])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->asArray()->all();
+                //$ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $type])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->asArray()->all();
+                $ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $type])->andWhere(['AND', ['!=', 'service_type', 6], ['!=', 'service_type', 7], ['!=', 'service_type', 8]])->andWhere(['between', 'served_at', $dateFrom, $dateTo])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m")'])->asArray()->all();
 
                 return json_encode(['result' => json_encode($ressArray), 'company' => '']);
 
@@ -229,9 +232,11 @@ class StatController extends Controller
 
                     }
 
-                    $ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['service_type' => $act_type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
+                    //$ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['service_type' => $act_type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
+                    $ressArray = Act::find()->where(['OR', ['client_id' => $company_id], ['client_id' => $arrParParIds]])->andWhere(['service_type' => $act_type])->andWhere(['AND', ['!=', 'service_type', 6], ['!=', 'service_type', 7], ['!=', 'service_type', 8]])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
                 } else {
-                    $ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $act_type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
+                    //$ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $act_type])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
+                    $ressArray = Act::find()->where(['partner_id' => $company_id, 'service_type' => $act_type])->andWhere(['AND', ['!=', 'service_type', 6], ['!=', 'service_type', 7], ['!=', 'service_type', 8]])->andWhere(["MONTH(FROM_UNIXTIME(served_at))" => $periodM, "YEAR(FROM_UNIXTIME(served_at))" => $periodY])->select('COUNT(`act`.id) AS countServe, SUM(expense) as expense, SUM(income) as income, SUM(profit) as profit, served_at')->groupBy(['DATE_FORMAT(FROM_UNIXTIME(served_at), "%Y-%m-%d")'])->asArray()->all();
                 }
 
                 return json_encode(['error' => 0, 'result' => json_encode($ressArray)]);
