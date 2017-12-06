@@ -18,11 +18,14 @@ use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
 use common\models\search\TenderControlSearch;
+use common\models\search\TenderMemberSearch;
 use common\models\search\TenderSearch;
 use common\models\Tender;
 use common\models\TenderHystory;
+use common\models\TenderLinks;
 use common\models\TenderLists;
 use common\models\TenderControl;
+use common\models\TenderMembers;
 use yii\base\DynamicModel;
 use common\models\CompanySubType;
 use yii\web\UploadedFile;
@@ -61,17 +64,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -658,7 +661,99 @@ class CompanyController extends Controller
 
     }
 
-    // Список договоров по дате окончания
+    // Участники тендеров
+    public function actionTendermembers()
+    {
+        $model = TenderMembers::find()->all();
+
+        $searchModel = new TenderMemberSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+
+        return $this->render('tender-members/tendermembers', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+        ]);
+
+    }
+
+    public function actionNewtendermembers()
+    {
+        $model = new TenderMembers();
+
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            return $this->redirect(['company/tendermembers']);
+
+        } else {
+            return $this->render('tender-members/newtendermembers', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionFulltendermembers($id)
+    {
+        $model = TenderMembers::findOne(['id' => $id]);
+        $model->id = $id;
+
+        $searchModel = new TenderMemberSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $dataProvider->query->innerJoin('tender_links', '`tender_links`.`member_id` = `tender_members`.`id`')->innerJoin('tender', '`tender`.`id` = `tender_links`.`tender_id` ')->where('tender_members.id=' . $id)->select('tender.id')->column();
+
+        return $this->render('tender-members/fulltendermembers', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'id' => $id,
+        ]);
+
+    }
+
+    public function actionUpdatetendermembers($id)
+    {
+        {
+            $model = TenderMembers::findOne(['id' => $id]);
+
+            $hasEditable = Yii::$app->request->post('hasEditable', false);
+            if ($hasEditable) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+
+                // Подготовка данных перед сохранением
+                $arrUpdate = Yii::$app->request->post();
+
+
+                if ($model->load($arrUpdate) && $model->save()) {
+                    $output = [];
+                    return ['output' => implode(', ', $output), 'message' => ''];
+                } else {
+                    return ['message' => 'не получилось'];
+                }
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        }
+    }
+
+    public function actionNewtenderlinks()
+    {
+        $model = new TenderLinks();
+
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            return $this->redirect(['company/tendermembers']);
+
+        } else {
+            return $this->render('tender-members/newtenderlinks', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    // Раздел архив тендеров
     public function actionArchivetender($win)
     {
         $searchModel = new TenderSearch();
@@ -714,6 +809,7 @@ class CompanyController extends Controller
 
         return TenderControl::colorForPaymentStatus($model->payment_status);
     }
+
 
     public function actionNewcontroltender()
     {

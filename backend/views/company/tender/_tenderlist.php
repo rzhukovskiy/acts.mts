@@ -397,7 +397,7 @@ echo GridView::widget([
 'emptyText' => '',
 'panel' => [
 'type' => 'primary',
-'heading' => 'Все закупки',
+'heading' => 'Закупки',
 'before' => false,
 'footer' => false,
 'after' => false,

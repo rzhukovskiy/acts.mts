@@ -495,6 +495,7 @@ $this->registerJs($script, View::POS_READY);
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
         </td>
+    </tr>
     <tr>
         <td class="list-label-md">
             <?= $model->getAttributeLabel('contacts_resp_customer') ?></td>
@@ -1277,53 +1278,6 @@ $this->registerJs($script, View::POS_READY);
         <td class="list-label-md"><?= $model->getAttributeLabel('date_status_contract') ?></td>
         <td>
             <?= ($model->date_status_contract) ? date('d.m.Y H:i', $model->date_status_contract) : '-' ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('competitor') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'competitor',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md">
-            <?= $model->getAttributeLabel('inn_competitors') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType'       => Editable::INPUT_TEXTAREA,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'inn_competitors',
-                'displayValue' => nl2br($model->inn_competitors),
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите ИНН конкурентов'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
         </td>
     </tr>
     <tr>

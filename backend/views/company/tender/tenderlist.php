@@ -10,7 +10,7 @@
  * @var $listType array
  * @var $userData array
  */
-$this->title = 'Все тендеры';
+$this->title = 'Закупки';
 
 $action = Yii::$app->controller->action->id;
 
