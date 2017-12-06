@@ -86,14 +86,14 @@ function sendCloseDownload() {
 }
 
 // Клик закрыть загрузку в тендере
-$('.btn-danger').on('click', function(){
+$('.closeTender').on('click', function(){
     var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
     
     if(checkCloseDownload == true) {     
        sendCloseDownload();
     }
 });
-$('.btn-warning').on('click', function(){
+$('.openTender').on('click', function(){
     var checkCloseDefault = confirm("Вы уверены что хотите открыть загрузку?");
   
     if(checkCloseDefault == true) {
@@ -495,6 +495,7 @@ $this->registerJs($script, View::POS_READY);
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
         </td>
+    </tr>
     <tr>
         <td class="list-label-md">
             <?= $model->getAttributeLabel('contacts_resp_customer') ?></td>
@@ -1280,53 +1281,6 @@ $this->registerJs($script, View::POS_READY);
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('competitor') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'competitor',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md">
-            <?= $model->getAttributeLabel('inn_competitors') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType'       => Editable::INPUT_TEXTAREA,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'inn_competitors',
-                'displayValue' => nl2br($model->inn_competitors),
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите ИНН конкурентов'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('date_contract') ?></td>
         <td>
             <?= Editable::widget([
@@ -1537,12 +1491,12 @@ $this->registerJs($script, View::POS_READY);
    if ($model->tender_close == 1) {
        echo "<tr> 
         <td class='list-label-md'>Закупка закрыта</td>
-        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span> <span class='btn btn-warning' style='display:none'>Открыть закупку</span></td>
+        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span> <span class='btn btn-warning openTender' style='display:none'>Открыть закупку</span></td>
         </tr>";
    } else {
        echo "<tr>
         <td class='list-label-md'>Закрыть закупку</td>
-        <td> <span class='btn btn-danger'>Закрыть закупку</span></td>
+        <td> <span class='btn btn-danger closeTender'>Закрыть закупку</span></td>
         </tr>";
    }
  ?>

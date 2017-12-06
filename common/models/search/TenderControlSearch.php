@@ -34,7 +34,7 @@ class TenderControlSearch extends TenderControl
     {
         return [
             [['user_id', 'site_address', 'type_payment', 'is_archive'], 'integer'],
-            [['send', 'return', 'balance_work'], 'safe'],
+            [['send', 'return'], 'safe'],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'], 'string'],
         ];
     }
@@ -95,9 +95,7 @@ class TenderControlSearch extends TenderControl
                 ->andFilterWhere(['like', 'platform', $this->platform])
                 ->andFilterWhere(['like', 'customer', $this->customer])
                 ->andFilterWhere(['like', 'purchase', $this->purchase])
-                ->andFilterWhere(['like', 'return', $this->return])
-                ->andFilterWhere(['like', 'balance_work', $this->balance_work]);
-
+                ->andFilterWhere(['like', 'return', $this->return]);
         return $dataProvider;
     }
 }

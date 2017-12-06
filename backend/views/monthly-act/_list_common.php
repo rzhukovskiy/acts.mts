@@ -80,8 +80,8 @@ echo GridView::widget([
     'id' => 'monthly-act-grid',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'showPageSummary' => false,
     'summary' => false,
+    'showPageSummary' => true,
     'emptyText' => '',
     'panel' => [
         'type' => 'primary',
@@ -115,11 +115,12 @@ echo GridView::widget([
     'columns' => [
         [
             'header' => '№',
-            'class' => 'yii\grid\SerialColumn'
+            'class' => 'kartik\grid\SerialColumn'
         ],
         'client' => [
             'attribute' => 'client_name',
             'header' => 'Клиент',
+            'pageSummary' => 'Всего',
             'format' => 'raw',
             'value' => function ($data) {
 
@@ -142,12 +143,12 @@ echo GridView::widget([
         ],
         'profit' => [
             'attribute' => 'profit',
-            'value' => function ($data) {
-                return $data->profit;
-            },
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM,
             'format' => 'html',
+            'value' => function ($data) {
+                return $data->profit;
+            },
         ],
         'payment_status' => [
             'attribute' => 'payment_status',
@@ -404,7 +405,7 @@ echo GridView::widget([
         ],
         */
         [
-            'class' => 'yii\grid\ActionColumn',
+            'class' => 'kartik\grid\ActionColumn',
             'template' => '{update}{search}{call}',
             'contentOptions' => ['style' => 'min-width: 90px'],
             'visibleButtons' => $visibleButton,

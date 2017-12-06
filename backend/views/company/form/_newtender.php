@@ -495,8 +495,6 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'status_request_security')->dropDownList(isset($arrLists[6]) ? $arrLists[6] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
 <?= $form->field($model, 'contract_security')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите обеспечение контракта']) ?>
 <?= $form->field($model, 'status_contract_security')->dropDownList(isset($arrLists[7]) ? $arrLists[7] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
-<?= $form->field($model, 'competitor')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите потенциального конкурента']) ?>
-<?= $form->field($model, 'inn_competitors')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите ИНН конкурентов']) ?>
 <?= $form->field($model, 'date_contract')->widget(DatePicker::className(), [
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите дату заключения договора'],

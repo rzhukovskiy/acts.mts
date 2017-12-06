@@ -358,7 +358,6 @@ $form = ActiveForm::begin([
         'weekStart'=>1,
     ]
 ]) ?>
-<?= $form->field($model, 'balance_work')->input('text', ['class' => 'form-control', 'placeholder' => 'Остаток в работе']) ?>
 <?= $form->field($model, 'comment')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Комментарий']) ?>
 
     <div class="form-group">
