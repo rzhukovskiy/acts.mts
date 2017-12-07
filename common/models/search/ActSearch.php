@@ -28,8 +28,8 @@ class ActSearch extends Act
     public function rules()
     {
         return [
-            [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
-            [['car_number', 'extra_car_number', 'period', 'address'], 'string'],
+            [['card_number', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
+            [['car_number', 'extra_car_number', 'period', 'address', 'partner_id'], 'string'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
