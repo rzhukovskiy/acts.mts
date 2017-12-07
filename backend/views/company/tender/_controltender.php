@@ -31,6 +31,12 @@ window.onload=function(){
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
+  var formatSum13 = $('td[data-col-seq="13"]');
+  $(formatSum13).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
   var formatSum8a = $('.kv-page-summary-container td:eq(8)');
   $(formatSum8a).each(function (id, value) {
        var thisId = $(this);
@@ -45,6 +51,12 @@ window.onload=function(){
   
     var formatSum12a = $('.kv-page-summary-container td:eq(12)');
   $(formatSum12a).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum13a = $('.kv-page-summary-container td:eq(13)');
+  $(formatSum13a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
@@ -322,18 +334,42 @@ if (isset($arrLists[9])){
                 ],
                 [
                     'vAlign'=>'middle',
-                    'header' => 'Остаток в работе',
+                    'header' => 'Возвратные',
                     'contentOptions' => ['style' => 'min-width: 100px'],
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,
                     'value' => function ($data) {
 
-                        if ($data->send || $data->return) {
-                            return $data->send - $data->return;
+            if($data->payment_status == 1 || $data->payment_status == 2) {
+                if ($data->send || $data->return) {
+                    return $data->send - $data->return;
+                } else {
+                    return '-';
+                }
+                     } else {
+                return '-';
+            }
+                    },
+                ],
+                [
+                    'vAlign'=>'middle',
+                    'header' => 'Невозвратные',
+                    'contentOptions' => ['style' => 'min-width: 100px'],
+                    'pageSummary' => true,
+                    'pageSummaryFunc' => GridView::F_SUM,
+                    'value' => function ($data) {
+
+                        if($data->payment_status == 0) {
+
+                            if ($data->send) {
+                                return $data->send;
+                            } else {
+                                return '-';
+                            }
+
                         } else {
                             return '-';
                         }
-
                     },
                 ],
                 [

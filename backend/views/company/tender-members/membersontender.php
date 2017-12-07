@@ -2,11 +2,10 @@
 
 use yii\bootstrap\Tabs;
 
-$this->title = 'Тендер №' . $model->id;
+$this->title = 'Участники тендера №' . $model->id;
 
 echo Tabs::widget([
     'items' => [
-        ['label' => 'Тендеры', 'url' => ['tenders', 'id' => $model->company_id], 'active' => Yii::$app->controller->action->id == 'tenders'],
         ['label' => 'Тендер №' . $model->id, 'url' => ['fulltender', 'tender_id' => $model->id], 'active' => Yii::$app->controller->action->id == 'fulltender'],
         ['label' => 'Участники', 'url' => ['membersontender', 'id' => $model->id], 'active' => Yii::$app->controller->action->id == 'membersontender'],
     ],
@@ -16,11 +15,13 @@ echo Tabs::widget([
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= 'Тендер №' . $model->id ?>
+        <?= 'Участники тендера №' . $model->id ?>
     </div>
     <div class="panel-body">
-        <?= $this->render('_fulltender', [
+        <?= $this->render('_membersontender', [
             'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
         ?>
     </div>
