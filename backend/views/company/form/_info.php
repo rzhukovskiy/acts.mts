@@ -132,6 +132,37 @@ $this->registerJs($script, View::POS_READY);
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('geolocation') ?></td>
+                <td>
+                    <?php $editableForm = Editable::begin([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'geolocation',
+                        'displayValue' => $modelCompanyInfo->geolocation,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'style' => 'display:none;'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+
+                    $form = $editableForm->getForm();
+                    echo Html::hiddenInput('kv-complex', '1');
+
+                    $editableForm->afterInput = '' . $form->field($modelCompanyInfo, 'lat')->textInput(['class' => 'form-control', 'value' => $modelCompanyInfo->lat, 'type' => 'text', 'placeholder' => 'Широта']) .
+                        $form->field($modelCompanyInfo, 'lng')->textInput(['class' => 'form-control', 'value' => $modelCompanyInfo->lng, 'type' => 'text', 'placeholder' => 'Долгота']);
+                    Editable::end();
+
+                    ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('inn') ?></td>
                 <td>
                     <?= Editable::widget([

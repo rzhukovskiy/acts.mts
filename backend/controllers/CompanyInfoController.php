@@ -98,6 +98,15 @@ class CompanyInfoController extends Controller
                 $postArr['CompanyInfo']['email'] = strtolower($postArr['CompanyInfo']['email']);
             }
 
+            if(isset($postArr['CompanyInfo']['geolocation'])) {
+                unset($postArr['CompanyInfo']['geolocation']);
+            }
+
+            $checkGeoLocation = false;
+            if(($postArr['CompanyInfo']['lat']) && ($postArr['CompanyInfo']['lng'])) {
+                $checkGeoLocation = true;
+            }
+
             if ($model->load($postArr) && $model->save()) {
                 $output = [];
                 foreach ($postArr['CompanyInfo'] as $name => $value) {
@@ -105,17 +114,24 @@ class CompanyInfoController extends Controller
                     // НДС
                     if($name == 'nds') {
 
-                        if($value == 0) {
+                        if ($value == 0) {
                             $output[] = 'Нет';
                         } else {
                             $output[] = 'Да';
                         }
-
+                    } elseif($name == 'geolocation') {
+                    } elseif($name == 'lat') {
+                    } elseif($name == 'lng') {
                     } else {
                         $output[] = $value;
                     }
 
                 }
+
+                if($checkGeoLocation == true) {
+                    $output[] = $postArr['CompanyInfo']['lat'] . ':' . $postArr['CompanyInfo']['lng'];
+                }
+
                 return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];

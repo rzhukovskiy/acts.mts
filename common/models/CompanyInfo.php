@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  * @property string $phone
  * @property string $index
  * @property string $city
+ * @property string $geolocation
  * @property string $street
  * @property string $house
  * @property string $address_mail
@@ -38,6 +39,7 @@ class CompanyInfo extends ActiveRecord
     private $fullAddress;
     public $payTypeDay;
     public $payDay;
+    private $geolocation;
     public $prePaid;
     private $comment;
     private $time_location;
@@ -58,7 +60,7 @@ class CompanyInfo extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['website', 'inn', 'lat', 'lng'], 'safe'],
+            [['website', 'inn', 'lat', 'lng', 'geolocation'], 'safe'],
             [['company_id', 'contract_date', 'time_location', 'nds'], 'integer'],
             ['comment', 'string', 'max' => 2500],
             [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
@@ -91,6 +93,7 @@ class CompanyInfo extends ActiveRecord
             'inn' => 'ИНН',
             'lat' => 'Широта',
             'lng' => 'Долгота',
+            'geolocation' => 'Координаты для карты',
         ];
     }
 
@@ -185,6 +188,15 @@ class CompanyInfo extends ActiveRecord
             return $this->pay;
         }
 
+    }
+
+    public function getGeolocation()
+    {
+        if((isset($this->lat)) && (isset($this->lng))) {
+            return $this->lat . ':' . $this->lng;
+        } else {
+            return '';
+        }
     }
 
     public function getComment()
