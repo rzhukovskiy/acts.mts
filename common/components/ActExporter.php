@@ -2490,7 +2490,7 @@ class ActExporter
                 break;
         }
 
-        $text = "Статистика и анализ по " . $textTitle . " машин";
+        $text = "Статистика и анализ машин (" . $textService . ")";
         $companyWorkSheet->setCellValue('B2', $text);
 
         $styleArray = array(
@@ -2504,7 +2504,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(3)->setRowHeight(45);
         $companyWorkSheet->getStyle('B3:I3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $companyWorkSheet->getStyle('B3')->getAlignment()->setWrapText(true);
-        $text = "компании " . $company->name . " за " . $monthName[0] . " " . date('Y', $this->time);
+        $text = $company->name . " за " . $monthName[0] . " " . date('Y', $this->time);
         $companyWorkSheet->setCellValue('B3', $text);
         $companyWorkSheet->getStyle('B3')->applyFromArray($styleArray);
         $companyWorkSheet->mergeCells('B4:I4');
@@ -3086,7 +3086,7 @@ class ActExporter
                     $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                     $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                 } else if($firstIncome < $incomeVal) {
-                    $percentDelta = $incomeVal / ($firstIncome / 100);
+                    $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                     $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                 }
 
@@ -3162,7 +3162,7 @@ class ActExporter
                     $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                     $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                 } else if($firstIncome < $incomeVal) {
-                    $percentDelta = $incomeVal / ($firstIncome / 100);
+                    $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                     $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                 }
 
@@ -3236,6 +3236,10 @@ class ActExporter
         $companyWorkSheet->getRowDimension($row)->setRowHeight(35);
         $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->setCellValue('B' . $row . '', "При возникновении вопросов, Вы всегда можете связаться с персональным менеджером нашей компании.");
+
+        $row++; $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "Вы просто везёте свой груз — об остальном позаботимся мы!");
 
         $row++; $row++;
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
@@ -13292,7 +13296,7 @@ class ActExporter
                 break;
         }
 
-        $text = "Статистика и анализ по " . $textTitle . " машин";
+        $text = "Статистика и анализ машин (" . $textService . ")";
         $companyWorkSheet->setCellValue('B2', $text);
 
         $styleArray = array(
@@ -13306,7 +13310,7 @@ class ActExporter
         $companyWorkSheet->getRowDimension(3)->setRowHeight(45);
         $companyWorkSheet->getStyle('B3:I3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
         $companyWorkSheet->getStyle('B3')->getAlignment()->setWrapText(true);
-        $text = "компании ООО Агро-Авто (Москва ЮГ - МФП) за " . $monthName[0] . " " . date('Y', $this->time);
+        $text = "ООО Агро-Авто (Москва ЮГ - МФП) за " . $monthName[0] . " " . date('Y', $this->time);
         $companyWorkSheet->setCellValue('B3', $text);
         $companyWorkSheet->getStyle('B3')->applyFromArray($styleArray);
         $companyWorkSheet->mergeCells('B4:I4');
@@ -13910,7 +13914,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -13987,7 +13991,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -14623,7 +14627,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -14700,7 +14704,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -15336,7 +15340,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -15413,7 +15417,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -16049,7 +16053,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -16126,7 +16130,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -16762,7 +16766,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -16839,7 +16843,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -17475,7 +17479,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -17552,7 +17556,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -18189,7 +18193,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -18266,7 +18270,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -18902,7 +18906,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -18979,7 +18983,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -19615,7 +19619,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -19692,7 +19696,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -20328,7 +20332,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -20405,7 +20409,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -21041,7 +21045,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -21118,7 +21122,7 @@ class ActExporter
                         $percentDelta = 100 - (($incomeVal * 100) / $firstIncome);
                         $percentDelta = "-" . number_format($percentDelta, 2) . "%";
                     } else if ($firstIncome < $incomeVal) {
-                        $percentDelta = $incomeVal / ($firstIncome / 100);
+                        $percentDelta = ($incomeVal - $firstIncome) / ($firstIncome / 100);
                         $percentDelta = "+" . number_format($percentDelta, 2) . "%";
                     }
 
@@ -21195,6 +21199,10 @@ class ActExporter
         $companyWorkSheet->getRowDimension($row)->setRowHeight(35);
         $companyWorkSheet->getStyle('B' . $row)->getAlignment()->setWrapText(true);
         $companyWorkSheet->setCellValue('B' . $row . '', "При возникновении вопросов, Вы всегда можете связаться с персональным менеджером нашей компании.");
+
+        $row++; $row++;
+        $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
+        $companyWorkSheet->setCellValue('B' . $row . '', "Вы просто везёте свой груз — об остальном позаботимся мы!");
 
         $row++; $row++;
         $companyWorkSheet->mergeCells('B' . $row . ':I' . $row . '');
