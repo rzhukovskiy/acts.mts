@@ -158,6 +158,16 @@ class CompanyInfo extends ActiveRecord
         $this->fullAddress = $value;
     }
 
+    public function setLat($value)
+    {
+        $this->lat = $value;
+    }
+
+    public function setLng($value)
+    {
+        $this->lng = $value;
+    }
+
     // Новый вывод сроков оплаты
     public function getPayData()
     {
