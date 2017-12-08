@@ -16,6 +16,9 @@ echo Tabs::widget([
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= 'Участники тендера №' . $model->id ?>
+        <div class="header-btn pull-right">
+            <?= \yii\helpers\Html::a('Добавить', ['company/newtendermembers', 'id' => $model->id], ['class' => 'btn btn-success btn-sm']) ?>
+        </div>
     </div>
     <div class="panel-body">
         <?= $this->render('_membersontender', [

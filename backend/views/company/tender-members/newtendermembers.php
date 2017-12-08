@@ -6,7 +6,7 @@ $this->title = 'Добавление участника';
 
 echo Tabs::widget([
     'items' => [
-        ['label' => 'Участники', 'url' => ['tendermembers'], 'active' => Yii::$app->controller->action->id == 'tendermembers'],
+        ['label' => 'Участники тендера №' . $id, 'url' => ['membersontender', 'id' => $id], 'active' => Yii::$app->controller->action->id == 'tendermembers'],
         ['label' => 'Добавление', 'url' => ['newtendermembers'], 'active' => Yii::$app->controller->action->id == 'newtendermembers'],
     ],
 ]);
@@ -20,6 +20,7 @@ echo Tabs::widget([
     <div class="panel-body">
         <?= $this->render('_newtendermembers', [
             'model' => $model,
+            'id' => $id,
         ]);
         ?>
     </div>

@@ -19,9 +19,6 @@ echo Tabs::widget([
 <div class="panel panel-primary">
     <div class="panel-heading">
         <?= 'Участники' ?>
-        <div class="header-btn pull-right">
-            <?= Html::a('Связать  ', ['company/newtenderlinks'], ['class' => 'btn btn-warning btn-sm']) . ' ' . Html::a('Добавить', ['company/newtendermembers'], ['class' => 'btn btn-success btn-sm']) ?>
-        </div>
     </div>
     <div class="panel-body">
         <?= $this->render('_tendermembers', [

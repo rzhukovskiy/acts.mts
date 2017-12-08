@@ -47,4 +47,9 @@ class TenderLinks extends ActiveRecord
         ];
     }
 
+    public function getTendermembers()
+    {
+        return $this->hasOne(TenderMembers::className(), ['id' => 'member_id']);
+    }
+
 }

@@ -33,6 +33,7 @@ $columns = [
     ],
     [
         'attribute' => 'partner_id',
+        'filter' => false,
         'value' => function ($data) {
             return isset($data->partner) ? $data->partner->name : '';
         },

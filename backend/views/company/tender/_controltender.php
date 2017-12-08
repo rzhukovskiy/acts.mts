@@ -360,13 +360,11 @@ if (isset($arrLists[9])){
                     'value' => function ($data) {
 
                         if($data->payment_status == 0) {
-
-                            if ($data->send) {
-                                return $data->send;
+                            if ($data->send || $data->return) {
+                                return $data->send - $data->return;
                             } else {
                                 return '-';
                             }
-
                         } else {
                             return '-';
                         }

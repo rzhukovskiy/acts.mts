@@ -89,6 +89,19 @@ use yii\helpers\Html;
             ],
             [
                 'class' => 'kartik\grid\ActionColumn',
+                'header' => 'Выиграл',
+                'vAlign'=>'middle',
+                'template' => '{view}',
+                'contentOptions' => ['style' => 'min-width: 60px'],
+                'buttons' => [
+                    'view' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-plus"></span>');
+                    },
+                ],
+
+            ],
+            [
+                'class' => 'kartik\grid\ActionColumn',
                 'header' => 'Действие',
                 'vAlign'=>'middle',
                 'template' => '{update}',

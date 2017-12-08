@@ -17,11 +17,7 @@ $request = Yii::$app->request;
 
 echo Tabs::widget([
     'items' => [
-        [
-            'label' => 'Акты',
-            'url' => ['error/list', 'type' => $model->service_type],
-            'active' => false,
-        ],
+
         [
             'label' => 'Редактирование',
             'url' => '#',
