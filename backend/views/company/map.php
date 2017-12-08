@@ -2,8 +2,42 @@
 
 use yii\web\View;
 use common\models\CompanyInfo;
+use common\models\Company;
 
-$this->title = 'Компании на карте';
+$titleTable = '';
+
+if($selID > 0) {
+    $companyName = Company::findOne(['id' => $selID]);
+    $titleTable = Company::$listType[$companyName->type]['ru'] . ' ' . $companyName->name . ' на карте';
+    $this->title = $titleTable;
+} else {
+
+    switch ($type) {
+        case 1:
+            $titleTable = "Компании на карте";
+            break;
+        case 2:
+            $titleTable = "Мойки на карте";
+            break;
+        case 3:
+            $titleTable = "Сервисы на карте";
+            break;
+        case 4:
+            $titleTable = "Шиномонтажы на карте";
+            break;
+        case 5:
+            $titleTable = "Дезинфекции на карте";
+            break;
+        case 6:
+            $titleTable = "Универсальная компании на карте";
+            break;
+        case 7:
+            $titleTable = "Стоянки на карте";
+            break;
+    }
+
+    $this->title = $titleTable;
+}
 
 $css = "#map {
         width: 100%;
@@ -76,7 +110,7 @@ $arrAddressCompany = json_encode($arrAddressCompany);
 
 echo '
 <div class="panel panel-primary">
-    <div class="panel-heading">Компании на карте</div>
+    <div class="panel-heading">' . $titleTable . '</div>
     <div class="panel-body">
         <div id="map"></div>
     </div>

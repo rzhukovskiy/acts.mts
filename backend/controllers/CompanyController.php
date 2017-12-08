@@ -4335,6 +4335,7 @@ class CompanyController extends Controller
     {
         $Company = [];
         $typePage = 0;
+        $selID = 0;
 
         if(($status) && ($type)) {
 
@@ -4350,6 +4351,7 @@ class CompanyController extends Controller
             // выбранная компания
             $Company = Company::find()->where(['company.id' => $id])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
             $typePage = 1;
+            $selID = $id;
 
         } else {
             return $this->redirect('/');
@@ -4361,6 +4363,7 @@ class CompanyController extends Controller
                 'type' => $type,
                 'Company' => $Company,
                 'typePage' => $typePage,
+                'selID' => $selID,
             ]);
     }
 
