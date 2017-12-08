@@ -103,8 +103,11 @@ class CompanyInfoController extends Controller
             }
 
             $checkGeoLocation = false;
-            if(($postArr['CompanyInfo']['lat']) && ($postArr['CompanyInfo']['lng'])) {
-                $checkGeoLocation = true;
+
+            if((isset($postArr['CompanyInfo']['lat'])) && (isset($postArr['CompanyInfo']['lng']))) {
+                if (($postArr['CompanyInfo']['lat']) && ($postArr['CompanyInfo']['lng'])) {
+                    $checkGeoLocation = true;
+                }
             }
 
             if ($model->load($postArr) && $model->save()) {
