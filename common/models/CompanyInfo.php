@@ -158,9 +158,19 @@ class CompanyInfo extends ActiveRecord
         $this->fullAddress = $value;
     }
 
+    public function getLat($value)
+    {
+        return $this->lat;
+    }
+
     public function setLat($value)
     {
         $this->lat = $value;
+    }
+
+    public function getLng($value)
+    {
+        return $this->lng;
     }
 
     public function setLng($value)
