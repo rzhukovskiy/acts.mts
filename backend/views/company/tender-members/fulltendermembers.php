@@ -16,7 +16,7 @@ echo Tabs::widget([
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <?= 'Редактирование участника '?>
+        <?= 'Редактирование участника №' . $model->id ?>
     </div>
     <div class="panel-body">
         <?= $this->render('_fulltendermembers', [

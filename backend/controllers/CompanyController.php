@@ -65,17 +65,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'tenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -679,17 +679,22 @@ class CompanyController extends Controller
 
     }
 
-    public function actionNewtendermembers()
+    public function actionNewtendermembers($id)
     {
         $model = new TenderMembers();
+        $model->tender_id = $id;
 
-        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
-
-            return $this->redirect(['company/tendermembers']);
+        if (($model->load(Yii::$app->request->post())) && (Yii::$app->request->isPost)) {
+            if ($model->save()) {
+                return $this->redirect(['company/membersontender', 'id' => $id]);
+            } else {
+                return $this->redirect(['company/membersontender', 'id' => $id]);
+            }
 
         } else {
             return $this->render('tender-members/newtendermembers', [
                 'model' => $model,
+                'id' => $id,
             ]);
         }
     }
@@ -4326,21 +4331,36 @@ class CompanyController extends Controller
     }
 
     // Карта компаний
-    public function actionMap($status, $type)
+    public function actionMap($status = null, $type = null, $id = null)
     {
         $Company = [];
+        $typePage = 0;
 
-        if($status == 2) {
-            $Company = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+        if(($status) && ($type)) {
+
+        // все компании
+            if($status == 2) {
+                $Company = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+            } else {
+                $Company = Company::find()->where(['AND', ['type' => $type], ['status' => $status]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+            }
+
+        } elseif($id) {
+
+            // выбранная компания
+            $Company = Company::find()->where(['company.id' => $id])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+            $typePage = 1;
+
         } else {
-            $Company = Company::find()->where(['AND', ['type' => $type], ['status' => $status]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+            return $this->redirect('/');
         }
 
         return $this->render('map',
             [
                 'status' => $status,
-                'type'  => $type,
-                'Company'  => $Company,
+                'type' => $type,
+                'Company' => $Company,
+                'typePage' => $typePage,
             ]);
     }
 

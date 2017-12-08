@@ -261,7 +261,7 @@ class menuLeftWidget extends Widget
                         'Ошибочные акты ' .
                         ($errorsCount ? '<span class="label label-danger">' . $errorsCount . '</span>' : ''),
                     'url'    => ['/error/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses' && Yii::$app->controller->action->id != 'async',
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses' && Yii::$app->controller->action->id != 'async' && Yii::$app->controller->action->id != 'update',
                 ],
                 [
                     'label'  =>

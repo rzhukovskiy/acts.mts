@@ -3,7 +3,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $form = ActiveForm::begin([
-    'action' => $model->isNewRecord ? ['/company/newtendermembers'] : ['/company/updatetendermembers'],
+    'action' => $model->isNewRecord ? ['/company/newtendermembers', 'id' => $id] : ['/company/updatetendermembers', 'id' => $id],
     'options' => ['accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
     'fieldConfig' => [
         'template' => '{label}<div class="col-sm-6">{input}{error}</div>',

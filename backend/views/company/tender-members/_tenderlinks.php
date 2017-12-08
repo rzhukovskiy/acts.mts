@@ -5,42 +5,8 @@ use yii\helpers\Html;
 use common\models\TenderLinks;
 use yii\helpers\Url;
 
-$ajaxwinner = Url::to('@web/company/tenderlinks');
-
 $script = <<< JS
 
-function sendtenderlinks() {
-          $.ajax({
-                type     :'POST',
-                cache    : true,
-                data: 'id=' + '' + '&winner=' + '',
-                url  : '$ajaxwinner',
-                success  : function(data) {
-                    
-                var response = $.parseJSON(data);
-                
-                if (response.success == 'true') { 
-                // Удачно
-                
-                location.reload();
-                
-                } else {
-                // Неудачно
-                }
-                
-                }
-                });
-}
-
-// Клик выиграл
-$('.glyphicon-plus').on('click', function(){
-    var checklinks = confirm("Вы подтверждаете победу?");
-    
-   if(checklinks == true) {     
-       sendtenderlinks();
-    }
-    
-});
 
 // формат числа
 window.onload=function(){

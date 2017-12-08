@@ -401,6 +401,11 @@ class Tender extends ActiveRecord
         return $this->company->name;
     }
 
+    public function getTendermembers()
+    {
+        return $this->hasOne(TenderMembers::className(), ['tender_id' => 'id']);
+    }
+
     public function getPurchase_status()
     {
     return $this->purchase_status;
