@@ -2165,7 +2165,7 @@ class ActExporter
             )
         );
         $companyWorkSheet->getRowDimension(6)->setRowHeight(40);
-        $companyWorkSheet->setCellValue('B6', 'Получатель:ООО«Международный Транспортный Сервис»');
+        $companyWorkSheet->setCellValue('B6', 'Получатель: ООО «Международный Транспортный Сервис»');
 
         $companyWorkSheet->mergeCells('D5:D6');
         $companyWorkSheet->getStyle("D5:D6")->applyFromArray(array(
@@ -12944,7 +12944,7 @@ class ActExporter
             )
         );
         $companyWorkSheet->getRowDimension(6)->setRowHeight(40);
-        $companyWorkSheet->setCellValue('B6', 'Получатель:ООО«Международный Транспортный Сервис»');
+        $companyWorkSheet->setCellValue('B6', 'Получатель: ООО «Международный Транспортный Сервис»');
 
         $companyWorkSheet->mergeCells('D5:D6');
         $companyWorkSheet->getStyle("D5:D6")->applyFromArray(array(
