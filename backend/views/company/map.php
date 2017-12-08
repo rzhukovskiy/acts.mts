@@ -15,6 +15,10 @@ $this->registerCSS($css);
 $arrAddressCompany = [];
 $iArr = 0;
 
+$zoomLat = '61.698653';
+$zoomLng = '99.505405';
+$zoomVal = 3;
+
 for($i = 0; $i < count($Company); $i++) {
 
     if((isset($Company[$i]['city'])) && (isset($Company[$i]['street'])) && (isset($Company[$i]['house']))) {
@@ -25,6 +29,13 @@ for($i = 0; $i < count($Company); $i++) {
             $arrAddressCompany[$iArr]['lng'] = $Company[$i]['lng'];
             $arrAddressCompany[$iArr]['name'] = $Company[$i]['name'];
             $iArr++;
+
+            // Зум к единственно выбранной компании
+            if(($i == 0) && ($typePage == 1)) {
+                $zoomLat = $Company[$i]['lat'];
+                $zoomLng = $Company[$i]['lng'];
+                $zoomVal = 12;
+            }
 
         } else {
 
@@ -46,6 +57,13 @@ for($i = 0; $i < count($Company); $i++) {
                 $CompanyInfo->lng = $lng;
                 $CompanyInfo->save();
 
+                // Зум к единственно выбранной компании
+                if(($i == 0) && ($typePage == 1)) {
+                    $zoomLat = $lat;
+                    $zoomLng = $lng;
+                    $zoomVal = 5;
+                }
+
                 $iArr++;
             }
 
@@ -65,10 +83,10 @@ echo '
 </div>
 <script>
     function initMap() {
-        var rusCountry = {lat: 61.698653, lng: 99.505405};
+        var rusCountry = {lat: ' . $zoomLat . ', lng: ' . $zoomLng . '};
 
         var map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 3,
+            zoom: ' . $zoomVal . ',
             center: rusCountry
         });
         
