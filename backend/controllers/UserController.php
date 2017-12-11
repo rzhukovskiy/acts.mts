@@ -211,4 +211,42 @@ class UserController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    // Блокировка доступа сотрудникам
+    public function actionCloselogin($status, $id = 0)
+    {
+
+        $currentUser = Yii::$app->user->identity;
+
+        if(($currentUser->role == User::ROLE_ADMIN) || ($currentUser->id == 176)) {
+
+            if($id > 0) {
+
+                $arrRes = Yii::$app->getDb()->createCommand('SELECT user_id FROM {{%department_user}} WHERE department_id<>4 AND user_id<>176 GROUP BY user_id ORDER BY user_id')->queryAll();
+
+                for ($i = 0; $i < count($arrRes); $i++) {
+                    if($arrRes[$i]['user_id'] == $id) {
+                        User::updateAll(['status' => $status], ['id' => $id]);
+                    }
+                }
+
+            } else {
+
+                $arrRes = Yii::$app->getDb()->createCommand('SELECT user_id FROM {{%department_user}} WHERE department_id<>3 AND department_id<>4 AND user_id<>176 GROUP BY user_id ORDER BY user_id')->queryAll();
+                $arrIDs = [];
+
+                for ($i = 0; $i < count($arrRes); $i++) {
+                    $arrIDs[] = $arrRes[$i]['user_id'];
+                }
+
+                User::updateAll(['status' => $status], ['id' => $arrIDs]);
+
+            }
+
+        }
+
+        return $this->goBack();
+
+    }
+
 }
