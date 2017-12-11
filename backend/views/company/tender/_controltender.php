@@ -261,7 +261,7 @@ if (isset($arrLists[9])){
                 ],
                 [
                     'attribute' => 'send',
-                    'header' => 'Отправили',
+                    'header' => 'Мы отправили',
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,
                     'format' => 'raw',
@@ -303,7 +303,7 @@ if (isset($arrLists[9])){
                 [
                     'attribute' => 'return',
                     'vAlign'=>'middle',
-                    'header' => 'Вернули',
+                    'header' => 'Нам вернули',
                     'contentOptions' => ['style' => 'min-width: 100px'],
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,
@@ -334,7 +334,7 @@ if (isset($arrLists[9])){
                 ],
                 [
                     'vAlign'=>'middle',
-                    'header' => 'Возвратные',
+                    'header' => 'Нам должны вернуть',
                     'contentOptions' => ['style' => 'min-width: 100px'],
                     'pageSummary' => true,
                     'pageSummaryFunc' => GridView::F_SUM,

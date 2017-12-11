@@ -753,7 +753,7 @@ class Company extends ActiveRecord
      */
     public function getCompanyPartner($type)
     {
-        $partner = Company::find()->select(['id', 'name'])->byType($type)->byAddress($this->address)->all();
+        $partner = Company::find()->where(['OR', ['status' => 10],['status' => 2]])->select(['id', 'name'])->byType($type)->all();
         $partner = ArrayHelper::map($partner, 'id', 'name');
 
         return $partner;
