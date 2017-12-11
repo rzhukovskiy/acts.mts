@@ -348,7 +348,7 @@ $form = ActiveForm::begin([
         'weekStart'=>1,
     ]
 ]) ?>
-<?= $form->field($model, 'return')->input('text', ['class' => 'form-control', 'placeholder' => 'Возврат']) ?>
+<?= $form->field($model, 'return')->input('text', ['class' => 'form-control', 'placeholder' => 'Вернули']) ?>
 <?= $form->field($model, 'date_return')->widget(DatePicker::className(), [
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Дата возврата'],

@@ -69,7 +69,7 @@ class TenderControl extends ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'Сотрудник',
-            'send' => 'Отправили',
+            'send' => 'Мы отправили',
             'date_send' => 'Дата отправки',
             'date_enlistment' => 'Дата зачисления',
             'site_address' => 'Адрес площадки',
@@ -79,7 +79,7 @@ class TenderControl extends ActiveRecord
             'eis_platform' => '№ ЕИС на площадке',
             'type_payment' => 'Тип платежа',
             'money_unblocking' => 'Дата разблокировки денег',
-            'return' => 'Вернули',
+            'return' => 'Нам вернули',
             'date_return' => 'Дата возврата',
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',
