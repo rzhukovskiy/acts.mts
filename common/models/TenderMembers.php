@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
 class TenderMembers extends ActiveRecord
 {
 
+    public $tender_id;
 
     /**
      * @inheritdoc
@@ -33,7 +34,7 @@ class TenderMembers extends ActiveRecord
     public function rules()
     {
         return [
-            [['tender_id'], 'required'],
+            [['company_name', 'inn'], 'required'],
             [['comment'], 'string'],
             [['company_name', 'city'], 'string', 'max' => 255],
             [['inn'], 'string', 'max' => 30],
@@ -57,19 +58,31 @@ class TenderMembers extends ActiveRecord
     public function beforeSave($insert)
     {
         if ($this->inn) {
-            if (TenderMembers::find()->where(['inn' => $this->inn])->exists()) {
-               $id_links = TenderMembers::find()->where(['inn' => $this->inn])->select('id');
-                $tenderlinks = new TenderLinks();
-                $tenderlinks->member_id = $id_links;
-                $tenderlinks->tender_id = $this->tender_id;
-                $tenderlinks->save();
+
+            $arr_links = TenderMembers::find()->where(['inn' => $this->inn])->select('id')->column();
+
+            if (count($arr_links) > 0) {
+                $id_links = $arr_links[0];
+                // проверяем наличие связи
+                $resWinner = TenderLinks::find()->where(['AND', ['tender_id' => $this->tender_id], ['member_id' => $id_links]])->select('id')->asArray()->column();
+
+                if(count($resWinner) == 0) {
+
+                    $tenderlinks = new TenderLinks();
+                    $tenderlinks->member_id = $id_links;
+                    $tenderlinks->tender_id = $this->tender_id;
+                    $tenderlinks->save();
+
+                }
+
                 return false;
             } else {
                 return parent::beforeSave($insert);
             }
-    } else {
-        return parent::beforeSave($insert);
-    }
+
+        } else {
+            return parent::beforeSave($insert);
+        }
     }
 
     public function afterSave($insert, $changedAttributes)

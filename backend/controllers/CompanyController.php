@@ -799,7 +799,7 @@ class CompanyController extends Controller
             $model->save();
         }
 
-        return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+        return $this->redirect(['company/membersontender', 'id' => $tender_id]);
 
     }
 
