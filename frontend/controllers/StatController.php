@@ -76,6 +76,10 @@ class StatController extends Controller
         $dataProvider->query
             ->andWhere(['service_type' => $type]);
 
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
+
         if ($group == 'company')
             $dataProvider->query->groupBy('client_id');
         elseif ($group == 'partner')
@@ -119,6 +123,10 @@ class StatController extends Controller
 
         /** @var Company $companyModel */
         $companyModel = Company::findOne($searchModel->client_id);
+
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
 
         $data = $dataProvider->query->asArray()->all();
 
@@ -179,6 +187,10 @@ class StatController extends Controller
 
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
+
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
@@ -261,6 +273,10 @@ class StatController extends Controller
 
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
+
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER) {
@@ -353,6 +369,10 @@ class StatController extends Controller
 
         if (!is_null($type))
             $dataProvider->query->andWhere(['service_type' => $type]);
+
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
 
         // Акты разные для партнера и клиента, уточняем что выбирать
         if ($companyModel->type == Company::TYPE_OWNER)
@@ -460,6 +480,10 @@ class StatController extends Controller
         $dataProvider->pagination = false;
         $dataProvider->query->joinWith(['client client']);
         $chartDataProvider->query->joinWith(['client client']);
+
+        // Убираем штрафы из поиска
+        $dataProvider->query->andWhere(['!=', 'act.service_type', 8]);
+        // Убираем штрафы из поиска
 
         /** @var User $identity */
         $identity = Yii::$app->user->identity;
