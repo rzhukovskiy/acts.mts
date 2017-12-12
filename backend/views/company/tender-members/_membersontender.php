@@ -2,11 +2,22 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use common\models\TenderLinks;
 
 ?>
 
 <div class="panel-body">
     <?php
+
+    $GLOBALS['tender_id'] = Yii::$app->request->get('id');
+
+    // Определяем победителя тендера
+    $resWinner = TenderLinks::find()->where(['AND', ['tender_id' => $GLOBALS['tender_id']], ['winner' => 1]])->select('member_id')->asArray()->column();
+
+    $GLOBALS['tender_win'] = 0;
+    if(count($resWinner) > 0) {
+        $GLOBALS['tender_win'] = $resWinner[0];
+    }
 
     echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -95,7 +106,11 @@ use yii\helpers\Html;
                 'contentOptions' => ['style' => 'min-width: 60px'],
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-plus"></span>');
+                        if ($GLOBALS['tender_win'] == $model->id) {
+                            return Html::a('<span class="glyphicon glyphicon-minus"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 0]);
+                        } else {
+                            return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 1]);
+                        }
                     },
                 ],
 

@@ -31,6 +31,8 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 <div class="panel-body">
     <?php
 
+    $GLOBALS['member'] = Yii::$app->request->get('id');
+
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'hover' => false,
@@ -118,7 +120,21 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 'contentOptions' => ['style' => 'min-width: 60px'],
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-plus"></span>');
+
+                        // Определяем победителя тендера
+                        $resWinner = TenderLinks::find()->where(['AND', ['tender_id' => $model->tender->id], ['member_id' => $GLOBALS['member']]])->select('winner')->asArray()->column();
+
+                        $win = 0;
+                        if(count($resWinner) > 0) {
+                            $win = $resWinner[0];
+                        }
+
+                        if ($win == 1) {
+                            return Html::a('<span class="glyphicon glyphicon-minus"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 0]);
+                        } else {
+                            return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 1]);
+                        }
+
                     },
                 ],
 

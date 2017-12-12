@@ -65,17 +65,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -775,6 +775,32 @@ class CompanyController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    public function actionTendermemberwin($tender_id, $member_id, $winner)
+    {
+
+        if($winner == 1) {
+
+            // Проверка
+            $model = TenderLinks::findOne(['tender_id' => $tender_id, 'member_id' => $member_id]);
+
+            if($model->winner == 0) {
+
+                TenderLinks::updateAll(['winner' => 0], ['tender_id' => $tender_id]);
+
+                $model->winner = $winner;
+                $model->save();
+            }
+
+        } else {
+            $model = TenderLinks::findOne(['tender_id' => $tender_id, 'member_id' => $member_id, 'winner' => 1]);
+            $model->winner = $winner;
+            $model->save();
+        }
+
+        return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+
     }
 
 
