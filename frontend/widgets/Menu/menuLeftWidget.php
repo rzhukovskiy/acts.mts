@@ -304,7 +304,7 @@ class menuLeftWidget extends Widget
                             'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
                                 $company->type
                         ],
-                        'active' => Yii::$app->controller->id == 'contact',
+                        'active' => Yii::$app->controller->id == 'contact' && Yii::$app->controller->action->id !== 'newyear',
                     ],
                     [
                         'label'  => 'Доходы',
@@ -323,6 +323,11 @@ class menuLeftWidget extends Widget
                             Yii::$app->controller->action->id != 'create' &&
                             Yii::$app->controller->action->id != 'disinfect' &&
                             Yii::$app->controller->action->id != 'create-entry',
+                    ],
+                    [
+                        'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
+                        'url'    => ['/contact/newyear'],
+                        'active' => Yii::$app->controller->action->id == 'newyear',
                     ],
                 ];
             } else {
@@ -346,7 +351,7 @@ class menuLeftWidget extends Widget
                             'type' => $company->type == Company::TYPE_UNIVERSAL ? $company->serviceTypes[0]->type :
                                 $company->type
                         ],
-                        'active' => Yii::$app->controller->id == 'contact',
+                        'active' => Yii::$app->controller->id == 'contact' && Yii::$app->controller->action->id !== 'newyear',
                     ],
                     [
                         'label'  => 'Доходы',
@@ -364,6 +369,11 @@ class menuLeftWidget extends Widget
                             Yii::$app->controller->id == 'act' &&
                             Yii::$app->controller->action->id != 'create' &&
                             Yii::$app->controller->action->id != 'disinfect',
+                    ],
+                    [
+                        'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
+                        'url'    => ['/contact/newyear'],
+                        'active' => Yii::$app->controller->action->id == 'newyear',
                     ],
                 ];
             }
@@ -390,7 +400,7 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Контакты',
                     'url'    => ['/contact/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'contact',
+                    'active' => Yii::$app->controller->id == 'contact' && Yii::$app->controller->action->id !== 'newyear',
                 ],
                 [
                     'label'  => 'Количество ТС',
@@ -455,6 +465,11 @@ class menuLeftWidget extends Widget
                     'label'  => 'Услуги',
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',
+                ],
+                [
+                    'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
+                    'url'    => ['/contact/newyear'],
+                    'active' => Yii::$app->controller->action->id == 'newyear',
                 ],
             ];
         } else {
