@@ -208,7 +208,7 @@ class Entry extends ActiveRecord
         }
 
         //проверяем чтобы не пересеклось с существующими записями (только когда создаем просто запись без акта)
-        if ($this->isNewRecord && !$this->act_id) {
+        /*if ($this->isNewRecord && !$this->act_id) {
             $existed = self::find()->andWhere(['company_id' => $this->company_id])->andWhere(['<', 'start_at', $this->start_at + 600])->andWhere(['>', 'end_at', $this->start_at + 600])->all();
             if (!empty($existed)) {
                 $this->addError('start_at', ['Время начала совпадает с существующей записью']);
@@ -219,7 +219,7 @@ class Entry extends ActiveRecord
                 $this->addError('end_at', ['Время окончания совпадает с существующей записью']);
                 return false;
             }
-        }
+        }*/
 
         if ($insert && !empty(Yii::$app->user->identity->id)) {
             $this->user_id = Yii::$app->user->identity->id;
