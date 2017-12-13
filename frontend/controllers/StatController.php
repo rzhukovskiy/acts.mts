@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use Faker\Provider\DateTime;
 use frontend\traits\ChartTrait;
 use frontend\widgets\datePeriod\DatePeriodWidget;
 use Yii;
@@ -32,17 +33,17 @@ class StatController extends Controller
                         'roles' => [User::ROLE_ADMIN]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act'],
+                        'actions' => ['view', 'month', 'day', 'total', 'act', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER]
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act','list'],
+                        'actions' => ['view', 'month', 'day', 'total', 'act','list', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['view', 'month', 'day', 'total', 'act'],
+                        'actions' => ['view', 'month', 'day', 'total', 'act', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT]
                     ]
@@ -550,6 +551,37 @@ class StatController extends Controller
         ]);
     }
 
+    public function actionCompare()
+    {
+        if (Yii::$app->request->post('arrMonth')) {
+            $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
+            $year = date('Y', time());
+            $ressArray =[];
+
+            for ($i = 0; $i < count($arrMonth); $i++) {
+
+                $query = Yii::$app->db->createCommand("SELECT COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, SUM(expense) as expense, SUM(profit) as profit, SUM(income) as income, `service_type` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE MONTH(FROM_UNIXTIME(served_at)) =" . $arrMonth[$i] . " AND YEAR(FROM_UNIXTIME(served_at)) =" . $year . " AND `service_type` <> 6 AND `service_type` <> 7 AND `service_type` <> 8 GROUP BY `service_type` ORDER BY `profit` DESC");
+                $queryArray = $query->queryAll();
+
+                for ($j = 0; $j < count($queryArray); $j++) {
+                    $arr = $queryArray[$j];
+                    $index = $arr['service_type'];
+                    $indexM = $arrMonth[$i];
+                    $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    $ressArray[$index][$indexM]['ssoom'] = $arr['ssoom'];
+                    $ressArray[$index][$indexM]['expense'] = $arr['expense'];
+                    $ressArray[$index][$indexM]['profit'] = $arr['profit'];
+                    $ressArray[$index][$indexM]['income'] = $arr['income'];
+
+                }
+
+            }
+
+            return json_encode(['result' => json_encode($ressArray), 'success' => 'true']);
+        } else {
+            return json_encode(['success' => 'false']);
+        }
+    }
     /**
      * Select template file by user role
      *
