@@ -939,7 +939,7 @@ class ActController extends Controller
                                         $modelAct->partner_id = 80;
 
                                         $createParams = [];
-                                        $createParams['Act']['time_str'] = date("d-m-Y", time());
+                                        $createParams['Act']['time_str'] = date("d-m-Y", strtotime($newPenalty->postedAt));
                                         $createParams['Act']['car_number'] = $resCar[$j]['number'];
                                         $createParams['Act']['extra_car_number'] = "";
                                         $createParams['Act']['mark_id'] = $resCar[$j]['mark_id'];
