@@ -14,10 +14,12 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/bootstrap.min.css',
         'css/site.css',
+        'css/plyr.css',
     ];
     public $js = [
         'js/form.js',
-        'js/scroll-startstop.events.jquery.js'
+        'js/scroll-startstop.events.jquery.js',
+        'js/plyr.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

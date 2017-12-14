@@ -26,17 +26,17 @@ class ContactController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['create', 'update', 'delete'],
+                        'actions' => ['create', 'update', 'delete', 'newyear'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'newyear'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'newyear'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_PARTNER, User::ROLE_CLIENT],
                     ],
@@ -163,4 +163,12 @@ class ContactController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionNewyear()
+    {
+
+            return $this->render('newyear/newyear');
+
+    }
+
 }
