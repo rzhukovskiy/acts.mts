@@ -23,7 +23,7 @@ use yii\web\View;
  * @var $group string
  */
 $actionLinkCompare = Url::to('@web/stat/compare');
-
+$nowMonth = date('n', strtotime("-1 month"));
 $script = <<< JS
 
 
@@ -31,6 +31,10 @@ $script = <<< JS
 // открываем модальное окно сравнения
 $('.compare').on('click', function() {
     $('#showListsName').modal('show');
+    // убираем галочки
+
+    $('input[type="checkbox"]').removeAttr('checked');
+    $('input[type="checkbox"][value="$nowMonth"]').prop('checked','checked');
 });
 
 var arrMonth = [];
@@ -118,42 +122,42 @@ function sendCompare() {
                          
                         if(oldvalue[2]['1'] != '') {
                         if (oldvalue[2]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'] + ' <span style="color:red;">&#8595</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           countServe = value['countServe'] + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           countServe = value['countServe'];
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[2]['2'] != '') {
                         if (oldvalue[2]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'] + ' <span style="color:red;">&#8595</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           ssoom = value['ssoom'] + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           ssoom = value['ssoom'];
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[2]['3'] != '') {
                         if (oldvalue[2]['3'] > parseInt(value['income'])) {
-                           income = value['income'] + ' <span style="color:red;">&#8595</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           income = value['income'] + ' <span style="color:green;">&#8593</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           income = value['income'];
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[2]['4'] != '') {
                         if (oldvalue[2]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'] + ' <span style="color:red;">&#8595</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           profit = value['profit'] + ' <span style="color:green;">&#8593</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           profit = value['profit'];
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         oldvalue[2]['1'] = parseInt(value['countServe']);
@@ -169,42 +173,42 @@ function sendCompare() {
                          
                          if (oldvalue[4]['1'] != '') {
                          if (oldvalue[4]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'] + ' <span style="color:red;">&#8595</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                          } else {
-                           countServe = value['countServe'] + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                          }
                          } else {
-                           countServe = value['countServe'];
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                          }
                        
                         if (oldvalue[4]['2'] != '') {
                         if (oldvalue[4]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'] + ' <span style="color:red;">&#8595</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           ssoom = value['ssoom'] + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           ssoom = value['ssoom'];
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                        
                         if (oldvalue[4]['3'] != '') {
                         if (oldvalue[4]['3'] > parseInt(value['income'])) {
-                           income = value['income'] + ' <span style="color:red;">&#8595</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           income = value['income'] + ' <span style="color:green;">&#8593</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           income = value['income'];
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if (oldvalue[4]['4'] != '') {
                         if (oldvalue[4]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'] + ' <span style="color:red;">&#8595</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           profit = value['profit'] + ' <span style="color:green;">&#8593</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           profit = value['profit'];
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         oldvalue[4]['1'] = parseInt(value['countServe']);
@@ -221,42 +225,42 @@ function sendCompare() {
                          
                          if (oldvalue[3]['1'] != '') {
                          if (oldvalue[3]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'] + ' <span style="color:red;">&#8595</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                          } else {
-                           countServe = value['countServe'] + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                          }
                          } else {
-                           countServe = value['countServe'];
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                          }
                        
                         if (oldvalue[3]['2'] != '') {
                         if (oldvalue[3]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'] + ' <span style="color:red;">&#8595</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           ssoom = value['ssoom'] + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           ssoom = value['ssoom'];
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                        
                         if (oldvalue[3]['3'] != '') {
                         if (oldvalue[3]['3'] > parseInt(value['income'])) {
-                           income = value['income'] + ' <span style="color:red;">&#8595</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           income = value['income'] + ' <span style="color:green;">&#8593</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           income = value['income'];
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if (oldvalue[3]['4'] != '') {
                         if (oldvalue[3]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'] + ' <span style="color:red;">&#8595</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           profit = value['profit'] + ' <span style="color:green;">&#8593</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           profit = value['profit'];
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         oldvalue[3]['1'] = parseInt(value['countServe']);
@@ -273,42 +277,42 @@ function sendCompare() {
                          
                         if(oldvalue[5]['1'] != '') {
                         if (oldvalue[5]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'] + ' <span style="color:red;">&#8595</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           countServe = value['countServe'] + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           countServe = value['countServe'];
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[5]['2'] != '') {
                         if (oldvalue[5]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'] + ' <span style="color:red;">&#8595</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           ssoom = value['ssoom'] + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           ssoom = value['ssoom'];
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[5]['3'] != '') {
                         if (oldvalue[5]['3'] > parseInt(value['income'])) {
-                           income = value['income'] + ' <span style="color:red;">&#8595</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           income = value['income'] + ' <span style="color:green;">&#8593</span>';
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           income = value['income'];
+                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[5]['4'] != '') {
                         if (oldvalue[5]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'] + ' <span style="color:red;">&#8595</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
                         } else {
-                           profit = value['profit'] + ' <span style="color:green;">&#8593</span>';
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
                         }
                         } else {
-                           profit = value['profit'];
+                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         oldvalue[5]['1'] = parseInt(value['countServe']);
@@ -323,16 +327,16 @@ function sendCompare() {
                     });
                 
                      if (reswash.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px'><td>Месяц</td><td>Обслужено</td><td>ССООМ</td><td>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
                      }
                      if (restires.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px'><td>Месяц</td><td>Обслужено</td><td>ССООМ</td><td>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
                      }
                      if (resservise.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px'><td>Месяц</td><td>Обслужено</td><td>ССООМ</td><td>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
                      }
                      if (resdesinf.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px'><td>Месяц</td><td>Обслужено</td><td>ССООМ</td><td>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
                      }
                 
                     $('.place_list').html(resTables);
