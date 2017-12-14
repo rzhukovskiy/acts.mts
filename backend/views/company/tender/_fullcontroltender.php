@@ -142,7 +142,7 @@ $this->registerJs($script, View::POS_READY);
                     'placement' => PopoverX::ALIGN_LEFT,
                     'size' => 'lg',
                     'data' => $usersList,
-                    'disabled' => $model->is_archive == 1 ? true : false,
+                    'disabled' => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $model->is_archive == 0) ? false : true,
                     'options' => ['class' => 'form-control'],
                     'formOptions' => [
                         'action' => ['/company/updatecontroltender', 'id' => $model->id]
@@ -433,7 +433,7 @@ $this->registerJs($script, View::POS_READY);
                     'asPopover' => true,
                     'placement' => PopoverX::ALIGN_LEFT,
                     'size' => 'lg',
-                    'disabled' => $model->is_archive == 1 ? true : false,
+                    'disabled' => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $model->is_archive == 0) ? false : true,
                     'options' => ['class' => 'form-control'],
                     'formOptions' => [
                         'action' => ['/company/updatecontroltender', 'id' => $model->id],
