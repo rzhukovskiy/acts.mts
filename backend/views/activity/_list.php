@@ -123,6 +123,7 @@ CanvasJsAsset::register($this);
                 'striped' => false,
                 'export' => false,
                 'summary' => false,
+                'showPageSummary' => true,
                 'emptyText' => '',
                 'layout' => '{items}',
                 'filterSelector' => '.ext-filter',
@@ -167,6 +168,8 @@ CanvasJsAsset::register($this);
                     [
                         'attribute' => 'companyNum',
                         'header' => ((Yii::$app->controller->action->id == 'new') ? 'Количество' : 'Перенесено в архив'),
+                        'pageSummary' => true,
+                        'pageSummaryFunc' => GridView::F_SUM,
                         'contentOptions' => ['class' => 'value_1', 'style' => 'width: 300px'],
                     ],
                     [

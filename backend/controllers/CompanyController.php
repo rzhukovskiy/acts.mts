@@ -1739,11 +1739,22 @@ class CompanyController extends Controller
         if ($model->load(Yii::$app->request->get()) && $model->save()) {
 
             if($model->status != Company::STATUS_TENDER) {
-                $DepartmentCompany = new DepartmentCompany();
-                $DepartmentCompany->company_id = $model->id;
-                $DepartmentCompany->user_id = Yii::$app->user->identity->id;
-                $DepartmentCompany->remove_id = 0;
-                $DepartmentCompany->save();
+
+                if($model->status != Company::STATUS_ARCHIVE) {
+                    $DepartmentCompany = new DepartmentCompany();
+                    $DepartmentCompany->company_id = $model->id;
+                    $DepartmentCompany->user_id = Yii::$app->user->identity->id;
+                    $DepartmentCompany->remove_id = 0;
+                    $DepartmentCompany->save();
+                } else {
+                    $DepartmentCompany = new DepartmentCompany();
+                    $DepartmentCompany->company_id = $model->id;
+                    $DepartmentCompany->user_id = Yii::$app->user->identity->id;
+                    $DepartmentCompany->remove_date = (String) time();
+                    $DepartmentCompany->remove_id = Yii::$app->user->identity->id;
+                    $DepartmentCompany->save();
+                }
+
             } else {
                 $TenderHystory = new TenderHystory();
                 $TenderHystory->company_id = $model->id;
