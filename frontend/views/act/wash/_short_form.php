@@ -16,6 +16,9 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
 use yii\web\View;
+use yii\helpers\Url;
+
+$actionLinkType = Url::to('@web/car/gettypeid');
 
 if (!empty($serviceList)) {
     $fixedList = json_encode(Service::find()
@@ -23,11 +26,20 @@ if (!empty($serviceList)) {
         ->select('is_fixed')->indexBy('id')->column());
 
 // получаем значение фиксированных цен
-    $compServList = json_encode(CompanyService::find()->where('`company_id`=' . Yii::$app->user->identity->company_id)->select('price')->indexBy('service_id')->orderBy('service_id ASC')->column());
+    $compServList = CompanyService::find()->where('`company_id`=' . Yii::$app->user->identity->company_id)->select('price, service_id, type_id')->asArray()->orderBy('service_id ASC')->all();
+
+    $arrServList = [];
+
+    for ($z = 0; $z < count($compServList); $z++) {
+        $indexS = $compServList[$z]['service_id'];
+        $indexT = $compServList[$z]['type_id'];
+        $arrServList[$indexS][$indexT] = $compServList[$z]['price'];
+    }
+    $arrServList = json_encode($arrServList);
 
     $script = <<< JS
     var serviceList = $fixedList;
-    var compServList = $compServList;
+    var compServList = $arrServList;
     //$('.scope-price').hide();
     
     for (var i = 0; i < $('.scope-price').length; i++) {
@@ -44,14 +56,38 @@ if (!empty($serviceList)) {
         
     }
 
+    // получаем тип тс по номеру
+    $(document).on('change', '#act-car_number', function () {
+                  $.ajax({
+                type     :'POST',
+                cache    : false,
+                data: 'number=' + $(this).val(),
+                url  : '$actionLinkType',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == true) { 
+                // Удачно
+                $("#act-type_id").val(response.type_id);
+                
+                } else {
+                // Неудачно
+                $("#act-type_id").val($("#act-type_id option:first").val());
+                }
+                
+                }
+                });
+    });
+    
     $(document).on('change', '.scope-service', function () {
         var fixed = serviceList[$(this).val()];
         if (fixed > 0) {
             //$(this).parent().parent().find('.scope-price').hide();
             $(this).parent().parent().find('.scope-price').attr('readonly', true);
-            
-            if ((typeof(compServList[$(this).val()]) != "undefined") && (compServList[$(this).val()] !== null)) {
-            $(this).parent().parent().find('.scope-price').val(compServList[$(this).val()]);
+
+            if ((typeof(compServList[$(this).val()][$('#act-type_id').val()]) != "undefined") && (compServList[$(this).val()][$('#act-type_id').val()] !== null)) {
+            $(this).parent().parent().find('.scope-price').val(compServList[$(this).val()][$('#act-type_id').val()]);
             } else {
             $(this).parent().parent().find('.scope-price').val('0');
             }
