@@ -79,6 +79,11 @@ class CompanyController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
+                    [
+                        'actions' => ['archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'map', 'attribute', 'price'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_ACCOUNT],
+                    ],
                 ],
             ],
         ];

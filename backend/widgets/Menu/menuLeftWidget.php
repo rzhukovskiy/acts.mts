@@ -235,6 +235,8 @@ class menuLeftWidget extends Widget
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
+            $company = Company::findOne(['id' => Yii::$app->request->get('id')]);
+
             $items = [
                 [
                     'label' => 'Запись ТС',
@@ -260,6 +262,17 @@ class menuLeftWidget extends Widget
                     'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
                     'active' => (Yii::$app->controller->id == 'message'),
+                ],
+                [
+                    'label' => 'Архив' . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_ARCHIVE)],
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE && Yii::$app->controller->action->id != 'fullcontroltender')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE && Yii::$app->controller->action->id != 'fulltendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE && Yii::$app->controller->action->id != 'tendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE && Yii::$app->controller->action->id != 'newtendermembers')
+                    ),
                 ],
             ];
         } elseif ($currentUser && ($currentUser->role == User::ROLE_WATCHER || $currentUser->role == User::ROLE_MANAGER)) {
