@@ -147,7 +147,16 @@ echo GridView::widget([
             'pageSummaryFunc' => GridView::F_SUM,
             'format' => 'html',
             'value' => function ($data) {
-                return $data->profit;
+
+                $intVal = (Int) $data->profit;
+                $checkVal = $data->profit - $intVal;
+
+                if($checkVal > 0) {
+                    return $data->profit;
+                } else {
+                    return $intVal;
+                }
+
             },
         ],
         'payment_status' => [

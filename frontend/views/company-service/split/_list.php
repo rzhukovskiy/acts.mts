@@ -35,6 +35,18 @@ echo GridView::widget([
             'options' => [
                 'style' => 'width: 250px',
             ],
+            'value' => function ($data) {
+
+                $intVal = (Int) $data->price;
+                $checkVal = $data->price - $intVal;
+
+                if($checkVal > 0) {
+                    return $data->price;
+                } else {
+                    return $intVal;
+                }
+
+            },
             'editableOptions'=> function ($data) {
                 return [
                     'formOptions' => ['action' => ['/company/editprice?service_id=' . $data->id]],

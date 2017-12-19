@@ -196,7 +196,7 @@ this.addHeaders = function(options) {
             if (!totalCount[col]) {
                 totalCount[col] = 0;
             }
-            total[col] += parseInt($(row).find('td.sum').text());
+            total[col] += parseFloat($(row).find('td.sum').text());
             totalCount[col]++;
             if (currentValue != nextValue) {
                 var footerTr = $('<tr>').addClass(defaultFooterClass);
@@ -205,8 +205,17 @@ this.addHeaders = function(options) {
                 }
                 for (var i = 0; i < $(row).find('td').not('.hidden').length; i++) {
                     if (i == pos) {
-                        var footerTd = $('<td>').text(total[col]);
-                        footerTr.append(footerTd);
+
+                        var intSum = parseInt(total[col]);
+
+                        if(total[col] > intSum) {
+                            var footerTd = $('<td>').text(total[col].toFixed(4));
+                            footerTr.append(footerTd);
+                        } else {
+                            var footerTd = $('<td>').text(total[col]);
+                            footerTr.append(footerTd);
+                        }
+
                     } else if (i == posCount) {
                         var footerTd = $('<td>').text(totalCount[col]);
                         footerTr.append(footerTd);

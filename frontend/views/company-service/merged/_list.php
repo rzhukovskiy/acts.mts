@@ -49,7 +49,16 @@ foreach (Service::findAll(['type' => $type]) as $service) {
         'class'=>'kartik\grid\EditableColumn',
         'readonly'=> false,
         'value' => function ($data) use($service) {
-            return $data->getPriceForService($service->id);
+
+            $intVal = (Int) $data->getPriceForService($service->id);
+            $checkVal = $data->getPriceForService($service->id) - $intVal;
+
+            if($checkVal > 0) {
+                return $data->getPriceForService($service->id);
+            } else {
+                return $intVal;
+            }
+
         },
         'editableOptions'=> function ($data) use($service) {
             return [

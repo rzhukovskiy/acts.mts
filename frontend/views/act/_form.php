@@ -272,7 +272,17 @@ $this->registerJs($script, View::POS_READY);
                             <?php
                             $partnerSumService =0;
                             foreach ($partnerScopes as $scope) {
-                                $partnerSumService+=$scope->amount*$scope->price
+                                $partnerSumService+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -419,7 +429,17 @@ $this->registerJs($script, View::POS_READY);
                             <?php
                             $clientSumService =0;
                             foreach ($clientScopes as $scope) {
-                                $clientSumService+=$scope->amount*$scope->price
+                                $clientSumService+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -499,7 +519,17 @@ $this->registerJs($script, View::POS_READY);
                         <?php
                         $partnerSum=0;
                         foreach ($partnerScopes as $scope) {
-                            $partnerSum+=$scope->amount*$scope->price
+                            $partnerSum+=$scope->amount*$scope->price;
+
+                            // Убираем нули после запятой если указано целое число
+                            $intVal = (Int) $scope->price;
+                            $checkVal = $scope->price - $intVal;
+
+                            if($checkVal > 0) {
+                            } else {
+                                $scope->price = $intVal;
+                            }
+
                             ?>
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-8">
@@ -560,7 +590,17 @@ $this->registerJs($script, View::POS_READY);
                         <?php
                         $clientSum=0;
                         foreach ($clientScopes as $scope) {
-                            $clientSum+=$scope->amount*$scope->price
+                            $clientSum+=$scope->amount*$scope->price;
+
+                            // Убираем нули после запятой если указано целое число
+                            $intVal = (Int) $scope->price;
+                            $checkVal = $scope->price - $intVal;
+
+                            if($checkVal > 0) {
+                            } else {
+                                $scope->price = $intVal;
+                            }
+
                             ?>
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-8">

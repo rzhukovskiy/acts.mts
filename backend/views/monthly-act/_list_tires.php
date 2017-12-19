@@ -93,7 +93,7 @@ echo GridView::widget([
     'hover'            => false,
     'striped'          => false,
     'export'           => false,
-    'showPageSummary'  => false,
+    'showPageSummary' => true,
     'filterSelector'   => '.ext-filter',
     'beforeHeader'     => [
         [
@@ -115,7 +115,6 @@ echo GridView::widget([
         [
             'header'      => '№',
             'class'       => 'kartik\grid\SerialColumn',
-            'pageSummary' => 'Всего',
             'mergeHeader' => false,
             'width'       => '30px',
             'vAlign'      => GridView::ALIGN_TOP,
@@ -123,6 +122,7 @@ echo GridView::widget([
         [
             'attribute'         => 'client_name',
             'header' => 'Клиент',
+            'pageSummary' => 'Всего',
             'format' => 'raw',
             //'group'             => true,  // enable grouping
             //'options'           => ['class' => 'kv-grouped-header'],
@@ -151,8 +151,19 @@ echo GridView::widget([
         ],
         [
             'attribute'       => 'profit',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
             'value'           => function ($data) {
-                return $data->profit;
+
+                $intVal = (Int) $data->profit;
+                $checkVal = $data->profit - $intVal;
+
+                if($checkVal > 0) {
+                    return $data->profit;
+                } else {
+                    return $intVal;
+                }
+
             },
             'pageSummary'     => true,
             'pageSummaryFunc' => GridView::F_SUM,
@@ -411,7 +422,7 @@ echo GridView::widget([
         ],
         */
         [
-            'class'          => 'yii\grid\ActionColumn',
+            'class' => 'kartik\grid\ActionColumn',
             'template' => '{update}{search}{call}',
             'contentOptions' => ['style' => 'min-width: 90px'],
             'visibleButtons' => $visibleButton,

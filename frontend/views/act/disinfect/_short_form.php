@@ -93,7 +93,18 @@ use yii\jui\AutoComplete;
 
                     <?php if(isset($partnerScopes)) {
                         $ipS = 0;
-                        foreach ($partnerScopes as $scope) {?>
+                        foreach ($partnerScopes as $scope) {
+
+                            // Убираем нули после запятой если указано целое число
+                            $intVal = (Int) $scope->price;
+                            $checkVal = $scope->price - $intVal;
+
+                            if($checkVal > 0) {
+                            } else {
+                                $scope->price = $intVal;
+                            }
+
+                            ?>
                             <div class="form-group" style="height: 25px;">
                                 <div class="col-xs-6">
                                     <?php if (!empty($serviceList)) { ?>

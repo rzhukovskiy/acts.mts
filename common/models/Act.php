@@ -30,9 +30,9 @@ use yii\helpers\ArrayHelper;
  * @property integer $car_id
  * @property integer $extra_car_id
  * @property integer $status
- * @property integer $expense
- * @property integer $income
- * @property integer $profit
+ * @property float $expense
+ * @property float $income
+ * @property float $profit
  * @property integer $service_type
  * @property integer $served_at
  * @property integer $created_at

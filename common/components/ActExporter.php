@@ -1898,6 +1898,18 @@ class ActExporter
             $companyWorkSheet->mergeCells("B$row:F$row");
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+
+            // Количество символов после запятой
+            $intVal = (Int) $total;
+            $checkVal = $total - $intVal;
+
+            if($checkVal > 0) {
+                $total = sprintf("%.4f", $total);
+            } else {
+                $total = $intVal;
+            }
+            // Количество символов после запятой
+
             $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
@@ -1988,6 +2000,18 @@ class ActExporter
             }
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+
+            // Количество символов после запятой
+            $intVal = (Int) $total;
+            $checkVal = $total - $intVal;
+
+            if($checkVal > 0) {
+                $total = sprintf("%.4f", $total);
+            } else {
+                $total = $intVal;
+            }
+            // Количество символов после запятой
+
             $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
@@ -12736,6 +12760,18 @@ class ActExporter
             $companyWorkSheet->mergeCells("B$row:F$row");
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:F$row")->getAlignment()->setWrapText(true);
+
+            // Количество символов после запятой
+            $intVal = (Int) $totalAll;
+            $checkVal = $totalAll - $intVal;
+
+            if($checkVal > 0) {
+                $totalAll = sprintf("%.4f", $totalAll);
+            } else {
+                $totalAll = $intVal;
+            }
+            // Количество символов после запятой
+
             $text = "Общая стоимость выполненных услуг составляет: $totalAll (" . DigitHelper::num2str($totalAll) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
@@ -12826,6 +12862,18 @@ class ActExporter
             }
             $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
             $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+
+            // Количество символов после запятой
+            $intVal = (Int) $totalAll;
+            $checkVal = $totalAll - $intVal;
+
+            if($checkVal > 0) {
+                $totalAll = sprintf("%.4f", $totalAll);
+            } else {
+                $totalAll = $intVal;
+            }
+            // Количество символов после запятой
+
             $text = "Общая стоимость выполненных услуг составляет: $totalAll (" . DigitHelper::num2str($totalAll) . ") рублей. НДС нет.";
             $companyWorkSheet->setCellValue("B$row", $text);
 

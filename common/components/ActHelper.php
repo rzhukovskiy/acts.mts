@@ -209,6 +209,18 @@ class ActHelper
                     if ($data->hasError('income')) $options['class'] .= ' text-danger';
                     return $options;
                 },
+                'value' => function ($data) {
+
+                    $intVal = (Int) $data->income;
+                    $checkVal = $data->income - $intVal;
+
+                    if($checkVal > 0) {
+                        return $data->income;
+                    } else {
+                        return $intVal;
+                    }
+
+                }
             ],
             'expense' => [
                 'attribute' => 'expense',
@@ -219,6 +231,18 @@ class ActHelper
                     if ($data->hasError('expense')) $options['class'] .= ' text-danger';
                     return $options;
                 },
+                'value' => function ($data) {
+
+                   $intVal = (Int) $data->expense;
+                   $checkVal = $data->expense - $intVal;
+
+                   if($checkVal > 0) {
+                       return $data->expense;
+                   } else {
+                       return $intVal;
+                   }
+
+                }
             ],
             'penaltyinfo.amount' => [
                 'attribute' => 'penaltyinfo.amount',

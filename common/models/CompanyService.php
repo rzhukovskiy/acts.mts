@@ -12,7 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $company_id
  * @property integer $service_id
  * @property integer $type_id
- * @property integer $price
+ * @property float $price
  * @property integer $created_at
  * @property integer $updated_at
  *

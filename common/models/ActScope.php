@@ -19,7 +19,7 @@ use yii\db\ActiveRecord;
  * @property integer $act_id
  * @property integer $company_id
  * @property integer $service_id
- * @property integer $price
+ * @property float $price
  * @property integer $amount
  * @property integer $parts
  * @property integer $created_at
