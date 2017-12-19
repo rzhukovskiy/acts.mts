@@ -3,6 +3,7 @@
 use yii\web\View;
 use common\models\CompanyInfo;
 use common\models\Company;
+use yii\helpers\Html;
 
 $titleTable = '';
 
@@ -62,6 +63,8 @@ for($i = 0; $i < count($Company); $i++) {
             $arrAddressCompany[$iArr]['lat'] = $Company[$i]['lat'];
             $arrAddressCompany[$iArr]['lng'] = $Company[$i]['lng'];
             $arrAddressCompany[$iArr]['name'] = $Company[$i]['name'];
+            $arrAddressCompany[$iArr]['id'] = $Company[$i]['company_id'];
+            $arrAddressCompany[$iArr]['type'] = $Company[$i]['type'];
             $iArr++;
 
             // Зум к единственно выбранной компании
@@ -85,6 +88,8 @@ for($i = 0; $i < count($Company); $i++) {
                 $arrAddressCompany[$iArr]['lat'] = $lat;
                 $arrAddressCompany[$iArr]['lng'] = $lng;
                 $arrAddressCompany[$iArr]['name'] = $Company[$i]['name'];
+                $arrAddressCompany[$iArr]['id'] = $Company[$i]['company_id'];
+                $arrAddressCompany[$iArr]['type'] = $Company[$i]['type'];
 
                 $CompanyInfo = CompanyInfo::findOne(['company_id' => $Company[$i]['company_id']]);
                 $CompanyInfo->lat = $lat;
@@ -110,7 +115,21 @@ $arrAddressCompany = json_encode($arrAddressCompany);
 
 echo '
 <div class="panel panel-primary">
-    <div class="panel-heading">' . $titleTable . '</div>
+    <div class="panel-heading">' . $titleTable . ($selID == 0 ? '<div class="header-btn pull-right">' . Html::a('Грузовые', [
+            'company/' . Yii::$app->controller->action->id,
+            'type' => $type,
+            'status' => $status,
+            'car_type' => 0,
+        ], ['class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:15px;']) . Html::a('Легковые', [
+            'company/' . Yii::$app->controller->action->id,
+            'type' => $type,
+            'status' => $status,
+            'car_type' => 1,
+        ], ['class' => 'btn btn-warning btn-sm', 'style' => 'margin-right:15px;']) . Html::a('Сбросить фильтр', [
+            'company/' . Yii::$app->controller->action->id,
+            'type' => $type,
+            'status' => $status,
+        ], ['class' => 'btn btn-success btn-sm']) . '</div>' : '') . '</div>
     <div class="panel-body">
         <div id="map"></div>
     </div>
@@ -130,14 +149,43 @@ echo '
             
         var CompanyAddress = {lat: parseFloat(companyArray[i]["lat"]), lng: parseFloat(companyArray[i]["lng"])};
         var name = companyArray[i]["name"];
+        var id = companyArray[i]["id"];
+        var type = companyArray[i]["type"];
         
-        var marker = new google.maps.Marker({
+        var marker;
+        
+        if(type == 1) {
+        marker = new google.maps.Marker({
+            position: CompanyAddress,
+            icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+            map: map,
+            title: name,
+            url: "/company/update?id=" + id
+        });
+        } else if(type == 2) {
+        marker = new google.maps.Marker({
+            position: CompanyAddress,
+            icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            map: map,
+            title: name,
+            url: "/company/update?id=" + id
+        });
+        } else {
+        marker = new google.maps.Marker({
             position: CompanyAddress,
             map: map,
-            title: name
+            title: name,
+            url: "/company/update?id=" + id
+        });
+        }
+        
+        // Клик по маркету
+        google.maps.event.addListener(marker, "click", function() {
+            window.open(this.url, "_blank");
         });
         
         }
+        
     }
 </script>
 <script async defer

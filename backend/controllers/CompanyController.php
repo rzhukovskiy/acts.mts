@@ -79,6 +79,11 @@ class CompanyController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
+                    [
+                        'actions' => ['archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'map', 'attribute', 'price'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_ACCOUNT],
+                    ],
                 ],
             ],
         ];
@@ -4368,7 +4373,7 @@ class CompanyController extends Controller
     }
 
     // Карта компаний
-    public function actionMap($status = null, $type = null, $id = null)
+    public function actionMap($status = null, $type = null, $id = null, $car_type = null)
     {
         $Company = [];
         $typePage = 0;
@@ -4377,16 +4382,26 @@ class CompanyController extends Controller
         if(($status) && ($type)) {
 
         // все компании
-            if($status == 2) {
-                $Company = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+
+            // Фильтр по типу ТС
+            if($car_type == null) {
+                if ($status == 2) {
+                    $Company = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id, company.car_type as type')->asArray()->all();
+                } else {
+                    $Company = Company::find()->where(['AND', ['type' => $type], ['status' => $status]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id, company.car_type as type')->asArray()->all();
+                }
             } else {
-                $Company = Company::find()->where(['AND', ['type' => $type], ['status' => $status]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+                if ($status == 2) {
+                    $Company = Company::find()->where(['AND', ['type' => $type], ['car_type' => $car_type]])->andWhere(['OR', ['status' => 2], ['status' => 10]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id, company.car_type as type')->asArray()->all();
+                } else {
+                    $Company = Company::find()->where(['AND', ['type' => $type], ['status' => $status], ['car_type' => $car_type]])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id, company.car_type as type')->asArray()->all();
+                }
             }
 
         } elseif($id) {
 
             // выбранная компания
-            $Company = Company::find()->where(['company.id' => $id])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id')->asArray()->all();
+            $Company = Company::find()->where(['company.id' => $id])->innerJoin('company_info', '`company_info`.`company_id` = `company`.`id`')->select('company.name, company_info.city, company_info.street, company_info.house, company_info.lat, company_info.lng, company_info.company_id, company.car_type as type')->asArray()->all();
             $typePage = 1;
             $selID = $id;
 

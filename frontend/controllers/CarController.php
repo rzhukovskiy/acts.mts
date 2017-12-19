@@ -64,7 +64,7 @@ class CarController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['check-extra'],
+                        'actions' => ['check-extra', 'gettypeid'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ]
@@ -605,6 +605,21 @@ class CarController extends Controller
         } else {
             echo json_encode(['success' => 'false']);
         }
+    }
+
+    public function actionGettypeid()
+    {
+
+        $number = Yii::$app->request->post("number");
+
+        $carCont = Car::find()->where(['number' => $number])->select('type_id')->asArray()->column();
+
+        if(count($carCont) > 0) {
+            return json_encode(['success' => true, 'type_id' => $carCont[0]]);
+        } else {
+            return json_encode(['success' => false]);
+        }
+
     }
 
 }
