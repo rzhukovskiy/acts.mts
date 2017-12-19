@@ -79,6 +79,18 @@ $columns = [
         'contentOptions' => function($data) {
             if($data->hasError('expense')) return ['class' => 'text-danger'];
         },
+        'value' => function ($data) {
+
+            $intVal = (Int) $data->expense;
+            $checkVal = $data->expense - $intVal;
+
+            if($checkVal > 0) {
+                return $data->expense;
+            } else {
+                return $intVal;
+            }
+
+        }
     ],
     [
         'header' => 'Приход',
@@ -87,6 +99,18 @@ $columns = [
         'contentOptions' => function($data) {
             if($data->hasError('income')) return ['class' => 'text-danger'];
         },
+        'value' => function ($data) {
+
+            $intVal = (Int) $data->income;
+            $checkVal = $data->income - $intVal;
+
+            if($checkVal > 0) {
+                return $data->income;
+            } else {
+                return $intVal;
+            }
+
+        }
     ],
     [
         'attribute' => 'check',

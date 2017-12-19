@@ -487,7 +487,17 @@ JS;
                             <?php
                             $partnerSum=0;
                             foreach ($partsPartnerScopes as $scope) {
-                                $partnerSum+=$scope->amount*$scope->price
+                                $partnerSum+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -555,7 +565,17 @@ JS;
                             <?php
                             $partnerSumService =0;
                             foreach ($partnerScopes as $scope) {
-                                $partnerSumService+=$scope->amount*$scope->price
+                                $partnerSumService+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -635,7 +655,17 @@ JS;
                             <?php
                             $clientSum=0;
                             foreach ($partsClientScopes as $scope) {
-                                $clientSum+=$scope->amount*$scope->price
+                                $clientSum+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -702,7 +732,17 @@ JS;
                             <?php
                             $clientSumService =0;
                             foreach ($clientScopes as $scope) {
-                                $clientSumService+=$scope->amount*$scope->price
+                                $clientSumService+=$scope->amount*$scope->price;
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
                                 ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
@@ -779,7 +819,18 @@ JS;
                     <td colspan="4">
                         <div class="col-sm-12">
                             <label class="control-label">Услуги партнера</label>
-                            <?php foreach ($partnerScopes as $scope) { ?>
+                            <?php foreach ($partnerScopes as $scope) {
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
+                                ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
                                         <?php if (!empty($serviceList)) { ?>
@@ -790,7 +841,7 @@ JS;
                                         <?php } ?>
                                     </div>
                                     <div class="col-xs-1">
-                                        <?= Html::input('number', "Act[partnerServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                        <?= Html::input('text', "Act[partnerServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                     </div>
                                     <div class="col-xs-2">
                                         <?= Html::textInput("Act[partnerServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
@@ -813,7 +864,7 @@ JS;
                                     <?php } ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <?= Html::input('number', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                    <?= Html::input('text', "Act[partnerServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-2">
                                     <?= Html::textInput("Act[partnerServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
@@ -828,7 +879,18 @@ JS;
 
                         <div class="col-sm-12" style="margin-top: 30px;">
                             <label class="control-label">Услуги клиента</label>
-                            <?php foreach ($clientScopes as $scope) { ?>
+                            <?php foreach ($clientScopes as $scope) {
+
+                                // Убираем нули после запятой если указано целое число
+                                $intVal = (Int) $scope->price;
+                                $checkVal = $scope->price - $intVal;
+
+                                if($checkVal > 0) {
+                                } else {
+                                    $scope->price = $intVal;
+                                }
+
+                                ?>
                                 <div class="form-group" style="height: 25px;">
                                     <div class="col-xs-8">
                                         <?php if (!empty($serviceList)) { ?>
@@ -839,7 +901,7 @@ JS;
                                         <?php } ?>
                                     </div>
                                     <div class="col-xs-1">
-                                        <?= Html::input('number', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                        <?= Html::input('text', "Act[clientServiceList][$scope->id][amount]", $scope->amount, ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                     </div>
                                     <div class="col-xs-2">
                                         <?= Html::textInput("Act[clientServiceList][$scope->id][price]", $scope->price, ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
@@ -861,7 +923,7 @@ JS;
                                     <?php } ?>
                                 </div>
                                 <div class="col-xs-1">
-                                    <?= Html::input('number', "Act[clientServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
+                                    <?= Html::input('text', "Act[clientServiceList][0][amount]", '1', ['class' => 'not-null form-control input-sm', 'placeholder' => 'Количество']) ?>
                                 </div>
                                 <div class="col-xs-2">
                                     <?= Html::textInput("Act[clientServiceList][0][price]", '', ['class' => 'form-control input-sm', 'placeholder' => 'цена']) ?>
