@@ -249,7 +249,7 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Контроль денежных</br> стредств',
                     'url'    => '#',
-                    'visible'    => Yii::$app->user->identity->role == User::ROLE_ADMIN ? true : false,
+                    'visible'    => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) ? true : false,
                     'active' => Yii::$app->controller->id == 'expense',
                     'items'  => [
                         [

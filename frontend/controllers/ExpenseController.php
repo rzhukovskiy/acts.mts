@@ -28,6 +28,11 @@ class ExpenseController extends Controller
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
+                    [
+                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete'],
+                        'allow' => true,
+                        'roles' => [User::ROLE_WATCHER],
+                    ],
                 ]
             ]
         ];
@@ -38,7 +43,7 @@ class ExpenseController extends Controller
 
     public function actionAddexpensecomp($type)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
             $model = new ExpenseCompany();
             $model->type = $type;
 
@@ -72,7 +77,7 @@ class ExpenseController extends Controller
 
     public function actionExpensecomp($id)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = ExpenseCompany::findOne(['id' => $id]);
 
         $newmodel = new Expense();
@@ -96,7 +101,7 @@ class ExpenseController extends Controller
 
     public function actionUpdateexpense($id)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = ExpenseCompany::findOne(['id' => $id]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -125,7 +130,7 @@ class ExpenseController extends Controller
 
     public function actionFullexpense($id)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = Expense::findOne(['id' => $id]);
 
         return $this->render('fullexpense', [
@@ -138,7 +143,7 @@ class ExpenseController extends Controller
 
     public function actionUpdateexp($id)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = Expense::findOne(['id' => $id]);
         // Подготовка данных перед сохранением
         $arrUpdate = Yii::$app->request->post();
@@ -160,7 +165,7 @@ class ExpenseController extends Controller
 
     public function actionStatexpense($type)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
 
             $listType = ExpenseCompany::$listType;
 
@@ -181,7 +186,7 @@ class ExpenseController extends Controller
 
     public function actionStattotal()
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
 
             $searchModel = new ExpenseSearch(['scenario' => Expense::SCENARIO_TOTAL]);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

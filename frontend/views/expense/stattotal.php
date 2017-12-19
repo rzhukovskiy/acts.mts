@@ -210,7 +210,7 @@ $columns = [
         'value' => function ($data) {
             if($data->type == 1){
                 if ($data->sum) {
-                    return $data->sum + ($data->sum*43.5/100);
+                    return $data->sum + ($data->sum/0.87 * 0.435);
                 } else {
                     return '-';
                 }

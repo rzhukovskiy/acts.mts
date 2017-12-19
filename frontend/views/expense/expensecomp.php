@@ -28,73 +28,73 @@ window.onload=function(){
   var formatSum3 = $('td[data-col-seq="3"]');
   $(formatSum3).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
   var formatSum4 = $('td[data-col-seq="4"]');
   $(formatSum4).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
   var formatSum5 = $('td[data-col-seq="5"]');
   $(formatSum5).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
     var formatSum6 = $('td[data-col-seq="6"]');
   $(formatSum6).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
     var formatSum7 = $('td[data-col-seq="7"]');
   $(formatSum7).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
       var formatSum8 = $('td[data-col-seq="8"]');
   $(formatSum8).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum2 = $('.kv-page-summary-container td:eq(2)');
-  $(formatSum2).each(function (id, value) {
+  var formatSum2a = $('.kv-page-summary-container td:eq(2)');
+  $(formatSum2a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum3 = $('.kv-page-summary-container td:eq(3)');
-  $(formatSum3).each(function (id, value) {
+  var formatSum3a = $('.kv-page-summary-container td:eq(3)');
+  $(formatSum3a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum4 = $('.kv-page-summary-container td:eq(4)');
-  $(formatSum4).each(function (id, value) {
+  var formatSum4a = $('.kv-page-summary-container td:eq(4)');
+  $(formatSum4a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum5 = $('.kv-page-summary-container td:eq(5)');
-  $(formatSum5).each(function (id, value) {
+  var formatSum5a = $('.kv-page-summary-container td:eq(5)');
+  $(formatSum5a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-    var formatSum6 = $('.kv-page-summary-container td:eq(6)');
-  $(formatSum6).each(function (id, value) {
+    var formatSum6a = $('.kv-page-summary-container td:eq(6)');
+  $(formatSum6a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-    var formatSum7 = $('.kv-page-summary-container td:eq(7)');
-  $(formatSum7).each(function (id, value) {
+    var formatSum7a = $('.kv-page-summary-container td:eq(7)');
+  $(formatSum7a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-      var formatSum8 = $('.kv-page-summary-container td:eq(8)');
-  $(formatSum8).each(function (id, value) {
+      var formatSum8a = $('.kv-page-summary-container td:eq(8)');
+  $(formatSum8a).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   } else {
         var formatSum3 = $('td[data-col-seq="3"]');
@@ -252,7 +252,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum * 13/100;
+                            return $data->sum/0.87 * 0.13;
                         } else {
                             return '-';
                         }
@@ -267,7 +267,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum * 22/100;
+                            return $data->sum/0.87 * 0.22;
                         } else {
                             return '-';
                         }
@@ -282,7 +282,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum * 5.1/100;
+                            return $data->sum/0.87 * 0.051;
                         } else {
                             return '-';
                         }
@@ -297,7 +297,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum * 2.9/100;
+                            return $data->sum/0.87 * 0.029;
                         } else {
                             return '-';
                         }
@@ -312,7 +312,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum * 0.5/100;
+                            return $data->sum/0.87 * 0.005;
                         } else {
                             return '-';
                         }
@@ -327,7 +327,7 @@ $this->title = 'Редактирование ' . $model->name
                     'value' => function ($data) {
 
                         if ($data->sum) {
-                            return $data->sum + $data->sum * 43.5/100;
+                            return $data->sum + $data->sum/0.87 * 0.435;
                         } else {
                             return '-';
                         }
@@ -422,7 +422,7 @@ $this->title = 'Редактирование ' . $model->name
                             },
                             'delete' => function ($url, $model, $key) {
                                 return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/expense/delete', 'id' => $model->id],
-                                    ['data-confirm' => "Вы уверены, что хотите удалить этот элемент?"]);
+                                    ['data-confirm' => "Вы уверены, что хотите удалить?"]);
                             },
                         ],
                     ],
