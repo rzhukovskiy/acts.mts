@@ -247,10 +247,29 @@ class menuLeftWidget extends Widget
                     ]
                 ],
                 [
+                    'label'  => 'Контроль денежных</br> стредств',
+                    'url'    => '#',
+                    'visible'    => Yii::$app->user->identity->role == User::ROLE_ADMIN ? true : false,
+                    'active' => Yii::$app->controller->id == 'expense',
+                    'items'  => [
+                        [
+                            'label'  => 'Добавление',
+                            'url'    => ['/expense/addexpensecomp?type=1'],
+                            'active' => Yii::$app->controller->action->id == 'addexpense' || Yii::$app->controller->action->id == 'addexpensecomp' || Yii::$app->controller->action->id == 'expensecomp' || Yii::$app->controller->action->id == 'updateexpense' || Yii::$app->controller->action->id == 'fullexpense',
+                        ],
+                        [
+                            'label'  => 'Статистика</br> денежных средств',
+                            'url'    => ['/expense/statexpense?type=1'],
+                            'active' => Yii::$app->controller->action->id == 'statexpense' || Yii::$app->controller->action->id == 'stattotal',
+                        ],
+                    ],
+                ],
+                [
                     'label'  => 'Закрыть загрузки',
                     'url'    => ['/load/list', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'load',
                 ],
+
                 [
                     'label'  => 'Акты',
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH],
@@ -277,6 +296,7 @@ class menuLeftWidget extends Widget
                     'url'    => ['/error/async', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'async',
                 ],
+
             ];
         } // Partner links
         elseif (Yii::$app->user->identity->role == User::ROLE_PARTNER) {
