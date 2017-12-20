@@ -9,12 +9,16 @@ use common\models\TenderLists;
 $script = <<< JS
 // формат числа
 window.onload=function(){
-  var formatSum = $('td[data-col-seq="10"]');
-  $(formatSum).each(function (id, value) {
+  var formatSum10 = $('td[data-col-seq="10"]');
+  $(formatSum10).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  
+  var formatSum11 = $('td[data-col-seq="11"]');
+  $(formatSum11).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
 };
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
@@ -369,6 +373,22 @@ $columns = [
 
             if ($data->price_nds) {
                 return $data->price_nds;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'cost_purchase_completion',
+        'vAlign'=>'middle',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+        'header' => 'Стоимость<br /> закупки по завершению',
+        'value' => function ($data) {
+
+            if ($data->cost_purchase_completion) {
+                return $data->cost_purchase_completion;
             } else {
                 return '-';
             }

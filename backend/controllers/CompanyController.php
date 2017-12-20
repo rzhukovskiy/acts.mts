@@ -750,10 +750,8 @@ class CompanyController extends Controller
             if ($hasEditable) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
 
-
                 // Подготовка данных перед сохранением
                 $arrUpdate = Yii::$app->request->post();
-
 
                 if ($model->load($arrUpdate) && $model->save()) {
                     $output = [];

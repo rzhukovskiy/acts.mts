@@ -42,6 +42,19 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         'showPageSummary' => true,
         'emptyText' => '',
         'layout' => '{items}',
+        'rowOptions' => function ($model) {
+
+            // Выделяем цветом для каких типов
+            if(isset($GLOBALS['tender_win'])) {
+                if ($GLOBALS['tender_win'] == 1) {
+                    return ['style' => 'background:#ffd5d5;'];
+                } else {
+                    return '';
+                }
+            } else {
+                return '';
+            }
+        },
         'columns' => [
             [
                 'header' => '№',
@@ -127,6 +140,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         $win = 0;
                         if(count($resWinner) > 0) {
                             $win = $resWinner[0];
+                            $GLOBALS['tender_win'] = $resWinner[0];
                         }
 
                         if ($win == 1) {
