@@ -711,7 +711,7 @@ class ActExporter
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'ООО «Международный Транспортный Сервис»');
 
             $row++; $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Филипова О. С. ___________');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Филиппова О. С. ___________');
             $objDrawing = null;
             if($company->is_act_sign == 1) {
                 //печать
@@ -1954,7 +1954,7 @@ class ActExporter
             }
 
             $row++;
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
             $companyWorkSheet->setCellValue("E$row", "$company->director ____________");
 
@@ -2102,7 +2102,7 @@ class ActExporter
             $docNumberMember = "";
 
             if($this->serviceType == 2) {
-                $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
                 $docNumberMember = "№10/05-2017 от 10.05.2017";
             } elseif($this->serviceType == 3) {
                 $companyWorkSheet->setCellValue("B$row", "Меркулова Ю. Ф. ____________");
@@ -2111,7 +2111,7 @@ class ActExporter
                 $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
                 $docNumberMember = "№01/05-2017 от 01.05.2017";
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
                 $docNumberMember = "№10/05-2017 от 10.05.2017";
             }
 
@@ -2463,7 +2463,7 @@ class ActExporter
         $docNumberMember = "";
 
         if($this->serviceType == 2) {
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $docNumberMember = "№10/05-2017 от 10.05.2017";
         } elseif($this->serviceType == 3) {
             $companyWorkSheet->setCellValue("B$row", "Меркулова Ю. Ф. ____________");
@@ -2472,7 +2472,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
             $docNumberMember = "№01/05-2017 от 01.05.2017";
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $docNumberMember = "№10/05-2017 от 10.05.2017";
         }
 
@@ -12816,7 +12816,7 @@ class ActExporter
             }
 
             $row++;
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
             $companyWorkSheet->setCellValue("E$row", $companyMain->director . " ____________");
 
@@ -12964,7 +12964,7 @@ class ActExporter
             $docNumberMember = "";
 
             if($this->serviceType == 2) {
-                $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
                 $docNumberMember = "№10/05-2017 от 10.05.2017";
             } elseif($this->serviceType == 3) {
                 $companyWorkSheet->setCellValue("B$row", "Меркулова Ю. Ф. ____________");
@@ -12973,7 +12973,7 @@ class ActExporter
                 $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
                 $docNumberMember = "№01/05-2017 от 01.05.2017";
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
                 $docNumberMember = "№10/05-2017 от 10.05.2017";
             }
 
@@ -13311,7 +13311,7 @@ class ActExporter
         $docNumberMember = "";
 
         if($this->serviceType == 2) {
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $docNumberMember = "№10/05-2017 от 10.05.2017";
         } elseif($this->serviceType == 3) {
             $companyWorkSheet->setCellValue("B$row", "Меркулова Ю. Ф. ____________");
@@ -13320,7 +13320,7 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
             $docNumberMember = "№01/05-2017 от 01.05.2017";
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", "Филипова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
             $docNumberMember = "№10/05-2017 от 10.05.2017";
         }
 
