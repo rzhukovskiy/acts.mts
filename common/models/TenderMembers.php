@@ -57,44 +57,49 @@ class TenderMembers extends ActiveRecord
     }
     public function beforeSave($insert)
     {
-        if ($this->inn) {
+            if ($this->inn && $this->isNewRecord) {
 
-            $arr_links = TenderMembers::find()->where(['inn' => $this->inn])->select('id')->column();
+                $arr_links = TenderMembers::find()->where(['inn' => $this->inn])->select('id')->column();
 
-            if (count($arr_links) > 0) {
-                $id_links = $arr_links[0];
-                // проверяем наличие связи
-                $resWinner = TenderLinks::find()->where(['AND', ['tender_id' => $this->tender_id], ['member_id' => $id_links]])->select('id')->asArray()->column();
+                if (count($arr_links) > 0) {
+                    $id_links = $arr_links[0];
+                    // проверяем наличие связи
+                    $resWinner = TenderLinks::find()->where(['AND', ['tender_id' => $this->tender_id], ['member_id' => $id_links]])->select('id')->asArray()->column();
 
-                if(count($resWinner) == 0) {
+                    if (count($resWinner) == 0) {
 
-                    $tenderlinks = new TenderLinks();
-                    $tenderlinks->member_id = $id_links;
-                    $tenderlinks->tender_id = $this->tender_id;
-                    $tenderlinks->save();
+                        $tenderlinks = new TenderLinks();
+                        $tenderlinks->member_id = $id_links;
+                        $tenderlinks->tender_id = $this->tender_id;
+                        $tenderlinks->save();
 
+                    }
+
+                    return false;
+                } else {
+                    return parent::beforeSave($insert);
                 }
 
-                return false;
             } else {
+                $inn_exists = TenderMembers::find()->where(['AND', ['!=', 'id', $this->id], ['inn' => $this->inn]])->exists();
+                if ($inn_exists) {
+                    return false;
+                }
+
                 return parent::beforeSave($insert);
             }
 
-        } else {
-            return parent::beforeSave($insert);
-        }
     }
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $tenderlinks = new TenderLinks();
-            $tenderlinks->member_id = $this->id;
-            $tenderlinks->tender_id = $this->tender_id;
+            if ($insert) {
+                $tenderlinks = new TenderLinks();
+                $tenderlinks->member_id = $this->id;
+                $tenderlinks->tender_id = $this->tender_id;
 
-            $tenderlinks->save();
-        }
-
+                $tenderlinks->save();
+            }
         parent::afterSave($insert, $changedAttributes);
     }
     public function getTenderlinks()

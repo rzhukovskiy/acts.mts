@@ -6,14 +6,6 @@ use yii\helpers\Html;
 
 $this->title = 'Участники';
 
-echo Tabs::widget([
-    'items' => [
-        ['label' => 'Мойка', 'url' => ['tendermembers'], 'active' => Yii::$app->controller->action->id == 'tendermembers'],
-        ['label' => 'Шиномонтаж', 'url' => ['tendermembers'], 'active' => Yii::$app->controller->action->id == 'tendermembers'],
-        ['label' => 'Мойка и шиномонтаж', 'url' => ['tendermembers'], 'active' => Yii::$app->controller->action->id == 'tendermembers'],
-    ],
-]);
-
 ?>
 
 <div class="panel panel-primary">

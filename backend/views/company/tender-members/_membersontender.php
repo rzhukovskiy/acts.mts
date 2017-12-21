@@ -27,6 +27,19 @@ use common\models\TenderLinks;
         'summary' => false,
         'emptyText' => '',
         'layout' => '{items}',
+        'rowOptions' => function ($model) {
+
+            // Выделяем цветом для каких типов
+            if(isset($GLOBALS['tender_win'])) {
+                if ($GLOBALS['tender_win'] == $model->id) {
+                    return ['style' => 'background:#ffd5d5;'];
+                } else {
+                    return '';
+                }
+            } else {
+                return '';
+            }
+        },
         'columns' => [
             [
                 'header' => '№',
