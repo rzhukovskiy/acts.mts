@@ -242,6 +242,21 @@ $columns = [
                     },
                 ],
                 [
+                    'attribute' => 'time_bidding_start',
+                    'vAlign'=>'middle',
+                    'header' => 'Начало торгов',
+                    'filter' => false,
+                    'value' => function ($data) {
+
+                        if ($data->time_bidding_start) {
+                            return date('d.m.Y', $data->time_bidding_start);
+                        } else {
+                            return '-';
+                        }
+
+                    },
+                ],
+                [
                     'attribute' => 'date_request_end',
                     'vAlign'=>'middle',
                     'header' => 'Окончание подачи<br /> заявки',

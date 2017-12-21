@@ -208,7 +208,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $userText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
+                'disabled' =>  true,
                 'size' => 'lg',
                 'data' => $usersList,
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
