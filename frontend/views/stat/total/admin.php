@@ -25,9 +25,6 @@ use yii\web\View;
 $actionLinkCompare = Url::to('@web/stat/compare');
 $nowMonth = date('n', strtotime("-1 month"));
 $script = <<< JS
-
-
-
 // открываем модальное окно сравнения
 $('.compare').on('click', function() {
     $('#showListsName').modal('show');
@@ -109,6 +106,9 @@ function sendCompare() {
                 oldvalue[5]['3'] = '';
                 oldvalue[5]['4'] = '';
                 
+                var splitFloat = "";
+                var splitInt = "";
+                
                 
                 if (response.success == 'true') {
                   
@@ -121,49 +121,84 @@ function sendCompare() {
                      if (key == 2) {
                          
                         if(oldvalue[2]['1'] != '') {
-                        if (oldvalue[2]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[2]['1'] > parseFloat(value['countServe'])) {
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[2]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
                         } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[2]['1'])/oldvalue[2]['1']*100).toFixed(1))  + '%</span>';
                         }
                         } else {
                            countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[2]['2'] != '') {
-                        if (oldvalue[2]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[2]['2'] > parseFloat(value['ssoom'])) {
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[2]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
                         } else {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[2]['2'])/oldvalue[2]['2']*100).toFixed(1))  + '%</span>';
                         }
                         } else {
                            ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[2]['3'] != '') {
-                        if (oldvalue[2]['3'] > parseInt(value['income'])) {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[2]['3'] > parseFloat(value['income'])) {
+                            if (value['income'] > parseInt(value['income'])) {
+                                 splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[2]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[2]['3'])/value['income']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
-                        }
-                        
-                        if(oldvalue[2]['4'] != '') {
-                        if (oldvalue[2]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[2]['3'])/oldvalue[2]['3']*100).toFixed(1))  + '%</span>';
                         } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[2]['3'])/oldvalue[2]['3']*100).toFixed(1))  + '%</span>';
+                        }
                         }
                         } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
                         }
-                        
-                        oldvalue[2]['1'] = parseInt(value['countServe']);
-                        oldvalue[2]['2'] = parseInt(value['ssoom']);
-                        oldvalue[2]['3'] = parseInt(value['income']);
-                        oldvalue[2]['4'] = parseInt(value['profit']);
+                        }
+                         if(oldvalue[2]['4'] != '') {
+                        if (oldvalue[2]['4'] > parseFloat(value['profit'])) {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                 splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[2]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[2]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[2]['4'])/oldvalue[2]['4']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[2]['4'])/oldvalue[2]['4']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
+                        }
+                       
+                        oldvalue[2]['1'] = parseFloat(value['countServe']);
+                        oldvalue[2]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[2]['3'] = parseFloat(value['income']);
+                        oldvalue[2]['4'] = parseFloat(value['profit']);
                         
                         reswash += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                      }
@@ -172,49 +207,85 @@ function sendCompare() {
                      if (key == 4) {
                          
                          if (oldvalue[4]['1'] != '') {
-                         if (oldvalue[4]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                         if (oldvalue[4]['1'] > parseFloat(value['countServe'])) {
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[4]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
                          } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[4]['1'])/oldvalue[4]['1']*100).toFixed(1))  + '%</span>';
                          }
                          } else {
                            countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                          }
                        
                         if (oldvalue[4]['2'] != '') {
-                        if (oldvalue[4]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[4]['2'] > parseFloat(value['ssoom'])) {
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[4]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
                         } else {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[4]['2'])/oldvalue[4]['2']*100).toFixed(1))  + '%</span>';
                         }
                         } else {
                            ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                        
                         if (oldvalue[4]['3'] != '') {
-                        if (oldvalue[4]['3'] > parseInt(value['income'])) {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[4]['3'] > parseFloat(value['income'])) {
+                            if (value['income'] > parseInt(value['income'])) {
+                                 splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[4]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[4]['3'])/value['income']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[4]['3'])/oldvalue[4]['3']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[4]['3'])/oldvalue[4]['3']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
                         if (oldvalue[4]['4'] != '') {
-                        if (oldvalue[4]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[4]['4'] > parseFloat(value['profit'])) {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                 splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[4]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[4]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[4]['4'])/oldvalue[4]['4']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[4]['4'])/oldvalue[4]['4']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
-                        oldvalue[4]['1'] = parseInt(value['countServe']);
-                        oldvalue[4]['2'] = parseInt(value['ssoom']);
-                        oldvalue[4]['3'] = parseInt(value['income']);
-                        oldvalue[4]['4'] = parseInt(value['profit']);
+                        oldvalue[4]['1'] = parseFloat(value['countServe']);
+                        oldvalue[4]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[4]['3'] = parseFloat(value['income']);
+                        oldvalue[4]['4'] = parseFloat(value['profit']);
                          
                          restires += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                      }
@@ -224,49 +295,85 @@ function sendCompare() {
                      if (key == 3) {
                          
                          if (oldvalue[3]['1'] != '') {
-                         if (oldvalue[3]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                         if (oldvalue[3]['1'] > parseFloat(value['countServe'])) {
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[3]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
                          } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[3]['1'])/oldvalue[3]['1']*100).toFixed(1))  + '%</span>';
                          }
                          } else {
                            countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                          }
                        
                         if (oldvalue[3]['2'] != '') {
-                        if (oldvalue[3]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[3]['2'] > parseFloat(value['ssoom'])) {
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[3]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
                         } else {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[3]['2'])/oldvalue[3]['2']*100).toFixed(1))  + '%</span>';
                         }
                         } else {
                            ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                        
                         if (oldvalue[3]['3'] != '') {
-                        if (oldvalue[3]['3'] > parseInt(value['income'])) {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[3]['3'] > parseFloat(value['income'])) {
+                            if (value['income'] > parseInt(value['income'])) {
+                                 splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[3]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[3]['3'])/value['income']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[3]['3'])/oldvalue[3]['3']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[3]['3'])/oldvalue[3]['3']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
                         if (oldvalue[3]['4'] != '') {
-                        if (oldvalue[3]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[3]['4'] > parseFloat(value['profit'])) {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                 splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[3]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[3]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[3]['4'])/oldvalue[3]['4']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[3]['4'])/oldvalue[3]['4']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
-                        oldvalue[3]['1'] = parseInt(value['countServe']);
-                        oldvalue[3]['2'] = parseInt(value['ssoom']);
-                        oldvalue[3]['3'] = parseInt(value['income']);
-                        oldvalue[3]['4'] = parseInt(value['profit']);
+                        oldvalue[3]['1'] = parseFloat(value['countServe']);
+                        oldvalue[3]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[3]['3'] = parseFloat(value['income']);
+                        oldvalue[3]['4'] = parseFloat(value['profit']);
                          
                          resservise += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                      }
@@ -276,49 +383,85 @@ function sendCompare() {
                      if (key == 5) {
                          
                         if(oldvalue[5]['1'] != '') {
-                        if (oldvalue[5]['1'] > parseInt(value['countServe'])) {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[5]['1'] > parseFloat(value['countServe'])) {
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[5]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
                         } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[5]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
                            countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[5]['2'] != '') {
-                        if (oldvalue[5]['2'] > parseInt(value['ssoom'])) {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
+                        if (oldvalue[5]['2'] > parseFloat(value['ssoom'])) {
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[5]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
                         } else {
-                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                           ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[5]['2'])/value['ssoom']*100).toFixed(1))  + '%</span>';
                         }
                         } else {
                            ssoom = value['ssoom'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[5]['3'] != '') {
-                        if (oldvalue[5]['3'] > parseInt(value['income'])) {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[5]['3'] > parseFloat(value['income'])) {
+                            if (value['income'] > parseInt(value['income'])) {
+                                 splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[5]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[5]['3'])/value['income']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           income = value['income'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[5]['3'])/oldvalue[5]['3']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[5]['3'])/oldvalue[5]['3']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
                         if(oldvalue[5]['4'] != '') {
-                        if (oldvalue[5]['4'] > parseInt(value['profit'])) {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595</span>';
-                        } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593</span>';
+                        if (oldvalue[5]['4'] > parseFloat(value['profit'])) {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                 splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[5]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[5]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
                         }
                         } else {
-                           profit = value['profit'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[5]['4'])/oldvalue[5]['4']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[5]['4'])/oldvalue[5]['4']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
                         }
                         
-                        oldvalue[5]['1'] = parseInt(value['countServe']);
-                        oldvalue[5]['2'] = parseInt(value['ssoom']);
-                        oldvalue[5]['3'] = parseInt(value['income']);
-                        oldvalue[5]['4'] = parseInt(value['profit']);
+                        oldvalue[5]['1'] = parseFloat(value['countServe']);
+                        oldvalue[5]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[5]['3'] = parseFloat(value['income']);
+                        oldvalue[5]['4'] = parseFloat(value['profit']);
                         
                          resdesinf += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                      }
@@ -327,16 +470,16 @@ function sendCompare() {
                     });
                 
                      if (reswash.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
                      }
                      if (restires.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
                      }
                      if (resservise.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
                      }
                      if (resdesinf.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:140px;'>Месяц</td><td style='width:170px;'>Обслужено</td><td style='width:155px;'>ССООМ</td><td style='width:175px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
                      }
                 
                     $('.place_list').html(resTables);
@@ -355,6 +498,7 @@ CanvasJsAsset::register($this);
 
 $css = ".modal {
     overflow-y: auto;
+    font-size:17px;
 }";
 $this->registerCss($css);
 
@@ -601,10 +745,11 @@ $filters .= 'Выбор периода: ' . $periodForm;
             'size'=>'modal-lg',
         ]);
 
-        echo "<div class='place_list' style='font-size: 15px; margin-left:15px; margin-right:15px;'></div>";
+        echo "<div class='place_list' style='margin-left:15px; margin-right:15px;'></div>";
 
         Modal::end();
         // Модальное окно
+
         ?>
         <hr>
 
@@ -615,6 +760,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 var dataTable = " . $chartData . ";
                 var max = 0;
                 dataTable.forEach(function (value) {
+                value.y = parseInt(value.y);
                     if (value.y > max) max = value.y;
                 });
                 var options = {
