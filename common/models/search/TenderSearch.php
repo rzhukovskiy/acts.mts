@@ -95,7 +95,7 @@ class TenderSearch extends Company
         // Если период не задан то задаем 10 лет. Выводим если не задан тендеры с пустыми датами, а если задан то которые попадают под фильтр
         if (((!isset($this->dateFrom)) && (!isset($this->dateTo))) || ((strtotime($this->dateTo) - strtotime($this->dateFrom)) > 157680000)) {
             $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
-            $this->dateTo = date('Y', time()) . '-12-31T21:00:00.000Z';
+            $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
             $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
 
         } else {

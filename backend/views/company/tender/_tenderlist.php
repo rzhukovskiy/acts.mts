@@ -69,6 +69,34 @@ $GLOBALS['arrLists'] = $arrLists;
 $GLOBALS['dateFrom'] = $searchModel->dateFrom;
 $GLOBALS['dateTo'] = $searchModel->dateTo;
 
+/**
+ * Виджет выбора диапазона дат
+ */
+$halfs = [
+    '1е полугодие',
+    '2е полугодие'
+];
+$quarters = [
+    '1й квартал',
+    '2й квартал',
+    '3й квартал',
+    '4й квартал',
+];
+$months = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+];
+
 $halfs = [
     '1е полугодие',
     '2е полугодие'
@@ -133,7 +161,7 @@ $currentMonth--;
 $filters = '';
 $periodForm = '';
 $periodForm .= Html::dropDownList('period', $period, \common\models\Tender::$periodList, [
-    'class' => 'select-period form-control',
+    'class' =>'select-period form-control',
     'style' => 'margin-right: 10px;'
 ]);
 $periodForm .= Html::dropDownList('month', $currentMonth, $months, [
@@ -157,7 +185,7 @@ $periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear)
     'style' => $diff && $diff <= 12 ? '' : 'display:none'
 ]);
 $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
-$periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
 $filters = 'Выбор периода: ' . $periodForm;
@@ -239,6 +267,21 @@ $columns = [
                         }
 
                         return $UserTendText;
+                    },
+                ],
+                [
+                    'attribute' => 'time_bidding_start',
+                    'vAlign'=>'middle',
+                    'header' => 'Начало торгов',
+                    'filter' => false,
+                    'value' => function ($data) {
+
+                        if ($data->time_bidding_start) {
+                            return date('d.m.Y', $data->time_bidding_start);
+                        } else {
+                            return '-';
+                        }
+
                     },
                 ],
                 [
