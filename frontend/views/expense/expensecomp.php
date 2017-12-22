@@ -59,51 +59,62 @@ window.onload=function(){
 });
   
   var formatSum2a = $('.kv-page-summary-container td:eq(2)');
+  if (formatSum2.length > 0) {
   $(formatSum2a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  
+  }
   var formatSum3a = $('.kv-page-summary-container td:eq(3)');
+  if (formatSum2.length > 0) {
   $(formatSum3a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  
+  }
   var formatSum4a = $('.kv-page-summary-container td:eq(4)');
+  if (formatSum2.length > 0) {
   $(formatSum4a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  
+  }
   var formatSum5a = $('.kv-page-summary-container td:eq(5)');
+  if (formatSum2.length > 0) {
   $(formatSum5a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
+  }
     var formatSum6a = $('.kv-page-summary-container td:eq(6)');
+    if (formatSum2.length > 0) {
   $(formatSum6a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
+  }
     var formatSum7a = $('.kv-page-summary-container td:eq(7)');
+    if (formatSum2.length > 0) {
   $(formatSum7a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
+  }
       var formatSum8a = $('.kv-page-summary-container td:eq(8)');
+      if (formatSum2.length > 0) {
   $(formatSum8a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(parseFloat(thisId.text()).toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
+  }
   } else {
-        var formatSum3 = $('td[data-col-seq="3"]');
-  $(formatSum3).each(function (id, value) {
+        var formatSum3c = $('td[data-col-seq="3"]');
+  $(formatSum3c).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-   var formatSum3 = $('.kv-page-summary-container td:eq(3)');
-  $(formatSum3).each(function (id, value) {
+   var formatSum3ab = $('.kv-page-summary-container td:eq(3)');
+  $(formatSum3ab).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });

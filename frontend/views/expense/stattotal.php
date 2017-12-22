@@ -27,9 +27,21 @@ window.onload=function(){
 });
 };
 
+var splitFloat = "";
+var splitInt = "";
+var profitAll = $profit[0];
+
 var profit = $('.kv-page-summary-container td:eq(2)').text();
-var sumprofit = $profit[0] - profit;
-$('.profit').text('Чистая прибыль: ' + sumprofit.toString().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+var sumprofit = profitAll - profit;
+
+if (parseFloat(sumprofit) > parseInt(sumprofit)) {
+  splitFloat = (parseFloat(sumprofit) - parseInt(sumprofit)).toFixed(4).toString().split('.');
+  splitInt = parseInt(sumprofit).toString().split('.');
+  $('.profit').text('Чистая прибыль: ' + splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1]);
+  } else {
+  splitInt = parseInt(sumprofit).toString().split('.');
+  $('.profit').text('Чистая прибыль: ' + splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.00');
+  }
 
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
@@ -231,9 +243,9 @@ $columns = [
         'template' => '{update}',
         'contentOptions' => ['style' => 'min-width: 60px'],
         'buttons' => [
-            'update' => function ($url, $searchModel, $key) {
+            'update' => function ($url, $data, $key) {
                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                    ['/expense/fullexpense', 'id' => $searchModel->id]);
+                    ['/expense/statexpense', 'type' => $data->type]);
             },
         ],
     ],

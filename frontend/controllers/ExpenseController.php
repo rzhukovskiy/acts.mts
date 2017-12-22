@@ -24,12 +24,12 @@ class ExpenseController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete'],
+                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete','duplicate'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete'],
+                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete','duplicate'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -104,6 +104,7 @@ class ExpenseController extends Controller
         if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = ExpenseCompany::findOne(['id' => $id]);
 
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['expense/expensecomp', 'id' => $model->id]);
         }
@@ -114,7 +115,7 @@ class ExpenseController extends Controller
 
     public function actionAddexpense($id)
     {
-        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = new Expense();
         $model->expense_company = $id;
 
@@ -132,9 +133,11 @@ class ExpenseController extends Controller
     {
         if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = Expense::findOne(['id' => $id]);
+        $expense_company = $model->expense_company;
 
         return $this->render('fullexpense', [
             'model' => $model,
+            'expense_company' => $expense_company,
         ]);
     } else {
         return $this->redirect(['/']);
@@ -145,6 +148,8 @@ class ExpenseController extends Controller
     {
         if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
         $model = Expense::findOne(['id' => $id]);
+        $expense_company = $model->expense_company;
+
         // Подготовка данных перед сохранением
         $arrUpdate = Yii::$app->request->post();
 
@@ -156,10 +161,48 @@ class ExpenseController extends Controller
         }
 
         if ($model->load($arrUpdate) && $model->save()) {
-            return $this->redirect(['expense/expensecomp', 'id' => $model->id]);
+            return $this->redirect(['expense/expensecomp', 'id' => $expense_company]);
         }
         } else {
             return $this->redirect(['/']);
+        }
+    }
+
+    public function actionDuplicate($type)
+    {
+        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
+
+            $month = date('m', time()) - 1;
+            $nowMonth = date('n', time());
+            $year = date('Y', time());
+
+            if ($nowMonth == 1) {
+                $year = date('Y', time()) - 1;
+                $month = 12;
+            }
+
+            $array = Expense::find()->where(['type' => $type])->andWhere(["MONTH(FROM_UNIXTIME(date))" => $month, "YEAR(FROM_UNIXTIME(date))" => $year])->asArray()->all();
+
+            for ($i = 0; $i < count($array); $i++) {
+
+                    $checkExpense = Expense::find()->where(['AND', ['type' => $type], ['sum' => $array[$i]['sum']],['expense_company' => $array[$i]['expense_company']]])->andWhere(["DAY(FROM_UNIXTIME(date))" => '01', "MONTH(FROM_UNIXTIME(date))" => date('m', time()), "YEAR(FROM_UNIXTIME(date))" => date('Y', time())])->exists();
+
+                    if ($checkExpense == false) {
+
+                    $model = new Expense;
+                    $model->type = $type;
+                    $model->date = date('01-m-Y', time());
+                    $model->expense_company = $array[$i]['expense_company'];
+                    $model->sum = $array[$i]['sum'];
+
+                if ($type != 1) {
+                    $model->description = $array[$i]['description'];
+                }
+
+                $model->save();
+                 }
+            }
+            return $this->redirect(['expense/addexpensecomp', 'type' => $type]);
         }
     }
 

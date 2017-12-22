@@ -14,7 +14,7 @@ $this->title = 'Редактировать затраты';
 echo Tabs::widget([
     'items' => [
         ['label' => 'Полный список', 'url' => ['addexpensecomp', 'type' => $model->type], 'active' => Yii::$app->controller->action->id == 'addexpensecomp'],
-        ['label' => 'Редактирование', 'url' => ['expensecomp', 'id' => $model->id], 'active' => Yii::$app->controller->action->id == 'expensecomp'],
+        ['label' => 'Редактирование', 'url' => ['expensecomp', 'id' => $expense_company], 'active' => Yii::$app->controller->action->id == 'expensecomp'],
         ['label' => 'Редактирование затрат', 'url' => ['fullexpense', 'id' => $model->id], 'active' => Yii::$app->controller->action->id == 'fullexpense'],
     ],
 ]);

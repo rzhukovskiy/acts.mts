@@ -46,7 +46,7 @@ use common\models\ExpenseCompany;
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Список
+        Список  <?php if (($model->type == 1) || ($model->type) == 2 || ($model->type == 4)) { echo Html::a('Дублировать', ['expense/duplicate', 'type' => $model->type], ['class' => 'btn btn-success btn-sm pull-right', 'style' => 'margin-top:-5px;']); } ?>
     </div>
     <div class="panel-body">
         <?php
