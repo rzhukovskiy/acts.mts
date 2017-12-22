@@ -711,7 +711,7 @@ class ActExporter
             $worksheet->setCellValueByColumnAndRow($startCol, $row, 'ООО «Международный Транспортный Сервис»');
 
             $row++; $row++;
-            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Филиппова О. С. ___________');
+            $worksheet->setCellValueByColumnAndRow($startCol, $row, 'Петросян А.Р. ___________');
             $objDrawing = null;
             if($company->is_act_sign == 1) {
                 //печать
@@ -1956,26 +1956,16 @@ class ActExporter
             $row++;
 
             $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+            $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
 
             $row++;
-            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
             $companyWorkSheet->setCellValue("E$row", "$company->director ____________");
 
             $row++;
 
-            $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
-
-            $row++;
-
-            $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", "№10/05-2017 от 10.05.2017");
-
-            $rowMP = $row - 1;
-
-            $companyWorkSheet->setCellValue("E$rowMP", "М.П.");
+            $companyWorkSheet->setCellValue("E$row", "М.П.");
         } else {
             $row++;
             if ($this->serviceType == Company::TYPE_WASH) {
@@ -2110,7 +2100,7 @@ class ActExporter
             } elseif($this->serviceType == 4) {
                 $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Шиномонтаж" ');
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+                $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
             }
 
             $row++;
@@ -2132,23 +2122,26 @@ class ActExporter
                 $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
                 $docNumberMember = "№01/05-2017 от 01.05.2017";
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
-                $docNumberMember = "№10/05-2017 от 10.05.2017";
+                $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+                $docNumberMember = "";
             }
 
             $companyWorkSheet->setCellValue("G$row", "$company->director ____________");
 
             $row++;
+            $rowMP = $row;
 
-            $companyWorkSheet->mergeCells("B$row:E$row");
-            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
+            if($this->serviceType != 5) {
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
 
-            $row++;
+                $row++;
 
-            $companyWorkSheet->mergeCells("B$row:E$row");
-            $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", $docNumberMember);
 
-            $rowMP = $row - 1;
+                $rowMP = $row - 1;
+            }
 
             $companyWorkSheet->setCellValue("G$rowMP", "М.П.");
         }
@@ -2491,7 +2484,7 @@ class ActExporter
         } elseif($this->serviceType == 4) {
             $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Шиномонтаж" ');
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+            $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
         }
 
         $row++;
@@ -2510,19 +2503,21 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
             $docNumberMember = "№01/05-2017 от 01.05.2017";
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
-            $docNumberMember = "№10/05-2017 от 10.05.2017";
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+            $docNumberMember = "";
         }
 
         $row++;
 
-        $companyWorkSheet->mergeCells("B$row:D$row");
-        $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
+        if($this->serviceType != 5) {
+            $companyWorkSheet->mergeCells("B$row:D$row");
+            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
 
-        $row++;
+            $row++;
 
-        $companyWorkSheet->mergeCells("B$row:D$row");
-        $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+            $companyWorkSheet->mergeCells("B$row:D$row");
+            $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+        }
 
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];
@@ -12856,26 +12851,16 @@ class ActExporter
             $row++;
 
             $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+            $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
 
             $row++;
-            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
             $companyWorkSheet->mergeCells("E$row:F$row");
             $companyWorkSheet->setCellValue("E$row", $companyMain->director . " ____________");
 
             $row++;
 
-            $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
-
-            $row++;
-
-            $companyWorkSheet->mergeCells("B$row:D$row");
-            $companyWorkSheet->setCellValue("B$row", "№10/05-2017 от 10.05.2017");
-
-            $rowMP = $row - 1;
-
-            $companyWorkSheet->setCellValue("E$rowMP", "М.П.");
+            $companyWorkSheet->setCellValue("E$row", "М.П.");
         } else {
             $row++;
             if ($this->serviceType == Company::TYPE_WASH) {
@@ -13011,7 +12996,7 @@ class ActExporter
             } elseif($this->serviceType == 4) {
                 $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Шиномонтаж" ');
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+                $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
             }
 
             $row++;
@@ -13033,23 +13018,26 @@ class ActExporter
                 $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
                 $docNumberMember = "№01/05-2017 от 01.05.2017";
             } elseif($this->serviceType == 5) {
-                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
-                $docNumberMember = "№10/05-2017 от 10.05.2017";
+                $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+                $docNumberMember = "";
             }
 
             $companyWorkSheet->setCellValue("G$row", "$company->director ____________");
 
             $row++;
+            $rowMP = $row;
 
-            $companyWorkSheet->mergeCells("B$row:E$row");
-            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
+            if($this->serviceType != 5) {
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
 
-            $row++;
+                $row++;
 
-            $companyWorkSheet->mergeCells("B$row:E$row");
-            $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", $docNumberMember);
 
-            $rowMP = $row - 1;
+                $rowMP = $row - 1;
+            }
 
             $companyWorkSheet->setCellValue("G$rowMP", "М.П.");
         }
@@ -13378,7 +13366,7 @@ class ActExporter
         } elseif($this->serviceType == 4) {
             $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Шиномонтаж" ');
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+            $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
         }
 
         $row++;
@@ -13397,19 +13385,21 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
             $docNumberMember = "№01/05-2017 от 01.05.2017";
         } elseif($this->serviceType == 5) {
-            $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
-            $docNumberMember = "№10/05-2017 от 10.05.2017";
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+            $docNumberMember = "";
         }
 
         $row++;
 
-        $companyWorkSheet->mergeCells("B$row:D$row");
-        $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
+        if($this->serviceType != 5) {
+            $companyWorkSheet->mergeCells("B$row:D$row");
+            $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
 
-        $row++;
+            $row++;
 
-        $companyWorkSheet->mergeCells("B$row:D$row");
-        $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+            $companyWorkSheet->mergeCells("B$row:D$row");
+            $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+        }
 
         //saving document
         $type = Service::$listType[$this->serviceType]['en'];
