@@ -886,8 +886,7 @@ class Company extends ActiveRecord
         } else {
 
 
-            if($this->isNewRecord == false) {
-
+            if (!$insert) {
 
                 $modelPenalty = new Penalty();
                 $modelPenalty->createToken();
