@@ -519,7 +519,8 @@ class EmailController extends Controller
 
             if(($id > 0) && ($id != '') && ($company_id > 0) && ($company_id != '')) {
 
-                $arrDrivers = CompanyDriver::find()->where(['AND', ['company_id' => $company_id], ['>', 'car_id', 0]])->select('phone')->asArray()->column();
+                //$arrDrivers = CompanyDriver::find()->where(['AND', ['company_id' => $company_id], ['>', 'car_id', 0]])->select('phone')->asArray()->column();
+                $arrDrivers = CompanyDriver::find()->where(['company_id' => $company_id])->andWhere(['not', ['phone' => null]])->select('phone')->asArray()->column();
 
                 if(count($arrDrivers) > 0) {
 
