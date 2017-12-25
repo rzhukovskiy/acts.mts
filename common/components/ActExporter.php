@@ -951,7 +951,7 @@ class ActExporter
                 )
             ));
             if ($this->company) {
-                $companyWorkSheet->setCellValue('F5', '1 ' . $monthName[1] . date(' Y', $this->time));
+                $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
@@ -2420,7 +2420,7 @@ class ActExporter
                 )
             )
         );
-        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y');
+        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y', $this->time);
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
@@ -3576,7 +3576,7 @@ class ActExporter
                 )
             ));
             if ($this->company) {
-                $companyWorkSheet->setCellValue('F5', '1 ' . $monthName[1] . date(' Y', $this->time));
+                $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
@@ -13302,7 +13302,7 @@ class ActExporter
                 )
             )
         );
-        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y');
+        $text = 'За услуги ' . Service::$listType[$this->serviceType]['in'] . ', оказанные в ' . $monthName[2] . date(' Y', $this->time);
         $companyWorkSheet->setCellValue("B$row", $text);
 
         $row++;
