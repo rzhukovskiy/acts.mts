@@ -81,48 +81,50 @@ $this->registerJs($script, View::POS_READY);
                     'attribute' => 'info.email',
                     'format' => 'raw',
                     'value' => function ($data) {
+                        if (isset($data->info->email)) {
+                            $emailShow = strtolower(trim($data->info->email));
 
-                        $emailShow = strtolower(trim($data->info->email));
+                            if (mb_strlen($emailShow) <= 4) {
+                                $emailShow = '<span style="color:#c96909">Не указано</span>';
+                            } else {
 
-                        if(mb_strlen($emailShow) <= 4) {
-                            $emailShow = '<span style="color:#c96909">Не указано</span>';
-                        } else {
+                                if (count(explode(',', $emailShow)) > 1) {
 
-                            if (count(explode(',', $emailShow)) > 1) {
+                                    $arrEmail = explode(',', $emailShow);
+                                    $checkError = false;
 
-                                $arrEmail = explode(',', $emailShow);
-                                $checkError = false;
+                                    for ($iEmail = 0; $iEmail < count($arrEmail); $iEmail++) {
 
-                                for ($iEmail = 0; $iEmail < count($arrEmail); $iEmail++) {
+                                        $emailContent = trim($arrEmail[$iEmail]);
 
-                                    $emailContent = trim($arrEmail[$iEmail]);
+                                        if (!filter_var($emailContent, FILTER_VALIDATE_EMAIL)) {
+                                            $checkError = true;
+                                        }
 
-                                    if (!filter_var($emailContent, FILTER_VALIDATE_EMAIL)) {
-                                        $checkError = true;
                                     }
 
-                                }
-
-                                if ($checkError == false) {
-                                    $emailShow = $data->info->email;
-                                } else {
-                                    $emailShow = '<span style="color:#d80000"><b>' . $data->info->email . '</b></span>';
-                                }
-
-                            } else {
-                                if (filter_var($emailShow, FILTER_VALIDATE_EMAIL)) {
-
-                                    $emailShow = $data->info->email;
+                                    if ($checkError == false) {
+                                        $emailShow = $data->info->email;
+                                    } else {
+                                        $emailShow = '<span style="color:#d80000"><b>' . $data->info->email . '</b></span>';
+                                    }
 
                                 } else {
-                                    $emailShow = '<span style="color:#d80000"><b>' . $data->info->email . '</b></span>';
+                                    if (filter_var($emailShow, FILTER_VALIDATE_EMAIL)) {
+
+                                        $emailShow = $data->info->email;
+
+                                    } else {
+                                        $emailShow = '<span style="color:#d80000"><b>' . $data->info->email . '</b></span>';
+                                    }
                                 }
+
                             }
 
+                            return $emailShow;
+                        } else {
+                            return '';
                         }
-
-                        return $emailShow;
-
                     },
                 ],
                 [
@@ -144,10 +146,14 @@ $this->registerJs($script, View::POS_READY);
                         'style' => 'width: 90px',
                     ],
                     'value' => function ($data) {
+                        if (isset($data->offer->email_status)) {
                         if($data->offer->email_status == 1) {
                             return '<input type="checkbox" class="updateNotific" data-id="' . $data->id . '" checked>';
                         } else {
                             return '<input type="checkbox" class="updateNotific" data-id="' . $data->id . '">';
+                        }
+                        } else {
+                            return '';
                         }
                     },
                 ],
