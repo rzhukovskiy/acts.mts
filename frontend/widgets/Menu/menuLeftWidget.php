@@ -260,7 +260,7 @@ class menuLeftWidget extends Widget
                         [
                             'label'  => 'Статистика</br> денежных средств',
                             'url'    => ['/expense/statexpense?type=1'],
-                            'active' => Yii::$app->controller->action->id == 'statexpense' || Yii::$app->controller->action->id == 'stattotal',
+                            'active' => Yii::$app->controller->action->id == 'statexpense' || Yii::$app->controller->action->id == 'stattotal' || Yii::$app->controller->action->id == 'wash' || Yii::$app->controller->action->id == 'tires' || Yii::$app->controller->action->id == 'service',
                         ],
                     ],
                 ],

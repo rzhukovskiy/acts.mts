@@ -18,10 +18,27 @@ window.onload=function(){
         var formatSum2 = $('td[data-col-seq="2"]');
   $(formatSum2).each(function (id, value) {
        var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       var splitF = "";
+       var splitI = "";
+       
+       if (parseFloat(thisId.text()) > parseInt(thisId.text())) {
+           splitF = (parseFloat(thisId.text()) - parseInt(thisId.text())).toFixed(4).toString().split('.');
+           splitI = parseInt(thisId.text()).toString().split('.');
+           thisId.text(splitI[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitF[1]);
+           } else {
+           splitI = parseInt(thisId.text()).toString().split('.');
+           thisId.text(splitI[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+       }
+       
+       
 });
    var formatSum2a = $('.kv-page-summary-container td:eq(2)');
   $(formatSum2a).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+     var formatSum3 = $('.kv-page-summary-container td:eq(6)');
+  $(formatSum3).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
@@ -32,7 +49,8 @@ var splitInt = "";
 var profitAll = $profit[0];
 
 var profit = $('.kv-page-summary-container td:eq(2)').text();
-var sumprofit = profitAll - profit;
+var profitact = $('.kv-page-summary-container td:eq(6)').text();
+var sumprofit = profitAll - profit - profitact;
 
 if (parseFloat(sumprofit) > parseInt(sumprofit)) {
   splitFloat = (parseFloat(sumprofit) - parseInt(sumprofit)).toFixed(4).toString().split('.');
@@ -175,13 +193,34 @@ $GLOBALS['listType'] = ExpenseCompany::$listType;
 $requestType = Yii::$app->request->get('type');
 
 $items = [];
+$i = 0;
 foreach ($listType as $type_id => $typeData) {
 
+    // В меню добавление перед прочим
+    if($i == 10) {
+        $items[] = [
+            'label' => 'Мойка',
+            'url' => ["/expense/wash"],
+            'active' => Yii::$app->controller->id == 'expense' && Yii::$app->controller->action->id == 'wash',
+        ];
+        $items[] = [
+            'label' => 'Сервис',
+            'url' => ["/expense/service"],
+            'active' => Yii::$app->controller->id == 'expense' && Yii::$app->controller->action->id == 'service',
+        ];
+        $items[] = [
+            'label' => 'Шиномонтаж',
+            'url' => ["/expense/tires"],
+            'active' => Yii::$app->controller->id == 'expense' && Yii::$app->controller->action->id == 'tires',
+        ];
+    }
+
     $items[] = [
-        'label' => $GLOBALS['listType'][$type_id]['ru'],
+        'label' => ExpenseCompany::$listType[$type_id]['ru'],
         'url' => ["/expense/statexpense", 'type' => $type_id],
         'active' => Yii::$app->controller->id == 'expense' && $requestType == $type_id,
     ];
+    $i++;
 }
 
 $items[] = [
@@ -205,13 +244,14 @@ $columns = [
     [
         'header' => 'Тип',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'width: 760px'],
         'pageSummary' => 'Всего',
         'value' => function ($data) {
-            if (empty($data->type))
+            if (empty($data->type)) {
                 return '—';
-            else
+            } else {
                 return $GLOBALS['listType'][$data->type]['ru'];
-
+            }
         },
     ],
     [
@@ -246,6 +286,54 @@ $columns = [
             'update' => function ($url, $data, $key) {
                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
                     ['/expense/statexpense', 'type' => $data->type]);
+            },
+        ],
+    ],
+];
+
+
+
+
+$columnsact = [
+    [
+        'header' => '№',
+        'vAlign'=>'middle',
+        'class' => 'kartik\grid\SerialColumn'
+    ],
+    [
+        'header' => 'Тип',
+        'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'width: 760px'],
+        'pageSummary' => 'Всего',
+        'value' => function ($data) {
+            return \common\models\Company::$listType[$data->type_id]['ru'];
+        },
+    ],
+    [
+        'header' => 'Сумма',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+            return \frontend\controllers\ExpenseController::getSum($data->type_id);
+        },
+
+    ],
+    [
+        'class' => 'kartik\grid\ActionColumn',
+        'header' => 'Действие',
+        'vAlign'=>'middle',
+        'template' => '{update}',
+        'contentOptions' => ['style' => 'min-width: 60px'],
+        'buttons' => [
+            'update' => function ($url, $data, $key) {
+                if ($data->type_id == 2)  {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/wash']);
+                } else if ($data->type_id == 3) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/service']);
+                } else {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/tires']);
+                }
             },
         ],
     ],
@@ -300,6 +388,33 @@ $columns = [
             ],
             'columns' => $columns,
         ]);
+        echo GridView::widget([
+            'dataProvider' => $newdataProvider,
+            'hover' => false,
+            'striped' => false,
+            'export' => false,
+            'summary' => false,
+            'resizableColumns' => false,
+            'showPageSummary' => true,
+            'emptyText' => '',
+            'layout' => '{items}',
+            'filterSelector' => '.ext-filter',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => '&nbsp',
+                            'options' => [
+                                'colspan' => count($columnsact),
+                            ]
+                        ]
+                    ],
+                    'options' => ['class' => 'kv-group-header'],
+                ],
+            ],
+            'columns' => $columnsact,
+        ]);
         ?>
+
     </div>
 </div>

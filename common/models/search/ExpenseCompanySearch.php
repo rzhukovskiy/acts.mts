@@ -19,7 +19,7 @@ class ExpenseCompanySearch extends ExpenseCompany
     {
         return [
             [['type'], 'integer'],
-            [['name'], 'string'],
+            [['name', 'position'], 'string'],
 
         ];
     }
@@ -63,6 +63,7 @@ class ExpenseCompanySearch extends ExpenseCompany
 
         $query->andWhere(['type' => $this->type]);
         $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'position', $this->position]);
 
         return $dataProvider;
     }

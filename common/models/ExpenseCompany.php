@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $type
  * @property string $name
+ * @property string $position
  */
 class ExpenseCompany extends ActiveRecord
 {
@@ -89,7 +90,7 @@ class ExpenseCompany extends ActiveRecord
         return [
             [['type', 'name'], 'required'],
             [['type'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['name', 'position'], 'string', 'max' => 255],
         ];
     }
 
@@ -102,6 +103,7 @@ class ExpenseCompany extends ActiveRecord
             'id' => 'ID',
             'type' => 'Тип',
             'name' => 'Имя',
+            'position' => 'Должность',
         ];
     }
 }
