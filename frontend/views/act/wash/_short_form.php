@@ -73,7 +73,7 @@ if (!empty($serviceList)) {
                 
                 } else {
                 // Неудачно
-                $("#act-type_id").val($("#act-type_id option:first").val());
+                $("#act-type_id").val('');
                 }
                 
                 }
