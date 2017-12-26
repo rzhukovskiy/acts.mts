@@ -277,7 +277,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->date_request_end) {
-                            return date('d.m.Y', $data->date_request_end);
+                            return date('d.m.Y H:i', $data->date_request_end);
                         } else {
                             return '-';
                         }

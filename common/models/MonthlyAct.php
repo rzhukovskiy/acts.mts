@@ -82,7 +82,7 @@ class MonthlyAct extends ActiveRecord
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
         self::ACT_STATUS_DONE => 'Подписан',
         self::ACT_STATUS_EMPTY => 'Без акта',
-        self::ACT_STATUS_EDO => 'ЭДО',
+        self::ACT_STATUS_EDO => 'Подписан ЭДО',
     ];
 
     public static function passActStatus($currentStatus)

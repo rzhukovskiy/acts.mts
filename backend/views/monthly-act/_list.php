@@ -116,7 +116,7 @@ $script = <<< JS
 
             // Оповещение Арама и Герберта
             if(((select.val() == 4) || (select.val() == 6)) && ($company != 1)) {
-                
+              
             var companyNameNotific = '';
             var priceNotific = '';
             var sendNotific = false;
@@ -135,7 +135,7 @@ $script = <<< JS
                 $.ajax({
                     type     :'POST',
                     cache    : false,
-                    data:'name=' + companyNameNotific + '&price=' + priceNotific + '&period=' + '$period' + '&type=' + '$type' + '&user_id=' + '$userID' + '&url=' + encodeURIComponent(location.protocol + "//" + location.host),
+                    data:'name=' + companyNameNotific + '&price=' + priceNotific + '&period=' + '$period' + '&type=' + '$type' + '&user_id=' + '$userID' + '&status=' + select.val() + '&url=' + encodeURIComponent(location.protocol + "//" + location.host),
                     url: '$actionNotifDirectors',
                     success: function(data){
                         // удачно отправлено уведомление Араму и Герберту
@@ -573,7 +573,7 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
     $filters .= '</td>
                 </tr>
                 <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">ЭДО</td>
+                    <td style="padding: 3px 5px 3px 5px">Подписано ЭДО</td>
                     <td class="edo" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
 
