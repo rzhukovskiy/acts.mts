@@ -181,34 +181,38 @@ class Car extends ActiveRecord
 
         } else {
 
-            $modelPenalty = new Penalty();
-            $modelPenalty->createToken();
+            if (!$insert) {
 
-            // Получаем токен
-            $token = $modelPenalty->createToken();
-            $resToken = json_decode($token[1], true);
+                $modelPenalty = new Penalty();
+                $modelPenalty->createToken();
 
-            // Сохраняем полученный токен
-            $modelPenalty->setParams(['token' => $resToken['token']]);
+                // Получаем токен
+                $token = $modelPenalty->createToken();
+                $resToken = json_decode($token[1], true);
 
-            $carList = $modelPenalty->getClientCars($this->company_id . '@mtransservice.ru');
-            $resCarList = json_decode($carList[1], true);
+                // Сохраняем полученный токен
+                $modelPenalty->setParams(['token' => $resToken['token']]);
 
-            if(isset($resCarList['cars'])) {
-                $arrCarsList = $resCarList['cars'];
+                $carList = $modelPenalty->getClientCars($this->company_id . '@mtransservice.ru');
+                $resCarList = json_decode($carList[1], true);
 
-                for ($i = 0; $i < count($arrCarsList); $i++) {
-                    if (($arrCarsList[$i]['reg'] == $this->number) || (mb_strtoupper(str_replace(' ', '', $arrCarsList[$i]['reg']), 'UTF-8') == $this->number)) {
+                if (isset($resCarList['cars'])) {
+                    $arrCarsList = $resCarList['cars'];
 
-                        $delCar = $modelPenalty->deleteClientCar($this->company_id . '@mtransservice.ru', $arrCarsList[$i]['id']);
-                        $resDel = json_decode($delCar[1], true);
+                    for ($i = 0; $i < count($arrCarsList); $i++) {
+                        if (($arrCarsList[$i]['reg'] == $this->number) || (mb_strtoupper(str_replace(' ', '', $arrCarsList[$i]['reg']), 'UTF-8') == $this->number)) {
 
-                        if (isset($resDel['errors'])) {
-                            // Ошибка
-                            Car::updateAll(['is_penalty' => 1], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
+                            $delCar = $modelPenalty->deleteClientCar($this->company_id . '@mtransservice.ru', $arrCarsList[$i]['id']);
+                            $resDel = json_decode($delCar[1], true);
+
+                            if (isset($resDel['errors'])) {
+                                // Ошибка
+                                Car::updateAll(['is_penalty' => 1], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
+                            }
+
                         }
-
                     }
+
                 }
 
             }

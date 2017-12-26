@@ -885,27 +885,32 @@ class Company extends ActiveRecord
 
         } else {
 
-            $modelPenalty = new Penalty();
-            $modelPenalty->createToken();
 
-            // Получаем токен
-            $token = $modelPenalty->createToken();
-            $resToken = json_decode($token[1], true);
+            if (!$insert) {
 
-            // Сохраняем полученный токен
-            $modelPenalty->setParams(['token' => $resToken['token']]);
+                $modelPenalty = new Penalty();
+                $modelPenalty->createToken();
 
-            // Удаление клиента
-            $delCliend = $modelPenalty->deleteClient($this->id . '@mtransservice.ru');
-            $resDelClient = json_decode($delCliend[1], true);
+                // Получаем токен
+                $token = $modelPenalty->createToken();
+                $resToken = json_decode($token[1], true);
 
-            if(isset($resDelClient['errors'])) {
-                // Ошибка
-                Company::updateAll(['use_penalty' => 1], 'id = ' . $this->id);
-            } else {
-                // Клиент удален
+                // Сохраняем полученный токен
+                $modelPenalty->setParams(['token' => $resToken['token']]);
 
-                Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->id);
+                // Удаление клиента
+                $delCliend = $modelPenalty->deleteClient($this->id . '@mtransservice.ru');
+                $resDelClient = json_decode($delCliend[1], true);
+
+                if (isset($resDelClient['errors'])) {
+                    // Ошибка
+                    Company::updateAll(['use_penalty' => 1], 'id = ' . $this->id);
+                } else {
+                    // Клиент удален
+
+                    Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->id);
+
+                }
 
             }
 
