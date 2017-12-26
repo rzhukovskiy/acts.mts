@@ -211,22 +211,6 @@ class ExpenseController extends Controller
         }
     }
 
-//    public function actionWash()
-//    {
-//        if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
-//
-//            $searchModel = new MonthlyActSearch();
-//            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-//
-//            return $this->render('wash', [
-//                'dataProvider' => $dataProvider,
-//                'searchModel' => $searchModel,
-//            ]);
-//        } else {
-//            return $this->redirect(['/']);
-//        }
-//    }
-
     public function actionWash ($company = 0)
     {
         $searchModel = new MonthlyActSearch();
@@ -234,7 +218,9 @@ class ExpenseController extends Controller
         $searchModel->payment_status = 2;
 
         $params = Yii::$app->request->queryParams;
-
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+            $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
 
         $dataProvider = $searchModel->search($params);
         //Запоминаем
@@ -266,8 +252,9 @@ class ExpenseController extends Controller
         $searchModel->payment_status = 2;
 
         $params = Yii::$app->request->queryParams;
-
-
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+            $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
         $dataProvider = $searchModel->search($params);
         //Запоминаем
 
@@ -299,10 +286,11 @@ class ExpenseController extends Controller
 
         $params = Yii::$app->request->queryParams;
 
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+        $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
 
         $dataProvider = $searchModel->search($params);
-        //Запоминаем
-
         $listType = ExpenseCompany::$listType;
 
         $currentUser = Yii::$app->user->identity;
@@ -354,7 +342,7 @@ class ExpenseController extends Controller
             $listType = ExpenseCompany::$listType;
 
             $newdataProvider = new ActiveDataProvider([
-                'query' => MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => '11-2017'], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => '2017-11-00'], ['payment_status' => 2]])->select('monthly_act.type_id')->groupBy('monthly_act.type_id'),
+                'query' => MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => date('n-Y', strtotime($searchModel->dateFrom))], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => date('Y-m-00', strtotime($searchModel->dateFrom))], ['payment_status' => 2]])->select('monthly_act.type_id')->groupBy('monthly_act.type_id'),
                 'pagination' => false,
                 'sort'       => [
                     'defaultOrder' => [
@@ -377,10 +365,10 @@ class ExpenseController extends Controller
         }
     }
 
-    public static function getSum($type)
+    public static function getSum($type, $dataFrom)
     {
 
-        $actDate = MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => '11-2017'], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => '2017-11-00'], ['payment_status' => 2], ['monthly_act.type_id' => $type]])->select('SUM(act.expense) as sum')->groupBy('monthly_act.type_id')->asArray()->column();
+        $actDate = MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => date('n-Y', strtotime($dataFrom))], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => date('Y-m-00', strtotime($dataFrom))], ['payment_status' => 2], ['monthly_act.type_id' => $type]])->select('SUM(act.expense) as sum')->groupBy('monthly_act.type_id')->asArray()->column();
 
         return $actDate[0];
 

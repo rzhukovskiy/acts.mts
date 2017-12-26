@@ -78,10 +78,10 @@ class ExpenseSearch extends Expense
                 $query->andWhere(['expense.type' => $this->type]);
                 $query->joinWith(['expensecompany']);
                 $query->andFilterWhere(['expense_company' => $this->expense_company]);
-                // Если период не задан то задаем 1 год.
+                // Если период не задан то задаем текущий месяц.
                 if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
-                    $this->dateFrom = date('Y-m', strtotime("-2 month")) . '-31T21:00:00.000Z';
-                    $this->dateTo = date('Y-m', strtotime("-1 month")) . '-31T21:00:00.000Z';
+                    $this->dateFrom = date('Y-m', strtotime("-1 month")) . '-31T21:00:00.000Z';
+                    $this->dateTo = date('Y-m', time()) . '-31T21:00:00.000Z';
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date))", $this->dateFrom, $this->dateTo]);
                 } else {
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date))", $this->dateFrom, $this->dateTo]);
@@ -91,9 +91,10 @@ class ExpenseSearch extends Expense
             case self::SCENARIO_TOTAL:
                 $query->groupBy('type');
                 $query->addSelect(['type', 'SUM(sum) as sum']);
+                // Если период не задан то задаем текущий месяц.
                 if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
-                    $this->dateFrom = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
-                    $this->dateTo = date('Y', time()) . '-12-31T21:00:00.000Z';
+                    $this->dateFrom = date('Y-m', strtotime("-1 month")) . '-31T21:00:00.000Z';
+                    $this->dateTo = date('Y-m', time()) . '-31T21:00:00.000Z';
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date))", $this->dateFrom, $this->dateTo]);
                 } else {
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date))", $this->dateFrom, $this->dateTo]);

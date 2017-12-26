@@ -64,6 +64,8 @@ if (parseFloat(sumprofit) > parseInt(sumprofit)) {
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
+$GLOBALS['dateFrom'] = $searchModel->dateFrom;
+
 /**
  * Виджет выбора диапазона дат
  */
@@ -315,7 +317,7 @@ $columnsact = [
         'pageSummaryFunc' => GridView::F_SUM,
         'vAlign'=>'middle',
         'value' => function ($data) {
-            return \frontend\controllers\ExpenseController::getSum($data->type_id);
+            return \frontend\controllers\ExpenseController::getSum($data->type_id, $GLOBALS['dateFrom']);
         },
 
     ],

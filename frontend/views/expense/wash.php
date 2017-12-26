@@ -103,7 +103,6 @@ $filters = 'Период: ' . DatePicker::widget([
             'class' => 'form-control ext-filter',
         ]
     ]);
-//Настройки кнопок
 ?>
 
 <div class="panel panel-primary">
