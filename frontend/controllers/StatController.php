@@ -553,11 +553,13 @@ class StatController extends Controller
 
     public function actionCompare()
     {
-        if (Yii::$app->request->post('arrMonth')) {
+        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrYear')) {
             $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
+            $arrYear = json_decode(Yii::$app->request->post("arrYear"));
             $year = date('Y', time());
             $ressArray =[];
 
+            if (count($arrMonth) > 0) {
             for ($i = 0; $i < count($arrMonth); $i++) {
 
                 $query = Yii::$app->db->createCommand("SELECT COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, SUM(expense) as expense, SUM(profit) as profit, SUM(income) as income, `service_type` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE MONTH(FROM_UNIXTIME(served_at)) =" . $arrMonth[$i] . " AND YEAR(FROM_UNIXTIME(served_at)) =" . $year . " AND `service_type` <> 6 AND `service_type` <> 7 AND `service_type` <> 8 GROUP BY `service_type` ORDER BY `profit` DESC");
@@ -572,11 +574,26 @@ class StatController extends Controller
                     $ressArray[$index][$indexM]['expense'] = $arr['expense'];
                     $ressArray[$index][$indexM]['profit'] = $arr['profit'];
                     $ressArray[$index][$indexM]['income'] = $arr['income'];
-
+                  }
                 }
+            } else {
+                for ($i = 0; $i < count($arrYear); $i++) {
 
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, SUM(expense) as expense, SUM(profit) as profit, SUM(income) as income, `service_type` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE YEAR(FROM_UNIXTIME(served_at)) =" . $arrYear[$i] . " AND `service_type` <> 6 AND `service_type` <> 7 AND `service_type` <> 8 GROUP BY `service_type` ORDER BY `profit` DESC");
+                    $queryArray = $query->queryAll();
+
+                    for ($j = 0; $j < count($queryArray); $j++) {
+                        $arr = $queryArray[$j];
+                        $index = $arr['service_type'];
+                        $indexM = $arrYear[$i];
+                        $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                        $ressArray[$index][$indexM]['ssoom'] = $arr['ssoom'];
+                        $ressArray[$index][$indexM]['expense'] = $arr['expense'];
+                        $ressArray[$index][$indexM]['profit'] = $arr['profit'];
+                        $ressArray[$index][$indexM]['income'] = $arr['income'];
+                    }
+                }
             }
-
             return json_encode(['result' => json_encode($ressArray), 'success' => 'true']);
         } else {
             return json_encode(['success' => 'false']);

@@ -24,8 +24,10 @@ use yii\web\View;
  */
 $actionLinkCompare = Url::to('@web/stat/compare');
 $nowMonth = date('n', strtotime("-1 month"));
+$nowYear = date('Y', time());
 $script = <<< JS
-// открываем модальное окно сравнения
+
+// открываем модальное окно сравнения по месяцу
 $('.compare').on('click', function() {
     $('#showListsName').modal('show');
     // убираем галочки
@@ -34,11 +36,22 @@ $('.compare').on('click', function() {
     $('input[type="checkbox"][value="$nowMonth"]').prop('checked','checked');
 });
 
+// открываем модальное окно сравнения по году
+$('.compare-year').on('click', function() {
+    $('#showListsYear').modal('show');
+    // убираем галочки
+     
+    $('input[type="checkbox"]').removeAttr('checked');
+    $('input[type="checkbox"][value="$nowYear"]').prop('checked','checked');
+});
+
+// Нажимаем на кнопку сравнить В месяцах
 var arrMonth = [];
+var arrYear = [];
 $('.addNewItem').on('click', function() {
     
     arrMonth = [];
-    
+    arrYear = [];
     $('#showListsName').modal('hide');
     
        $('.monthList').each(function (value) {
@@ -51,11 +64,30 @@ $('.addNewItem').on('click', function() {
     $('#showSettingsList').modal('show');
 });
 
+// Нажимаем на кнопку сравнить В годах
+$('.addNewYear').on('click', function() {
+    
+    arrYear = [];
+    arrMonth = [];
+    $('#showListsYear').modal('hide');
+    
+       $('.yearList').each(function (id, value) {
+           var thisId = $(this);
+      if (thisId.is(':checked')) {
+            arrYear.push(thisId.val());
+     }
+       
+});
+      sendCompare();
+    $('#showSettingsList').modal('show');
+});
+
 function sendCompare() {
           $.ajax({
+         
                 type     :'POST',
                 cache    : true,
-                data: 'arrMonth=' + JSON.stringify(arrMonth),
+                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrYear=' + JSON.stringify(arrYear),
                 url  : '$actionLinkCompare',
                 success  : function(data) {
                 var resTables = "";
@@ -83,6 +115,14 @@ function sendCompare() {
                 month['10'] = "Октябрь";
                 month['11'] = "Ноябрь";
                 month['12'] = "Декабрь";
+                
+                var today = new Date();
+                var yr = today.getFullYear();
+                var year = [];
+                year[yr] = yr;
+                for (i = 10; i > 0; i--) {
+                year[yr-i] = yr - i;
+                }
                 
                 var oldvalue = [];
                 oldvalue[2] = [];
@@ -200,7 +240,12 @@ function sendCompare() {
                         oldvalue[2]['3'] = parseFloat(value['income']);
                         oldvalue[2]['4'] = parseFloat(value['profit']);
                         
-                        reswash += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        if (arrMonth.length > 0) {
+                            reswash += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        } else {
+                            reswash += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        }
+                        
                      }
                      
                      
@@ -287,7 +332,12 @@ function sendCompare() {
                         oldvalue[4]['3'] = parseFloat(value['income']);
                         oldvalue[4]['4'] = parseFloat(value['profit']);
                          
-                         restires += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                         if (arrMonth.length > 0) {
+                            restires += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        } else {
+                            restires += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        }
+                     
                      }
                      
                     
@@ -375,7 +425,11 @@ function sendCompare() {
                         oldvalue[3]['3'] = parseFloat(value['income']);
                         oldvalue[3]['4'] = parseFloat(value['profit']);
                          
-                         resservise += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        if (arrMonth.length > 0) {
+                            resservise += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        } else {
+                            resservise += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        }
                      }
                      
                      
@@ -463,26 +517,36 @@ function sendCompare() {
                         oldvalue[5]['3'] = parseFloat(value['income']);
                         oldvalue[5]['4'] = parseFloat(value['profit']);
                         
-                         resdesinf += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        if (arrMonth.length > 0) {
+                            resdesinf += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        } else {
+                            resdesinf += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                        }
                      }
 
                             });
                     });
-                
+                    var nameColomn = "";
+                    if (arrMonth.length > 0) {
+                        nameColomn = 'Месяц';
+                    } else {
+                        nameColomn = 'Год';
+                    }
                      if (reswash.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
                      }
                      if (restires.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
                      }
                      if (resservise.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
                      }
                      if (resdesinf.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>Месяц</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
                      }
                 
                     $('.place_list').html(resTables);
+                    
                 } else {
                 // Неудачно
                 $('.place_list').html();
@@ -616,7 +680,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 [
                     'columns' => [
                         [
-                            'content' => $filters . '<span class="pull-right btn btn-warning btn-sm compare" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Сравнить</span>',
+                            'content' => $filters . '<span class="pull-right btn btn-danger btn-sm compare-year" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Сравнение по году</span>' . '<span class="pull-right btn btn-warning btn-sm compare" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Сравнение по месяцу</span>',
                             'options' => ['colspan' => 8, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
                         ],
                     ],
@@ -712,7 +776,7 @@ $filters .= 'Выбор периода: ' . $periodForm;
         ]);
         //Pjax::end();
 
-        // Модальное окно сравнения
+        // Модальное окно месяца
         $modalListsName = Modal::begin([
             'header' => '<h5>Выбор месяца</h5>',
             'id' => 'showListsName',
@@ -734,6 +798,23 @@ $filters .= 'Выбор периода: ' . $periodForm;
         echo "<input type='checkbox' class='monthList' value='12'> Декабрь</br>";
         echo "</br><span class='btn btn-primary btn-sm addNewItem'>Сравнить</span></div>";
 
+        Modal::end();
+        // Модальное окно месяца
+
+        // Модальное окно года
+        $modalListsName = Modal::begin([
+            'header' => '<h5>Выбор года</h5>',
+            'id' => 'showListsYear',
+            'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+            'size'=>'modal-sm',
+        ]);
+
+
+        for ($i = 10; $i > 0; $i--) {
+            echo "<input type='checkbox' class='yearList' value='" . date('Y', strtotime("-$i year")) . "'> " . date('Y', strtotime("-$i year")) . "</br>";
+        }
+        echo "<input type='checkbox' class='yearList' value='" . date('Y', time()) . "'> " . date('Y', time()) . "</br>";
+        echo "</br><span class='btn btn-primary btn-sm addNewYear'>Сравнить</span></div>";
         Modal::end();
         // Модальное окно сравнения
 
