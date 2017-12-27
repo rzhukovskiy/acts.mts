@@ -980,7 +980,7 @@ class EmailController extends Controller
 
     }
 
-    public function actionCronaddressnew()
+    public function actionCronaddressnew($id)
     {
 
         // Рассылка 1 раза в неделю для партреров о новом адресе
@@ -997,7 +997,7 @@ class EmailController extends Controller
             $stringErrorEmail = '';
             $stringErrorEmailWash = '';
 
-            $numTemplate = 14;
+            $numTemplate = $id;
 
             // Получаем партнеров
 
