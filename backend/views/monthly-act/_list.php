@@ -286,9 +286,8 @@ readyToSort = 1;
     // Сортировка по дням до оплаты
     
     // Поиск по номеру акта или счета
-$('#searchActNumButt').on('click', function(){
+    function serchNomber() {
     var textSearch = $('#searchActNum').val();
-    
     if(textSearch.length > 0) {
         
             $.ajax({
@@ -316,8 +315,24 @@ $('#searchActNumButt').on('click', function(){
             });
         
     }
+    }
     
-});
+            $('#searchActNumButt').on('click', function(){
+                
+                serchNomber();
+                
+            });
+           $(document).ready(function(){
+	     	 $("#searchActNum").keypress(function(e){
+	     	   if(e.keyCode==13){
+	     	   //нажата клавиша enter
+	     	
+                serchNomber();
+            
+	     	   }
+	     	 });
+ 
+	     });
     // Поиск по номеру акта или счета
     
     // Выделение выбранного номера акта
