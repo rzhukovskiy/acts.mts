@@ -2,11 +2,16 @@
 
 namespace frontend\controllers;
 
+use common\models\Company;
 use common\models\Expense;
 use common\models\ExpenseCompany;
+use common\models\MonthlyAct;
 use common\models\search\ExpenseCompanySearch;
 use common\models\search\ExpenseSearch;
+use common\models\search\MonthlyActSearch;
+use common\models\Service;
 use common\models\User;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use Yii;
@@ -24,12 +29,12 @@ class ExpenseController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete','duplicate'],
+                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete', 'duplicate', 'wash', 'service', 'tires'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete','duplicate'],
+                        'actions' => ['addexpense', 'addexpensecomp', 'expensecomp', 'updateexpense', 'fullexpense', 'updateexp', 'statexpense', 'stattotal', 'delete','duplicate', 'wash', 'service', 'tires'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -206,6 +211,106 @@ class ExpenseController extends Controller
         }
     }
 
+    public function actionWash ($company = 0)
+    {
+        $searchModel = new MonthlyActSearch();
+        $searchModel->type_id = 2;
+        $searchModel->payment_status = 2;
+
+        $params = Yii::$app->request->queryParams;
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+            $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
+
+        $dataProvider = $searchModel->search($params);
+        //Запоминаем
+
+        $listType = ExpenseCompany::$listType;
+
+        $currentUser = Yii::$app->user->identity;
+        if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
+            $admin = true;
+        } else {
+            $admin = false;
+        }
+
+        return $this->render('wash',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => 2,
+                'company'      => $company,
+                'listType'     => $listType,
+                'admin'        => $admin,
+            ]);
+    }
+
+    public function actionService ($company = 0)
+    {
+        $searchModel = new MonthlyActSearch();
+        $searchModel->type_id = 3;
+        $searchModel->payment_status = 2;
+
+        $params = Yii::$app->request->queryParams;
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+            $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
+        $dataProvider = $searchModel->search($params);
+        //Запоминаем
+
+        $listType = ExpenseCompany::$listType;
+
+        $currentUser = Yii::$app->user->identity;
+        if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
+            $admin = true;
+        } else {
+            $admin = false;
+        }
+
+        return $this->render('service',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => 3,
+                'company'      => $company,
+                'listType'     => $listType,
+                'admin'        => $admin,
+            ]);
+    }
+
+    public function actionTires ($company = 0)
+    {
+        $searchModel = new MonthlyActSearch();
+        $searchModel->type_id = 4;
+        $searchModel->payment_status = 2;
+
+        $params = Yii::$app->request->queryParams;
+
+        if (!isset($params['MonthlyActSearch']['act_date'])) {
+        $params['MonthlyActSearch']['act_date'] = date('n-Y', time());
+        }
+
+        $dataProvider = $searchModel->search($params);
+        $listType = ExpenseCompany::$listType;
+
+        $currentUser = Yii::$app->user->identity;
+        if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
+            $admin = true;
+        } else {
+            $admin = false;
+        }
+
+        return $this->render('tires',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel'  => $searchModel,
+                'type'         => 4,
+                'company'      => $company,
+                'listType'     => $listType,
+                'admin'        => $admin,
+            ]);
+    }
+
     public function actionStatexpense($type)
     {
         if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 708)) {
@@ -236,6 +341,16 @@ class ExpenseController extends Controller
 
             $listType = ExpenseCompany::$listType;
 
+            $newdataProvider = new ActiveDataProvider([
+                'query' => MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => date('n-Y', strtotime($searchModel->dateFrom))], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => date('Y-m-00', strtotime($searchModel->dateFrom))], ['payment_status' => 2]])->select('monthly_act.type_id')->groupBy('monthly_act.type_id'),
+                'pagination' => false,
+                'sort'       => [
+                    'defaultOrder' => [
+                        'number' => SORT_DESC,
+                    ]
+                ],
+            ]);
+
             $profit = Yii::$app->db->createCommand("SELECT SUM(profit) as profit FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE(FROM_UNIXTIME(`served_at`)) BETWEEN '" . $searchModel->dateFrom . "' AND '" . $searchModel->dateTo . "')")->queryColumn();
             return $this->render('stattotal',
                 [
@@ -243,10 +358,20 @@ class ExpenseController extends Controller
                     'profit' => $profit,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'newdataProvider' => $newdataProvider,
                 ]);
         } else {
             return $this->redirect(['/']);
         }
+    }
+
+    public static function getSum($type, $dataFrom)
+    {
+
+        $actDate = MonthlyAct::find()->leftJoin('company', '`monthly_act`.`client_id` = `company`.`id`')->innerJoin('act', 'monthly_act.client_id = act.partner_id AND act.expense > 0')->andWhere(['AND', ['DATE_FORMAT( act_date,  "%c-%Y" )' => date('n-Y', strtotime($dataFrom))], ['monthly_act.is_partner' => 1]])->andWhere(['AND', ["DATE_FORMAT(FROM_UNIXTIME(act.served_at), '%Y-%m-00')" => date('Y-m-00', strtotime($dataFrom))], ['payment_status' => 2], ['monthly_act.type_id' => $type]])->select('SUM(act.expense) as sum')->groupBy('monthly_act.type_id')->asArray()->column();
+
+        return $actDate[0];
+
     }
 
     public function actionDelete($id)

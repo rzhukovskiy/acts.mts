@@ -439,16 +439,25 @@ class EmailController extends Controller
             $type = Yii::$app->request->post('type');
             $user_id = Yii::$app->request->post('user_id');
             $url = Yii::$app->request->post('url');
+            $status = Yii::$app->request->post('status');
 
             // Получаем почтовый шаблон
+
             $model = Email::findOne(['id' => 12]);
+
             $userModel = User::findOne(['id' => $user_id]);
 
             if ((isset($model)) && (isset($userModel))) {
 
                 if ((isset($model->title)) && (isset($model->text)) && (isset($userModel->username))) {
 
-                    $subject = $model->title;
+                    // для статуса ЭДО
+                    if ($status == 6) {
+                        $subject = $model->title . " ЭДО";
+                    } else {
+                        $subject = $model->title;
+                    }
+
                     $plainTextContent = nl2br($model->text);
 
                     if(preg_match('~"([^"]*)"~u' , $name , $n)) {
@@ -470,6 +479,11 @@ class EmailController extends Controller
                         $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', (urldecode($url) . "/monthly-act/list?MonthlyActSearch%5Bact_date%5D=" . $period . "&type=" . $type)), $plainTextContent);
                     } else {
                         $plainTextContent = str_replace('{LINK}', Html::a('Ссылка', (urldecode($url) . "/monthly-act/list?MonthlyActSearch%5Bact_date%5D=" . $period . "&MonthlyActSearch%5Bclient_name%5D=" . urlencode($name) . "&type=" . $type)), $plainTextContent);
+                    }
+
+                    // для статуса ЭДО
+                    if ($status == 6) {
+                        $plainTextContent = "ЭДО срочно оплатить!<br /><br />" . $plainTextContent;
                     }
 
                     // Арам

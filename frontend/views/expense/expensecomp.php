@@ -153,7 +153,7 @@ $this->title = 'Редактирование ' . $model->name
             ],
         ]) ?>
         <?= $form->field($model, 'name') ?>
-
+        <?= ($model->type == 1) ? $form->field($model, 'position') : ''; ?>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">

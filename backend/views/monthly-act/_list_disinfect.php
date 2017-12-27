@@ -78,6 +78,7 @@ $script = <<< JS
     $(".sendedOriginal").text($('td[data-col-seq=act_status] select[data-actstatus=2]').length);
     $(".signed").text($('td[data-col-seq=act_status] select[data-actstatus=4]').length);
     $(".noAct").text($('td[data-col-seq=act_status] select[data-actstatus=5]').length);
+    $(".edo").text($('td[data-col-seq=act_status] select[data-actstatus=6]').length);
     // Заполнение таблицы с информацией
     
     // пересчет нумерации

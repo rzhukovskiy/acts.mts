@@ -951,7 +951,11 @@ class ActExporter
                 )
             ));
             if ($this->company) {
-                $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                if($serviceDescription == 'доп. дезинфекция') {
+                    $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                } else {
+                    $companyWorkSheet->setCellValue('F5', date('1 ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                }
             } else {
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
@@ -3576,7 +3580,7 @@ class ActExporter
                 )
             ));
             if ($this->company) {
-                $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                $companyWorkSheet->setCellValue('F5', date('1 ', $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('F5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
@@ -3640,7 +3644,7 @@ class ActExporter
                 $companyWorkSheet->mergeCells('H5:J5');
             }
             if ($this->company) {
-                $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
+                $companyWorkSheet->setCellValue('H5', date("1 ", $this->time) . $monthName[1] . date(' Y', $this->time));
             } else {
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
             }

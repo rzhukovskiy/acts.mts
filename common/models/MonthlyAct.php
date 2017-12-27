@@ -60,6 +60,7 @@ class MonthlyAct extends ActiveRecord
     const ACT_STATUS_SIGNED_SCAN = 3;
     const ACT_STATUS_DONE = 4;
     const ACT_STATUS_EMPTY = 5;
+    const ACT_STATUS_EDO = 6;
 
     const NOT_PARTNER = 0;
     const PARTNER = 1;
@@ -81,6 +82,7 @@ class MonthlyAct extends ActiveRecord
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
         self::ACT_STATUS_DONE => 'Подписан',
         self::ACT_STATUS_EMPTY => 'Без акта',
+        self::ACT_STATUS_EDO => 'Подписан ЭДО',
     ];
 
     public static function passActStatus($currentStatus)
@@ -480,6 +482,7 @@ class MonthlyAct extends ActiveRecord
             self::ACT_STATUS_SIGNED_SCAN => 'monthly-act-warning',
             self::ACT_STATUS_DONE => 'monthly-act-success',
             self::ACT_STATUS_EMPTY => 'monthly-act-info',
+            self::ACT_STATUS_EDO => 'monthly-act-success',
         ];
 
         return $actStatus[$status];
@@ -499,7 +502,7 @@ class MonthlyAct extends ActiveRecord
     static function actDis($val)
     {
         $currentUser = Yii::$app->user->identity;
-        if (($val == self::ACT_STATUS_DONE || $val == self::ACT_STATUS_EMPTY) && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
+        if (($val == self::ACT_STATUS_DONE || $val == self::ACT_STATUS_EMPTY || $val == self::ACT_STATUS_EDO) && $currentUser && $currentUser->role != User::ROLE_ADMIN) {
             $disabled = true;
         } else {
             $disabled = false;

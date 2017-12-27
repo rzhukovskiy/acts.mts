@@ -31,7 +31,7 @@ use common\models\ExpenseCompany;
         ]) ?>
 
        <?= $form->field($model, 'name')->input('text', ['class' => 'form-control', 'placeholder' => $model->type == 1 ? 'ФИО' : 'Наименование организации']);?>
-
+       <?= ($model->type == 1) ? ($form->field($model, 'position')->input('text', ['class' => 'form-control', 'placeholder' => 'Должность'])) : '';?>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
@@ -83,7 +83,22 @@ use common\models\ExpenseCompany;
 
                     },
                 ],
+                [
+                    'attribute' => 'position',
+                    'format' => 'raw',
+                    'vAlign'=>'middle',
+                    'visible' => $model->type == 1 ? true : false,
+                    'contentOptions' => ['style' => 'min-width: 100px'],
+                    'value' => function ($data) {
 
+                        if ($data->position) {
+                            return $data->position;
+                        } else {
+                            return '-';
+                        }
+
+                    },
+                ],
                 [
                     'class' => 'kartik\grid\ActionColumn',
                     'header' => 'Действие',
