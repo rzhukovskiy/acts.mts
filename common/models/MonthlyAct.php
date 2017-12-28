@@ -90,7 +90,12 @@ class MonthlyAct extends ActiveRecord
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             return self::$actStatus;
         } else {
-            return array_slice(self::$actStatus, $currentStatus, null, true);
+            $allStatus = [];
+            for ($i = $currentStatus; $i < count(self::$actStatus); $i++) {
+
+                $allStatus[$i] = self::$actStatus[$i];
+            }
+            return $allStatus;
         }
     }
 
