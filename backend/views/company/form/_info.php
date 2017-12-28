@@ -65,7 +65,7 @@ if($('#companyinfo-nds')) {
         }
     });
     // Отобразить иконку ссылки если данное поле изменили
-
+    $('.glyphicon-new-window').css({'cursor':'pointer'});
     // Клик по ссылке website
     $('table tbody tr td').on('click', '.glyphicon-new-window', function() {
         var websiteCompany = $('#companyinfo-website-targ').text();

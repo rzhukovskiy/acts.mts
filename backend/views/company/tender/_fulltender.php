@@ -108,11 +108,71 @@ $('#showFormAttach').modal('show');
 
 $('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
 
+// Скрыть иконку ссылки если поле ссылки пустое
+    if(($('#tender-site-targ').text() == '') || ($('#tender-site-targ').text() == 'не задано')) {
+        $('.glyphicon-new-window').hide();
+    }
+    // Скрыть иконку ссылки если поле ссылки пустое
+    $('.glyphicon-new-window').css({'cursor':'pointer'});
+    // Отобразить иконку ссылки если данное поле изменили
+    var websiteOld = $('#tender-site-targ').text();
+    $('#tender-site-targ').bind("DOMSubtreeModified",function() {
+        var websiteNew = $('#tender-site-targ').text();
+        if((websiteOld != websiteNew) && (websiteNew != '')) {
+        websiteOld = websiteNew;
+        
+        if((websiteNew.length > 0) && (websiteNew != 'не задано')) {
+        if(websiteNew.indexOf('http') + 1) {
+            $('.glyphicon-new-window').show();
+        }
+        }
+        
+        } else {
+          $('.glyphicon-new-window').hide();  
+        }
+    });
+    // Отобразить иконку ссылки если данное поле изменили
+
+    // Клик по ссылке website
+    $('table tbody tr td').on('click', '.glyphicon-new-window', function() {
+        var website = $('#tender-site-targ').text();
+       
+        if((website.length > 0) && (website != 'не задано')) {
+        if(website.indexOf('http') + 1) {
+            window.open(website, '_blank');
+        }
+        }
+    });
+    // Клик по ссылке website
+
 JS;
 $this->registerJs($script, View::POS_READY);
 ?>
 
 <table class="table table-bordered list-data">
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('site') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'site',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта (с http://)'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+            <?= '<span class="glyphicon glyphicon-new-window"></span>' ?>
+        </td>
+    </tr>
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('purchase_status') ?></td>
         <td>

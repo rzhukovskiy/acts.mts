@@ -57,6 +57,7 @@ use yii\behaviors\TimestampBehavior;
  * @property float $ensuring_application
  * @property string $comment_date_contract
  * @property integer $tender_close
+ * @property string $site
  */
 class Tender extends ActiveRecord
 {
@@ -75,6 +76,7 @@ class Tender extends ActiveRecord
     private $ensuring_application;
     private $comment_date_contract;
     private $tender_close;
+    private $site;
 
     /**
      * @var UploadedFile
@@ -113,7 +115,7 @@ class Tender extends ActiveRecord
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
-            [['inn_customer'], 'string', 'max' => 200],
+            [['inn_customer', 'site'], 'string', 'max' => 200],
             [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer'], 'string', 'max' => 10000],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
             ];
@@ -172,6 +174,7 @@ class Tender extends ActiveRecord
             'comment_date_contract' => 'Комментарий к сроку договора',
             'tender_close' => 'Закрыть закупку',
             'files' => 'Вложения',
+            'site' => 'Прямая ссылка',
             'companyname' => 'Имя компании',
         ];
     }
@@ -549,5 +552,13 @@ class Tender extends ActiveRecord
     public function setTender_close($value)
     {
         $this->tender_close = $value;
+    }
+    public function getSite()
+    {
+        return $this->site;
+    }
+    public function setSite($value)
+    {
+        $this->site = $value;
     }
 }

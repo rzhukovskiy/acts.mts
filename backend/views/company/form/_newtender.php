@@ -405,6 +405,7 @@ $form = ActiveForm::begin([
 ]); ?>
 
 <?= $form->field($model, 'company_id')->hiddenInput()->label(false) ?>
+<?= $form->field($model, 'site')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта (с http://)']) ?>
 <?= $form->field($model, 'purchase_status')->dropDownList(isset($arrLists[0]) ? $arrLists[0] : [], ['class' => 'form-control', 'prompt' => 'Выберите статус закупки']) ?>
 <?= $form->field($model, 'comment_status_proc')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий к статусу закупки']) ?>
 <?= $form->field($model, 'user_id')->dropDownList(isset($arrLists[1]) ? $arrLists[1] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
