@@ -71,14 +71,14 @@ $form = ActiveForm::begin([
         <td style="width: 250px">
             <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['max-width'])->error(false) ?>
         </td>
-        <td style="width: 150px">
-            <label class="control-label">Действие</label>
+    </tr>
+    <tr><td colspan="2"><?= $form->field($model, 'phone')->textInput(); ?></td>
+        <td colspan="3">
             <?= Html::submitButton($model->isNewRecord ? 'Записать' : 'Изменить', ['class' => 'btn btn-primary']) ?>
             <?= Html::activeHiddenInput($model, 'day') ?>
             <?= Html::activeHiddenInput($model, 'company_id') ?>
             <?= Html::activeHiddenInput($model, 'service_type') ?>
-        </td>
-    </tr>
+        </td></tr>
     </tbody>
 </table>
 <?php ActiveForm::end() ?>

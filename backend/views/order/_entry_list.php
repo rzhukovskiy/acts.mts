@@ -75,6 +75,14 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     },
                 ],
                 [
+                    'header'    => 'Телефон',
+                    'attribute' => 'phone',
+                    'format'         => 'raw',
+                    'value'     => function ($model) {
+                        return isset($model->phone) ? '<a class="callNumber" data-id="' . $model->id . '" style="cursor: pointer;">' . $model->phone . '</a>' : '-';
+                    },
+                ],
+                [
                     'class'          => 'yii\grid\ActionColumn',
                     'template'       => '{update} {delete}',
                     'contentOptions' => ['style' => 'min-width: 80px'],

@@ -20,6 +20,7 @@ use yii\db\ActiveRecord;
  * @property integer $service_type
  * @property integer $status
  * @property string $number
+ * @property string $phone
  * @property string $extra_number
  * @property integer $created_at
  * @property integer $updated_at
@@ -81,6 +82,7 @@ class Entry extends ActiveRecord
             [['company_id', 'type_id', 'card_id', 'mark_id', 'service_type', 'status', 'created_at', 'updated_at', 'start_at', 'end_at', 'card_number'], 'integer'],
             [['company_id'], 'required'],
             [['number', 'extra_number', 'start_str', 'end_str', 'day'], 'string', 'max' => 45],
+            [['phone'], 'string'],
         ];
     }
 
@@ -104,6 +106,7 @@ class Entry extends ActiveRecord
             'end_str' => 'Окончание',
             'user_id' => 'Кто записал',
             'status' => 'Статус',
+            'phone' => 'Телефон',
         ];
     }
 

@@ -17,6 +17,12 @@ foreach (Service::$listType as $type_id => $typeData) {
     ];
 }
 
+$items[] = [
+    'label' => 'Замещение услуг',
+    'url' => ['replace', 'type' => 2],
+    'active' => Yii::$app->controller->action->id == 'replace',
+];
+
 echo Tabs::widget([
     'items' => $items,
 ]);

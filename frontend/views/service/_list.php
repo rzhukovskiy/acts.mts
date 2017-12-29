@@ -10,7 +10,7 @@ use common\models\Service;
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Список компаний
+        Список услуг
     </div>
     <div class="panel-body">
         <?= GridView::widget([

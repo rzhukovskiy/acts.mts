@@ -9,19 +9,44 @@ use yii\grid\GridView;
  * @var $admin boolean
  */
 
-$this->title = 'Услуги';
+$this->title = (Yii::$app->controller->action->id != 'replace') ? 'Услуги' : 'Замещение услуг';
 
-echo $this->render('_tabs', [
-    'model' => $model,
-]);
 
-if ($admin) {
-    echo $this->render('_form', [
+if(Yii::$app->controller->action->id != 'replace') {
+    // раздел услуги
+
+    echo $this->render('_tabs', [
         'model' => $model,
+    ]);
+
+    if ($admin) {
+        echo $this->render('_form', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
+    }
+    echo $this->render('_list', [
+        'dataProvider' => $dataProvider,
+        'admin' => $admin,
+    ]);
+} else {
+    // раздел замещения
+
+    echo $this->render('_tabsReplace', [
+        'model' => $model,
+        'type' => $type,
+    ]);
+
+    echo $this->render('_formReplace', [
+        'model' => $model,
+        'type' => $type,
         'searchModel' => $searchModel,
     ]);
+
+    echo $this->render('_replace', [
+        'dataProvider' => $dataProvider,
+        'type' => $type,
+        'CarTypes' => $CarTypes,
+        'CompanyList' => $CompanyList,
+    ]);
 }
-echo $this->render('_list', [
-    'dataProvider' => $dataProvider,
-    'admin' => $admin,
-]);

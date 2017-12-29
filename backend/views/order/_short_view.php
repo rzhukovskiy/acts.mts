@@ -593,7 +593,6 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 </div>
 <?php
 
-
 // Модальное окно зновонк клиенту
 $modalAttach = Modal::begin([
     'header' => '<h4>Звонок клиенту</h4>',
