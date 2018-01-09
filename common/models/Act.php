@@ -563,6 +563,91 @@ class Act extends ActiveRecord
                 return false;
             }
         } else {
+
+            // Проверяем на наличие замещений
+            $arrReplaceNeed = [];
+            if((Yii::$app->user->identity->id != 1) && (Yii::$app->user->identity->id != 176) && (Yii::$app->user->identity->id != 238)) {
+
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+
+                $numServReplace = 0;
+                $numServiceTrue = 0;
+                $numServiceHaveClient = 0;
+                $arrnumServiceReplace = [];
+
+                if (count($replaceArray) > 0) {
+
+                    for ($i = 0; $i < count($replaceArray); $i++) {
+
+                        $replace_id = $replaceArray[$i];
+
+                        $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+
+                        $numServReplace = 0;
+                        $numServiceTrue = 0;
+                        $numServiceHaveClient = 0;
+
+                        for ($j = 0; $j < count($replaceCont); $j++) {
+
+                            if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+
+                                $numServReplace++;
+                                $toNextService = false;
+
+                                foreach ($this->partnerServiceList as $serviceData) {
+                                    if($toNextService == false) {
+                                        if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                            $numServiceTrue++;
+                                            $toNextService = true;
+
+                                            $index = $replaceCont[$j]['service_id'];
+
+                                            if(isset($arrnumServiceReplace[$index])) {
+
+                                                if($arrnumServiceReplace[$index] >= 1) {
+                                                    $arrnumServiceReplace[$index]++;
+                                                } else {
+                                                    $arrnumServiceReplace[$index] = 1;
+                                                }
+
+                                            } else {
+                                                $arrnumServiceReplace[$index] = 1;
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                $toNextService = false;
+                                foreach ($this->clientServiceList as $serviceData) {
+                                    if($toNextService == false) {
+                                        if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                            $numServiceHaveClient++;
+                                            $toNextService = true;
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+                            // Нашли нужное замещение
+                            if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                                $arrReplaceNeed = $replaceCont;
+                            }
+
+                        }
+
+                    }
+                }
+
+                if($numServiceHaveClient < $numServiceTrue) {
+                    $arrReplaceNeed = [];
+                }
+
+            }
+            // END Проверяем на наличие замещений
+
             $totalExpense = 0;
             $totalIncome = 0;
 
@@ -625,6 +710,43 @@ class Act extends ActiveRecord
             if (!empty($this->clientServiceList)) {
                 ActScope::deleteAll(['act_id' => $this->id, 'company_id' => $this->client_id]);
 
+                // Выполняем замещение клиент
+
+                $arrClientsType = [];
+
+                if((Yii::$app->user->identity->id != 1) && (Yii::$app->user->identity->id != 176) && (Yii::$app->user->identity->id != 238)) {
+                    if (count($arrReplaceNeed) > 0) {
+                        // Удаляем услуги выбранные у клиента
+                        for ($j = 0; $j < count($arrReplaceNeed); $j++) {
+                            if ($arrReplaceNeed[$j]['company_id'] != $this->client_id) {
+
+                                foreach ($this->clientServiceList as $key => $serviceData) {
+                                    if (!empty($serviceData['service_id'])) {
+                                        if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
+
+                                            $index = $arrReplaceNeed[$j]['service_id'];
+
+                                            if(isset($arrnumServiceReplace[$index])) {
+
+                                                if($arrnumServiceReplace[$index] > 0) {
+                                                    $arrnumServiceReplace[$index]--;
+                                                    unset($this->clientServiceList[$key]);
+                                                }
+
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        // END Удаляем услуги выбранные у клиента
+
+                    }
+                }
+                // END Выполняем замещение клиент
+
                 foreach ($this->clientServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -632,6 +754,7 @@ class Act extends ActiveRecord
                     $scope = new ActScope();
                     $scope->company_id = $this->client_id;
                     $scope->act_id = $this->id;
+
                     if (!empty($serviceData['service_id'])) {
                         $scope->service_id = $serviceData['service_id'];
                         $companyService = CompanyService::findOne([
@@ -669,6 +792,57 @@ class Act extends ActiveRecord
                     $totalIncome += $scope->price * $scope->amount;
                 }
 
+                // добавляем замещенные услуги
+                for ($j = 0; $j < count($arrReplaceNeed); $j++) {
+                    if ($arrReplaceNeed[$j]['company_id'] == $this->client_id) {
+
+                        $haveServiceRepair = false;
+
+                        foreach ($this->clientServiceList as $serviceData) {
+                            if($haveServiceRepair == false) {
+                                if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
+                                    $haveServiceRepair = true;
+                                }
+                            }
+                        }
+
+                        if($haveServiceRepair == false) {
+
+                            $scope = new ActScope();
+                            $scope->company_id = $this->client_id;
+                            $scope->act_id = $this->id;
+                            $scope->service_id = $arrReplaceNeed[$j]['service_id'];
+                            $clientService = CompanyService::findOne([
+                                'service_id' => $arrReplaceNeed[$j]['service_id'],
+                                'company_id' => $this->client_id,
+                                'type_id' => ($arrReplaceNeed[$j]['car_type'] > 0) ? $arrReplaceNeed[$j]['car_type'] : $this->type_id,
+                            ]);
+
+                            if (!empty($clientService) && $clientService->service->is_fixed) {
+                                $scope->price = $clientService->price;
+                                $scope->description = $clientService->service->description;
+                            } else {
+                                $scope->price = 0;
+                                $scope->description =
+                                    Service::findOne(['id' => $arrReplaceNeed[$j]['service_id']])->description;
+                            }
+                            $scope->amount = 1;
+
+                            if (isset($serviceData['parts'])) {
+                                $scope->parts = $serviceData['parts'];
+                            } else {
+                                $scope->parts = 0;
+                            }
+
+                            $scope->save();
+                            $totalIncome += $scope->price * $scope->amount;
+
+                        }
+
+                    }
+                }
+                // END добавляем замещенные услуги
+
                 $this->income = $totalIncome;
             }
 
@@ -686,43 +860,157 @@ class Act extends ActiveRecord
         /**
          * сохраняем все указанные услуги и дублируем для компании и клиента на первый раз
          */
+
+        // Для замещений и проверку на асинхронные
+        $arrReplaceNeed = [];
+        $numePartnerService = 0;
+        $numeClientService = 0;
+        $numReplacePartner = 0;
+        $numReplaceClient = 0;
+
         if ($insert) {
 
             if (!empty($this->serviceList)) {
-                foreach ($this->serviceList as $serviceData) {
-                    $clientScope = new ActScope();
-                    $clientScope->company_id = $this->client_id;
-                    $clientScope->act_id = $this->id;
-                    if (!empty($serviceData['service_id'])) {
-                        $clientScope->service_id = $serviceData['service_id'];
-                        $clientService = CompanyService::findOne([
-                            'service_id' => $serviceData['service_id'],
-                            'company_id' => $this->client_id,
-                            'type_id'    => $this->type_id,
-                        ]);
 
-                        if (!empty($clientService) && $clientService->service->is_fixed) {
-                            $clientScope->price = $clientService->price;
-                            $clientScope->description = $clientService->service->description;
-                        } else {
-                            $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
-                            $clientScope->description =
-                                Service::findOne(['id' => $serviceData['service_id']])->description;
+                // Проверяем на наличие замещений
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+
+                $numServReplace = 0;
+                $numServiceTrue = 0;
+                $arrnumServiceReplace = [];
+
+                if (count($replaceArray) > 0) {
+
+                    for ($i = 0; $i < count($replaceArray); $i++) {
+
+                        $replace_id = $replaceArray[$i];
+
+                        $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+
+                        $numServReplace = 0;
+                        $numServiceTrue = 0;
+
+                        for ($j = 0; $j < count($replaceCont); $j++) {
+
+                            if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+
+                                $numServReplace++;
+                                $toNextService = false;
+
+                                foreach ($this->serviceList as $serviceData) {
+                                    if ($toNextService == false) {
+                                        if (!empty($serviceData['service_id'])) {
+                                            if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                                $numServiceTrue++;
+                                                $toNextService = true;
+
+                                                $index = $replaceCont[$j]['service_id'];
+
+                                                if(isset($arrnumServiceReplace[$index])) {
+
+                                                    if($arrnumServiceReplace[$index] >= 1) {
+                                                        $arrnumServiceReplace[$index]++;
+                                                    } else {
+                                                        $arrnumServiceReplace[$index] = 1;
+                                                    }
+
+                                                } else {
+                                                    $arrnumServiceReplace[$index] = 1;
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            // Нашли нужное замещение
+                            if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                                $arrReplaceNeed = $replaceCont;
+                                $numReplacePartner = $numServiceTrue;
+                                $numReplaceClient = count($replaceCont) - $numReplacePartner;
+                            }
+
                         }
-                    } else {
-                        //на 20% увеличиваем цену для клиента
-                        $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
-                        $clientScope->description = ArrayHelper::getValue($serviceData, 'description', 'Нет описания');
-                    }
-                    $clientScope->amount = $serviceData['amount'];
 
-                    if(isset($serviceData['parts'])) {
-                        $clientScope->parts = $serviceData['parts'];
-                    } else {
-                        $clientScope->parts = 0;
                     }
+                }
+                // END Проверяем на наличие замещений
 
-                    $clientScope->save();
+                $numRepairServiceClient = 0;
+
+                foreach ($this->serviceList as $serviceData) {
+
+                    $removeServiceClient = false;
+
+                    // Выполняем замещение клиент
+                    if (count($arrReplaceNeed) > 0) {
+                        for ($j = 0; $j < count($arrReplaceNeed); $j++) {
+                            if ($arrReplaceNeed[$j]['company_id'] != $this->client_id) {
+
+                                if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
+                                    // Удаляем услуги выбранные у клиента
+                                    $removeServiceClient = true;
+
+                                    $index = $arrReplaceNeed[$j]['service_id'];
+
+                                    if(isset($arrnumServiceReplace[$index])) {
+
+                                        if($arrnumServiceReplace[$index] > 0) {
+                                            $arrnumServiceReplace[$index]--;
+                                        } else {
+                                            $removeServiceClient = false;
+                                        }
+
+                                    }
+
+                                }
+
+                            } else {
+                                $numRepairServiceClient++;
+                            }
+                        }
+                    }
+                    // END Выполняем замещение клиент
+
+                    // Удаляем услуги выбранные у клиента
+                    if ($removeServiceClient == false) {
+                        $clientScope = new ActScope();
+                        $clientScope->company_id = $this->client_id;
+                        $clientScope->act_id = $this->id;
+                        if (!empty($serviceData['service_id'])) {
+                            $clientScope->service_id = $serviceData['service_id'];
+                            $clientService = CompanyService::findOne([
+                                'service_id' => $serviceData['service_id'],
+                                'company_id' => $this->client_id,
+                                'type_id' => $this->type_id,
+                            ]);
+
+                            if (!empty($clientService) && $clientService->service->is_fixed) {
+                                $clientScope->price = $clientService->price;
+                                $clientScope->description = $clientService->service->description;
+                            } else {
+                                $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
+                                $clientScope->description =
+                                    Service::findOne(['id' => $serviceData['service_id']])->description;
+                            }
+                        } else {
+                            //на 20% увеличиваем цену для клиента
+                            $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
+                            $clientScope->description = ArrayHelper::getValue($serviceData, 'description', 'Нет описания');
+                        }
+                        $clientScope->amount = $serviceData['amount'];
+
+                        if (isset($serviceData['parts'])) {
+                            $clientScope->parts = $serviceData['parts'];
+                        } else {
+                            $clientScope->parts = 0;
+                        }
+
+                        $clientScope->save();
+                        $numeClientService++;
+                    }
 
                     $partnerScope = new ActScope();
                     $partnerScope->company_id = $this->partner_id;
@@ -732,7 +1020,7 @@ class Act extends ActiveRecord
                         $partnerService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->partner_id,
-                            'type_id'    => $this->type_id,
+                            'type_id' => $this->type_id,
                         ]);
                         if (!empty($partnerService) && $partnerService->service->is_fixed) {
                             $partnerScope->price = $partnerService->price;
@@ -748,16 +1036,121 @@ class Act extends ActiveRecord
                     }
                     $partnerScope->amount = $serviceData['amount'];
 
-                    if(isset($serviceData['parts'])) {
+                    if (isset($serviceData['parts'])) {
                         $partnerScope->parts = $serviceData['parts'];
                     } else {
                         $partnerScope->parts = 0;
                     }
 
                     $partnerScope->save();
+                    $numePartnerService++;
+                }
+
+                // Добавляем услуги замещения
+                if ((count($arrReplaceNeed) > 0) && ($numRepairServiceClient > 0)) {
+                    for ($j = 0; $j < count($arrReplaceNeed); $j++) {
+                        if ($arrReplaceNeed[$j]['company_id'] == $this->client_id) {
+
+                            $haveServiceRepair = false;
+
+                            foreach ($this->serviceList as $serviceData) {
+                                if ($haveServiceRepair == false) {
+                                    if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
+                                        $haveServiceRepair = true;
+                                    }
+                                }
+                            }
+
+                            if ($haveServiceRepair == false) {
+
+                                $clientScope = new ActScope();
+                                $clientScope->company_id = $this->client_id;
+                                $clientScope->act_id = $this->id;
+                                $clientScope->service_id = $arrReplaceNeed[$j]['service_id'];
+                                $clientService = CompanyService::findOne([
+                                    'service_id' => $arrReplaceNeed[$j]['service_id'],
+                                    'company_id' => $this->client_id,
+                                    'type_id' => ($arrReplaceNeed[$j]['car_type'] > 0) ? $arrReplaceNeed[$j]['car_type'] : $this->type_id,
+                                ]);
+
+                                if (!empty($clientService) && $clientService->service->is_fixed) {
+                                    $clientScope->price = $clientService->price;
+                                    $clientScope->description = $clientService->service->description;
+                                } else {
+                                    $clientScope->price = 0;
+                                    $clientScope->description =
+                                        Service::findOne(['id' => $arrReplaceNeed[$j]['service_id']])->description;
+                                }
+                                $clientScope->amount = 1;
+                                $clientScope->parts = 0;
+
+                                $clientScope->save();
+                                $numeClientService++;
+
+                            }
+
+                        }
+
+                    }
                 }
             }
+            // END Добавляем услуги замещения
+
+        } else {
+            // Для асинхронных актов при редактировании
+            // Проверяем на наличие замещений
+            $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+
+            $numServReplace = 0;
+            $numServiceTrue = 0;
+
+            if(count($replaceArray) > 0) {
+
+                for ($i = 0; $i < count($replaceArray); $i++) {
+
+                    $replace_id = $replaceArray[$i];
+
+                    $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+
+                    $numServReplace = 0;
+                    $numServiceTrue = 0;
+
+                    for ($j = 0; $j < count($replaceCont); $j++) {
+
+                        if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+
+                            $numServReplace++;
+                            $toNextService = false;
+
+                            foreach ($this->partnerServiceList as $serviceData) {
+                                if($toNextService == false) {
+                                    if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                        $numServiceTrue++;
+                                        $toNextService = true;
+                                    }
+                                }
+                            }
+
+                        }
+
+                        // Нашли нужное замещение
+                        if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                            $arrReplaceNeed = $replaceCont;
+                            $numReplacePartner = $numServiceTrue;
+                            $numReplaceClient = count($replaceCont) - $numReplacePartner;
+                        }
+
+                    }
+
+                }
+            }
+            // END Проверяем на наличие замещений
+
+            $numePartnerService = count($this->partnerServiceList);
+            $numeClientService = count($this->clientServiceList);
+
         }
+
         //Пересчитываем месячный акт
         MonthlyAct::getRealObject($this->service_type)->saveFromAct($this);
 
@@ -783,7 +1176,7 @@ class Act extends ActiveRecord
         }
 
         // Асинхронные акты
-        if(count($this->clientServiceList) != count($this->partnerServiceList)) {
+        if((($numeClientService != $numePartnerService) && ((count($arrReplaceNeed) == 0))) || ((count($arrReplaceNeed) > 0) && ((($numReplacePartner > $numReplaceClient) && ($numeClientService < $numePartnerService) && ($numePartnerService != ($numeClientService + ($numReplacePartner - $numReplaceClient)))) || (($numReplaceClient > $numReplacePartner) && ($numePartnerService < $numeClientService) && ($numeClientService != ($numePartnerService + ($numReplaceClient - $numReplacePartner)))) || (($numReplaceClient != $numReplacePartner) && ($numePartnerService == $numeClientService))))) {
             $modelActError = new ActError();
             $modelActError->act_id = $this->id;
             $modelActError->error_type = 20;
