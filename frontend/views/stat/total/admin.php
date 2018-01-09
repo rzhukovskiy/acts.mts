@@ -27,13 +27,23 @@ $nowMonth = date('n', strtotime("-1 month"));
 $nowYear = date('Y', time());
 $script = <<< JS
 
+var arrMonth = [];
+var arrYear = [];
+var arrMonthYears = [];
 // открываем модальное окно сравнения по месяцу
 $('.compare').on('click', function() {
     $('#showListsName').modal('show');
     // убираем галочки
-
     $('input[type="checkbox"]').removeAttr('checked');
     $('input[type="checkbox"][value="$nowMonth"]').prop('checked','checked');
+    
+    //сбрасываем селектор
+    arrMonthYears = [];
+    arrMonth = [];
+    var now = new Date();
+    var yearM = now.getFullYear();
+    $('.yearMonth').val(yearM);
+    
 });
 
 // открываем модальное окно сравнения по году
@@ -43,21 +53,29 @@ $('.compare-year').on('click', function() {
      
     $('input[type="checkbox"]').removeAttr('checked');
     $('input[type="checkbox"][value="$nowYear"]').prop('checked','checked');
+    arrYear = [];
 });
 
 // Нажимаем на кнопку сравнить В месяцах
-var arrMonth = [];
-var arrYear = [];
+
 $('.addNewItem').on('click', function() {
     
     arrMonth = [];
     arrYear = [];
     $('#showListsName').modal('hide');
     
+        var selectMonth = 1;
+    
        $('.monthList').each(function (value) {
       if ($(this).is(':checked')) {
           arrMonth.push($(this).val());
+          
+          if($("#yearOnMonth[data-month='" + selectMonth + "']") != "undefined" && $("#yearOnMonth[data-month='" + selectMonth + "']") !== null) {  
+          arrMonthYears.push($("#yearOnMonth[data-month='" + selectMonth + "']").val());
+          }
+          
      }
+     selectMonth++;
        
 });
       sendCompare();
@@ -87,7 +105,7 @@ function sendCompare() {
          
                 type     :'POST',
                 cache    : true,
-                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrYear=' + JSON.stringify(arrYear),
+                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrYear=' + JSON.stringify(arrYear)  + '&arrMonthYears=' + JSON.stringify(arrMonthYears) ,
                 url  : '$actionLinkCompare',
                 success  : function(data) {
                 var resTables = "";
@@ -95,6 +113,7 @@ function sendCompare() {
                 var restires = "";
                 var resdesinf = "";
                 var resservise = "";
+                var resall = "";
                 var response = $.parseJSON(data);
                
                 var countServe = '';
@@ -115,7 +134,7 @@ function sendCompare() {
                 month['10'] = "Октябрь";
                 month['11'] = "Ноябрь";
                 month['12'] = "Декабрь";
-                
+                               
                 var today = new Date();
                 var yr = today.getFullYear();
                 var year = [];
@@ -145,21 +164,53 @@ function sendCompare() {
                 oldvalue[5]['2'] = '';
                 oldvalue[5]['3'] = '';
                 oldvalue[5]['4'] = '';
+                oldvalue[6] = [];
+                oldvalue[6]['1'] = '';
+                oldvalue[6]['2'] = '';
+                oldvalue[6]['3'] = '';
+                oldvalue[6]['4'] = '';
                 
                 var splitFloat = "";
                 var splitInt = "";
                 
-                
+               var sumArr = [];
+      
                 if (response.success == 'true') {
                   
                 // Удачно
                 var arr = $.parseJSON(response.result);
                 $.each(arr,function(key,data) {
-
+                    
                  $.each(data, function(index,value) {
+                    
+                        if(!sumArr[index]) {
+                            sumArr[index] = [];
+                        }
                      
+                        if(!sumArr[index]['countServe']) {
+                            sumArr[index]['countServe'] = 0;
+                        }
+                        if(!sumArr[index]['ssoom']) {
+                            sumArr[index]['ssoom'] = 0;
+                        }
+                        
+                        if(!sumArr[index]['income']) {
+                            sumArr[index]['income'] = 0;
+                        }
+                        
+                        if(!sumArr[index]['profit']) {
+                            sumArr[index]['profit'] = 0;
+                        }
+                        
+                        sumArr[index]['countServe'] += parseFloat(value['countServe']);
+                        sumArr[index]['ssoom'] += parseFloat(value['ssoom']);
+                        sumArr[index]['income'] += parseFloat(value['income']);
+                        sumArr[index]['profit'] += parseFloat(value['profit']);
+                        sumArr[index]['served_at'] = value['served_at'];
+                 console.log(value);
+               
                      if (key == 2) {
-                         
+                        
                         if(oldvalue[2]['1'] != '') {
                         if (oldvalue[2]['1'] > parseFloat(value['countServe'])) {
                            countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[2]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
@@ -240,8 +291,10 @@ function sendCompare() {
                         oldvalue[2]['3'] = parseFloat(value['income']);
                         oldvalue[2]['4'] = parseFloat(value['profit']);
                         
+                        var dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
                         if (arrMonth.length > 0) {
-                            reswash += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                            reswash += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         } else {
                             reswash += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         }
@@ -332,15 +385,16 @@ function sendCompare() {
                         oldvalue[4]['3'] = parseFloat(value['income']);
                         oldvalue[4]['4'] = parseFloat(value['profit']);
                          
+                        dateShow = '';
+                        dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
                          if (arrMonth.length > 0) {
-                            restires += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                            restires += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         } else {
                             restires += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         }
                      
                      }
-                     
-                    
                      
                      if (key == 3) {
                          
@@ -425,8 +479,11 @@ function sendCompare() {
                         oldvalue[3]['3'] = parseFloat(value['income']);
                         oldvalue[3]['4'] = parseFloat(value['profit']);
                          
+                        dateShow = '';
+                        dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
                         if (arrMonth.length > 0) {
-                            resservise += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                            resservise += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         } else {
                             resservise += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         }
@@ -517,15 +574,116 @@ function sendCompare() {
                         oldvalue[5]['3'] = parseFloat(value['income']);
                         oldvalue[5]['4'] = parseFloat(value['profit']);
                         
+                        dateShow = '';
+                        dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
                         if (arrMonth.length > 0) {
-                            resdesinf += "<tr><td>" + month[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                            resdesinf += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         } else {
                             resdesinf += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
                         }
                      }
-
+                      
                             });
                     });
+                       
+                        $.each(sumArr, function(index,value) {
+                       
+                         if (typeof sumArr[index] !== 'undefined' && sumArr[index] !== null) {
+                         console.log(value['countServe']);
+                         
+                         
+                         if(oldvalue[6]['1'] != '') {
+                        if (oldvalue[6]['1'] > parseFloat(value['countServe'])) {
+                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                        } else {
+                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                        }
+                        } else {
+                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                        }
+                        
+                        if(oldvalue[6]['2'] != '') {
+                        if (oldvalue[6]['2'] > parseFloat(value['ssoom'])) {
+                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[6]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
+                        } else {
+                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[6]['2'])/value['ssoom']*100).toFixed(1))  + '%</span>';
+                        }
+                        } else {
+                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                        }
+                        
+                        if(oldvalue[6]['3'] != '') {
+                        if (oldvalue[6]['3'] > parseFloat(value['income'])) {
+                            if (value['income'] > parseInt(value['income'])) {
+                                 splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[6]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['income'] - oldvalue[6]['3'])/value['income']*100).toFixed(1)) + '%</span>';
+                        }
+                        } else {
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[6]['3'])/oldvalue[6]['3']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['income'] - oldvalue[6]['3'])/oldvalue[6]['3']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['income'] > parseInt(value['income'])) {
+                                splitFloat = (parseFloat(value['income']) - parseInt(value['income'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['income'])).toString().split('.');
+                           income = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           income = parseInt(value['income']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
+                        }
+                        
+                        if(oldvalue[6]['4'] != '') {
+                        if (oldvalue[6]['4'] > parseFloat(value['profit'])) {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                 splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                 splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[6]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        } else { 
+                         profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['profit'] - oldvalue[6]['4'])/value['profit']*100).toFixed(1)) + '%</span>';
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1] + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[6]['4'])/oldvalue[6]['4']*100).toFixed(1))  + '%</span>';
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['profit'] - oldvalue[6]['4'])/oldvalue[6]['4']*100).toFixed(1))  + '%</span>';
+                        }
+                        }
+                        } else {
+                            if (value['profit'] > parseInt(value['profit'])) {
+                                splitFloat = (parseFloat(value['profit']) - parseInt(value['profit'])).toFixed(4).toString().split('.');
+                                splitInt = (parseInt(value['profit'])).toString().split('.');
+                           profit = splitInt[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + splitFloat[1];
+                        } else {
+                           profit = parseInt(value['profit']).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");    
+                        }
+                        }
+                        
+                        oldvalue[6]['1'] = parseFloat(value['countServe']);
+                        oldvalue[6]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[6]['3'] = parseFloat(value['income']);
+                        oldvalue[6]['4'] = parseFloat(value['profit']);
+                        
+                        var dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
+                         if (arrMonth.length > 0) {
+                            resall += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                         } else {
+                            resall += "<tr><td>" + year[index] + "</td><td>" + countServe + "</td><td>" + ssoom + "</td><td>" + income + "</td><td>" + profit + "</td></tr>";
+                         }
+                         }
+                         });
+                        
                     var nameColomn = "";
                     if (arrMonth.length > 0) {
                         nameColomn = 'Месяц';
@@ -533,16 +691,19 @@ function sendCompare() {
                         nameColomn = 'Год';
                     }
                      if (reswash.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Мойка</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:130px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:200px;'>Доход</td><td>Прибыль</td></tr>" + reswash +"</table></br>";
                      }
                      if (restires.length > 0) {
-                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
+                      resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Шиномонтаж</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:130px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:200px;'>Доход</td><td>Прибыль</td></tr>" + restires +"</table></br>";
                      }
                      if (resservise.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Сервис</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:130px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:200px;'>Доход</td><td>Прибыль</td></tr>" + resservise +"</table></br>";
                      }
                      if (resdesinf.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:110px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:220px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Дезинфекция</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:130px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:200px;'>Доход</td><td>Прибыль</td></tr>" + resdesinf +"</table></br>";
+                     }
+                     if (resall.length > 0) {
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Общая</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:130px;'>" + nameColomn + "</td><td style='width:150px;'>Обслужено</td><td style='width:150px;'>ССООМ</td><td style='width:200px;'>Доход</td><td>Прибыль</td></tr>" + resall +"</table></br>";
                      }
                 
                     $('.place_list').html(resTables);
@@ -783,19 +944,56 @@ $filters .= 'Выбор периода: ' . $periodForm;
             'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
             'size'=>'modal-sm',
         ]);
+        
+        // Вывод селектора для года
+        $select = [];
+        
+        for ($j = 1; $j <= 12; $j++) {
+            
+        $yearOnMonth = "";
+        
+        for ($i = 10; $i > 0; $i--) {
+            $yearOnMonth .= "<option value='" . date('Y', strtotime("-$i year")) . "'>" . date('Y', strtotime("-$i year")) . "</option>";
+        }
+        
+        $nowYearOnMonth = "<option selected value='" . date('Y', time()) . "'>" . date('Y', time()) . "</option>";
+        $select[$j] = "<select id='yearOnMonth' class='yearMonth' data-month='" . $j . "'>$yearOnMonth $nowYearOnMonth</select>";
+        
+        }
+        
+        echo "<table><tr><td><input type='checkbox' class='monthList' value='1'> Январь </td><td>" . $select[1] . "</td></tr>" . "</td></tr>";
 
-        echo "<input type='checkbox' class='monthList' value='1'> Январь</br>";
-        echo "<input type='checkbox' class='monthList' value='2'> Февраль</br>";
-        echo "<input type='checkbox' class='monthList' value='3'> Март</br>";
-        echo "<input type='checkbox' class='monthList' value='4'> Апрель</br>";
-        echo "<input type='checkbox' class='monthList' value='5'> Май</br>";
-        echo "<input type='checkbox' class='monthList' value='6'> Июнь</br>";
-        echo "<input type='checkbox' class='monthList' value='7'> Июль</br>";
-        echo "<input type='checkbox' class='monthList' value='8'> Август</br>";
-        echo "<input type='checkbox' class='monthList' value='9'> Сентябрь</br>";
-        echo "<input type='checkbox' class='monthList' value='10'> Октябрь</br>";
-        echo "<input type='checkbox' class='monthList' value='11'> Ноябрь</br>";
-        echo "<input type='checkbox' class='monthList' value='12'> Декабрь</br>";
+        echo "<tr><td><input type='checkbox' class='monthList' value='2'> Февраль </td><td>" . $select[2] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='3'> Март </td><td>" . $select[3] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='4'> Апрель </td><td>" . $select[4] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='5'> Май </td><td>" . $select[5] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='6'> Июнь </td><td>" . $select[6] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='7'> Июль </td><td>" . $select[7] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='8'> Август </td><td>" . $select[8] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='9'> Сентябрь </td><td>" . $select[9] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='10'> Октябрь </td><td>" . $select[10] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='11'> Ноябрь </td><td>" . $select[11] . "</td></tr>";
+
+        echo "<tr><td><input type='checkbox' class='monthList' value='12'> Декабрь </td><td>" . $select[12] . "</td></tr></table>";
+
+//        echo "<td valign='top'><p><select id='yearOnMonth''>
+//        <option disabled>Выберите год</option>";
+//        $yearOnMonth = "";
+//        for ($i = 10; $i > 0; $i--) {
+//            $yearOnMonth .= "<option value='" . date('Y', strtotime("-$i year")) ."'>" . date('Y', strtotime("-$i year")) ."</option>";
+//        }
+//
+//        echo "$yearOnMonth<option selected value='" . date('Y', time()) . "'>" . date('Y', time()) . "</option></select></p></td></tr></table>";
+
         echo "</br><span class='btn btn-primary btn-sm addNewItem'>Сравнить</span></div>";
 
         Modal::end();
