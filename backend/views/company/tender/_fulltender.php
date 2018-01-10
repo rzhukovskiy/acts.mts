@@ -268,7 +268,7 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => $userText,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' =>  true,
+                'disabled' =>  \Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN ? false : true,
                 'size' => 'lg',
                 'data' => $usersList,
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],

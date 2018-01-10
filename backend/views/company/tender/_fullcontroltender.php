@@ -85,7 +85,7 @@ function sendControlisarchive() {
                 if (response.success == 'true') { 
                 // Удачно
                 
-                location.reload();
+                location.replace("/company/controltender"); 
                 
                 } else {
                 // Неудачно
