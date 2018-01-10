@@ -207,7 +207,7 @@ function sendCompare() {
                         sumArr[index]['income'] += parseFloat(value['income']);
                         sumArr[index]['profit'] += parseFloat(value['profit']);
                         sumArr[index]['served_at'] = value['served_at'];
-                 console.log(value);
+                 
                
                      if (key == 2) {
                         
@@ -590,8 +590,6 @@ function sendCompare() {
                         $.each(sumArr, function(index,value) {
                        
                          if (typeof sumArr[index] !== 'undefined' && sumArr[index] !== null) {
-                         console.log(value['countServe']);
-                         
                          
                          if(oldvalue[6]['1'] != '') {
                         if (oldvalue[6]['1'] > parseFloat(value['countServe'])) {
@@ -785,6 +783,11 @@ switch ($diff) {
         $period = 0;
 }
 
+$rangeYear = range(date('Y') - 10, date('Y'));
+$currentYear = isset($searchModel->dateFrom)
+    ? date('Y', strtotime($searchModel->dateFrom))
+    : date('Y');
+
 $currentMonth = isset($searchModel->dateFrom)
     ? date('n', strtotime($searchModel->dateFrom))
     : date('n');
@@ -792,11 +795,30 @@ $currentMonth--;
 
 $filters = '';
 $periodForm = '';
-$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, ['class' =>'select-period form-control', 'style' => 'margin-right: 10px;']);
-$periodForm .= Html::dropDownList('month', $currentMonth, $months, ['id' => 'month', 'class' => 'autoinput form-control', 'style' => $diff == 1 ? '' : 'display:none']);
-$periodForm .= Html::dropDownList('half', $currentMonth < 5 ? 0 : 1, $halfs, ['id' => 'half', 'class' => 'autoinput form-control', 'style' => $diff == 6 ? '' : 'display:none']);
-$periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters, ['id' => 'quarter', 'class' => 'autoinput form-control', 'style' => $diff == 3 ? '' : 'display:none']);
-$periodForm .= Html::dropDownList('year', 10, range(date('Y') - 10, date('Y')), ['id' => 'year', 'class' => 'autoinput form-control', 'style' => $diff && $diff <= 12 ? '' : 'display:none']);
+$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, [
+    'class' =>'select-period form-control',
+    'style' => 'margin-right: 10px;'
+]);
+$periodForm .= Html::dropDownList('month', $currentMonth, $months, [
+    'id' => 'month',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 1 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('half', $currentMonth < 5 ? 0 : 1, $halfs, [
+    'id' => 'half',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 6 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters, [
+    'id' => 'quarter',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 3 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
+    'id' => 'year',
+    'class' => 'autoinput form-control',
+    'style' => $diff && $diff <= 12 ? '' : 'display:none'
+]);
 $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
@@ -1039,7 +1061,8 @@ $filters .= 'Выбор периода: ' . $periodForm;
                 var dataTable = " . $chartData . ";
                 var max = 0;
                 dataTable.forEach(function (value) {
-                value.y = parseInt(value.y);
+                
+                value.y = parseFloat(value.y);
                     if (value.y > max) max = value.y;
                 });
                 var options = {

@@ -76,6 +76,7 @@ switch ($diff) {
     default:
         $period = 0;
 }
+
 $rangeYear = range(date('Y') - 10, date('Y'));
 $currentYear = isset($searchModel->dateFrom)
     ? date('Y', strtotime($searchModel->dateFrom))
@@ -88,7 +89,7 @@ $currentMonth--;
 
 $filters = '';
 $periodForm = '';
-$periodForm .= Html::dropDownList('period', $period, Act::$periodList, [
+$periodForm .= Html::dropDownList('period', $period, \common\models\Act::$periodList, [
     'class' =>'select-period form-control',
     'style' => 'margin-right: 10px;'
 ]);
@@ -107,7 +108,7 @@ $periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters
     'class' => 'autoinput form-control',
     'style' => $diff == 3 ? '' : 'display:none'
 ]);
-$periodForm .= Html::dropDownList('year', $currentYear, range(date('Y'), date('Y') - 10), [
+$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
     'id' => 'year',
     'class' => 'autoinput form-control',
     'style' => $diff && $diff <= 12 ? '' : 'display:none'
@@ -335,14 +336,14 @@ $filters .= 'Выбор периода: ' . $periodForm;
         // TODO: refactor it, plz, move collecting data into controller
         $js = "
             var dataTable = [];
-            console.log('Hello');
+            
             $('.table tbody tr').each(function (id, value) {
                 dataTable.push({
                     label: $(this).find('.value_0').text(),
                     y: parseInt($(this).find('.value_2').text().replace(/\s+/g, '').replace(',', '')),
                 });
             });
-            console.log(dataTable);
+            
             var options = {
                 title: {
                     text: 'По компаниям',
