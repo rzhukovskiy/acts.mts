@@ -69,14 +69,11 @@ $this->registerJs($script, View::POS_READY);
                 },
             ],
             [
+                'attribute' => 'name',
+            ],
+            [
                 'attribute' => 'position',
 
-            ],
-            [
-                'attribute' => 'email',
-            ],
-            [
-                'attribute' => 'name',
             ],
             [
                 'attribute' => 'phone',
@@ -89,6 +86,9 @@ $this->registerJs($script, View::POS_READY);
                     return $phone;
 
                 },
+            ],
+            [
+                'attribute' => 'email',
             ],
         ],
     ]);
