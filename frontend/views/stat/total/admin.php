@@ -604,13 +604,13 @@ function sendCompare() {
                         }
                         
                         if(oldvalue[6]['2'] != '') {
-                        if (oldvalue[6]['2'] > parseFloat(value['ssoom'])) {
-                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['ssoom'] - oldvalue[6]['2'])/value['ssoom']*100).toFixed(1)) + '%</span>';
+                        if (oldvalue[6]['2'] > (parseFloat(value['profit'])/parseFloat(value['countServe']))) {
+                           ssoom = (parseFloat(value['profit'])/parseFloat(value['countServe'])).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs((((parseFloat(value['profit'])/parseFloat(value['countServe'])) - oldvalue[6]['2'])/(parseFloat(value['profit'])/parseFloat(value['countServe']))*100).toFixed(1)) + '%</span>';
                         } else {
-                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['ssoom'] - oldvalue[6]['2'])/value['ssoom']*100).toFixed(1))  + '%</span>';
+                           ssoom = (parseFloat(value['profit'])/parseFloat(value['countServe'])).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs((((parseFloat(value['profit'])/parseFloat(value['countServe'])) - oldvalue[6]['2'])/(parseFloat(value['profit'])/parseFloat(value['countServe']))*100).toFixed(1))  + '%</span>';
                         }
                         } else {
-                           ssoom = value['ssoom'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                           ssoom = (parseFloat(value['profit'])/parseFloat(value['countServe'])).toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
                         }
                         
                         if(oldvalue[6]['3'] != '') {
@@ -670,7 +670,7 @@ function sendCompare() {
                         }
                         
                         oldvalue[6]['1'] = parseFloat(value['countServe']);
-                        oldvalue[6]['2'] = parseFloat(value['ssoom']);
+                        oldvalue[6]['2'] = parseFloat(value['profit'])/parseFloat(value['countServe']);
                         oldvalue[6]['3'] = parseFloat(value['income']);
                         oldvalue[6]['4'] = parseFloat(value['profit']);
                         
