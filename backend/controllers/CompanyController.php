@@ -806,6 +806,14 @@ class CompanyController extends Controller
 
     }
 
+    public static function getCount($count)
+    {
+
+        $countTenders = TenderLinks::find()->where(['member_id' => $count])->count();
+
+        return $countTenders;
+
+    }
 
     // Раздел архив тендеров
     public function actionArchivetender($win)

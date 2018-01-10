@@ -43,6 +43,13 @@ use yii\helpers\Html;
                     },
                 ],
                 [
+                    'vAlign'=>'middle',
+                    'header' => 'Кол-во тендеров',
+                    'value' => function ($data) {
+                        return \backend\controllers\CompanyController::getCount($data->id);
+                    },
+                ],
+                [
                     'attribute' => 'inn',
                     'vAlign'=>'middle',
                     'header' => 'ИНН',
