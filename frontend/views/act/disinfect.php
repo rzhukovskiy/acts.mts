@@ -16,6 +16,7 @@ echo $this->render('_mass_form', [
     'searchModel' => $searchModel,
     'serviceList' => $serviceList,
     'companyList' => $companyList,
+    'showError' => $showError,
 ]);
 
 if ($dataProvider) {

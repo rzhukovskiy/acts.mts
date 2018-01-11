@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Mark;
 use common\models\PenaltyInfo;
 use common\models\ActExport;
 use common\components\ActExporter;
@@ -16,6 +17,7 @@ use common\models\search\ActSearch;
 use common\models\search\CarSearch;
 use common\models\search\EntrySearch;
 use common\models\Service;
+use common\models\Type;
 use common\models\User;
 use frontend\models\Penalty;
 use yii;
@@ -25,6 +27,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use common\models\CompanyOffer;
+use PHPExcel_IOFactory;
 
 class ActController extends Controller
 {
@@ -384,8 +387,10 @@ class ActController extends Controller
         $dataProvider = null;
         $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
         $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
-        
+        $showError = '';
+
         if ($serviceId) {
+            // Массовая дезинфекция из компании
             $searchModel->is_infected = 1;
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -405,9 +410,147 @@ class ActController extends Controller
             }
         }
 
+        if(Yii::$app->request->isPost) {
+            // Массовая дезинфекция из файла
+            $uploadFile = UploadedFile::getInstanceByName('CarList');
+
+            if(isset($uploadFile)) {
+
+                $period = Yii::$app->request->post('CarSearch')['period'];
+                $service_id = Yii::$app->request->post('service_id');
+
+                // Проверяем что загружен Excel файл
+                $arrFileName = explode('.', $uploadFile->name);
+                $countArrFileName = count($arrFileName) - 1;
+
+                if (($arrFileName[$countArrFileName] == 'xlsx') || ($arrFileName[$countArrFileName] == 'xls')) {
+                    $pExcel = PHPExcel_IOFactory::load($uploadFile->tempName);
+
+                    // Загружаем только первую страницу
+                    $firstPage = false;
+                    $tables = [];
+
+                    foreach ($pExcel->getWorksheetIterator() as $worksheet) {
+
+                        if ($firstPage == false) {
+                            $tables[] = $worksheet->toArray();
+                            $firstPage = true;
+                        }
+
+                    }
+
+                    $tables = $tables[0];
+
+                    if (isset($tables[0][0])) {
+                        $companyName = trim($tables[0][0]);
+
+                        // Ищем компанию по названию
+                        $companyArr = Company::find()->where(['name' => $companyName])->asArray()->select('id')->column();
+                        $company_id = count($companyArr) > 0 ? $companyArr[0] : 0;
+
+                        if ($company_id > 0) {
+
+                            // Цикл по строкам
+                            $numRows = count($tables);
+
+                            $numTrueDis = 0;
+
+                            if ($numRows > 2) {
+
+                                for ($i = 0; $i < $numRows; $i++) {
+
+                                    // Цикл по столбцам
+                                    if ($i > 1) {
+
+                                        $numCol = count($tables[$i]);
+
+                                        if ($numCol > 3) {
+                                            // Проверка
+
+                                            if ((isset($tables[$i][0]) && (isset($tables[$i][1]))) && (isset($tables[$i][2])) && (isset($tables[$i][3]))) {
+
+                                                if ($tables[$i][3] == 1) {
+
+                                                    $mark = $tables[$i][0];
+                                                    $number = mb_strtoupper(str_replace(' ', '', $tables[$i][1]), 'UTF-8');
+                                                    $type_id = $tables[$i][2];
+
+                                                    $markArr = Mark::find()->where(['name' => $mark])->asArray()->select('id')->column();
+                                                    $mark_id = count($markArr) > 0 ? $markArr[0] : 0;
+
+                                                    $typeArr = Type::find()->where(['name' => $type_id])->asArray()->select('id')->column();
+                                                    $type_id = count($typeArr) > 0 ? $typeArr[0] : 0;
+
+                                                    $carArr = Car::find()->where(['number' => $number])->asArray()->all();
+                                                    $car_id = isset($carArr[0]['id']) ? $carArr[0]['id'] : 0;
+
+                                                    if(count($carArr) > 0) {
+                                                        $mark_id = $carArr[0]['mark_id'];
+                                                        $type_id = $carArr[0]['type_id'];
+                                                    }
+
+                                                    if (($mark_id > 0) && ($type_id > 0) && (mb_strlen($number) > 3)) {
+
+                                                        $model = new Act();
+                                                        $model->time_str = '01-' . $period;
+                                                        $model->partner_id = Yii::$app->user->identity->company_id;
+
+                                                        $model->client_id = $company_id;
+                                                        $model->car_number = $number;
+                                                        $model->car_id = $car_id;
+                                                        $model->service_type = Service::TYPE_DISINFECT;
+
+                                                        $model->serviceList = [
+                                                            0 => [
+                                                                'service_id' => $service_id,
+                                                                'amount' => 1,
+                                                            ]
+                                                        ];
+                                                        $model->save();
+
+                                                        $numTrueDis++;
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                                if (($numTrueDis == 0) && ($showError == '')) {
+                                    $showError = 'Неверный формат файла.';
+                                } else if (($numTrueDis > 0) && ($showError == '')) {
+                                    return $this->redirect(['act/disinfect', 'CarSearch[period]' => $period, 'CarSearch[company_id]' => $company_id, 'serviceId' => $service_id]);
+                                }
+
+                            }
+
+                        } else {
+                            $showError = 'Неверное название компании. Компания не найдена.';
+                        }
+
+                    } else {
+                        $showError = 'Неверный формат файла.';
+                    }
+
+                } else {
+                    $showError = 'Неверный тип файла.';
+                }
+
+            } else {
+                $showError = 'Не выбран файл.';
+            }
+
+        }
+
         return $this->render('disinfect', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'showError' => $showError,
             'serviceList' => Service::find()->where(['type' => Service::TYPE_DISINFECT])->select(['description', 'id'])->indexBy('id')->column(),
             'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->active()->column(),
             'role' => Yii::$app->user->identity->role,
