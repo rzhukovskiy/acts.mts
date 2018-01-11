@@ -14,6 +14,28 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use kartik\date\DatePicker;
 use yii\web\View;
+use yii\helpers\Url;
+
+$actionLinkGetComments = Url::to('@web/load/getcomments');
+$period = isset(Yii::$app->request->get('ActSearch')['period']) ? Yii::$app->request->get('ActSearch')['period'] : date("n-Y");
+$type = Yii::$app->request->get('type');
+// Выделение номера акта
+
+$css = "#previewStatus {
+background:#fff;
+padding:12px;
+position:fixed;
+font-size:14px;
+z-index:50;
+border-radius:3px;
+border:1px solid #069;
+}
+
+.showStatus:hover {
+cursor:pointer;
+}
+";
+$this->registerCss($css);
 
 //Скрытие фильтров
 $script = <<< JS
@@ -86,6 +108,113 @@ textClose.html('Закрыто: <b>' + numClose + ' (' + numClosePer + '%)</b> �
 textOpen.html('Открыто: <b>' + numOpen + ' (' + numOpenPer + '%)</b> загрузок');
 }
 
+// При наведении на название показывается статус актов
+var margTop = 0;
+var margLeft = 0;
+var openWindowComm = false;
+
+var arrRessComm = [];
+
+var showStatusVar = $(".showStatus");
+    showStatusVar.hover(function() {
+        
+        if(openWindowComm == false) {
+        
+            if($("#previewStatus")) {
+                $("#previewStatus").remove(); 
+            }
+            
+            openWindowComm = true;
+            
+            var companyName = $(this).text();
+            
+                if($(this).parent().data('company') > 0) {
+        
+                var idKey = $(this).parent().data('company');
+                    console.log(idKey);
+                if(arrRessComm[idKey]) {
+                    
+            this.t = this.title;
+            this.title = "";
+            var c = (this.t != "") ? "<br/>" + this.t : "";
+            $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
+
+            margTop = window.event.clientY - 20;
+            margLeft = window.event.clientX + document.body.scrollLeft + 25;
+            
+            $("#previewStatus").css("top", margTop + "px")
+            .css("left", margLeft + "px")
+            .fadeIn("fast");
+                    
+                if($("#previewStatus")) {
+                $("#previewStatus").html(arrRessComm[idKey]);
+                }
+                openWindowComm = false;
+                } else {
+                
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'id=' + idKey + '&period=' + '$period'  + '&type=' + '$type',
+                url  : '$actionLinkGetComments',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                arrRessComm[idKey] = "<b>" + companyName + "</b><br />" + response.comment;
+                
+                if($("#previewStatus")) {
+                $("#previewStatus").html(arrRessComm[idKey]);
+                }
+                openWindowComm = false;
+                } else {
+                // Неудачно
+                openWindowComm = false;
+                }
+                
+                }
+                });
+                
+                }
+        
+            this.t = this.title;
+            this.title = "";
+            var c = (this.t != "") ? "<br/>" + this.t : "";
+            $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
+
+            margTop = window.event.clientY - 20;
+            margLeft = window.event.clientX + document.body.scrollLeft + 25;
+            
+            $("#previewStatus").css("top", margTop + "px")
+            .css("left", margLeft + "px")
+            .fadeIn("fast");
+                
+                } else {
+                    openWindowComm = false;
+                }
+            
+            }
+            
+        },
+        function() {
+        if(openWindowComm == false) {
+            $("#previewStatus").remove();
+            margTop = 0;
+            margLeft = 0;
+            }
+        });
+    
+    showStatusVar.mousemove(function(e) {
+        margTop = window.event.clientY - 20;
+        margLeft = window.event.clientX + document.body.scrollLeft + 25;
+        $("#previewStatus")
+            .css("top", margTop + "px")
+            .css("left", margLeft + "px");
+    });
+// При наведении на название показывается статус актов
 JS;
 $this->registerJs($script, View::POS_READY);
 //Выбор периода

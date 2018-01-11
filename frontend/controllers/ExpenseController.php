@@ -125,10 +125,8 @@ class ExpenseController extends Controller
         $model->expense_company = $id;
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
-
             return $this->redirect(['expense/expensecomp', 'id' => $id]);
-
-        }
+        } else { echo 'Неправильно введена сумма'; }
     } else {
          return $this->redirect(['/']);
         }

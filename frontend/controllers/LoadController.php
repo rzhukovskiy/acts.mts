@@ -11,6 +11,7 @@ use common\models\Company;
 use common\models\CompanyMember;
 use common\models\Entry;
 use common\models\Lock;
+use common\models\LockInfo;
 use common\models\search\ActSearch;
 use common\models\search\CarSearch;
 use common\models\search\CompanyMemberSearch;
@@ -38,22 +39,22 @@ class LoadController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact', 'stickers'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact', 'stickers'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view'],
+                        'actions' => ['list', 'view', 'comment', 'getcomments'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'comment', 'getcomments'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -175,6 +176,57 @@ class LoadController extends Controller
 
             return 2;
         }
+    }
+
+    public function actionComment($id, $type, $period, $company = 0)
+    {
+        $model = LockInfo::findOne(['partner_id' => $id, 'type' => $type, 'period' => $period]);
+        if (isset($model)) {
+        } else {
+            $model = new LockInfo();
+            $model->partner_id = $id;
+            $model->type = $type;
+            $model->period = $period;
+        }
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+                return $this->redirect(['load/list', 'ActSearch[period]' => $period, 'id' => $id, 'type' => $type, 'period' => $period, 'company' => $company]);
+        }
+
+        return $this->render('comment',
+                [
+                    'model' => $model,
+                    'id' => $id,
+                    'type' => $type,
+                    'period' => $period,
+                    'company' => $company,
+                ]);
+
+    }
+
+    public function actionGetcomments()
+    {
+
+        if(Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+            $period = Yii::$app->request->post('period');
+            $type = Yii::$app->request->post('type');
+            $resComm = '';
+
+            $model = LockInfo::findOne(['partner_id' => $id, 'type' => $type, 'period' => $period]);
+
+            if (isset($model)) {
+                $resComm = "<u style='color:#757575;'>Комментарий:</u> " . $model->comment . "<br />";
+            } else {
+                $resComm = "<u style='color:#757575;'>Комментарий:</u><br />";
+            }
+
+            echo json_encode(['success' => 'true', 'comment' => $resComm]);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
     }
 
     public function actionContact($id)
