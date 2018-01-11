@@ -29,7 +29,7 @@ class LockInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['partner_id', 'type', 'period', 'comment'], 'required'],
+            [['partner_id', 'type', 'period'], 'required'],
             [['partner_id', 'type'], 'integer'],
             [['period', 'comment'], 'string', 'max' => 255],
         ];
