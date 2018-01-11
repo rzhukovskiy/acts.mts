@@ -122,9 +122,9 @@ class LoadHelper
                 },
                 'contentOptions' =>function ($model, $key, $index, $column){
                     if($GLOBALS['company'] == 1) {
-                        return ['data-id' => $model->id];
+                        return ['data-company' => $model->id];
                     } else {
-                        return ['data-id' => $model->partner_id];
+                        return ['data-company' => $model->partner_id];
                     }
                 },
             ],

@@ -153,7 +153,7 @@ trait ChartTrait
         $data = $this->fillWithMonth();
 
         foreach ($models as $model) {
-            $month = (int) date('m',strtotime($model->dateMonth));
+            $month = (int) date('m', strtotime($model->dateMonth));
             $data[$month-1]['y'] = $model->profit; // нумерация отстает от месяца на 1
         }
 
