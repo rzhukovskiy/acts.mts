@@ -12,6 +12,7 @@ use common\models\Company;
 use common\models\Department;
 use common\models\search\CompanySearch;
 use common\models\search\MessageSearch;
+use common\models\search\TenderOwnerSearch;
 use common\models\Service;
 use common\models\User;
 use yii;
@@ -66,6 +67,8 @@ class menuLeftWidget extends Widget
         $searchModel->is_read = null;
         $countMessage = $searchModel->search([])->count;
 
+        $countOwner = TenderOwnerSearch::find()->where(['tender_user' => 0])->count();
+
         $items = [];
         // Admin links
         if ($currentUser && $currentUser->role == User::ROLE_ADMIN) {
@@ -86,7 +89,7 @@ class menuLeftWidget extends Widget
                     'label'  => 'Тендеры',
                     'url'    => '#',
                     'active' => ((Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
-                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender') || (Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtenderlinks') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'membersontender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender') || (Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtenderlinks') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'membersontender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerlist') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderowneradd') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerupdate') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerfull'),
                     'items'  => [
                         [
                             'label'  => 'Компании' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
@@ -125,6 +128,11 @@ class menuLeftWidget extends Widget
                             'label' => 'Архив тендеров',
                             'url' => ['/company/archivetender?win=1'],
                             'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
+                        ],
+                        [
+                            'label' => 'Распределение<br />тендеров' . ($countOwner ? '<span class="label label-success">' . $countOwner . '</span>' : ''),
+                            'url' => ['/company/tenderownerlist?win=1'],
+                            'active' => (Yii::$app->controller->id == 'company' && (Yii::$app->controller->action->id == 'tenderownerlist' || Yii::$app->controller->action->id == 'tenderowneradd' || Yii::$app->controller->action->id == 'tenderownerupdate' || Yii::$app->controller->action->id == 'tenderownerfull')),
                         ],
                     ],
                 ],
@@ -292,7 +300,7 @@ class menuLeftWidget extends Widget
                     'url'    => '#',
                     'visible'    => ((Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756)) ? true : false,
                     'active' => ((Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
-                            ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender') || (Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtenderlinks') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'membersontender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
+                            ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender') || (Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtenderlinks') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'membersontender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerlist') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderowneradd') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerupdate') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerfull'),
                     'items'  => [
                         [
                             'label'  => 'Компании' . ($countTender ? '<span class="label label-success">' . $countTender . '</span>' : ''),
@@ -331,6 +339,11 @@ class menuLeftWidget extends Widget
                             'label' => 'Архив тендеров',
                             'url' => ['/company/archivetender?win=1'],
                             'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender'),
+                        ],
+                        [
+                            'label' => 'Распределение<br />тендеров' . ($countOwner ? '<span class="label label-success">' . $countOwner . '</span>' : ''),
+                            'url' => ['/company/tenderownerlist?win=1'],
+                            'active' => (Yii::$app->controller->id == 'company' && (Yii::$app->controller->action->id == 'tenderownerlist' || Yii::$app->controller->action->id == 'tenderowneradd' || Yii::$app->controller->action->id == 'tenderownerupdate' || Yii::$app->controller->action->id == 'tenderownerfull')),
                         ],
                     ],
                 ],
