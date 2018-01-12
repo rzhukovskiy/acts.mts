@@ -11,18 +11,24 @@ use common\models\Car;
 /**
  * CarSearch represents the model behind the search form about `common\models\Car`.
  * @property string $period
+ * @property string $periodex
+ * @property string $periodel
+ * @property string $company_del
  */
 class CarSearch extends Car
 {
     public $period;
+    public $periodex;
+    public $periodel;
+    public $company_del;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'company_id', 'mark_id', 'type_id', 'is_infected'], 'integer'],
-            [['number', 'period'], 'safe'],
+            [['id', 'company_id', 'company_del', 'mark_id', 'type_id', 'is_infected'], 'integer'],
+            [['number', 'period', 'periodex', 'periodel'], 'safe'],
         ];
     }
 
@@ -33,7 +39,7 @@ class CarSearch extends Car
     {
         return [
             self::SCENARIO_DEFAULT => ['company_id', 'number','mark_id', 'type_id'],
-            self::SCENARIO_INFECTED => ['company_id', 'period'],
+            self::SCENARIO_INFECTED => ['company_id', 'company_del', 'period', 'periodex', 'periodel'],
             self::SCENARIO_OWNER => ['company_id', 'number','mark_id', 'type_id'],
             'default' => ['company_id', 'number','mark_id', 'type_id'],
         ];
