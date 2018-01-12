@@ -56,7 +56,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'closeload'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'deldisinfect', 'create-entry', 'closeload'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -382,12 +382,13 @@ class ActController extends Controller
         return "Закрыть загрузку";
     }
 
-    public function actionDisinfect($serviceId = null)
+    public function actionDisinfect($serviceId = null, $showError = '')
     {
         $dataProvider = null;
         $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
-        $searchModel->period = date('n-Y', time() - 10 * 24 * 3600);
-        $showError = '';
+        $searchModel->period = date('n-Y', strtotime("+1 month"));
+        $searchModel->periodel = date('n-Y', strtotime("+1 month"));
+        $searchModel->periodex = date('n-Y', strtotime("+1 month"));
 
         if ($serviceId) {
             // Массовая дезинфекция из компании
@@ -416,7 +417,7 @@ class ActController extends Controller
 
             if(isset($uploadFile)) {
 
-                $period = Yii::$app->request->post('CarSearch')['period'];
+                $period = Yii::$app->request->post('CarSearch')['periodex'];
                 $service_id = Yii::$app->request->post('service_id');
 
                 // Проверяем что загружен Excel файл
@@ -555,6 +556,42 @@ class ActController extends Controller
             'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->active()->column(),
             'role' => Yii::$app->user->identity->role,
         ]);
+    }
+
+    // Удаление массовой дезинфекции
+    public function actionDeldisinfect()
+    {
+
+        if(Yii::$app->request->isPost) {
+
+            if((Yii::$app->request->post('CarSearch')) && (isset(Yii::$app->request->post('CarSearch')['periodel'])) && (Yii::$app->request->post('service_id')) && (Yii::$app->request->post('CarSearch')['company_del'])) {
+
+                $period = Yii::$app->request->post('CarSearch')['periodel'];
+                $comopany_id = Yii::$app->request->post('CarSearch')['company_del'];
+                $service_id = Yii::$app->request->post('service_id');
+                $periodQuery = strtotime('01-' . $period);
+
+                $arrPeriod = explode('-', $period);
+
+                if($periodQuery >= strtotime('01-' . date('n-Y', strtotime("+1 month")))) {
+
+                    $query = Yii::$app->db->createCommand("DELETE act, act_scope FROM act INNER JOIN act_scope ON act_scope.act_id = act.id WHERE act.client_id=" . $comopany_id . " AND act.service_type=5 AND act_scope.service_id=" . $service_id . " AND (MONTH(FROM_UNIXTIME(act.served_at)) = " . $arrPeriod[0] . ") AND (YEAR(FROM_UNIXTIME(act.served_at)) = " . $arrPeriod[1] . ");")->query();
+
+                    return $this->redirect(['act/disinfect']);
+                } else {
+                    return $this->redirect(['act/disinfect', 'showError' => 'Задан неверный период']);
+                }
+
+
+
+            } else {
+                return $this->redirect(['act/disinfect', 'showError' => 'Заполните все данные']);
+            }
+
+        } else {
+            return $this->redirect(['act/disinfect', 'showError' => 'Ошибка удаления']);
+        }
+
     }
 
     public function actionFix($type, $company = false)
