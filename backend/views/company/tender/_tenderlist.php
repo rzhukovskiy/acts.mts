@@ -465,6 +465,8 @@ echo GridView::widget([
              return ['style' => 'background: #f3dcf3;'];
          } else if ($model->purchase_status == 58) {
              return ['style' => 'background: #ffe7c6;'];
+         } else if ($model->purchase_status == 85) {
+             return ['style' => 'background: #b3e6d7;'];
          } else {
              return '';
          }
