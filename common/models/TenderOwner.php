@@ -10,6 +10,7 @@ use Yii;
  * @property integer $id
  * @property string $text
  * @property string $data
+ * @property string $link
  * @property integer $tender_user
  * @property integer $tender_id
  */
@@ -32,6 +33,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             [['text'], 'required'],
             [['text'], 'string'],
             [['data'], 'string', 'max' => 20],
+            [['link'], 'string', 'max' => 255],
             [['tender_user', 'tender_id'], 'integer'],
         ];
     }
@@ -47,6 +49,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             'tender_user' => 'Ответственный сотрудник',
             'tender_id' => 'ID Тендер',
             'data' => 'Дата',
+            'link' => 'Документация',
         ];
     }
     /* Связь с моделью User*/

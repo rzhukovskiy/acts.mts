@@ -13,6 +13,8 @@ use yii\data\ActiveDataProvider;
  * @property integer $tender_id
  * @property integer $tender_user
  * @property string $text
+ * @property string $link
+ * @property string $data
  */
 class TenderOwnerSearch extends TenderOwner
 {
@@ -22,7 +24,7 @@ class TenderOwnerSearch extends TenderOwner
     public function rules()
     {
         return [
-            [['text', 'data'], 'string'],
+            [['text', 'data', 'link'], 'string'],
             [['tender_user', 'tender_id'], 'integer'],
         ];
     }

@@ -114,6 +114,31 @@ echo Tabs::widget([
             </tr>
             <tr>
                 <td class="list-label-md">
+                    <?= $model->getAttributeLabel('link') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'link',
+                        'displayValue' => $model->link ? $model->link : '',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите ссылку'],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
                     <?= $model->getAttributeLabel('tender_id') ?></td>
                 <td>
                     <?= Editable::widget([

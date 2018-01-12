@@ -24,13 +24,26 @@ $collumn = [
     [
         'attribute' => 'text',
         'vAlign'=>'middle',
-        'header' => 'Текст',
         'value' => function ($data) {
 
             if ($data->text) {
                 return $data->text;
             } else {
                 return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'link',
+        'vAlign'=>'middle',
+        'format' => 'raw',
+        'value' => function ($data) {
+
+            if (isset($data->link)) {
+                return Html::a('ссылка', $data->link, ['target' => '_blank']);
+            } else {
+                return '';
             }
 
         },
@@ -111,6 +124,20 @@ $collumn = [
                     return date('d.m.Y', $data->data);
                 } else {
                     return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'link',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'value' => function ($data) {
+
+                if (isset($data->link)) {
+                    return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                } else {
+                    return '';
                 }
 
             },
