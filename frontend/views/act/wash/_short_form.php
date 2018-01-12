@@ -74,6 +74,7 @@ if (!empty($serviceList)) {
                 } else {
                 // Неудачно
                 $("#act-type_id").val('');
+                $("#act-mark_id").val('');
                 }
                 
                 }
