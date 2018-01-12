@@ -355,13 +355,13 @@ class Act extends ActiveRecord
             case self::ERROR_EXPENSE:
                 $hasError = !$this->expense;
                 foreach ($this->partnerScopes as $scope) {
-                    $hasError = $hasError || !$scope->price;
+                    $hasError = $hasError || ($scope->price == 0) ? 1 : 0;
                 }
                 break;
             case self::ERROR_INCOME:
                 $hasError = !$this->income;
                 foreach ($this->clientScopes as $scope) {
-                    $hasError = $hasError || !$scope->price;
+                    $hasError = $hasError || ($scope->price == 0) ? 1 : 0;
                 }
                 break;
             case self::ERROR_CHECK:
