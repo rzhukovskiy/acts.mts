@@ -201,7 +201,33 @@ class CompanyController extends Controller
         if(($service_id > 0) && ($newPrice >= 0)) {
 
             $companyService = CompanyService::findOne($service_id);
+            $oldPrice = $companyService->price;
             $companyService->price = $newPrice;
+
+            // Уведомление Герберта
+            $plainTextContent = '';
+
+            if(Yii::$app->user->identity->id != 1) {
+                $user_id = Yii::$app->user->identity->id;
+                $modelUser = User::findOne(['id' => $user_id]);
+                $companyModel = Company::findOne(['id' => $companyService->company_id]);
+
+                $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
+
+                $modelService = Service::findOne(['id' => $companyService->service_id]);
+                $modelType = Type::findOne(['id' => $companyService->type_id]);
+                $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', старая цена: ' . $oldPrice . ' руб. <b>новая цена:</b> ' . $newPrice . ' руб.<br />';
+
+                $toEmail = "mtransservice@mail.ru";
+
+                $mailCont = Yii::$app->mailer->compose()
+                    ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                    ->setTo($toEmail)
+                    ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
+                    ->setHtmlBody($plainTextContent)->send();
+
+            }
+            // Уведомление Герберта
 
             if ($companyService->save()) {
                 return 1;
