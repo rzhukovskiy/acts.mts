@@ -951,7 +951,7 @@ class ActExporter
                 )
             ));
             if ($this->company) {
-                if($serviceDescription == 'доп. дезинфекция') {
+                if ($serviceDescription == 'доп. дезинфекция') {
                     $companyWorkSheet->setCellValue('F5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
                 } else {
                     $companyWorkSheet->setCellValue('F5', date('1 ', $this->time) . $monthName[1] . date(' Y', $this->time));
@@ -990,7 +990,61 @@ class ActExporter
                 )
             ));
             $companyWorkSheet->setCellValue('B' . $row, $company->getRequisitesByType($this->serviceType, 'header'));
+        } else if ($this->serviceType == Company::TYPE_WASH) {
+            $companyWorkSheet->getStyle('B2:J4')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                )
+            ));
+            $companyWorkSheet->mergeCells('B2:J2');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('B2:K2');
+            }
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
+            $companyWorkSheet->setCellValue('B2', $text);
+            $companyWorkSheet->mergeCells('B3:J3');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
+            $companyWorkSheet->setCellValue('B3', $text);
+            $companyWorkSheet->mergeCells('B4:J4');
+            $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
+            $companyWorkSheet->setCellValue('B4', $text);
 
+            $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+            $companyWorkSheet->getStyle('H5:J5')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                )
+            ));
+            $companyWorkSheet->mergeCells('H5:J5');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('H5:K5');
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
+            } else {
+                $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+            }
+
+            $companyWorkSheet->mergeCells('B8:J8');
+            $companyWorkSheet->mergeCells('B7:J7');
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B7', "Заказчик: $company->name");
+            } else {
+                $companyWorkSheet->setCellValue('B7', "Исполнитель: $company->name");
+                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+            }
+
+            $companyWorkSheet->mergeCells('B10:J10');
+            $companyWorkSheet->getStyle('B10:J10')->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B10:J10')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
+                )
+            ));
+            $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
+            $row = 10;
         } else {
             $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
                 'alignment' => array(
@@ -1685,13 +1739,14 @@ class ActExporter
                 $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                 $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                 $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                 if($company->is_split) {
-                    $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                    $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                 }
 
-                $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                 if($company->is_split) {
-                    $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                    $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                 }
                 $companyWorkSheet->fromArray($headers, null, 'B12');
                 /** @var Act $data */
@@ -1704,7 +1759,7 @@ class ActExporter
                     if ($isParent && $currentId != $data->client_id) {
                         $row++;
 
-                        $companyWorkSheet->getStyle("B$row:I$row")->applyFromArray(array(
+                        $companyWorkSheet->getStyle("B$row:J$row")->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -1712,7 +1767,7 @@ class ActExporter
                             )
                         );
 
-                        $companyWorkSheet->mergeCells("B$row:I$row");
+                        $companyWorkSheet->mergeCells("B$row:J$row");
                         $companyWorkSheet->setCellValue("B$row", $data->client->name);
                         $currentId = $data->client_id;
                     }
@@ -1726,6 +1781,7 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                     if($company->is_split) {
                         $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -1773,7 +1829,7 @@ class ActExporter
                     $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                 }
 
-                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':J' . $rowStarts)->applyFromArray(array(
                         'font' => array(
                             'bold' => true,
                             'color' => array('argb' => 'FF006699'),
@@ -1781,7 +1837,7 @@ class ActExporter
                     )
                 );
                 if($company->is_split) {
-                    $companyWorkSheet->getStyle('J12')->applyFromArray(array(
+                    $companyWorkSheet->getStyle('K12')->applyFromArray(array(
                             'font' => array(
                                 'bold' => true,
                                 'color' => array('argb' => 'FF006699'),
@@ -1790,7 +1846,7 @@ class ActExporter
                     );
                 }
 
-                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":J$row")
                     ->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
@@ -1801,7 +1857,7 @@ class ActExporter
                         )
                     );
                 if($company->is_split) {
-                    $companyWorkSheet->getStyle("J12:J$row")
+                    $companyWorkSheet->getStyle("K12:K$row")
                         ->applyFromArray(array(
                                 'borders' => array(
                                     'allborders' => array(
@@ -1974,11 +2030,11 @@ class ActExporter
             $row++;
             if ($this->serviceType == Company::TYPE_WASH) {
                 if($company->is_split) {
+                    $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                    $companyWorkSheet->setCellValue("J$row", "$total");
+                } else {
                     $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                     $companyWorkSheet->setCellValue("I$row", "$total");
-                } else {
-                    $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                    $companyWorkSheet->setCellValue("H$row", "$total");
                 }
             } else {
                 $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -1995,12 +2051,21 @@ class ActExporter
             }
 
             $row++; $row++;
-            $companyWorkSheet->mergeCells("B$row:I$row");
-            if($company->is_split) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 $companyWorkSheet->mergeCells("B$row:J$row");
+                if ($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:J$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:J$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
             }
-            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
-            $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
 
             // Количество символов после запятой
             $intVal = (Int) $total;
@@ -2017,12 +2082,22 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", $text);
 
             $row++;
-            $companyWorkSheet->mergeCells("B$row:I$row");
-            if($company->is_split) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 $companyWorkSheet->mergeCells("B$row:J$row");
+                if ($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:J$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:J$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+
             }
-            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
-            $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
             $text = "Настоящий Акт составлен в 2 (двух) экземплярах, один из которых находится у Исполнителя, второй – у Заказчика.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
@@ -2075,6 +2150,9 @@ class ActExporter
                 $objDrawing = new \PHPExcel_Worksheet_Drawing();
                 $objDrawing->setPath('images/post.png');
                 $objDrawing->setCoordinates("D$row");
+                $objDrawing->setResizeProportional(false);
+                $objDrawing->setWidth(100);
+                $objDrawing->setHeight(200);
                 $objDrawing->setWorksheet($companyWorkSheet);
                 $objDrawing->setOffsetX(30);
             } else if ($company->is_act_sign == 2) {
@@ -3601,7 +3679,8 @@ class ActExporter
                 $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
             }
 
-            $row++; $row++;
+            $row++;
+            $row++;
 
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
@@ -3614,34 +3693,34 @@ class ActExporter
                 )
             ));
             $companyWorkSheet->setCellValue('B' . $row, $companyMain->getRequisitesByType($this->serviceType, 'header'));
-        } else {
-            $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
+        } else if ($this->serviceType == Company::TYPE_WASH) {
+            $companyWorkSheet->getStyle('B2:J4')->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
                 )
             ));
-            $companyWorkSheet->mergeCells('B2:I2');
+            $companyWorkSheet->mergeCells('B2:J2');
             if($companyMain->is_split) {
-                $companyWorkSheet->mergeCells('B2:J2');
+                $companyWorkSheet->mergeCells('B2:K2');
             }
             $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
             $companyWorkSheet->setCellValue('B2', $text);
-            $companyWorkSheet->mergeCells('B3:I3');
+            $companyWorkSheet->mergeCells('B3:J3');
             $text = "по договору на оказание услуг " . $companyMain->getRequisitesByType($this->serviceType, 'contract');
             $companyWorkSheet->setCellValue('B3', $text);
-            $companyWorkSheet->mergeCells('B4:I4');
+            $companyWorkSheet->mergeCells('B4:J4');
             $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
             $companyWorkSheet->setCellValue('B4', $text);
 
             $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
-            $companyWorkSheet->getStyle('H5:I5')->applyFromArray(array(
+            $companyWorkSheet->getStyle('H5:J5')->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
                 )
             ));
-            $companyWorkSheet->mergeCells('H5:I5');
+            $companyWorkSheet->mergeCells('H5:J5');
             if($companyMain->is_split) {
-                $companyWorkSheet->mergeCells('H5:J5');
+                $companyWorkSheet->mergeCells('H5:K5');
             }
             if ($this->company) {
                 $companyWorkSheet->setCellValue('H5', date("1 ", $this->time) . $monthName[1] . date(' Y', $this->time));
@@ -3649,8 +3728,8 @@ class ActExporter
                 $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
             }
 
-            $companyWorkSheet->mergeCells('B' . $row . ':I' . $row);
-            $companyWorkSheet->mergeCells('B7:I7');
+            $companyWorkSheet->mergeCells('B' . $row . ':J' . $row);
+            $companyWorkSheet->mergeCells('B7:J7');
             if ($this->company) {
                 $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
                 $companyWorkSheet->setCellValue('B7', "Заказчик: ООО Агро-Авто (Москва ЮГ - МФП)");
@@ -3663,9 +3742,66 @@ class ActExporter
 
 
             $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
-            $companyWorkSheet->mergeCells('B' . $row .':I' . $row);
-            $companyWorkSheet->getStyle('B' . $row .':I' . $row)->getAlignment()->setWrapText(true);
-            $companyWorkSheet->getStyle('B' . $row .':I' . $row)->applyFromArray(array(
+            $companyWorkSheet->mergeCells('B' . $row .':J' . $row);
+            $companyWorkSheet->getStyle('B' . $row .':J' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row .':J' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
+                )
+            ));
+            $companyWorkSheet->setCellValue('B' . $row, $companyMain->getRequisitesByType($this->serviceType, 'header'));
+        } else {
+            $companyWorkSheet->getStyle('B2:J4')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                )
+            ));
+            $companyWorkSheet->mergeCells('B2:J2');
+            if($companyMain->is_split) {
+                $companyWorkSheet->mergeCells('B2:K2');
+            }
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
+            $companyWorkSheet->setCellValue('B2', $text);
+            $companyWorkSheet->mergeCells('B3:J3');
+            $text = "по договору на оказание услуг " . $companyMain->getRequisitesByType($this->serviceType, 'contract');
+            $companyWorkSheet->setCellValue('B3', $text);
+            $companyWorkSheet->mergeCells('B4:J4');
+            $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
+            $companyWorkSheet->setCellValue('B4', $text);
+
+            $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+            $companyWorkSheet->getStyle('H5:J5')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                )
+            ));
+            $companyWorkSheet->mergeCells('H5:J5');
+            if($companyMain->is_split) {
+                $companyWorkSheet->mergeCells('H5:K5');
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('H5', date("1 ", $this->time) . $monthName[1] . date(' Y', $this->time));
+            } else {
+                $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+            }
+
+            $companyWorkSheet->mergeCells('B' . $row . ':J' . $row);
+            $companyWorkSheet->mergeCells('B7:J7');
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B7', "Заказчик: ООО Агро-Авто (Москва ЮГ - МФП)");
+            } else {
+                $companyWorkSheet->setCellValue('B7', "Исполнитель: ООО Агро-Авто (Москва ЮГ - МФП)");
+                $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
+            }
+
+            $row++; $row++;
+
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
+            $companyWorkSheet->mergeCells('B' . $row .':J' . $row);
+            $companyWorkSheet->getStyle('B' . $row .':J' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row .':J' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
                 )
@@ -4295,17 +4431,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[154][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[154][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[154][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -4325,6 +4462,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[154][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -4356,7 +4494,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -4364,7 +4502,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[154][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -4373,7 +4511,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -4384,7 +4522,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[154][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -4481,11 +4619,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($dataMfpTmp[154][0]->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -5123,17 +5261,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[900][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[900][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[900][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -5153,6 +5292,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[900][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -5184,7 +5324,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -5192,7 +5332,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[900][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -5201,7 +5341,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -5212,7 +5352,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[900][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -5309,11 +5449,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($dataMfpTmp[900][0]->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -5951,17 +6091,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[849][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $dataList = $dataMfpTmp[849][1];
 
                         $rowStart++; $row++;
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[849][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -5981,6 +6122,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[849][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -6012,7 +6154,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -6020,7 +6162,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[849][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -6029,7 +6171,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -6040,7 +6182,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[849][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -6137,11 +6279,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($dataMfpTmp[849][0]->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -6779,17 +6921,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[850][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[850][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[850][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -6809,6 +6952,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[850][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -6840,7 +6984,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -6848,7 +6992,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[850][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -6857,7 +7001,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -6868,7 +7012,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[850][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -6965,11 +7109,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($dataMfpTmp[850][0]->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -7607,17 +7751,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[851][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[851][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[851][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -7637,6 +7782,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[851][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -7668,7 +7814,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -7676,7 +7822,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[851][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -7685,7 +7831,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -7696,7 +7842,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[851][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -7793,11 +7939,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($dataMfpTmp[851][0]->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -8435,17 +8581,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[852][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[852][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[852][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -8465,6 +8612,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[852][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -8496,7 +8644,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -8504,7 +8652,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[852][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -8513,7 +8661,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -8524,7 +8672,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[852][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -8621,11 +8769,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -9263,17 +9411,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[1957][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[1957][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[1957][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -9293,6 +9442,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[1957][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -9324,7 +9474,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -9332,7 +9482,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[1957][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -9341,7 +9491,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -9352,7 +9502,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[1957][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -9449,11 +9599,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -10091,17 +10241,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[2073][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[2073][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[2073][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -10121,6 +10272,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[2073][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -10152,7 +10304,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -10160,7 +10312,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[2073][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -10169,7 +10321,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -10180,7 +10332,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[2073][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -10277,11 +10429,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -10919,17 +11071,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[2074][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[2074][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[2074][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -10949,6 +11102,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[2074][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -10980,7 +11134,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -10988,7 +11142,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[2074][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -10997,7 +11151,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -11008,7 +11162,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[2074][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -11105,11 +11259,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -11747,17 +11901,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[2075][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[2075][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[2075][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -11777,6 +11932,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[2075][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -11808,7 +11964,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -11816,7 +11972,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[2075][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -11825,7 +11981,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -11836,7 +11992,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[2075][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -11933,11 +12089,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -12575,17 +12731,18 @@ class ActExporter
                         $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
                         $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                        $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
                         if ($dataMfpTmp[2076][0]->is_split) {
-                            $companyWorkSheet->getColumnDimension('J')->setAutoSize(true);
+                            $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
                         }
 
                         $rowStart++; $row++;
 
                         $dataList = $dataMfpTmp[2076][1];
 
-                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
+                        $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Вид услуги', 'Стоимость', '№ Чека'];
                         if ($dataMfpTmp[2076][0]->is_split) {
-                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
+                            $headers = ['№', 'Число', '№ Карты', 'Марка ТС', 'Тип ТС', 'Госномер', 'Прицеп', 'Вид услуги', 'Стоимость', '№ Чека'];
                         }
                         $companyWorkSheet->fromArray($headers, null, 'B' . $rowStart);
                         /** @var Act $data */
@@ -12605,6 +12762,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $date->format('j'));
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->card) ? $data->card->number : $data->card_id);
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->mark) ? $data->mark->name : "");
+                            $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, isset($data->type) ? $data->type->name : "");
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->car_number);
                             if ($dataMfpTmp[2076][0]->is_split) {
                                 $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $data->extra_car_number);
@@ -12636,7 +12794,7 @@ class ActExporter
                             $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, ' ' . $data->check);
                         }
 
-                        $companyWorkSheet->getStyle('B' . $rowStart . ':I' . $rowStart)->applyFromArray(array(
+                        $companyWorkSheet->getStyle('B' . $rowStart . ':J' . $rowStart)->applyFromArray(array(
                                 'font' => array(
                                     'bold' => true,
                                     'color' => array('argb' => 'FF006699'),
@@ -12644,7 +12802,7 @@ class ActExporter
                             )
                         );
                         if ($dataMfpTmp[2076][0]->is_split) {
-                            $companyWorkSheet->getStyle('J' . $rowStart)->applyFromArray(array(
+                            $companyWorkSheet->getStyle('K' . $rowStart)->applyFromArray(array(
                                     'font' => array(
                                         'bold' => true,
                                         'color' => array('argb' => 'FF006699'),
@@ -12653,7 +12811,7 @@ class ActExporter
                             );
                         }
 
-                        $companyWorkSheet->getStyle("B$rowStart:I$row")
+                        $companyWorkSheet->getStyle("B$rowStart:J$row")
                             ->applyFromArray(array(
                                     'borders' => array(
                                         'allborders' => array(
@@ -12664,7 +12822,7 @@ class ActExporter
                                 )
                             );
                         if ($dataMfpTmp[2076][0]->is_split) {
-                            $companyWorkSheet->getStyle("J$rowStart:J$row")
+                            $companyWorkSheet->getStyle("K$rowStart:K$row")
                                 ->applyFromArray(array(
                                         'borders' => array(
                                             'allborders' => array(
@@ -12761,11 +12919,11 @@ class ActExporter
                     $row++;
                     if ($this->serviceType == Company::TYPE_WASH) {
                         if ($company->is_split) {
+                            $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                            $companyWorkSheet->setCellValue("J$row", "$total");
+                        } else {
                             $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                             $companyWorkSheet->setCellValue("I$row", "$total");
-                        } else {
-                            $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                            $companyWorkSheet->setCellValue("H$row", "$total");
                         }
                     } else {
                         $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -12869,11 +13027,11 @@ class ActExporter
             $row++;
             if ($this->serviceType == Company::TYPE_WASH) {
                 if($companyMain->is_split) {
+                    $companyWorkSheet->setCellValue("I$row", "ВСЕГО:");
+                    $companyWorkSheet->setCellValue("J$row", "$totalAll");
+                } else {
                     $companyWorkSheet->setCellValue("H$row", "ВСЕГО:");
                     $companyWorkSheet->setCellValue("I$row", "$totalAll");
-                } else {
-                    $companyWorkSheet->setCellValue("G$row", "ВСЕГО:");
-                    $companyWorkSheet->setCellValue("H$row", "$totalAll");
                 }
             } else {
                 $companyWorkSheet->setCellValue("F$row", "ВСЕГО:");
@@ -12890,12 +13048,21 @@ class ActExporter
             }
 
             $row++; $row++;
-            $companyWorkSheet->mergeCells("B$row:I$row");
-            if($companyMain->is_split) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 $companyWorkSheet->mergeCells("B$row:J$row");
+                if ($companyMain->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:J$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if ($companyMain->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:J$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
             }
-            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
-            $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
 
             // Количество символов после запятой
             $intVal = (Int) $totalAll;
@@ -12912,12 +13079,21 @@ class ActExporter
             $companyWorkSheet->setCellValue("B$row", $text);
 
             $row++;
-            $companyWorkSheet->mergeCells("B$row:I$row");
-            if($companyMain->is_split) {
+            if ($this->serviceType == Company::TYPE_WASH) {
                 $companyWorkSheet->mergeCells("B$row:J$row");
+                if ($companyMain->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:J$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if ($companyMain->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:J$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
             }
-            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
-            $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
             $text = "Настоящий Акт составлен в 2 (двух) экземплярах, один из которых находится у Исполнителя, второй – у Заказчика.";
             $companyWorkSheet->setCellValue("B$row", $text);
 
