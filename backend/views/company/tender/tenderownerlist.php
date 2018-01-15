@@ -41,9 +41,13 @@ $collumn = [
         'value' => function ($data) {
 
             if (isset($data->link)) {
-                return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                if ($data->link) {
+                    return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                } else {
+                    return '-';
+                }
             } else {
-                return '';
+                return '-';
             }
 
         },
@@ -68,12 +72,18 @@ $collumn = [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действие',
         'vAlign'=>'middle',
-        'template' => '{update}',
+        'template' => '{update}{delete}',
         'contentOptions' => ['style' => 'min-width: 60px'],
         'buttons' => [
             'update' => function ($url, $data, $key) {
                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
                     ['/company/tenderownerfull', 'id' => $data->id]);
+            },
+            'delete' => function ($url, $data, $key) {
+                if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/company/ownerdelete', 'id' => $data->id],
+                    ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                }
             },
         ],
     ],
@@ -135,9 +145,13 @@ $collumn = [
             'value' => function ($data) {
 
                 if (isset($data->link)) {
+                    if ($data->link) {
                     return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                    } else {
+                        return '-';
+                    }
                 } else {
-                    return '';
+                    return '-';
                 }
 
             },
@@ -146,12 +160,12 @@ $collumn = [
             'class' => 'kartik\grid\ActionColumn',
             'header' => 'Действие',
             'vAlign'=>'middle',
-            'template' => '{link}{update}',
+            'template' => '{link}{update}{delete}',
             'contentOptions' => ['style' => 'min-width: 60px'],
             'buttons' => [
                 'link' => function ($url, $data, $key) {
                     if (isset($data->tender_id)) {
-                        return Html::a('<span class="glyphicon glyphicon-new-window" style="font-size: 17px;margin-right: 10px;"></span>',
+                        return Html::a('<span class="glyphicon glyphicon-new-window" style="font-size: 17px;"></span>',
                             ['company/fulltender', 'tender_id' => $data->tender_id]);
                     } else {
                         return '';
@@ -160,6 +174,12 @@ $collumn = [
                 'update' => function ($url, $data, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
                         ['/company/tenderownerfull', 'id' => $data->id]);
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/company/ownerdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
                 },
             ],
         ],
