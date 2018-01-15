@@ -58,6 +58,8 @@ use yii\behaviors\TimestampBehavior;
  * @property string $comment_date_contract
  * @property integer $tender_close
  * @property string $site
+ * @property float $last_sentence_nds
+ * @property float $last_sentence_nonds
  */
 class Tender extends ActiveRecord
 {
@@ -77,6 +79,8 @@ class Tender extends ActiveRecord
     private $comment_date_contract;
     private $tender_close;
     private $site;
+    private $last_sentence_nds;
+    private $last_sentence_nonds;
 
     /**
      * @var UploadedFile
@@ -111,7 +115,7 @@ class Tender extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'purchase_status', 'percent_down', 'percent_max'], 'integer'],
-            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close'], 'safe'],
+            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close', 'last_sentence_nds', 'last_sentence_nonds'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
@@ -176,6 +180,8 @@ class Tender extends ActiveRecord
             'files' => 'Вложения',
             'site' => 'Прямая ссылка',
             'companyname' => 'Имя компании',
+            'last_sentence_nds' => 'Наше последнее предложение с НДС',
+            'last_sentence_nonds' => 'Наше последнее предложение без НДС',
         ];
     }
 
@@ -560,5 +566,21 @@ class Tender extends ActiveRecord
     public function setSite($value)
     {
         $this->site = $value;
+    }
+    public function getLast_sentence_nds()
+    {
+        return $this->last_sentence_nds;
+    }
+    public function setLast_sentence_nds($value)
+    {
+        $this->last_sentence_nds = $value;
+    }
+    public function getLast_sentence_nonds()
+    {
+        return $this->last_sentence_nonds;
+    }
+    public function setgetLast_sentence_nonds($value)
+    {
+        $this->last_sentence_nonds = $value;
     }
 }

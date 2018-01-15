@@ -144,9 +144,9 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         }
 
                         if ($win == 1) {
-                            return Html::a('<span class="glyphicon glyphicon-minus"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 0]);
+                            return Html::a('<span class="glyphicon glyphicon-remove"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 0]);
                         } else {
-                            return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 1]);
+                            return Html::a('<span class="glyphicon glyphicon-ok"></span>', ['/company/tendermemberwin', 'tender_id' => $model->tender->id, 'member_id' => $GLOBALS['member'], 'winner' => 1]);
                         }
 
                     },

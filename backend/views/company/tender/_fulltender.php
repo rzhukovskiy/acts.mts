@@ -993,6 +993,52 @@ $this->registerJs($script, View::POS_READY);
         </td>
     </tr>
     <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('last_sentence_nds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'last_sentence_nds',
+                'displayValue' => $model->last_sentence_nds ? ($model->last_sentence_nds . ' ₽') : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('last_sentence_nonds') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'last_sentence_nonds',
+                'displayValue' => $model->last_sentence_nonds ? ($model->last_sentence_nonds . ' ₽') : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('percent_down') ?></td>
         <td>
             <?php

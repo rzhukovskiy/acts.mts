@@ -80,7 +80,7 @@ class TenderControl extends ActiveRecord
             'type_payment' => 'Тип платежа',
             'money_unblocking' => 'Дата разблокировки денег',
             'return' => 'Нам вернули',
-            'date_return' => 'Дата возврата',
+            'date_return' => 'Фактическая дата возврата с ЭТП',
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',
             'payment_status' => 'Статус',
