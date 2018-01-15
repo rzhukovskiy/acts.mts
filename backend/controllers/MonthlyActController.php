@@ -78,8 +78,10 @@ class MonthlyActController extends Controller
                 $searchModel->act_status = 3;
             } else if($params['filterStatus'] == 8) {
                 $searchModel->act_status = 1;
-            } else if($params['filterStatus'] == 9) {
+            } else if($params['filterStatus'] == 10) {
                 $searchModel->act_status = 6;
+            } else if($params['filterStatus'] == 9) {
+                $searchModel->act_status = 7;
             }
 
         }

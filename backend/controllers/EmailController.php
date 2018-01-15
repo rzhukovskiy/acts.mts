@@ -452,7 +452,7 @@ class EmailController extends Controller
                 if ((isset($model->title)) && (isset($model->text)) && (isset($userModel->username))) {
 
                     // для статуса ЭДО
-                    if ($status == 6) {
+                    if ($status == 7) {
                         $subject = $model->title . " ЭДО";
                     } else {
                         $subject = $model->title;
@@ -482,7 +482,7 @@ class EmailController extends Controller
                     }
 
                     // для статуса ЭДО
-                    if ($status == 6) {
+                    if ($status == 7) {
                         $plainTextContent = "ЭДО срочно оплатить!<br /><br />" . $plainTextContent;
                     }
 
