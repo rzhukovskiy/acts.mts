@@ -522,25 +522,32 @@ class CarController extends Controller
                                             Yii::$app->db->createCommand()->update('{{%act}}', ['client_id' => $company_id, 'car_number' => $modelCar->number, 'car_id' => $modelCar->id, 'status' => Act::STATUS_NEW], 'id = ' . $arrActs[$i]['id'])->execute();
                                             // Жестко переносим клиент ид в актах
 
-                                            // Проверяем на ошибочный номер карты
-                                            if(isset($modelAct->card_number)) {
-                                                if ($modelAct->card_number) {
-                                                    $cardInfo = Card::findOne(['number' => $modelAct->card_number]);
+                                            // Ошибочные акты только за предыдущий месяц и свежее
+                                            $dateLastMonth = date('Y-m-01 00:00:00', strtotime("-1 month"));
 
-                                                    if (isset($cardInfo->company_id)) {
-                                                        if (($cardInfo->company_id) && ($cardInfo->company_id != $company_id)) {
+                                            if($modelAct->served_at >= strtotime($dateLastMonth)) {
+
+                                                // Проверяем на ошибочный номер карты
+                                                if (isset($modelAct->card_number)) {
+                                                    if ($modelAct->card_number) {
+                                                        $cardInfo = Card::findOne(['number' => $modelAct->card_number]);
+
+                                                        if (isset($cardInfo->company_id)) {
+                                                            if (($cardInfo->company_id) && ($cardInfo->company_id != $company_id)) {
+                                                                $modelActError = new ActError();
+                                                                $modelActError->act_id = $arrActs[$i]['id'];
+                                                                $modelActError->error_type = 3;
+                                                                $modelActError->save();
+                                                            }
+                                                        } else {
                                                             $modelActError = new ActError();
                                                             $modelActError->act_id = $arrActs[$i]['id'];
                                                             $modelActError->error_type = 3;
                                                             $modelActError->save();
                                                         }
-                                                    } else {
-                                                        $modelActError = new ActError();
-                                                        $modelActError->act_id = $arrActs[$i]['id'];
-                                                        $modelActError->error_type = 3;
-                                                        $modelActError->save();
                                                     }
                                                 }
+
                                             }
                                             // Проверяем на ошибочный номер карты
 
