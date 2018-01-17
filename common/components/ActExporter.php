@@ -76,7 +76,7 @@ class ActExporter
             $dataformat = $dataformat[1] . '-0' . $dataformat[0] . '-00';
         }
 
-        $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['act_status' => 5])->andWhere(['act_date' => $dataformat])->all();
+        $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['OR', ['act_status' => 5], ['act_status' => 6], ['act_status' => 7]])->andWhere(['act_date' => $dataformat])->asArray()->all();
 
         for($za = 0; $za < count($queryMountActs); $za++) {
             $index = $queryMountActs[$za]['client_id'];
