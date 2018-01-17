@@ -115,7 +115,7 @@ $script = <<< JS
             }
 
             // Оповещение Арама и Герберта
-            if(((select.val() == 4) || (select.val() == 6)) && ($company != 1)) {
+            if(((select.val() == 4) || (select.val() == 7)) && ($company != 1)) {
               
             var companyNameNotific = '';
             var priceNotific = '';
@@ -583,6 +583,19 @@ if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 4);
     } else {
         $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 4);
+    }
+
+    $filters .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Согласовано ЭДО</td>
+                    <td class="agreeedo" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+    if (strpos(Yii::$app->request->url, "&filterStatus=") > 0) {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", substr(Yii::$app->request->url, 0, strpos(Yii::$app->request->url, "&filterStatus=")) . "&filterStatus=" . 9);
+    } else {
+        $filters .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", Yii::$app->request->url . "&filterStatus=" . 10);
     }
 
     $filters .= '</td>

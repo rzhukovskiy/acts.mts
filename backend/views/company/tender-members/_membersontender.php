@@ -120,9 +120,9 @@ use common\models\TenderLinks;
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         if ($GLOBALS['tender_win'] == $model->id) {
-                            return Html::a('<span class="glyphicon glyphicon-minus"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 0]);
+                            return Html::a('<span class="glyphicon glyphicon-remove"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 0]);
                         } else {
-                            return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 1]);
+                            return Html::a('<span class="glyphicon glyphicon-ok"></span>', ['/company/tendermemberwin', 'tender_id' => $GLOBALS['tender_id'], 'member_id' => $model->id, 'winner' => 1]);
                         }
                     },
                 ],

@@ -60,7 +60,8 @@ class MonthlyAct extends ActiveRecord
     const ACT_STATUS_SIGNED_SCAN = 3;
     const ACT_STATUS_DONE = 4;
     const ACT_STATUS_EMPTY = 5;
-    const ACT_STATUS_EDO = 6;
+    const ACT_STATUS_AGREEEDO = 6;
+    const ACT_STATUS_EDO = 7;
 
     const NOT_PARTNER = 0;
     const PARTNER = 1;
@@ -82,6 +83,7 @@ class MonthlyAct extends ActiveRecord
         self::ACT_STATUS_SEND_ORIGIN => 'Отправлен оригинал',
         self::ACT_STATUS_DONE => 'Подписан',
         self::ACT_STATUS_EMPTY => 'Без акта',
+        self::ACT_STATUS_AGREEEDO => 'Согласован ЭДО',
         self::ACT_STATUS_EDO => 'Подписан ЭДО',
     ];
 
@@ -488,6 +490,7 @@ class MonthlyAct extends ActiveRecord
             self::ACT_STATUS_DONE => 'monthly-act-success',
             self::ACT_STATUS_EMPTY => 'monthly-act-info',
             self::ACT_STATUS_EDO => 'monthly-act-success',
+            self::ACT_STATUS_AGREEEDO => 'monthly-act-success',
         ];
 
         return $actStatus[$status];

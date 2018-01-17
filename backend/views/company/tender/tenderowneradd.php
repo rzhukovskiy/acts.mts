@@ -33,7 +33,7 @@ echo Tabs::widget([
     ]); ?>
 
     <?= $form->field($model, 'text')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите текст']) ?>
-    <?= $form->field($model, 'link')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку']) ?>
+    <?= $form->field($model, 'link')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку с http://']) ?>
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">

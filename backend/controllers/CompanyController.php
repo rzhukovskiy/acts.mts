@@ -1834,7 +1834,7 @@ class CompanyController extends Controller
                         $output[] = $stringStatusContractText;
                     } else if ($name == 'key_type') {
                         $output[] = $stringKeyTypeText;
-                    } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application') {
+                    } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application' || $name == 'last_sentence_nds' || $name == 'last_sentence_nonds') {
                         $output[] = $value . " ₽";
                     } else {
                         $output[] = $value;
