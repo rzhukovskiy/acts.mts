@@ -4,8 +4,10 @@ namespace frontend\controllers;
 
 use common\components\ArrayHelper;
 use common\models\Act;
+use common\models\ActError;
 use common\models\ActScope;
 use common\models\Car;
+use common\models\Card;
 use common\models\Company;
 use common\models\search\ActSearch;
 use common\models\Service;
@@ -515,24 +517,32 @@ class CarController extends Controller
 
                                             $company_clear = $modelAct->client_id;
 
-                                            $modelAct->client_id = $company_id;
-                                            $modelAct->car_number = $modelCar->number;
-                                            $modelAct->car_id = $modelCar->id;
+                                            // Жестко переносим клиент ид в актах
+                                            Yii::$app->db->createCommand()->update('{{%act_scope}}', ['company_id' => $company_id], 'act_id = ' . $arrActs[$i]['id'] . ' AND company_id = ' . $company_clear)->execute();
+                                            Yii::$app->db->createCommand()->update('{{%act}}', ['client_id' => $company_id, 'car_number' => $modelCar->number, 'car_id' => $modelCar->id, 'status' => Act::STATUS_NEW], 'id = ' . $arrActs[$i]['id'])->execute();
+                                            // Жестко переносим клиент ид в актах
 
-                                            if ($modelAct->save(false) && $modelAct->validate()) {
+                                            // Проверяем на ошибочный номер карты
+                                            if(isset($modelAct->card_number)) {
+                                                if ($modelAct->card_number) {
+                                                    $cardInfo = Card::findOne(['number' => $modelAct->card_number]);
 
-                                                // Жестко переносим клиент ид чтобы он был и в ошибочных актах но и перенесся
-                                                Yii::$app->db->createCommand()->update('{{%act}}', ['client_id' => $company_id, 'car_number' => $modelCar->number, 'car_id' => $modelCar->id], 'id = ' . $arrActs[$i]['id'])->execute();
-                                                // Жестко переносим клиент ид чтобы он был и в ошибочных актах но и перенесся
-
-                                                $modelActScope = ActScope::findOne(['act_id' => $arrActs[$i]['id'], 'company_id' => $company_clear]);
-
-                                                if(isset($modelActScope->id)) {
-                                                    $modelActScope->company_id = $company_id;
-                                                    $modelActScope->save(false);
+                                                    if (isset($cardInfo->company_id)) {
+                                                        if (($cardInfo->company_id) && ($cardInfo->company_id != $company_id)) {
+                                                            $modelActError = new ActError();
+                                                            $modelActError->act_id = $arrActs[$i]['id'];
+                                                            $modelActError->error_type = 3;
+                                                            $modelActError->save();
+                                                        }
+                                                    } else {
+                                                        $modelActError = new ActError();
+                                                        $modelActError->act_id = $arrActs[$i]['id'];
+                                                        $modelActError->error_type = 3;
+                                                        $modelActError->save();
+                                                    }
                                                 }
-
                                             }
+                                            // Проверяем на ошибочный номер карты
 
                                         }
 
