@@ -207,26 +207,24 @@ class CompanyController extends Controller
             // Уведомление Герберта
             $plainTextContent = '';
 
-            if(Yii::$app->user->identity->id != 1) {
-                $user_id = Yii::$app->user->identity->id;
-                $modelUser = User::findOne(['id' => $user_id]);
-                $companyModel = Company::findOne(['id' => $companyService->company_id]);
+            $user_id = Yii::$app->user->identity->id;
+            $modelUser = User::findOne(['id' => $user_id]);
+            $companyModel = Company::findOne(['id' => $companyService->company_id]);
 
-                $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
+            $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
 
-                $modelService = Service::findOne(['id' => $companyService->service_id]);
-                $modelType = Type::findOne(['id' => $companyService->type_id]);
-                $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', старая цена: ' . $oldPrice . ' руб. <b>новая цена:</b> ' . $newPrice . ' руб.<br />';
+            $modelService = Service::findOne(['id' => $companyService->service_id]);
+            $modelType = Type::findOne(['id' => $companyService->type_id]);
+            $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', старая цена: ' . $oldPrice . ' руб. <b>новая цена:</b> ' . $newPrice . ' руб.<br />';
 
-                $toEmail = "mtransservice@mail.ru";
+            $toEmail = "mtransservice@mail.ru";
 
-                $mailCont = Yii::$app->mailer->compose()
-                    ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                    ->setTo($toEmail)
-                    ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
-                    ->setHtmlBody($plainTextContent)->send();
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo($toEmail)
+                ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
+                ->setHtmlBody($plainTextContent)->send();
 
-            }
             // Уведомление Герберта
 
             if ($companyService->save()) {
@@ -262,13 +260,12 @@ class CompanyController extends Controller
         $model = $this->findModel($id);
         $plainTextContent = '';
 
-        if(Yii::$app->user->identity->id != 1) {
-            $user_id = Yii::$app->user->identity->id;
-            $modelUser = User::findOne(['id' => $user_id]);
-            $companyModel = Company::findOne(['id' => $model->id]);
+        $user_id = Yii::$app->user->identity->id;
+        $modelUser = User::findOne(['id' => $user_id]);
+        $companyModel = Company::findOne(['id' => $model->id]);
 
-            $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
-        }
+        $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
+
 
         if ($priceData = Yii::$app->request->post('Price')) {
             foreach ($priceData['type'] as $type_id) {
@@ -282,27 +279,23 @@ class CompanyController extends Controller
                     $companyService->save();
 
                     // Для email Рассылки
-                    if(Yii::$app->user->identity->id != 1) {
-                        if ($price) {
-                            $modelService = Service::findOne(['id' => $service_id]);
-                            $modelType = Type::findOne(['id' => $type_id]);
-                            $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', цена: ' . $price . ' руб.<br />';
-                        }
+                    if ($price) {
+                        $modelService = Service::findOne(['id' => $service_id]);
+                        $modelType = Type::findOne(['id' => $type_id]);
+                        $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', цена: ' . $price . ' руб.<br />';
                     }
 
                 }
             }
 
             // Уведомление Герберта
-            if(Yii::$app->user->identity->id != 1) {
-                $toEmail = "mtransservice@mail.ru";
+            $toEmail = "mtransservice@mail.ru";
 
-                $mailCont = Yii::$app->mailer->compose()
-                    ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                    ->setTo($toEmail)
-                    ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
-                    ->setHtmlBody($plainTextContent)->send();
-            }
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo($toEmail)
+                ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
+                ->setHtmlBody($plainTextContent)->send();
             // Уведомление Герберта
 
         }

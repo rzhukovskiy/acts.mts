@@ -1154,34 +1154,43 @@ class Act extends ActiveRecord
         //Пересчитываем месячный акт
         MonthlyAct::getRealObject($this->service_type)->saveFromAct($this);
 
-        //Проверяем на ошибки
-        $listErrors = $this->getListError();
+        // Ошибочные акты только за предыдущий месяц и свежее
         ActError::deleteAll(['act_id' => $this->id]);
-        if ($this->card_id) {
-            Card::markFoundedById($this->card_id);            
-        }
-        foreach ($listErrors as $errorType) {
-            $modelActError = new ActError();
-            $modelActError->act_id = $this->id;
-            $modelActError->error_type = $errorType;
-            $modelActError->save();
-        }
+        $dateLastMonth = date('Y-m-01 00:00:00', strtotime("-1 month"));
 
-        // Проверка на убыточный акт
-        if($this->profit < 0) {
-            $modelActError = new ActError();
-            $modelActError->act_id = $this->id;
-            $modelActError->error_type = 19;
-            $modelActError->save();
-        }
+        if($this->served_at >= strtotime($dateLastMonth)) {
 
-        // Асинхронные акты
-        if((($numeClientService != $numePartnerService) && ((count($arrReplaceNeed) == 0))) || ((count($arrReplaceNeed) > 0) && ((($numReplacePartner > $numReplaceClient) && ($numeClientService < $numePartnerService) && ($numePartnerService != ($numeClientService + ($numReplacePartner - $numReplaceClient)))) || (($numReplaceClient > $numReplacePartner) && ($numePartnerService < $numeClientService) && ($numeClientService != ($numePartnerService + ($numReplaceClient - $numReplacePartner)))) || (($numReplaceClient != $numReplacePartner) && ($numePartnerService == $numeClientService))))) {
-            $modelActError = new ActError();
-            $modelActError->act_id = $this->id;
-            $modelActError->error_type = 20;
-            $modelActError->save();
+            //Проверяем на ошибки
+            $listErrors = $this->getListError();
+
+            if ($this->card_id) {
+                Card::markFoundedById($this->card_id);
+            }
+            foreach ($listErrors as $errorType) {
+                $modelActError = new ActError();
+                $modelActError->act_id = $this->id;
+                $modelActError->error_type = $errorType;
+                $modelActError->save();
+            }
+
+            // Проверка на убыточный акт
+            if ($this->profit < 0) {
+                $modelActError = new ActError();
+                $modelActError->act_id = $this->id;
+                $modelActError->error_type = 19;
+                $modelActError->save();
+            }
+
+            // Асинхронные акты
+            if ((($numeClientService != $numePartnerService) && ((count($arrReplaceNeed) == 0))) || ((count($arrReplaceNeed) > 0) && ((($numReplacePartner > $numReplaceClient) && ($numeClientService < $numePartnerService) && ($numePartnerService != ($numeClientService + ($numReplacePartner - $numReplaceClient)))) || (($numReplaceClient > $numReplacePartner) && ($numePartnerService < $numeClientService) && ($numeClientService != ($numePartnerService + ($numReplaceClient - $numReplacePartner)))) || (($numReplaceClient != $numReplacePartner) && ($numePartnerService == $numeClientService))))) {
+                $modelActError = new ActError();
+                $modelActError->act_id = $this->id;
+                $modelActError->error_type = 20;
+                $modelActError->save();
+            }
+
         }
+        // Ошибочные акты только за предыдущий месяц и свежее
 
         parent::afterSave($insert, $changedAttributes);
     }

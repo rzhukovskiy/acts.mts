@@ -573,7 +573,7 @@ class ActController extends Controller
 
                 $arrPeriod = explode('-', $period);
 
-                if($periodQuery >= strtotime('01-' . date('n-Y', strtotime("+1 month")))) {
+                if($periodQuery >= strtotime('01-' . date('n-Y'))) {
 
                     $query = Yii::$app->db->createCommand("DELETE act, act_scope FROM act INNER JOIN act_scope ON act_scope.act_id = act.id WHERE act.client_id=" . $comopany_id . " AND act.service_type=5 AND act_scope.service_id=" . $service_id . " AND (MONTH(FROM_UNIXTIME(act.served_at)) = " . $arrPeriod[0] . ") AND (YEAR(FROM_UNIXTIME(act.served_at)) = " . $arrPeriod[1] . ");")->query();
 
