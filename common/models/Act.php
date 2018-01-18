@@ -1155,13 +1155,14 @@ class Act extends ActiveRecord
         MonthlyAct::getRealObject($this->service_type)->saveFromAct($this);
 
         // Ошибочные акты только за предыдущий месяц и свежее
+        ActError::deleteAll(['act_id' => $this->id]);
         $dateLastMonth = date('Y-m-01 00:00:00', strtotime("-1 month"));
 
         if($this->served_at >= strtotime($dateLastMonth)) {
 
             //Проверяем на ошибки
             $listErrors = $this->getListError();
-            ActError::deleteAll(['act_id' => $this->id]);
+
             if ($this->card_id) {
                 Card::markFoundedById($this->card_id);
             }
