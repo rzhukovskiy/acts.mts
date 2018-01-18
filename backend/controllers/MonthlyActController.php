@@ -13,8 +13,10 @@ use common\models\Company;
 use common\models\MonthlyAct;
 use common\models\search\MonthlyActSearch;
 use common\models\Service;
+use common\models\TrackerInfo;
 use common\models\User;
 use common\models\ActData;
+use yii\bootstrap\Html;
 use yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -33,12 +35,12 @@ class MonthlyActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact', 'getcomments', 'gettrack'],
+                        'actions' => ['delete', 'delete-image', 'ajax-act-status', 'ajax-payment-status', 'archive', 'searchact', 'getcomments', 'gettrack', 'gettrackerlist'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact', 'getcomments', 'gettrack'],
+                        'actions' => ['update', 'detail', 'list', 'archive', 'searchact', 'getcomments', 'gettrack', 'gettrackerlist'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -203,7 +205,122 @@ class MonthlyActController extends Controller
         $model = $this->findModel($id);
         $model->scenario = 'detail';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $arrPost = Yii::$app->request->post();
+
+        if ($model->load($arrPost) && $model->save()) {
+
+            // Добавляем статус в отслеживание для ускорения загрузки
+            $post_number = '';
+
+            switch ($model->type_id) {
+                case Service::TYPE_WASH:
+                    $post_number = $arrPost['WashMonthlyAct']['post_number'];
+                    break;
+                case Service::TYPE_SERVICE:
+                    $post_number = $arrPost['ServiceMonthlyAct']['post_number'];
+                    break;
+                case Service::TYPE_TIRES:
+                    $post_number = $arrPost['TiresMonthlyAct']['post_number'];
+                    break;
+                case Service::TYPE_DISINFECT:
+                    $post_number = $arrPost['DisinfectMonthlyAct']['post_number'];
+                    break;
+                case Service::TYPE_PARKING:
+                    $post_number = $arrPost['ParkingMonthlyAct']['post_number'];
+                    break;
+                case Service::TYPE_PENALTY:
+                    $post_number = $arrPost['PenaltyMonthlyAct']['post_number'];
+                    break;
+            }
+
+            if(mb_strlen($post_number) > 2) {
+
+                $oldResTrack = TrackerInfo::findOne(['type' => 1, 'second_id' => $model->id, 'number' => $post_number]);
+                $doTrack = true;
+
+                if (isset($oldResTrack)) {
+                    $doTrack = false;
+                }
+
+                if ($doTrack) {
+
+                    $api_track_link = 'https://gdeposylka.ru';
+
+                    $ResTrack = curl_init($api_track_link . '/api/v4/tracker/detect/' . $post_number);
+                    curl_setopt_array($ResTrack, [
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Authorization-Token: 23acf42e4453471bac36d514e2370bc6d1b24bf5e1708eeedd7c2761f388204a8bfc442b5676d931']]
+                    );
+                    $result = json_decode(curl_exec($ResTrack), TRUE);
+                    curl_close($ResTrack);
+
+                    if (isset($result['result'])) {
+                        if ($result['result'] == 'success') {
+
+                            if (isset($result['data'][0]['tracker_url'])) {
+                                $tracker_url = $result['data'][0]['tracker_url'];
+
+                                $ResTrack = curl_init($api_track_link . $tracker_url);
+                                curl_setopt_array($ResTrack, [
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Authorization-Token: 23acf42e4453471bac36d514e2370bc6d1b24bf5e1708eeedd7c2761f388204a8bfc442b5676d931']]
+                                );
+                                $result = json_decode(curl_exec($ResTrack), TRUE);
+                                curl_close($ResTrack);
+
+                                if (isset($result['result'])) {
+                                    if ($result['result'] == 'success') {
+
+                                        if(isset($result['data']['checkpoints'])) {
+
+                                            $checkpoints = $result['data']['checkpoints'];
+
+                                            if(count($checkpoints) > 0) {
+
+                                                $haveNeedTrack = 0;
+
+                                                for ($j = 0; $j < count($checkpoints); $j++) {
+
+                                                    if((isset($checkpoints[$j]['status_name'])) && (isset($checkpoints[$j]['status_raw']))) {
+
+                                                        if (($checkpoints[$j]['status_name'] == 'Прибыла в пункт назначения') && ($checkpoints[$j]['status_raw'] == 'Обработка - Прибыло в место вручения') && ($haveNeedTrack == 0)) {
+                                                            $haveNeedTrack = 1;
+                                                        }
+
+                                                        if (($checkpoints[$j]['status_name'] == 'Посылка доставлена') && ($checkpoints[$j]['status_raw'] == 'Вручение - Вручение адресату')) {
+                                                            $haveNeedTrack = 2;
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                                $newTrackerInfo = new TrackerInfo();
+                                                $newTrackerInfo->value = $haveNeedTrack;
+                                                $newTrackerInfo->type = 1;
+                                                $newTrackerInfo->second_id = $model->id;
+                                                $newTrackerInfo->number = $post_number;
+                                                $newTrackerInfo->save();
+
+                                            }
+
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+            // Добавляем статус в отслеживание для ускорения загрузки
+
             $redirect = [
                 'list',
                 'type'                       => $model->type_id,
@@ -448,6 +565,174 @@ class MonthlyActController extends Controller
             }
 
             echo json_encode(['success' => 'true', 'trackCont' => $trackCont]);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    // Получение списка для модального окна отслеживания
+    public static function actionGettrackerlist() {
+
+        if((Yii::$app->request->post('period')) && (Yii::$app->request->post('type'))) {
+
+            $period = Yii::$app->request->post('period');
+            $company = 0;
+
+            if(Yii::$app->request->post('company')) {
+                $company = Yii::$app->request->post('company');
+            }
+
+            $type = Yii::$app->request->post('type');
+
+            // получаем месяц и год из периода
+            $periodArr = explode('-', $period);
+
+            $actList = [];
+
+            if ($company) {
+                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.client_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 0], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id')->groupBy('monthly_act.id')->asArray()->all();
+            } else {
+                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.partner_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 1], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id')->groupBy('monthly_act.id')->asArray()->all();
+            }
+
+            $resArr = [];
+            $resArr[0] = '';
+            $resArr[1] = '';
+            $resArr[2] = '';
+            $DataTrack = [];
+
+            $ArrIdsActs = [];
+            $ArrNameActs = [];
+            $tracker_url = '';
+
+            for ($i = 0; $i < count($actList); $i++) {
+
+                $ResTrack = '';
+
+                $oldResTrack = TrackerInfo::findOne(['type' => 1, 'second_id' => $actList[$i]['id'], 'number' => $actList[$i]['number']]);
+                $doTrack = true;
+
+                if (isset($oldResTrack)) {
+                    if (isset($oldResTrack->value)) {
+                        if ($oldResTrack->value == 2) {
+                            $doTrack = false;
+
+                            $indexID = $oldResTrack->second_id;
+                            $ArrIdsActs[] = $indexID;
+                            $ArrNameActs[$indexID] = $actList[$i]['name'];
+
+                        }
+                    }
+                }
+
+                if ($doTrack == true) {
+
+                    $api_track_link = 'https://gdeposylka.ru';
+
+                    if($tracker_url == '') {
+                        $ResTrack = curl_init($api_track_link . '/api/v4/tracker/detect/' . $actList[$i]['number']);
+                        curl_setopt_array($ResTrack, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Authorization-Token: 23acf42e4453471bac36d514e2370bc6d1b24bf5e1708eeedd7c2761f388204a8bfc442b5676d931']]
+                        );
+                        $result = json_decode(curl_exec($ResTrack), TRUE);
+                        curl_close($ResTrack);
+
+                        if (isset($result['result'])) {
+                            if ($result['result'] == 'success') {
+
+                                if (isset($result['data'][0]['tracker_url'])) {
+                                    $tracker_url = $result['data'][0]['tracker_url'];
+                                }
+
+                            }
+                        }
+                    }
+
+                    if($tracker_url != '') {
+
+                        $index = $actList[$i]['id'];
+                        $ArrIdsActs[] = $index;
+                        $ArrNameActs[$index] = $actList[$i]['name'];
+
+                        $ResTrack = curl_init($api_track_link . $tracker_url);
+                        curl_setopt_array($ResTrack, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Authorization-Token: 23acf42e4453471bac36d514e2370bc6d1b24bf5e1708eeedd7c2761f388204a8bfc442b5676d931']]
+                        );
+                        $result = json_decode(curl_exec($ResTrack), TRUE);
+                        curl_close($ResTrack);
+
+                        if (isset($result['result'])) {
+                            if ($result['result'] == 'success') {
+
+                                if(isset($result['data']['checkpoints'])) {
+
+                                    $checkpoints = $result['data']['checkpoints'];
+
+                                    if(count($checkpoints) > 0) {
+
+                                        $haveNeedTrack = 0;
+
+                                        for ($j = 0; $j < count($checkpoints); $j++) {
+
+                                            if((isset($checkpoints[$j]['status_name'])) && (isset($checkpoints[$j]['status_raw']))) {
+
+                                                if (($checkpoints[$j]['status_name'] == 'Прибыла в пункт назначения') && ($checkpoints[$j]['status_raw'] == 'Обработка - Прибыло в место вручения') && ($haveNeedTrack == 0)) {
+                                                    $haveNeedTrack = 1;
+                                                }
+
+                                                if (($checkpoints[$j]['status_name'] == 'Посылка доставлена') && ($checkpoints[$j]['status_raw'] == 'Вручение - Вручение адресату')) {
+                                                    $haveNeedTrack = 2;
+                                                }
+
+                                            }
+
+                                        }
+
+                                        if (isset($oldResTrack)) {
+                                            TrackerInfo::updateAll(['value' => $haveNeedTrack], 'type = ' . 1 . ' AND second_id = ' . $actList[$i]['id'] . ' AND number = ' . $actList[$i]['number']);
+                                        } else {
+                                            $newTrackerInfo = new TrackerInfo();
+                                            $newTrackerInfo->value = $haveNeedTrack;
+                                            $newTrackerInfo->type = 1;
+                                            $newTrackerInfo->second_id = $actList[$i]['id'];
+                                            $newTrackerInfo->number = $actList[$i]['number'];
+                                            $newTrackerInfo->save();
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+            $arrTreckInfo = TrackerInfo::find()->where(['type' => 1])->andWhere(['second_id' => $ArrIdsActs])->select('value, second_id')->asArray()->all();
+
+            for ($i = 0; $i < count($arrTreckInfo); $i++) {
+
+                $index = $arrTreckInfo[$i]['second_id'];
+
+                if ($arrTreckInfo[$i]['value'] == 1) {
+                    $resArr[0] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                } else if ($arrTreckInfo[$i]['value'] == 2) {
+                    $resArr[1] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                } else {
+                    $resArr[2] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                }
+            }
+
+            echo json_encode(['success' => 'true', 'result' => $resArr]);
 
         } else {
             echo json_encode(['success' => 'false']);

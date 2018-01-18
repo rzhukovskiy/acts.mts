@@ -11,6 +11,7 @@ use yii\bootstrap\Html;
 use common\models\User;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
+use yii\bootstrap\Modal;
 
 $isAdmin = $admin ? 1 : 0;
 
@@ -36,6 +37,7 @@ $userID = Yii::$app->user->identity->id;
 $actionLinkSearch = Url::to('@web/monthly-act/searchact');
 $actionLinkGetComments = Url::to('@web/monthly-act/getcomments');
 $actionNotifDirectors = Url::to('@web/email/notifdirectors');
+$actionGetTrack = Url::to('@web/monthly-act/gettrackerlist');
 
 // Выделение номера акта
 $numFind = 0;
@@ -47,6 +49,30 @@ if(isset(Yii::$app->request->queryParams['search_number'])) {
 }
 
 // Выделение номера акта
+
+// Для отслеживания
+$Selperiod = "";
+$Seltype = "";
+$Selcompany = "";
+
+if(isset(Yii::$app->request->get('MonthlyActSearch')["act_date"])) {
+    $Selperiod = Yii::$app->request->get('MonthlyActSearch')["act_date"];
+} else {
+    $Selperiod = date("n-Y", strtotime("-1 month"));
+}
+
+if(Yii::$app->request->get('type') !== null) {
+    $Seltype = Yii::$app->request->get('type');
+} else {
+    $Seltype = 2;
+}
+
+if(Yii::$app->request->get('company') !== null) {
+    $Selcompany = Yii::$app->request->get('company');
+} else {
+    $Selcompany = '0';
+}
+// Для отслеживания
 
 $css = "#previewStatus {
 background:#fff;
@@ -470,6 +496,50 @@ var showStatusVar = $(".showStatus");
     });
 // При наведении на название показывается статус актов
 
+// открываем модальное окно отслеживаний
+
+function loadTrackers() {
+    
+    $('.infilial').text('Загрузка..');
+    $('.sendfinish').text('Загрузка..');
+    $('.intransit').text('Загрузка..');
+    
+    $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'type=' + '$Seltype' + '&company=' + '$Selcompany' + '&period=' + '$period',
+                url  : '$actionGetTrack',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                var resTrack = response.result;
+
+                $('.infilial').html(resTrack[0]);
+                $('.sendfinish').html(resTrack[1]);
+                $('.intransit').html(resTrack[2]);
+                
+                } else {
+                // Неудачно
+                $('.infilial').text('Ошибка загрузки.');
+                $('.sendfinish').text('Ошибка загрузки.');
+                $('.intransit').text('Ошибка загрузки.');
+                }
+                
+                }
+            });
+    
+}
+
+$('.modalTecker').on('click', function(){
+$('#showModalTracker').modal('show');
+loadTrackers();
+});
+// открываем модальное окно отслеживаний
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
@@ -524,6 +594,9 @@ $filters .= 'Поиск по номеру:';
 $filters .= Html::textInput("act_number", '',['id' => 'searchActNum', 'class' => 'form-control', 'style' => 'margin-left:10px;', 'placeholder' => 'номер акта или счета']);
 $filters .= Html::buttonInput("Поиск", ['id' => 'searchActNumButt', 'class' => 'btn btn-primary', 'style' => 'padding:7px 16px 6px 16px;']);
 // Поиск по номеру
+
+// Модальное окно отслеживаний
+$filters .= '<span class="btn btn-warning modalTecker" style="padding:7px 16px 6px 16px;">Отслеживания</span>';
 
 // Таблица детализации
 if(!isset(Yii::$app->request->queryParams['filterStatus'])) {
@@ -732,6 +805,26 @@ echo newerton\fancybox\FancyBox::widget([
         ],
     ]
 ]);
+
+// Модальное окно отслеживаний
+$modal = Modal::begin([
+    'header' => '<h4>Отслеживание отправлений</h4>',
+    'id' => 'showModalTracker',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div id='trackInfo' style='word-wrap: break-word; font-size:14px;'>
+<div><b>Ожидают в месте вручения:</b></div>
+<div class='infilial'></div>
+<div style='margin-top: 10px;'><b>Получены адресатом:</b></div>
+<div class='sendfinish'></div>
+<div style='margin-top: 10px;'><b>В пути:</b></div>
+<div class='intransit'></div>
+</div>";
+Modal::end();
+// Модальное окно отслеживаний
+
 ?>
 <?php if ($type == Service::TYPE_DISINFECT) {
     echo $this->render('_list_disinfect',
