@@ -26,10 +26,11 @@ $('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"]
 JS;
 $this->registerJs($script, View::POS_READY);
 
-if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 176)) {
     $tabs = [
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
+        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
     ];
 } else {
@@ -80,7 +81,7 @@ echo Tabs::widget([
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md"><?= $model->getAttributeLabel('for_user_copy') ?></td>
+                <td class="list-label-md"><?= $newmodel->getAttributeLabel('for_user_copy') ?></td>
                 <td>
                     <?php
 

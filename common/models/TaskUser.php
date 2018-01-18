@@ -67,7 +67,6 @@ class TaskUser extends \yii\db\ActiveRecord
             'status' => 'Статус',
             'for_user' => 'Для пользователя',
             'files' => 'Вложения',
-            'for_user_copy' => 'Копия',
         ];
     }
 
@@ -85,7 +84,7 @@ class TaskUser extends \yii\db\ActiveRecord
     static function payDis($val)
     {
         $currentUser = Yii::$app->user->identity;
-        if (($val == self::PAYMENT_STATUS_TRUE) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN)) {
+        if (($val == self::PAYMENT_STATUS_TRUE) && ($currentUser) && ($currentUser->role != User::ROLE_ADMIN) && ($currentUser->id != 176)) {
             $disabled = true;
         } else {
             $disabled = false;

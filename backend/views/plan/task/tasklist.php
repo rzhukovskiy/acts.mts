@@ -10,10 +10,11 @@ use yii\helpers\Url;
 
 $this->title = 'Задачи для пользователей';
 
-if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 176)) {
     $tabs = [
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0'], 'active' => $type == 0],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
+        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
 ];
 } else {
     $tabs = [

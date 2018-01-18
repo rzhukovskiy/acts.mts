@@ -201,8 +201,8 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'list'),
                 ],
                 [
-                    'label' => 'Задачи',
-                    'url' => ['/plan/tasklist?type=0'],
+                    'label' => 'Задачи' . (($countTaskU || $countTaskL) ? '<span class="label label-success">' . ($countTaskU + $countTaskL) . '</span>' : ''),
+                    'url' => ['/plan/tasklist?type=1'],
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull'),
                 ],
                 [
