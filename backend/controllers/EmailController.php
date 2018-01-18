@@ -498,15 +498,13 @@ class EmailController extends Controller
                     }*/
 
                     // Герберт
-                    if($user_id != 1) {
-                        $toEmail = "mtransservice@mail.ru";
+                    $toEmail = "mtransservice@mail.ru";
 
-                        $mailCont = Yii::$app->mailer->compose()
-                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                            ->setTo($toEmail)
-                            ->setSubject($subject)
-                            ->setHtmlBody($plainTextContent)->send();
-                    }
+                    $mailCont = Yii::$app->mailer->compose()
+                        ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($toEmail)
+                        ->setSubject($subject)
+                        ->setHtmlBody($plainTextContent)->send();
 
                     echo json_encode(['success' => 'true']);
 
