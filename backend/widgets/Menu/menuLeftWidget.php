@@ -14,6 +14,8 @@ use common\models\search\CompanySearch;
 use common\models\search\MessageSearch;
 use common\models\search\TenderOwnerSearch;
 use common\models\Service;
+use common\models\TaskUser;
+use common\models\TaskUserLink;
 use common\models\User;
 use yii;
 use yii\bootstrap\Widget;
@@ -68,6 +70,8 @@ class menuLeftWidget extends Widget
         $countMessage = $searchModel->search([])->count;
 
         $countOwner = TenderOwnerSearch::find()->where(['tender_user' => 0])->count();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->count();
+        $countTaskL = TaskUserLink::find()->innerJoin('task_user', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->count();
 
         $items = [];
         // Admin links
@@ -194,7 +198,12 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Планирование',
                     'url' => ['/plan/list'],
-                    'active' => (Yii::$app->controller->id == 'plan'),
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'list'),
+                ],
+                [
+                    'label' => 'Задачи',
+                    'url' => ['/plan/tasklist?type=0'],
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull'),
                 ],
                 [
                     'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
@@ -298,7 +307,7 @@ class menuLeftWidget extends Widget
                 [
                     'label'  => 'Тендеры',
                     'url'    => '#',
-                    'visible'    => ((Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756) || (Yii::$app->user->identity->id == 708)) ? true : false,
+                    'visible'    => ((Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756) || (Yii::$app->user->identity->id == 708)  || (Yii::$app->user->identity->id == 176)) ? true : false,
                     'active' => ((Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_TENDER]['en']) ||
                             ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_TENDER) || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenders') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtender')) || (Yii::$app->controller->action->id == 'tenderlist') || (Yii::$app->controller->action->id == 'filtertender') || (Yii::$app->controller->action->id == 'controltender') || (Yii::$app->controller->action->id == 'newcontroltender') || (Yii::$app->controller->action->id == 'fullcontroltender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'fulltendermembers') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'newtenderlinks') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'membersontender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'archivetender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerlist') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderowneradd') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerupdate') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'tenderownerfull'),
                     'items'  => [
@@ -405,7 +414,12 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Планирование',
                     'url' => ['/plan/list'],
-                    'active' => (Yii::$app->controller->id == 'plan'),
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'list'),
+                ],
+                [
+                    'label' => 'Задачи' . (($countTaskU || $countTaskL) ? '<span class="label label-success">' . ($countTaskU + $countTaskL) . '</span>' : ''),
+                    'url' => ['/plan/tasklist?type=2'],
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull'),
                 ],
                 [
                     'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
