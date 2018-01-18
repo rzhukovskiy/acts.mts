@@ -184,8 +184,6 @@ class PlanController extends Controller
             return $this->redirect(['plan/tasklist?type=1']);
         }
 
-// } else if ((($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
-
         return $this->render('task/tasklist', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
@@ -203,11 +201,12 @@ class PlanController extends Controller
         $model->from_user = Yii::$app->user->identity->id;
 
         $arrUpdate = Yii::$app->request->post();
-
+        // Проверка на существование копии пользователей и удаление ее из массива
         if (isset($arrUpdate['TaskUserLink']['for_user_copy'])) {
             $arrUserIdCopy = $arrUpdate['TaskUserLink']['for_user_copy'];
             unset($arrUpdate['TaskUserLink']['for_user_copy']);
         }
+        //Конец Проверка на существование копии пользователей и удаление ее из массива
 
         if (($model->load($arrUpdate)) && ($model->save()) && (Yii::$app->request->isPost)) {
 
@@ -265,7 +264,6 @@ class PlanController extends Controller
     public function actionTaskupdate($id)
     {
         $model = TaskUser::findOne(['id' => $id]);
-        $newmodel = TaskUserLink::findOne(['task_id' => $id]);
         $userLists = User::find()->select('username')->indexby('id')->column();
 
         $hasEditable = Yii::$app->request->post('hasEditable', false);
@@ -274,7 +272,7 @@ class PlanController extends Controller
 
             // Подготовка данных перед сохранением
             $arrUpdate = Yii::$app->request->post();
-
+            // Проверка на существование копии пользователей и удаление и создание новых
             if (isset($arrUpdate['TaskUserLink']['for_user_copy'])) {
                 $arrUserIdCopy = $arrUpdate['TaskUserLink']['for_user_copy'];
                 if (count($arrUserIdCopy) > 0) {
@@ -287,19 +285,20 @@ class PlanController extends Controller
                         $newmodellink->for_user_copy = $arrUserIdCopy[$i];
                         $newmodellink->save();
                     }
-
                 }
-
             }
+            //Конец Проверка на существование копии пользователей и удаление и создание новых
 
-            if (isset($arrUpdate['TaskUser']['for_user'])) {
+            if (isset($arrUpdate['TaskUser']['data'])) {
                 foreach ($arrUpdate['TaskUser'] as $name => $value) {
                     if ($name == 'data') {
-                        $arrUpdate['TaskUser'][$name] = (String)strtotime($value);
+                        $arrUpdate['TaskUser'][$name] = (String) strtotime($value);
                     }
                 }
             }
+            //Конец Подготовка данных перед сохранением
 
+            // Вывод после сохранения без перезагрузки
             $output = [];
 
             if ($model->load($arrUpdate) && $model->save()) {
@@ -351,7 +350,7 @@ class PlanController extends Controller
         } else {
             return ['message' => 'не получилось'];
         }
-
+        //Конец Вывод после сохранения без перезагрузки
     }
 
 
