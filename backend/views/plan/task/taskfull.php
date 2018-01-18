@@ -31,12 +31,14 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
     ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
     ];
 }
@@ -70,7 +72,7 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'data' => $userListsData,
+                        'data' => $userListsAll,
                         'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
                         'options' => ['class' => 'form-control'],
                         'formOptions' => [
@@ -88,7 +90,7 @@ echo Tabs::widget([
                     $users = TaskUserLink::find()->where(['task_id' => $model->id])->select('for_user_copy')->asArray()->column();
                     $userText = '';
                     for ($i = 0; $i < count($users); $i++) {
-                        $userText .= $userListsData[$users[$i]] . '<br />';
+                        $userText .= $userListsAll[$users[$i]] . '<br />';
 
                     }
 
@@ -131,7 +133,7 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'data' => $userListsData,
+                        'data' => $userListsAll,
                         'disabled' => Yii::$app->user->identity->role !== User::ROLE_ADMIN ? true : false,
                         'options' => ['class' => 'form-control'],
                         'formOptions' => [

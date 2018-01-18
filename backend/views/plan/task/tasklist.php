@@ -15,11 +15,13 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0'], 'active' => $type == 0],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
 ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
     ];
 }
 
@@ -240,6 +242,22 @@ if ($type == 1) {
                 } else {
                     return '-';
                 }
+            },
+        ],
+        [
+            'header' => 'Копия',
+            'vAlign'=>'middle',
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                $user = TaskUserLink::find()->innerJoin('user', '`user`.`id` = `task_user_link`.`for_user_copy`')->where(['task_id' => $data->id])->select('username')->asArray()->all();
+                $alluser = '';
+
+                for ($i = 0; $i < count($user); $i++) {
+                    $alluser .= $user[$i]['username'] . '<br/>';
+                }
+
+                return $alluser;
             },
         ],
         [
@@ -487,6 +505,117 @@ if ($type == 1) {
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/plan/taskdelete', 'id' => $data->id],
                             ['data-confirm' => "Вы уверены, что хотите удалить?"]);
                     }
+                },
+            ],
+        ],
+    ];
+} else if ($type == 3) {
+    $column = [
+
+        [
+            'header' => '№',
+            'vAlign'=>'middle',
+            'class' => 'kartik\grid\SerialColumn'
+        ],
+        [
+            'attribute' => 'task',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->task) {
+                    return $data->task;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'data',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->data) {
+                    return date('d.m.y H:i', $data->data);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'header' => 'Осталось<br/> до истечения',
+            'vAlign'=>'middle',
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                if (($data->data) && ($data->status !== 2)) {
+                    $lostDateText = '';
+                    $lostDate = $data->data - time();
+
+                    $days = ((Int) ($lostDate / 86400));
+                    $lostDate -= (((Int) ($lostDate / 86400)) * 86400);
+
+                    $hours = (round($lostDate / 3600));
+                    $lostDate -= (round($lostDate / 3600) * 3600);
+
+                    $minutes = (round($lostDate / 60));
+
+                    $lostDateText .= 'Дней: ' .  abs($days);
+                    $lostDateText .= ', часов: ' . abs($hours);
+                    $lostDateText .= ', минут: ' . abs($minutes);
+
+                    if ($data->data > time()) {
+                        return '<span style="color: green">' . $lostDateText . '</span>';
+                    } else if ($data->data < time()) {
+                        return '<span style="color: red">- ' . $lostDateText . '</span>';
+                    } else {
+                        return $lostDateText;
+                    }
+
+                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                    return '<span style="color: red">Выполнено не вовремя</span>';
+                } else if (($data->status == 2) && ($data->data > $data->data_status)) {
+                    return '<span style="color: green">Выполнено вовремя</span>';
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'vAlign'=>'middle',
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'status', TaskUser::$executionStatus,
+                    [
+                        'class'              => 'form-control change-execution_status',
+                        'data-id'            => $data->id,
+                        'data-executionStatus' => $data->status,
+                        'disabled'           => TaskUser::payDis($data->status) ? 'disabled' : false,
+                    ]
+
+                );
+            },
+
+            'contentOptions' => function ($data) {
+                return [
+                    'class' => TaskUser::colorForExecutionStatus($data->status),
+                    'style' => 'width: 155px',
+                ];
+            },
+        ],
+        [
+            'class' => 'kartik\grid\ActionColumn',
+            'header' => 'Действие',
+            'vAlign'=>'middle',
+            'template' => '{update}',
+            'contentOptions' => ['style' => 'min-width: 60px'],
+            'buttons' => [
+                'update' => function ($url, $data, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                        ['/plan/taskfull', 'id' => $data->id]);
                 },
             ],
         ],

@@ -14,12 +14,14 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
     ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Собственные задачи', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
     ];
 }
@@ -45,7 +47,7 @@ echo Tabs::widget([
             ],
         ]); ?>
         <?= $form->field($model, 'for_user')->dropDownList($userLists, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
-        <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userLists, ['class' => 'form-control', 'multiple' => 'true']) ?>
+        <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Задача']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,

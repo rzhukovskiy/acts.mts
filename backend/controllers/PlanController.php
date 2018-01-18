@@ -179,8 +179,10 @@ class PlanController extends Controller
         if ($type == 1) {
             $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id]);
         } else if ($type == 2) {
-            $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]]);
-        } else if ((($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
+            $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id]);
+        } else if ($type == 3) {
+            $dataProvider->query->andWhere(['for_user' => Yii::$app->user->identity->id]);
+        } else if ((($type != 3) && ($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
             return $this->redirect(['plan/tasklist?type=1']);
         }
 
@@ -194,7 +196,8 @@ class PlanController extends Controller
 
     public function actionTaskadd()
     {
-        $userLists = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
+        $userLists = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+        $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
 
         $newmodellink = new TaskUserLink();
         $model = new TaskUser();
@@ -241,6 +244,7 @@ class PlanController extends Controller
                 'model' => $model,
                 'newmodellink' => $newmodellink,
                 'userLists' => $userLists,
+                'userListsID' => $userListsID,
             ]);
         }
 
@@ -252,12 +256,14 @@ class PlanController extends Controller
         $newmodel = new TaskUserLink();
 
         $userLists = User::find()->select('username')->indexby('id')->column();
-        $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+        $userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+        $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
         return $this->render('task/taskfull', [
             'model' => $model,
             'userLists' => $userLists,
             'newmodel' => $newmodel,
             'userListsData' => $userListsData,
+            'userListsAll' => $userListsAll,
         ]);
     }
 
