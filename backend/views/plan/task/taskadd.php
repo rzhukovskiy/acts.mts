@@ -48,7 +48,7 @@ echo Tabs::widget([
         ]); ?>
         <?= $form->field($model, 'for_user')->dropDownList($userLists, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
         <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
-        <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Задача']) ?>
+        <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,
             'options' => ['placeholder' => 'Выберите дату и время'],

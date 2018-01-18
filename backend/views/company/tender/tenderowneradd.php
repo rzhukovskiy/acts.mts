@@ -33,7 +33,7 @@ echo Tabs::widget([
     ],
     ]); ?>
 
-    <?= $form->field($model, 'text')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите текст']) ?>
+    <?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите текст']) ?>
     <?= $form->field($model, 'link')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку с http://']) ?>
 
     <div class="form-group">
