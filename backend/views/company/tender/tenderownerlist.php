@@ -10,6 +10,7 @@ echo Tabs::widget([
     'items' => [
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1'], 'active' => $win == 1],
         ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0'], 'active' => $win == 0],
+        ['label' => 'Архив', 'url' => ['company/tenderownerlist?win=2'], 'active' => $win == 2],
     ],
 ]);
 
