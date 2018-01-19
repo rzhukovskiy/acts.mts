@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\MonthlyAct;
 use common\models\Plan;
 use common\models\search\PlanSearch;
+use common\models\search\TaskUserSearch;
 use common\models\TaskMy;
 use common\models\TaskUser;
 use common\models\TaskUserLink;
@@ -168,12 +169,9 @@ class PlanController extends Controller
 
     public function actionTasklist($type = 0)
     {
-        $searchModel = TaskUser::find();
+        $searchModel = new TaskUserSearch();
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $searchModel,
-            'pagination' => false,
-        ]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $userList = User::find()->select('username')->indexby('id')->column();
 
@@ -299,13 +297,14 @@ class PlanController extends Controller
         $newmodel = new TaskUserLink();
 
         $userLists = User::find()->select('username')->indexby('id')->column();
-        //$userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+        $userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
         $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
         return $this->render('task/taskfull', [
             'model' => $model,
             'userLists' => $userLists,
             'newmodel' => $newmodel,
             'userListsData' => $userListsData,
+            'userListsAll' => $userListsAll,
         ]);
     }
 
