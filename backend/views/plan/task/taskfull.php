@@ -90,7 +90,7 @@ echo Tabs::widget([
                     $users = TaskUserLink::find()->where(['task_id' => $model->id])->select('for_user_copy')->asArray()->column();
                     $userText = '';
                     for ($i = 0; $i < count($users); $i++) {
-                        $userText .= $userListsData[$users[$i]] . '<br />';
+                        $userText .= $userListsAll[$users[$i]] . '<br />';
 
                     }
 
