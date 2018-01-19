@@ -344,11 +344,11 @@ class menuLeftWidget extends Widget
                             Yii::$app->controller->action->id != 'disinfect' &&
                             Yii::$app->controller->action->id != 'create-entry',
                     ],
-                    [
+                   /* Новогоднее поздравление [
                         'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
                         'url'    => ['/contact/newyear'],
                         'active' => Yii::$app->controller->action->id == 'newyear',
-                    ],
+                    ],*/
                 ];
             } else {
                 $items = [
@@ -390,11 +390,11 @@ class menuLeftWidget extends Widget
                             Yii::$app->controller->action->id != 'create' &&
                             Yii::$app->controller->action->id != 'disinfect',
                     ],
-                    [
+                    /* Новогоднее поздравление [
                         'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
                         'url'    => ['/contact/newyear'],
                         'active' => Yii::$app->controller->action->id == 'newyear',
-                    ],
+                    ],*/
                 ];
             }
         } // Client links
@@ -486,11 +486,11 @@ class menuLeftWidget extends Widget
                     'url'    => ['/act/list', 'type' => Company::TYPE_WASH, 'company' => true],
                     'active' => Yii::$app->controller->id == 'act',
                 ],
-                [
+               /* Новогоднее поздравление [
                     'label'  => Yii::$app->controller->action->id == 'newyear' ? 'Новогоднее</br> Поздравление' : '<span style="color: #c72e1a">Новогоднее</br> Поздравление</span>',
                     'url'    => ['/contact/newyear'],
                     'active' => Yii::$app->controller->action->id == 'newyear',
-                ],
+                ],*/
             ];
         } else {
             $items = [

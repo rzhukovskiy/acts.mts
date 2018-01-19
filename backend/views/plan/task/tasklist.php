@@ -15,11 +15,13 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0'], 'active' => $type == 0],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
+        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => $type == 3],
 ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
+        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => $type == 3],
     ];
 }
 
@@ -243,6 +245,22 @@ if ($type == 1) {
             },
         ],
         [
+            'header' => 'Копия',
+            'vAlign'=>'middle',
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                $user = TaskUserLink::find()->innerJoin('user', '`user`.`id` = `task_user_link`.`for_user_copy`')->where(['task_id' => $data->id])->select('username')->asArray()->all();
+                $alluser = '';
+
+                for ($i = 0; $i < count($user); $i++) {
+                    $alluser .= $user[$i]['username'] . '<br/>';
+                }
+
+                return $alluser;
+            },
+        ],
+        [
             'attribute' => 'data',
             'vAlign'=>'middle',
             'value' => function ($data) {
@@ -354,6 +372,19 @@ if ($type == 1) {
             },
         ],
         [
+            'header' => 'От кого',
+            'vAlign'=>'middle',
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                if ($data->from_user) {
+                    return $GLOBALS['usersList'][$data->from_user];
+                } else {
+                    return '-';
+                }
+            },
+        ],
+        [
             'header' => 'Кому',
             'vAlign'=>'middle',
             'format'=> 'raw',
@@ -380,19 +411,6 @@ if ($type == 1) {
                 }
 
                 return $alluser;
-            },
-        ],
-        [
-            'header' => 'От кого',
-            'vAlign'=>'middle',
-            'format'=> 'raw',
-            'value' => function ($data) {
-
-                if ($data->from_user) {
-                    return $GLOBALS['usersList'][$data->from_user];
-                } else {
-                    return '-';
-                }
             },
         ],
         [
@@ -498,7 +516,7 @@ if ($type == 1) {
     <div class="panel-heading">
         Задачи для пользователей
         <div class="header-btn pull-right">
-            <?= Html::a('Добавить', ['plan/taskadd'], ['class' => 'btn btn-success btn-sm']) ?>
+            <?= ($type !=2) ? Html::a('Добавить', ['plan/taskadd'], ['class' => 'btn btn-success btn-sm']) : '' ?>
         </div>
     </div>
     <div class="panel-body">

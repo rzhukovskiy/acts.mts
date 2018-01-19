@@ -12,9 +12,8 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
 use yii\web\View;
-use common\models\TaskUserLink;
 
-$this->title = 'Редактирование задания';
+$this->title = 'Редактирование собственного задания';
 
 $script = <<< JS
 // открываем модальное окно добавить вложения
@@ -32,14 +31,14 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
-        ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
+        ['label' => 'Редактирование', 'url' => ['plan/taskmyfull'], 'active' => Yii::$app->controller->action->id == 'taskmyfull'],
     ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
-        ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
+        ['label' => 'Редактирование', 'url' => ['plan/taskmyfull'], 'active' => Yii::$app->controller->action->id == 'taskmyfull'],
     ];
 }
 
@@ -56,94 +55,6 @@ echo Tabs::widget([
     <div class="panel-body">
         <table class="table table-bordered list-data">
             <tr>
-                <td class="list-label-md"><?= $model->getAttributeLabel('for_user') ?></td>
-                <td>
-                    <?php
-
-                    echo Editable::widget([
-                        'model' => $model,
-                        'buttonsTemplate' => '{submit}',
-                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'for_user',
-                        'displayValue' => isset($userLists[$model->for_user]) ? $userLists[$model->for_user] : '',
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'data' => $userListsData,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
-                        'options' => ['class' => 'form-control'],
-                        'formOptions' => [
-                            'action' => ['/plan/taskupdate', 'id' => $model->id]
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
-                </td>
-            </tr>
-            <tr>
-                <td class="list-label-md"><?= $newmodel->getAttributeLabel('for_user_copy') ?></td>
-                <td>
-                    <?php
-
-                    $users = TaskUserLink::find()->where(['task_id' => $model->id])->select('for_user_copy')->asArray()->column();
-                    $userText = '';
-                    for ($i = 0; $i < count($users); $i++) {
-                        $userText .= $userListsData[$users[$i]] . '<br />';
-
-                    }
-
-                    echo Editable::widget([
-                        'model' => $newmodel,
-                        'buttonsTemplate' => '{submit}',
-                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'for_user_copy',
-                        'displayValue' => $userText,
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'data' => $userListsData,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
-                        'options' => ['class' => 'form-control', 'multiple' => 'true'],
-                        'formOptions' => [
-                            'action' => ['/plan/taskupdate', 'id' => $model->id]
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
-                </td>
-            </tr>
-            <tr>
-                <td class="list-label-md"><?= $model->getAttributeLabel('from_user') ?></td>
-                <td>
-                    <?php
-
-                    echo Editable::widget([
-                        'model' => $model,
-                        'buttonsTemplate' => '{submit}',
-                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                        'submitButton' => [
-                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                        ],
-                        'attribute' => 'from_user',
-                        'displayValue' => isset($userLists[$model->from_user]) ? $userLists[$model->from_user] : '',
-                        'asPopover' => true,
-                        'placement' => PopoverX::ALIGN_LEFT,
-                        'size' => 'lg',
-                        'data' => $userListsData,
-                        'disabled' => Yii::$app->user->identity->role !== User::ROLE_ADMIN ? true : false,
-                        'options' => ['class' => 'form-control'],
-                        'formOptions' => [
-                            'action' => ['/plan/taskupdate', 'id' => $model->id]
-                        ],
-                        'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
-                </td>
-            </tr>
-            <tr>
                 <td class="list-label-md"><?= $model->getAttributeLabel('data') ?></td>
                 <td>
                     <?= Editable::widget([
@@ -157,7 +68,6 @@ echo Tabs::widget([
                         'inputType' => Editable::INPUT_DATETIME,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
                         'size' => 'lg',
                         'options' => [
                             'options' => ['value' => $model->data ? date('d.m.Y H:i', $model->data) : ''],
@@ -171,7 +81,7 @@ echo Tabs::widget([
                             ],
                         ],
                         'formOptions' => [
-                            'action' => ['/plan/taskupdate', 'id' => $model->id],
+                            'action' => ['/plan/taskmyupdate', 'id' => $model->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]);
@@ -194,10 +104,9 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите задание'],
                         'formOptions' => [
-                            'action' => ['/plan/taskupdate', 'id' => $model->id],
+                            'action' => ['/plan/taskmyupdate', 'id' => $model->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
@@ -209,8 +118,8 @@ echo Tabs::widget([
                 <td>
                     <?php
 
-                    $pathfolder = \Yii::getAlias('@webroot/files/task/' . $model->id . '/');
-                    $shortPath = '/files/task/' . $model->id . '/';
+                    $pathfolder = \Yii::getAlias('@webroot/files/mytask/' . $model->id . '/');
+                    $shortPath = '/files/mytask/' . $model->id . '/';
 
                     if (file_exists($pathfolder)) {
 
@@ -238,11 +147,7 @@ echo Tabs::widget([
                     ?>
 
                     <?php
-                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) {
                         echo '<br /><span class="btn btn-primary btn-sm showFormAttachButt" style="margin-right:15px;">Добавить вложение</span>';
-                    } else {
-
-                    }
                     ?>
                 </td>
             </tr>
@@ -251,8 +156,8 @@ echo Tabs::widget([
 </div>
 <?php
 // Модальное окно добавить вложения
-$pathfolder = \Yii::getAlias('@webroot/files/task/' . $model->id . '/');
-$shortPath = '/files/task/' . $model->id . '/';
+$pathfolder = \Yii::getAlias('@webroot/files/mytask/' . $model->id . '/');
+$shortPath = '/files/mytask/' . $model->id . '/';
 
 $modalAttach = Modal::begin([
     'header' => '<h5>Добавить вложения</h5>',
@@ -267,7 +172,7 @@ $modelAddAttach = new \yii\base\DynamicModel(['files']);
 $modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
 
 $form = ActiveForm::begin([
-    'action' => ['/plan/newtendattach', 'id' => $model->id],
+    'action' => ['/plan/taskmyattach', 'id' => $model->id],
     'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
     'fieldConfig' => [
         'template' => '<div class="col-sm-6">{input}</div>',

@@ -1397,10 +1397,12 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        if ($win) {
+        if ($win == 1) {
             $dataProvider->query->andWhere(['tender_user' => 0]);
+        } else if ($win == 2) {
+            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['!=', 'tender_id', '']])->orderBy('tender_user');
         } else {
-            $dataProvider->query->andWhere(['!=', 'tender_user', 0])->orderBy('tender_user');
+            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null]])->orderBy('tender_user');
         }
 
 
