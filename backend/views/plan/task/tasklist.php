@@ -63,6 +63,7 @@ if ($type == 1) {
         ],
         [
             'attribute' => 'task',
+            'filter' => false,
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -76,10 +77,10 @@ if ($type == 1) {
         ],
         [
             'header' => 'Кому',
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andWhere(['task_user.from_user' => Yii::$app->user->identity->id])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
-
                 if ($data->for_user) {
                     return $GLOBALS['usersList'][$data->for_user];
                 } else {
@@ -90,6 +91,7 @@ if ($type == 1) {
         [
             'header' => 'Копия',
             'vAlign'=>'middle',
+            'filter' => false,
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -105,6 +107,7 @@ if ($type == 1) {
         ],
         [
             'attribute' => 'data',
+            'filter' => false,
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -158,6 +161,7 @@ if ($type == 1) {
         ],
         [
             'attribute' => 'status',
+            'filter' => Html::activeDropDownList($searchModel, 'status', TaskUser::$executionStatus, ['class' => 'form-control', 'prompt' => 'Все статусы']),
             'format' => 'raw',
             'vAlign'=>'middle',
             'value' => function ($data, $key, $index, $column) {
@@ -204,6 +208,7 @@ if ($type == 1) {
         [
             'attribute' => 'task',
             'vAlign'=>'middle',
+            'filter' => false,
             'value' => function ($data) {
 
                 if ($data->task) {
@@ -217,6 +222,7 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -230,6 +236,7 @@ if ($type == 1) {
         [
             'header' => 'Ответственный<br/> сотрудник',
             'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -263,6 +270,7 @@ if ($type == 1) {
         [
             'attribute' => 'data',
             'vAlign'=>'middle',
+            'filter' => false,
             'value' => function ($data) {
 
                 if ($data->data) {
@@ -316,6 +324,7 @@ if ($type == 1) {
         [
             'attribute' => 'status',
             'format' => 'raw',
+            'filter' => Html::activeDropDownList($searchModel, 'status', TaskUser::$executionStatus, ['class' => 'form-control', 'prompt' => 'Все статусы']),
             'vAlign'=>'middle',
             'value' => function ($data, $key, $index, $column) {
                 return Html::activeDropDownList($data, 'status', TaskUser::$executionStatus,
@@ -361,6 +370,7 @@ if ($type == 1) {
         [
             'attribute' => 'task',
             'vAlign'=>'middle',
+            'filter' => false,
             'value' => function ($data) {
 
                 if ($data->task) {
@@ -374,6 +384,7 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -387,6 +398,7 @@ if ($type == 1) {
         [
             'header' => 'Кому',
             'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -400,6 +412,7 @@ if ($type == 1) {
         [
             'header' => 'Копия',
             'vAlign'=>'middle',
+            'filter' => false,
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -416,6 +429,7 @@ if ($type == 1) {
         [
             'attribute' => 'data',
             'vAlign'=>'middle',
+            'filter' => false,
             'value' => function ($data) {
 
                 if ($data->data) {
@@ -469,6 +483,7 @@ if ($type == 1) {
         [
             'attribute' => 'status',
             'format' => 'raw',
+            'filter' => Html::activeDropDownList($searchModel, 'status', TaskUser::$executionStatus, ['class' => 'form-control', 'prompt' => 'Все статусы']),
             'vAlign'=>'middle',
             'value' => function ($data, $key, $index, $column) {
                 return Html::activeDropDownList($data, 'status', TaskUser::$executionStatus,
@@ -523,6 +538,7 @@ if ($type == 1) {
         <?php
         echo GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'hover' => false,
             'striped' => false,
             'export' => false,

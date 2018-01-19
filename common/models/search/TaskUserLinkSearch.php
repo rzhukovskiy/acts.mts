@@ -3,6 +3,7 @@
 namespace common\models\search;
 
 use common\models\TaskUser;
+use common\models\TaskUserLink;
 use common\models\User;
 use Yii;
 use yii\base\Model;
@@ -11,7 +12,7 @@ use yii\data\ActiveDataProvider;
 /**
  * TopicSearch represents the model behind the search form about `common\models\TaskUser`.
  */
-class TaskUserSearch extends TaskUser
+class TaskUserLinkSearch extends TaskUserLink
 {
     /**
      * @inheritdoc
@@ -19,8 +20,7 @@ class TaskUserSearch extends TaskUser
     public function rules()
     {
         return [
-            [['from_user', 'status', 'for_user'], 'integer'],
-            [['data', 'data_status', 'task'], 'string'],
+            [['task_id', 'for_user_copy'], 'integer'],
         ];
     }
 
@@ -42,7 +42,7 @@ class TaskUserSearch extends TaskUser
      */
     public function search($params)
     {
-        $query = TaskUser::find();
+        $query = TaskUserLink::find();
 
         // add conditions that should always apply here
 
@@ -61,9 +61,7 @@ class TaskUserSearch extends TaskUser
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'for_user' => $this->for_user,
-            'from_user' => $this->from_user,
-            'status' => $this->status,
+            'for_user_copy' => $this->for_user_copy,
         ]);
 
         return $dataProvider;
