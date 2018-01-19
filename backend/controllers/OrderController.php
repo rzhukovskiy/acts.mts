@@ -55,9 +55,28 @@ class OrderController extends Controller
 
         $params = Yii::$app->request->queryParams;
 
+        // вывод названия компании
+        $companyName = '';
+        $cardNumber = 0;
+
         if(!isset($params['CompanySearch']['address'])) {
             $params['CompanySearch']['address'] = 'Архангельск';
         }
+
+        // Получаем название компании по введенной карте
+        if(isset($params['CompanySearch']['card_number'])) {
+            $cardNumber = $params['CompanySearch']['card_number'];
+        }
+
+        if($cardNumber > 0) {
+            $nameArr = Card::find()->innerJoin('company', 'company.id = card.company_id')->where(['number' => $cardNumber])->select('company.name')->asArray()->column();
+
+            if(isset($nameArr[0])) {
+                $companyName = ' для компании ' . $nameArr[0];
+            }
+
+        }
+        // Получаем название компании по введенной карте
 
         $dataProvider = $searchModel->searchWithCard($params);
 
@@ -109,6 +128,7 @@ class OrderController extends Controller
             'entrySearchModel' => $entrySearchModel,
             'entryModel' => $entryModel,
             'listCity' => $listCity,
+            'companyName' => $companyName,
         ]);
     }
 

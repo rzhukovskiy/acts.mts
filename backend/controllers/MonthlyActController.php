@@ -592,16 +592,17 @@ class MonthlyActController extends Controller
             $actList = [];
 
             if ($company) {
-                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.client_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 0], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id')->groupBy('monthly_act.id')->asArray()->all();
+                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.client_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->innerJoin('{{%company_info}}', 'company_info.company_id=company.id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 0], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id, company_info.email as email')->groupBy('monthly_act.id')->asArray()->all();
             } else {
-                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.partner_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 1], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id')->groupBy('monthly_act.id')->asArray()->all();
+                $actList = MonthlyAct::find()->innerJoin('{{%act}}', 'monthly_act.client_id=act.partner_id')->innerJoin('{{%company}}', 'company.id=monthly_act.client_id')->innerJoin('{{%company_info}}', 'company_info.company_id=company.id')->where(['AND', ['monthly_act.type_id' => $type], ['act.service_type' => $type], ['monthly_act.is_partner' => 1], ['DATE_FORMAT(`act_date`, "%c-%Y")' => $period], ["MONTH(FROM_UNIXTIME(served_at))" => $periodArr[0]], ["YEAR(FROM_UNIXTIME(served_at))" => $periodArr[1]], ['>', 'act.expense', 0], ['not', ['monthly_act.post_number' => null]], ['not', ['monthly_act.post_number' => '']]])->select('company.name as name, monthly_act.post_number as number, monthly_act.id as id, company_info.email as email')->groupBy('monthly_act.id')->asArray()->all();
             }
 
             $resArr = [];
             $resArr[0] = '';
             $resArr[1] = '';
             $resArr[2] = '';
-            $DataTrack = [];
+            $emailArr = [];
+            $numberArr = [];
 
             $ArrIdsActs = [];
             $ArrNameActs = [];
@@ -622,6 +623,8 @@ class MonthlyActController extends Controller
                             $indexID = $oldResTrack->second_id;
                             $ArrIdsActs[] = $indexID;
                             $ArrNameActs[$indexID] = $actList[$i]['name'];
+                            $emailArr[$indexID] = $actList[$i]['email'];
+                            $numberArr[$indexID] = $actList[$i]['number'];
 
                         }
                     }
@@ -718,21 +721,31 @@ class MonthlyActController extends Controller
             }
 
             $arrTreckInfo = TrackerInfo::find()->where(['type' => 1])->andWhere(['second_id' => $ArrIdsActs])->select('value, second_id')->asArray()->all();
+            $numTypes = [0 => 1, 1 => 1, 2 => 1];
+            $resEmail = [];
+            $resNumber = [];
 
             for ($i = 0; $i < count($arrTreckInfo); $i++) {
 
                 $index = $arrTreckInfo[$i]['second_id'];
 
                 if ($arrTreckInfo[$i]['value'] == 1) {
-                    $resArr[0] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    // Ждут в месте получения
+                    $resArr[0] .= '<span style="color:#7F7F7F">' . $numTypes[0] . '.</span> ' . Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    $numTypes[0]++;
+
+                    $resEmail[$index] = $emailArr[$index];
+                    $resNumber[$index] = $numberArr[$index];
                 } else if ($arrTreckInfo[$i]['value'] == 2) {
-                    $resArr[1] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    $resArr[1] .= '<span style="color:#7F7F7F">' . $numTypes[1] . '.</span> ' . Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    $numTypes[1]++;
                 } else {
-                    $resArr[2] .= Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    $resArr[2] .= '<span style="color:#7F7F7F">' . $numTypes[2] . '.</span> ' . Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
+                    $numTypes[2]++;
                 }
             }
 
-            echo json_encode(['success' => 'true', 'result' => $resArr]);
+            echo json_encode(['success' => 'true', 'result' => $resArr, 'emails' => json_encode($resEmail), 'numbers' => json_encode($resNumber)]);
 
         } else {
             echo json_encode(['success' => 'false']);

@@ -33,17 +33,17 @@ class EmailController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'sendemailmass', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'sendemailmass', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
+                        'actions' => ['list', 'notification', 'add', 'update', 'delete', 'test', 'sendemail', 'sendemailmass', 'deletefile', 'smstext', 'sendsms', 'notifdirectors'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -626,6 +626,77 @@ class EmailController extends Controller
 
     }
     // Отправляем смс шаблон по водителям компании
+
+    // Массовая отправка уведомлений о прибытии в место получения
+    public function actionSendemailmass()
+    {
+
+        // Универсальная отправка писем по заданному шаблону
+
+        if((Yii::$app->request->post('email')) && (Yii::$app->request->post('id')) && (Yii::$app->request->post('number'))) {
+
+            $emailArr = json_decode(json_decode(Yii::$app->request->post('email'), True), True);
+            $idTemplate = Yii::$app->request->post('id');
+            $numberArr = json_decode(json_decode(Yii::$app->request->post('number'), True), True);
+
+            $numTrueSend = 0;
+
+            // Почтовый шаблон для уведомления
+            $emailCont = Email::findOne(['id' => $idTemplate]);
+
+            if (isset($emailCont)) {
+
+                if ((isset($emailCont->title)) && (isset($emailCont->text))) {
+
+                    $subject = $emailCont->title;
+                    $maintext = nl2br($emailCont->text);
+                    $maintext = str_replace('{TRACKLIST}', 'Прибыло в пункт назначения', $maintext);
+
+                    if(count($emailArr) > 0) {
+                        foreach ($emailArr as $key => $value) {
+
+                            $plainTextContent = $maintext;
+
+                            if(isset($numberArr[$key])) {
+
+                                $linkTrack = 'https://www.pochta.ru/tracking#' . $numberArr[$key];
+                                $plainTextContent = str_replace('{TRACKLINK}', Html::a($linkTrack, $linkTrack, ['target' => 'blank']), $plainTextContent);
+                                $plainTextContent = str_replace('История почтового отправления', 'Местоположение почтового отправления', $plainTextContent);
+
+                                $resSend = Yii::$app->mailer->compose()
+                                    ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                    ->setTo($value)
+                                    ->setSubject($subject)
+                                    ->setHtmlBody($plainTextContent)->send();
+
+                                if ($resSend) {
+                                    $numTrueSend++;
+                                }
+
+                            }
+
+                        }
+                    }
+
+                    if($numTrueSend > 0) {
+                        echo json_encode(['success' => 'true', 'numsend' => $numTrueSend]);
+                    } else {
+                        echo json_encode(['success' => 'false']);
+                    }
+
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
 
     public function actionCronmailer()
     {
