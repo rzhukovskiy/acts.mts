@@ -43,7 +43,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Выбор города
+        Выбор города <?= $companyName ?>
     </div>
     <div class="panel-body">
         <?php
