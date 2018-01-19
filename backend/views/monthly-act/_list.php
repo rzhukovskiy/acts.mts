@@ -38,6 +38,9 @@ $actionLinkSearch = Url::to('@web/monthly-act/searchact');
 $actionLinkGetComments = Url::to('@web/monthly-act/getcomments');
 $actionNotifDirectors = Url::to('@web/email/notifdirectors');
 $actionGetTrack = Url::to('@web/monthly-act/gettrackerlist');
+$actionLinkEmail = Url::to('@web/email/sendemailmass');
+
+$mailTemplateID = 5;
 
 // Выделение номера акта
 $numFind = 0;
@@ -85,6 +88,10 @@ border:1px solid #069;
 }
 
 .showStatus:hover {
+cursor:pointer;
+}
+
+.sendNotificInFilial:hover {
 cursor:pointer;
 }
 ";
@@ -497,8 +504,13 @@ var showStatusVar = $(".showStatus");
 // При наведении на название показывается статус актов
 
 // открываем модальное окно отслеживаний
+var sendMailNotificIco = $('.sendNotificInFilial');
+var arrEmailMass = [];
+var arrNumberMass = [];
 
 function loadTrackers() {
+    
+    sendMailNotificIco.hide();
     
     $('.infilial').text('Загрузка..');
     $('.sendfinish').text('Загрузка..');
@@ -510,14 +522,22 @@ function loadTrackers() {
                 data:'type=' + '$Seltype' + '&company=' + '$Selcompany' + '&period=' + '$period',
                 url  : '$actionGetTrack',
                 success  : function(data) {
-                    
+                
                 var response = $.parseJSON(data);
                 
                 if (response.success == 'true') { 
                 // Удачно
                 
                 var resTrack = response.result;
-
+                
+                // Данные для кнопки отправить уведомления
+                if(resTrack[0].length > 0) {
+                    sendMailNotificIco.show();
+                    arrEmailMass = response.emails;
+                    arrNumberMass = response.numbers;
+                }
+                // Данные для кнопки отправить уведомления
+                
                 $('.infilial').html(resTrack[0]);
                 $('.sendfinish').html(resTrack[1]);
                 $('.intransit').html(resTrack[2]);
@@ -536,8 +556,39 @@ function loadTrackers() {
 
 $('.modalTecker').on('click', function(){
 $('#showModalTracker').modal('show');
-loadTrackers();
+    loadTrackers();
 });
+
+// Нажимаем на кнопку отправить уведомление
+sendMailNotificIco.on('click', function(){
+    
+   if((arrEmailMass.length > 0) && (arrNumberMass.length > 0)) {
+
+            $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'email=' + JSON.stringify(arrEmailMass) + '&id=' + '$mailTemplateID' + '&number=' + JSON.stringify(arrNumberMass),
+                url  : '$actionLinkEmail',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                    // Удачно
+                    alert('Письма успешно отправлены');
+                } else {
+                    // Неудачно
+                    alert('Ошибка при отправке писем');
+                }
+                
+                }
+            });
+       
+   }
+   
+});
+// Нажимаем на кнопку отправить уведомление
+
 // открываем модальное окно отслеживаний
 
 JS;
@@ -815,7 +866,7 @@ $modal = Modal::begin([
 ]);
 
 echo "<div id='trackInfo' style='word-wrap: break-word; font-size:14px;'>
-<div><b>Ожидают в месте вручения:</b></div>
+<div><b>Ожидают в месте вручения:</b> <span class='glyphicon glyphicon-envelope sendNotificInFilial' style='margin-left:5px; font-size:15px; color:#3d8040;'></span></div>
 <div class='infilial'></div>
 <div style='margin-top: 10px;'><b>Получены адресатом:</b></div>
 <div class='sendfinish'></div>

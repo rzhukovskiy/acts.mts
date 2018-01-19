@@ -114,11 +114,11 @@ if(validateEmail('$email')) {
                 if (response.success == 'true') { 
                 // Удачно
                 $('#showModalNotific').modal('hide');
-                alert('Письмо успешно отправлено');
+                    alert('Письмо успешно отправлено');
                 } else {
                 // Неудачно
                 $('#showModalNotific').modal('hide');
-                alert('Ошибка при отправке письма');
+                    alert('Ошибка при отправке письма');
                 }
                 
                 }
