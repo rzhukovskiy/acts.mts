@@ -747,6 +747,8 @@ class Act extends ActiveRecord
                 }
                 // END Выполняем замещение клиент
 
+                $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
+
                 foreach ($this->clientServiceList as $serviceData) {
                     if (empty($serviceData['service_id']) && empty($serviceData['description'])) {
                         continue;
@@ -773,7 +775,7 @@ class Act extends ActiveRecord
 
                             $scope->description = $companyService->service->description;
                         } else {
-                            $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
+                            $scope->price = $kpd == 1 ? 0 : ($kpd * ArrayHelper::getValue($serviceData, 'price', 0)); // Если цены нет то ставим 0
                             $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
@@ -991,7 +993,7 @@ class Act extends ActiveRecord
                                 $clientScope->price = $clientService->price;
                                 $clientScope->description = $clientService->service->description;
                             } else {
-                                $clientScope->price = $kpd * ArrayHelper::getValue($serviceData, 'price', 0);
+                                $clientScope->price = $kpd == 1 ? 0 : ($kpd * ArrayHelper::getValue($serviceData, 'price', 0));  // Если цены нет то ставим 0
                                 $clientScope->description =
                                     Service::findOne(['id' => $serviceData['service_id']])->description;
                             }
