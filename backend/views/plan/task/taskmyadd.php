@@ -3,11 +3,10 @@
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use \kartik\date\DatePicker;
 use kartik\datetime\DateTimePicker;
 use common\models\User;
 
-$this->title = 'Добавление';
+$this->title = 'Добавление собственной задачи';
 
 if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == 176)) {
     $tabs = [
@@ -15,14 +14,14 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
-        ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
+        ['label' => 'Добавление cобственной задачи', 'url' => ['plan/taskmyadd'], 'active' => Yii::$app->controller->action->id == 'taskmyadd'],
     ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
-        ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
+        ['label' => 'Добавление cобственной задачи', 'url' => ['plan/taskmyadd'], 'active' => Yii::$app->controller->action->id == 'taskmyadd'],
     ];
 }
 echo Tabs::widget([
@@ -33,12 +32,12 @@ echo Tabs::widget([
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Добавление
+        Добавление собственной задачи
     </div>
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin([
-            'action' => ['/plan/taskadd'],
+            'action' => ['/plan/taskmyadd'],
             'options' => ['accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
             'fieldConfig' => [
                 'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
@@ -46,8 +45,6 @@ echo Tabs::widget([
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]); ?>
-        <?= $form->field($model, 'for_user')->dropDownList($userListsID, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
-        <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,

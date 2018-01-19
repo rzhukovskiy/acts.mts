@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\MonthlyAct;
 use common\models\Plan;
 use common\models\search\PlanSearch;
+use common\models\TaskMy;
 use common\models\TaskUser;
 use common\models\TaskUserLink;
 use common\models\User;
@@ -35,12 +36,12 @@ class PlanController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskadd', 'taskupdate', 'taskfull', 'ajaxexecutionstatus', 'taskdelete', 'newtendattach'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskadd', 'taskupdate', 'taskfull', 'ajaxexecutionstatus', 'taskdelete', 'newtendattach'],
+                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ]
@@ -180,9 +181,7 @@ class PlanController extends Controller
             $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id]);
         } else if ($type == 2) {
             $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id]);
-        } else if ($type == 3) {
-            $dataProvider->query->andWhere(['for_user' => Yii::$app->user->identity->id]);
-        } else if ((($type != 3) && ($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
+        } else if ((($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
             return $this->redirect(['plan/tasklist?type=1']);
         }
 
@@ -194,9 +193,26 @@ class PlanController extends Controller
         ]);
     }
 
+    public function actionTaskmylist()
+    {
+        $searchModel = TaskMy::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+        $dataProvider->query->where(['from_user' => Yii::$app->user->identity->id]);
+
+        return $this->render('task/taskmylist', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
+
     public function actionTaskadd()
     {
-        $userLists = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+       // $userLists = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
         $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
 
         $newmodellink = new TaskUserLink();
@@ -243,8 +259,35 @@ class PlanController extends Controller
             return $this->render('task/taskadd', [
                 'model' => $model,
                 'newmodellink' => $newmodellink,
-                'userLists' => $userLists,
                 'userListsID' => $userListsID,
+            ]);
+        }
+
+    }
+
+    public function actionTaskmyadd()
+    {
+        $model = new TaskMy();
+        $model->from_user = Yii::$app->user->identity->id;
+
+        $arrUpdate = Yii::$app->request->post();
+
+        if (($model->load($arrUpdate)) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            $model->files = UploadedFile::getInstances($model, 'files');
+
+            if ($model->files) {
+
+                if ($model->upload()) {
+                    // file is uploaded successfully
+                }
+            }
+
+            return $this->redirect(['plan/taskmylist']);
+
+        } else {
+            return $this->render('task/taskmyadd', [
+                'model' => $model,
             ]);
         }
 
@@ -256,14 +299,22 @@ class PlanController extends Controller
         $newmodel = new TaskUserLink();
 
         $userLists = User::find()->select('username')->indexby('id')->column();
-        $userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+        //$userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
         $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
         return $this->render('task/taskfull', [
             'model' => $model,
             'userLists' => $userLists,
             'newmodel' => $newmodel,
             'userListsData' => $userListsData,
-            'userListsAll' => $userListsAll,
+        ]);
+    }
+
+    public function actionTaskmyfull($id)
+    {
+        $model = TaskMy::findOne(['id' => $id]);
+
+        return $this->render('task/taskmyfull', [
+            'model' => $model,
         ]);
     }
 
@@ -359,6 +410,40 @@ class PlanController extends Controller
         //Конец Вывод после сохранения без перезагрузки
     }
 
+    public function actionTaskmyupdate($id)
+    {
+        $model = TaskMy::findOne(['id' => $id]);
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+
+            if (isset($arrUpdate['TaskMy']['data'])) {
+                foreach ($arrUpdate['TaskMy'] as $name => $value) {
+                    if ($name == 'data') {
+                        $arrUpdate['TaskMy'][$name] = (String)strtotime($value);
+                    }
+                }
+            }
+            //Конец Подготовка данных перед сохранением
+
+            // Вывод после сохранения без перезагрузки
+            $output = [];
+
+            if ($model->load($arrUpdate) && $model->save()) {
+
+
+                return ['output' => implode(', ', $output), 'message' => ''];
+
+            } else {
+                return ['message' => 'не получилось'];
+            }
+            //Конец Вывод после сохранения без перезагрузки
+        }
+    }
 
     public function actionTaskdelete($id)
     {
@@ -373,6 +458,16 @@ class PlanController extends Controller
         if (TaskUserLink::find()->where(['task_id' => $id])->exists()) {
         Yii::$app->db->createCommand()->delete('{{%task_user_link}}', ['task_id' => $id])->execute();
         }
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionTaskmydelete($id)
+    {
+        TaskMy::findOne(['id' => $id])->delete();
+
+        // Удаляем
+        Yii::$app->db->createCommand()->delete('{{%task_my}}', ['id' => $id])->execute();
 
         return $this->redirect(Yii::$app->request->referrer);
     }
@@ -422,11 +517,69 @@ class PlanController extends Controller
 
     }
 
+    public function actionTaskmyattach($id)
+    {
+
+        $modelAddAttach = new DynamicModel(['files']);
+        $modelAddAttach->addRule(['files'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+        $filesArr = UploadedFile::getInstances($modelAddAttach, 'files');
+
+        $filePath = \Yii::getAlias('@webroot/files/mytask/' . $id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/mytask/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/mytask/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/mytask/' . $id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/mytask/' . $id . '/'), 0775);
+        }
+
+        foreach ($filesArr as $file) {
+
+            if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
+            } else {
+
+                $filename = $filePath . $file->baseName . '.' . $file->extension;
+                $i = 1;
+
+                while (file_exists($filename)) {
+                    $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
+                    $i++;
+                }
+
+                $file->saveAs($filename);
+
+            }
+        }
+
+        return $this->redirect(['plan/taskmyfull', 'id' => $id]);
+
+    }
+
     public function actionAjaxexecutionstatus()
     {
         $id = Yii::$app->request->post('id');
         $status = Yii::$app->request->post('status');
         $model = TaskUser::findOne(['id' => $id]);
+        $model->id = $id;
+        $model->status = $status;
+        $model->data_status = (String) time();
+        $model->save();
+
+        return TaskUser::colorForExecutionStatus($model->status);
+    }
+
+    public function actionTaskmystatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = TaskMy::findOne(['id' => $id]);
         $model->id = $id;
         $model->status = $status;
         $model->data_status = (String) time();

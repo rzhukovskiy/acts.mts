@@ -26,17 +26,17 @@ class ContactController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['create', 'update', 'delete', 'newyear'],
+                        'actions' => ['create', 'update', 'delete'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'newyear'],
+                        'actions' => ['list', 'view'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'newyear'],
+                        'actions' => ['list', 'view'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_PARTNER, User::ROLE_CLIENT],
                     ],
