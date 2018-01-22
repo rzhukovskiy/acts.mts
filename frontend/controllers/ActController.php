@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\ActError;
 use common\models\Mark;
 use common\models\PenaltyInfo;
 use common\models\ActExport;
@@ -486,11 +487,11 @@ class ActController extends Controller
                                                     $car_id = isset($carArr[0]['id']) ? $carArr[0]['id'] : 0;
 
                                                     if(count($carArr) > 0) {
-                                                        $mark_id = $carArr[0]['mark_id'];
+                                                        // не заменять марку $mark_id = $carArr[0]['mark_id'];
                                                         $type_id = $carArr[0]['type_id'];
                                                     }
 
-                                                    if (($mark_id > 0) && ($type_id > 0) && (mb_strlen($number) > 3)) {
+                                                    if (($type_id > 0) && (mb_strlen($number) > 3)) {
 
                                                         $model = new Act();
                                                         $model->time_str = '01-' . $period;
@@ -498,6 +499,8 @@ class ActController extends Controller
 
                                                         $model->client_id = $company_id;
                                                         $model->car_number = $number;
+                                                        $model->mark_id = $mark_id;
+                                                        $model->type_id = $type_id;
                                                         $model->car_id = $car_id;
                                                         $model->service_type = Service::TYPE_DISINFECT;
 
@@ -507,7 +510,11 @@ class ActController extends Controller
                                                                 'amount' => 1,
                                                             ]
                                                         ];
-                                                        $model->save();
+
+                                                        if($model->save()) {
+                                                            // Удаляем ошибочные акты где неверный номер ТС
+                                                            ActError::deleteAll(['act_id' => $model->id, 'error_type' => 4]);
+                                                        }
 
                                                         $numTrueDis++;
                                                     }
