@@ -16,6 +16,7 @@ echo Tabs::widget([
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1']],
         ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0']],
         ['label' => 'Архив', 'url' => ['company/tenderownerlist?win=2']],
+        ['label' => 'Не взяли', 'url' => ['company/tenderownerlist?win=3']],
         ['label' => 'Редактирование', 'url' => ['company/tenderownerfull', 'id' => $model->id], 'active' => Yii::$app->controller->action->id == 'tenderownerfull'],
     ],
 ]);
@@ -155,6 +156,30 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите номер тендера'],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('reason_not_take') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'reason_not_take',
+                        'displayValue' => nl2br($model->reason_not_take),
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите причину по которой не берете тендер'],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
                         ],

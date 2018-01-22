@@ -38,12 +38,12 @@ class PlanController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach'],
+                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ]
@@ -175,14 +175,16 @@ class PlanController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $userList = User::find()->select('username')->indexby('id')->column();
-        
 
         if ($type == 1) {
-           $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id]);
+           $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
         } else if ($type == 2) {
-                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id]);
-
-        } else if ((($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
+           $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
+        } else if ($type == 3) {
+           $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->orWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['is_archive' => 1]);
+        } else if ($type == 0) {
+            $dataProvider->query->andWhere(['is_archive' => 0]);
+        } else if ((($type != 3) && ($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
             return $this->redirect(['plan/tasklist?type=1']);
         }
 
@@ -588,6 +590,37 @@ class PlanController extends Controller
         $model->save();
 
         return TaskUser::colorForExecutionStatus($model->status);
+    }
+
+    public function actionGetcomments()
+    {
+
+        if(Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+
+            $model = TaskUser::findOne(['id' => $id]);
+
+            if (isset($model->comment)) {
+                $resComm = "<u style='color:#757575;'>Комментарий от ответственного:</u> " . $model->comment . "<br />";
+            } else {
+                $resComm = "<u style='color:#757575;'>Комментарий:</u><br />";
+            }
+
+            echo json_encode(['success' => 'true', 'comment' => $resComm]);
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    public function actionIsarchive($id)
+    {
+            $model = TaskUser::findOne(['id' => $id]);
+            $model->is_archive = 1;
+            $model->save();
+            return $this->redirect(Yii::$app->request->referrer);
     }
 
     /**

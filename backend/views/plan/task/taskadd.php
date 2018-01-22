@@ -14,6 +14,7 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
     ];
@@ -21,6 +22,7 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
     ];

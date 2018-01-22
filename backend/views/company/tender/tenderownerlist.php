@@ -11,6 +11,7 @@ echo Tabs::widget([
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1'], 'active' => $win == 1],
         ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0'], 'active' => $win == 0],
         ['label' => 'Архив', 'url' => ['company/tenderownerlist?win=2'], 'active' => $win == 2],
+        ['label' => 'Не взяли', 'url' => ['company/tenderownerlist?win=3'], 'active' => $win == 3],
     ],
 ]);
 
@@ -89,6 +90,79 @@ $collumn = [
         ],
     ],
 ];
+} else if ($win == 3) {
+    $collumn = [
+        [
+            'header' => '№',
+            'vAlign'=>'middle',
+            'class' => 'kartik\grid\SerialColumn'
+        ],
+        [
+            'attribute' => 'text',
+            'vAlign'=>'middle',
+            'header' => 'Текст',
+            'value' => function ($data) {
+
+                if ($data->text) {
+                    return $data->text;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'reason_not_take',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->reason_not_take) {
+                    return $data->reason_not_take;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'link',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'value' => function ($data) {
+
+                if (isset($data->link)) {
+                    if ($data->link) {
+                        return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'class' => 'kartik\grid\ActionColumn',
+            'header' => 'Действие',
+            'vAlign'=>'middle',
+            'template' => '{update}{delete}',
+            'contentOptions' => ['style' => 'min-width: 60px'],
+            'buttons' => [
+                'update' => function ($url, $data, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                        ['/company/tenderownerfull', 'id' => $data->id]);
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/company/ownerdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
+                },
+            ],
+        ],
+    ];
 } else {
     $collumn = [
         [

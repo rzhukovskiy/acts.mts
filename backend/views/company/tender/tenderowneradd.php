@@ -11,6 +11,7 @@ echo Tabs::widget([
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1']],
         ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0']],
         ['label' => 'Архив', 'url' => ['company/tenderownerlist?win=2']],
+        ['label' => 'Не взяли', 'url' => ['company/tenderownerlist?win=3']],
         ['label' => 'Добавление', 'url' => ['company/tenderowneradd'], 'active' => Yii::$app->controller->action->id == 'tenderowneradd'],
     ],
 ]);

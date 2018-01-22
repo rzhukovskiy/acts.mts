@@ -131,7 +131,7 @@ var showStatusVar = $(".showStatus");
                 if($(this).parent().data('company') > 0) {
         
                 var idKey = $(this).parent().data('company');
-                    console.log(idKey);
+                
                 if(arrRessComm[idKey]) {
                     
             this.t = this.title;

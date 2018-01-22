@@ -69,9 +69,9 @@ class menuLeftWidget extends Widget
         $searchModel->is_read = null;
         $countMessage = $searchModel->search([])->count;
 
-        $countOwner = TenderOwnerSearch::find()->where(['tender_user' => 0])->count();
-        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->count();
-        $countTaskL = TaskUserLink::find()->innerJoin('task_user', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->count();
+        $countOwner = TenderOwnerSearch::find()->where(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']])->count();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->andwhere(['task_user.is_archive' => 0])->count();
+        $countTaskL = TaskUserLink::find()->innerJoin('task_user', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->andwhere(['!=', 'task_user.status', 2])->andwhere(['task_user.is_archive' => 0])->count();
 
         $items = [];
         // Admin links

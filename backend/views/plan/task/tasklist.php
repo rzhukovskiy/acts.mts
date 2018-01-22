@@ -15,13 +15,15 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0'], 'active' => $type == 0],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
-        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => $type == 3],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
+        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
 ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
-        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => $type == 3],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
+        ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
     ];
 }
 
@@ -33,8 +35,26 @@ $GLOBALS['usersList'] = $userList;
 
 $isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 $ajaxexecutionstatus = Url::to('@web/plan/ajaxexecutionstatus');
+$actionLinkGetComments = Url::to('@web/plan/getcomments');
+
+$css = "#previewStatus {
+background:#fff;
+padding:12px;
+position:fixed;
+font-size:14px;
+z-index:50;
+border-radius:3px;
+border:1px solid #069;
+}
+
+.showStatus:hover {
+cursor:pointer;
+}
+";
+$this->registerCss($css);
 
 $script = <<< JS
+
 $('.change-execution_status').change(function(){
 
     var select=$(this);
@@ -50,6 +70,108 @@ $('.change-execution_status').change(function(){
     }
         });
     });
+
+// При наведении на название показывается статус актов
+var margTop = 0;
+var margLeft = 0;
+var openWindowComm = false;
+
+var arrRessComm = [];
+
+var showStatusVar = $(".showStatus");
+    showStatusVar.hover(function() {
+        
+        if(openWindowComm == false) {
+        
+            if($("#previewStatus")) {
+                $("#previewStatus").remove(); 
+            }
+            
+            openWindowComm = true;
+            
+                if($(this).parent().data('task') > 0) {
+        
+                var idKey = $(this).parent().data('task');
+                if(typeof(arrRessComm[idKey]) != "undefined" && arrRessComm[idKey] !== null) {
+            this.t = this.title;
+            this.title = "";
+            $("body").append("<p id='previewStatus'></p>");
+           
+
+            margTop = window.event.clientY - 20;
+            margLeft = window.event.clientX + document.body.scrollLeft + 25;
+            
+            $("#previewStatus").css("top", margTop + "px")
+            .css("left", margLeft + "px")
+            .fadeIn("fast");
+                    
+                if($("#previewStatus")) {
+                $("#previewStatus").html(arrRessComm[idKey]);
+                }
+                openWindowComm = false;
+                } else {
+                
+                $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'id=' + idKey,
+                url  : '$actionLinkGetComments',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                arrRessComm[idKey] = response.comment;
+                
+                if($("#previewStatus")) {
+                $("#previewStatus").html(arrRessComm[idKey]);
+                }
+                openWindowComm = false;
+                } else {
+                // Неудачно
+                openWindowComm = false;
+                }
+                
+                }
+                });
+                
+                }
+        
+            this.t = this.title;
+            this.title = "";
+            $("body").append("<p id='previewStatus'></p>");
+
+            margTop = window.event.clientY - 20;
+            margLeft = window.event.clientX + document.body.scrollLeft + 25;
+            
+            $("#previewStatus").css("top", margTop + "px")
+            .css("left", margLeft + "px")
+            .fadeIn("fast");
+                
+                } else {
+                    openWindowComm = false;
+                }
+            }
+        },
+        function() {
+        if(openWindowComm == false) {
+            $("#previewStatus").remove();
+            margTop = 0;
+            margLeft = 0;
+            }
+        });
+    
+    showStatusVar.mousemove(function(e) {
+        margTop = window.event.clientY - 20;
+        margLeft = window.event.clientX + document.body.scrollLeft + 25;
+        $("#previewStatus")
+            .css("top", margTop + "px")
+            .css("left", margLeft + "px");
+    });
+// При наведении на название показывается статус актов
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
@@ -65,14 +187,18 @@ if ($type == 1) {
             'attribute' => 'task',
             'filter' => false,
             'vAlign'=>'middle',
+            'format'=> 'raw',
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return $data->task;
+                    return '<span class="showStatus">' . $data->task . '</span>';
                 } else {
                     return '-';
                 }
 
+            },
+            'contentOptions' =>function ($model, $key, $index, $column){
+                 return ['data-task' => $model->id];
             },
         ],
         [
@@ -187,12 +313,24 @@ if ($type == 1) {
             'class' => 'kartik\grid\ActionColumn',
             'header' => 'Действие',
             'vAlign'=>'middle',
-            'template' => '{update}',
+            'template' => '{update}{archive}{delete}',
             'contentOptions' => ['style' => 'min-width: 60px'],
             'buttons' => [
                 'update' => function ($url, $data, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                    return Html::a('<span class="glyphicon glyphicon-search" style="margin-right: 5px;"> </span>',
                         ['/plan/taskfull', 'id' => $data->id]);
+                },
+                'archive' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
+                    }
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"> </span>', ['/plan/taskdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
                 },
             ],
         ],
@@ -208,15 +346,19 @@ if ($type == 1) {
         [
             'attribute' => 'task',
             'vAlign'=>'middle',
+            'format' => 'raw',
             'filter' => false,
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return $data->task;
+                    return '<span class="showStatus">' . $data->task . '</span>';
                 } else {
                     return '-';
                 }
 
+            },
+            'contentOptions' =>function ($model, $key, $index, $column){
+                return ['data-task' => $model->id];
             },
         ],
         [
@@ -349,12 +491,24 @@ if ($type == 1) {
             'class' => 'kartik\grid\ActionColumn',
             'header' => 'Действие',
             'vAlign'=>'middle',
-            'template' => '{update}',
+            'template' => '{update}{archive}{delete}',
             'contentOptions' => ['style' => 'min-width: 60px'],
             'buttons' => [
                 'update' => function ($url, $data, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                    return Html::a('<span class="glyphicon glyphicon-search" style="margin-right: 5px;"> </span>',
                         ['/plan/taskfull', 'id' => $data->id]);
+                },
+                'archive' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
+                    }
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"> </span>', ['/plan/taskdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
                 },
             ],
         ],
@@ -370,15 +524,19 @@ if ($type == 1) {
         [
             'attribute' => 'task',
             'vAlign'=>'middle',
+            'format' => 'raw',
             'filter' => false,
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return $data->task;
+                    return '<span class="showStatus">' . $data->task . '</span>';
                 } else {
                     return '-';
                 }
 
+            },
+            'contentOptions' =>function ($model, $key, $index, $column){
+                return ['data-task' => $model->id];
             },
         ],
         [
@@ -421,6 +579,192 @@ if ($type == 1) {
 
                 for ($i = 0; $i < count($user); $i++) {
                     $alluser .= $user[$i]['username'] . '<br/>';
+                }
+
+                return $alluser;
+            },
+        ],
+        [
+            'attribute' => 'data',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->data) {
+                    return date('d.m.y H:i', $data->data);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'header' => 'Осталось<br/> до истечения',
+            'vAlign'=>'middle',
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                if (($data->data) && ($data->status !== 2)) {
+                    $lostDateText = '';
+                    $lostDate = $data->data - time();
+
+                    $days = ((Int) ($lostDate / 86400));
+                    $lostDate -= (((Int) ($lostDate / 86400)) * 86400);
+
+                    $hours = (round($lostDate / 3600));
+                    $lostDate -= (round($lostDate / 3600) * 3600);
+
+                    $minutes = (round($lostDate / 60));
+
+                    $lostDateText .= 'Дней: ' .  abs($days);
+                    $lostDateText .= ', часов: ' . abs($hours);
+                    $lostDateText .= ', минут: ' . abs($minutes);
+
+                    if ($data->data > time()) {
+                        return '<span style="color: green">' . $lostDateText . '</span>';
+                    } else if ($data->data < time()) {
+                        return '<span style="color: red">- ' . $lostDateText . '</span>';
+                    } else {
+                        return $lostDateText;
+                    }
+
+                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                    return '<span style="color: red">Выполнено не вовремя</span>';
+                } else if (($data->status == 2) && ($data->data > $data->data_status)) {
+                    return '<span style="color: green">Выполнено вовремя</span>';
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'filter' => Html::activeDropDownList($searchModel, 'status', TaskUser::$executionStatus, ['class' => 'form-control', 'prompt' => 'Все статусы']),
+            'vAlign'=>'middle',
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'status', TaskUser::$executionStatus,
+                    [
+                        'class'              => 'form-control change-execution_status',
+                        'data-id'            => $data->id,
+                        'data-executionStatus' => $data->status,
+                        'disabled'           => TaskUser::payDis($data->status) ? 'disabled' : false,
+                    ]
+
+                );
+            },
+
+            'contentOptions' => function ($data) {
+                return [
+                    'class' => TaskUser::colorForExecutionStatus($data->status),
+                    'style' => 'width: 155px',
+                ];
+            },
+        ],
+        [
+            'class' => 'kartik\grid\ActionColumn',
+            'header' => 'Действие',
+            'vAlign'=>'middle',
+            'template' => '{update}{archive}{delete}',
+            'contentOptions' => ['style' => 'min-width: 60px'],
+            'buttons' => [
+                'update' => function ($url, $data, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search" style="margin-right: 5px;"> </span>',
+                        ['/plan/taskfull', 'id' => $data->id]);
+                },
+                'archive' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
+                    }
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"> </span>', ['/plan/taskdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
+                },
+            ],
+        ],
+    ];
+} else if ($type == 3) {
+    $column = [
+
+        [
+            'header' => '№',
+            'vAlign'=>'middle',
+            'class' => 'kartik\grid\SerialColumn'
+        ],
+        [
+            'attribute' => 'task',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->task) {
+                    return '<span class="showStatus">' . $data->task . '</span>';
+                } else {
+                    return '-';
+                }
+
+            },
+            'contentOptions' =>function ($model, $key, $index, $column){
+                return ['data-task' => $model->id];
+            },
+        ],
+        [
+            'header' => 'От кого',
+            'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                if ($data->from_user) {
+                    if ($data->from_user == Yii::$app->user->identity->id) {
+                        return '<b>Вы</b>';
+                    } else {
+                        return $GLOBALS['usersList'][$data->from_user];
+                    }
+                } else {
+                        return '-';
+                }
+            },
+        ],
+        [
+            'header' => 'Кому',
+            'vAlign'=>'middle',
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                if ($data->for_user) {
+                    if ($data->for_user == Yii::$app->user->identity->id) {
+                        return '<b>Вы</b>';
+                    } else {
+                        return $GLOBALS['usersList'][$data->for_user];
+                    }
+                } else {
+                    return '-';
+                }
+            },
+        ],
+        [
+            'header' => 'Копия',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'format'=> 'raw',
+            'value' => function ($data) {
+
+                $user = TaskUserLink::find()->innerJoin('user', '`user`.`id` = `task_user_link`.`for_user_copy`')->where(['task_id' => $data->id])->select('user.id, user.username')->asArray()->all();
+                $alluser = '';
+                for ($i = 0; $i < count($user); $i++) {
+                    if ($user[$i]['id'] == Yii::$app->user->identity->id) {
+                        $alluser .= '<b>Вы</b><br/>';
+                    } else {
+                        $alluser .= $user[$i]['username'] . '<br/>';
+                    }
                 }
 
                 return $alluser;

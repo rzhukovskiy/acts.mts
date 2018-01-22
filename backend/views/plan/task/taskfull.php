@@ -31,6 +31,7 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
     ];
@@ -38,6 +39,7 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Редактирование', 'url' => ['plan/taskfull'], 'active' => Yii::$app->controller->action->id == 'taskfull'],
     ];
@@ -195,6 +197,31 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите задание'],
+                        'formOptions' => [
+                            'action' => ['/plan/taskupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('comment') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'comment',
+                        'displayValue' => nl2br($model->comment),
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите задание'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id],

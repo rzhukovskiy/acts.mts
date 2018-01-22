@@ -31,7 +31,7 @@ class TenderOwner extends \yii\db\ActiveRecord
     {
         return [
             [['text'], 'required'],
-            [['text'], 'string'],
+            [['text', 'reason_not_take'], 'string', 'max' => 5000],
             [['data'], 'string', 'max' => 20],
             [['link'], 'string', 'max' => 255],
             [['tender_user', 'tender_id'], 'integer'],
@@ -50,6 +50,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             'tender_id' => 'ID Тендер',
             'data' => 'Дата',
             'link' => 'Документация',
+            'reason_not_take' => 'Причина',
         ];
     }
     /* Связь с моделью User*/
