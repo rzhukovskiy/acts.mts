@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\MonthlyAct;
 use common\models\Plan;
 use common\models\search\PlanSearch;
+use common\models\search\TaskUserLinkSearch;
 use common\models\search\TaskUserSearch;
 use common\models\TaskMy;
 use common\models\TaskUser;
@@ -174,11 +175,13 @@ class PlanController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $userList = User::find()->select('username')->indexby('id')->column();
+        
 
         if ($type == 1) {
-            $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id]);
+           $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id]);
         } else if ($type == 2) {
-            $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id]);
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id]);
+
         } else if ((($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
             return $this->redirect(['plan/tasklist?type=1']);
         }
