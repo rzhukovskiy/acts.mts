@@ -419,12 +419,11 @@ var showStatusVar = $(".showStatus");
         
                 var idKey = $(this).parent().parent().data("key");
                     
-                if(arrRessComm[idKey]) {
+                if(typeof(arrRessComm[idKey]) != "undefined" && arrRessComm[idKey] !== null) {
                     
             this.t = this.title;
             this.title = "";
             var c = (this.t != "") ? "<br/>" + this.t : "";
-            $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
 
             margTop = window.event.clientY - 20;
             margLeft = window.event.clientX + document.body.scrollLeft + 25;
@@ -432,13 +431,14 @@ var showStatusVar = $(".showStatus");
             $("#previewStatus").css("top", margTop + "px")
             .css("left", margLeft + "px")
             .fadeIn("fast");
+            
+                $("body").append("<p id='previewStatus'>" + arrRessComm[idKey] + "</p>");
                     
-                if($("#previewStatus")) {
-                $("#previewStatus").html(arrRessComm[idKey]);
-                }
                 openWindowComm = false;
                 } else {
                 
+                $("body").append("<p id='previewStatus'></p>");
+                    
                 $.ajax({
                 type     :'POST',
                 cache    : true,
@@ -470,7 +470,16 @@ var showStatusVar = $(".showStatus");
             this.t = this.title;
             this.title = "";
             var c = (this.t != "") ? "<br/>" + this.t : "";
-            $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
+            
+            if($("#previewStatus")) {
+                $("#previewStatus").remove(); 
+            }
+            
+            if(typeof(arrRessComm[idKey]) != "undefined" && arrRessComm[idKey] !== null) {
+                $("body").append("<p id='previewStatus'>" + arrRessComm[idKey] + "</p>");
+            } else {
+                $("body").append("<p id='previewStatus'><b>" + companyName + "</b></p>");
+            }
 
             margTop = window.event.clientY - 20;
             margLeft = window.event.clientX + document.body.scrollLeft + 25;

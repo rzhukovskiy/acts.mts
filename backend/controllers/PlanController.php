@@ -602,9 +602,9 @@ class PlanController extends Controller
             $model = TaskUser::findOne(['id' => $id]);
 
             if (isset($model->comment)) {
-                $resComm = "<u style='color:#757575;'>Комментарий от ответственного:</u> " . $model->comment . "<br />";
+                $resComm = "<u style='color:#757575;'>Комментарий ответственного:</u> " . $model->comment . "<br />";
             } else {
-                $resComm = "<u style='color:#757575;'>Комментарий:</u><br />";
+                $resComm = "<u style='color:#757575;'>Комментарий ответственного:</u><br />";
             }
 
             echo json_encode(['success' => 'true', 'comment' => $resComm]);
