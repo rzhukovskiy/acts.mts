@@ -327,92 +327,7 @@ class ActController extends Controller
                     return json_encode(['error' => 2]);
                 } else {
 
-                    if($type == 2) {
-
-                        $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . $company_id . ' AND `company_service`.`type_id`=' . $car_type . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $type])
-                            ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
-                            ->indexBy('id')->column();
-
-                        $serviceList = ArrayHelper::perMutate($serviceList);
-                        $newServiceList = [];
-                        $checkNewArr = false;
-                        $numcontArr = [];
-
-                        foreach ($serviceList as $key => $value) {
-
-                            if ($value == 'снаружи') {
-                                $numcontArr[] = $key;
-                            }
-
-                            if ($value == 'внутри') {
-                                $numcontArr[] = $key;
-                            }
-
-                            if (($value == 'внутри+снаружи') || ($value == 'снаружи+внутри')) {
-                                $numcontArr[] = $key;
-                                $serviceList[$key] = 'снаружи+внутри';
-                            }
-
-                            if ($value == 'отогрев') {
-                                $numcontArr[] = $key;
-                            }
-
-                            if ($value == 'двигатель') {
-                                $numcontArr[] = $key;
-                            }
-
-                            if ($value == 'химчистка') {
-                                $numcontArr[] = $key;
-                            }
-
-                            //
-                            if ($value == 'Стандарт') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Экспресс') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Уборка салона пылесосом') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Влажная уборка салона') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Уборка багажника') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Протирка стёкол') {
-                                $numcontArr[] = $key;
-                            }
-                            if ($value == 'Удаление битума') {
-                                $numcontArr[] = $key;
-                            }
-
-                        }
-
-                        for ($i = 0; $i < count($numcontArr); $i++) {
-                            $newServiceList[$numcontArr[$i]] = $serviceList[$numcontArr[$i]];
-                        }
-
-                        foreach ($serviceList as $key => $value) {
-
-                            if (($value == 'снаружи') || ($value == 'внутри') || ($value == 'внутри+снаружи') || ($value == 'отогрев') || ($value == 'двигатель') || ($value == 'химчистка') || ($value == 'Стандарт') || ($value == 'Экспресс') || ($value == 'Уборка салона пылесосом') || ($value == 'Влажная уборка салона') || ($value == 'Уборка багажника') || ($value == 'Протирка стёкол') || ($value == 'Удаление битума')) {
-                            } else {
-                                $newServiceList[$key] = $value;
-                            }
-
-                        }
-
-                        $arrRes = [];
-                        $i = 0;
-                        foreach ($newServiceList as $key => $value) {
-                            $arrRes[$i]['id'] = $key;
-                            $arrRes[$i]['name'] = $value;
-                            $i++;
-                        }
-
-                        return json_encode(['error' => 0, 'service' => json_encode($arrRes)]);
-                    } else if (($type == 3) || ($type == 4)) {
+                    if (($type == 2) || ($type == 3) || ($type == 4)) {
                         $serviceList = Service::find()->where(['type' => $type])
                             ->orderBy('description')->select(['description', 'id', 'is_fixed'])->asArray()->all();
 
@@ -588,7 +503,7 @@ class ActController extends Controller
     public function actionCreate()
     {
 
-        if ((Yii::$app->request->post("token")) && (Yii::$app->request->post("user_id")) && (Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type")) && (Yii::$app->request->post("selectDate")) && (Yii::$app->request->post("selectCardNum")) && (Yii::$app->request->post("selectCarNumber")) && (Yii::$app->request->post("selectMark")) && (Yii::$app->request->post("selectType")) && (Yii::$app->request->post("services")) && (Yii::$app->request->post("checkNumber"))) {
+        if ((Yii::$app->request->post("token")) && (Yii::$app->request->post("user_id")) && (Yii::$app->request->post("company_id")) && (Yii::$app->request->post("type")) && (Yii::$app->request->post("selectDate")) && (Yii::$app->request->post("selectCardNum")) && (Yii::$app->request->post("selectCarNumber")) && (Yii::$app->request->post("selectMark")) && (Yii::$app->request->post("selectType")) && (Yii::$app->request->post("checkNumber")) && (Yii::$app->request->post("services")) && (Yii::$app->request->post("amounts")) && (Yii::$app->request->post("prices"))) {
 
             $token = Yii::$app->request->post("token");
             $user_id = Yii::$app->request->post("user_id");
@@ -599,8 +514,21 @@ class ActController extends Controller
             $selectCarNumber = Yii::$app->request->post("selectCarNumber");
             $selectMark = Yii::$app->request->post("selectMark");
             $selectType = Yii::$app->request->post("selectType");
-            $services = Yii::$app->request->post("services");
             $checkNumber = Yii::$app->request->post("checkNumber");
+
+            // Услуги
+            $services = [];
+            $amounts = [];
+            $prices = [];
+
+            $tmpServices = Yii::$app->request->post("services");
+            $tmpAmounts = Yii::$app->request->post("amounts");
+            $tmpPrices = Yii::$app->request->post("prices");
+
+            $services = explode(":", $tmpServices);
+            $amounts = explode(":", $tmpAmounts);
+            $prices = explode(":", $tmpPrices);
+            // Услуги
 
             $token = str_replace('\"', '"', $token);
             $token = str_replace("\'", "'", $token);
@@ -632,8 +560,24 @@ class ActController extends Controller
                     $createParams['Act']['extra_car_number'] = "";
                     $createParams['Act']['mark_id'] = $selectMark;
                     $createParams['Act']['type_id'] = $selectType;
-                    $createParams['Act']['serviceList'] = [0 => ['service_id' => $services, 'amount' => 1, 'price' => 0]];
                     $createParams['Act']['check'] = $checkNumber;
+
+                    // Услуги
+                    $arrServices = [];
+
+                    $iService = 0;
+
+                    for ($i = 0; $i < count($services); $i++) {
+                        if(($services[$i] > 0) && ($amounts[$i] > 0)) {
+                            $arrServices[$iService]['service_id'] = $services[$i];
+                            $arrServices[$iService]['amount'] = $amounts[$i];
+                            $arrServices[$iService]['price'] = $prices[$i];
+                            $iService++;
+                        }
+                    }
+
+                    $createParams['Act']['serviceList'] = $arrServices;
+                    // Услуги
 
                     if ($model->load($createParams)) {
 
