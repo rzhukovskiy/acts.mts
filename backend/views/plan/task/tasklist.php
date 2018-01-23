@@ -328,7 +328,7 @@ if ($type == 1) {
                         ['/plan/taskfull', 'id' => $data->id]);
                 },
                 'archive' => function ($url, $data, $key) {
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->from_user == Yii::$app->user->identity->id)) {
                         return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
                             ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
                     }
@@ -506,7 +506,7 @@ if ($type == 1) {
                         ['/plan/taskfull', 'id' => $data->id]);
                 },
                 'archive' => function ($url, $data, $key) {
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->from_user == Yii::$app->user->identity->id)) {
                         return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
                             ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
                     }

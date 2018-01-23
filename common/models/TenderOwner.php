@@ -50,7 +50,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             'tender_id' => 'ID Тендер',
             'data' => 'Дата',
             'link' => 'Документация',
-            'reason_not_take' => 'Причина',
+            'reason_not_take' => 'Комментарий',
         ];
     }
     /* Связь с моделью User*/
