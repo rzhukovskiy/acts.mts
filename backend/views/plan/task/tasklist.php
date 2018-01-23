@@ -224,7 +224,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
                 } else {
                     return '-';
                 }
@@ -410,7 +410,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
                 } else {
                     return '-';
                 }
@@ -588,7 +588,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
                 } else {
                     return '-';
                 }
@@ -763,7 +763,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
                 } else {
                     return '-';
                 }
