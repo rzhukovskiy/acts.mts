@@ -775,7 +775,7 @@ class Act extends ActiveRecord
 
                             $scope->description = $companyService->service->description;
                         } else {
-                            $scope->price = $kpd == 1 ? 0 : ($kpd * ArrayHelper::getValue($serviceData, 'price', 0)); // Если цены нет то ставим 0
+                            $scope->price = $kpd == 1 ? 0 : ArrayHelper::getValue($serviceData, 'price', 0); // Если цены нет то ставим 0
                             $scope->description = Service::findOne(['id' => $serviceData['service_id']])->description;
                         }
                     } else {
