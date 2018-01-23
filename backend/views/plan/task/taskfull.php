@@ -182,6 +182,31 @@ echo Tabs::widget([
             </tr>
             <tr>
                 <td class="list-label-md">
+                    <?= $model->getAttributeLabel('title') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'title',
+                        'displayValue' => $model->title,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите тему'],
+                        'formOptions' => [
+                            'action' => ['/plan/taskupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
                     <?= $model->getAttributeLabel('task') ?></td>
                 <td>
                     <?= Editable::widget([
