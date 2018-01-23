@@ -993,7 +993,7 @@ class Act extends ActiveRecord
                                 $clientScope->price = $clientService->price;
                                 $clientScope->description = $clientService->service->description;
                             } else {
-                                $clientScope->price = $kpd == 1 ? 0 : ArrayHelper::getValue($serviceData, 'price', 0);  // Если цены нет то ставим 0
+                                $clientScope->price = $kpd == 1 ? 0 : ($kpd * ArrayHelper::getValue($serviceData, 'price', 0));  // Если цены нет то ставим 0
                                 $clientScope->description =
                                     Service::findOne(['id' => $serviceData['service_id']])->description;
                             }
