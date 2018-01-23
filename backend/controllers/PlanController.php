@@ -179,9 +179,39 @@ class PlanController extends Controller
         if ($type == 1) {
            $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
         } else if ($type == 2) {
-           $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
-        } else if ($type == 3) {
-           $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->orWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['is_archive' => 1]);
+
+            if ($searchModel->from_user) {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['from_user' => $searchModel->from_user])->andWhere(['is_archive' => 0]);
+            } else if ($searchModel->for_user) {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['for_user' => $searchModel->for_user])->andWhere(['is_archive' => 0]);
+            } else if (isset($searchModel->status)) {
+                if ($searchModel->status || $searchModel->status == '0') {
+                    $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['status' => $searchModel->status])->andWhere(['is_archive' => 0]);
+                } else {
+                    $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
+                }
+            } else {
+            $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
+            }
+
+        } else if (($type == 3) && (Yii::$app->user->identity->role != User::ROLE_ADMIN)) {
+
+            if ($searchModel->from_user) {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['from_user' => $searchModel->from_user])->andWhere(['is_archive' => 1]);
+            } else if ($searchModel->for_user) {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['for_user' => $searchModel->for_user])->andWhere(['is_archive' => 1]);
+            } else if (isset($searchModel->status)) {
+                if ($searchModel->status || $searchModel->status == '0') {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['status' => $searchModel->status])->andWhere(['is_archive' => 1]);
+                } else {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['is_archive' => 1]);
+                }
+            } else {
+                $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andWhere(['is_archive' => 1]);
+            }
+
+        } else if (($type == 3) && (Yii::$app->user->identity->role == User::ROLE_ADMIN)) {
+           $dataProvider->query->andWhere(['is_archive' => 1]);
         } else if ($type == 0) {
             $dataProvider->query->andWhere(['is_archive' => 0]);
         } else if ((($type != 3) && ($type != 2) && ($type != 1)) && ($type == '0' && ((Yii::$app->user->identity->role != User::ROLE_ADMIN) && (Yii::$app->user->identity->id != 176)))) {
