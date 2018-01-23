@@ -328,7 +328,7 @@ if ($type == 1) {
                         ['/plan/taskfull', 'id' => $data->id]);
                 },
                 'archive' => function ($url, $data, $key) {
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->from_user == Yii::$app->user->identity->id)) {
                         return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
                             ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
                     }
@@ -506,7 +506,7 @@ if ($type == 1) {
                         ['/plan/taskfull', 'id' => $data->id]);
                 },
                 'archive' => function ($url, $data, $key) {
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->from_user == Yii::$app->user->identity->id)) {
                         return Html::a('<span class="glyphicon glyphicon-folder-open"> </span>', ['/plan/isarchive', 'id' => $data->id],
                             ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
                     }
@@ -724,13 +724,13 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', (Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
                 if ($data->from_user) {
                     if ($data->from_user == Yii::$app->user->identity->id) {
-                        return '<b>Вы</b>';
+                        return '<b>От вас</b>';
                     } else {
                         return $GLOBALS['usersList'][$data->from_user];
                     }
@@ -742,13 +742,13 @@ if ($type == 1) {
         [
             'header' => 'Кому',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'for_user',(Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
                 if ($data->for_user) {
                     if ($data->for_user == Yii::$app->user->identity->id) {
-                        return '<b>Вы</b>';
+                        return '<b>Вам</b>';
                     } else {
                         return $GLOBALS['usersList'][$data->for_user];
                     }
@@ -768,7 +768,7 @@ if ($type == 1) {
                 $alluser = '';
                 for ($i = 0; $i < count($user); $i++) {
                     if ($user[$i]['id'] == Yii::$app->user->identity->id) {
-                        $alluser .= '<b>Вы</b><br/>';
+                        $alluser .= '<b>Вам</b><br/>';
                     } else {
                         $alluser .= $user[$i]['username'] . '<br/>';
                     }
