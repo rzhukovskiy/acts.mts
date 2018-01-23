@@ -75,7 +75,7 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'data' => $userListsData,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
+                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
                         'options' => ['class' => 'form-control'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id]
@@ -108,8 +108,8 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'data' => $userListsData,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
+                        'data' => $userListsAll,
+                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
                         'options' => ['class' => 'form-control', 'multiple' => 'true'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id]
