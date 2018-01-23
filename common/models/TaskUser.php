@@ -16,6 +16,7 @@ use common\traits\JsonTrait;
  * @property string $data_status
  * @property string $comment
  * @property integer $status
+ * @property integer $priority
  */
 class TaskUser extends \yii\db\ActiveRecord
 {
@@ -26,6 +27,16 @@ class TaskUser extends \yii\db\ActiveRecord
     const PAYMENT_STATUS_NOT_DONE = 0;
     const PAYMENT_STATUS_DONE = 1;
     const PAYMENT_STATUS_TRUE = 2;
+
+    const PRIORITY_STATUS_NOTFAST = 0;
+    const PRIORITY_STATUS_QUICKLY = 1;
+    const PRIORITY_STATUS_FAST = 2;
+
+    public static $priorityStatus = [
+        self::PRIORITY_STATUS_NOTFAST => 'Не срочно',
+        self::PRIORITY_STATUS_QUICKLY => 'Срочно',
+        self::PRIORITY_STATUS_FAST => 'Очень срочно',
+    ];
 
     public static $executionStatus = [
         self::PAYMENT_STATUS_NOT_DONE => 'Не выполнено',
@@ -48,7 +59,7 @@ class TaskUser extends \yii\db\ActiveRecord
         return [
             [['task', 'from_user', 'for_user'], 'required'],
             [['task', 'comment'], 'string', 'max' => 5000],
-            [['from_user', 'status', 'for_user', 'is_archive'], 'integer'],
+            [['from_user', 'status', 'for_user', 'is_archive', 'priority'], 'integer'],
             [['data', 'data_status'], 'string', 'max' => 20],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
         ];
@@ -66,6 +77,7 @@ class TaskUser extends \yii\db\ActiveRecord
             'data' => 'Сроки',
             'data_status' => 'Дата выбора статуса',
             'status' => 'Статус',
+            'priority' => 'Приоритет',
             'for_user' => 'Для пользователя',
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',

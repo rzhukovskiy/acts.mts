@@ -36,6 +36,7 @@ $GLOBALS['usersList'] = $userList;
 $isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 $ajaxexecutionstatus = Url::to('@web/plan/ajaxexecutionstatus');
 $actionLinkGetComments = Url::to('@web/plan/getcomments');
+$taskpriority = Url::to('@web/plan/taskpriority');
 
 $css = "#previewStatus {
 background:#fff;
@@ -65,6 +66,22 @@ $('.change-execution_status').change(function(){
             success: function(data){
         select.parent().attr('class',data);
         if(($isAdmin!=1)&&(select.data('executionstatus')!=1)){
+            select.attr('disabled', 'disabled');
+        }
+    }
+        });
+    });
+
+$('.change-priority_status').change(function(){
+
+    var select=$(this);
+    $.ajax({
+            url: '$taskpriority',
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+        select.parent().attr('class',data);
+        if(($isAdmin!=1)&&(select.data('prioritystatus')!=1)){
             select.attr('disabled', 'disabled');
         }
     }
@@ -184,7 +201,16 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
 if ($type == 1) {
     $column = [
-
+        [
+            'header' => 'Статус',
+            'content' => function ($data) {
+                return TaskUser::$priorityStatus[$data->priority];
+            },
+            'group' => true,
+            'groupedRow' => true,
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
+        ],
         [
             'header' => '№',
             'vAlign'=>'middle',
@@ -317,6 +343,23 @@ if ($type == 1) {
             },
         ],
         [
+            'attribute' => 'priority',
+            'format' => 'raw',
+            'contentOptions' => ['style' => 'min-width: 145px'],
+            'vAlign'=> 'middle',
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'priority', TaskUser::$priorityStatus,
+                    [
+                        'class'              => 'form-control change-priority_status',
+                        'data-id'            => $data->id,
+                        'data-priorityStatus' => $data->priority,
+                        'disabled'           =>  (Yii::$app->user->identity->role == User::ROLE_ADMIN || $data->from_user == Yii::$app->user->identity->id)? false : 'disabled',
+                    ]
+
+                );
+            },
+        ],
+        [
             'class' => 'kartik\grid\ActionColumn',
             'header' => 'Действие',
             'vAlign'=>'middle',
@@ -344,7 +387,16 @@ if ($type == 1) {
     ];
 } else if ($type == 2) {
     $column = [
-
+        [
+            'header' => 'Статус',
+            'content' => function ($data) {
+                return TaskUser::$priorityStatus[$data->priority];
+            },
+            'group' => true,
+            'groupedRow' => true,
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
+        ],
         [
             'header' => '№',
             'vAlign'=>'middle',

@@ -13,6 +13,7 @@ use Yii;
  * @property string $data_status
  * @property string $data
  * @property integer $status
+ * @property integer $priority
  */
 class TaskMy extends \yii\db\ActiveRecord
 {
@@ -33,7 +34,7 @@ class TaskMy extends \yii\db\ActiveRecord
         return [
             [['task', 'from_user'], 'required'],
             [['task'], 'string'],
-            [['from_user', 'status'], 'integer'],
+            [['from_user', 'status', 'priority'], 'integer'],
             [['data_status', 'data'], 'string', 'max' => 20],
         ];
     }
@@ -50,6 +51,7 @@ class TaskMy extends \yii\db\ActiveRecord
             'data' => 'Сроки',
             'data_status' => 'Дата выбора статуса',
             'status' => 'Статус',
+            'priority' => 'Приоритет',
             'files' => 'Вложения',
         ];
     }

@@ -33,6 +33,7 @@ echo Tabs::widget([
 
 $isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 $taskmystatus = Url::to('@web/plan/taskmystatus');
+$taskmypriority = Url::to('@web/plan/taskmypriority');
 
 $script = <<< JS
 $('.change-execution_status').change(function(){
@@ -50,11 +51,35 @@ $('.change-execution_status').change(function(){
     }
         });
     });
+$('.change-priority_status').change(function(){
+
+    var select=$(this);
+    $.ajax({
+            url: '$taskmypriority',
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+        select.parent().attr('class',data);
+        if(($isAdmin!=1)&&(select.data('prioritystatus')!=1)){
+            select.attr('disabled', 'disabled');
+        }
+    }
+        });
+    });
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
     $column = [
-
+        [
+            'header' => 'Статус',
+            'content' => function ($data) {
+                    return TaskUser::$priorityStatus[$data->priority];
+            },
+            'group' => true,
+            'groupedRow' => true,
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
+        ],
         [
             'header' => '№',
             'vAlign'=>'middle',
@@ -147,6 +172,22 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     'class' => TaskUser::colorForExecutionStatus($data->status),
                     'style' => 'width: 155px',
                 ];
+            },
+        ],
+        [
+            'attribute' => 'priority',
+            'format' => 'raw',
+            'contentOptions' => ['style' => 'min-width: 145px'],
+            'vAlign'=> 'middle',
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'priority', TaskUser::$priorityStatus,
+                    [
+                        'class'              => 'form-control change-priority_status',
+                        'data-id'            => $data->id,
+                        'data-priorityStatus' => $data->priority,
+                    ]
+
+                );
             },
         ],
         [

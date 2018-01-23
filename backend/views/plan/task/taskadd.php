@@ -3,7 +3,7 @@
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use \kartik\date\DatePicker;
+use common\models\TaskUser;
 use kartik\datetime\DateTimePicker;
 use common\models\User;
 
@@ -50,6 +50,7 @@ echo Tabs::widget([
         ]); ?>
         <?= $form->field($model, 'for_user')->dropDownList($userListsID, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
         <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
+        <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control', 'prompt' => 'Выберите срочность']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,

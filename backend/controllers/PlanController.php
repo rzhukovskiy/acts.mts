@@ -38,12 +38,12 @@ class PlanController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive'],
+                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ]
@@ -177,9 +177,21 @@ class PlanController extends Controller
         $userList = User::find()->select('username')->indexby('id')->column();
 
         if ($type == 1) {
+            $dataProvider->sort = [
+                'defaultOrder' => [
+                    'priority' => SORT_DESC,
+                    'data' => SORT_ASC,
+                ]
+            ];
            $dataProvider->query->andWhere(['from_user' => Yii::$app->user->identity->id])->andWhere(['is_archive' => 0]);
         } else if ($type == 2) {
 
+            $dataProvider->sort = [
+                'defaultOrder' => [
+                    'priority' => SORT_DESC,
+                    'data' => SORT_ASC,
+                ]
+            ];
             if ($searchModel->from_user) {
                 $dataProvider->query->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->andWhere(['from_user' => $searchModel->from_user])->andWhere(['is_archive' => 0]);
             } else if ($searchModel->for_user) {
@@ -234,6 +246,13 @@ class PlanController extends Controller
             'query' => $searchModel,
             'pagination' => false,
         ]);
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'priority' => SORT_DESC,
+                'data' => SORT_ASC,
+            ]
+        ];
 
         $dataProvider->query->where(['from_user' => Yii::$app->user->identity->id]);
 
@@ -620,6 +639,28 @@ class PlanController extends Controller
         $model->save();
 
         return TaskUser::colorForExecutionStatus($model->status);
+    }
+
+    public function actionTaskmypriority()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = TaskMy::findOne(['id' => $id]);
+        $model->id = $id;
+        $model->priority = $status;
+        $model->save();
+
+    }
+
+    public function actionTaskpriority()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = TaskUser::findOne(['id' => $id]);
+        $model->id = $id;
+        $model->priority = $status;
+        $model->save();
+
     }
 
     public function actionGetcomments()
