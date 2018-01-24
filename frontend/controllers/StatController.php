@@ -557,6 +557,7 @@ class StatController extends Controller
             $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
             $arrMonthYears = json_decode(Yii::$app->request->post("arrMonthYears"));
             $arrYear = json_decode(Yii::$app->request->post("arrYear"));
+            $Day = json_decode(Yii::$app->request->post("arrDay"));
             $ressArray =[];
 
             if (count($arrMonth) > 0) {
@@ -576,6 +577,23 @@ class StatController extends Controller
                     $ressArray[$index][$indexM]['income'] = $arr['income'];
                     $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
                   }
+                }
+            } else if ($Day) {
+                    $dataStart = date("Y-m-01", strtotime($Day));
+
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, SUM(expense) as expense, SUM(profit) as profit, SUM(income) as income, `service_type`, `served_at` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE (FROM_UNIXTIME(served_at)) BETWEEN '". $dataStart ."T00:00:00.000Z' AND '". $Day ."T23:59:59.000Z') AND `service_type` <> 6 AND `service_type` <> 7 AND `service_type` <> 8 GROUP BY DAY(FROM_UNIXTIME(served_at)), `service_type` ORDER BY served_at ASC");
+                    $queryArray = $query->queryAll();
+
+                for ($j = 0; $j < count($queryArray); $j++) {
+                    $arr = $queryArray[$j];
+                    $index = $arr['service_type'];
+                    $indexM = date("j", $arr['served_at']);
+                    $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    $ressArray[$index][$indexM]['ssoom'] = $arr['ssoom'];
+                    $ressArray[$index][$indexM]['expense'] = $arr['expense'];
+                    $ressArray[$index][$indexM]['profit'] = $arr['profit'];
+                    $ressArray[$index][$indexM]['income'] = $arr['income'];
+                    $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
                 }
             } else {
                 for ($i = 0; $i < count($arrYear); $i++) {
