@@ -19,7 +19,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use \PHPExcel_IOFactory;
 
-class CarUploadXlsForm extends Model
+class CarUploadCsvForm extends Model
 {
 
     public $company_id;
@@ -43,7 +43,7 @@ class CarUploadXlsForm extends Model
     {
         return [
             [['company_id', 'type_id'], 'safe'],
-            ['file', 'file', 'skipOnEmpty' => false, 'extensions' => ['xls', 'xlsx'], 'checkExtensionByMimeType' => false],
+            ['file', 'file', 'skipOnEmpty' => false, 'extensions' => ['csv'], 'checkExtensionByMimeType' => false],
         ];
     }
 
@@ -127,120 +127,117 @@ class CarUploadXlsForm extends Model
 
         $this->updatedCounter = 0;
 
-        $objPHPExcel = \PHPExcel_IOFactory::load($file);
-
         $markArray = ArrayHelper::map(Mark::find()->all(), 'id', 'name');
         $typeArray = ArrayHelper::map(Type::find()->all(), 'id', 'name');
 
-        // оптимизируем запрос к бд
+        // загрузка из csv
+        ini_set('auto_detect_line_endings', true);
+        $csvFile = fopen($file, 'r');
         $data = [];
         $arrNumbers = [];
         $curentLine = 0;
-        $name = '';
 
-        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-            $highestRow = $worksheet->getHighestRow(); // e.g. 10
+        while (($line = fgetcsv($csvFile, 0, ";")) !== FALSE) {
+            $data[] = $line;
 
-            for ($row = 1; $row <= $highestRow; ++$row) {
+            // Получаем номера всех ТС
+            if($curentLine > 0) {
+                $number = $line[1];
+                $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
+                $number = strtr($number, Translit::$rules);
 
-                // Получаем номера всех ТС
-                if($row > 1) {
-                    $number = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-                    $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
-                    $number = strtr($number, Translit::$rules);
-
-                    $mark = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
-                    $type = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
-                    $is_infected = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-
-                    $data[$curentLine]['number'] = $number;
-                    $data[$curentLine]['mark'] = $mark;
-                    $data[$curentLine]['type'] = $type;
-
-                    if (isset($is_infected)) {
-                        if ($is_infected) {
-                            $data[$curentLine]['is_infected'] = 1;
-                        } else {
-                            $data[$curentLine]['is_infected'] = 0;
-                        }
-                    } else {
-                        $data[$curentLine]['is_infected'] = 0;
-                    }
-
-                    $arrNumbers[] = $number;
-                } else {
-                    $name = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
-                    if ($newCompany = Company::findOne(['name' => trim($name)])) {
-                        $this->company_id = $newCompany->id;
-                    }
-                }
-
-                $curentLine++;
-
+                $arrNumbers[] = $number;
             }
 
+            $curentLine++;
         }
+
+        fclose($csvFile); //Закрываем файл
+
+        // Название компании
+        $name = $data[0][0];
+
+        if ($newCompany = Company::findOne(['name' => $name])) {
+            $this->company_id = $newCompany->id;
+        }
+        $curentLine = 0;
 
         $existed = Car::findAll(['number' => $arrNumbers]);
 
-        // Добавляем ТС
         foreach ($data as $key => $value) {
 
-            if (!$this->company_id) {
-                return false;
-            }
+            if($curentLine > 0) {
 
-            $mark = $value['mark'];
-            $number = $value['number'];
-            $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
-            $number = strtr($number, Translit::$rules);
-            $type = $value['type'];
-            $is_infected = $value['is_infected'];
+                if(!$this->company_id) {
+                    return false;
+                }
 
-            $car = [];
-            $haveCar = false;
+                $mark = $value[0];
+                $number = $value[1];
+                $number = mb_strtoupper(str_replace(' ', '', $number), 'UTF-8');
+                $number = strtr($number, Translit::$rules);
+                $type = $value[2];
+                $is_infected = $value[3];
 
-            foreach ($existed as $index => $result) {
+                $car = [];
+                $haveCar = false;
 
-                if ($result->number == $number) {
-                    $car = $result;
-                    $haveCar = true;
+                foreach ($existed as $index => $result) {
+
+                    if ($result->number == $number) {
+                        $car = $result;
+                        $haveCar = true;
+                    }
+
+                }
+
+                if ($haveCar == false) {
+                    $car = new Car();
+                }
+
+                $car->attributes = $this->attributes;
+                $car->number = $number;
+
+                // ToDo: бывает ситуация, когда ошибка в типе, тогда что присваивать?
+                // ToDo: ввести ошибочный тип?
+                if ($typeKey = array_search($type, $typeArray)) {
+                    $car->type_id = $typeKey;
+                }
+
+                $mark = explode('-', explode(' ', $mark)[0])[0];
+                if ($markKey = array_search($mark, $markArray)) {
+                    $car->mark_id = $markKey;
+                } else {
+                    if ($newMarkModel = $this->createMark($mark)) {
+                        $car->mark_id = $newMarkModel->id;
+                    }
+                }
+
+                if (isset($is_infected)) {
+                    if ($is_infected) {
+                        $car->is_infected = 1;
+                    } else {
+                        $car->is_infected = 0;
+                    }
+                } else {
+                    $car->is_infected = 0;
+                }
+
+                if ($car->save()) {
+                    $this->updatedCounter++;
+                    $this->updatedIds[] = $car->id;
                 }
 
             }
 
-            if ($haveCar == false) {
-                $car = new Car();
-            }
-
-            $car->attributes = $this->attributes;
-            $car->number = $number;
-
-            // ToDo: бывает ситуация, когда ошибка в типе, тогда что присваивать?
-            // ToDo: ввести ошибочный тип?
-            if ($typeKey = array_search($type, $typeArray)) {
-                $car->type_id = $typeKey;
-            }
-
-            $mark = explode('-', explode(' ', $mark)[0])[0];
-            if ($markKey = array_search($mark, $markArray)) {
-                $car->mark_id = $markKey;
-            } else {
-                if ($newMarkModel = $this->createMark($mark)) {
-                    $car->mark_id = $newMarkModel->id;
-                }
-            }
-
-            $car->is_infected = $is_infected;
-
-            if ($car->save()) {
-                $this->updatedCounter++;
-                $this->updatedIds[] = $car->id;
-            }
-
+            $curentLine++;
         }
 
-        /*foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+        // загрузка из csv
+
+        /*$objPHPExcel = \PHPExcel_IOFactory::load($file);
+
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $highestRow = $worksheet->getHighestRow(); // e.g. 10
 
             for ($row = 1; $row <= $highestRow; ++$row) {

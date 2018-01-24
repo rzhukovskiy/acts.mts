@@ -30,7 +30,7 @@ echo $form->field($model, 'company_id')
 echo $form->field($model, 'type_id')
     ->dropDownList($typeDropDownItems, ['prompt' => 'Выберете тип ТС']);
 echo $form->field($model, 'file')
-    ->fileInput(['class' => '']);
+    ->fileInput(['class' => '', 'accept' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel']);
 ?>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-6">

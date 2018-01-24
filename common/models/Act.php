@@ -8,6 +8,7 @@
 
 namespace common\models;
 
+use common\components\Translit;
 use common\models\query\ActQuery;
 use yii;
 use yii\behaviors\TimestampBehavior;
@@ -480,6 +481,7 @@ class Act extends ActiveRecord
 
         //номер в верхний регистр
         $this->car_number = mb_strtoupper(str_replace(' ', '', $this->car_number), 'UTF-8');
+        $this->car_number = strtr($this->car_number, Translit::$rules);
         $this->extra_car_number = mb_strtoupper(str_replace(' ', '', $this->extra_car_number), 'UTF-8');
 
         //подставляем тип и марку из машины, если нашли по номеру

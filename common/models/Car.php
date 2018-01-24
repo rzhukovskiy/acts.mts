@@ -31,6 +31,7 @@ class Car extends ActiveRecord
     
     public $carsCountByType;
     public $listService;
+    public $curentCar;
 
     /**
      * @inheritdoc
@@ -105,30 +106,39 @@ class Car extends ActiveRecord
     public function beforeSave($insert)
     {
 
-        if($this->isNewRecord) {
+        // массовая загрузка тс тормозит из-за этого
+        /*if($this->isNewRecord) {
             $this->is_penalty = 1;
-        }
+        }*/
+
+        $this->curentCar = self::findOne($this->id);
 
         // Контроль штрафов
         if($this->is_penalty == 1) {
 
-            // Проверка включен ли контроль штрафов в компании
-            $companyModel = Company::findOne(['id' => $this->company_id]);
+            if((!$this->isNewRecord) && ($this->curentCar->is_penalty != $this->is_penalty)) {
 
-            if($companyModel->use_penalty == 1) {
+                // Проверка включен ли контроль штрафов в компании
+                $companyModel = Company::findOne(['id' => $this->company_id]);
 
-            $modelInfo = CompanyInfo::findOne(['company_id' => $this->company_id]);
+                if ($companyModel->use_penalty == 1) {
 
-            if (isset($modelInfo)) {
+                    $modelInfo = CompanyInfo::findOne(['company_id' => $this->company_id]);
 
-                if ((mb_strlen($modelInfo->inn) > 3) && (mb_strlen($this->cert) > 3)) {
+                    if (isset($modelInfo)) {
+
+                        if ((mb_strlen($modelInfo->inn) > 3) && (mb_strlen($this->cert) > 3)) {
+                        } else {
+                            $this->is_penalty = 0;
+                        }
+
+                    } else {
+                        $this->is_penalty = 0;
+                    }
+
                 } else {
                     $this->is_penalty = 0;
                 }
-
-            } else {
-                $this->is_penalty = 0;
-            }
 
             } else {
                 $this->is_penalty = 0;
@@ -148,11 +158,48 @@ class Car extends ActiveRecord
         // Контроль штрафов
         if($this->is_penalty == 1) {
 
-            $modelInfo = CompanyInfo::findOne(['company_id' => $this->company_id]);
+            if((!$insert) && ($this->curentCar->is_penalty != $this->is_penalty)) {
 
-            if (isset($modelInfo)) {
+                $modelInfo = CompanyInfo::findOne(['company_id' => $this->company_id]);
 
-                if ((mb_strlen($modelInfo->inn) > 3) && (mb_strlen($this->cert) > 3)) {
+                if (isset($modelInfo)) {
+
+                    if ((mb_strlen($modelInfo->inn) > 3) && (mb_strlen($this->cert) > 3)) {
+
+                        $modelPenalty = new Penalty();
+                        $modelPenalty->createToken();
+
+                        // Получаем токен
+                        $token = $modelPenalty->createToken();
+                        $resToken = json_decode($token[1], true);
+
+                        // Сохраняем полученный токен
+                        $modelPenalty->setParams(['token' => $resToken['token']]);
+
+                        // Добавление ТС
+                        $addCars = $modelPenalty->createClientCar($this->company_id . '@mtransservice.ru', ['name' => '', 'cert' => $this->cert, 'reg' => $this->number]);
+                        $resAddCars = json_decode($addCars[1], true);
+
+                        if (isset($resAddCars['errors'])) {
+                            // Ошибка
+                            Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
+                        } else {
+                        }
+                        // Добавление ТС
+
+                    }
+
+                }
+
+            } else {
+                $this->is_penalty = 0;
+            }
+
+        } else {
+
+            if (!$insert) {
+
+                if($this->curentCar->is_penalty != $this->is_penalty) {
 
                     $modelPenalty = new Penalty();
                     $modelPenalty->createToken();
@@ -164,53 +211,26 @@ class Car extends ActiveRecord
                     // Сохраняем полученный токен
                     $modelPenalty->setParams(['token' => $resToken['token']]);
 
-                    // Добавление ТС
-                    $addCars = $modelPenalty->createClientCar($this->company_id . '@mtransservice.ru', ['name' => '', 'cert' => $this->cert, 'reg' => $this->number]);
-                    $resAddCars = json_decode($addCars[1], true);
+                    $carList = $modelPenalty->getClientCars($this->company_id . '@mtransservice.ru');
+                    $resCarList = json_decode($carList[1], true);
 
-                    if(isset($resAddCars['errors'])) {
-                        // Ошибка
-                        Car::updateAll(['is_penalty' => 0], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
-                    } else {
-                    }
-                    // Добавление ТС
+                    if (isset($resCarList['cars'])) {
+                        $arrCarsList = $resCarList['cars'];
 
-                }
+                        for ($i = 0; $i < count($arrCarsList); $i++) {
+                            if (($arrCarsList[$i]['reg'] == $this->number) || (mb_strtoupper(str_replace(' ', '', $arrCarsList[$i]['reg']), 'UTF-8') == $this->number)) {
 
-            }
+                                $delCar = $modelPenalty->deleteClientCar($this->company_id . '@mtransservice.ru', $arrCarsList[$i]['id']);
+                                $resDel = json_decode($delCar[1], true);
 
-        } else {
+                                if (isset($resDel['errors'])) {
+                                    // Ошибка
+                                    Car::updateAll(['is_penalty' => 1], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
+                                }
 
-            if (!$insert) {
-
-                $modelPenalty = new Penalty();
-                $modelPenalty->createToken();
-
-                // Получаем токен
-                $token = $modelPenalty->createToken();
-                $resToken = json_decode($token[1], true);
-
-                // Сохраняем полученный токен
-                $modelPenalty->setParams(['token' => $resToken['token']]);
-
-                $carList = $modelPenalty->getClientCars($this->company_id . '@mtransservice.ru');
-                $resCarList = json_decode($carList[1], true);
-
-                if (isset($resCarList['cars'])) {
-                    $arrCarsList = $resCarList['cars'];
-
-                    for ($i = 0; $i < count($arrCarsList); $i++) {
-                        if (($arrCarsList[$i]['reg'] == $this->number) || (mb_strtoupper(str_replace(' ', '', $arrCarsList[$i]['reg']), 'UTF-8') == $this->number)) {
-
-                            $delCar = $modelPenalty->deleteClientCar($this->company_id . '@mtransservice.ru', $arrCarsList[$i]['id']);
-                            $resDel = json_decode($delCar[1], true);
-
-                            if (isset($resDel['errors'])) {
-                                // Ошибка
-                                Car::updateAll(['is_penalty' => 1], 'company_id = ' . $this->company_id . ' AND number="' . $this->number . '"');
                             }
-
                         }
+
                     }
 
                 }
