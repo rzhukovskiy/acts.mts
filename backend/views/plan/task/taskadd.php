@@ -50,7 +50,7 @@ echo Tabs::widget([
         ]); ?>
         <?= $form->field($model, 'for_user')->dropDownList($userListsID, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
         <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
-        <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control', 'prompt' => 'Выберите срочность']) ?>
+        <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control']) ?>
         <?= $form->field($model, 'title')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите тему']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [

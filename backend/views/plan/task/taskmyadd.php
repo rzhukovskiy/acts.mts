@@ -48,7 +48,7 @@ echo Tabs::widget([
                 'inputOptions' => ['class' => 'form-control input-sm'],
             ],
         ]); ?>
-        <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control', 'prompt' => 'Выберите срочность']) ?>
+        <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,

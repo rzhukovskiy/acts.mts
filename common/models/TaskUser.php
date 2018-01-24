@@ -58,7 +58,7 @@ class TaskUser extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['task', 'from_user', 'for_user'], 'required'],
+            [['task', 'from_user', 'for_user', 'priority'], 'required'],
             [['task', 'comment'], 'string', 'max' => 5000],
             [['from_user', 'status', 'for_user', 'is_archive', 'priority'], 'integer'],
             [['data', 'data_status'], 'string', 'max' => 20],

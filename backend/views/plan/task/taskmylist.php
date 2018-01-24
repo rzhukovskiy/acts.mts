@@ -73,7 +73,11 @@ $this->registerJs($script, \yii\web\View::POS_READY);
         [
             'header' => 'Статус',
             'content' => function ($data) {
-                    return TaskUser::$priorityStatus[$data->priority];
+                    if (isset($data->priority)) {
+                        return TaskUser::$priorityStatus[$data->priority];
+                    } else {
+                        return '';
+                    }
             },
             'group' => true,
             'groupedRow' => true,
@@ -141,7 +145,7 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         return $lostDateText;
                     }
 
-                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                } else if (($data->status == 2) && ($data->data < $data->data_status) && ($data->data)) {
                     return '<span style="color: red">Выполнено не вовремя</span>';
                 } else if (($data->status == 2) && ($data->data > $data->data_status)) {
                     return '<span style="color: green">Выполнено вовремя</span>';
