@@ -15,15 +15,15 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0'], 'active' => $type == 0],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
-        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
 ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1'], 'active' => $type == 1],
         ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2'], 'active' => $type == 2],
-        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
+        ['label' => 'Архив', 'url' => ['plan/tasklist?type=3'], 'active' => $type == 3],
     ];
 }
 
@@ -228,7 +228,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -283,7 +283,7 @@ if ($type == 1) {
             },
         ],
         [
-            'header' => 'Осталось<br/> до истечения',
+            'header' => 'Осталось<br/> времени',
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
@@ -312,7 +312,7 @@ if ($type == 1) {
                         return $lostDateText;
                     }
 
-                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                } else if (($data->status == 2) && ($data->data < $data->data_status) && ($data->data)) {
                     return '<span style="color: red">Выполнено не вовремя</span>';
                 } else if (($data->status == 2) && ($data->data > $data->data_status)) {
                     return '<span style="color: green">Выполнено вовремя</span>';
@@ -418,7 +418,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -491,7 +491,7 @@ if ($type == 1) {
             },
         ],
         [
-            'header' => 'Осталось<br/> до истечения',
+            'header' => 'Осталось<br/> времени',
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
@@ -520,7 +520,7 @@ if ($type == 1) {
                         return $lostDateText;
                     }
 
-                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                } else if (($data->status == 2) && ($data->data < $data->data_status) && ($data->data)) {
                     return '<span style="color: red">Выполнено не вовремя</span>';
                 } else if (($data->status == 2) && ($data->data > $data->data_status)) {
                     return '<span style="color: green">Выполнено вовремя</span>';
@@ -596,7 +596,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -666,7 +666,7 @@ if ($type == 1) {
             },
         ],
         [
-            'header' => 'Осталось<br/> до истечения',
+            'header' => 'Осталось<br/> времени',
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
@@ -695,7 +695,7 @@ if ($type == 1) {
                         return $lostDateText;
                     }
 
-                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                } else if (($data->status == 2) && ($data->data < $data->data_status) && ($data->data)) {
                     return '<span style="color: red">Выполнено не вовремя</span>';
                 } else if (($data->status == 2) && ($data->data > $data->data_status)) {
                     return '<span style="color: green">Выполнено вовремя</span>';
@@ -771,7 +771,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: </b>' . $data->title . '<br />') : ("")) . $data->task . '</span>';
+                    return '<span class="showStatus">' . (isset($data->title) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -852,7 +852,7 @@ if ($type == 1) {
             },
         ],
         [
-            'header' => 'Осталось<br/> до истечения',
+            'header' => 'Осталось<br/> времени',
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
@@ -881,7 +881,7 @@ if ($type == 1) {
                         return $lostDateText;
                     }
 
-                } else if (($data->status == 2) && ($data->data < $data->data_status)) {
+                } else if (($data->status == 2) && ($data->data < $data->data_status) && ($data->data)) {
                     return '<span style="color: red">Выполнено не вовремя</span>';
                 } else if (($data->status == 2) && ($data->data > $data->data_status)) {
                     return '<span style="color: green">Выполнено вовремя</span>';
