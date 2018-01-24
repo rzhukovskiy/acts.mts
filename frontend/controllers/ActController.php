@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\Translit;
 use common\models\ActError;
 use common\models\Mark;
 use common\models\PenaltyInfo;
@@ -475,6 +476,7 @@ class ActController extends Controller
 
                                                     $mark = $tables[$i][0];
                                                     $number = mb_strtoupper(str_replace(' ', '', $tables[$i][1]), 'UTF-8');
+                                                    $number = strtr($number, Translit::$rules);
                                                     $type_id = $tables[$i][2];
 
                                                     $markArr = Mark::find()->where(['name' => $mark])->asArray()->select('id')->column();

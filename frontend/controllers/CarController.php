@@ -12,6 +12,7 @@ use common\models\Company;
 use common\models\search\ActSearch;
 use common\models\Service;
 use common\models\Type;
+use frontend\models\forms\CarUploadCsvForm;
 use frontend\models\forms\carUploadXlsForm;
 use frontend\models\Penalty;
 use frontend\models\search\CarSearch;
@@ -229,6 +230,8 @@ class CarController extends Controller
     public function actionUpload()
     {
         $model = new CarUploadXlsForm();
+        //$model = new CarUploadCsvForm();
+
         $typeDropDownItems = ArrayHelper::map(Type::find()->all(), 'id', 'name');
         $companyDropDownItems = ArrayHelper::map(
             Company::find()->active()->where(['type' => Company::TYPE_OWNER])->all(),
