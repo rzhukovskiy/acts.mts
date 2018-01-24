@@ -204,7 +204,11 @@ if ($type == 1) {
         [
             'header' => 'Статус',
             'content' => function ($data) {
-                return TaskUser::$priorityStatus[$data->priority];
+                if (isset($data->priority)) {
+                    return TaskUser::$priorityStatus[$data->priority];
+                } else {
+                    return '';
+                }
             },
             'group' => true,
             'groupedRow' => true,
@@ -390,7 +394,11 @@ if ($type == 1) {
         [
             'header' => 'Статус',
             'content' => function ($data) {
-                return TaskUser::$priorityStatus[$data->priority];
+                if (isset($data->priority)) {
+                    return TaskUser::$priorityStatus[$data->priority];
+                } else {
+                    return '';
+                }
             },
             'group' => true,
             'groupedRow' => true,

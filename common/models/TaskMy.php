@@ -32,7 +32,7 @@ class TaskMy extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['task', 'from_user'], 'required'],
+            [['task', 'from_user', 'priority'], 'required'],
             [['task'], 'string'],
             [['from_user', 'status', 'priority'], 'integer'],
             [['data_status', 'data'], 'string', 'max' => 20],
