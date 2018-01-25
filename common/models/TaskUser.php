@@ -15,6 +15,8 @@ use common\traits\JsonTrait;
  * @property string $data
  * @property string $data_status
  * @property string $comment
+ * @property string $comment_main
+ * @property string $comment_watcher
  * @property string $title
  * @property integer $status
  * @property integer $priority
@@ -60,7 +62,7 @@ class TaskUser extends \yii\db\ActiveRecord
     {
         return [
             [['task', 'from_user', 'for_user', 'priority'], 'required'],
-            [['task', 'comment'], 'string', 'max' => 5000],
+            [['task', 'comment', 'comment_main', 'comment_watcher'], 'string', 'max' => 5000],
             [['from_user', 'status', 'for_user', 'is_archive', 'priority'], 'integer'],
             [['data', 'data_status'], 'string', 'max' => 20],
             [['title'], 'string', 'max' => 255],
@@ -84,7 +86,9 @@ class TaskUser extends \yii\db\ActiveRecord
             'status' => 'Статус',
             'priority' => 'Приоритет',
             'for_user' => 'Для пользователя',
-            'comment' => 'Комментарий',
+            'comment' => 'Комментарий ответственного',
+            'comment_main' => 'Комментарий инициатора',
+            'comment_watcher' => 'Комментарий наблюдателя',
             'is_archive' => 'Архив',
             'files' => 'Вложения инициатора',
             'files_main' => 'Вложения ответственного',

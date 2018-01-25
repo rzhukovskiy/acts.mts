@@ -157,12 +157,66 @@ $collumn = [
         'class' => 'kartik\grid\SerialColumn'
     ],
     [
+        'attribute' => 'city',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->city) {
+                return $data->city;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
         'attribute' => 'text',
         'vAlign'=>'middle',
         'value' => function ($data) {
 
             if ($data->text) {
                 return $data->text;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'purchase',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->purchase) {
+                return $data->purchase  . ' ₽';
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'date_from',
+        'vAlign'=>'middle',
+        'filter' => false,
+        'value' => function ($data) {
+
+            if ($data->date_from) {
+                return date('d.m.Y', $data->date_from);
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'date_to',
+        'vAlign'=>'middle',
+        'filter' => false,
+        'value' => function ($data) {
+
+            if ($data->date_to) {
+                return date('d.m.Y', $data->date_to);
             } else {
                 return '-';
             }
@@ -231,6 +285,19 @@ $collumn = [
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
+            'attribute' => 'city',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'format' => 'raw',
@@ -246,6 +313,47 @@ $collumn = [
             },
             'contentOptions' =>function ($model, $key, $index, $column){
                 return ['data-owner' => $model->id];
+            },
+        ],
+        [
+            'attribute' => 'purchase',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->purchase) {
+                    return $data->purchase  . ' ₽';
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_from',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_from) {
+                    return date('d.m.Y', $data->date_from);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_to',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_to) {
+                    return date('d.m.Y', $data->date_to);
+                } else {
+                    return '-';
+                }
+
             },
         ],
         [
@@ -309,6 +417,19 @@ $collumn = [
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
+            'attribute' => 'city',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'header' => 'Текст',
@@ -316,6 +437,47 @@ $collumn = [
 
                 if ($data->text) {
                     return $data->text;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'purchase',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->purchase) {
+                    return $data->purchase  . ' ₽';
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_from',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_from) {
+                    return date('d.m.Y', $data->date_from);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_to',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_to) {
+                    return date('d.m.Y', $data->date_to);
                 } else {
                     return '-';
                 }

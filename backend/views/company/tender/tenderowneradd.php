@@ -3,6 +3,7 @@
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use \kartik\date\DatePicker;
 
 $this->title = 'Добавление';
 
@@ -34,7 +35,27 @@ echo Tabs::widget([
     ],
     ]); ?>
 
+    <?= $form->field($model, 'city')->input('text', ['class' => 'form-control', 'placeholder' => 'Город']) ?>
     <?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите текст']) ?>
+    <?= $form->field($model, 'purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Сумма закупки']) ?>
+    <?= $form->field($model, 'date_from')->widget(DatePicker::className(), [
+            'type' => DatePicker::TYPE_INPUT,
+            'options' => ['placeholder' => 'Дата начала'],
+            'pluginOptions' => [
+                'format' => 'dd.mm.yyyy',
+                'autoclose'=>true,
+                'weekStart'=>1,
+            ]
+        ]) ?>
+    <?= $form->field($model, 'date_to')->widget(DatePicker::className(), [
+            'type' => DatePicker::TYPE_INPUT,
+            'options' => ['placeholder' => 'Дата окончания'],
+            'pluginOptions' => [
+                'format' => 'dd.mm.yyyy',
+                'autoclose'=>true,
+                'weekStart'=>1,
+            ]
+        ]) ?>
     <?= $form->field($model, 'link')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку с http://']) ?>
 
     <div class="form-group">
