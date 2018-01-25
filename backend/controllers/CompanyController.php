@@ -94,10 +94,25 @@ class CompanyController extends Controller
     public function actionAddPrice($id)
     {
         $model = $this->findModel($id);
+        $plainTextContent = '';
+
+        $user_id = Yii::$app->user->identity->id;
+        $modelUser = User::findOne(['id' => $user_id]);
+        $companyModel = Company::findOne(['id' => $model->id]);
+
+        $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
 
         if ($priceData = Yii::$app->request->post('Price')) {
             foreach ($priceData['type'] as $type_id) {
                 foreach ($priceData['service'] as $service_id => $price) {
+
+                    // Проверка на наличие цен
+                    $existed = CompanyService::findOne([
+                        'company_id' => $model->id,
+                        'type_id' => $type_id,
+                        'service_id' => $service_id,
+                    ]);
+
                     $companyService = new CompanyService();
                     $companyService->company_id = $model->id;
                     $companyService->service_id = $service_id;
@@ -105,8 +120,40 @@ class CompanyController extends Controller
                     $companyService->price = $price;
 
                     $companyService->save();
+
+                    // Для email Рассылки
+                    if ($price) {
+                        $modelService = Service::findOne(['id' => $service_id]);
+                        $modelType = Type::findOne(['id' => $type_id]);
+
+                        if(isset($existed)) {
+                            if(isset($existed->price)) {
+                                if($existed->price) {
+                                    $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', старая цена: ' . $existed->price . ' руб, новая цена: ' . $price . ' руб.<br />';
+                                } else {
+                                    $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', цена: ' . $price . ' руб.<br />';
+                                }
+                            } else {
+                                $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', цена: ' . $price . ' руб.<br />';
+                            }
+                        } else {
+                            $plainTextContent .= $modelService->description . ', тип: ' . $modelType->name . ', цена: ' . $price . ' руб.<br />';
+                        }
+                    }
+
                 }
             }
+
+            // Уведомление Герберта
+            $toEmail = "mtransservice@mail.ru";
+
+            $mailCont = Yii::$app->mailer->compose()
+                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo($toEmail)
+                ->setSubject('Добавлена новая цена на услугу для ' . $companyModel->name)
+                ->setHtmlBody($plainTextContent)->send();
+            // Уведомление Герберта
+
         }
         Yii::$app->session->setFlash('saved', true);
 

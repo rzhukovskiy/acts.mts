@@ -266,7 +266,6 @@ class CompanyController extends Controller
 
         $plainTextContent = 'Сотрудник <b>' . $modelUser->username . '</b> добавил новые цены на услуги для компании <b>' . $companyModel->name . '</b><br /><br />';
 
-
         if ($priceData = Yii::$app->request->post('Price')) {
             foreach ($priceData['type'] as $type_id) {
                 foreach ($priceData['service'] as $service_id => $price) {
