@@ -1930,8 +1930,12 @@ class CompanyController extends Controller
 
             $model = TenderOwner::findOne(['id' => $id]);
             $userLists = User::find()->select('username')->indexby('id')->column();
-            if (isset($model->reason_not_take) && isset($model->user_comment)) {
+            if (isset($model->reason_not_take)) {
+                if (isset($model->user_comment)) {
                 $resComm = "<u style='color:#757575;'>Комментарий от</u><b> " . $userLists[$model->user_comment] . "</b>: " . nl2br($model->reason_not_take) . "<br />";
+                } else {
+                $resComm = "<u style='color:#757575;'>Комментарий:</u> " . nl2br($model->reason_not_take) . "<br />";
+                }
             } else {
                 $resComm = "<u style='color:#757575;'>Нет комментария</u><br />";
             }
