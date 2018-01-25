@@ -44,6 +44,8 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $purchase_status
  * @property string $comment_status_proc
  * @property string $user_id
+ * @property string $work_user_id
+ * @property string $work_user_time
  * @property string $comment_customer
  * @property string $inn_customer
  * @property string $contacts_resp_customer
@@ -81,6 +83,7 @@ class Tender extends ActiveRecord
     private $site;
     private $last_sentence_nds;
     private $last_sentence_nonds;
+    public $curentTender;
 
     /**
      * @var UploadedFile
@@ -116,7 +119,7 @@ class Tender extends ActiveRecord
             [['company_id'], 'required'],
             [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'work_user_id'], 'integer'],
             [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close', 'last_sentence_nds', 'last_sentence_nonds'], 'safe'],
-            [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
+            [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
             [['notice_eis'], 'string', 'max' => 100],
             [['inn_customer', 'site'], 'string', 'max' => 200],
@@ -165,6 +168,7 @@ class Tender extends ActiveRecord
             'comment_status_proc' => 'Комментарий к статусу закупки',
             'user_id' => 'Ответственный сотрудник',
             'work_user_id' => 'Разработка тех. задания',
+            'work_user_time' => 'Дата добавления разработчика тех. задания',
             'comment_customer' => 'Комментарий к полю "Заказчик"',
             'inn_customer' => 'ИНН заказчика',
             'contacts_resp_customer' => 'Контакты ответственных лиц заказчика',
@@ -356,6 +360,21 @@ class Tender extends ActiveRecord
 
             }
         }
+
+        // Записываем дату изменения разработчика технического задания
+        $this->curentTender = self::findOne($this->id);
+        if($this->work_user_id ) {
+
+            if(isset($this->curentTender->work_user_id)) {
+                if($this->curentTender->work_user_id != $this->work_user_id) {
+                    $this->work_user_time = (String) time();
+                }
+            } else {
+                $this->work_user_time = (String) time();
+            }
+
+        }
+
         return parent::beforeSave($insert);
 
     }
