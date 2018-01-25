@@ -21,8 +21,12 @@ $script = <<< JS
 $('.showFormAttachButt').on('click', function(){
     $('#showFormAttach').modal('show');
 });
+$('.showFormAttachmainButt').on('click', function(){
+    $('#showFormAttachmain').modal('show');
+});
 
 $('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
+$('#showFormAttachmain div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
 JS;
 $this->registerJs($script, View::POS_READY);
 
@@ -247,7 +251,7 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите задание'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id],
                         ],
@@ -298,6 +302,49 @@ echo Tabs::widget([
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('files_main') ?></td>
+                <td>
+                    <?php
+
+                    $pathfoldermain = \Yii::getAlias('@webroot/files/task_main/' . $model->id . '/');
+                    $shortPathmain = '/files/task_main/' . $model->id . '/';
+
+                    if (file_exists($pathfoldermain)) {
+
+                        $numFiles = 0;
+                        $resLinksFiles = '';
+                        $arrStateID = [];
+
+                        foreach (\yii\helpers\FileHelper::findFiles($pathfoldermain) as $file) {
+
+                            $resLinksFiles .= Html::a(basename($file), $shortPathmain . basename($file), ['target' => '_blank']) . '<br />';
+                            $numFiles++;
+
+                        }
+
+                        if($numFiles > 0) {
+                            echo $resLinksFiles;
+                        } else {
+                            echo '-<br />';
+                        }
+
+                    } else {
+                        echo '-<br />';
+                    }
+
+                    ?>
+
+                    <?php
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->for_user)) {
+                        echo '<br /><span class="btn btn-primary btn-sm showFormAttachmainButt" style="margin-right:15px;">Добавить вложение</span>';
+                    } else {
+
+                    }
+                    ?>
+                </td>
+            </tr>
         </table>
     </div>
 </div>
@@ -307,7 +354,7 @@ $pathfolder = \Yii::getAlias('@webroot/files/task/' . $model->id . '/');
 $shortPath = '/files/task/' . $model->id . '/';
 
 $modalAttach = Modal::begin([
-    'header' => '<h5>Добавить вложения</h5>',
+    'header' => '<h5>Добавить вложения инициатора</h5>',
     'id' => 'showFormAttach',
     'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
     'size'=>'modal-lg',
@@ -337,3 +384,38 @@ Modal::end();
 // Модальное окно добавить вложения
 ?>
 
+<?php
+// Модальное окно добавить вложения ответственного
+$pathfoldermain = \Yii::getAlias('@webroot/files/task_main/' . $model->id . '/');
+$shortPathmain = '/files/task_main/' . $model->id . '/';
+
+$modalAttachmain = Modal::begin([
+    'header' => '<h5>Добавить вложения ответственного</h5>',
+    'id' => 'showFormAttachmain',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div style='font-size: 15px; margin-left:15px;'>Выберите файлы:</div>";
+
+$modelAddAttachmain = new \yii\base\DynamicModel(['files_main']);
+$modelAddAttachmain->addRule(['files_main'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+$form = ActiveForm::begin([
+    'action' => ['/plan/newtaskattach', 'id' => $model->id],
+    'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+    'fieldConfig' => [
+        'template' => '<div class="col-sm-6">{input}</div>',
+        'inputOptions' => ['class' => 'form-control input-sm'],
+    ],
+]);
+
+echo $form->field($modelAddAttachmain, 'files_main[]')->fileInput(['multiple' => true]);
+
+echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']);
+
+ActiveForm::end();
+
+Modal::end();
+// Модальное окно добавить вложения
+?>

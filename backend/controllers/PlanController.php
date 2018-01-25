@@ -38,12 +38,12 @@ class PlanController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority'],
+                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ]
@@ -569,6 +569,52 @@ class PlanController extends Controller
         return $this->redirect(['plan/taskfull', 'id' => $id]);
 
     }
+
+    public function actionNewtaskattach($id)
+    {
+
+        $modelAddAttachmain = new DynamicModel(['files_main']);
+        $modelAddAttachmain->addRule(['files_main'], 'file', ['skipOnEmpty' => true, 'maxFiles' => 30]);
+
+        $filesArr = UploadedFile::getInstances($modelAddAttachmain, 'files_main');
+
+        $filePath = \Yii::getAlias('@webroot/files/task_main/' . $id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/task_main/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/task_main/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/task_main/' . $id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/task_main/' . $id . '/'), 0775);
+        }
+
+        foreach ($filesArr as $file) {
+
+            if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
+            } else {
+
+                $filename = $filePath . $file->baseName . '.' . $file->extension;
+                $i = 1;
+
+                while (file_exists($filename)) {
+                    $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
+                    $i++;
+                }
+
+                $file->saveAs($filename);
+
+            }
+        }
+
+        return $this->redirect(['plan/taskfull', 'id' => $id]);
+
+    }
+
 
     public function actionTaskmyattach($id)
     {

@@ -22,6 +22,7 @@ use common\traits\JsonTrait;
 class TaskUser extends \yii\db\ActiveRecord
 {
     public $files;
+    public $files_main;
 
     use JsonTrait;
 
@@ -64,6 +65,7 @@ class TaskUser extends \yii\db\ActiveRecord
             [['data', 'data_status'], 'string', 'max' => 20],
             [['title'], 'string', 'max' => 255],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
+            [['files_main'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
         ];
     }
 
@@ -84,7 +86,8 @@ class TaskUser extends \yii\db\ActiveRecord
             'for_user' => 'Для пользователя',
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',
-            'files' => 'Вложения',
+            'files' => 'Вложения инициатора',
+            'files_main' => 'Вложения ответственного',
         ];
     }
 
