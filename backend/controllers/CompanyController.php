@@ -1408,8 +1408,13 @@ class CompanyController extends Controller
                 // Подготовка данных перед сохранением
                 $arrUpdate = Yii::$app->request->post();
                 foreach ($arrUpdate['TenderOwner'] as $name => $value) {
-                    if ($name == 'data') {
-                        $arrUpdate['TenderOwner'][$name] = (String)strtotime($value);
+                    if ($name == 'date_from') {
+                        $arrUpdate['TenderOwner'][$name] = (String) strtotime($value);
+                    } else if ($name == 'date_to') {
+                        $arrUpdate['TenderOwner'][$name] = (String) strtotime($value);
+                    } else if ($name == 'reason_not_take') {
+                        $model->user_comment = Yii::$app->user->identity->id;
+                        $model->save();
                     }
                 }
 
@@ -1420,6 +1425,8 @@ class CompanyController extends Controller
 
                         if ($name == 'tender_user') {
                             $output[] = $usersList[$value];
+                        } else if ($name == 'purchase') {
+                            $output[] = $value . " ₽";
                         } else {
                             $output[] = $value;
                         }
@@ -1922,11 +1929,11 @@ class CompanyController extends Controller
             $id = Yii::$app->request->post('id');
 
             $model = TenderOwner::findOne(['id' => $id]);
-
-            if (isset($model->reason_not_take)) {
-                $resComm = "<u style='color:#757575;'>Комментарий:</u> " . $model->reason_not_take . "<br />";
+            $userLists = User::find()->select('username')->indexby('id')->column();
+            if (isset($model->reason_not_take) && $model->user_comment) {
+                $resComm = "<u style='color:#757575;'>Комментарий от</u><b> " . $userLists[$model->user_comment] . "</b>: " . nl2br($model->reason_not_take) . "<br />";
             } else {
-                $resComm = "<u style='color:#757575;'>Комментарий:</u><br />";
+                $resComm = "<u style='color:#757575;'>Нет комментария</u><br />";
             }
 
             echo json_encode(['success' => 'true', 'comment' => $resComm]);

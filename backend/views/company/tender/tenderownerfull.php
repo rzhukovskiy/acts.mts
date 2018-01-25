@@ -56,37 +56,27 @@ echo Tabs::widget([
                 </td>
             </tr>
             <tr>
-                <td class="list-label-md"><?= $model->getAttributeLabel('data') ?></td>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('city') ?></td>
                 <td>
                     <?= Editable::widget([
                         'model' => $model,
                         'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
-                        'attribute' => 'data',
-                        'displayValue' => $model->data ? date('d.m.Y', $model->data) : '',
-                        'inputType' => Editable::INPUT_DATE,
+                        'attribute' => 'city',
+                        'displayValue' => isset($model->city) ? $model->city : '',
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
-                        'options' => [
-                            'class' => 'form-control',
-                            'removeButton' => false,
-                            'pluginOptions' => [
-                                'format' => 'dd.mm.yyyy',
-                                'autoclose' => true,
-                                'pickerPosition' => 'bottom-right',
-                            ],
-                            'options'=>['value' => $model->data ? date('d.m.Y', $model->data) : '']
-                        ],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите город'],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]);
-                    ?>
+                    ]); ?>
                 </td>
             </tr>
             <tr>
@@ -101,7 +91,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'text',
-                        'displayValue' => nl2br($model->text),
+                        'displayValue' => isset($model->text) ? nl2br($model->text) : '',
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
@@ -112,6 +102,99 @@ echo Tabs::widget([
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]); ?>
+                </td>
+            </tr>
+            </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('purchase') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'purchase',
+                        'displayValue' => isset($model->purchase) ? $model->purchase . ' ₽' : '',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите сумму закупки'],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md"><?= $model->getAttributeLabel('date_from') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'date_from',
+                        'displayValue' => $model->date_from ? date('d.m.Y', $model->date_from) : '',
+                        'inputType' => Editable::INPUT_DATE,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+                        'options' => [
+                            'class' => 'form-control',
+                            'removeButton' => false,
+                            'pluginOptions' => [
+                                'format' => 'dd.mm.yyyy',
+                                'autoclose' => true,
+                                'pickerPosition' => 'bottom-right',
+                            ],
+                            'options'=>['value' => $model->date_from ? date('d.m.Y', $model->date_from) : '']
+                        ],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md"><?= $model->getAttributeLabel('date_to') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'date_to',
+                        'displayValue' => $model->date_to ? date('d.m.Y', $model->date_to) : '',
+                        'inputType' => Editable::INPUT_DATE,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+                        'options' => [
+                            'class' => 'form-control',
+                            'removeButton' => false,
+                            'pluginOptions' => [
+                                'format' => 'dd.mm.yyyy',
+                                'autoclose' => true,
+                                'pickerPosition' => 'bottom-right',
+                            ],
+                            'options'=>['value' => $model->date_to ? date('d.m.Y', $model->date_to) : '']
+                        ],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -151,7 +234,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'tender_id',
-                        'displayValue' => $model->tender_id,
+                        'displayValue' => isset($model->tender_id) ? $model->tender_id : '',
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
@@ -175,7 +258,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'reason_not_take',
-                        'displayValue' => nl2br($model->reason_not_take),
+                        'displayValue' => isset($model->reason_not_take) ? nl2br($model->reason_not_take) : '',
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',

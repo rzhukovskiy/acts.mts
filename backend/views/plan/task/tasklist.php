@@ -228,7 +228,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -418,7 +418,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -596,7 +596,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -771,7 +771,7 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
