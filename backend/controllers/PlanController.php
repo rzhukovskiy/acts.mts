@@ -673,7 +673,7 @@ class PlanController extends Controller
             $model = TaskUser::findOne(['id' => $id]);
 
             if (isset($model->comment)) {
-                $resComm = "<u style='color:#757575;'>Комментарий ответственного:</u> " . $model->comment . "<br />";
+                $resComm = "<u style='color:#757575;'>Комментарий ответственного:</u> " . nl2br($model->comment) . "<br />";
             } else {
                 $resComm = "<u style='color:#757575;'>Комментарий ответственного:</u><br />";
             }

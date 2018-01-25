@@ -6,6 +6,9 @@ use yii\bootstrap\Html;
 use kartik\grid\GridView;
 use common\models\DepartmentCompany;
 use common\models\MonthlyAct;
+use common\models\User;
+
+$isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 
 /**
  * @var $this yii\web\View
@@ -64,6 +67,35 @@ $script = <<< JS
         });
         
     }
+    
+        $('.change-payment_status').change(function(){
+       
+     var select=$(this);
+        $.ajax({
+            url: "/monthly-act/ajax-payment-status",
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+                if(($isAdmin!=1)&&(select.data('paymentstatus')!=1)){
+                    select.attr('disabled', 'disabled');
+                }
+            }
+        });
+    });
+    
+    $('.change-act_status').change(function(){
+        var select=$(this);
+        $.ajax({
+            url: "/monthly-act/ajax-act-status",
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+            var obj = jQuery.parseJSON(data);
+            select.parent().attr('class',obj.color);
+            }
+        });
+    });
 
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
@@ -291,7 +323,7 @@ if($searchModel->client_id) {
                     'class'              => 'form-control change-payment_status',
                     'data-id'            => $model->id,
                     'data-paymentStatus' => $model->payment_status,
-                    'disabled'           => MonthlyAct::payDis($model->payment_status) ? 'disabled' : false,
+                    'disabled'       => \Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : 'disabled',
                 ]
 
             );
@@ -316,7 +348,7 @@ if($searchModel->client_id) {
                     'class'          => 'form-control change-act_status',
                     'data-id'        => $model->id,
                     'data-actStatus' => $model->act_status,
-                    'disabled'       => MonthlyAct::actDis($model->act_status) ? 'disabled' : false,
+                    'disabled'       => \Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : 'disabled',
                 ]);
         },
         'contentOptions' => function ($model) {
