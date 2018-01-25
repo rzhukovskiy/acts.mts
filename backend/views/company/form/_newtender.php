@@ -8,6 +8,7 @@ use \yii\web\View;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\TenderLists;
+use common\models\User;
 
 /* @var $this yii\web\View
  * @var $model common\models\CompanyMember
@@ -55,6 +56,18 @@ for ($i = 0; $i < count($arrayTenderList); $i++) {
 
 }
 //
+
+// Разработчик тех. задания - список
+$workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
+
+$workUserData = [];
+
+foreach ($workUserArr as $name => $value) {
+    $index = $value['id'];
+    $workUserData[$index] = trim($value['username']);
+}
+asort($workUserData);
+// Разработчик тех. задания - список
 
 $actionGetListItems = Url::to('@web/company/listitems');
 $actionSaveNewItem = Url::to('@web/company/newitemlist');
@@ -409,6 +422,7 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'purchase_status')->dropDownList(isset($arrLists[0]) ? $arrLists[0] : [], ['class' => 'form-control', 'prompt' => 'Выберите статус закупки']) ?>
 <?= $form->field($model, 'comment_status_proc')->textarea(['maxlength' => true, 'rows' => '7', 'placeholder' => 'Введите комментарий к статусу закупки']) ?>
 <?= $form->field($model, 'user_id')->dropDownList(isset($arrLists[1]) ? $arrLists[1] : [], ['class' => 'form-control', 'multiple' => 'true']) ?>
+<?= $form->field($model, 'work_user_id')->dropDownList($workUserData, ['class' => 'form-control', 'prompt' => 'Выберите разработчика тех. задания']) ?>
 <?= $form->field($model, 'date_search')->widget(DatePicker::className(), [
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Дата нахождения закупки', 'value' => date('d.m.Y')],

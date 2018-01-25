@@ -114,7 +114,7 @@ class Tender extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'purchase_status', 'percent_down', 'percent_max'], 'integer'],
+            [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'work_user_id'], 'integer'],
             [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close', 'last_sentence_nds', 'last_sentence_nonds'], 'safe'],
             [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
@@ -164,6 +164,7 @@ class Tender extends ActiveRecord
             'purchase_status' => 'Статус закупки',
             'comment_status_proc' => 'Комментарий к статусу закупки',
             'user_id' => 'Ответственный сотрудник',
+            'work_user_id' => 'Разработка тех. задания',
             'comment_customer' => 'Комментарий к полю "Заказчик"',
             'inn_customer' => 'ИНН заказчика',
             'contacts_resp_customer' => 'Контакты ответственных лиц заказчика',

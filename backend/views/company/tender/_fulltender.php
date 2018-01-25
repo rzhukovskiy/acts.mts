@@ -13,6 +13,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
 use common\models\TenderLists;
+use common\models\User;
 
 // массив списков
 $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
@@ -272,6 +273,43 @@ $this->registerJs($script, View::POS_READY);
                 'size' => 'lg',
                 'data' => $usersList,
                 'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('work_user_id') ?></td>
+        <td>
+            <?php
+
+            $workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
+
+            $workUserData = [];
+
+            foreach ($workUserArr as $name => $value) {
+                $index = $value['id'];
+                $workUserData[$index] = trim($value['username']);
+            }
+            asort($workUserData);
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'work_user_id',
+                'displayValue' => isset($workUserData[$model->work_user_id]) ? $workUserData[$model->work_user_id] : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' =>  ((\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) || ((!$model->work_user_id) && ($model->tender_close == 0))) ? false : true,
+                'size' => 'lg',
+                'data' => $workUserData,
+                'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -1596,9 +1634,8 @@ $this->registerJs($script, View::POS_READY);
    <?php
    if ($model->tender_close == 1) {
        echo "<tr> 
-        <td class='list-label-md'>Закупка закрыта</td>
-        <td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span> <span class='btn btn-warning openTender' style='display:none'>Открыть закупку</span></td>
-        </tr>";
+        <td class='list-label-md'>Закупка закрыта</td><td><span style='color:#BA0006'>Закупка была закрыта, поэтому внести изменения невозможно</span>" .
+           (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN ? "<br /><span class='btn btn-warning openTender'>Открыть закупку</span></td>" : "") . "</tr>";
    } else {
        echo "<tr>
         <td class='list-label-md'>Закрыть закупку</td>
