@@ -32,12 +32,12 @@ class CardController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'find', 'lost', 'create', 'update', 'delete', 'diapason'],
+                        'actions' => ['list', 'find', 'lost', 'create', 'update', 'delete', 'diapason', 'movecard'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'lost', 'find'],
+                        'actions' => ['list', 'lost', 'find', 'movecard'],
                         'allow'   => true,
                         'roles'   => [User::ROLE_WATCHER, User::ROLE_MANAGER],
                     ],
@@ -198,4 +198,34 @@ class CardController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionMovecard()
+    {
+        if((Yii::$app->request->post('id')) && (Yii::$app->request->post('company_from')) && (Yii::$app->request->post('company_id')) && (Yii::$app->request->post('card_number'))) {
+
+            $id = Yii::$app->request->post('id');
+            $company_from = Yii::$app->request->post('company_from');
+            $company_id = Yii::$app->request->post('company_id');
+            $card_number = Yii::$app->request->post('card_number');
+
+            $modelCard = Card::findOne(['id' => $id]);
+
+            if (($modelCard->company_id != $company_id) && ($modelCard->company_id == $company_from)) {
+                $modelCard->company_id = $company_id;
+
+                if ($modelCard->save()) {
+                    echo json_encode(['success' => 'true']);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
+        }
+    }
+
 }

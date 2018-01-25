@@ -381,15 +381,86 @@ class CompanyController extends Controller
     public static function getCompanyParents($id) {
 
         $arrParentId = Company::find()->where(['id' => $id])->select('parent_id')->column();
+        $arrParParIds = [];
+        $ParParCheck = false;
+        $ParID = 0;
 
         if(isset($arrParentId[0])) {
             $arrParentId = $arrParentId[0];
 
-            $arrCompany = Company::find()->where(['OR', ['parent_id' => $id], ['parent_id' => $arrParentId]])->select('name')->indexBy('id')->orderBy('id ASC')->column();
+            $arrParParIds[] = $id;
+            $arrParParIds[] = $arrParentId;
+            $ParID = $arrParentId;
 
-            if(isset($arrCompany)) {
+            // Родительские компании
+            $queryParPar = Company::find()->where(['parent_id' => $arrParentId])->select('id')->asArray()->all();
 
-                if(count($arrCompany) > 0) {
+            if(count($queryParPar) > 0) {
+                for ($j = 0; $j < count($queryParPar); $j++) {
+                    if (!in_array($queryParPar[$j]['id'], $arrParParIds)) {
+                        $arrParParIds[] = $queryParPar[$j]['id'];
+                    }
+                }
+            }
+            // Родительские компании
+
+            // Родительские родительских компании
+            $queryPar = Company::find()->where(['id' => $arrParentId])->select('parent_id')->column();
+
+            if(isset($queryPar[0])) {
+                $arrParentId = $queryPar[0];
+                $arrParParIds[] = $arrParentId;
+
+                $queryParPar = Company::find()->where(['parent_id' => $arrParentId])->select('id')->asArray()->all();
+
+                if(count($queryParPar) > 0) {
+                    for ($j = 0; $j < count($queryParPar); $j++) {
+                        if (!in_array($queryParPar[$j]['id'], $arrParParIds)) {
+                            $arrParParIds[] = $queryParPar[$j]['id'];
+                        }
+                    }
+
+                    $ParParCheck = true;
+
+                }
+
+            }
+            // Родительские родительских компании
+
+            // Выводим дочерних третей вложенности
+            if(($ParParCheck == false) && ($ParID > 0)) {
+                $arrParents = Company::find()->where(['parent_id' => $ParID])->select('id')->asArray()->all();
+
+                // Вторая вложенность
+                if(count($arrParents) > 0) {
+                    for ($j = 0; $j < count($arrParents); $j++) {
+                        if (!in_array($arrParents[$j]['id'], $arrParParIds)) {
+                            $arrParParIds[] = $arrParents[$j]['id'];
+                        }
+
+                        $arrParentsParents = Company::find()->where(['parent_id' => $arrParents[$j]['id']])->select('id')->asArray()->all();
+
+                        // Третья вложенность
+                        if(count($arrParentsParents) > 0) {
+                            for ($j = 0; $j < count($arrParentsParents); $j++) {
+                                if (!in_array($arrParentsParents[$j]['id'], $arrParParIds)) {
+                                    $arrParParIds[] = $arrParentsParents[$j]['id'];
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+            // Выводим дочерних третей вложенности
+
+            $arrCompany = Company::find()->where(['id' => $arrParParIds])->andWhere(['>', 'parent_id', 0])->select('name')->indexBy('id')->orderBy('id ASC')->column();
+
+            if (isset($arrCompany)) {
+
+                if (count($arrCompany) > 0) {
                     return $arrCompany;
                 }
 

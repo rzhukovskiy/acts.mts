@@ -152,8 +152,12 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 
 // Перемещение ТС в другой филиал
 $MoveCheck = false;
+$MoveCard = false;
 if(((isset($model->car_number) ? $model->car_number : '') != '') && ($model->hasError(Act::ERROR_CAR))) {
     $MoveCheck = true;
+}
+if($model->hasError(Act::ERROR_CARD)) {
+    $MoveCard = true;
 }
 // Перемещение ТС в другой филиал
 
@@ -291,6 +295,84 @@ JS;
             <tr>
         <td>
             <?= $form->field($model, 'card_number')->textInput(); ?>
+            <?php
+
+if($MoveCard == true) {
+    $css = ".moveCardButt:hover {
+cursor:pointer;
+}";
+    $this->registerCSS($css);
+
+    $actionLinkMoveCard = Url::to('@web/card/movecard');
+    $company_card = isset($model->card->company_id) ? $model->card->company_id : 0;
+    $act_data = $model->served_at;
+
+    $script = <<< JS
+
+var card_id = 0;
+
+// Удаляем ненужную кнопку открыть модальное окно
+
+// открываем модальное окно перенести карту
+$('.moveCardButt').on('click', function(){
+card_id = $(this).data('id');
+
+$('.removeListCard').html('<b>Номер карты:</b> ' + $(this).data('card'));
+
+$('#showModalCard').modal('show');
+
+});
+
+$('#save_new_card').on('click', function(){
+
+                if(($('#new_company_card').val() > 0) && ($('#new_company_card').val() != $company_card)) {
+
+                var checkboxAppy = 1;
+                var card_number = $('.moveCardButt').data('card');
+                    
+                if($('#appyAct').prop('checked')) {
+                    checkboxAppy = 1;
+                } else {
+                    checkboxAppy = 2;
+                }
+                
+                if(card_id === null) {
+                    card_id = 0;   
+                }
+                    
+                $.ajax({
+                type     :'POST',
+                cache    : false,
+                data:'id=' + card_id + '&company_from=' + '$company_card' + '&company_id=' + $('#new_company_card').val() + '&card_number=' + card_number,
+                url  : '$actionLinkMoveCard',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                card_id = 0;
+                alert('Успешно');
+                window.location.reload();
+                } else {
+                // Неудачно
+                card_id = 0;
+                alert('Ошибка переноса');
+                }
+                
+                }
+                });
+                
+                }
+    
+});
+
+JS;
+    $this->registerJs($script, View::POS_READY);
+
+    echo '<div class="moveCardButt" data-id="' . (isset($model->card_id) ? $model->card_id : 0) . '" data-card="' . (isset($model->card_number) ? $model->card_number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-credit-card" style="font-size: 13px;"></span></div>';
+}
+            ?>
         </td>
         <td>
             <?= $form->field($model, 'car_number')->widget(AutoComplete::classname(), [
@@ -381,13 +463,9 @@ $('#save_new_company').on('click', function(){
 
 JS;
     $this->registerJs($script, View::POS_READY);
-}
 
-            ?>
-            <?php
-            if($MoveCheck == true) {
-                echo '<div class="moveCarButt" data-id="' . (isset($model->car_id) ? $model->car_id : 0) . '" data-number="' . (isset($model->car_number) ? $model->car_number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>';
-            }
+    echo '<div class="moveCarButt" data-id="' . (isset($model->car_id) ? $model->car_id : 0) . '" data-number="' . (isset($model->car_number) ? $model->car_number : '') . '">Перенести в другой филиал <span class="glyphicon glyphicon-sort"></span></div>';
+}
             ?>
         </td>
         <td>
@@ -953,6 +1031,8 @@ JS;
 </div>
 <?php
 
+$arrCompany = [];
+
 if($MoveCheck == true) {
 
     // Перемещение ТС в другой филиал
@@ -973,6 +1053,30 @@ if($MoveCheck == true) {
 
     Modal::end();
     // Перемещение ТС в другой филиал
+
+}
+
+if($MoveCard == true) {
+
+    // Перемещение карты в другой филиал
+    $modal = Modal::begin([
+        'header' => '<h4>Перенести карту в другой филиал</h4>',
+        'id' => 'showModalCard',
+        'toggleButton' => ['label' => 'открыть окно', 'class' => 'btn btn-default', 'style' => 'display:none;'],
+        'size' => 'modal-lg',
+    ]);
+
+    if(count($arrCompany) == 0) {
+        $arrCompany = \frontend\controllers\CompanyController::getCompanyParents($model->client_id);
+    }
+
+    echo "<div class='removeListCard' style='margin-bottom:15px; font-size:15px; color:#000;'></div>";
+
+    echo Html::dropDownList("new_company", (isset($model->card->company_id) ? $model->card->company_id : 0), $arrCompany, ['id' => 'new_company_card', 'class' => 'form-control', 'prompt' => 'Филиалы']);
+    echo Html::buttonInput("Сохранить", ['id' => 'save_new_card', 'class' => 'btn btn-primary', 'style' => 'margin-top:20px; padding:7px 16px 6px 16px;']);
+
+    Modal::end();
+    // Перемещение карты в другой филиал
 
 }
 
