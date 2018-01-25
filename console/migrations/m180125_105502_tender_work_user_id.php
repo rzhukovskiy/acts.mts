@@ -12,6 +12,7 @@ class m180125_105502_tender_work_user_id extends Migration
 
     public function down()
     {
-
+        $this->dropColumn('{{%tender}}','work_user_id');
+        $this->dropColumn('{{%tender}}','work_user_time');
     }
 }
