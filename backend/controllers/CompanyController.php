@@ -1894,6 +1894,19 @@ class CompanyController extends Controller
                         $output[] = $stringKeyTypeText;
                     } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application' || $name == 'last_sentence_nds' || $name == 'last_sentence_nonds') {
                         $output[] = $value . " ₽";
+                    } else if($name == 'work_user_id') {
+
+                        $workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
+
+                        $workUserData = [];
+
+                        foreach ($workUserArr as $key => $result) {
+                            $index = $result['id'];
+                            $workUserData[$index] = trim($result['username']);
+                        }
+
+                        $output[] = isset($workUserData[$value]) ? $workUserData[$value] : $value;
+
                     } else {
                         $output[] = $value;
                     }
