@@ -358,6 +358,119 @@ JS;
                     ?>
                 </td>
             </tr>
+            <?php if($modelCompany->type > 1) { ?>
+            <tr>
+                <td class="list-label-md"><?= $modelevent->getAttributeLabel('date_from') ?></td>
+                <td>
+
+                    <?php
+
+                    if ($modelCompanyInfo->time_location == 0) {
+                        $time = time();
+                    } else {
+                        $time = (time() + (3600 * $modelCompanyInfo->time_location));
+                    }
+                        if (isset($modelevent)) {
+                            if ((isset($modelevent->date_from)) && (isset($modelevent->date_to))) {
+                                if (($modelevent->date_from) && ($modelevent->date_to) && ($time > $modelevent->date_to)) {
+                                    $modelevent->date_from = '';
+                                    $modelevent->date_to = '';
+                                    $modelevent->comment = '';
+                                    $modelevent->save();
+                                }
+                            }
+                        }
+
+                        echo Editable::widget([
+                            'model' => $modelevent,
+                            'buttonsTemplate' => '{submit}',
+                            'submitButton' => [
+                                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                            ],
+                            'attribute' => 'date_from',
+                            'displayValue' => $modelevent->date_from ? date('d.m.Y H:i', $modelevent->date_from) : '',
+                            'inputType' => Editable::INPUT_DATETIME,
+                            'asPopover' => true,
+                            'placement' => PopoverX::ALIGN_LEFT,
+                            'size' => 'lg',
+                            'options' => [
+                                'options' => ['value' => $modelevent->date_from ? date('d.m.Y H:i', $modelevent->date_from) : ''],
+                                'class' => 'form-control',
+                                'removeButton' => false,
+                                'pluginOptions' => [
+                                    'format' => 'dd.mm.yyyy hh:i',
+                                    'weekStart' => 1,
+                                    'autoclose' => true,
+                                    'pickerPosition' => 'bottom-right',
+                                ],
+                            ],
+                            'formOptions' => [
+                                'action' => ['/company-info/commentupdate', 'id' => $modelCompany->id],
+                            ],
+                            'valueIfNull' => '<span class="text-danger">не задано</span>',
+                        ]);
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md"><?= $modelevent->getAttributeLabel('date_to') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelevent,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'date_to',
+                        'displayValue' => $modelevent->date_to ? date('d.m.Y H:i', $modelevent->date_to) : '',
+                        'inputType' => Editable::INPUT_DATETIME,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => [
+                            'options' => ['value' => $modelevent->date_to ? date('d.m.Y H:i', $modelevent->date_to) : ''],
+                            'class' => 'form-control',
+                            'removeButton' => false,
+                            'pluginOptions' => [
+                                'format' => 'dd.mm.yyyy hh:i',
+                                'weekStart'=>1,
+                                'autoclose' => true,
+                                'pickerPosition' => 'bottom-right',
+                            ],
+                        ],
+                        'formOptions' => [
+                            'action' => ['/company-info/commentupdate', 'id' => $modelCompany->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]);
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $modelevent->getAttributeLabel('comment') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelevent,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'comment',
+                        'displayValue' => $modelevent->comment,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий'],
+                        'formOptions' => [
+                            'action' => ['/company-info/commentupdate', 'id' => $modelCompany->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+    <?php } ?>
             <tr>
                 <td class="list-label-md">
                     <?= $modelCompany->type == Company::TYPE_WASH ? 'Телефон для записи на мойку' : $modelCompanyInfo->getAttributeLabel('phone') ?></td>

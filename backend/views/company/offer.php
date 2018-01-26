@@ -19,4 +19,5 @@ echo $this->render('form/_process', [
     'modelCompanyInfo' => $modelCompanyInfo,
     'modelCompanyOffer' => $modelCompanyOffer,
     'admin' => $admin,
+    'modelevent' => $modelevent,
 ]);
