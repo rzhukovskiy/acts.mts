@@ -17,6 +17,7 @@ use common\models\CompanyMember;
 use common\models\CompanyOffer;
 use common\models\CompanyService;
 use common\models\CompanyState;
+use common\models\EntryEvent;
 use common\models\search\TenderControlSearch;
 use common\models\search\TenderLinksSearch;
 use common\models\search\TenderMemberSearch;
@@ -1451,6 +1452,11 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'purchase' => SORT_DESC,
+            ]
+        ];
         if ($win == 1) {
             $dataProvider->query->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']]);
         } else if ($win == 2) {
@@ -2059,11 +2065,19 @@ class CompanyController extends Controller
             $modelCompanyOffer->save();
         }
 
+        $modelevent = EntryEvent::findOne(['company_id' => $model->id]);
+        if (isset($modelevent)) {
+            $modelevent = EntryEvent::findOne(['company_id' => $model->id]);
+        } else {
+            $modelevent = new EntryEvent();
+        }
+
         return $this->render('offer', [
             'modelCompany' => $model,
             'modelCompanyInfo' => $modelCompanyInfo,
             'modelCompanyOffer' => $modelCompanyOffer,
             'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
+            'modelevent' => $modelevent,
         ]);
     }
 

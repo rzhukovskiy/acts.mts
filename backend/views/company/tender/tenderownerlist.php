@@ -157,19 +157,6 @@ $collumn = [
         'class' => 'kartik\grid\SerialColumn'
     ],
     [
-        'attribute' => 'city',
-        'vAlign'=>'middle',
-        'value' => function ($data) {
-
-            if ($data->city) {
-                return $data->city;
-            } else {
-                return '-';
-            }
-
-        },
-    ],
-    [
         'attribute' => 'text',
         'vAlign'=>'middle',
         'value' => function ($data) {
@@ -185,6 +172,7 @@ $collumn = [
     [
         'attribute' => 'purchase',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'min-width: 130px'],
         'value' => function ($data) {
 
             if ($data->purchase) {
@@ -217,6 +205,19 @@ $collumn = [
 
             if ($data->date_to) {
                 return date('d.m.Y', $data->date_to);
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'city',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->city) {
+                return $data->city;
             } else {
                 return '-';
             }
@@ -285,19 +286,6 @@ $collumn = [
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
-            'attribute' => 'city',
-            'vAlign'=>'middle',
-            'value' => function ($data) {
-
-                if ($data->city) {
-                    return $data->city;
-                } else {
-                    return '-';
-                }
-
-            },
-        ],
-        [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'format' => 'raw',
@@ -318,6 +306,7 @@ $collumn = [
         [
             'attribute' => 'purchase',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'min-width: 130px'],
             'value' => function ($data) {
 
                 if ($data->purchase) {
@@ -350,6 +339,19 @@ $collumn = [
 
                 if ($data->date_to) {
                     return date('d.m.Y', $data->date_to);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'city',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
                 } else {
                     return '-';
                 }
@@ -417,19 +419,6 @@ $collumn = [
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
-            'attribute' => 'city',
-            'vAlign'=>'middle',
-            'value' => function ($data) {
-
-                if ($data->city) {
-                    return $data->city;
-                } else {
-                    return '-';
-                }
-
-            },
-        ],
-        [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'header' => 'Текст',
@@ -446,6 +435,7 @@ $collumn = [
         [
             'attribute' => 'purchase',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'min-width: 130px'],
             'value' => function ($data) {
 
                 if ($data->purchase) {
@@ -478,6 +468,19 @@ $collumn = [
 
                 if ($data->date_to) {
                     return date('d.m.Y', $data->date_to);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'city',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
                 } else {
                     return '-';
                 }

@@ -140,7 +140,6 @@ class menuLeftWidget extends Widget
                         ],
                     ],
                 ],
-
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/new', 'type' => Company::TYPE_WASH],
@@ -152,6 +151,19 @@ class menuLeftWidget extends Widget
                         || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW && Yii::$app->controller->action->id != 'newtendermembers')
                     ),
                 ],
+                [
+                    'label'  => 'Архивы',
+                    'url'    => '#',
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE3]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'fullcontroltender')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'fulltendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'tendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'newtendermembers')
+                    ),
+                    'items'  => [
                 [
                     'label' => 'Архив' . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
                     'url' => ['/company/archive', 'type' => Company::TYPE_WASH],
@@ -185,6 +197,8 @@ class menuLeftWidget extends Widget
                         || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3 && Yii::$app->controller->action->id != 'newtendermembers')
                     ),
                 ],
+             ],
+        ],
                 [
                     'label' => 'Акты и оплата',
                     'url' => ['/monthly-act/list?type=' . Company::TYPE_WASH],
@@ -375,6 +389,19 @@ class menuLeftWidget extends Widget
                     ),
                 ],
                 [
+                    'label'  => 'Архивы',
+                    'url'    => '#',
+                    'active' => (
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE]['en']) ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_REFUSE]['en']) ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_ARCHIVE3]['en']) ||
+                        ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'fullcontroltender')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'fulltendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'tendermembers')
+                        || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_REFUSE && Yii::$app->controller->action->id != 'newtendermembers')
+                    ),
+                    'items'  => [
+                [
                     'label' => 'Архив' . ($countNew ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_ARCHIVE]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_ARCHIVE)],
                     'active' => (
@@ -406,6 +433,8 @@ class menuLeftWidget extends Widget
                         || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3 && Yii::$app->controller->action->id != 'tendermembers')
                         || ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_ARCHIVE3 && Yii::$app->controller->action->id != 'newtendermembers')
                     ),
+                        ],
+                    ],
                 ],
                 [
                     'label' => 'Акты и оплата',

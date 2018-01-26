@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\EntryEvent;
 use Yii;
 use common\models\CompanyInfo;
 use common\models\search\CompanyInfoSearch;
@@ -148,6 +149,38 @@ class CompanyInfoController extends Controller
                 ]);
             }            
         }
+    }
+
+    public function actionCommentupdate($id)
+    {
+        $model = EntryEvent::findOne(['company_id' => $id]);
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+            foreach ($arrUpdate['EntryEvent'] as $name => $value) {
+                if ($name == 'date_from') {
+                    $arrUpdate['EntryEvent'][$name] = (String) strtotime($value);
+                } else if ($name == 'date_to') {
+                    $arrUpdate['EntryEvent'][$name] = (String) strtotime($value);
+                }
+            }
+
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
+
+
+                return ['output' => implode(', ', $output), 'message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        } else {
+            return ['message' => 'не получилось'];
+        }
+
     }
 
     public function actionUpdatepay($id)

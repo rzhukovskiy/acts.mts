@@ -14,6 +14,7 @@ use common\models\Car;
 use common\models\Card;
 use common\models\Company;
 use common\models\Entry;
+use common\models\EntryEvent;
 use common\models\search\CompanySearch;
 use common\models\search\EntrySearch;
 use common\models\User;
@@ -121,6 +122,7 @@ class OrderController extends Controller
         }
 
         $listCity = $newListCity;
+
 
         return $this->render('list', [
             'dataProvider' => $dataProvider,

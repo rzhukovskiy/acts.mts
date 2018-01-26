@@ -571,6 +571,37 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                 ?>
 
             </div>
+            <div class="col-sm-12" style="margin-top: 15px; font-size: larger">
+                <?php
+
+                $modelevent = \common\models\EntryEvent::findOne(['company_id' => $model->id]);
+                $time = '';
+
+                if ($modelCompanyInfo->time_location == 0) {
+                    $time = time();
+                } else {
+                    $time = (time() + (3600 * $modelCompanyInfo->time_location));
+                }
+
+                if (isset($modelevent)) {
+                if ((isset($modelevent->date_from)) && (isset($modelevent->date_to))){
+                if ((($modelevent->date_from) < $time) && ($time < ($modelevent->date_to))) {
+                    if (isset($modelevent->comment)) {
+                    echo '<span style="color: darkred">' . $modelevent->comment . '</span>';
+                    }
+                }
+                    if (($modelevent->date_from) && ($modelevent->date_to) && ($time > $modelevent->date_to)) {
+                        $modelevent->date_from = '';
+                        $modelevent->date_to = '';
+                        $modelevent->comment = '';
+                        $modelevent->save();
+                    }
+                }
+                }
+                ?>
+
+            </div>
+
             <div class="free-time" style ="height: 220px; text-align: center;">
                 <?php
                 $arrayFreeTime = $model->getFreeTimeArray($entrySearchModel->day);
