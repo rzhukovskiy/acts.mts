@@ -20,6 +20,26 @@ if(($action == 'new') || ($action == 'archive')) {
             'active' => $requestType == $type_id,
         ];
     }
+} else if($action == 'tender') {
+    $items[] = [
+        'label' => 'Мойка',
+        'url' => ["/activity/$action", 'type' => 1],
+        'active' => $requestType == 1,
+    ];
+    $items[] = [
+        'label' => 'Шиномонтаж',
+        'url' => ["/activity/$action", 'type' => 7],
+        'active' => $requestType == 7,
+    ];
+} else if($action == 'showtender') {
+    $items[] = [
+        'label' => $requestType == 1 ? 'Мойка' : 'Шиномонтаж',
+        'url' => ["/activity/tender", 'type' => $requestType],
+    ];
+    $items[] = [
+        'label' => 'Подробная статистика',
+        'active' => $action == 'showtender',
+    ];
 } else {
     $items[] = [
         'label' => Company::$listType[$type]['ru'],

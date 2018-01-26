@@ -602,7 +602,7 @@ class CompanyController extends Controller
 
         $currentUser = Yii::$app->user->identity;
 
-        $searchModel = new TenderSearch();
+        $searchModel = new TenderSearch(['scenario' => 'tender']);
 
         if ($currentUser->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -627,7 +627,7 @@ class CompanyController extends Controller
 
         $currentUser = Yii::$app->user->identity;
 
-        $searchModel = new TenderSearch();
+        $searchModel = new TenderSearch(['scenario' => 'tender']);
 
         if ($currentUser->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -867,7 +867,7 @@ class CompanyController extends Controller
     // Раздел архив тендеров
     public function actionArchivetender($win)
     {
-        $searchModel = new TenderSearch();
+        $searchModel = new TenderSearch(['scenario' => 'tender']);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
