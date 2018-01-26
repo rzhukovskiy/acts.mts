@@ -63,6 +63,7 @@ echo Tabs::widget([
                 'todayBtn'=>true,
             ]
         ]) ?>
+        <?= $form->field($model, 'tender_id')->input('number', ['class' => 'form-control', 'placeholder' => 'Введите ID тендера']) ?>
         <?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
 
