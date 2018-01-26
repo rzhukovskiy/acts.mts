@@ -447,6 +447,31 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'monthly-act' && Yii::$app->controller->action->id == 'archive'),
                 ],
                 [
+                    'label'  => 'Активность<br />сотрудников',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'activity',
+                    'items'  => [
+                        [
+                            'label'  => 'Статистика<br />заявок',
+                            'url' => ['/activity/new', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew'))),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />архива',
+                            'url' => ['/activity/archive', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'showarchive'))),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />тендеров',
+                            'url' => ['/activity/tender', 'type' => 1],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'tender') || (Yii::$app->controller->action->id == 'showtender'))),
+                        ],
+                    ],
+                ],
+                [
                     'label' => 'Планирование',
                     'url' => ['/plan/list'],
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'list'),
