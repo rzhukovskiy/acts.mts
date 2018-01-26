@@ -289,6 +289,10 @@ $this->registerJs($script, View::POS_READY);
 
             $workUserData = [];
 
+            if(count($workUserArr) > 0) {
+                $workUserData[''] = '- Выберите разработчика тех. задания';
+            }
+
             foreach ($workUserArr as $name => $value) {
                 $index = $value['id'];
                 $workUserData[$index] = trim($value['username']);
@@ -303,7 +307,7 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'work_user_id',
-                'displayValue' => isset($workUserData[$model->work_user_id]) ? $workUserData[$model->work_user_id] : '',
+                'displayValue' => isset($workUserData[$model->work_user_id]) ? ($model->work_user_id > 0 ?$workUserData[$model->work_user_id] : '') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' =>  ((\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) || ((!$model->work_user_id) && ($model->tender_close == 0))) ? false : true,

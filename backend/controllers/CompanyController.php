@@ -1871,6 +1871,12 @@ class CompanyController extends Controller
                     $arrUpdate['Tender'][$name] = (String) strtotime($value);
                 } else if($name == 'term_contract') {
                     $arrUpdate['Tender'][$name] = (String) strtotime($value);
+                } else if($name == 'work_user_id') {
+
+                    if($value == '') {
+                        $arrUpdate['Tender'][$name] = 0;
+                    }
+
                 }
             }
 
@@ -1902,16 +1908,22 @@ class CompanyController extends Controller
                         $output[] = $value . " ₽";
                     } else if($name == 'work_user_id') {
 
-                        $workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
+                        if($value > 0) {
 
-                        $workUserData = [];
+                            $workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
 
-                        foreach ($workUserArr as $key => $result) {
-                            $index = $result['id'];
-                            $workUserData[$index] = trim($result['username']);
+                            $workUserData = [];
+
+                            foreach ($workUserArr as $key => $result) {
+                                $index = $result['id'];
+                                $workUserData[$index] = trim($result['username']);
+                            }
+
+                            $output[] = isset($workUserData[$value]) ? $workUserData[$value] : '';
+
+                        } else {
+                            $output[] = '';
                         }
-
-                        $output[] = isset($workUserData[$value]) ? $workUserData[$value] : $value;
 
                     } else {
                         $output[] = $value;
