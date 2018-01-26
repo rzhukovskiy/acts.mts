@@ -373,6 +373,8 @@ class Tender extends ActiveRecord
                 $this->work_user_time = (String) time();
             }
 
+        } else {
+            $this->work_user_time = NULL;
         }
 
         return parent::beforeSave($insert);
