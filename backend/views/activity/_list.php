@@ -196,6 +196,163 @@ CanvasJsAsset::register($this);
                     ],
                 ],
             ]);
+
+        } elseif(Yii::$app->controller->action->id == 'tender') {
+
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'summary' => false,
+                'showPageSummary' => true,
+                'emptyText' => '',
+                'layout' => '{items}',
+                'filterSelector' => '.ext-filter',
+                'beforeHeader' => [
+                    [
+                        'columns' => [
+                            [
+                                'content' => $filters,
+                                'options' => [
+                                    'style' => 'vertical-align: middle',
+                                    'colspan' => 3,
+                                    'class' => 'kv-grid-group-filter',
+                                ],
+                            ]
+                        ],
+                        'options' => ['class' => 'extend-header'],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'content' => '&nbsp',
+                                'options' => [
+                                    'colspan' => 3,
+                                ]
+                            ]
+                        ],
+                        'options' => ['class' => 'kv-group-header'],
+                    ],
+                ],
+                'columns' => [
+                    [
+                        'attribute' => 'work_user_id',
+                        'header' => 'Разработчик технического задания',
+                        'contentOptions' => ['class' => 'value_0', 'style' => 'min-width: 300px'],
+                        'value' => function ($data) {
+                            return isset($GLOBALS['authorMembers'][$data->work_user_id]) ? $GLOBALS['authorMembers'][$data->work_user_id] : '';
+                        },
+                    ],
+                    [
+                        'header' => 'Количество',
+                        'pageSummary' => true,
+                        'pageSummaryFunc' => GridView::F_SUM,
+                        'contentOptions' => ['class' => 'value_1', 'style' => 'width: 300px'],
+                        'value' => function ($data) {
+                            return $data->created_at;
+                        },
+                    ],
+                    [
+                        'class' => 'kartik\grid\ActionColumn',
+                        'template' => '{view}',
+                        'contentOptions' => ['style' => 'width: 120px'],
+                        'buttons' => [
+                            'view' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                    ['/activity/showtender', 'user_id' => $model->work_user_id, 'type' => $GLOBALS['type'],
+                                        'TenderSearch[dateFrom]' => $GLOBALS['dateFrom'],
+                                        'TenderSearch[dateTo]' => $GLOBALS['dateTo']]);
+                            },
+                        ],
+                    ],
+                ],
+            ]);
+
+        } elseif(Yii::$app->controller->action->id == 'showtender') {
+
+            $GLOBALS['name'] = '';
+
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'summary' => false,
+                'showPageSummary' => true,
+                'emptyText' => '',
+                'layout' => '{items}',
+                'filterSelector' => '.ext-filter',
+                'beforeHeader' => [
+                    [
+                        'columns' => [
+                            [
+                                'content' => $filters,
+                                'options' => [
+                                    'style' => 'vertical-align: middle',
+                                    'colspan' => 4,
+                                    'class' => 'kv-grid-group-filter',
+                                ],
+                            ]
+                        ],
+                        'options' => ['class' => 'extend-header'],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'content' => '&nbsp',
+                                'options' => [
+                                    'colspan' => 4,
+                                ]
+                            ]
+                        ],
+                        'options' => ['class' => 'kv-group-header'],
+                    ],
+                ],
+                'columns' => [
+                    [
+                        'attribute' => 'work_user_id',
+                        'header' => 'Разработчик технического задания',
+                        'group' => true,
+                        'groupedRow' => true,
+                        'groupOddCssClass' => 'kv-group-header',
+                        'groupEvenCssClass' => 'kv-group-header',
+                        'value' => function ($data) {
+                            $GLOBALS['name'] = isset($GLOBALS['authorMembers'][$data->work_user_id]) ? $GLOBALS['authorMembers'][$data->work_user_id] : '';
+                            return isset($GLOBALS['authorMembers'][$data->work_user_id]) ? $GLOBALS['authorMembers'][$data->work_user_id] : '';
+                        },
+                    ],
+                    [
+                        'header' => '№',
+                        'class' => 'kartik\grid\SerialColumn'
+                    ],
+                    [
+                        'attribute' => 'customer',
+                        'pageSummary' => 'Количество',
+                    ],
+                    [
+                        'attribute' => 'work_user_time',
+                        'pageSummary' => true,
+                        'pageSummaryFunc' => GridView::F_COUNT,
+                        'contentOptions' => ['class' => 'value_0'],
+                        'value' => function ($data) {
+                            return date('d.m.Y', $data->work_user_time);
+                        },
+                    ],
+                    [
+                        'class' => 'kartik\grid\ActionColumn',
+                        'template' => '{view}',
+                        'contentOptions' => ['style' => 'width: 120px'],
+                        'buttons' => [
+                            'view' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                    ['/company/fulltender', 'tender_id' => $model->id]);
+                            },
+                        ],
+                    ],
+                ],
+            ]);
+
         } elseif(Yii::$app->controller->action->id == 'shownew') {
 
             $GLOBALS['name'] = '';
@@ -414,7 +571,7 @@ echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" st
 
 $js = "";
 
-if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'archive')) {
+if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'tender')) {
     $js = "
             var dataTable = [];
             console.log('Hello');

@@ -256,6 +256,12 @@ class menuLeftWidget extends Widget
                             'active' => ((Yii::$app->controller->id == 'activity') &&
                                 ((Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'showarchive'))),
                         ],
+                        [
+                            'label'  => 'Статистика<br />тендеров',
+                            'url' => ['/activity/tender', 'type' => 1],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'tender') || (Yii::$app->controller->action->id == 'showtender'))),
+                        ],
                     ],
                 ],
                 [

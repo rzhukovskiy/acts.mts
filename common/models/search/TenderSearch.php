@@ -28,6 +28,7 @@ class TenderSearch extends Company
     public $dateFrom;
     public $dateTo;
     public $period;
+    public $work_user_id;
     /**
      * @inheritdoc
      */
@@ -35,7 +36,7 @@ class TenderSearch extends Company
     {
         return [
             [['date_request_end', 'time_bidding_end', 'customer', 'city'], 'string'],
-            [['purchase_status', 'method_purchase'], 'integer'],
+            [['purchase_status', 'method_purchase', 'work_user_id'], 'integer'],
             [['user_id', 'service_type', 'price_nds'], 'safe'],
             [['company_id'], 'integer'],
             [['dateFrom', 'dateTo', 'period'], 'safe'],
@@ -49,7 +50,11 @@ class TenderSearch extends Company
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return [
+            'tender' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
+            'activity' => ['dateFrom', 'dateTo', 'service_type', 'period', 'work_user_id'],
+            'default' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
+        ];
     }
 
     /**
@@ -78,31 +83,55 @@ class TenderSearch extends Company
             return $dataProvider;
         }
 
-        $query->joinWith(['company']);
+        switch ($this->scenario) {
+            case 'tender':
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'company_id' => $this->company_id,
-            'purchase_status' => $this->purchase_status,
-            'user_id' => $this->user_id,
-            'method_purchase' => $this->method_purchase,
-            'service_type' => $this->service_type,
+                $query->joinWith(['company']);
 
-        ]);
-        $query->andFilterWhere(['like', 'city', $this->city])
-              ->andFilterWhere(['like', 'price_nds', $this->price_nds]);
+                // grid filtering conditions
+                $query->andFilterWhere([
+                    'company_id' => $this->company_id,
+                    'purchase_status' => $this->purchase_status,
+                    'user_id' => $this->user_id,
+                    'method_purchase' => $this->method_purchase,
+                    'service_type' => $this->service_type,
 
-        // Если период не задан то задаем 10 лет. Выводим если не задан тендеры с пустыми датами, а если задан то которые попадают под фильтр
-        if (((!isset($this->dateFrom)) && (!isset($this->dateTo))) || ((strtotime($this->dateTo) - strtotime($this->dateFrom)) > 157680000)) {
-            $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
-            $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
-            $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
+                ]);
+                $query->andFilterWhere(['like', 'city', $this->city])
+                    ->andFilterWhere(['like', 'price_nds', $this->price_nds]);
 
-        } else {
-            $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
+                // Если период не задан то задаем 10 лет. Выводим если не задан тендеры с пустыми датами, а если задан то которые попадают под фильтр
+                if (((!isset($this->dateFrom)) && (!isset($this->dateTo))) || ((strtotime($this->dateTo) - strtotime($this->dateFrom)) > 157680000)) {
+                    $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+                    $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
+                    $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
+
+                } else {
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
+                }
+
+                $query->orderby('company.id');
+                break;
+
+            case 'activity':
+
+                $query->innerJoin('department_user', '`department_user`.`user_id` = `tender`.`work_user_id`')->andWhere(['department_id' => $this->service_type]);
+                $query->andWhere(['between', "DATE(FROM_UNIXTIME(work_user_time))", $this->dateFrom, $this->dateTo]);
+
+                if($this->work_user_id) {
+                    $query->andWhere(['`tender`.`work_user_id`' => $this->work_user_id]);
+                    $query->groupBy('`tender`.`id`');
+                    $query->orderBy('`tender`.`work_user_time`');
+                } else {
+                    $query->groupBy('`tender`.`work_user_id`');
+                    $query->orderBy('`tender`.`work_user_id`');
+                }
+
+                $query->select('`tender`.`id` as `id`, `tender`.`customer` as `customer`, `tender`.`work_user_time` as `work_user_time`, `tender`.`work_user_id`, COUNT(Distinct `tender`.`id`) as `created_at`');
+
+                break;
+
         }
-
-        $query->orderby('company.id');
 
         return $dataProvider;
     }

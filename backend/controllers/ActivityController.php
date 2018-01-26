@@ -8,6 +8,8 @@
 
 namespace backend\controllers;
 
+use common\models\search\TenderSearch;
+use common\models\Tender;
 use yii;
 use common\models\DepartmentCompany;
 use common\models\search\DepartmentCompanySearch;
@@ -31,7 +33,7 @@ class ActivityController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['new', 'shownew', 'archive', 'showarchive'],
+                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
@@ -183,6 +185,93 @@ class ActivityController extends Controller
         $dataProvider = $searchModel->search($params);
 
         $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+
+    // Тендеры
+    public function actionTender($type)
+    {
+
+        $searchModel = new TenderSearch(['scenario' => 'activity']);
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if(!isset($params['TenderSearch']['dateFrom'])) {
+            $params['TenderSearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+            $searchModel->dateFrom = $params['TenderSearch']['dateFrom'];
+        }
+
+        if(!isset($params['TenderSearch']['dateTo'])) {
+            $params['TenderSearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
+            $searchModel->dateTo = $params['TenderSearch']['dateTo'];
+        }
+        $params['TenderSearch']['service_type'] = $type;
+        // Если не выбран период то показываем только текущий год
+
+        $dataProvider = $searchModel->search($params);
+
+        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.id, user.username')->asArray()->all();
+        $authorMembers = [];
+
+        foreach ($workUserData as $name => $value) {
+            $index = $value['id'];
+            $authorMembers[$index] = trim($value['username']);
+        }
+        asort($authorMembers);
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+    public function actionShowtender($user_id, $type)
+    {
+
+        $searchModel = new TenderSearch(['scenario' => 'activity']);
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if(!isset($params['TenderSearch']['dateFrom'])) {
+            $params['TenderSearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+            $searchModel->dateFrom = $params['TenderSearch']['dateFrom'];
+        }
+
+        if(!isset($params['TenderSearch']['dateTo'])) {
+            $params['TenderSearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
+            $searchModel->dateTo = $params['TenderSearch']['dateTo'];
+        }
+        $params['TenderSearch']['service_type'] = $type;
+        $params['TenderSearch']['work_user_id'] = $user_id;
+        // Если не выбран период то показываем только текущий год
+
+        $dataProvider = $searchModel->search($params);
+
+        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.id, user.username')->asArray()->all();
+        $authorMembers = [];
+
+        foreach ($workUserData as $name => $value) {
+            $index = $value['id'];
+            $authorMembers[$index] = trim($value['username']);
+        }
+        asort($authorMembers);
 
         $listType = Company::$listType;
 
