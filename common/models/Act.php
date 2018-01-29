@@ -944,6 +944,9 @@ class Act extends ActiveRecord
 
                 $numRepairServiceClient = 0;
 
+                $totalExpense = 0;
+                $totalIncome = 0;
+
                 foreach ($this->serviceList as $serviceData) {
 
                     $removeServiceClient = false;
@@ -1012,6 +1015,8 @@ class Act extends ActiveRecord
                             $clientScope->parts = 0;
                         }
 
+                        $totalIncome += $clientScope->price * $serviceData['amount'];
+
                         $clientScope->save();
                         $numeClientService++;
                     }
@@ -1045,6 +1050,8 @@ class Act extends ActiveRecord
                     } else {
                         $partnerScope->parts = 0;
                     }
+
+                    $totalExpense += $partnerScope->price * $serviceData['amount'];
 
                     $partnerScope->save();
                     $numePartnerService++;
@@ -1088,6 +1095,8 @@ class Act extends ActiveRecord
                                 $clientScope->amount = 1;
                                 $clientScope->parts = 0;
 
+                                $totalIncome += $clientScope->price;
+
                                 $clientScope->save();
                                 $numeClientService++;
 
@@ -1097,6 +1106,16 @@ class Act extends ActiveRecord
 
                     }
                 }
+
+                // Жестко сохряняем доход, расход и прибыль после выполнения замещений
+                if(($this->expense != $totalExpense) || ($this->income != $totalIncome)) {
+
+                    $profit = $totalIncome - $totalExpense;
+                    Yii::$app->db->createCommand()->update('{{%act}}', ['expense' => $totalExpense, 'income' => $totalIncome, 'profit' => $profit], ['id' => $this->id])->execute();
+                    
+                }
+                // END Сохряняем доход, расход и прибыль после выполнения замещений
+
             }
             // END Добавляем услуги замещения
 
