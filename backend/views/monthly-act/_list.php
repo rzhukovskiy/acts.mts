@@ -541,9 +541,13 @@ function loadTrackers() {
                 
                 // Данные для кнопки отправить уведомления
                 if(resTrack[0].length > 0) {
+                    
+                    if((response.emails.length != '[]') && (response.numbers != '[]')) {
                     sendMailNotificIco.show();
                     arrEmailMass = response.emails;
                     arrNumberMass = response.numbers;
+                    }
+                    
                 }
                 // Данные для кнопки отправить уведомления
                 
@@ -571,7 +575,7 @@ $('#showModalTracker').modal('show');
 // Нажимаем на кнопку отправить уведомление
 sendMailNotificIco.on('click', function(){
     
-   if((arrEmailMass.length > 0) && (arrNumberMass.length > 0)) {
+   if((arrEmailMass.length > 0) && (arrNumberMass.length > 0) && (arrEmailMass != '[]') && (arrNumberMass != '[]')) {
 
             $.ajax({
                 type     :'POST',

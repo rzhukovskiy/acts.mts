@@ -659,18 +659,53 @@ class EmailController extends Controller
 
                             if(isset($numberArr[$key])) {
 
-                                $linkTrack = 'https://www.pochta.ru/tracking#' . $numberArr[$key];
-                                $plainTextContent = str_replace('{TRACKLINK}', Html::a($linkTrack, $linkTrack, ['target' => 'blank']), $plainTextContent);
-                                $plainTextContent = str_replace('История почтового отправления', 'Местоположение почтового отправления', $plainTextContent);
+                                if(count(explode(',', $value)) > 1) {
 
-                                $resSend = Yii::$app->mailer->compose()
-                                    ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                                    ->setTo($value)
-                                    ->setSubject($subject)
-                                    ->setHtmlBody($plainTextContent)->send();
+                                    $arrEmail = explode(',', $value);
 
-                                if ($resSend) {
-                                    $numTrueSend++;
+                                    for ($iEmail = 0; $iEmail < count($arrEmail); $iEmail++) {
+
+                                        $emailContent = trim($arrEmail[$iEmail]);
+
+                                        if (filter_var($emailContent, FILTER_VALIDATE_EMAIL)) {
+
+                                            $linkTrack = 'https://www.pochta.ru/tracking#' . $numberArr[$key];
+                                            $plainTextContent = str_replace('{TRACKLINK}', Html::a($linkTrack, $linkTrack, ['target' => 'blank']), $plainTextContent);
+                                            $plainTextContent = str_replace('История почтового отправления', 'Местоположение почтового отправления', $plainTextContent);
+
+                                            $resSend = Yii::$app->mailer->compose()
+                                                ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                                ->setTo($emailContent)
+                                                ->setSubject($subject)
+                                                ->setHtmlBody($plainTextContent)->send();
+
+                                            if ($resSend) {
+                                                $numTrueSend++;
+                                            }
+
+                                        }
+                                    }
+
+                                } else {
+
+                                    if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+
+                                        $linkTrack = 'https://www.pochta.ru/tracking#' . $numberArr[$key];
+                                        $plainTextContent = str_replace('{TRACKLINK}', Html::a($linkTrack, $linkTrack, ['target' => 'blank']), $plainTextContent);
+                                        $plainTextContent = str_replace('История почтового отправления', 'Местоположение почтового отправления', $plainTextContent);
+
+                                        $resSend = Yii::$app->mailer->compose()
+                                            ->setFrom(['notice@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                                            ->setTo($value)
+                                            ->setSubject($subject)
+                                            ->setHtmlBody($plainTextContent)->send();
+
+                                        if ($resSend) {
+                                            $numTrueSend++;
+                                        }
+
+                                    }
+
                                 }
 
                             }
