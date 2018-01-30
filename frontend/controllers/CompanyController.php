@@ -213,13 +213,16 @@ class CompanyController extends Controller
             $newChange->sub_type = $companyModel->type;
             $newChange->user_id = Yii::$app->user->identity->id;
             $newChange->service_id = $companyService->service_id;
-            $newChange->old_value = $oldPrice;
-            $newChange->new_value = $newPrice;
+            $newChange->old_value = (String) $oldPrice;
+            $newChange->new_value = (String) $newPrice;
             $newChange->company_id = $companyService->company_id;
             $newChange->type_id = $companyService->type_id;
             $newChange->status = Changes::EDIT_PRICE;
             $newChange->date = (String) time();
-            $newChange->save();
+
+            if(($oldPrice > $newPrice) || ($oldPrice < $newPrice)) {
+                $newChange->save();
+            }
             // Добавление в историю изменения цен
 
             if ($companyService->save()) {
@@ -274,8 +277,8 @@ class CompanyController extends Controller
                         $newChange->sub_type = $companyModel->type;
                         $newChange->user_id = Yii::$app->user->identity->id;
                         $newChange->service_id = $service_id;
-                        $newChange->old_value = 0;
-                        $newChange->new_value = $price;
+                        $newChange->old_value = '0';
+                        $newChange->new_value = (String) $price;
                         $newChange->company_id = $companyService->company_id;
                         $newChange->type_id = $companyService->type_id;
                         $newChange->status = Changes::NEW_PRICE;

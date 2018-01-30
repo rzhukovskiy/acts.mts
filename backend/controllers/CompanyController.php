@@ -130,26 +130,31 @@ class CompanyController extends Controller
                         if(isset($existed)) {
                             if(isset($existed->price)) {
                                 if($existed->price) {
-                                    $newChange->old_value = $existed->price;
+                                    $newChange->old_value = (String) $existed->price;
                                     $newChange->status = Changes::EDIT_PRICE;
                                 } else {
-                                    $newChange->old_value = 0;
+                                    $newChange->old_value = '0';
                                     $newChange->status = Changes::NEW_PRICE;
                                 }
                             } else {
-                                $newChange->old_value = 0;
+                                $newChange->old_value = '0';
                                 $newChange->status = Changes::NEW_PRICE;
                             }
                         } else {
-                            $newChange->old_value = 0;
+                            $newChange->old_value = '0';
                             $newChange->status = Changes::NEW_PRICE;
                         }
 
-                        $newChange->new_value = $price;
+                        $newChange->new_value = (String) $price;
                         $newChange->company_id = $companyService->company_id;
                         $newChange->type_id = $companyService->type_id;
                         $newChange->date = (String) time();
-                        $newChange->save();
+
+                        if(($newChange->status == Changes::EDIT_PRICE) && (($newChange->old_value > $newChange->new_value) || ($newChange->old_value < $newChange->new_value))) {
+                            $newChange->save();
+                        } else if(($newChange->status == Changes::NEW_PRICE)) {
+                            $newChange->save();
+                        }
                         // Добавление в историю изменения цен
                     }
 
