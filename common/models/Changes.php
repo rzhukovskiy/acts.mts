@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $type
  * @property integer $sub_type
+ * @property integer $service_id
  * @property integer $user_id
  * @property integer $company_id
  * @property integer $type_id
@@ -45,7 +46,7 @@ class Changes extends ActiveRecord
     {
         return [
             [['type', 'user_id', 'old_value', 'new_value', 'status'], 'required'],
-            [['type', 'sub_type', 'user_id', 'status', 'company_id', 'type_id'], 'integer'],
+            [['type', 'sub_type', 'user_id', 'status', 'company_id', 'type_id', 'service_id'], 'integer'],
             [['date'], 'safe'],
             [['old_value', 'new_value'], 'string', 'max' => 255],
         ];
@@ -60,6 +61,7 @@ class Changes extends ActiveRecord
             'id' => 'ID',
             'type' => 'Тип',
             'sub_type' => 'Подтип',
+            'service_id' => 'Услуга',
             'user_id' => 'Сотрудник',
             'company_id' => 'Компания',
             'type_id' => 'Тип ТС',

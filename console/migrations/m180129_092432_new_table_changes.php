@@ -10,6 +10,7 @@ class m180129_092432_new_table_changes extends Migration
             'id' => $this->primaryKey(),
             'type' => 'tinyint(2) NOT NULL',
             'sub_type' => 'tinyint(2) DEFAULT NULL',
+            'service_id' => 'smallint(3) DEFAULT NULL',
             'user_id' => 'int(11) NOT NULL',
             'company_id' => 'int(11) DEFAULT NULL',
             'type_id' => 'int(11) DEFAULT NULL',

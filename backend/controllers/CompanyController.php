@@ -124,6 +124,7 @@ class CompanyController extends Controller
                         $newChange->type = Changes::TYPE_PRICE;
                         $newChange->sub_type = $companyModel->type;
                         $newChange->user_id = Yii::$app->user->identity->id;
+                        $newChange->service_id = $service_id;
 
                         // Проверяем добавлена или изменена цена
                         if(isset($existed)) {
