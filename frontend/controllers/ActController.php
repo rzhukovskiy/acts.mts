@@ -490,7 +490,7 @@ class ActController extends Controller
 
                                                     if(count($carArr) > 0) {
                                                         // не заменять марку $mark_id = $carArr[0]['mark_id'];
-                                                        $type_id = $carArr[0]['type_id'];
+                                                        //$type_id = $carArr[0]['type_id'];
                                                     }
 
                                                     if (($type_id > 0) && (mb_strlen($number) > 3)) {

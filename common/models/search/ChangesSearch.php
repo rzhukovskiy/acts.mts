@@ -13,6 +13,11 @@ class ChangesSearch extends Changes
     public $dateTo;
     public $period;
     public $type;
+    public $company_id;
+    public $user_id;
+    public $status;
+    public $type_id;
+    public $service_id;
 
     /**
      * @inheritdoc
@@ -20,8 +25,8 @@ class ChangesSearch extends Changes
     public function rules()
     {
         return [
-            [['type'], 'integer'],
-            [['dateFrom', 'dateTo', 'period'], 'safe'],
+            [['type', 'company_id', 'user_id', 'status', 'service_id'], 'integer'],
+            [['dateFrom', 'dateTo', 'period', 'type_id'], 'safe'],
         ];
     }
 
@@ -69,7 +74,25 @@ class ChangesSearch extends Changes
         }
         // Если не выбран период то показываем только текущий год
 
+        // Фильтры
+        if($this->company_id) {
+            $query->andWhere(['company_id' => $this->company_id]);
+        }
+        if($this->user_id) {
+            $query->andWhere(['user_id' => $this->user_id]);
+        }
+        if($this->status) {
+            $query->andWhere(['status' => $this->status]);
+        }
+        if($this->type_id) {
+            $query->andWhere(['type_id' => $this->type_id]);
+        }
+        if($this->service_id) {
+            $query->andWhere(['service_id' => $this->service_id]);
+        }
+
         $query->andWhere(['between', "DATE(FROM_UNIXTIME(`date`))", $this->dateFrom, $this->dateTo]);
+        // Фильтры
 
         $dataProvider->sort = [
             'defaultOrder' => [
