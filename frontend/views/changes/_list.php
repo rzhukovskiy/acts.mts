@@ -162,18 +162,21 @@ if(Yii::$app->controller->action->id == 'card') {
         ],
         [
             'attribute' => 'user_id',
+            'filter' => Html::activeDropDownList($searchModel, 'user_id', Changes::find()->innerJoin('user', '`user`.`id` = `changes`.`user_id`')->where(['AND', ['changes.type' => Changes::TYPE_CARD], ['changes.sub_type' => Yii::$app->request->get('type')], ['between', "DATE(FROM_UNIXTIME(`date`))", $searchModel->dateFrom, $searchModel->dateTo]])->select('user.username')->indexBy('user_id')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'value' => function ($data) {
                 return isset($GLOBALS['authorMembers'][$data->user_id]) ? $GLOBALS['authorMembers'][$data->user_id] : '';
             },
         ],
         [
             'attribute' => 'status',
+            'filter' => Html::activeDropDownList($searchModel, 'status', [1 => 'Добавление', 2 => 'Перенос'], ['class' => 'form-control', 'prompt' => 'Все действия']),
             'value' => function ($data) {
                 if ($data->status == Changes::NEW_CARD) {
                     return 'Добавление';
                 } else if ($data->status == Changes::MOVE_CARD) {
                     return 'Перенос';
                 }
+                return '-';
             },
         ],
         [
