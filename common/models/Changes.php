@@ -30,6 +30,8 @@ class Changes extends ActiveRecord
     // Status
     const NEW_PRICE = 1;
     const EDIT_PRICE = 2;
+    const NEW_CARD = 1;
+    const MOVE_CARD = 2;
 
     /**
      * @inheritdoc

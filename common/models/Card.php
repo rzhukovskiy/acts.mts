@@ -5,6 +5,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use Yii;
 
 /**
  * Card model
@@ -129,6 +130,18 @@ class Card extends ActiveRecord
                     $card = clone $this;
                     $card->number = $range;
                     $card->save();
+
+                    // Добавление в историю изменения карт
+                    $newChange = new Changes();
+                    $newChange->type = Changes::TYPE_CARD;
+                    $newChange->user_id = Yii::$app->user->identity->id;
+                    $newChange->old_value = (String) $card->number;
+                    $newChange->new_value = (String) $card->company_id;
+                    $newChange->status = Changes::NEW_CARD;
+                    $newChange->date = (String)time();
+                    $newChange->save();
+                    // Добавление в историю изменения карт
+
                 }
             }
 
@@ -138,6 +151,18 @@ class Card extends ActiveRecord
                     $card = clone $this;
                     $card->number = $num;
                     $card->save();
+
+                    // Добавление в историю изменения карт
+                    $newChange = new Changes();
+                    $newChange->type = Changes::TYPE_CARD;
+                    $newChange->user_id = Yii::$app->user->identity->id;
+                    $newChange->old_value = (String) $card->number;
+                    $newChange->new_value = (String) $card->company_id;
+                    $newChange->status = Changes::NEW_CARD;
+                    $newChange->date = (String)time();
+                    $newChange->save();
+                    // Добавление в историю изменения карт
+
                 }
                 $this->number = intval($numPointList[1]);
             }
@@ -149,8 +174,21 @@ class Card extends ActiveRecord
                     //чтобы не вызвало ошибку не совпадения владельца карты и машины
                     Act::updateAll(['status' => Act::STATUS_FIXED], ['card_id' => $existed->id]);
 
+                    // Добавление в историю изменения карт
+                    $newChange = new Changes();
+                    $newChange->type = Changes::TYPE_CARD;
+                    $newChange->user_id = Yii::$app->user->identity->id;
+                    $newChange->old_value = (String) $this->number;
+                    $newChange->company_id = $existed->company_id;
+                    $newChange->new_value = (String) $this->company_id;
+                    $newChange->status = Changes::MOVE_CARD;
+                    $newChange->date = (String)time();
+                    $newChange->save();
+                    // Добавление в историю изменения карт
+
                     $existed->company_id = $this->company_id;
                     $existed->save();
+
                 }
 
                 return false;

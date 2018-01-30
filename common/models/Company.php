@@ -1008,6 +1008,34 @@ class Company extends ActiveRecord
             $card->company_id = $this->id;
             $card->number = $this->cardList;
             $card->save();
+
+            // Проверка на разделители в номере для инстории изменения
+            $singlCard = true;
+
+            $numPointList = explode(',', $this->cardList);
+            if (count($numPointList) > 1) {
+                $singlCard = false;
+            }
+
+            $numPointList = explode('-', $this->cardList);
+            if (count($numPointList) > 1) {
+                $singlCard = false;
+            }
+
+            if($singlCard == true) {
+                // Добавление в историю изменения карт
+                $newChange = new Changes();
+                $newChange->type = Changes::TYPE_CARD;
+                $newChange->user_id = Yii::$app->user->identity->id;
+                $newChange->old_value = (String) $card->number;
+                $newChange->new_value = (String) $card->company_id;
+                $newChange->status = Changes::NEW_CARD;
+                $newChange->date = (String)time();
+                $newChange->save();
+                // Добавление в историю изменения карт
+            }
+            // Проверка на разделители в номере для инстории изменения
+
         }
 
         /**

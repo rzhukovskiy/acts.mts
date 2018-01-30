@@ -27,6 +27,7 @@ echo $this->render('_list',
     'searchModel'  => $searchModel,
     'authorMembers' => $authorMembers,
     'arrTypes' => $arrTypes,
+    'serviceList' => $serviceList,
 ]);
 
 

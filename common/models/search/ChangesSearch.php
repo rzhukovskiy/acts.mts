@@ -49,6 +49,12 @@ class ChangesSearch extends Changes
             return $dataProvider;
         }
 
+        // Разделяем по разделам
+        if($this->type) {
+            $query->andWhere(['type' => $this->type]);
+        }
+
+        // Добавляем вкладки типов для цены
         if($this->type == Changes::TYPE_PRICE) {
             $query->andWhere(['sub_type' => $this->sub_type]);
         }
