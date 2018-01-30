@@ -415,10 +415,10 @@ if (isset($arrLists[9])){
                         },
                         'archive' => function ($url, $data, $key) {
                             if ($data->is_archive == 0) {
-                                return Html::a('<span class="glyphicon glyphicon-export" style="margin-left: 5px; font-size: 15px;"> </span>', ['/company/controlisarchive', 'id' => $data->id],
+                                return Html::a('<span class="glyphicon glyphicon-floppy-save" style="margin-left: 5px; font-size: 16px;"> </span>', ['/company/controlisarchive', 'id' => $data->id],
                                     ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
                             } else if (($data->is_archive == 1) && (Yii::$app->user->identity->role == User::ROLE_ADMIN)) {
-                                return Html::a('<span class="glyphicon glyphicon-import" style="margin-left: 5px; font-size: 15px;"> </span>', ['/company/controlisarchive', 'id' => $data->id, 'is_archive' => $data->is_archive],
+                                return Html::a('<span class="glyphicon glyphicon-floppy-open" style="margin-left: 5px; font-size: 16px;"> </span>', ['/company/controlisarchive', 'id' => $data->id, 'is_archive' => $data->is_archive],
                                     ['data-confirm' => "Вы уверены, что хотите перенести в активные?"]);
                             } else {
                                 return '';
