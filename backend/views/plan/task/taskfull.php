@@ -27,6 +27,17 @@ $('.showFormAttachmainButt').on('click', function(){
 
 $('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
 $('#showFormAttachmain div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
+
+// Обновление страницы при изменении ID тендера
+var refreshPage = false;
+$("body").on('DOMSubtreeModified', "#taskuser-tender_id-targ", function() {
+    if(refreshPage == false) {
+        refreshPage = true;
+        $('#taskuser-tender_id-cont').append('<br />Загрузка..');
+        location.reload();
+    }
+});
+
 JS;
 $this->registerJs($script, View::POS_READY);
 
@@ -308,6 +319,86 @@ echo Tabs::widget([
                     ]); ?>
                 </td>
             </tr>
+            <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('tender_id') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXT,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'tender_id',
+                        'displayValue' => ($model->tender_id > 0) ? $model->tender_id : '',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'disabled' => ((\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) || ((!$model->tender_id) && ($model->tender_id == 0))) ? false : true,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите ID тендера', 'type' => 'number'],
+                        'formOptions' => [
+                            'action' => ['/plan/taskupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <?php
+
+                // Выбор ответственного за разработку тех. задания
+                if($model->tender_id) {
+
+                    $modelTender = \common\models\Tender::findOne(['id' => $model->tender_id]);
+
+                    if (isset($modelTender)) {
+
+                        ?>
+                        <tr>
+                            <td class="list-label-md"><?= $modelTender->getAttributeLabel('work_user_id') ?></td>
+                            <td>
+                                <?php
+
+                                $workUserArr = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['OR', ['department_id' => 1], ['department_id' => 7]])->select('user.id, user.username')->asArray()->all();
+
+                                $workUserData = [];
+
+                                if (count($workUserArr) > 0) {
+                                    $workUserData[''] = '- Выберите разработчика тех. задания';
+                                }
+
+                                foreach ($workUserArr as $name => $value) {
+                                    $index = $value['id'];
+                                    $workUserData[$index] = trim($value['username']);
+                                }
+                                asort($workUserData);
+
+                                echo Editable::widget([
+                                    'model' => $modelTender,
+                                    'buttonsTemplate' => '{submit}',
+                                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                    'submitButton' => [
+                                        'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                    ],
+                                    'attribute' => 'work_user_id',
+                                    'displayValue' => isset($workUserData[$modelTender->work_user_id]) ? ($modelTender->work_user_id > 0 ? $workUserData[$modelTender->work_user_id] : '') : '',
+                                    'asPopover' => true,
+                                    'placement' => PopoverX::ALIGN_LEFT,
+                                    'disabled' => ((\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) || ((!$modelTender->work_user_id) && ($modelTender->tender_close == 0))) ? false : true,
+                                    'size' => 'lg',
+                                    'data' => $workUserData,
+                                    'options' => ['class' => 'form-control'],
+                                    'formOptions' => [
+                                        'action' => ['/company/updatetender', 'id' => $modelTender->id]
+                                    ],
+                                    'valueIfNull' => '<span class="text-danger">не задано</span>',
+                                ]); ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                }
+            ?>
             <tr>
                 <td class="list-label-md">
                     <?= $model->getAttributeLabel('files') ?></td>

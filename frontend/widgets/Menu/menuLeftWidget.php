@@ -254,13 +254,31 @@ class menuLeftWidget extends Widget
                     'items'  => [
                         [
                             'label'  => 'Добавление',
-                            'url'    => ['/expense/addexpensecomp?type=1'],
-                            'active' => Yii::$app->controller->action->id == 'addexpense' || Yii::$app->controller->action->id == 'addexpensecomp' || Yii::$app->controller->action->id == 'expensecomp' || Yii::$app->controller->action->id == 'updateexpense' || Yii::$app->controller->action->id == 'fullexpense',
+                            'url'    => ['/expense/addexpensecomp', 'type' => 1],
+                            'active' => Yii::$app->controller->id == 'expense' && (Yii::$app->controller->action->id == 'addexpense' || Yii::$app->controller->action->id == 'addexpensecomp' || Yii::$app->controller->action->id == 'expensecomp' || Yii::$app->controller->action->id == 'updateexpense' || Yii::$app->controller->action->id == 'fullexpense'),
                         ],
                         [
                             'label'  => 'Статистика</br> денежных средств',
-                            'url'    => ['/expense/statexpense?type=1'],
-                            'active' => Yii::$app->controller->action->id == 'statexpense' || Yii::$app->controller->action->id == 'stattotal' || Yii::$app->controller->action->id == 'wash' || Yii::$app->controller->action->id == 'tires' || Yii::$app->controller->action->id == 'service',
+                            'url'    => ['/expense/statexpense', 'type' => 1],
+                            'active' => Yii::$app->controller->id == 'expense' && (Yii::$app->controller->action->id == 'statexpense' || Yii::$app->controller->action->id == 'stattotal' || Yii::$app->controller->action->id == 'wash' || Yii::$app->controller->action->id == 'tires' || Yii::$app->controller->action->id == 'service'),
+                        ],
+                    ],
+                ],
+                [
+                    'label'  => 'Изменение</br>информации',
+                    'url'    => '#',
+                    'visible'    => (Yii::$app->user->identity->role == User::ROLE_ADMIN) ? true : false,
+                    'active' => Yii::$app->controller->id == 'changes',
+                    'items'  => [
+                        [
+                            'label'  => 'Карты',
+                            'url'    => ['/changes/card'],
+                            'active' => Yii::$app->controller->id == 'changes' && Yii::$app->controller->action->id == 'card',
+                        ],
+                        [
+                            'label'  => 'Цены',
+                            'url'    => ['/changes/price', 'type' => Company::TYPE_OWNER],
+                            'active' => Yii::$app->controller->id == 'changes' && Yii::$app->controller->action->id == 'price',
                         ],
                     ],
                 ],

@@ -38,12 +38,12 @@ class ActivityController extends Controller
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => [],
+                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => [],
+                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],

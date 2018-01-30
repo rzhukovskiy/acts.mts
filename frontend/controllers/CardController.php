@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Card;
+use common\models\Changes;
 use common\models\Company;
 use common\models\User;
 use frontend\models\search\CardSearch;
@@ -108,7 +109,37 @@ class CardController extends Controller
     {
         $model = new Card();
 
+        $params = Yii::$app->request->post();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            // Проверка на разделители в номере для инстории изменения
+            $singlCard = true;
+
+            $numPointList = explode(',', $params['Card']['number']);
+            if (count($numPointList) > 1) {
+                $singlCard = false;
+            }
+
+            $numPointList = explode('-', $params['Card']['number']);
+            if (count($numPointList) > 1) {
+                $singlCard = false;
+            }
+
+            if($singlCard == true) {
+                // Добавление в историю изменения карт
+                $newChange = new Changes();
+                $newChange->type = Changes::TYPE_CARD;
+                $newChange->user_id = Yii::$app->user->identity->id;
+                $newChange->old_value = (String) $model->number;
+                $newChange->new_value = (String) $model->company_id;
+                $newChange->status = Changes::NEW_CARD;
+                $newChange->date = (String)time();
+                $newChange->save();
+                // Добавление в историю изменения карт
+            }
+            // Проверка на разделители в номере для инстории изменения
+
             return $this->redirect(['list']);
         } else {
             return $this->redirect(['list']);
@@ -126,7 +157,24 @@ class CardController extends Controller
         $model = $this->findModel($id);
         $companyDropDownData = Company::dataDropDownList(1);
 
+        $oldCompany = $model->company_id;
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            if(($oldCompany > 0) && ($oldCompany != $model->company_id)) {
+                // Добавление в историю изменения карт
+                $newChange = new Changes();
+                $newChange->type = Changes::TYPE_CARD;
+                $newChange->user_id = Yii::$app->user->identity->id;
+                $newChange->old_value = (String) $model->number;
+                $newChange->company_id = $oldCompany;
+                $newChange->new_value = (String) $model->company_id;
+                $newChange->status = Changes::MOVE_CARD;
+                $newChange->date = (String)time();
+                $newChange->save();
+                // Добавление в историю изменения карт
+            }
+
             return $this->goBack();
         } else {
             return $this->render('update',
@@ -211,6 +259,19 @@ class CardController extends Controller
             $modelCard = Card::findOne(['id' => $id]);
 
             if (($modelCard->company_id != $company_id) && ($modelCard->company_id == $company_from)) {
+
+                // Добавление в историю изменения карт
+                $newChange = new Changes();
+                $newChange->type = Changes::TYPE_CARD;
+                $newChange->user_id = Yii::$app->user->identity->id;
+                $newChange->old_value = (String) $modelCard->number;
+                $newChange->company_id = $modelCard->company_id;
+                $newChange->new_value = (String) $company_id;
+                $newChange->status = Changes::MOVE_CARD;
+                $newChange->date = (String)time();
+                $newChange->save();
+                // Добавление в историю изменения карт
+
                 $modelCard->company_id = $company_id;
 
                 if ($modelCard->save()) {

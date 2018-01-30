@@ -660,6 +660,8 @@ class MonthlyActController extends Controller
                         $index = $actList[$i]['id'];
                         $ArrIdsActs[] = $index;
                         $ArrNameActs[$index] = $actList[$i]['name'];
+                        $emailArr[$index] = $actList[$i]['email'];
+                        $numberArr[$index] = $actList[$i]['number'];
 
                         $ResTrack = curl_init($api_track_link . $tracker_url);
                         curl_setopt_array($ResTrack, [
@@ -734,8 +736,11 @@ class MonthlyActController extends Controller
                     $resArr[0] .= '<span style="color:#7F7F7F">' . $numTypes[0] . '.</span> ' . Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
                     $numTypes[0]++;
 
-                    $resEmail[$index] = $emailArr[$index];
-                    $resNumber[$index] = $numberArr[$index];
+                    if((isset($emailArr[$index])) && (isset($numberArr[$index]))) {
+                        $resEmail[$index] = $emailArr[$index];
+                        $resNumber[$index] = $numberArr[$index];
+                    }
+
                 } else if ($arrTreckInfo[$i]['value'] == 2) {
                     $resArr[1] .= '<span style="color:#7F7F7F">' . $numTypes[1] . '.</span> ' . Html::a($ArrNameActs[$index], ['detail', 'id' => $arrTreckInfo[$i]['second_id']], ['target' => '_blank']) . "<br />";
                     $numTypes[1]++;
