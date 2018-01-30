@@ -14,6 +14,10 @@ use yii\widgets\ActiveForm;
 use yii\bootstrap\Modal;
 use common\models\TenderLists;
 use common\models\User;
+use common\models\TenderControl;
+use kartik\datetime\DateTimePicker;
+use \kartik\date\DatePicker;
+use kartik\grid\GridView;
 
 // массив списков
 $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
@@ -57,11 +61,52 @@ for ($i = 0; $i < count($arrayTenderList); $i++) {
 }
 //
 
+$GLOBALS['arrLists'] = $arrLists;
+$GLOBALS['usersList'] = $usersList;
+
+// сортировка
+$arrsite = [];
+if (isset($arrLists[8])){
+    $arrsite = $arrLists[8];
+    asort($arrsite);
+}
+$arrtype = [];
+if (isset($arrLists[9])){
+    $arrtype = $arrLists[9];
+    asort($arrtype);
+}
+
+$actionGetListItems = Url::to('@web/company/listitems');
+$actionSaveNewItem = Url::to('@web/company/newitemlist');
+$actionDelItem = Url::to('@web/company/deleteitemlist');
+$actionEditItem = Url::to('@web/company/edititemlist');
 $actionLinkCloseDownload = Url::to('@web/company/closedownload');
+
+$isAdmin = (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? 1 : 0;
+$ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
+
 $tender_id = $model->id;
 $tender_close = $model->tender_close;
 
 $script = <<< JS
+
+
+
+// Клик закрыть загрузку в тендере
+$('.closeTender').on('click', function(){
+    var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
+    
+    if(checkCloseDownload == true) {     
+       sendCloseDownload();
+    }
+});
+$('.openTender').on('click', function(){
+    var checkCloseDefault = confirm("Вы уверены что хотите открыть загрузку?");
+  
+    if(checkCloseDefault == true) {
+      sendCloseDownload();
+     } 
+});
 
 function sendCloseDownload() {
           $.ajax({
@@ -85,22 +130,6 @@ function sendCloseDownload() {
                 }
                 });
 }
-
-// Клик закрыть загрузку в тендере
-$('.closeTender').on('click', function(){
-    var checkCloseDownload = confirm("Вы уверены что хотите закрыть загрузку?");
-    
-    if(checkCloseDownload == true) {     
-       sendCloseDownload();
-    }
-});
-$('.openTender').on('click', function(){
-    var checkCloseDefault = confirm("Вы уверены что хотите открыть загрузку?");
-  
-    if(checkCloseDefault == true) {
-      sendCloseDownload();
-     } 
-});
 
 // открываем модальное окно добавить вложения
 $('.showFormAttachButt').on('click', function(){
@@ -145,11 +174,386 @@ $('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"]
         }
     });
     // Клик по ссылке website
+    
+    // Управление списками
+var selectType = 0;
+var selectID = 0;
+
+// открываем модальное окно с названиями списков
+$('.listSettings').on('click', function() {
+$('#showListsName').modal('show');
+});
+
+// открываем модальное окно управления списками purchase_status
+$('.purchase_status').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(0);
+
+});
+
+// открываем модальное окно управления списками method_purchase
+$('.method_purchase').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(2);
+
+});
+
+// открываем модальное окно управления списками service_type
+$('.service_type').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(3);
+
+});
+
+// открываем модальное окно управления списками federal_law
+$('.federal_law').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(4);
+
+});
+
+// открываем модальное окно управления списками status_request_security
+$('.status_request_security').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(6);
+
+});
+
+// открываем модальное окно управления списками status_contract_security
+$('.status_contract_security').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(7);
+
+});
+
+// открываем модальное окно  site_address
+$('.site_address').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(8);
+
+});
+
+// открываем модальное окно type_payment
+$('.type_payment').on('click', function() {
+    
+$('#showListsName').modal('hide');
+$('#showSettingsList').modal('show');
+
+$('.settings_name').text('Управление списками: ' + $(this).text());
+
+loadListsItems(9);
+
+});
+
+// Загружаем список по заданному типу
+function loadListsItems(type) {
+    
+    selectType = 0;
+    selectType = type;
+    
+    $('.place_list').html();
+    
+              $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'type=' + type,
+                url  : '$actionGetListItems',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                // Очищаем текущий селект
+                var selectObj;
+                
+                switch (type) {
+                    case 0: {
+                        selectObj = $("#tender-purchase_status");
+                        break;
+                    }
+                    case 2: {
+                        selectObj = $("#tender-method_purchase");
+                        break;
+                    }
+                    case 3: {
+                        selectObj = $("#tender-service_type");
+                        break;
+                    }
+                    case 4: {
+                        selectObj = $("#tender-federal_law");
+                        break;
+                    }
+                    case 6: {
+                        selectObj = $("#tender-status_request_security");
+                        break;
+                    }
+                    case 7: {
+                        selectObj = $("#tender-status_contract_security");
+                        break;
+                    }
+                    case 8: {
+                        selectObj = $("#tendercontrol-site_address");
+                        break;
+                    }
+                    case 9: {
+                        selectObj = $("#tendercontrol-type_payment");
+                        break;
+                    }
+                }
+                
+                selectObj.empty();
+                // Очищаем текущий селект
+                    
+                var itemsArr = jQuery.parseJSON(response.items);
+                
+                    // добавляем placeholder
+                    if(type == 0) {
+                        selectObj.append($("<option></option>").text("Выберите статус закупки"));
+                    }
+                    if(type == 2) {
+                        selectObj.append($("<option></option>").text("Выберите способ закупки"));
+                    }
+                    if(type == 3) {
+                        selectObj.append($("<option></option>").text("Выберите закупаемые услуги"));
+                    }
+                    if(type == 4) {
+                        selectObj.append($("<option></option>").text("Выберите ФЗ"));
+                    }
+                    if(type == 6) {
+                        selectObj.append($("<option></option>").text("Выберите статус обеспечения заявки"));
+                    }
+                    if(type == 7) {
+                        selectObj.append($("<option></option>").text("Выберите статус обеспечения контракта"));
+                    }
+                    if(type == 8) {
+                        selectObj.append($("<option></option>").text("Выберите адрес площадки"));
+                    }
+                    if(type == 9) {
+                        selectObj.append($("<option></option>").text("Выберите тип платежа"));
+                    }
+                    
+                if(itemsArr.length > 0) {
+                    
+                    var resItems = "";
+                    
+                    // Вывод значений списков
+                    for (var i = 0; i < itemsArr.length; i++) {
+                        
+                    // Обновляем селект
+                    
+                    selectObj.append($("<option></option>").attr("value", itemsArr[i]['id']).text(itemsArr[i]['description']));
+                        
+                    resItems = resItems + "<div style='margin-top:5px;'>" + itemsArr[i]['description'];
+                   
+                    if(itemsArr[i]['required'] == 0) {
+                        resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span><span class='deleteItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d9534f; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Удалить</span>";
+                    } else {
+                        resItems = resItems + "<span class='editItem' data-id='" + itemsArr[i]['id'] + "' data-name='" + itemsArr[i]['description'] + "' style='color:#d08f33; margin-left: 10px; text-decoration:underline; font-size:12px; cursor:pointer;'>Изменить</span>";
+                    }
+                    
+                    resItems = resItems + "</div>";
+                   
+                    }
+                    
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div>' + resItems + '');
+                    
+                } else {
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div><br /><div>Нет данных</div>');
+                }
+                
+                } else {
+                // Неудачно
+                    $('.place_list').html('<div style="font-size: 16px;"><b>Список:</b></div><div>Ошибка загрузки</div>');
+                }
+                
+                }
+                });
+    
+}
+
+// кнопка добавить новый пункт в список
+$('.addNewItem').on('click', function() {
+    
+    var newItemName = $('.itemName');
+    var newItemReq = $('.required');
+    var requerVal = 0;
+    
+    if (newItemReq.is(":checked")) {
+        requerVal = 1;
+    }
+    
+    $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'type=' + selectType + '&name=' + newItemName.val() + '&required=' + requerVal,
+                url  : '$actionSaveNewItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                // Обнуление формы
+                requerVal = 0;
+                newItemName.val('');
+                newItemReq.prop('checked', false);
+                loadListsItems(selectType);
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+    
+});
+
+// Нажимаем на кнопку изменить пункт меню
+$('.place_list').on('click', '.editItem', function(){
+    $('#showSettingsList').modal('hide');
+    
+    $('.itemNameEdit').val($(this).data("name"));
+    
+    selectID = 0;
+    selectID = $(this).data("id");
+    
+    $('#showEditItem').modal('show');
+});
+
+// Нажимаем на кнопку удалить пункт меню
+$('.place_list').on('click', '.deleteItem', function(){
+    
+    var checkDeleteItem = confirm('Вы уверены что хотите удалить пункт "' + $(this).data("name") + '" из списка?');
+    
+    if(checkDeleteItem == true) {     
+       
+            $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'item_id=' + $(this).data("id"),
+                url  : '$actionDelItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                loadListsItems(selectType);
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+        
+    }
+    
+});
+
+// кнопка сохранить изменение пункта меню
+$('.SaveItem').on('click', function() {
+    
+    var newItemName = $('.itemNameEdit');
+    
+    $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'id=' + selectID + '&name=' + newItemName.val(),
+                url  : '$actionEditItem',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                newItemName.val("");
+                $('#showEditItem').modal('hide');
+                $('#showSettingsList').modal('show');
+
+                loadListsItems(selectType);
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+    
+});
+
+$('.field-tendercontrol-purchase').css("display", "none");
+$('.field-tendercontrol-user_id').css("display", "none");
+$('.field-tendercontrol-site_address').css("display", "none");
+$('.field-tendercontrol-platform').css("display", "none");
+$('.field-tendercontrol-customer').css("display", "none");
+
+$('.change-payment_status').change(function(){
+       
+     var select=$(this);
+        $.ajax({
+            url: '$ajaxpaymentstatus',
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+                if(($isAdmin!=1)&&(select.data('paymentstatus')!=1)){
+                    select.attr('disabled', 'disabled');
+                }
+            }
+        });
+    });
 
 JS;
 $this->registerJs($script, View::POS_READY);
 ?>
 
+    <div class="panel panel-primary">
+    <div class="panel-heading">
+        <?= 'Тендер №' . $model->id ?>
+        <div class="header-btn pull-right">
+            <span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span>
+        </div>
+    </div>
+    <div class="panel-body">
 <table class="table table-bordered list-data">
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('site') ?></td>
@@ -203,60 +607,11 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md">
-            <?= $model->getAttributeLabel('comment_status_proc') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType'       => Editable::INPUT_TEXTAREA,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'comment_status_proc',
-                'displayValue' => nl2br($model->comment_status_proc),
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control', 'placeholder' => 'Введите комментарий к статусу закупки'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
+
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('user_id') ?></td>
         <td>
             <?php
-
-            $usersList = isset($arrLists[1]) ? $arrLists[1] : [];
-
-            $arrUserTend = explode(', ', $model->user_id);
-            $userText = '';
-
-            if (count($arrUserTend) > 1) {
-
-                for ($i = 0; $i < count($arrUserTend); $i++) {
-                    if(isset($usersList[$arrUserTend[$i]])) {
-                        $userText .= $usersList[$arrUserTend[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($usersList[$model->user_id])) {
-                        $userText = $usersList[$model->user_id];
-                    }
-                } catch (\Exception $e) {
-                    $userText = '-';
-                }
-
-            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -266,13 +621,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'user_id',
-                'displayValue' => $userText,
+                'displayValue' => isset($usersList[$model->user_id]) ? $usersList[$model->user_id] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' =>  \Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN ? false : true,
                 'size' => 'lg',
                 'data' => $usersList,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'placeholder' => 'Выберите сотрудника'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -319,40 +674,6 @@ $this->registerJs($script, View::POS_READY);
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_search') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'date_search',
-                'displayValue' => date('d.m.Y', $model->date_search),
-                'inputType' => Editable::INPUT_DATE,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => [
-                    'class' => 'form-control',
-                    'removeButton' => false,
-                    'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy',
-                        'autoclose' => true,
-                        'pickerPosition' => 'bottom-right',
-                    ],
-                    'options'=>['value' => date('d.m.Y', $model->date_search)]
-                ],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);
-            ?>
         </td>
     </tr>
     <tr>
@@ -630,29 +951,6 @@ $this->registerJs($script, View::POS_READY);
 
             $arrMethods = isset($arrLists[2]) ? $arrLists[2] : [];
 
-            $arrMethodsTend = explode(', ', $model->method_purchase);
-            $methodsText = '';
-
-            if (count($arrMethodsTend) > 1) {
-
-                for ($i = 0; $i < count($arrMethodsTend); $i++) {
-                    if(isset($arrMethods[$arrMethodsTend[$i]])) {
-                        $methodsText .= $arrMethods[$arrMethodsTend[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($arrMethods[$model->method_purchase])) {
-                        $methodsText = $arrMethods[$model->method_purchase];
-                    }
-                } catch (\Exception $e) {
-                    $methodsText = '-';
-                }
-
-            }
-
             echo Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
@@ -661,13 +959,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'method_purchase',
-                'displayValue' => $methodsText,
+                'displayValue' => isset($arrMethods[$model->method_purchase]) ? $arrMethods[$model->method_purchase] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrMethods,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'prompt' => 'Выберите способ закупки'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -704,29 +1002,6 @@ $this->registerJs($script, View::POS_READY);
 
             $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
 
-            $arrServices = explode(', ', $model->service_type);
-            $serviceText = '';
-
-            if (count($arrServices) > 1) {
-
-                for ($i = 0; $i < count($arrServices); $i++) {
-                    if(isset($ServicesList[$arrServices[$i]])) {
-                        $serviceText .= $ServicesList[$arrServices[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($ServicesList[$model->service_type])) {
-                        $serviceText = $ServicesList[$model->service_type];
-                    }
-                } catch (\Exception $e) {
-                    $serviceText = '-';
-                }
-
-            }
-
             echo Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
@@ -735,15 +1010,37 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'service_type',
-                'displayValue' => $serviceText,
+                'displayValue' => isset($ServicesList[$model->service_type]) ? $ServicesList[$model->service_type] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $ServicesList,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'prompt' => 'Выберите закупаемые услуги'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('purchase') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'purchase',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
@@ -756,29 +1053,6 @@ $this->registerJs($script, View::POS_READY);
 
             $arrFZlist = isset($arrLists[4]) ? $arrLists[4] : [];
 
-            $arrFZ = explode(', ', $model->federal_law);
-            $FZText = '';
-
-            if (count($arrFZ) > 1) {
-
-                for ($i = 0; $i < count($arrFZ); $i++) {
-                    if(isset($arrFZlist[$arrFZ[$i]])) {
-                        $FZText .= $arrFZlist[$arrFZ[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($arrFZlist[$model->federal_law])) {
-                        $FZText = $arrFZlist[$model->federal_law];
-                    }
-                } catch (\Exception $e) {
-                    $FZText = '-';
-                }
-
-            }
-
             echo Editable::widget([
                 'model' => $model,
                 'buttonsTemplate' => '{submit}',
@@ -787,13 +1061,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'federal_law',
-                'displayValue' => $FZText,
+                'displayValue' => isset($arrFZlist[$model->federal_law]) ? $arrFZlist[$model->federal_law] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrFZlist,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'prompt' => 'Выберите ФЗ'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -801,28 +1075,7 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('notice_eis') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'notice_eis',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
+
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('number_purchase') ?></td>
         <td>
@@ -840,6 +1093,34 @@ $this->registerJs($script, View::POS_READY);
                 'options' => ['class' => 'form-control'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('site_address') ?></td>
+        <td>
+            <?php
+
+
+            echo Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'site_address',
+                'displayValue' => isset($arrsite[$model->site_address]) ? $arrsite[$model->site_address] : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'size' => 'lg',
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'data' => $arrsite,
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
                 'valueIfNull' => '<span class="text-danger">не задано</span>',
             ]); ?>
@@ -867,58 +1148,7 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('key_type') ?></td>
-        <td>
-            <?php
 
-            $arrKeyTypeList = isset($arrLists[5]) ? $arrLists[5] : [];
-
-            $arrKeyType = explode(', ', $model->key_type);
-            $keyTypeText = '';
-
-            if (count($arrKeyType) > 1) {
-
-                for ($i = 0; $i < count($arrKeyType); $i++) {
-                    if(isset($arrKeyTypeList[$arrKeyType[$i]])) {
-                        $keyTypeText .= $arrKeyTypeList[$arrKeyType[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($arrKeyTypeList[$model->key_type])) {
-                        $keyTypeText = $arrKeyTypeList[$model->key_type];
-                    }
-                } catch (\Exception $e) {
-                    $keyTypeText = '-';
-                }
-
-            }
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'key_type',
-                'displayValue' => $keyTypeText,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'data' => $arrKeyTypeList,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]);  ?>
-        </td>
-    </tr>
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('price_nds') ?></td>
         <td>
@@ -930,29 +1160,6 @@ $this->registerJs($script, View::POS_READY);
                 ],
                 'attribute' => 'price_nds',
                 'displayValue' => $model->price_nds ? ($model->price_nds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_price') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'maximum_purchase_price',
-                'displayValue' => $model->maximum_purchase_price ? ($model->maximum_purchase_price . ' ₽') : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
@@ -989,335 +1196,11 @@ $this->registerJs($script, View::POS_READY);
         </td>
     </tr>
     <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('cost_purchase_completion') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'cost_purchase_completion',
-                'displayValue' => $model->cost_purchase_completion ? ($model->cost_purchase_completion . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('pre_income') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'pre_income',
-                'displayValue' => $model->pre_income ? ($model->pre_income . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('last_sentence_nds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'last_sentence_nds',
-                'displayValue' => $model->last_sentence_nds ? ($model->last_sentence_nds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('last_sentence_nonds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'last_sentence_nonds',
-                'displayValue' => $model->last_sentence_nonds ? ($model->last_sentence_nonds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('percent_down') ?></td>
-        <td>
-            <?php
-            // Вычисление значиния для вывода Процентное снижение по завершению закупки в процентах
-            $resPerDown = '';
-
-            if($model->percent_down === 0) {
-                $resPerDown = 0 . '%';
-            } else if($model->percent_down > 0) {
-                $resPerDown = $model->percent_down . '%';
-            }
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'percent_down',
-                'displayValue' => $resPerDown,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'data' => [0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51, 52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65, 66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72, 73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79, 80 => 80, 81 => 81, 82 => 82, 83 => 83, 84 => 84, 85 => 85, 86 => 86, 87 => 87, 88 => 88, 89 => 89, 90 => 90, 91 => 91, 92 => 92, 93 => 93, 94 => 94, 95 => 95, 96 => 96, 97 => 97, 98 => 98, 99 => 99, 100 => 100],
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_nds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'maximum_purchase_nds',
-                'displayValue' => $model->maximum_purchase_nds ? ($model->maximum_purchase_nds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_purchase_notnds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'maximum_purchase_notnds',
-                'displayValue' => $model->maximum_purchase_notnds ? ($model->maximum_purchase_notnds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('percent_max') ?></td>
-        <td>
-            <?php
-            // Вычисление значиния для вывода Максимальное согласованное расчетное снижение в процентах
-            $resPerMax = '';
-
-            if($model->percent_max === 0) {
-                $resPerMax = 0 . '%';
-            } else if($model->percent_max > 0) {
-                $resPerMax = $model->percent_max . '%';
-            }
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'percent_max',
-                'displayValue' => $resPerMax,
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'data' => [0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16, 17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30, 31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37, 38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44, 45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51, 52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65, 66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72, 73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79, 80 => 80, 81 => 81, 82 => 82, 83 => 83, 84 => 84, 85 => 85, 86 => 86, 87 => 87, 88 => 88, 89 => 89, 90 => 90, 91 => 91, 92 => 92, 93 => 93, 94 => 94, 95 => 95, 96 => 96, 97 => 97, 98 => 98, 99 => 99, 100 => 100],
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_agreed_calcnds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'maximum_agreed_calcnds',
-                'displayValue' => $model->maximum_agreed_calcnds ? ($model->maximum_agreed_calcnds . ' ₽') : '',
-
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('maximum_agreed_calcnotnds') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'maximum_agreed_calcnotnds',
-                'displayValue' => $model->maximum_agreed_calcnotnds ? ($model->maximum_agreed_calcnotnds . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('site_fee_participation') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'site_fee_participation',
-                'displayValue' => $model->site_fee_participation ? ($model->site_fee_participation . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('ensuring_application') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'ensuring_application',
-                'displayValue' => $model->ensuring_application ? ($model->ensuring_application . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
         <td>
             <?php
 
             $arrStatusRequestList = isset($arrLists[6]) ? $arrLists[6] : [];
-
-            $arrStatusRequest = explode(', ', $model->status_request_security);
-            $statusRequestText = '';
-
-            if (count($arrStatusRequest) > 1) {
-
-                for ($i = 0; $i < count($arrStatusRequest); $i++) {
-                    if(isset($arrStatusRequestList[$arrStatusRequest[$i]])) {
-                        $statusRequestText .= $arrStatusRequestList[$arrStatusRequest[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($arrStatusRequestList[$model->status_request_security])) {
-                        $statusRequestText = $arrStatusRequestList[$model->status_request_security];
-                    }
-                } catch (\Exception $e) {
-                    $statusRequestText = '-';
-                }
-
-            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -1327,13 +1210,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'status_request_security',
-                'displayValue' => $statusRequestText,
+                'displayValue' => isset($arrStatusRequestList[$model->status_request_security]) ? $arrStatusRequestList[$model->status_request_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrStatusRequestList,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'prompt' => 'Статус обеспечения заявки'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -1347,58 +1230,13 @@ $this->registerJs($script, View::POS_READY);
             <?= ($model->date_status_request) ? date('d.m.Y H:i', $model->date_status_request) : '-' ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('contract_security') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'contract_security',
-                'displayValue' => $model->contract_security ? ($model->contract_security . ' ₽') : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
+
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_contract_security') ?></td>
         <td>
             <?php
 
             $arrStatusContractList = isset($arrLists[7]) ? $arrLists[7] : [];
-
-            $arrStatusContract = explode(', ', $model->status_contract_security);
-            $statusContractText = '';
-
-            if (count($arrStatusContract) > 1) {
-
-                for ($i = 0; $i < count($arrStatusContract); $i++) {
-                    if(isset($arrStatusContractList[$arrStatusContract[$i]])) {
-                        $statusContractText .= $arrStatusContractList[$arrStatusContract[$i]] . '<br />';
-                    }
-                }
-
-            } else {
-
-                try {
-                    if(isset($arrStatusContractList[$model->status_contract_security])) {
-                        $statusContractText = $arrStatusContractList[$model->status_contract_security];
-                    }
-                } catch (\Exception $e) {
-                    $statusContractText = '-';
-                }
-
-            }
 
             echo Editable::widget([
                 'model' => $model,
@@ -1408,13 +1246,13 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'status_contract_security',
-                'displayValue' => $statusContractText,
+                'displayValue' => isset($arrStatusContractList[$model->status_contract_security]) ? $arrStatusContractList[$model->status_contract_security] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
                 'size' => 'lg',
                 'data' => $arrStatusContractList,
-                'options' => ['class' => 'form-control', 'multiple' => 'true'],
+                'options' => ['class' => 'form-control', 'prompt' => 'Дата изменения статуса заявки'],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id]
                 ],
@@ -1648,6 +1486,582 @@ $this->registerJs($script, View::POS_READY);
    }
  ?>
 </table>
+    </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Контроль денежных средств
+        </div>
+        <div class="panel-body">
+            <?php
+
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'summary' => false,
+                'emptyText' => '',
+                'layout' => '{items}',
+                'columns' => [
+                    [
+                        'header' => '№',
+                        'vAlign'=>'middle',
+                        'class' => 'kartik\grid\SerialColumn'
+                    ],
+                    [
+                        'attribute' => 'user_id',
+                        'header' => 'Сотрудник',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_RIGHT,
+                                'inputType'       => Editable::INPUT_DROPDOWN_LIST,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($GLOBALS['usersList'][$data->user_id]) ? $GLOBALS['usersList'][$data->user_id] : '',
+                                'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                                'data'            => $GLOBALS['usersList'],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'user_id',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'prompt'      => 'Выберите сотрудника',
+                                    'id'          => 'user_id' . $data->id,
+                                    'value'       => isset($GLOBALS['usersList'][$data->user_id]) ? $GLOBALS['usersList'][$data->user_id] : ''
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'date_send',
+                        'format' => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'name'            =>'date_send',
+                                'placement'       => PopoverX::ALIGN_RIGHT,
+                                'inputType'       => Editable::INPUT_DATE,
+                                'asPopover'       => true,
+                                'value'           => ($data->date_send) ? date('d.m.Y', $data->date_send) : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'size'=>'md',
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'options' => [
+                                    'class'         => 'form-control',
+                                    'id'            => 'date_send' . $data->id,
+                                    'removeButton'  => false,
+                                    'pluginOptions' => [
+                                        'format'         => 'dd.mm.yyyy',
+                                        'autoclose'      => true,
+                                        'pickerPosition' => 'bottom-right',
+                                    ],
+                                    'options'=>['value'  => ($data->date_send) ? date('d.m.Y', $data->date_send) : '']
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'date_enlistment',
+                        'format' => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'name'            =>'date_enlistment',
+                                'placement'       => PopoverX::ALIGN_RIGHT,
+                                'inputType'       => Editable::INPUT_DATE,
+                                'asPopover'       => true,
+                                'value'           => ($data->date_enlistment) ? date('d.m.Y', $data->date_enlistment) : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'size'=>'md',
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'options' => [
+                                    'class'         => 'form-control',
+                                    'id'            => 'date_enlistment' . $data->id,
+                                    'removeButton'  => false,
+                                    'pluginOptions' => [
+                                        'format'         => 'dd.mm.yyyy',
+                                        'autoclose'      => true,
+                                        'pickerPosition' => 'bottom-right',
+                                    ],
+                                    'options'=>['value'  => ($data->date_enlistment) ? date('d.m.Y', $data->date_enlistment) : '']
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'site_address',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_DROPDOWN_LIST,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($GLOBALS['arrLists'][8][$data->site_address]) ? $GLOBALS['arrLists'][8][$data->site_address] : '',
+                                'data'            => $GLOBALS['arrLists'][8],
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'site_address',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'prompt'      => 'Выберите адрес площадки',
+                                    'id'          => 'site_address' . $data->id,
+                                    'value'       => isset($GLOBALS['arrLists'][8][$data->site_address]) ? $GLOBALS['arrLists'][8][$data->site_address] : ''
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'platform',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_TEXT,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($data->platform) ? $data->platform : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'platform',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите электронную площадку',
+                                    'id'          => 'platform' . $data->id,
+                                    'value'       => $data->platform
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'customer',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_TEXT,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($data->customer) ? $data->customer : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'customer',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите заказчика',
+                                    'id'          => 'customer' . $data->id,
+                                    'value'       => $data->customer
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'purchase',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'formOptions'     => [
+                                    'action' => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'inputType'       => Editable::INPUT_TEXTAREA,
+                                'submitButton'    => [
+                                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'purchase',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите что закупается',
+                                    'id'          => 'purchase' . $data->id
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'type_payment',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_DROPDOWN_LIST,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($GLOBALS['arrLists'][9][$data->type_payment]) ? $GLOBALS['arrLists'][9][$data->type_payment] : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'data'            => $GLOBALS['arrLists'][9],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'type_payment',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'prompt'      => 'Выберите тип платежа',
+                                    'id'          => 'type_payment' . $data->id,
+                                    'value'       => isset($GLOBALS['arrLists'][9][$data->type_payment]) ? $GLOBALS['arrLists'][9][$data->type_payment] : ''
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'send',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_TEXT,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'displayValue'    => isset($data->send) ? $data->send : '',
+                                'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'contentOptions'  => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'send',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите сумму отправления',
+                                    'id'          => 'send' . $data->id,
+                                    'value'       => $data->send
+                                ],
+                            ]);
+                        },
+                    ],
+
+                    [
+                        'attribute' => 'payment_status',
+                        'format' => 'raw',
+                        'vAlign'=>'middle',
+                        'value' => function ($model, $key, $index, $column) {
+                            return Html::activeDropDownList($model, 'payment_status', TenderControl::$paymentStatus,
+                                [
+                                    'class'              => 'form-control change-payment_status',
+                                    'data-id'            => $model->id,
+                                    'data-paymentStatus' => $model->payment_status,
+                                    'disabled'           => TenderControl::payDis($model->payment_status) ? 'disabled' : false,
+                                ]
+
+                            );
+                        },
+
+                        'contentOptions' => function ($model) {
+                            return [
+                                'class' => TenderControl::colorForPaymentStatus($model->payment_status),
+                                'style' => 'min-width: 50px',
+                            ];
+                        },
+                    ],
+                    [
+                        'attribute' => 'money_unblocking',
+                        'format' => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'name'            => 'money_unblocking',
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_DATE,
+                                'asPopover'       => true,
+                                'value'           => ($data->money_unblocking) ? date('d.m.Y', $data->money_unblocking) : '',
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'size'            => 'md',
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'options'         => [
+                                    'class'         => 'form-control',
+                                    'id'            => 'money_unblocking' . $data->id,
+                                    'removeButton'  => false,
+                                    'pluginOptions' => [
+                                        'format'         => 'dd.mm.yyyy',
+                                        'autoclose'      => true,
+                                        'pickerPosition' => 'bottom-right',
+                                    ],
+                                    'options' => ['value' => ($data->money_unblocking) ? date('d.m.Y', $data->money_unblocking) : '']
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'return',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'formOptions'     => [
+                                    'action' => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'displayValue' => isset($data->return) ? $data->return : '',
+                                'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                                'contentOptions' => ['style' => 'min-width: 100px'],
+                                'submitButton'    => [
+                                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'return',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите сумму возврата',
+                                    'id'          => 'return' . $data->id,
+                                    'value'       => $data->return
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'date_return',
+                        'format' => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'name'            => 'date_return',
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'inputType'       => Editable::INPUT_DATE,
+                                'asPopover'       => true,
+                                'value'           => ($data->date_return) ? date('d.m.Y', $data->date_return) : '',
+                                'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'size'            => 'md',
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'options'         => [
+                                    'class'         => 'form-control',
+                                    'id'            => 'date_return' . $data->id,
+                                    'removeButton'  => false,
+                                    'pluginOptions' => [
+                                        'format'         => 'dd.mm.yyyy',
+                                        'autoclose'      => true,
+                                        'pickerPosition' => 'bottom-right',
+                                    ],
+                                    'options' => ['value' => ($data->date_return) ? date('d.m.Y', $data->date_return) : '']
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'comment',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'inputType'       => Editable::INPUT_TEXTAREA,
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'comment',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите комментарий',
+                                    'id'          => 'comment' . $data->id
+                                ],
+                            ]);
+                        },
+                    ],
+                ],
+            ]);
+            ?>
+        </div>
+    </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Данные для контроля денежных средств
+                </div>
+                <div class="panel-body">
+
+                <?php
+    $form = ActiveForm::begin([
+    'action' => $newmodel->isNewRecord ? ['/company/newcontroltender', 'id' => $model->id] : '',
+    'options' => ['accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+    'fieldConfig' => [
+    'template' => '{label}<div class="col-sm-6">{input}{error}</div>',
+    'labelOptions' => ['class' => 'col-sm-3 control-label'],
+    'inputOptions' => ['class' => 'form-control input-sm'],
+    ],
+    ]); ?>
+
+
+    <?= $form->field($newmodel, 'user_id')->hiddenInput(['value' => $model->user_id])->label(false) ?>
+    <?= $form->field($newmodel, 'site_address')->hiddenInput(['value' => $model->site_address])->label(false) ?>
+    <?= $form->field($newmodel, 'platform')->hiddenInput(['value' => $model->place])->label(false) ?>
+    <?= $form->field($newmodel, 'customer')->hiddenInput(['value' => $model->customer])->label(false) ?>
+    <?= $form->field($newmodel, 'purchase')->hiddenInput(['value' => $model->purchase])->label(false) ?>
+
+    <?= $form->field($newmodel, 'send')->input('text', ['class' => 'form-control', 'placeholder' => 'Отправили']) ?>
+    <?= $form->field($newmodel, 'date_send')->widget(DatePicker::className(), [
+        'type' => DatePicker::TYPE_INPUT,
+        'options' => ['placeholder' => 'Дата отправки'],
+        'pluginOptions' => [
+            'format' => 'dd.mm.yyyy',
+            'autoclose'=>true,
+            'weekStart'=>1,
+        ]
+    ]) ?>
+    <?= $form->field($newmodel, 'date_enlistment')->widget(DatePicker::className(), [
+        'type' => DatePicker::TYPE_INPUT,
+        'options' => ['placeholder' => 'Дата зачисления'],
+        'pluginOptions' => [
+            'format' => 'dd.mm.yyyy',
+            'autoclose'=>true,
+            'weekStart'=>1,
+        ]
+    ]) ?>
+    <?= $form->field($newmodel, 'type_payment')->dropDownList($arrtype, ['class' => 'form-control', 'prompt' => 'Выберите тип платежа']) ?>
+
+    <?= $form->field($newmodel, 'comment')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Комментарий']) ?>
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']) ?>
+        </div>
+    </div>
+            </div>
+            </div>
+
+<?php ActiveForm::end();
+
+// Модальное окно с названиями списков
+$modalListsName = Modal::begin([
+    'header' => '<h5>Управление списками</h5>',
+    'id' => 'showListsName',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-sm',
+]);
+
+echo "<div class='purchase_status' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('purchase_status') . "</div>";
+echo "<div class='site_address' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('site_address') . "</div>";
+echo "<div class='method_purchase' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('method_purchase') . "</div>";
+echo "<div class='service_type' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('service_type') . "</div>";
+echo "<div class='federal_law' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('federal_law') . "</div>";
+echo "<div class='type_payment' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('type_payment') . "</div>";
+echo "<div class='status_request_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_request_security') . "</div>";
+echo "<div class='status_contract_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_contract_security') . "</div>";
+
+Modal::end();
+// Модальное окно с названиями списков
+
+// Модальное окно со списком пунктов
+$modalListsName = Modal::begin([
+    'header' => '<h5 class="settings_name">Управление списками: </h5>',
+    'id' => 'showSettingsList',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div class='place_list' style='font-size: 15px; margin-left:15px; margin-right:15px;'></div>";
+echo "<br /><div style='font-size: 16px; margin-left:15px; margin-right:15px;'><b>Добавление нового:</b>";
+echo "<br /><div style='margin-top: 15px;'><input type='text' class='form-control itemName' placeholder='Название'></div>";
+echo "<br /><div>Запретить удаление данного пункта: <input type='checkbox' class='required' value='0'></div>";
+echo "<br /><span class='btn btn-primary btn-sm addNewItem'>Добавить</span></div>";
+
+Modal::end();
+// Модальное окно со списком пунктов
+
+// Модальное окно изменения пункта
+$modalListsName = Modal::begin([
+    'header' => '<h5>Изменение пункта</h5>',
+    'id' => 'showEditItem',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div style='font-size: 16px; margin-left:15px; margin-right:15px;'><div><input type='text' class='form-control itemNameEdit' placeholder='Название'></div>";
+echo "<br /><span class='btn btn-primary btn-sm SaveItem'>Сохранить</span></div>";
+
+Modal::end();
+// Модальное окно редактирования списка
+
+?>
+
 
 <?php
 // Модальное окно добавить вложения

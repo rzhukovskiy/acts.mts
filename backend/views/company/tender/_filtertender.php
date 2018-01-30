@@ -176,22 +176,6 @@ $columns = [
                     },
                 ],
                 [
-                    'attribute' => 'cost_purchase_completion',
-                    'header' => 'Стоимость закупки по завершению закупки без НДС',
-                    'format' => 'raw',
-                    'vAlign'=>'middle',
-                    'value' => function ($data) {
-
-                        if ($data->cost_purchase_completion) {
-                            return $data->cost_purchase_completion . ' ₽';
-                        } else {
-                            return '-';
-                        }
-                    },
-                ],
-
-
-                [
                     'attribute' => 'date_contract',
                     'vAlign'=>'middle',
                     'header' => 'Дата заключения договора',

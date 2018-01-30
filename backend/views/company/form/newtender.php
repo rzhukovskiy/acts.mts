@@ -21,6 +21,7 @@ echo Tabs::widget([
         <?= $this->render('_newtender', [
             'id' => $id,
             'model' => $model,
+            'usersList' => $usersList,
         ]);
         ?>
     </div>

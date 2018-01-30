@@ -11,26 +11,19 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property integer $id
  * @property integer $company_id
- * @property string $date_search
  * @property string $city
  * @property string $place
  * @property string $number_purchase
  * @property string $customer
  * @property string $service_type
  * @property float $price_nds
- * @property float $pre_income
  * @property float $final_price
- * @property integer $percent_down
- * @property integer $percent_max
  * @property integer $federal_law
  * @property integer $method_purchase
- * @property float $contract_security
  * @property integer $status_request_security
  * @property string $date_status_request
  * @property integer $status_contract_security
  * @property string $date_status_contract
- * @property string $notice_eis
- * @property integer $key_type
  * @property string $date_request_start
  * @property string $date_request_end
  * @property string $time_request_process
@@ -42,47 +35,25 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $purchase_status
- * @property string $comment_status_proc
  * @property string $user_id
  * @property string $work_user_id
  * @property string $work_user_time
  * @property string $comment_customer
  * @property string $inn_customer
  * @property string $contacts_resp_customer
- * @property float $maximum_purchase_price
- * @property float $cost_purchase_completion
- * @property float $maximum_purchase_nds
- * @property float $maximum_purchase_notnds
- * @property float $maximum_agreed_calcnds
- * @property float $maximum_agreed_calcnotnds
- * @property float $site_fee_participation
- * @property float $ensuring_application
  * @property string $comment_date_contract
  * @property integer $tender_close
  * @property string $site
- * @property float $last_sentence_nds
- * @property float $last_sentence_nonds
  */
 class Tender extends ActiveRecord
 {
     private $purchase_status;
-    private $comment_status_proc;
     private $comment_customer;
     private $inn_customer;
     private $contacts_resp_customer;
-    private $maximum_purchase_price;
-    private $cost_purchase_completion;
-    private $maximum_purchase_nds;
-    private $maximum_purchase_notnds;
-    private $maximum_agreed_calcnds;
-    private $maximum_agreed_calcnotnds;
-    private $site_fee_participation;
-    private $ensuring_application;
     private $comment_date_contract;
     private $tender_close;
     private $site;
-    private $last_sentence_nds;
-    private $last_sentence_nonds;
     public $curentTender;
 
     /**
@@ -117,13 +88,13 @@ class Tender extends ActiveRecord
     {
         return [
             [['company_id'], 'required'],
-            [['company_id', 'purchase_status', 'percent_down', 'percent_max', 'work_user_id'], 'integer'],
-            [['price_nds', 'pre_income', 'final_price', 'contract_security', 'maximum_purchase_price', 'cost_purchase_completion', 'maximum_purchase_nds', 'maximum_purchase_notnds', 'maximum_agreed_calcnds', 'maximum_agreed_calcnotnds', 'site_fee_participation', 'ensuring_application', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'key_type', 'status_request_security', 'status_contract_security', 'tender_close', 'last_sentence_nds', 'last_sentence_nonds'], 'safe'],
-            [['date_search', 'date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
+            [['company_id', 'purchase_status', 'work_user_id', 'site_address'], 'integer'],
+            [['price_nds', 'final_price', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'tender_close'], 'safe'],
+            [['date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
             [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
-            [['notice_eis'], 'string', 'max' => 100],
             [['inn_customer', 'site'], 'string', 'max' => 200],
-            [['comment', 'comment_status_proc', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer'], 'string', 'max' => 10000],
+            [['purchase'], 'string', 'max' => 255],
+            [['comment', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer'], 'string', 'max' => 10000],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
             ];
     }
@@ -136,26 +107,19 @@ class Tender extends ActiveRecord
         return [
             'id' => 'ID',
             'company_id' => 'Компания',
-            'date_search' => 'Дата нахождения закупки',
             'city' => 'Город, Область поставки',
             'place' => 'Электронная площадка',
             'number_purchase' => 'Номер закупки на площадке',
             'customer' => 'Заказчик',
             'service_type' => 'Закупаемые услуги, товары',
             'price_nds' => 'Максимальная стоимость закупки с НДС',
-            'pre_income' => 'Предварительная прибыль от закупки',
             'final_price' => 'Стоимость закупки по завершению закупки с НДС',
-            'percent_down' => 'Процентное снижение по завершению закупки в процентах',
-            'percent_max' => 'Максимальное согласованное расчетное снижение в процентах',
             'federal_law' => 'ФЗ',
             'method_purchase' => 'Способ закупки',
-            'contract_security' => 'Обеспечение контракта',
             'status_request_security' => 'Статус обеспечения заявки',
             'date_status_request' => 'Дата изменения статуса заявки',
             'status_contract_security' => 'Статус обеспечения контракта',
             'date_status_contract' => 'Дата изменения статуса контракта',
-            'notice_eis' => 'Номер извещения в ЕИС',
-            'key_type' => 'Тип ключа',
             'date_request_start' => 'Начало подачи заявки',
             'date_request_end' => 'Окончание подачи заявки',
             'time_request_process' => 'Дата и время рассмотрения заявок',
@@ -163,30 +127,23 @@ class Tender extends ActiveRecord
             'time_bidding_end' => 'Дата и время подведения итогов',
             'date_contract' => 'Дата заключения договора',
             'term_contract' => 'Дата окончания заключенного договора',
-            'comment' => 'Комментарий',
+            'comment' => 'Общий комментарий',
             'purchase_status' => 'Статус закупки',
-            'comment_status_proc' => 'Комментарий к статусу закупки',
             'user_id' => 'Ответственный сотрудник',
             'work_user_id' => 'Разработка тех. задания',
             'work_user_time' => 'Дата добавления разработчика тех. задания',
             'comment_customer' => 'Комментарий к полю "Заказчик"',
             'inn_customer' => 'ИНН заказчика',
             'contacts_resp_customer' => 'Контакты ответственных лиц заказчика',
-            'maximum_purchase_price' => 'Максимальная начальная стоимость закупки без НДС',
-            'cost_purchase_completion' => 'Стоимость закупки по завершению закупки без НДС',
-            'maximum_purchase_nds' => 'Снижение от максимальной начальной стоимости закупки по завершению закупки в рублях с НДС',
-            'maximum_purchase_notnds' => 'Снижение от максимальной начальной стоимости закупки по завершению закупки в рублях без НДС',
-            'maximum_agreed_calcnds' => 'Максимальное согласованное расчетное снижение в рублях с НДС',
-            'maximum_agreed_calcnotnds' => 'Максимальное согласованное расчетное снижение в рублях без НДС',
-            'site_fee_participation' => 'Плата площадке за участие',
-            'ensuring_application' => 'Обеспечение заявки',
             'comment_date_contract' => 'Комментарий к сроку договора',
             'tender_close' => 'Закрыть закупку',
             'files' => 'Вложения',
             'site' => 'Прямая ссылка',
             'companyname' => 'Имя компании',
-            'last_sentence_nds' => 'Наше последнее предложение с НДС',
-            'last_sentence_nonds' => 'Наше последнее предложение без НДС',
+            'site_address' => 'Адрес площадки',
+            'purchase' => 'Что закупается?',
+            'type_payment' => 'Тип платежа',
+
         ];
     }
 
@@ -196,7 +153,6 @@ class Tender extends ActiveRecord
         // Если это новая запись то обрабатываем данные из формы здесь
         if($this->isNewRecord) {
             // переводим дату в нужный формат
-            $this->date_search = (String) strtotime($this->date_search);
             $this->date_status_request = (String) strtotime($this->date_status_request);
             $this->date_status_contract = (String) strtotime($this->date_status_contract);
             $this->date_request_start = (String) strtotime($this->date_request_start);
@@ -212,153 +168,6 @@ class Tender extends ActiveRecord
                 $this->term_contract = (String) strtotime($this->term_contract);
             }
 
-            // запись в базу нескольких услуг
-            if (is_array($this->service_type)) {
-
-                $arrServices = $this->service_type;
-
-                if (count($arrServices) > 0) {
-                    $stringServices = '';
-
-                    for ($i = 0; $i < count($arrServices); $i++) {
-                        if ($i == 0) {
-                            $stringServices .= $arrServices[$i];
-                        } else {
-                            $stringServices .= ', ' . $arrServices[$i];
-                        }
-                    }
-
-                    $this->service_type = $stringServices;
-
-                }
-
-            }
-            // запись в базу нескольких сотрудников
-            if (is_array($this->user_id)) {
-
-                $arrUserTend = $this->user_id;
-
-                if (count($arrUserTend) > 0) {
-                    $stringUserTend = '';
-
-                    for ($i = 0; $i < count($arrUserTend); $i++) {
-                        if ($i == 0) {
-                            $stringUserTend .= $arrUserTend[$i];
-                        } else {
-                            $stringUserTend .= ', ' . $arrUserTend[$i];
-                        }
-                    }
-
-                    $this->user_id = $stringUserTend;
-
-                }
-
-            }
-            // запись в базу нескольких способов закупки
-            if (is_array($this->method_purchase)) {
-
-                $arrMethodsTend = $this->method_purchase;
-
-                if (count($arrMethodsTend) > 0) {
-                    $stringMethods = '';
-
-                    for ($i = 0; $i < count($arrMethodsTend); $i++) {
-                        if ($i == 0) {
-                            $stringMethods .= $arrMethodsTend[$i];
-                        } else {
-                            $stringMethods .= ', ' . $arrMethodsTend[$i];
-                        }
-                    }
-
-                    $this->method_purchase = $stringMethods;
-
-                }
-
-            }
-            // запись в базу нескольких фз
-            if (is_array($this->federal_law)) {
-
-                $arrFZ = $this->federal_law;
-
-                if (count($arrFZ) > 0) {
-                    $stringFZ = '';
-
-                    for ($i = 0; $i < count($arrFZ); $i++) {
-                        if ($i == 0) {
-                            $stringFZ .= $arrFZ[$i];
-                        } else {
-                            $stringFZ .= ', ' . $arrFZ[$i];
-                        }
-                    }
-
-                    $this->federal_law = $stringFZ;
-
-                }
-
-            }
-            // запись в базу нескольких типов ключа
-            if (is_array($this->key_type)) {
-
-                $arrKeyType = $this->key_type;
-
-                if (count($arrKeyType) > 0) {
-                    $stringKeyType = '';
-
-                    for ($i = 0; $i < count($arrKeyType); $i++) {
-                        if ($i == 0) {
-                            $stringKeyType .= $arrKeyType[$i];
-                        } else {
-                            $stringKeyType .= ', ' . $arrKeyType[$i];
-                        }
-                    }
-
-                    $this->key_type = $stringKeyType;
-
-                }
-
-            }
-            // запись в базу нескольких Статус обеспечения заявки
-            if (is_array($this->status_request_security)) {
-
-                $arrStatusRequest = $this->status_request_security;
-
-                if (count($arrStatusRequest) > 0) {
-                    $stringStatusRequest = '';
-
-                    for ($i = 0; $i < count($arrStatusRequest); $i++) {
-                        if ($i == 0) {
-                            $stringStatusRequest .= $arrStatusRequest[$i];
-                        } else {
-                            $stringStatusRequest .= ', ' . $arrStatusRequest[$i];
-                        }
-                    }
-
-                    $this->status_request_security = $stringStatusRequest;
-
-                }
-
-            }
-            // запись в базу нескольких Статус обеспечения контракта
-            if (is_array($this->status_contract_security)) {
-
-                $arrСontractRequest = $this->status_contract_security;
-
-                if (count($arrСontractRequest) > 0) {
-                    $stringСontractRequest = '';
-
-                    for ($i = 0; $i < count($arrСontractRequest); $i++) {
-                        if ($i == 0) {
-                            $stringСontractRequest .= $arrСontractRequest[$i];
-                        } else {
-                            $stringСontractRequest .= ', ' . $arrСontractRequest[$i];
-                        }
-                    }
-
-                    $this->status_contract_security = $stringСontractRequest;
-
-                }
-
-            }
         }
 
         // Записываем дату изменения разработчика технического задания
@@ -446,15 +255,6 @@ class Tender extends ActiveRecord
     {
         $this->purchase_status = $value;
     }
-    public function getComment_status_proc()
-    {
-        return $this->comment_status_proc;
-    }
-
-    public function setComment_status_proc($value)
-    {
-        $this->comment_status_proc = $value;
-    }
 
     public function getComment_customer()
     {
@@ -483,78 +283,6 @@ class Tender extends ActiveRecord
     {
         $this->contacts_resp_customer = $value;
     }
-    public function getMaximum_purchase_price()
-    {
-        return $this->maximum_purchase_price;
-    }
-
-    public function setMaximum_purchase_price($value)
-    {
-        $this->maximum_purchase_price = $value;
-    }
-    public function getCost_purchase_completion()
-    {
-        return $this->cost_purchase_completion;
-    }
-
-    public function setCost_purchase_completion($value)
-    {
-        $this->cost_purchase_completion = $value;
-    }
-    public function getMaximum_purchase_nds()
-    {
-        return $this->maximum_purchase_nds;
-    }
-
-    public function setMaximum_purchase_nds($value)
-    {
-        $this->maximum_purchase_nds = $value;
-    }
-    public function getNdsmaximum_purchase_not()
-    {
-        return $this->ndsmaximum_purchase_not;
-    }
-
-    public function setNdsmaximum_purchase_not($value)
-    {
-        $this->ndsmaximum_purchase_not = $value;
-    }
-    public function getMaximum_agreed_calcnds()
-    {
-        return $this->maximum_agreed_calcnds;
-    }
-
-    public function setMaximum_agreed_calcnds($value)
-    {
-        $this->maximum_agreed_calcnds = $value;
-    }
-    public function getMaximum_agreed_calcnotnds()
-    {
-        return $this->maximum_agreed_calcnotnds;
-    }
-
-    public function setMaximum_agreed_calcnotnds($value)
-    {
-        $this->maximum_agreed_calcnotnds = $value;
-    }
-    public function getSite_fee_participation()
-    {
-        return $this->site_fee_participation;
-    }
-
-    public function setSite_fee_participation($value)
-    {
-        $this->site_fee_participation = $value;
-    }
-    public function getEnsuring_application()
-    {
-        return $this->ensuring_application;
-    }
-
-    public function setEnsuring_application($value)
-    {
-        $this->ensuring_application = $value;
-    }
 
     public function getComment_date_contract()
     {
@@ -564,14 +292,6 @@ class Tender extends ActiveRecord
     public function setComment_date_contract($value)
     {
         $this->comment_date_contract = $value;
-    }
-    public function setMaximum_purchase_notnds($value)
-    {
-        $this->maximum_purchase_notnds = $value;
-    }
-    public function getMaximum_purchase_notnds()
-    {
-        return $this->maximum_purchase_notnds;
     }
     public function getTender_close()
     {
@@ -588,21 +308,5 @@ class Tender extends ActiveRecord
     public function setSite($value)
     {
         $this->site = $value;
-    }
-    public function getLast_sentence_nds()
-    {
-        return $this->last_sentence_nds;
-    }
-    public function setLast_sentence_nds($value)
-    {
-        $this->last_sentence_nds = $value;
-    }
-    public function getLast_sentence_nonds()
-    {
-        return $this->last_sentence_nonds;
-    }
-    public function setgetLast_sentence_nonds($value)
-    {
-        $this->last_sentence_nonds = $value;
     }
 }

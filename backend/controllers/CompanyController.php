@@ -617,6 +617,8 @@ class CompanyController extends Controller
             $listType = $currentUser->getAllCompanyType(Company::STATUS_TENDER);
         }
 
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andWhere(['OR', ['purchase_status' => 15], ['purchase_status' => 18], ['purchase_status' => 19], ['purchase_status' => 57], ['purchase_status' => 58], ['purchase_status' => 85]]);
 
@@ -625,6 +627,7 @@ class CompanyController extends Controller
                 'dataProvider' => $dataProvider,
                 'searchModel'  => $searchModel,
                 'listType'     => $listType,
+                'usersList'     => $usersList,
             ]);
     }
 
@@ -677,10 +680,13 @@ class CompanyController extends Controller
             ]
         ];
 
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
         return $this->render('tenders', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
             'model' => $model,
+            'usersList' => $usersList,
         ]);
 
     }
@@ -690,6 +696,8 @@ class CompanyController extends Controller
     {
         $model = new Tender();
         $model->company_id = $id;
+
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
 
@@ -708,6 +716,7 @@ class CompanyController extends Controller
             return $this->render('form/newtender', [
                 'id' => $id,
                 'model' => $model,
+                'usersList' => $usersList,
             ]);
         }
     }
@@ -716,9 +725,21 @@ class CompanyController extends Controller
     {
 
         $model = Tender::findOne(['id' => $tender_id]);
+        $newmodel = new TenderControl();
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
+        $searchModel = TenderControl::find()->where(['tender_id' => $tender_id]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
 
         return $this->render('tender/fulltender', [
             'model' => $model,
+            'usersList' => $usersList,
+            'newmodel' => $newmodel,
+            'dataProvider' => $dataProvider,
         ]);
 
     }
@@ -890,11 +911,14 @@ class CompanyController extends Controller
             ]
         ];
 
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+
         return $this->render('tender/archivetender',
             [
                 'dataProvider' => $dataProvider,
                 'searchModel'  => $searchModel,
                 'win' => $win,
+                'usersList' => $usersList,
             ]);
     }
 
@@ -931,32 +955,17 @@ class CompanyController extends Controller
 
     public function actionNewcontroltender()
     {
+        $id = Yii::$app->request->get('id');
         $model = new TenderControl();
+        $model->tender_id = $id;
 
         $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
 
-            return $this->redirect(['company/controltender']);
+            return $this->redirect(['company/fulltender', 'tender_id' => $id]);
 
-        } else {
-            return $this->render('form/newcontroltender', [
-                'model' => $model,
-                'usersList' => $usersList,
-            ]);
         }
-    }
-    public function actionFullcontroltender($id)
-    {
-        $model = TenderControl::findOne(['id' => $id]);
-
-        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
-
-        return $this->render('tender/fullcontroltender', [
-            'model' => $model,
-            'usersList' => $usersList,
-        ]);
-
     }
 
 
@@ -1018,8 +1027,8 @@ class CompanyController extends Controller
             $arrSiteAddress = isset($arrLists[8]) ? $arrLists[8] : [];
             $arrTypePayment = isset($arrLists[9]) ? $arrLists[9] : [];
 
-            foreach ($arrUpdate['TenderControl'] as $name => $value) {
-                if($name == 'date_send') {
+            foreach ($arrUpdate as $name => $value) {
+                if ($name == 'date_send') {
                     $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
                 } else if($name == 'date_enlistment') {
                     $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
@@ -1032,6 +1041,8 @@ class CompanyController extends Controller
 
             if ($model->load($arrUpdate) && $model->save()) {
                 $output = [];
+                if (Yii::$app->request->post('TenderControl')) {
+
                 foreach (Yii::$app->request->post('TenderControl') as $name => $value) {
 
                     if ($name == 'site_address') {
@@ -1040,14 +1051,24 @@ class CompanyController extends Controller
                         $output[] = $arrTypePayment[$value];
                     } else if ($name == 'user_id') {
                         $output[] = $usersList[$value];
-                    } else if ($name == 'send' || $name == 'return' || $name == 'balance_work') {
-                        $output[] = $value . " ₽";
                     } else {
                         $output[] = $value;
                     }
 
                 }
+            }
+                if (Yii::$app->request->post('date_return')) {
+                    $output[] = $value;
+                } else if (Yii::$app->request->post('money_unblocking')) {
+                    $output[] = $value;
+                } else if (Yii::$app->request->post('date_enlistment')) {
+                    $output[] = $value;
+                } else if (Yii::$app->request->post('date_send')) {
+                    $output[] = $value;
+                }
+
                 return ['output' => implode(', ', $output), 'message' => ''];
+
             } else {
                 return ['message' => 'не получилось'];
             }
@@ -1060,10 +1081,10 @@ class CompanyController extends Controller
     public function actionControlisarchive()
     {
 
-        if(Yii::$app->request->post('control_id')) {
+        if(Yii::$app->request->get('id')) {
 
-            $id = Yii::$app->request->post('control_id');
-            $is_archive = Yii::$app->request->post('is_archive');
+            $id = Yii::$app->request->get('id');
+            $is_archive = Yii::$app->request->get('is_archive');
 
             $model = TenderControl::findOne(['id' => $id]);
 
@@ -1074,13 +1095,13 @@ class CompanyController extends Controller
             }
 
             if($model->save()) {
-                echo json_encode(['success' => 'true']);
+                return $this->redirect(['company/controltender']);
             } else {
-                echo json_encode(['success' => 'false']);
+                return $this->redirect(['company/controltender']);
             }
 
         } else {
-            echo json_encode(['success' => 'false']);
+            return $this->redirect(['/']);
         }
 
     }
@@ -1642,223 +1663,18 @@ class CompanyController extends Controller
             $arrUpdate = Yii::$app->request->post();
 
             // Списки с данными
-            $stringServicesText = "";
-            $stringUserTendText = "";
-            $stringMethodsTendText = "";
-            $stringFZText = "";
-            $stringKeyTypeText = "";
-            $stringStatusRequestText = "";
-            $stringStatusContractText = "";
             $ServicesList = isset($arrLists[3]) ? $arrLists[3] : [];
             $arrFZlist = isset($arrLists[4]) ? $arrLists[4] : [];
-            $usersList = isset($arrLists[1]) ? $arrLists[1] : [];
+            $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
             $arrPurchstatus = isset($arrLists[0]) ? $arrLists[0] : [];
             $arrMethods = isset($arrLists[2]) ? $arrLists[2] : [];
             $arrStatusRequestlist = isset($arrLists[6]) ? $arrLists[6] : [];
             $arrStatusContractlist = isset($arrLists[7]) ? $arrLists[7] : [];
-            $arrKeyTypelist = isset($arrLists[5]) ? $arrLists[5] : [];
+            $arrSitelist = isset($arrLists[8]) ? $arrLists[8] : [];
 
             foreach ($arrUpdate['Tender'] as $name => $value) {
                 if($name == 'date_search') {
                     $arrUpdate['Tender'][$name] = (String) strtotime($value);
-                } else if($name == 'service_type') {
-
-                    // запись в базу нескольких услуг
-                    if (is_array($value)) {
-
-                        $arrServices = $value;
-
-                        if (count($arrServices) > 0) {
-                            $stringServices = '';
-
-                            for ($i = 0; $i < count($arrServices); $i++) {
-                                if ($i == 0) {
-                                    $stringServices .= $arrServices[$i];
-                                } else {
-                                    $stringServices .= ', ' . $arrServices[$i];
-                                }
-
-                                if(isset($ServicesList[$arrServices[$i]])) {
-                                    $stringServicesText .= $ServicesList[$arrServices[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringServices;
-
-                        }
-
-                    }
-                } else if($name == 'user_id') {
-
-                    // запись в базу нескольких пользователей
-                    if (is_array($value)) {
-
-                        $arrUserTend = $value;
-
-                        if (count($arrUserTend) > 0) {
-                            $stringUserTend = '';
-
-                            for ($i = 0; $i < count($arrUserTend); $i++) {
-                                if ($i == 0) {
-                                    $stringUserTend .= $arrUserTend[$i];
-                                } else {
-                                    $stringUserTend .= ', ' . $arrUserTend[$i];
-                                }
-
-                                if(isset($usersList[$arrUserTend[$i]])) {
-                                    $stringUserTendText .= $usersList[$arrUserTend[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringUserTend;
-
-                        }
-                    }
-                    } else if($name == 'federal_law') {
-
-                // запись в базу нескольких фз
-                if (is_array($value)) {
-
-                    $arrFZ = $value;
-
-                    if (count($arrFZ) > 0) {
-                        $stringFz = '';
-
-                        for ($i = 0; $i < count($arrFZ); $i++) {
-                            if ($i == 0) {
-                                $stringFz .= $arrFZ[$i];
-                            } else {
-                                $stringFz .= ', ' . $arrFZ[$i];
-                            }
-
-                            if(isset($arrFZlist[$arrFZ[$i]])) {
-                                $stringFZText .= $arrFZlist[$arrFZ[$i]] . '<br />';
-                            }
-
-                        }
-
-                        $arrUpdate['Tender'][$name] = $stringFz;
-
-                    }
-
-                }
-
-                } else if($name == 'status_contract_security') {
-
-                    // запись в базу нескольких Статус обеспечения заявки
-                    if (is_array($value)) {
-
-                        $arrStatusContract = $value;
-
-                        if (count($arrStatusContract) > 0) {
-                            $stringStatusContract = '';
-
-                            for ($i = 0; $i < count($arrStatusContract); $i++) {
-                                if ($i == 0) {
-                                    $stringStatusContract .= $arrStatusContract[$i];
-                                } else {
-                                    $stringStatusContract .= ', ' . $arrStatusContract[$i];
-                                }
-
-                                if(isset($arrStatusContractlist[$arrStatusContract[$i]])) {
-                                    $stringStatusContractText .= $arrStatusContractlist[$arrStatusContract[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringStatusContract;
-
-                        }
-
-                    }
-
-                } else if($name == 'status_request_security') {
-
-                    // запись в базу нескольких Статус обеспечения заявки
-                    if (is_array($value)) {
-
-                        $arrStatusRequest = $value;
-
-                        if (count($arrStatusRequest) > 0) {
-                            $stringStatusRequest = '';
-
-                            for ($i = 0; $i < count($arrStatusRequest); $i++) {
-                                if ($i == 0) {
-                                    $stringStatusRequest .= $arrStatusRequest[$i];
-                                } else {
-                                    $stringStatusRequest .= ', ' . $arrStatusRequest[$i];
-                                }
-
-                                if(isset($arrStatusRequestlist[$arrStatusRequest[$i]])) {
-                                    $stringStatusRequestText .= $arrStatusRequestlist[$arrStatusRequest[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringStatusRequest;
-
-                        }
-
-                    }
-
-                } else if($name == 'key_type') {
-
-                    // запись в базу нескольких типов ключей
-                    if (is_array($value)) {
-
-                        $arrKeyType = $value;
-
-                        if (count($arrKeyType) > 0) {
-                            $stringKeyType = '';
-
-                            for ($i = 0; $i < count($arrKeyType); $i++) {
-                                if ($i == 0) {
-                                    $stringKeyType .= $arrKeyType[$i];
-                                } else {
-                                    $stringKeyType .= ', ' . $arrKeyType[$i];
-                                }
-
-                                if(isset($arrKeyTypelist[$arrKeyType[$i]])) {
-                                    $stringKeyTypeText .= $arrKeyTypelist[$arrKeyType[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringKeyType;
-
-                        }
-
-                    }
-                } else if($name == 'method_purchase') {
-
-                    // запись в базу нескольких услуг
-                    if (is_array($value)) {
-
-                        $arrMethodsTend = $value;
-
-                        if (count($arrMethodsTend) > 0) {
-                            $stringMethods = '';
-
-                            for ($i = 0; $i < count($arrMethodsTend); $i++) {
-                                if ($i == 0) {
-                                    $stringMethods .= $arrMethodsTend[$i];
-                                } else {
-                                    $stringMethods .= ', ' . $arrMethodsTend[$i];
-                                }
-
-                                if(isset($arrMethods[$arrMethodsTend[$i]])) {
-                                    $stringMethodsTendText .= $arrMethods[$arrMethodsTend[$i]] . '<br />';
-                                }
-
-                            }
-
-                            $arrUpdate['Tender'][$name] = $stringMethods;
-
-                        }
-
-                    }
                 } else if($name == 'status_request_security') {
                     $arrUpdate['Tender']['date_status_request'] = (String) time();
                 } else if($name == 'status_contract_security') {
@@ -1891,25 +1707,25 @@ class CompanyController extends Controller
                 foreach (Yii::$app->request->post('Tender') as $name => $value) {
 
                     if ($name == 'service_type') {
-                        $output[] = $stringServicesText;
+                        $output[] = $ServicesList[$value];
                     } else if ($name == 'user_id') {
-                        $output[] = $stringUserTendText;
+                        $output[] = $usersList[$value];
                     } else if ($name == 'percent_down') {
                         $output[] = $value . "%";
                     } else if ($name == 'percent_max') {
                         $output[] = $value . "%";
                     } else if ($name == 'federal_law') {
-                        $output[] = $stringFZText;
+                        $output[] = $arrFZlist[$value];
                     } else if ($name == 'purchase_status') {
                         $output[] = $arrPurchstatus[$value];
                     } else if ($name == 'method_purchase') {
-                        $output[] = $stringMethodsTendText;
+                        $output[] = $arrMethods[$value];
                     } else if ($name == 'status_request_security') {
-                        $output[] = $stringStatusRequestText;
+                        $output[] = $arrStatusRequestlist[$value];
                     } else if ($name == 'status_contract_security') {
-                        $output[] = $stringStatusContractText;
-                    } else if ($name == 'key_type') {
-                        $output[] = $stringKeyTypeText;
+                        $output[] = $arrStatusContractlist[$value];
+                    } else if ($name == 'site_address') {
+                        $output[] = $arrSitelist[$value];
                     } else if ($name == 'price_nds' || $name == 'pre_income' || $name == 'final_price' || $name == 'contract_security' || $name == 'maximum_purchase_price' || $name == 'cost_purchase_completion' || $name == 'maximum_purchase_nds' || $name == 'maximum_purchase_notnds' || $name == 'maximum_agreed_calcnds' || $name == 'maximum_agreed_calcnotnds' || $name == 'site_fee_participation' || $name == 'ensuring_application' || $name == 'last_sentence_nds' || $name == 'last_sentence_nonds') {
                         $output[] = $value . " ₽";
                     } else if($name == 'work_user_id') {

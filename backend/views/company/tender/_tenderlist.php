@@ -64,6 +64,7 @@ for ($i = 0; $i < count($arrayTenderList); $i++) {
 //
 
 $GLOBALS['arrLists'] = $arrLists;
+$GLOBALS['usersList'] = $usersList;
 
 //Выбор периода
 $GLOBALS['dateFrom'] = $searchModel->dateFrom;
@@ -235,38 +236,18 @@ $columns = [
                 [
                     'attribute' => 'user_id',
                     'header' => 'Сотрудник',
-                    'filter' => Html::activeDropDownList($searchModel, 'user_id', isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1] : [], ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+                    'filter' => Html::activeDropDownList($searchModel, 'user_id', $usersList, ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
                     'format' => 'raw',
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
-                        $arrUserTend = explode(', ', $data->user_id);
-                        $UserTendText = '';
 
-                        if (count($arrUserTend) > 1) {
-
-                            for ($i = 0; $i < count($arrUserTend); $i++) {
-
-                                $index = $arrUserTend[$i];
-
-                                if(isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') {
-                                    $UserTendText .= (isset($GLOBALS['arrLists'][1][$index]) ? $GLOBALS['arrLists'][1][$index] : '-') . '<br />';
-                                }
-                            }
-
+                        if (isset($GLOBALS['usersList'][$data->user_id])) {
+                            return $GLOBALS['usersList'][$data->user_id];
                         } else {
-
-                            try {
-                                if(isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-') {
-                                    $UserTendText = isset($GLOBALS['arrLists'][1]) ? $GLOBALS['arrLists'][1][$data->user_id] : '-';
-                                }
-                            } catch (\Exception $e) {
-                                $UserTendText = '-';
-                            }
-
+                            return '-';
                         }
 
-                        return $UserTendText;
                     },
                 ],
                 [
