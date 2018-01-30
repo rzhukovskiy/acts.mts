@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "tender_control".
  *
  * @property integer $id
+ * @property integer $tender_id
  * @property integer $user_id
  * @property string $send
  * @property string $date_send
@@ -18,7 +19,6 @@ use yii\db\ActiveRecord;
  * @property string $platform
  * @property string $customer
  * @property string $purchase
- * @property string $eis_platform
  * @property string $type_payment
  * @property string $money_unblocking
  * @property string $return
@@ -53,11 +53,11 @@ class TenderControl extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'site_address', 'type_payment', 'payment_status', 'is_archive'], 'integer'],
+            [['user_id', 'site_address', 'type_payment', 'payment_status', 'is_archive', 'tender_id'], 'integer'],
             [['send', 'return'], 'safe'],
             [['comment'], 'string', 'max' => 10000],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return'], 'string', 'max' => 20],
-            [['platform', 'customer', 'purchase', 'eis_platform'], 'string', 'max' => 255],
+            [['platform', 'customer', 'purchase'], 'string', 'max' => 255],
         ];
     }
 
@@ -68,15 +68,15 @@ class TenderControl extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'Сотрудник',
+            'tender_id' => 'ID Тендера',
+            'user_id' => 'Ответственный сотрудник',
             'send' => 'Мы отправили',
             'date_send' => 'Дата отправки',
             'date_enlistment' => 'Дата зачисления',
             'site_address' => 'Адрес площадки',
-            'platform' => 'Площадка',
+            'platform' => 'Электронная площадка',
             'customer' => 'Заказчик',
-            'purchase' => 'Закупка',
-            'eis_platform' => '№ ЕИС на площадке',
+            'purchase' => 'Что закупается?',
             'type_payment' => 'Тип платежа',
             'money_unblocking' => 'Дата разблокировки денег',
             'return' => 'Нам вернули',

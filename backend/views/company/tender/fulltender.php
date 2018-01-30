@@ -14,14 +14,10 @@ echo Tabs::widget([
 
 ?>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <?= 'Тендер №' . $model->id ?>
-    </div>
-    <div class="panel-body">
         <?= $this->render('_fulltender', [
             'model' => $model,
+            'usersList' => $usersList,
+            'newmodel' => $newmodel,
+            'dataProvider' => $dataProvider,
         ]);
         ?>
-    </div>
-</div>

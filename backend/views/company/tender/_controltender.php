@@ -6,6 +6,9 @@ use common\models\Company;
 use common\models\TenderLists;
 use common\models\TenderControl;
 use yii\helpers\Url;
+use kartik\editable\Editable;
+use kartik\popover\PopoverX;
+use common\models\User;
 
 $isAdmin = (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? 1 : 0;
 $ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
@@ -13,14 +16,24 @@ $ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
 $script = <<< JS
 // формат числа
 window.onload=function(){
-  var formatSum8 = $('td[data-col-seq="8"]');
-  $(formatSum8).each(function (id, value) {
+  var formatSum7 = $('td[data-col-seq="7"]');
+  $(formatSum7).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  
-  var formatSum10 = $('td[data-col-seq="10"]');
-  $(formatSum10).each(function (id, value) {
+  var nomber = 0;
+  var formatSum9 = $('td[data-col-seq="9"] .kv-editable .kv-editable-value');
+  $(formatSum9).each(function (id, value) {
+      var thisId = $(this);
+       if(!isNaN(parseFloat($(this).text()))) {
+       nomber += parseFloat($(this).text());
+       }
+      thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  $('.kv-page-summary-container td:eq(9)').text(nomber.toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+      
+  var formatSum11 = $('td[data-col-seq="11"]');
+  $(formatSum11).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
@@ -31,32 +44,22 @@ window.onload=function(){
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum13 = $('td[data-col-seq="13"]');
-  $(formatSum13).each(function (id, value) {
+  var formatSum7a = $('.kv-page-summary-container td:eq(7)');
+  $(formatSum7a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum8a = $('.kv-page-summary-container td:eq(8)');
-  $(formatSum8a).each(function (id, value) {
+
+  
+    var formatSum11a = $('.kv-page-summary-container td:eq(11)');
+  $(formatSum11a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum10a = $('.kv-page-summary-container td:eq(10)');
-  $(formatSum10a).each(function (id, value) {
-       var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
-});
-  
-    var formatSum12a = $('.kv-page-summary-container td:eq(12)');
+  var formatSum12a = $('.kv-page-summary-container td:eq(12)');
   $(formatSum12a).each(function (id, value) {
-       var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
-});
-  
-  var formatSum13a = $('.kv-page-summary-container td:eq(13)');
-  $(formatSum13a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
@@ -137,9 +140,6 @@ if (isset($arrLists[9])){
 <div class="panel panel-primary">
     <div class="panel-heading">
         Контроль денежных средств
-        <div class="header-btn pull-right">
-            <?= Html::a('Добавить', ['company/newcontroltender'], ['class' => 'btn btn-success btn-sm']) ?>
-        </div>
     </div>
     <div class="panel-body">
         <?php
@@ -160,12 +160,6 @@ if (isset($arrLists[9])){
                     'vAlign'=>'middle',
                     'class' => 'kartik\grid\SerialColumn'
                 ],
-
-                [
-                    'attribute' => 'id',
-                    'format' => 'raw',
-                    'vAlign'=>'middle',
-                ],
                 [
                     'attribute' => 'user_id',
                     'header' => 'Сотрудник',
@@ -175,7 +169,7 @@ if (isset($arrLists[9])){
                     'vAlign'=>'middle',
                     'value' => function ($data) {
 
-                        if ($data->user_id) {
+                        if (isset($GLOBALS['usersList'][$data->user_id])) {
                             return $GLOBALS['usersList'][$data->user_id];
                         } else {
                             return '-';
@@ -302,34 +296,68 @@ if (isset($arrLists[9])){
                 ],
                 [
                     'attribute' => 'return',
-                    'vAlign'=>'middle',
-                    'header' => 'Нам вернули',
-                    'contentOptions' => ['style' => 'min-width: 100px'],
-                    'pageSummary' => true,
-                    'pageSummaryFunc' => GridView::F_SUM,
-                    'value' => function ($data) {
-
-                        if ($data->return) {
-                            return $data->return;
-                        } else {
-                            return '-';
-                        }
-
+                    'format'    => 'raw',
+                    'contentOptions' => [
+                            'style' => 'min-width: 100px',
+                            ],
+                    'value'     => function ($data) {
+                        return Editable::widget([
+                            'model'           => $data,
+                            'placement'       => PopoverX::ALIGN_LEFT,
+                            'formOptions'     => [
+                                'action' => ['/company/updatecontroltender', 'id' => $data->id]
+                            ],
+                            'valueIfNull'     => '(не задано)',
+                            'buttonsTemplate' => '{submit}',
+                            'displayValue' => isset($data->return) ? $data->return : '',
+                            'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                            'submitButton'    => [
+                                'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                            ],
+                            'attribute'       => 'return',
+                            'asPopover'       => true,
+                            'size'            => 'md',
+                            'options'         => [
+                                'class'       => 'form-control',
+                                'placeholder' => 'Введите сумму возврата',
+                                'id'          => 'return' . $data->id,
+                                'value'       => $data->return
+                            ],
+                        ]);
                     },
                 ],
                 [
                     'attribute' => 'date_return',
-                    'vAlign'=>'middle',
-                    'filter' => false,
-                    'header' => 'Дата возврата',
-                    'value' => function ($data) {
-
-                        if ($data->date_return) {
-                            return date('d.m.Y', $data->date_return);
-                        } else {
-                            return '-';
-                        }
-
+                    'format' => 'raw',
+                    'value'     => function ($data) {
+                        return Editable::widget([
+                            'name'            => 'date_return',
+                            'placement'       => PopoverX::ALIGN_LEFT,
+                            'inputType'       => Editable::INPUT_DATE,
+                            'asPopover'       => true,
+                            'value'           => ($data->date_return) ? date('d.m.Y', $data->date_return) : '',
+                            'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                            'valueIfNull'     => '(не задано)',
+                            'buttonsTemplate' => '{submit}',
+                            'submitButton'    => [
+                                'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                            ],
+                            'size'            => 'md',
+                            'formOptions'     => [
+                                'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                            ],
+                            'options'         => [
+                                'class'         => 'form-control',
+                                'id'            => 'date_return' . $data->id,
+                                'removeButton'  => false,
+                                'pluginOptions' => [
+                                    'format'         => 'dd.mm.yyyy',
+                                    'autoclose'      => true,
+                                    'pickerPosition' => 'bottom-right',
+                                ],
+                                'options' => ['value' => ($data->date_return) ? date('d.m.Y', $data->date_return) : '']
+                            ],
+                        ]);
                     },
                 ],
                 [
@@ -374,12 +402,27 @@ if (isset($arrLists[9])){
                     'class' => 'kartik\grid\ActionColumn',
                     'header' => 'Действие',
                     'vAlign'=>'middle',
-                    'template' => '{update}',
+                    'template' => '{update}{archive}',
                     'contentOptions' => ['style' => 'min-width: 60px'],
                     'buttons' => [
                         'update' => function ($url, $model, $key) {
+                        if (isset($model->tender_id)) {
                             return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                                ['/company/fullcontroltender', 'id' => $model->id]);
+                                ['/company/fulltender', 'tender_id' => $model->tender_id]);
+                            } else {
+                            return '';
+                        }
+                        },
+                        'archive' => function ($url, $data, $key) {
+                            if ($data->is_archive == 0) {
+                                return Html::a('<span class="glyphicon glyphicon-export" style="margin-left: 5px; font-size: 15px;"> </span>', ['/company/controlisarchive', 'id' => $data->id],
+                                    ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
+                            } else if (($data->is_archive == 1) && (Yii::$app->user->identity->role == User::ROLE_ADMIN)) {
+                                return Html::a('<span class="glyphicon glyphicon-import" style="margin-left: 5px; font-size: 15px;"> </span>', ['/company/controlisarchive', 'id' => $data->id, 'is_archive' => $data->is_archive],
+                                    ['data-confirm' => "Вы уверены, что хотите перенести в активные?"]);
+                            } else {
+                                return '';
+                            }
                         },
                     ],
                 ],

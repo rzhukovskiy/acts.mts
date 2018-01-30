@@ -17,5 +17,6 @@ $action = Yii::$app->controller->action->id;
 echo $this->render('_tenderlist', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
+    'usersList'     => $usersList,
     'admin' => isset($admin) ? $admin : false,
 ]);

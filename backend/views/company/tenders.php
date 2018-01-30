@@ -15,4 +15,5 @@ echo $this->render('_tenders', [
     'dataProvider' => $dataProvider,
     'searchModel'  => $searchModel,
     'model' => $model,
+    'usersList' => $usersList,
 ]);
