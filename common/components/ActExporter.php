@@ -76,13 +76,16 @@ class ActExporter
             $dataformat = $dataformat[1] . '-0' . $dataformat[0] . '-00';
         }
 
-        $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['OR', ['act_status' => 5], ['act_status' => 6], ['act_status' => 7]])->andWhere(['act_date' => $dataformat])->asArray()->all();
+        if($this->serviceType != 3) {
+            $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['OR', ['act_status' => 5], ['act_status' => 6], ['act_status' => 7]])->andWhere(['act_date' => $dataformat])->select('client_id')->asArray()->column();
 
-        for($za = 0; $za < count($queryMountActs); $za++) {
-            $index = $queryMountActs[$za]['client_id'];
-            $this->noActArr[$index] = 5;
-            $index = 0;
+            for ($za = 0; $za < count($queryMountActs); $za++) {
+                $index = $queryMountActs[$za];
+                $this->noActArr[$index] = 5;
+                $index = 0;
+            }
         }
+        // Получаем из базы тех у кого без акта
 
         if ($this->company) {
             $listAct = $searchModel->searchClient()->getModels();
