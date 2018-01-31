@@ -126,6 +126,7 @@ if(Yii::$app->controller->action->id == 'card') {
         ],
         [
             'attribute' => 'company_id',
+            'filter' => Html::activeDropDownList($searchModel, 'company_id', Changes::find()->innerJoin('company', '`company`.`id` = `changes`.`company_id`')->where(['AND', ['changes.type' => Changes::TYPE_CARD], ['changes.sub_type' => Yii::$app->request->get('type')], ['between', "DATE(FROM_UNIXTIME(`date`))", $searchModel->dateFrom, $searchModel->dateTo]])->select('company.name')->indexBy('company_id')->column(), ['class' => 'form-control', 'prompt' => 'Все компании']),
             'header' => 'Старая компания',
             'value' => function ($data) {
                 if (isset($data->company_id)) {
@@ -145,6 +146,7 @@ if(Yii::$app->controller->action->id == 'card') {
         [
             'attribute' => 'new_value',
             'header' => 'Новая компания',
+            'filter' => Html::activeDropDownList($searchModel, 'new_value', Changes::find()->innerJoin('company', '`company`.`id` = `changes`.`new_value`')->where(['AND', ['changes.type' => Changes::TYPE_CARD], ['between', "DATE(FROM_UNIXTIME(`date`))", $searchModel->dateFrom, $searchModel->dateTo]])->select('company.name')->indexBy('new_value')->column(), ['class' => 'form-control', 'prompt' => 'Все компании']),
             'value' => function ($data) {
                 if (isset($data->new_value)) {
                     if ($data->new_value) {
@@ -195,7 +197,7 @@ if(Yii::$app->controller->action->id == 'card') {
         ],
         [
             'attribute' => 'company_id',
-            'filter' => Html::activeDropDownList($searchModel, 'user_id', Changes::find()->innerJoin('company', '`company`.`id` = `changes`.`company_id`')->where(['AND', ['changes.type' => Changes::TYPE_PRICE], ['changes.sub_type' => Yii::$app->request->get('type')], ['between', "DATE(FROM_UNIXTIME(`date`))", $searchModel->dateFrom, $searchModel->dateTo]])->select('company.name')->indexBy('company_id')->column(), ['class' => 'form-control', 'prompt' => 'Все компании']),
+            'filter' => Html::activeDropDownList($searchModel, 'company_id', Changes::find()->innerJoin('company', '`company`.`id` = `changes`.`company_id`')->where(['AND', ['changes.type' => Changes::TYPE_PRICE], ['changes.sub_type' => Yii::$app->request->get('type')], ['between', "DATE(FROM_UNIXTIME(`date`))", $searchModel->dateFrom, $searchModel->dateTo]])->select('company.name')->indexBy('company_id')->column(), ['class' => 'form-control', 'prompt' => 'Все компании']),
             'value' => function ($data) {
                 if (isset($data->company_id)) {
                     if ($data->company_id) {

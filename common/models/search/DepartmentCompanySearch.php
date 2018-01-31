@@ -89,7 +89,7 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'archive':
 
-                $query->where(['>', '`department_company`.`remove_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`remove_id`');
+                $query->where(['>', '`department_company`.`remove_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`remove_id`');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $this->dateFrom, $this->dateTo]);
 
@@ -103,7 +103,7 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'showarchive':
 
-                $query->with('company')->where(['`department_company`.`remove_id`' => $this->user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['`company`.`status`' => 2])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
+                $query->with('company')->where(['`department_company`.`remove_id`' => $this->user_id])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $this->dateFrom, $this->dateTo]);
 
