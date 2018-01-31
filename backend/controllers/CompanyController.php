@@ -1482,6 +1482,7 @@ class CompanyController extends Controller
         $dataProvider->sort = [
             'defaultOrder' => [
                 'purchase' => SORT_DESC,
+                'date_to' => SORT_ASC,
             ]
         ];
         if ($win == 1) {
