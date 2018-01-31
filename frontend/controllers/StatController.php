@@ -63,8 +63,8 @@ class StatController extends Controller
 
         // Если не выбран период то показываем только текущий год
         if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
-            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
-            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
+            $params['ActSearch']['dateFrom'] = date('Y-m', strtotime("-1 month")) . '-31T23:59:59.000Z';
+            $params['ActSearch']['dateTo'] = date('Y-m', time()) . '-31T23:59:59.000Z';
         }
 
         $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
@@ -469,8 +469,8 @@ class StatController extends Controller
 
         // Если не выбран период то показываем только текущий год
         if((!isset($params['ActSearch']['dateFrom'])) && (!isset($params['ActSearch']['dateTo']))) {
-            $params['ActSearch']['dateFrom'] = (((int) date('Y', time())) - 1) . '-12-31T21:00:00.000Z';
-            $params['ActSearch']['dateTo'] = date('Y', time()) . '-12-31T21:00:00.000Z';
+            $params['ActSearch']['dateFrom'] = date('Y-m', strtotime("-1 month")) . '-31T23:59:59.000Z';
+            $params['ActSearch']['dateTo'] = date('Y-m', time()) . '-31T23:59:59.000Z';
         }
 
         $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
