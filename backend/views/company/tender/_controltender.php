@@ -336,7 +336,7 @@ if (isset($arrLists[9])){
                             'inputType'       => Editable::INPUT_DATE,
                             'asPopover'       => true,
                             'value'           => ($data->date_return) ? date('d.m.Y', $data->date_return) : '',
-                            'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
+                            'disabled'        => $data->is_archive == 1 ? true : false,
                             'valueIfNull'     => '(не задано)',
                             'buttonsTemplate' => '{submit}',
                             'submitButton'    => [
