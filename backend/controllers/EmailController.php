@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\Company;
 use common\models\CompanyDriver;
 use common\models\Email;
+use common\models\MonthlyAct;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -662,6 +663,7 @@ class EmailController extends Controller
                                 if(count(explode(',', $value)) > 1) {
 
                                     $arrEmail = explode(',', $value);
+                                    $checkSendMail = false;
 
                                     for ($iEmail = 0; $iEmail < count($arrEmail); $iEmail++) {
 
@@ -681,9 +683,21 @@ class EmailController extends Controller
 
                                             if ($resSend) {
                                                 $numTrueSend++;
+                                                $checkSendMail = true;
                                             }
 
                                         }
+                                    }
+
+                                    if($checkSendMail) {
+                                        // Сохраняем комментарий в акте и оплате
+                                        $modelMonthlyAct = MonthlyAct::findOne(['id' => $key]);
+
+                                        if(isset($modelMonthlyAct)) {
+                                            $modelMonthlyAct->act_comment = trim($modelMonthlyAct->act_comment . " Отправление поступило в место вручения. Отправлено повторное уведомление.");
+                                            $modelMonthlyAct->save();
+                                        }
+                                        // Сохраняем комментарий в акте и оплате
                                     }
 
                                 } else {
@@ -702,6 +716,16 @@ class EmailController extends Controller
 
                                         if ($resSend) {
                                             $numTrueSend++;
+
+                                            // Сохраняем комментарий в акте и оплате
+                                            $modelMonthlyAct = MonthlyAct::findOne(['id' => $key]);
+
+                                            if(isset($modelMonthlyAct)) {
+                                                $modelMonthlyAct->act_comment = trim($modelMonthlyAct->act_comment . " Отправление поступило в место вручения. Отправлено повторное уведомление.");
+                                                $modelMonthlyAct->save();
+                                            }
+                                            // Сохраняем комментарий в акте и оплате
+
                                         }
 
                                     }
