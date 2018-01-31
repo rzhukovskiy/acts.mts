@@ -624,7 +624,6 @@ $this->registerJs($script, View::POS_READY);
                 'displayValue' => isset($usersList[$model->user_id]) ? $usersList[$model->user_id] : '',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' =>  \Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN ? false : true,
                 'size' => 'lg',
                 'data' => $usersList,
                 'options' => ['class' => 'form-control', 'placeholder' => 'Выберите сотрудника'],
