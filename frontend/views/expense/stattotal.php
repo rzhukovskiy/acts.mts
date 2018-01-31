@@ -65,7 +65,8 @@ JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
 $GLOBALS['dateFrom'] = $searchModel->dateFrom;
-
+$GLOBALS['dateTo'] = $searchModel->dateTo;
+$GLOBALS['date'] = date('m-Y', strtotime($searchModel->dateFrom));
 /**
  * Виджет выбора диапазона дат
  */
@@ -262,7 +263,7 @@ $columns = [
         'buttons' => [
             'update' => function ($url, $data, $key) {
                 return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                    ['/expense/statexpense', 'type' => $data->type]);
+                    ['/expense/statexpense', 'type' => $data->type, 'ExpenseSearch[dateFrom]' => $GLOBALS['dateFrom'], 'ExpenseSearch[dateTo]' => $GLOBALS['dateTo']]);
             },
         ],
     ],
@@ -305,11 +306,11 @@ $columnsact = [
         'buttons' => [
             'update' => function ($url, $data, $key) {
                 if ($data->type_id == 2)  {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/wash']);
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/wash', 'MonthlyActSearch[act_date]' => $GLOBALS['date']]);
                 } else if ($data->type_id == 3) {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/service']);
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/service', 'MonthlyActSearch[act_date]' => $GLOBALS['date']]);
                 } else {
-                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/tires']);
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',['/expense/tires', 'MonthlyActSearch[act_date]' => $GLOBALS['date']]);
                 }
             },
         ],
