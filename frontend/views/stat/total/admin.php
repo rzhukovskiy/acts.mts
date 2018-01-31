@@ -768,6 +768,7 @@ echo $this->render('../_tabs', ['action' => $group]);
 /**
  * Виджет выбора диапазона дат
  */
+
 $halfs = [
     '1е полугодие',
     '2е полугодие'
@@ -819,7 +820,6 @@ switch ($diff) {
     default:
         $period = 0;
 }
-
 $rangeYear = range(date('Y') - 10, date('Y'));
 $currentYear = isset($searchModel->dateFrom)
     ? date('Y', strtotime($searchModel->dateFrom))
