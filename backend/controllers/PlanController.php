@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\MonthlyAct;
 use common\models\Plan;
 use common\models\search\PlanSearch;
+use common\models\search\TaskMySearch;
 use common\models\search\TaskUserLinkSearch;
 use common\models\search\TaskUserSearch;
 use common\models\TaskMy;
@@ -240,12 +241,9 @@ class PlanController extends Controller
 
     public function actionTaskmylist()
     {
-        $searchModel = TaskMy::find();
+        $searchModel = new TaskMySearch();
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $searchModel,
-            'pagination' => false,
-        ]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $dataProvider->sort = [
             'defaultOrder' => [
@@ -254,11 +252,12 @@ class PlanController extends Controller
             ]
         ];
 
-        $dataProvider->query->where(['from_user' => Yii::$app->user->identity->id]);
+        $userLists = User::find()->select('username')->indexby('id')->column();
 
         return $this->render('task/taskmylist', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'userLists' => $userLists,
         ]);
     }
 

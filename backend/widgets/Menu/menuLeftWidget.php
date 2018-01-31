@@ -217,7 +217,7 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Задачи' . (($countTaskU || $countTaskL) ? '<span class="label label-success">' . ($countTaskU + $countTaskL) . '</span>' : ''),
                     'url' => ['/plan/tasklist?type=1'],
-                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull'),
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmylist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyfull'),
                 ],
                 [
                     'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
@@ -479,8 +479,8 @@ class menuLeftWidget extends Widget
                 [
                     'label' => 'Задачи' . (($countTaskU || $countTaskL) ? '<span class="label label-success">' . ($countTaskU + $countTaskL) . '</span>' : ''),
                     'url' => ['/plan/tasklist?type=2'],
-                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull'),
-                ],
+                    'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmylist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyfull'),
+                    ],
                 [
                     'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
                     'url' => ['/message/list', 'department_id' => Department::getFirstId()],
