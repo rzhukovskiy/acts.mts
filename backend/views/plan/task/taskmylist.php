@@ -95,10 +95,11 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
         [
             'attribute' => 'task',
             'vAlign'=>'middle',
+            'format' => 'raw',
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return $data->task;
+                    return mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskmyfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -239,11 +240,12 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
         [
             'attribute' => 'task',
             'filter' => false,
+            'format' => 'raw',
             'vAlign'=>'middle',
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return $data->task;
+                    return mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskmyfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
