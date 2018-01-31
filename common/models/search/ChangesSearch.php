@@ -18,6 +18,7 @@ class ChangesSearch extends Changes
     public $status;
     public $type_id;
     public $service_id;
+    public $new_value;
 
     /**
      * @inheritdoc
@@ -26,7 +27,7 @@ class ChangesSearch extends Changes
     {
         return [
             [['type', 'company_id', 'user_id', 'status', 'service_id'], 'integer'],
-            [['dateFrom', 'dateTo', 'period', 'type_id'], 'safe'],
+            [['dateFrom', 'dateTo', 'period', 'type_id', 'new_value'], 'safe'],
         ];
     }
 
@@ -89,6 +90,9 @@ class ChangesSearch extends Changes
         }
         if($this->service_id) {
             $query->andWhere(['service_id' => $this->service_id]);
+        }
+        if($this->new_value) {
+            $query->andWhere(['new_value' => $this->new_value]);
         }
 
         $query->andWhere(['between', "DATE(FROM_UNIXTIME(`date`))", $this->dateFrom, $this->dateTo]);
