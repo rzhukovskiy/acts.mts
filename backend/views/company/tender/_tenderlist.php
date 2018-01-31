@@ -14,8 +14,16 @@ window.onload=function(){
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
+var thisuser = '';
+var user4 = $('td[data-col-seq="4"]');
+  $(user4).each(function (id, value) {
+       thisuser += $(this).text();
+       });
+   $('.userDen').text((thisuser.match(/Денис Митрофанов/g) || []).length);
+   $('.userAlyna').text((thisuser.match(/Алена Попова/g) || []).length);
+   $('.userMasha').text((thisuser.match(/Мария Губарева/g) || []).length);
+ };
   
-};
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
@@ -413,6 +421,41 @@ $columns = [
                     ],
 ],
 ];
+
+$statTable = '';
+$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
+                <tr style="background: #428bca; color: #fff;">
+                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">Статистика сотрудников</td>
+                </tr>';
+$statTable .=  '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
+                    <td class="userDen" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 256);
+
+$statTable .=  '<tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
+                    <td class="userAlyna" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 654);
+
+$statTable .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
+                    <td class="userMasha" style="padding: 3px 5px 3px 5px"></td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderlist?TenderSearch[user_id]=" . 756);
+
+$statTable .= '</td>
+                </tr>
+            </table>';
+
 echo GridView::widget([
 'dataProvider' => $dataProvider,
 'filterModel' => $searchModel,
@@ -478,13 +521,13 @@ echo GridView::widget([
     [
         'columns' => [
             [
-                'content' => '&nbsp',
+                'content' => $statTable,
                 'options' => [
                     'colspan' => count($columns),
                 ]
             ]
         ],
-        'options' => ['class' => 'kv-group-header'],
+        'options' => ['class' => 'kv-grid-group-filter'],
     ],
 ],
 'columns' => $columns,
