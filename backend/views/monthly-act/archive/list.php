@@ -25,7 +25,11 @@ $isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 $colNum = 0;
 
 if(!$searchModel->type_id) {
-    $colNum = 4;
+    if(!$searchModel->client_id) {
+        $colNum = 2;
+    } else {
+        $colNum = 4;
+    }
 } else {
 
     if($searchModel->type_id == Company::TYPE_DISINFECT) {
@@ -37,6 +41,9 @@ if(!$searchModel->type_id) {
     }
 
 }
+
+$GLOBALS['dateFrom'] = $searchModel->dateFrom;
+$GLOBALS['dateTo'] = $searchModel->dateTo;
 
 $script = <<< JS
 
@@ -227,6 +234,27 @@ $columns[] = [
     'pageSummary' => 'Итого',
 ];
 
+if((!$searchModel->client_id) && (Yii::$app->request->get('type') == 1)) {
+    $columns[] = [
+        'header' => 'Сумма',
+        'value' => function ($data) {
+            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->select('SUM(act.income) as profit')->column();
+
+            if(count($profitRes) > 0) {
+                if(isset($profitRes[0])) {
+                    return $profitRes[0];
+                }
+            }
+
+            return 0;
+        },
+        'format' => 'html',
+        'filter' => false,
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+    ];
+}
+
 if($searchModel->client_id) {
     $columns[] = [
         'attribute' => 'act_date',
@@ -291,21 +319,21 @@ if($searchModel->client_id && $searchModel->type_id == Company::TYPE_DISINFECT) 
 }
 
 if($searchModel->client_id && $searchModel->type_id == Company::TYPE_SERVICE) {
-  $columns[] = [
-      'attribute' => 'number',
-      'label'     => 'Номер',
-      'filter'    => false,
-      'content'   => function ($data) {
-          return $data->number;
-      },
-  ];
+    $columns[] = [
+        'attribute' => 'number',
+        'label'     => 'Номер',
+        'filter'    => false,
+        'content'   => function ($data) {
+            return $data->number;
+        },
+    ];
 }
 
 if($searchModel->client_id) {
     $columns[] = [
         'attribute'     => 'profit',
         'value'         => function ($data) {
-            return (int) $data->profit;
+            return $data->profit;
         },
         'format'        => 'html',
         'filter'    => false,
@@ -438,7 +466,7 @@ if($searchModel->client_id) {
         'id'               => 'monthly-act-grid',
         'dataProvider'     => $dataProvider,
         'filterModel' => $searchModel,
-        'showPageSummary' => ($searchModel->client_id),
+        'showPageSummary' => (Yii::$app->request->get('type') == 1),
         'summary'          => false,
         'emptyText'        => '',
         'panel'            => [
