@@ -553,11 +553,12 @@ class StatController extends Controller
 
     public function actionCompare()
     {
-        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrYear')) {
+        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrYear') || Yii::$app->request->post('arrMonthYears') || Yii::$app->request->post('arrDay') || Yii::$app->request->post('arrDayCount')) {
             $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
             $arrMonthYears = json_decode(Yii::$app->request->post("arrMonthYears"));
             $arrYear = json_decode(Yii::$app->request->post("arrYear"));
             $Day = json_decode(Yii::$app->request->post("arrDay"));
+            $arrDayCount = json_decode(Yii::$app->request->post("arrDayCount"));
             $ressArray =[];
 
             if (count($arrMonth) > 0) {
@@ -595,6 +596,26 @@ class StatController extends Controller
                     $ressArray[$index][$indexM]['income'] = $arr['income'];
                     $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
                 }
+            } else if (count($arrDayCount) > 0) {
+              for ($i = 0; $i < count($arrDayCount); $i++) {
+
+                    $dataStart = date("Y-m-01", strtotime($arrDayCount[$i]));
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(`act`.id) AS countServe, ROUND(SUM(profit)/COUNT(`act`.id)) AS ssoom, SUM(expense) as expense, SUM(profit) as profit, SUM(income) as income, `service_type`, `served_at` FROM `act` LEFT JOIN `company` `client` ON `act`.`client_id` = `client`.`id` WHERE (DATE (FROM_UNIXTIME(served_at)) BETWEEN '". $dataStart ."T00:00:00.000Z' AND '". $arrDayCount[$i] ."T23:59:59.000Z') AND `service_type` <> 6 AND `service_type` <> 7 AND `service_type` <> 8 GROUP BY `service_type`");
+                    $queryArray = $query->queryAll();
+
+                for ($j = 0; $j < count($queryArray); $j++) {
+                    $arr = $queryArray[$j];
+                    $index = $arr['service_type'];
+                    $indexM = date("n", $arr['served_at']);
+                    $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    $ressArray[$index][$indexM]['ssoom'] = $arr['ssoom'];
+                    $ressArray[$index][$indexM]['expense'] = $arr['expense'];
+                    $ressArray[$index][$indexM]['profit'] = $arr['profit'];
+                    $ressArray[$index][$indexM]['income'] = $arr['income'];
+                    $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
+                    $ressArray[$index][$indexM]['day'] = date("j", strtotime($arrDayCount[$i]));
+                }
+              }
             } else {
                 for ($i = 0; $i < count($arrYear); $i++) {
 
