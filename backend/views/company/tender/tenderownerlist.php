@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use common\models\User;
 use yii\helpers\Url;
+use common\models\TenderOwner;
 
 $this->title = 'Распределение тендеров';
 
@@ -142,11 +143,17 @@ $this->registerJs($script, \yii\web\View::POS_READY);
 echo Tabs::widget([
     'items' => [
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1'], 'active' => $win == 1],
-        ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0'], 'active' => $win == 0],
+        ['label' => 'В работе', 'url' => ['company/tenderownerlist?win=0'], 'active' => $win == 0 || $win == 256 || $win == 654 || $win == 756],
         ['label' => 'Архив', 'url' => ['company/tenderownerlist?win=2'], 'active' => $win == 2],
         ['label' => 'Не взяли', 'url' => ['company/tenderownerlist?win=3'], 'active' => $win == 3],
     ],
 ]);
+
+// подсчет количества тендеров в работе
+$userDen = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 256])->count();
+$userAlyona = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 654])->count();
+$userMasha = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 756])->count();
+// конец подсчет количества тендеров в работе
 
 if ($win == 1) {
 $collumn = [
@@ -548,6 +555,49 @@ $collumn = [
         ],
     ];
 }
+
+$statTable = '';
+$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
+                <tr style="background: #428bca; color: #fff;">
+                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">В работе</td>
+                </tr>';
+$statTable .=  '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
+                    <td class="userDen" width="300px;" style="padding: 3px 5px 3px 5px">' . $userDen .'</td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderownerlist?win=" . 256);
+
+$statTable .=  '<tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
+                    <td class="userAlyna" width="300px;" style="padding: 3px 5px 3px 5px">' . $userAlyona .'</td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderownerlist?win=" . 654);
+
+$statTable .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
+                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px">' . $userMasha .'</td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderownerlist?win=" . 756);
+
+$statTable .= '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Всего</td>
+                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px">' . ($userDen + $userAlyona + $userMasha) .'</td>
+                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+
+$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderownerlist?win=" . 0);
+
+$statTable .= '</td>
+                </tr>
+            </table>';
 ?>
 
 <div class="panel panel-primary">
@@ -567,6 +617,19 @@ $collumn = [
             'summary' => false,
             'emptyText' => '',
             'layout' => '{items}',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $statTable,
+                            'options' => [
+                                'colspan' => count($collumn),
+                            ]
+                        ]
+                    ],
+                    'options' => ['class' => 'kv-grid-group-filter'],
+                ],
+            ],
             'columns' => $collumn,
         ]);
         ?>

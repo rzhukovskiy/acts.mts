@@ -110,6 +110,15 @@ class TenderSearch extends Company
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
                 }
 
+                if (!isset($this->user_id) && !$this->user_id) {
+                    if ((Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756)) {
+                    $this->user_id = Yii::$app->user->identity->id;
+                        $query->andFilterWhere([
+                            'user_id' => $this->user_id,
+                        ]);
+                    }
+                }
+
                 $query->orderby('company.id');
                 break;
 

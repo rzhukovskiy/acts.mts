@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use common\models\Company;
 use kartik\date\DatePicker;
 use common\models\TenderLists;
+use common\models\TenderOwner;
 
 $script = <<< JS
 // формат числа
@@ -70,6 +71,12 @@ for ($i = 0; $i < count($arrayTenderList); $i++) {
 
 }
 //
+
+// подсчет количества тендеров в работе
+$userDen = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 256])->count();
+$userAlyona = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 654])->count();
+$userMasha = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 756])->count();
+// конец подсчет количества тендеров в работе
 
 $GLOBALS['arrLists'] = $arrLists;
 $GLOBALS['usersList'] = $usersList;
@@ -431,14 +438,14 @@ $statTable .=  '</td>
                 </tr>
                 <tr style="background: #fff; font-weight: normal;">
                     <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
-                    <td class="userDen" style="padding: 3px 5px 3px 5px"></td>
+                    <td class="userDen" width="300px;" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
 
 $statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 256);
 
 $statTable .=  '<tr style="background: #fff; font-weight: normal;">
                     <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
-                    <td class="userAlyna" style="padding: 3px 5px 3px 5px"></td>
+                    <td class="userAlyna" width="300px;" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
 
 $statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 654);
@@ -447,7 +454,7 @@ $statTable .= '</td>
                 </tr>
                 <tr style="background: #fff; font-weight: normal;">
                     <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
-                    <td class="userMasha" style="padding: 3px 5px 3px 5px"></td>
+                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px"></td>
                     <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
 
 $statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderlist?TenderSearch[user_id]=" . 756);
@@ -455,6 +462,27 @@ $statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/c
 $statTable .= '</td>
                 </tr>
             </table>';
+$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
+                <tr style="background: #428bca; color: #fff;">
+                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">В работе</td>
+                </tr>';
+$statTable .=  '</td>
+                </tr>
+                <tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
+                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userDen .'</td>
+                    </tr>';
+
+$statTable .=  '<tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
+                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userAlyona .'</td>
+                    </tr>';
+
+$statTable .= '<tr style="background: #fff; font-weight: normal;">
+                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
+                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userMasha .'</td>
+                    </tr></table>';
+
 
 echo GridView::widget([
 'dataProvider' => $dataProvider,
