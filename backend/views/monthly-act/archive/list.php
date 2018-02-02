@@ -238,15 +238,26 @@ if((!$searchModel->client_id) && (Yii::$app->request->get('type') == 1)) {
     $columns[] = [
         'header' => 'Сумма',
         'value' => function ($data) {
-            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->select('SUM(act.income) as profit')->column();
+            $resProfit = 0;
+
+            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
 
             if(count($profitRes) > 0) {
                 if(isset($profitRes[0])) {
-                    return $profitRes[0];
+                    $resProfit += $profitRes[0];
                 }
             }
 
-            return 0;
+            //
+            $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+
+            if(count($profitResDes) > 0) {
+                if(isset($profitResDes[0])) {
+                    $resProfit += $profitResDes[0];
+                }
+            }
+
+            return $resProfit;
         },
         'format' => 'html',
         'filter' => false,
@@ -333,7 +344,19 @@ if($searchModel->client_id) {
     $columns[] = [
         'attribute'     => 'profit',
         'value'         => function ($data) {
-            return $data->profit;
+            if((Yii::$app->request->get('type') == 1) && ($data->type_id == 5)) {
+                $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = ' . $data->service_id)->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.type_id' => 5], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]])->select('SUM(act.income) as profit')->column();
+
+                if(count($profitRes) > 0) {
+                    if(isset($profitRes[0])) {
+                        return $profitRes[0];
+                    }
+                }
+
+                return 0;
+            } else {
+                return $data->profit;
+            }
         },
         'format'        => 'html',
         'filter'    => false,

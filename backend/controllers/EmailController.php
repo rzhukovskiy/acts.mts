@@ -8,6 +8,7 @@
 
 namespace backend\controllers;
 
+use common\components\DateHelper;
 use common\models\Company;
 use common\models\CompanyDriver;
 use common\models\Email;
@@ -49,7 +50,7 @@ class EmailController extends Controller
                         'roles' => [User::ROLE_WATCHER],
                     ],
                     [
-                        'actions' => ['cronmailer', 'cronaddressnew'],
+                        'actions' => ['cronmailer', 'cronaddressnew', 'crondebt'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -1125,7 +1126,7 @@ class EmailController extends Controller
     public function actionCronaddressnew($id)
     {
 
-        // Рассылка 1 раза в неделю для партреров о новом адресе
+        // Рассылка по шаблону крон
         if(isset(Yii::$app->user->identity->id)) {
             return $this->redirect('/');
         } else {
@@ -1497,7 +1498,111 @@ class EmailController extends Controller
 
         return 1;
 
-        // Рассылка 1 раза в неделю для партреров о новом адресе
+        // Рассылка по шаблону крон
+
+    }
+
+    public function actionCrondebt()
+    {
+
+        // Рассылка 2 раза в неделю о должниках Араму и Юле
+        if(isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+
+            $ArrDebt = [];
+            $dateFrom = date('Y-m-t', strtotime("-6 month")) . 'T21:00:00.000Z';
+            $dateTo = date('Y-m-t') . 'T21:00:00.000Z';
+
+            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.act_date, monthly_act.client_id, monthly_act.type_id')->asArray()->all();
+
+            if(count($profitRes) > 0) {
+                foreach ($profitRes as $key => $value) {
+
+                    $arrDate = $profitRes[$key];
+                    $indexP = $arrDate['date'];
+                    $index = $arrDate['id'];
+                    $indexT = $arrDate['type'];
+
+                    $ArrDebt[$indexP][$index][$indexT][0] = $arrDate['name'];
+                    $ArrDebt[$indexP][$index][$indexT][1] = $arrDate['profit'];
+                }
+            }
+
+            // дез
+            $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.act_date, monthly_act.client_id, monthly_act.type_id')->asArray()->all();
+
+            if(count($profitResDes) > 0) {
+                foreach ($profitResDes as $key => $value) {
+
+                    $arrDate = $profitResDes[$key];
+                    $indexP = $arrDate['date'];
+                    $index = $arrDate['id'];
+                    $indexT = $arrDate['type'];
+
+                    if((isset($ArrDebt[$indexP][$index][$indexT][0])) && (isset($ArrDebt[$indexP][$index][$indexT][1]))) {
+                        $ArrDebt[$indexP][$index][$indexT][1] += $arrDate['profit'];
+                    } else {
+                        $ArrDebt[$indexP][$index][$indexT][0] = $arrDate['name'];
+                        $ArrDebt[$indexP][$index][$indexT][1] = $arrDate['profit'];
+                    }
+
+                }
+            }
+
+            $resText = '<b style="color:#069;">Должники за последние 5 месяцев:</b><br />';
+            $arrTypes = Company::$listType;
+            $i = 1;
+            $summ = 0;
+
+            $old_id = 0;
+
+            foreach ($ArrDebt as $keyP => $valueP) {
+                foreach ($valueP as $key => $value) {
+                    foreach ($value as $keyT => $valueT) {
+
+                        $new_id = $key;
+                        $arrPeriod = explode('-', $keyP);
+                        $in = (int) $arrPeriod[1];
+                        $showDate = DateHelper::$months[$in][0] . ' ' . $arrPeriod[0];
+
+                        if($old_id != $new_id) {
+
+                            $resText .= '<br /><b>' . $ArrDebt[$keyP][$key][$keyT][0] . '</b><br />';
+                            $resText .= $showDate . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+
+                            $old_id = $new_id;
+                        } else {
+                            $resText .= $showDate . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+                        }
+
+                        $summ += $ArrDebt[$keyP][$key][$keyT][1];
+                        $i++;
+                    }
+                }
+            }
+
+            $resText .= '<br /><b style="color:#069;">Общая сумма: </b>' . $summ . '₽';
+
+            // Юля
+            Yii::$app->mailer->compose()
+                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo('merkulova@mtransservice.ru')
+                ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
+                ->setHtmlBody($resText)->send();
+
+            // Арам
+            Yii::$app->mailer->compose()
+                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo('aram@mtransservice.ru')
+                ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
+                ->setHtmlBody($resText)->send();
+
+        }
+
+        return 1;
+
+        // Рассылка 2 раза в неделю о должниках Араму и Юле
 
     }
 
