@@ -240,7 +240,7 @@ if ($type == 1) {
         ],
         [
             'header' => 'Кому',
-            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andWhere(['task_user.from_user' => Yii::$app->user->identity->id])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andWhere(['task_user.from_user' => Yii::$app->user->identity->id])->select('user.username')->indexBy('for_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'vAlign'=>'middle',
             'format'=> 'raw',
             'value' => function ($data) {
@@ -431,7 +431,7 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -445,7 +445,7 @@ if ($type == 1) {
         [
             'header' => 'Ответственный<br/> сотрудник',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->where(['OR', ['task_user_link.for_user_copy' => Yii::$app->user->identity->id], ['task_user.for_user' => Yii::$app->user->identity->id]])->andWhere(['!=', 'from_user', Yii::$app->user->identity->id])->select('user.username')->indexBy('for_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -609,7 +609,7 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -623,7 +623,7 @@ if ($type == 1) {
         [
             'header' => 'Кому',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'for_user', TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->select('user.username')->indexBy('for_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -784,7 +784,7 @@ if ($type == 1) {
         [
             'header' => 'От кого',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', (Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', (Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`from_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 
@@ -802,7 +802,7 @@ if ($type == 1) {
         [
             'header' => 'Кому',
             'vAlign'=>'middle',
-            'filter' => Html::activeDropDownList($searchModel, 'for_user',(Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'for_user',(Yii::$app->user->identity->role == User::ROLE_ADMIN) ? TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->orderBy('username ASC')->column() : TaskUser::find()->innerJoin('user', '`task_user`.`for_user` = `user`.`id`')->leftJoin('task_user_link', '`task_user_link`.`task_id` = `task_user`.`id`')->andWhere(['task_user_link.for_user_copy' => Yii::$app->user->identity->id])->orWhere(['AND', ['!=', 'from_user', Yii::$app->user->identity->id], ['for_user' => Yii::$app->user->identity->id]])->orWhere(['AND', ['from_user' => Yii::$app->user->identity->id], ['!=', 'for_user', Yii::$app->user->identity->id]])->andwhere(['task_user.is_archive' => 1])->select('user.username')->indexBy('for_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'format'=> 'raw',
             'value' => function ($data) {
 

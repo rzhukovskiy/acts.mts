@@ -254,7 +254,7 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
         ],
         [
             'attribute' => 'from_user',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskMy::find()->innerJoin('user', '`task_my`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskMy::find()->innerJoin('user', '`task_my`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'vAlign'=>'middle',
             'value' => function ($data) {
 
