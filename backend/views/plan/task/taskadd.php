@@ -13,7 +13,7 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
     $tabs = [
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
-        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Мне поставили задачу ' . (($countTaskU > 0) ? '<span class="label label-success">' . $countTaskU . '</span>' : ''), 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
@@ -21,13 +21,14 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
-        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Мне поставили задачу ' . (($countTaskU > 0) ? '<span class="label label-success">' . $countTaskU . '</span>' : ''), 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist']],
         ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
         ['label' => 'Добавление', 'url' => ['plan/taskadd'], 'active' => Yii::$app->controller->action->id == 'taskadd'],
     ];
 }
 echo Tabs::widget([
+    'encodeLabels' => false,
     'items' => $tabs,
 ]);
 
