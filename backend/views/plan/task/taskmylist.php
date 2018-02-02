@@ -14,20 +14,21 @@ if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->i
     $tabs = [
         ['label' => 'Все задачи', 'url' => ['plan/tasklist?type=0']],
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
-        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Мне поставили задачу ' . (($countTaskU > 0) ? '<span class="label label-success">' . $countTaskU . '</span>' : ''), 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => Yii::$app->controller->action->id == 'taskmylist'],
         ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
     ];
 } else {
     $tabs = [
         ['label' => 'Я поставил задачу', 'url' => ['plan/tasklist?type=1']],
-        ['label' => 'Мне поставили задачу', 'url' => ['plan/tasklist?type=2']],
+        ['label' => 'Мне поставили задачу ' . (($countTaskU > 0) ? '<span class="label label-success">' . $countTaskU . '</span>' : ''), 'url' => ['plan/tasklist?type=2']],
         ['label' => 'Собственные задачи', 'url' => ['plan/taskmylist'], 'active' => Yii::$app->controller->action->id == 'taskmylist'],
         ['label' => 'Архив', 'url' => ['plan/tasklist?type=3']],
     ];
 }
 
 echo Tabs::widget([
+    'encodeLabels' => false,
     'items' => $tabs,
 ]);
 
@@ -254,7 +255,7 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
         ],
         [
             'attribute' => 'from_user',
-            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskMy::find()->innerJoin('user', '`task_my`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
+            'filter' => Html::activeDropDownList($searchModel, 'from_user', TaskMy::find()->innerJoin('user', '`task_my`.`from_user` = `user`.`id`')->select('user.username')->indexBy('from_user')->orderBy('username ASC')->column(), ['class' => 'form-control', 'prompt' => 'Все сотрудники']),
             'vAlign'=>'middle',
             'value' => function ($data) {
 

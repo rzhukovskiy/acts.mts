@@ -176,6 +176,7 @@ class PlanController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $userList = User::find()->select('username')->indexby('id')->column();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
 
         if ($type == 1) {
             $dataProvider->sort = [
@@ -236,6 +237,7 @@ class PlanController extends Controller
             'searchModel' => $searchModel,
             'type' => $type,
             'userList' => $userList,
+            'countTaskU' => $countTaskU,
         ]);
     }
 
@@ -253,18 +255,21 @@ class PlanController extends Controller
         ];
 
         $userLists = User::find()->select('username')->indexby('id')->column();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
 
         return $this->render('task/taskmylist', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'userLists' => $userLists,
+            'countTaskU' => $countTaskU,
         ]);
     }
 
     public function actionTaskadd()
     {
        // $userLists = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
-        $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
+        $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->orderBy('username ASC')->column();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
 
         $newmodellink = new TaskUserLink();
         $model = new TaskUser();
@@ -311,6 +316,7 @@ class PlanController extends Controller
                 'model' => $model,
                 'newmodellink' => $newmodellink,
                 'userListsID' => $userListsID,
+                'countTaskU' => $countTaskU,
             ]);
         }
 
@@ -320,6 +326,7 @@ class PlanController extends Controller
     {
         $model = new TaskMy();
         $model->from_user = Yii::$app->user->identity->id;
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
 
         $arrUpdate = Yii::$app->request->post();
 
@@ -339,6 +346,7 @@ class PlanController extends Controller
         } else {
             return $this->render('task/taskmyadd', [
                 'model' => $model,
+                'countTaskU' => $countTaskU,
             ]);
         }
 
@@ -350,23 +358,28 @@ class PlanController extends Controller
         $newmodel = new TaskUserLink();
 
         $userLists = User::find()->select('username')->indexby('id')->column();
-        $userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
-        $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->column();
+        $userListsAll = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->orderBy('username ASC')->column();
+        $userListsData = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('username')->indexby('id')->orderBy('username ASC')->column();
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
+
         return $this->render('task/taskfull', [
             'model' => $model,
             'userLists' => $userLists,
             'newmodel' => $newmodel,
             'userListsData' => $userListsData,
             'userListsAll' => $userListsAll,
+            'countTaskU' => $countTaskU,
         ]);
     }
 
     public function actionTaskmyfull($id)
     {
         $model = TaskMy::findOne(['id' => $id]);
+        $countTaskU = TaskUser::find()->where(['task_user.for_user' => Yii::$app->user->identity->id])->andwhere(['task_user.status' => 0])->andwhere(['task_user.is_archive' => 0])->count();
 
         return $this->render('task/taskmyfull', [
             'model' => $model,
+            'countTaskU' => $countTaskU,
         ]);
     }
 
