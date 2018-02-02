@@ -452,7 +452,6 @@ class CarController extends Controller
             $company_from = 0;
             $company_id = Yii::$app->request->post('company_id');
             $actAppy = 1;
-            $actData = false;
 
             if(Yii::$app->request->post('act_appy')) {
                 $actAppy = Yii::$app->request->post('act_appy');
@@ -464,10 +463,6 @@ class CarController extends Controller
 
             if(Yii::$app->request->post('company_from')) {
                 $company_from = Yii::$app->request->post('company_from');
-            }
-
-            if(Yii::$app->request->post('act_data')) {
-                $actData = Yii::$app->request->post('act_data');
             }
 
             if((($id == 0) && (Yii::$app->request->post('number'))) || ($id > 0)) {
@@ -495,13 +490,9 @@ class CarController extends Controller
                         if ($actAppy == 1) {
                             // Меняем client id в актах и акт скоуп
 
-                            if ($actData == false) {
-                                $arrActs = Act::find()->where(['car_number' => $modelCar->number])->select('id')->all();
-                            } else {
-                                $dataFrom = date("Y-m-", $actData) . '01T21:00:00.000Z';
-                                $dataTo = date("Y-m-t", $actData) . 'T21:00:00.000Z';
-                                $arrActs = Act::find()->where(['car_number' => $modelCar->number])->andWhere(['between', "DATE(FROM_UNIXTIME(served_at))", $dataFrom, $dataTo])->select('id')->all();
-                            }
+                            $dataFrom = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+                            $dataTo = date("Y-m-t") . 'T21:00:00.000Z';
+                            $arrActs = Act::find()->where(['car_number' => $modelCar->number])->andWhere(['between', "DATE(FROM_UNIXTIME(served_at))", $dataFrom, $dataTo])->select('id')->all();
 
                             if (isset($arrActs)) {
                                 if (count($arrActs) > 0) {

@@ -305,7 +305,6 @@ cursor:pointer;
 
     $actionLinkMoveCard = Url::to('@web/card/movecard');
     $company_card = isset($model->card->company_id) ? $model->card->company_id : 0;
-    $act_data = $model->served_at;
 
     $script = <<< JS
 
@@ -396,7 +395,6 @@ cursor:pointer;
 
     $actionLinkMove = Url::to('@web/car/movecar');
     $company_id = isset($model->car->company_id) ? $model->car->company_id : 0;
-    $act_data = $model->served_at;
 
     $script = <<< JS
 
@@ -437,7 +435,7 @@ $('#save_new_company').on('click', function(){
                 $.ajax({
                 type     :'POST',
                 cache    : false,
-                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy + '&act_data=' + '$act_data' + '&number=' + number,
+                data:'id=' + car_id + '&company_from=' + '$company_id' + '&company_id=' + $('#new_company').val() + '&act_appy=' + checkboxAppy + '&number=' + number,
                 url  : '$actionLinkMove',
                 success  : function(data) {
                     
