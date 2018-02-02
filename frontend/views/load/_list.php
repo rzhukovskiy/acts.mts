@@ -17,7 +17,8 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $actionLinkGetComments = Url::to('@web/load/getcomments');
-$period = isset(Yii::$app->request->get('ActSearch')['period']) ? Yii::$app->request->get('ActSearch')['period'] : date("n-Y");
+$period = isset(Yii::$app->request->get('ActSearch')['period']) ? Yii::$app->request->get('ActSearch')['period'] : date("n-Y", time() - 10 * 24 * 3600);
+
 $type = Yii::$app->request->get('type');
 // Выделение номера акта
 
