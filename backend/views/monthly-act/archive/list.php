@@ -7,6 +7,7 @@ use kartik\grid\GridView;
 use common\models\DepartmentCompany;
 use common\models\MonthlyAct;
 use common\models\User;
+use yii\web\View;
 
 $isAdmin = (\Yii::$app->user->identity->role == User::ROLE_ADMIN) ? 1 : 0;
 
@@ -105,7 +106,7 @@ $script = <<< JS
     });
 
 JS;
-$this->registerJs($script, \yii\web\View::POS_READY);
+$this->registerJs($script, View::POS_READY);
 
 $this->title = "Архив актов";
 
@@ -235,8 +236,88 @@ $columns[] = [
 ];
 
 if((!$searchModel->client_id) && (Yii::$app->request->get('type') == 1)) {
+
+    $script = <<< JS
+
+    window.onload=function(){
+        
+        // Выполнение фильтра по цене
+        function doFilterPrice(search) {
+    
+        var sumPrice = 0;
+        var iListPrice = 1;
+    
+        $('table tbody tr[data-key]').each(function (id, value) {
+            
+            if($(this).find('td[data-col-seq="2"]').text().indexOf(search) + 1) {
+                
+                if(!$(this).is(":visible")) {
+                $(this).show();
+                }
+                
+                sumPrice += parseFloat($(this).find('td[data-col-seq="2"]').text());
+                
+                $(this).find('td').eq(0).text(iListPrice);
+                iListPrice++;
+            } else {
+                $(this).hide();
+            }
+            
+        });
+        
+        var SumBodyFooter = $('.kv-page-summary-container');
+        SumBodyFooter.find('tr td').eq(2).text(sumPrice);
+        
+        if(sumPrice > 0) {
+            if(!SumBodyFooter.is(":visible")) {
+                SumBodyFooter.show();
+            }
+        } else {
+            if(SumBodyFooter.is(":visible")) {
+                SumBodyFooter.hide();
+            }
+        }
+        
+        }
+    // Выполнение фильтра по цене
+    
+        var priceForm = $('.searchPrice');
+        var oldValuePrice = '';
+        
+        // Изменение
+        priceForm.change(function() {
+            
+            if(priceForm.val() != oldValuePrice) {
+                oldValuePrice = priceForm.val();
+                doFilterPrice(oldValuePrice);
+            }
+            
+        });
+        
+        // Клик на ентер
+        priceForm.keypress(function (e) {
+            var key = e.which;
+            
+            if(key == 13) {
+                
+                if(priceForm.val() != oldValuePrice) {
+                    oldValuePrice = priceForm.val();
+                    doFilterPrice(oldValuePrice);
+                }
+                
+                return false;  
+            }
+            
+        });
+    
+    }
+
+JS;
+    $this->registerJs($script, View::POS_READY);
+
     $columns[] = [
         'header' => 'Сумма',
+        'filter' => Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']),
         'value' => function ($data) {
             $resProfit = 0;
 
@@ -260,7 +341,6 @@ if((!$searchModel->client_id) && (Yii::$app->request->get('type') == 1)) {
             return $resProfit;
         },
         'format' => 'html',
-        'filter' => false,
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
     ];
@@ -341,6 +421,89 @@ if($searchModel->client_id && $searchModel->type_id == Company::TYPE_SERVICE) {
 }
 
 if($searchModel->client_id) {
+
+    if(Yii::$app->request->get('type') == 1) {
+
+        $script = <<< JS
+
+    window.onload=function(){
+        
+        // Выполнение фильтра по цене
+        function doFilterPrice(search) {
+    
+        var sumPrice = 0;
+        var iListPrice = 1;
+    
+        $('table tbody tr[data-key]').each(function (id, value) {
+            
+            if($(this).find('td[data-col-seq="4"]').text().indexOf(search) + 1) {
+                
+                if(!$(this).is(":visible")) {
+                $(this).show();
+                }
+                
+                sumPrice += parseFloat($(this).find('td[data-col-seq="4"]').text());
+                
+                $(this).find('td').eq(0).text(iListPrice);
+                iListPrice++;
+            } else {
+                $(this).hide();
+            }
+            
+        });
+        
+        var SumBodyFooter = $('.kv-page-summary-container');
+        SumBodyFooter.find('tr td').eq(3).text(sumPrice);
+        
+        if(sumPrice > 0) {
+            if(!SumBodyFooter.is(":visible")) {
+                SumBodyFooter.show();
+            }
+        } else {
+            if(SumBodyFooter.is(":visible")) {
+                SumBodyFooter.hide();
+            }
+        }
+        
+        }
+    // Выполнение фильтра по цене
+    
+        var priceForm = $('.searchPrice');
+        var oldValuePrice = '';
+        
+        // Изменение
+        priceForm.change(function() {
+            
+            if(priceForm.val() != oldValuePrice) {
+                oldValuePrice = priceForm.val();
+                doFilterPrice(oldValuePrice);
+            }
+            
+        });
+        
+        // Клик на ентер
+        priceForm.keypress(function (e) {
+            var key = e.which;
+            
+            if(key == 13) {
+                
+                if(priceForm.val() != oldValuePrice) {
+                    oldValuePrice = priceForm.val();
+                    doFilterPrice(oldValuePrice);
+                }
+                
+                return false;  
+            }
+            
+        });
+    
+    }
+
+JS;
+$this->registerJs($script, View::POS_READY);
+
+    }
+
     $columns[] = [
         'attribute'     => 'profit',
         'value'         => function ($data) {
@@ -359,7 +522,7 @@ if($searchModel->client_id) {
             }
         },
         'format'        => 'html',
-        'filter'    => false,
+        'filter'    => (Yii::$app->request->get('type') == 1) ? Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']) : false,
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
     ];
@@ -441,6 +604,7 @@ if($searchModel->client_id) {
     echo GridView::widget([
         'id'               => 'monthly-act-grid',
         'dataProvider'     => $dataProvider,
+        'filterModel' => $searchModel,
         'showPageSummary' => ($searchModel->client_id),
         'summary'          => false,
         'emptyText'        => '',
