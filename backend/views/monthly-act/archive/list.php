@@ -241,6 +241,124 @@ if((!$searchModel->client_id) && (Yii::$app->request->get('type') == 1)) {
 
     window.onload=function(){
         
+        // Сортировка
+        
+        var arrDataSort = [];
+        var iSort = 0;
+        
+        $('table tbody tr[data-key]').each(function (id, value) {
+            arrDataSort[iSort] = [];
+            arrDataSort[iSort][0] = $(this);
+            arrDataSort[iSort][1] = parseFloat($(this).find('td[data-col-seq="2"]').text());
+            arrDataSort[iSort][2] = parseFloat($(this).find('td[data-col-seq="0"]').text());
+            
+            iSort++;
+        });
+        
+    function ReplaceItemsTable(firstEl, secEl) {
+        
+    var content1 = $(arrDataSort[firstEl][0]).html();
+    var content1i = arrDataSort[firstEl][2];
+    var content2 = $(arrDataSort[secEl][0]).html();
+    var content2i = arrDataSort[secEl][2];
+
+    $(arrDataSort[firstEl][0]).html(content2).show();
+    $(arrDataSort[secEl][0]).html(content1).show();
+    $(arrDataSort[firstEl][0]).children("td:first").text(content1i);
+    $(arrDataSort[secEl][0]).children("td:first").text(content2i);
+    
+    iSort = 0;
+
+    arrDataSort = [];
+    $('table tbody tr[data-key]').each(function (id, value) {
+            arrDataSort[iSort] = [];
+            arrDataSort[iSort][0] = $(this);
+            arrDataSort[iSort][1] = parseFloat($(this).find('td[data-col-seq="2"]').text());
+            arrDataSort[iSort][2] = parseFloat($(this).find('td[data-col-seq="0"]').text());
+            
+            iSort++;
+    });
+    
+    }
+        
+        // Кнопка сортировать
+        var readyToSort = 1;
+        var typeSort = 1;
+
+        var sortPriceButt = $('table thead tr th[data-col-seq="2"]');
+
+        sortPriceButt[0].style.cursor = "pointer";
+        sortPriceButt[0].style.textDecoration = "underline";
+        // Кнопка сортировать
+        
+    sortPriceButt[0].addEventListener("click", function() {
+
+    if(readyToSort == 1) {
+
+    if(typeSort == 0) {
+    typeSort = 1;
+    } else {
+    typeSort = 0;
+    }
+
+    readyToSort = 0;
+    var min = 0;
+    var min_i = 0;
+    var z = 0;
+    var j = 0;
+    
+    if(typeSort == 0) {
+        
+    for (z = 0; z < iSort; z++) {
+
+        min = arrDataSort[z][1];
+        min_i = z;
+
+        for (j = z; j < iSort; j++) {
+            
+            if (arrDataSort[j][1] < min) {
+                min = arrDataSort[j][1];
+                min_i = j;
+            }
+        }
+
+        if (z != min_i) {
+        ReplaceItemsTable(min_i, z);
+        }
+        
+    }
+
+    } else {
+        
+    for (z = 0; z < iSort; z++) {
+
+        min = arrDataSort[z][1];
+        min_i = z;
+
+        for (j = z; j < iSort; j++) {
+
+            if (arrDataSort[j][1] > min) {
+                min = arrDataSort[j][1];
+                min_i = j;
+            }
+        }
+
+        if (z != min_i) {
+        ReplaceItemsTable(min_i, z);
+        }
+        
+     }
+     
+    }
+
+readyToSort = 1;
+
+}
+
+}, false);
+        
+        // Сортировка
+    
         // Выполнение фильтра по цене
         function doFilterPrice(search) {
     
