@@ -1594,7 +1594,7 @@ class EmailController extends Controller
             // Арам
             Yii::$app->mailer->compose()
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                ->setTo('aram@mtransservice.ru')
+                ->setTo('aram.mtransservice@mail.ru')
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
                 ->setHtmlBody($resText)->send();
 
