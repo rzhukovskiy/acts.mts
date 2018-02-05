@@ -20,6 +20,12 @@ window.onload=function(){
 var companyTR = $('tbody tr');
 
     var oldTR = "";
+    var arruserCount = 0;
+    var userName = [];
+    var userOld = '';
+    var userNow = '';
+    var resTables = '';
+    var resUsers = "";
     var numColumns = 0;
     var numCount = 0;
     var i = 0;
@@ -45,8 +51,17 @@ var companyTR = $('tbody tr');
                     trFooter.append(footerTdmerge);
 
                     oldTR.after(trFooter);
-                }
 
+                    }
+                    userNow = thisId.find($('td[data-even-css="kv-group-header"]')).text();
+                    
+                  if (i == 0) {
+                      userName[userNow] = 0;
+                  } else {
+                      userName[userOld] = numCount;
+                  }
+                    
+                    
                 numCount = 0;
             } else if (thisId.attr('class') == "kv-page-summary warning") {
                 
@@ -64,9 +79,9 @@ var companyTR = $('tbody tr');
                     trFooter.append(footerTdmerge);
 
                     oldTR.after(trFooter);
+                    userName[userNow] = numCount;
                 }
-                
-            } else if (thisId.attr('data-key') > 0) {
+                } else if (thisId.attr('data-key') > 0) {
 
                 numCount++;
 
@@ -76,14 +91,28 @@ var companyTR = $('tbody tr');
                 }
 
             }
-
+            userOld = userNow;
             oldTR = thisId;
             i++;
 
         }
 
     });
+for (var key in userName) {
+    if (userName.hasOwnProperty(key)) {
+        resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ key +'</td><td style="padding: 3px 5px 3px 5px">' + userName[key] + '</td></tr>';
+    }
+}
 // Подсчет кол.
+
+            resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
+             '<tr style="background: #428bca; color: #fff;">' +
+              '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">Количество заявок</td>' +
+               '</tr>' +
+                '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
+           if(resUsers.length > 0) {
+            $('.place_list').html(resTables);
+            }
 };
 
 JS;
@@ -161,6 +190,8 @@ if($searchModel->type == 3) {
     </div>
     <div class="panel-body">
         <?php
+        $statTable = '<div class="place_list"></div>';
+
 //        if ($admin) {
 //            echo $this->render('_selector', [
 //                'type' => $type,
@@ -201,13 +232,13 @@ if($searchModel->type == 3) {
                 [
                     'columns' => [
                         [
-                            'content' => '&nbsp',
+                            'content' => $statTable,
                             'options' => [
                                 'colspan' => 7,
                             ]
                         ]
                     ],
-                    'options' => ['class' => 'kv-group-header'],
+                    'options' => ['class' => 'kv-group-filter'],
                 ],
             ],
             'rowOptions' => function ($model) {
