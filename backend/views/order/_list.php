@@ -7,9 +7,12 @@
 
 use common\models\Entry;
 use common\models\Company;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
+use common\assets\CanvasJs\CanvasJsAsset;
+
+CanvasJsAsset::register($this);
 
 $script = <<< JS
     $('.change-status').change(function(){
@@ -495,6 +498,148 @@ $('#showModalCall').on('hidden.bs.modal', function () {
 
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
+
+// Фильтр
+$halfs = [
+    '1е полугодие',
+    '2е полугодие'
+];
+$quarters = [
+    '1й квартал',
+    '2й квартал',
+    '3й квартал',
+    '4й квартал',
+];
+$months = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+];
+$days = [
+    1 => '01',
+    2 => '02',
+    3 => '03',
+    4 => '04',
+    5 => '05',
+    6 => '06',
+    7 => '07',
+    8 => '08',
+    9 => '09',
+    10 => '10',
+    11 => '11',
+    12 => '12',
+    13 => '13',
+    14 => '14',
+    15 => '15',
+    16 => '16',
+    17 => '17',
+    18 => '18',
+    19 => '19',
+    20 => '20',
+    21 => '21',
+    22 => '22',
+    23 => '23',
+    24 => '24',
+    25 => '25',
+    26 => '26',
+    27 => '27',
+    28 => '28',
+    29 => '29',
+    30 => '30',
+    31 => '31',
+];
+
+$ts1 = strtotime($searchModel->dateFrom);
+$ts2 = strtotime($searchModel->dateTo);
+
+$year1 = date('Y', $ts1);
+$year2 = date('Y', $ts2);
+
+$month1 = date('m', $ts1);
+$month2 = date('m', $ts2);
+
+$diff = (($year2 - $year1) * 12) + ($month2 - $month1);
+switch ($diff) {
+    case 1:
+        $period = 1;
+        break;
+    case 3:
+        $period = 2;
+        break;
+    case 6:
+        $period = 3;
+        break;
+    case 12:
+        $period = 4;
+        break;
+    case 0:
+        // для фильтра по дням
+        $period = 5;
+        break;
+    default:
+        $period = 0;
+}
+
+$rangeYear = range(date('Y') - 10, date('Y'));
+$currentYear = isset($searchModel->dateFrom)
+    ? date('Y', strtotime($searchModel->dateFrom))
+    : date('Y');
+
+$currentMonth = isset($searchModel->dateFrom)
+    ? date('n', strtotime($searchModel->dateFrom))
+    : date('n');
+$currentMonth--;
+
+$currentDay = isset($searchModel->dateFrom) ? date('j', strtotime($searchModel->dateFrom)) : 1;
+
+$filters = '';
+$periodForm = '';
+$periodForm .= Html::dropDownList('period', $period, Entry::$periodList, [
+    'class' => 'select-period form-control',
+    'style' => 'margin-right: 10px;'
+]);
+$periodForm .= Html::dropDownList('day', $currentDay, $days, [
+    'id' => 'day',
+    'class' => 'autoinput form-control',
+    'style' => $period == 5 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('month', $currentMonth, $months, [
+    'id' => 'month',
+    'class' => 'autoinput form-control',
+    'style' => ($diff == 1) || ($period == 5) ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('half', $currentMonth < 5 ? 0 : 1, $halfs, [
+    'id' => 'half',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 6 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters, [
+    'id' => 'quarter',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 3 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
+    'id' => 'year',
+    'class' => 'autoinput form-control',
+    'style' => ($diff && $diff <= 12) || $period == 5 ? '' : 'display:none'
+]);
+
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
+
+$filters = 'Выбор периода: ' . $periodForm;
+// Фильтр
+
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -505,6 +650,34 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             'dataProvider' => $dataProvider,
             'layout' => '{items}',
             'emptyText' => '',
+            'filterSelector' => '.ext-filter',
+            'resizableColumns' => false,
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $filters,
+                            'options' => [
+                                'style' => 'vertical-align: middle',
+                                'colspan' => 13,
+                                'class' => 'kv-grid-group-filter',
+                            ],
+                        ]
+                    ],
+                    'options' => ['class' => 'extend-header'],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'content' => '&nbsp',
+                            'options' => [
+                                'colspan' => 13,
+                            ]
+                        ]
+                    ],
+                    'options' => ['class' => 'kv-group-header'],
+                ],
+            ],
             'columns' => [
                 [
                     'header' => '№',
@@ -616,11 +789,178 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                         return date('H:i d.m.Y', $data->created_at);
                     },
                     'filter'         => false,
+                    'contentOptions' => ['class' => 'value_0'],
                 ],
             ],
         ]); ?>
     </div>
 </div>
+    <div class="col-sm-12">
+        <div id="chart_div" style="width:100%;height:500px;"></div>
+        <?php
+        $js = "CanvasJS.addColorSet('blue', ['#428bca']);
+                
+                var dataTable = [];
+                var dataTmp = [];
+            
+            switch ('" . $diff . "') {
+            case '0':
+                    
+                    // Выбран день, выводим график по часам
+                    
+                    $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                    
+                    var arrIndex = index.split(':');
+                    index = arrIndex[0];
+                    
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                    });
+                    
+                // Преобразуем в нужный формат
+                dataTmp.forEach(function (value, key) {
+                    dataTable.push({
+                    label: key + ':00',
+                    y: value,
+                    });
+                });
+                // Преобразуем в нужный формат
+                
+                break;
+            case '1':
+                
+                // Выбран месяц, выводим график по дням
+                
+                $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                
+                var arrIndex = index.split(' ');
+                var arrIndex = arrIndex[1].split('.');
+                    index = parseInt(arrIndex[0]);
+                    
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                 });
+                    console.log(dataTmp);
+                // Преобразуем в нужный формат
+                dataTmp.forEach(function (value, key) {
+                    dataTable.push({
+                    label: key,
+                    y: value,
+                    });
+                });
+                // Преобразуем в нужный формат
+                
+                break;
+            case '3':
+
+                // Выбран месяц, выводим график по дням
+                
+                $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                
+                var arrIndex = index.split(' ');
+                var arrIndex = arrIndex[1].split('.');
+                    index = parseInt(arrIndex[1]);
+                    
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                 });
+                    console.log(dataTmp);
+                // Преобразуем в нужный формат
+                dataTmp.forEach(function (value, key) {
+                    dataTable.push({
+                    label: key,
+                    y: value,
+                    });
+                });
+                // Преобразуем в нужный формат
+
+                break;
+            case '6':
+                break;
+            case '12':
+                break;
+            default:
+                    
+            }
+              
+                var max = 0;
+                dataTable.forEach(function (value) {
+                
+                value.y = parseFloat(value.y);
+                    if (value.y > max) max = value.y;
+                });
+                var options = {
+                    colorSet: 'blue',
+                    dataPointMaxWidth: 40,
+                    title: {
+                        text: 'По месяцам',
+                        fontColor: '#069',
+                        fontSize: 22
+                    },
+                    subtitles: [
+                        {
+                            text: 'Прибыль',
+                            horizontalAlign: 'left',
+                            fontSize: 14,
+                            fontColor: '#069',
+                            margin: 20
+                        }
+                    ],
+                    data: [
+                        {
+                            type: 'column', //change it to line, area, bar, pie, etc
+                            dataPoints: dataTable
+                        }
+                    ],
+                    axisX: {
+                        title: 'Месяц',
+                        titleFontSize: 14,
+                        titleFontColor: '#069',
+                        titleFontWeight: 'bol',
+                        labelFontColor: '#069',
+                        labelFontWeight: 'bold',
+                        interval: 1,
+                        lineThickness: 1,
+                        labelFontSize: 14,
+                        lineColor: 'black'
+                    },
+
+                    axisY: {
+                        labelFontColor: '#069',
+                        labelFontWeight: 'bold',
+                        tickThickness: 1,
+                        gridThickness: 1,
+                        lineThickness: 1,
+                        labelFontSize: 14,
+                        lineColor: 'black',
+                        valueFormatString: '### ### ###',
+                        maximum: max + 0.1 * max
+                    }
+                };
+
+                $('#chart_div').CanvasJSChart(options);
+                ";
+        $this->registerJs($js);
+        ?>
+    </div>
 <?php
 
 // Модальное окно зновонк клиенту
