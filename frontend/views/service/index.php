@@ -47,6 +47,7 @@ if(Yii::$app->controller->action->id != 'replace') {
         'dataProvider' => $dataProvider,
         'type' => $type,
         'CarTypes' => $CarTypes,
+        'CarMarks' => $CarMarks,
         'CompanyList' => $CompanyList,
     ]);
 }

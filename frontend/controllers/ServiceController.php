@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Company;
+use common\models\Mark;
 use common\models\search\ServiceSearch;
 use common\models\ServiceReplace;
 use common\models\ServiceReplaceItem;
@@ -154,6 +155,7 @@ class ServiceController extends Controller
 
         $model = new ServiceReplace();
         $CarTypes = Type::find()->select('name')->indexBy('id')->asArray()->column();
+        $CarMarks = Mark::find()->select('name')->indexBy('id')->asArray()->column();
         $CompanyList = Company::find()->where(['OR', ['type' => $type], ['type' => Company::TYPE_OWNER]])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('id')->asArray()->column();
 
         return $this->render('index', [
@@ -162,6 +164,7 @@ class ServiceController extends Controller
             'model' => $model,
             'type' => $type,
             'CarTypes' => $CarTypes,
+            'CarMarks' => $CarMarks,
             'CompanyList' => $CompanyList,
         ]);
     }
@@ -186,13 +189,28 @@ class ServiceController extends Controller
         } elseif(!($params['ServiceReplace']['type_client'] > 0)) {
             $params['ServiceReplace']['type_client'] = 0;
         }
+        // Если не заданы типы ТС
+
+        // Если не задана марка ТС
+        if(!isset($params['ServiceReplace']['mark_partner'])) {
+            $params['ServiceReplace']['mark_partner'] = 0;
+        } elseif(!($params['ServiceReplace']['mark_partner'] > 0)) {
+            $params['ServiceReplace']['mark_partner'] = 0;
+        }
+
+        if(!isset($params['ServiceReplace']['mark_client'])) {
+            $params['ServiceReplace']['mark_client'] = 0;
+        } elseif(!($params['ServiceReplace']['mark_client'] > 0)) {
+            $params['ServiceReplace']['mark_client'] = 0;
+        }
+        // Если не задана марка ТС
 
         // не сохранять если не переданы услуги
         if((isset($params['partner'])) && (isset($params['client']))) {
             if ((count($params['partner']) > 0) && (count($params['client']) > 0)) {
 
                 // Если задан тип тс то у обоих
-                if ((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) {
+                if(((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
 
                     if ($model->load($params) && $model->save()) {
                     // Успешно
@@ -250,9 +268,24 @@ class ServiceController extends Controller
             } elseif (!($params['ServiceReplace']['type_client'] > 0)) {
                 $params['ServiceReplace']['type_client'] = 0;
             }
+            // Если не заданы типы ТС
+
+            // Если не задана марка ТС
+            if(!isset($params['ServiceReplace']['mark_partner'])) {
+                $params['ServiceReplace']['mark_partner'] = 0;
+            } elseif(!($params['ServiceReplace']['mark_partner'] > 0)) {
+                $params['ServiceReplace']['mark_partner'] = 0;
+            }
+
+            if(!isset($params['ServiceReplace']['mark_client'])) {
+                $params['ServiceReplace']['mark_client'] = 0;
+            } elseif(!($params['ServiceReplace']['mark_client'] > 0)) {
+                $params['ServiceReplace']['mark_client'] = 0;
+            }
+            // Если не задана марка ТС
 
             // Если задан тип тс то у обоих
-            if ((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) {
+            if(((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
 
                 // не сохранять если не переданы услуги
                 if ((isset($params['partner'])) && (isset($params['client']))) {

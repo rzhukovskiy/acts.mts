@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer $company_id
  * @property integer $type
  * @property integer $car_type
+ * @property integer $car_mark
  */
 class ServiceReplaceItem extends ActiveRecord
 {
@@ -32,7 +33,7 @@ class ServiceReplaceItem extends ActiveRecord
     {
         return [
             [['replace_id', 'service_id', 'company_id', 'type'], 'required'],
-            [['replace_id', 'service_id', 'company_id', 'type', 'car_type'], 'integer'],
+            [['replace_id', 'service_id', 'company_id', 'type', 'car_type', 'car_mark'], 'integer'],
         ];
     }
 
@@ -48,6 +49,7 @@ class ServiceReplaceItem extends ActiveRecord
             'company_id' => 'Компания',
             'type' => 'Тип',
             'car_type' => 'Тип ТС',
+            'car_mark' => 'Марка ТС',
         ];
     }
 }

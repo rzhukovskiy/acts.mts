@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use common\models\Company;
 use common\models\Service;
 use common\models\Type;
+use common\models\Mark;
 
 /* @var $this yii\web\View
  * @var $model common\models\Service
@@ -63,6 +64,13 @@ if(!$model->isNewRecord) {
             <tr>
                 <td><?= $form->field($model, 'type_partner')->dropDownList(Type::find()->select('name')->indexBy('id')->orderBy('name')->asArray()->column(), ['class' => 'form-control input-sm', 'prompt' => 'Выберите тип ТС'])->label(false) ?></td>
                 <td><?= $form->field($model, 'type_client')->dropDownList(Type::find()->select('name')->indexBy('id')->orderBy('name')->asArray()->column(), ['class' => 'form-control input-sm', 'prompt' => 'Выберите тип ТС'])->label(false) ?></td>
+            </tr>
+            <tr style="background: #aedaff;">
+                <td colspan="2" class="list-label-md" width="50%"><b>Марка</b></td>
+            </tr>
+            <tr>
+                <td><?= $form->field($model, 'mark_partner')->dropDownList(Mark::find()->select('name')->indexBy('id')->orderBy('name')->asArray()->column(), ['class' => 'form-control input-sm', 'prompt' => 'Выберите марку ТС'])->label(false) ?></td>
+                <td><?= $form->field($model, 'mark_client')->dropDownList(Mark::find()->select('name')->indexBy('id')->orderBy('name')->asArray()->column(), ['class' => 'form-control input-sm', 'prompt' => 'Выберите марку ТС'])->label(false) ?></td>
             </tr>
             <tr style="background: #aedaff;">
                 <td colspan="2" class="list-label-md" width="50%"><b>Услуги</b></td>

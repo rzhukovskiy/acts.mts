@@ -15,6 +15,8 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $type
  * @property integer $type_client
  * @property integer $type_partner
+ * @property integer $mark_client
+ * @property integer $mark_partner
  * @property integer $created_at
  * @property integer $updated_at
  */
@@ -45,7 +47,7 @@ class ServiceReplace extends ActiveRecord
     {
         return [
             [['client_id', 'partner_id', 'type'], 'required'],
-            [['client_id', 'partner_id', 'type', 'type_client', 'type_partner', 'created_at', 'updated_at'], 'integer'],
+            [['client_id', 'partner_id', 'type', 'type_client', 'type_partner', 'mark_client', 'mark_partner', 'created_at', 'updated_at'], 'integer'],
         ];
     }
 
@@ -61,6 +63,8 @@ class ServiceReplace extends ActiveRecord
             'type' => 'Тип',
             'type_client' => 'Тип ТС клиента',
             'type_partner' => 'Тип ТС партнера',
+            'mark_client' => 'Марка ТС клиента',
+            'mark_partner' => 'Марка ТС партнера',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата изменения',
         ];

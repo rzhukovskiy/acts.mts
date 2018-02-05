@@ -9,6 +9,7 @@ use yii\helpers\Html;
  */
 
 $GLOBALS['CarTypes'] = $CarTypes;
+$GLOBALS['CarMarks'] = $CarMarks;
 $GLOBALS['CompanyList'] = $CompanyList;
 
 ?>
@@ -59,6 +60,26 @@ $GLOBALS['CompanyList'] = $CompanyList;
                     'value' => function ($data) {
                         if($data->type_client > 0) {
                             return isset($GLOBALS['CarTypes'][$data->type_client]) ? $GLOBALS['CarTypes'][$data->type_client] : '-';
+                        } else {
+                            return '-';
+                        }
+                    },
+                ],
+                [
+                    'attribute' => 'mark_partner',
+                    'value' => function ($data) {
+                        if($data->mark_partner > 0) {
+                            return isset($GLOBALS['CarMarks'][$data->mark_partner]) ? $GLOBALS['CarMarks'][$data->mark_partner] : '-';
+                        } else {
+                            return '-';
+                        }
+                    },
+                ],
+                [
+                    'attribute' => 'mark_client',
+                    'value' => function ($data) {
+                        if($data->mark_client > 0) {
+                            return isset($GLOBALS['CarMarks'][$data->mark_client]) ? $GLOBALS['CarMarks'][$data->mark_client] : '-';
                         } else {
                             return '-';
                         }
