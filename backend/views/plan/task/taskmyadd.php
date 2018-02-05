@@ -50,6 +50,7 @@ echo Tabs::widget([
             ],
         ]); ?>
         <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control']) ?>
+        <?= $form->field($model, 'title')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите тему']) ?>
         <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,

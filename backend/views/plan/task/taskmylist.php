@@ -100,7 +100,7 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskmyfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
@@ -246,7 +246,7 @@ if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskmyfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }

@@ -137,6 +137,61 @@ var showStatusVar = $(".showStatus");
     });
 // При наведении на название показывается статус актов
 
+
+window.onload=function(){           
+       var companyTR = $('tbody tr');
+       var numCount = 0;
+       var userName = [];
+       var i = 0;
+       var userOld = '';
+       var userNow = '';
+       var resTables = '';
+       var resUsers = '';
+       var nameTabs = '';
+       
+     $(companyTR).each(function (id, value) {
+        var thisId = $(this);
+        if(!(thisId.find('td div').hasClass('empty'))) {
+             if (thisId.attr('class') == "kv-grid-group-row") {
+                 userNow = thisId.find($('td[data-even-css="kv-group-header"]')).text();
+                  if (i == 0) {
+                      userName[userNow] = 0;
+                  } else {
+                      userName[userOld] = numCount;
+                  }
+                  numCount = 0;
+           } else if (thisId.attr('class') == "kv-page-summary warning") {
+                 if (i > 0) {
+                 userName[userNow] = numCount;
+                 }
+           } else if (thisId.attr('data-key') > 0) {
+                numCount++;
+           }
+        }
+        userOld = userNow;
+        i++;
+     });
+    
+       for (var key in userName) {
+    if (userName.hasOwnProperty(key)) {
+        resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ key +'</td><td style="padding: 3px 5px 3px 5px">' + userName[key] + '</td></tr>';
+    }
+}
+// Подсчет кол.
+            if ($win == 2) {
+           nameTabs = 'Количество в архиве';
+            } else if ($win == 0) {
+           nameTabs = 'Количество в работе';
+            }
+            resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
+             '<tr style="background: #428bca; color: #fff;">' +
+              '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
+               '</tr>' +
+                '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
+           if($win == 2 || $win == 0) {
+            $('.place_list').html(resTables);
+            }
+       }
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
@@ -148,12 +203,6 @@ echo Tabs::widget([
         ['label' => 'Не взяли', 'url' => ['company/tenderownerlist?win=3'], 'active' => $win == 3],
     ],
 ]);
-
-// подсчет количества тендеров в работе
-$userDen = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 256])->count();
-$userAlyona = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 654])->count();
-$userMasha = TenderOwner::find()->Where(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 756])->count();
-// конец подсчет количества тендеров в работе
 
 if ($win == 1) {
 $collumn = [
@@ -428,6 +477,7 @@ $collumn = [
         [
             'attribute' => 'text',
             'vAlign'=>'middle',
+            'pageSummary' => 'Всего',
             'header' => 'Текст',
             'value' => function ($data) {
 
@@ -442,6 +492,8 @@ $collumn = [
         [
             'attribute' => 'purchase',
             'vAlign'=>'middle',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
             'contentOptions' => ['style' => 'min-width: 130px'],
             'value' => function ($data) {
 
@@ -556,48 +608,8 @@ $collumn = [
     ];
 }
 
-$statTable = '';
-$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
-                <tr style="background: #428bca; color: #fff;">
-                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">В работе</td>
-                </tr>';
-$statTable .=  '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
-                    <td class="userDen" width="300px;" style="padding: 3px 5px 3px 5px">' . $userDen .'</td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
+$statTable = '<div class="place_list"></div>';
 
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderownerlist?win=" . 256);
-
-$statTable .=  '<tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
-                    <td class="userAlyna" width="300px;" style="padding: 3px 5px 3px 5px">' . $userAlyona .'</td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderownerlist?win=" . 654);
-
-$statTable .= '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
-                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px">' . $userMasha .'</td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderownerlist?win=" . 756);
-
-$statTable .= '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Всего</td>
-                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px">' . ($userDen + $userAlyona + $userMasha) .'</td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderownerlist?win=" . 0);
-
-$statTable .= '</td>
-                </tr>
-            </table>';
 ?>
 
 <div class="panel panel-primary">
@@ -615,6 +627,7 @@ $statTable .= '</td>
             'striped' => false,
             'export' => false,
             'summary' => false,
+            'showPageSummary' => true,
             'emptyText' => '',
             'layout' => '{items}',
             'beforeHeader' => [

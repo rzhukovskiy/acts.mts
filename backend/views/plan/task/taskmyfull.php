@@ -93,6 +93,30 @@ echo Tabs::widget([
             </tr>
             <tr>
                 <td class="list-label-md">
+                    <?= $model->getAttributeLabel('title') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'title',
+                        'displayValue' => $model->title,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите тему'],
+                        'formOptions' => [
+                            'action' => ['/plan/taskmyupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="list-label-md">
                     <?= $model->getAttributeLabel('task') ?></td>
                 <td>
                     <?= Editable::widget([
