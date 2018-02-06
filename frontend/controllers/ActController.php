@@ -458,12 +458,12 @@ class ActController extends Controller
 
                             $numTrueDis = 0;
 
-                            if ($numRows > 2) {
+                            if ($numRows > 1) {
 
                                 for ($i = 0; $i < $numRows; $i++) {
 
                                     // Цикл по столбцам
-                                    if ($i > 1) {
+                                    if ($i > 0) {
 
                                         $numCol = count($tables[$i]);
 

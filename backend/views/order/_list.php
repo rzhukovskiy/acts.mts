@@ -802,18 +802,38 @@ $filters = 'Выбор периода: ' . $periodForm;
                 
                 var dataTable = [];
                 var dataTmp = [];
+                
+                var monthsList = [
+                'январь',
+                'февраль',
+                'март',
+                'апрель',
+                'май',
+                'июнь',
+                'июль',
+                'август',
+                'сентябрь',
+                'октябрь',
+                'ноябрь',
+                'декабрь',
+                ];
+                
+                var titleCanves = '';
+                var MetaCanves = '';
             
             switch ('" . $diff . "') {
             case '0':
                     
                     // Выбран день, выводим график по часам
+                    titleCanves = 'По часам';
+                    MetaCanves = 'час';
                     
                     $('.table tbody tr').each(function (id, value) {
                 
                     var index = $(this).find('.value_0').text();
                     
                     var arrIndex = index.split(':');
-                    index = arrIndex[0];
+                    index = parseInt(arrIndex[0]);
                     
                     if(dataTmp[index]) {
                         dataTmp[index]++;
@@ -836,6 +856,8 @@ $filters = 'Выбор периода: ' . $periodForm;
             case '1':
                 
                 // Выбран месяц, выводим график по дням
+                    titleCanves = 'По дням';
+                    MetaCanves = 'день';
                 
                 $('.table tbody tr').each(function (id, value) {
                 
@@ -852,7 +874,7 @@ $filters = 'Выбор периода: ' . $periodForm;
                     }
                     
                  });
-                    console.log(dataTmp);
+                    
                 // Преобразуем в нужный формат
                 dataTmp.forEach(function (value, key) {
                     dataTable.push({
@@ -865,7 +887,9 @@ $filters = 'Выбор периода: ' . $periodForm;
                 break;
             case '3':
 
-                // Выбран месяц, выводим график по дням
+                // Выбран квартал выводим график по месяцам
+                    titleCanves = 'По кварталу';
+                    MetaCanves = 'месяц';
                 
                 $('.table tbody tr').each(function (id, value) {
                 
@@ -882,11 +906,11 @@ $filters = 'Выбор периода: ' . $periodForm;
                     }
                     
                  });
-                    console.log(dataTmp);
+                    
                 // Преобразуем в нужный формат
                 dataTmp.forEach(function (value, key) {
                     dataTable.push({
-                    label: key,
+                    label: monthsList[key - 1],
                     y: value,
                     });
                 });
@@ -894,11 +918,101 @@ $filters = 'Выбор периода: ' . $periodForm;
 
                 break;
             case '6':
+                // Выбран пол года выводим график по месяцам
+                    titleCanves = 'По полугодию';
+                    MetaCanves = 'месяц';
+                
+                $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                
+                var arrIndex = index.split(' ');
+                var arrIndex = arrIndex[1].split('.');
+                    index = parseInt(arrIndex[1]);
+                    
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                 });
+                    
+                // Преобразуем в нужный формат
+                dataTmp.forEach(function (value, key) {
+                    dataTable.push({
+                    label: monthsList[key - 1],
+                    y: value,
+                    });
+                });
+                // Преобразуем в нужный формат
                 break;
             case '12':
+                // Выбран год, выводим график по месяцам
+                    titleCanves = 'По году';
+                    MetaCanves = 'месяц';
+                
+                $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                
+                var arrIndex = index.split(' ');
+                var arrIndex = arrIndex[1].split('.');
+                    index = parseInt(arrIndex[1]);
+                    
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                 });
+                    
+                // Преобразуем в нужный формат
+                dataTmp.forEach(function (value, key) {
+                    dataTable.push({
+                    label: monthsList[key - 1],
+                    y: value,
+                    });
+                });
+                // Преобразуем в нужный формат
                 break;
             default:
+                // Выбран период за все время
+                    titleCanves = 'За все время';
+                    MetaCanves = 'месяц и год';
+                
+                $('.table tbody tr').each(function (id, value) {
+                
+                    var index = $(this).find('.value_0').text();
+                
+                var arrIndex = index.split(' ');
+                var arrIndex = arrIndex[1].split('.');
+                    index = parseInt(arrIndex[1]).toString() + '.' + parseInt(arrIndex[2]).toString();
                     
+                    if(dataTmp[index]) {
+                        dataTmp[index]++;
+                    } else {
+                        dataTmp[index] = 1;
+                    }
+                    
+                 });
+                    
+                // Преобразуем в нужный формат
+                for (key in dataTmp) {
+                    if (dataTmp[key]) {
+                        var arrKey = key.split('.');
+                        var keyM = arrKey[0] - 1;
+                        keyM = monthsList[keyM];
+                        var keyY = arrKey[1];
+               
+                        dataTable.push({
+                            label: (keyM + ' ' + keyY.toString()),
+                            y: dataTmp[key],
+                        });
+                    }
+                }
+                // Преобразуем в нужный формат
             }
               
                 var max = 0;
@@ -911,13 +1025,13 @@ $filters = 'Выбор периода: ' . $periodForm;
                     colorSet: 'blue',
                     dataPointMaxWidth: 40,
                     title: {
-                        text: 'По месяцам',
+                        text: titleCanves,
                         fontColor: '#069',
                         fontSize: 22
                     },
                     subtitles: [
                         {
-                            text: 'Прибыль',
+                            text: 'Записи ТС',
                             horizontalAlign: 'left',
                             fontSize: 14,
                             fontColor: '#069',
@@ -931,7 +1045,7 @@ $filters = 'Выбор периода: ' . $periodForm;
                         }
                     ],
                     axisX: {
-                        title: 'Месяц',
+                        title: MetaCanves,
                         titleFontSize: 14,
                         titleFontColor: '#069',
                         titleFontWeight: 'bol',

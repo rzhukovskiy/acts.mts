@@ -38,7 +38,7 @@ class EntrySearch extends Entry
                 ],
                 'integer'
             ],
-            [['dateFrom', 'dateTo', 'period', 'number', 'extra_number'], 'safe'],
+            [['day', 'dateFrom', 'dateTo', 'period', 'number', 'extra_number'], 'safe'],
         ];
     }
 
@@ -92,18 +92,24 @@ class EntrySearch extends Entry
             'updated_at' => $this->updated_at,
             'start_at' => $this->start_at,
             'end_at' => $this->end_at,
-            //'DATE_FORMAT(FROM_UNIXTIME(start_at), "%d-%m-%Y")' => $this->day, старый поиск по дню
         ]);
 
-        // Если период не задан то задаем сегодняшний день
-        if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
-            $this->dateFrom = date('Y-m-d') . 'T00:00:00.000Z';
-            $this->dateTo = date('Y-m-d') . 'T23:59:59.000Z';
-            $query->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $this->dateFrom, $this->dateTo]);
+        // Старый поиск по дню
+        if($this->day) {
+            $query->andWhere(['DATE_FORMAT(FROM_UNIXTIME(start_at), "%d-%m-%Y")' => $this->day]);
         } else {
-            $query->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $this->dateFrom, $this->dateTo]);
+
+            // Если период не задан то задаем сегодняшний день
+            if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
+                $this->dateFrom = date('Y-m-d') . 'T00:00:00.000Z';
+                $this->dateTo = date('Y-m-d') . 'T23:59:59.000Z';
+                $query->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $this->dateFrom, $this->dateTo]);
+            } else {
+                $query->andWhere(['between', "DATE(FROM_UNIXTIME(created_at))", $this->dateFrom, $this->dateTo]);
+            }
+            // Если период не задан то задаем сегодняшний день
+
         }
-        // Если период не задан то задаем сегодняшний день
 
         $query->andFilterWhere(['like', 'number', $this->number])
             ->andFilterWhere(['like', 'extra_number', $this->extra_number]);

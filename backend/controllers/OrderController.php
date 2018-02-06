@@ -142,11 +142,9 @@ class OrderController extends Controller
     {
         $searchModel = new EntrySearch();
         $searchModel->service_type = $type;
-        if (empty($searchModel->day)) {
-            $searchModel->day = date('d-m-Y');
-        }
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->orderBy('user_id, start_at');
+        $dataProvider->query->orderBy('created_at');
         
         $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
         return $this->render('archive', [

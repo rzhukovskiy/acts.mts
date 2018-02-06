@@ -41,7 +41,7 @@ if($requestType == 3) {
         'url' => ["/order/$action", 'type' => 3,
             'CompanySearch[card_number]' => Yii::$app->request->get('CompanySearch')['card_number'] ? Yii::$app->request->get('CompanySearch')['card_number'] : '',
             'CompanySearch[address]' => Yii::$app->request->get('CompanySearch')['address'] ? Yii::$app->request->get('CompanySearch')['address'] : '',
-            'EntrySearch[day]' => Yii::$app->request->get('EntrySearch')['day'] ? Yii::$app->request->get('EntrySearch')['day'] : ''],
+            'EntrySearch[day]' => isset(Yii::$app->request->get('EntrySearch')['day']) ? Yii::$app->request->get('EntrySearch')['day'] : ''],
         'active' => Yii::$app->controller->id == 'order' && $requestType == 3 && $requestSupType == 0,
     ];
 
@@ -53,7 +53,7 @@ if($requestType == 3) {
                 'sub' => $type_id,
                 'CompanySearch[card_number]' => Yii::$app->request->get('CompanySearch')['card_number'] ? Yii::$app->request->get('CompanySearch')['card_number'] : '',
                 'CompanySearch[address]' => Yii::$app->request->get('CompanySearch')['address'] ? Yii::$app->request->get('CompanySearch')['address'] : '',
-                'EntrySearch[day]' => Yii::$app->request->get('EntrySearch')['day'] ? Yii::$app->request->get('EntrySearch')['day'] : ''],
+                'EntrySearch[day]' => isset(Yii::$app->request->get('EntrySearch')['day']) ? Yii::$app->request->get('EntrySearch')['day'] : ''],
             'active' => Yii::$app->controller->id == 'order' && $requestType == 3 && $requestSupType == $type_id,
         ];
     }
