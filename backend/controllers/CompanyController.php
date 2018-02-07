@@ -69,17 +69,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender' ,'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -127,10 +127,10 @@ class CompanyController extends Controller
                         $newChange->service_id = $service_id;
 
                         // Проверяем добавлена или изменена цена
-                        if(isset($existed)) {
-                            if(isset($existed->price)) {
-                                if($existed->price) {
-                                    $newChange->old_value = (String) $existed->price;
+                        if (isset($existed)) {
+                            if (isset($existed->price)) {
+                                if ($existed->price) {
+                                    $newChange->old_value = (String)$existed->price;
                                     $newChange->status = Changes::EDIT_PRICE;
                                 } else {
                                     $newChange->old_value = '0';
@@ -145,14 +145,14 @@ class CompanyController extends Controller
                             $newChange->status = Changes::NEW_PRICE;
                         }
 
-                        $newChange->new_value = (String) $price;
+                        $newChange->new_value = (String)$price;
                         $newChange->company_id = $companyService->company_id;
                         $newChange->type_id = $companyService->type_id;
-                        $newChange->date = (String) time();
+                        $newChange->date = (String)time();
 
-                        if(($newChange->status == Changes::EDIT_PRICE) && (($newChange->old_value > $newChange->new_value) || ($newChange->old_value < $newChange->new_value))) {
+                        if (($newChange->status == Changes::EDIT_PRICE) && (($newChange->old_value > $newChange->new_value) || ($newChange->old_value < $newChange->new_value))) {
                             $newChange->save();
-                        } else if(($newChange->status == Changes::NEW_PRICE)) {
+                        } else if (($newChange->status == Changes::NEW_PRICE)) {
                             $newChange->save();
                         }
                         // Добавление в историю изменения цен
@@ -180,7 +180,7 @@ class CompanyController extends Controller
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
         $searchModel->status = Company::STATUS_NEW;
-        
+
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
         } else {
@@ -191,14 +191,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -246,15 +246,15 @@ class CompanyController extends Controller
         $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list',
-        [
-            'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
-            'type'         => $type,
-            'model'        => $model,
-            'listType'     => $listType,
-            'userData'     => $userData,
-            'admin'        => Yii::$app->user->identity->role == User::ROLE_ADMIN,
-        ]);
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
+                'userData' => $userData,
+                'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
+            ]);
     }
 
     /**
@@ -281,14 +281,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -297,7 +297,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address'    => SORT_ASC,
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -320,10 +320,10 @@ class CompanyController extends Controller
         return $this->render('list',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'type'         => $type,
-                'model'        => $model,
-                'listType'     => $listType,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
             ]);
     }
 
@@ -339,7 +339,7 @@ class CompanyController extends Controller
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        $searchModel->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
+        $searchModel->status = [Company::STATUS_ARCHIVE, Company::STATUS_ACTIVE];
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -351,14 +351,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -367,7 +367,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address'    => SORT_ASC,
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -378,7 +378,7 @@ class CompanyController extends Controller
         foreach ($listType as $type_id => &$typeData) {
             $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
             $badgeSearch->type = $type_id;
-            $badgeSearch->status = [Company::STATUS_ARCHIVE , Company::STATUS_ACTIVE];
+            $badgeSearch->status = [Company::STATUS_ARCHIVE, Company::STATUS_ACTIVE];
             if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
                 $badgeSearch->user_id = $currentUser->id;
             }
@@ -390,10 +390,10 @@ class CompanyController extends Controller
         return $this->render('list',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'type'         => $type,
-                'model'        => $model,
-                'listType'     => $listType,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
             ]);
     }
 
@@ -421,14 +421,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -437,7 +437,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address'    => SORT_ASC,
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -458,13 +458,13 @@ class CompanyController extends Controller
         $this->view->title = 'Отказавшиеся - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list',
-        [
-            'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
-            'type'         => $type,
-            'model'        => $model,
-            'listType'     => $listType,
-        ]);
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
+            ]);
     }
 
     /**
@@ -491,14 +491,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -507,7 +507,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address'    => SORT_ASC,
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -530,10 +530,10 @@ class CompanyController extends Controller
         return $this->render('list',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'type'         => $type,
-                'model'        => $model,
-                'listType'     => $listType,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
             ]);
     }
 
@@ -557,14 +557,14 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Подкатегории для сервиса
-        if($type == 3) {
+        if ($type == 3) {
             $requestSupType = 0;
 
-            if(Yii::$app->request->get('sub')) {
+            if (Yii::$app->request->get('sub')) {
                 $requestSupType = Yii::$app->request->get('sub');
             }
 
-            if($requestSupType > 0) {
+            if ($requestSupType > 0) {
                 $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
             }
 
@@ -573,7 +573,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'address'    => SORT_ASC,
+                'address' => SORT_ASC,
                 'created_at' => SORT_DESC,
             ]
         ];
@@ -596,10 +596,10 @@ class CompanyController extends Controller
         return $this->render('list',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'type'         => $type,
-                'model'        => $model,
-                'listType'     => $listType,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
             ]);
     }
 
@@ -625,9 +625,9 @@ class CompanyController extends Controller
         return $this->render('tender/tenderlist',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
-                'listType'     => $listType,
-                'usersList'     => $usersList,
+                'searchModel' => $searchModel,
+                'listType' => $listType,
+                'usersList' => $usersList,
             ]);
     }
 
@@ -650,14 +650,14 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'term_contract'    => SORT_ASC,
+                'term_contract' => SORT_DESC,
             ]
         ];
 
         return $this->render('tender/filtertender',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
+                'searchModel' => $searchModel,
             ]);
     }
 
@@ -676,7 +676,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'date_request_end'    => SORT_ASC,
+                'date_request_end' => SORT_ASC,
             ]
         ];
 
@@ -684,7 +684,7 @@ class CompanyController extends Controller
 
         return $this->render('tenders', [
             'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
+            'searchModel' => $searchModel,
             'model' => $model,
             'usersList' => $usersList,
         ]);
@@ -860,12 +860,12 @@ class CompanyController extends Controller
     public function actionTendermemberwin($tender_id, $member_id, $winner)
     {
 
-        if($winner == 1) {
+        if ($winner == 1) {
 
             // Проверка
             $model = TenderLinks::findOne(['tender_id' => $tender_id, 'member_id' => $member_id]);
 
-            if($model->winner == 0) {
+            if ($model->winner == 0) {
 
                 TenderLinks::updateAll(['winner' => 0], ['tender_id' => $tender_id]);
 
@@ -899,7 +899,7 @@ class CompanyController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        if($win) {
+        if ($win) {
             $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]]);
         } else {
             $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 17], ['purchase_status' => 20], ['purchase_status' => 23]]);
@@ -907,7 +907,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'term_contract'    => SORT_ASC,
+                'term_contract' => SORT_ASC,
             ]
         ];
 
@@ -916,7 +916,7 @@ class CompanyController extends Controller
         return $this->render('tender/archivetender',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel'  => $searchModel,
+                'searchModel' => $searchModel,
                 'win' => $win,
                 'usersList' => $usersList,
             ]);
@@ -933,7 +933,7 @@ class CompanyController extends Controller
 
         return $this->render('tender/controltender', [
             'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
+            'searchModel' => $searchModel,
             'usersList' => $usersList,
 
         ]);
@@ -988,14 +988,14 @@ class CompanyController extends Controller
 
             for ($i = 0; $i < count($arrayTenderList); $i++) {
 
-                if($arrayTenderList[$i]['type'] == $oldType) {
+                if ($arrayTenderList[$i]['type'] == $oldType) {
 
                     $index = $arrayTenderList[$i]['id'];
                     $tmpArray[$index] = $arrayTenderList[$i]['description'];
 
                 } else {
 
-                    if($i > 0) {
+                    if ($i > 0) {
 
                         $arrLists[$oldType] = $tmpArray;
                         $tmpArray = [];
@@ -1014,7 +1014,7 @@ class CompanyController extends Controller
                     }
                 }
 
-                if(($i + 1) == count($arrayTenderList)) {
+                if (($i + 1) == count($arrayTenderList)) {
                     $arrLists[$oldType] = $tmpArray;
                 }
 
@@ -1029,13 +1029,13 @@ class CompanyController extends Controller
 
             foreach ($arrUpdate as $name => $value) {
                 if ($name == 'date_send') {
-                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
-                } else if($name == 'date_enlistment') {
-                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
-                } else if($name == 'money_unblocking') {
-                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
-                } else if($name == 'date_return') {
-                    $arrUpdate['TenderControl'][$name] = (String) strtotime($value);
+                    $arrUpdate['TenderControl'][$name] = (String)strtotime($value);
+                } else if ($name == 'date_enlistment') {
+                    $arrUpdate['TenderControl'][$name] = (String)strtotime($value);
+                } else if ($name == 'money_unblocking') {
+                    $arrUpdate['TenderControl'][$name] = (String)strtotime($value);
+                } else if ($name == 'date_return') {
+                    $arrUpdate['TenderControl'][$name] = (String)strtotime($value);
                 }
             }
 
@@ -1043,20 +1043,20 @@ class CompanyController extends Controller
                 $output = [];
                 if (Yii::$app->request->post('TenderControl')) {
 
-                foreach (Yii::$app->request->post('TenderControl') as $name => $value) {
+                    foreach (Yii::$app->request->post('TenderControl') as $name => $value) {
 
-                    if ($name == 'site_address') {
-                        $output[] = $arrSiteAddress[$value];
-                    } else if ($name == 'type_payment') {
-                        $output[] = $arrTypePayment[$value];
-                    } else if ($name == 'user_id') {
-                        $output[] = $usersList[$value];
-                    } else {
-                        $output[] = $value;
+                        if ($name == 'site_address') {
+                            $output[] = $arrSiteAddress[$value];
+                        } else if ($name == 'type_payment') {
+                            $output[] = $arrTypePayment[$value];
+                        } else if ($name == 'user_id') {
+                            $output[] = $usersList[$value];
+                        } else {
+                            $output[] = $value;
+                        }
+
                     }
-
                 }
-            }
                 if (Yii::$app->request->post('date_return')) {
                     $output[] = $value;
                 } else if (Yii::$app->request->post('money_unblocking')) {
@@ -1081,20 +1081,20 @@ class CompanyController extends Controller
     public function actionControlisarchive()
     {
 
-        if(Yii::$app->request->get('id')) {
+        if (Yii::$app->request->get('id')) {
 
             $id = Yii::$app->request->get('id');
             $is_archive = Yii::$app->request->get('is_archive');
 
             $model = TenderControl::findOne(['id' => $id]);
 
-            if($is_archive == 1) {
+            if ($is_archive == 1) {
                 $model->is_archive = 0;
             } else {
                 $model->is_archive = 1;
             }
 
-            if($model->save()) {
+            if ($model->save()) {
                 return $this->redirect(['company/controltender']);
             } else {
                 return $this->redirect(['company/controltender']);
@@ -1105,23 +1105,25 @@ class CompanyController extends Controller
         }
 
     }
+
     // Скачиваем файл Excel для заполнения
     public function actionTendersexcel()
     {
-            $resExcel = self::createExcelTenders();
+        $resExcel = self::createExcelTenders();
 
-            $pathFile = Yii::getAlias('@webroot/files/tenders/filtertender.xls');
+        $pathFile = Yii::getAlias('@webroot/files/tenders/filtertender.xls');
 
-            header("Content-Type: application/octet-stream");
-            header("Accept-Ranges: bytes");
-            header("Content-Length: ".filesize($pathFile));
-            header("Content-Disposition: attachment; filename=filtertender.xls");
-            readfile($pathFile);
+        header("Content-Type: application/octet-stream");
+        header("Accept-Ranges: bytes");
+        header("Content-Length: " . filesize($pathFile));
+        header("Content-Disposition: attachment; filename=filtertender.xls");
+        readfile($pathFile);
 
     }
 
     // Формирование Excel файла
-    public static function createExcelTenders() {
+    public static function createExcelTenders()
+    {
 
         $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, cost_purchase_completion, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
 
@@ -1150,7 +1152,7 @@ class CompanyController extends Controller
         $row = 1;
 
         // Body
-        if(count($arrTenders) > 0) {
+        if (count($arrTenders) > 0) {
 
             $companyWorkSheet->getColumnDimension('A')->setWidth(20);
             $companyWorkSheet->getColumnDimension('B')->setWidth(20);
@@ -1186,7 +1188,7 @@ class CompanyController extends Controller
                     'font' => [
                         'bold' => true,
                         'size' => 12,
-                        'name'  => 'Times New Roman'
+                        'name' => 'Times New Roman'
                     ],
                 ]
             );
@@ -1207,14 +1209,14 @@ class CompanyController extends Controller
 
                 for ($j = 0; $j < count($arrayTenderList); $j++) {
 
-                    if($arrayTenderList[$j]['type'] == $oldType) {
+                    if ($arrayTenderList[$j]['type'] == $oldType) {
 
                         $index = $arrayTenderList[$j]['id'];
                         $tmpArray[$index] = $arrayTenderList[$j]['description'];
 
                     } else {
 
-                        if($j > 0) {
+                        if ($j > 0) {
 
                             $arrLists[$oldType] = $tmpArray;
                             $tmpArray = [];
@@ -1233,7 +1235,7 @@ class CompanyController extends Controller
                         }
                     }
 
-                    if(($j + 1) == count($arrayTenderList)) {
+                    if (($j + 1) == count($arrayTenderList)) {
                         $arrLists[$oldType] = $tmpArray;
                     }
 
@@ -1249,24 +1251,24 @@ class CompanyController extends Controller
 
                     if ((is_array($serviseVal)) && (count($serviseVal) > 0)) {
 
-                            for ($z = 0; $z < count($serviseVal); $z++) {
+                        for ($z = 0; $z < count($serviseVal); $z++) {
 
-                                if($z == (count($serviseVal) - 1)) {
-                                    if (isset($ServicesList[$serviseVal[$z]])) {
-                                        $stringServText .= $ServicesList[$serviseVal[$z]];
-                                    } else {
-                                        $stringServText .= "-";
-                                    }
+                            if ($z == (count($serviseVal) - 1)) {
+                                if (isset($ServicesList[$serviseVal[$z]])) {
+                                    $stringServText .= $ServicesList[$serviseVal[$z]];
                                 } else {
-                                    if (isset($ServicesList[$serviseVal[$z]])) {
-                                        $stringServText .= $ServicesList[$serviseVal[$z]];
-                                        $stringServText .= ", ";
-                                    } else {
-                                        $stringServText .= "-, ";
-                                    }
+                                    $stringServText .= "-";
                                 }
-
+                            } else {
+                                if (isset($ServicesList[$serviseVal[$z]])) {
+                                    $stringServText .= $ServicesList[$serviseVal[$z]];
+                                    $stringServText .= ", ";
+                                } else {
+                                    $stringServText .= "-, ";
+                                }
                             }
+
+                        }
 
                     } else {
 
@@ -1285,7 +1287,7 @@ class CompanyController extends Controller
 
                 $showTotal = '';
 
-                if(isset($arrTenders[$i]['term_contract'])) {
+                if (isset($arrTenders[$i]['term_contract'])) {
                     $timeNow = time();
 
 
@@ -1320,35 +1322,35 @@ class CompanyController extends Controller
 
                 }
 
-                   $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? (mb_strlen($arrTenders[$i]['customer']) > 0 ? $arrTenders[$i]['customer'] : '-') : '-');
-                    $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? (mb_strlen($arrTenders[$i]['inn_customer']) > 0 ? $arrTenders[$i]['inn_customer'] : '-') : '-');
-                    $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? (mb_strlen($arrTenders[$i]['city']) > 0 ? $arrTenders[$i]['city'] : '-') : '-');
-                    $companyWorkSheet->setCellValue('D' . $row, $stringServText);
-                    $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
-                    $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
-                    $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
-                    $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
-                    $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
-                    $companyWorkSheet->setCellValue('J' . $row, $showTotal);
+                $companyWorkSheet->setCellValue('A' . $row, isset($arrTenders[$i]['customer']) ? (mb_strlen($arrTenders[$i]['customer']) > 0 ? $arrTenders[$i]['customer'] : '-') : '-');
+                $companyWorkSheet->setCellValue('B' . $row, isset($arrTenders[$i]['inn_customer']) ? (mb_strlen($arrTenders[$i]['inn_customer']) > 0 ? $arrTenders[$i]['inn_customer'] : '-') : '-');
+                $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? (mb_strlen($arrTenders[$i]['city']) > 0 ? $arrTenders[$i]['city'] : '-') : '-');
+                $companyWorkSheet->setCellValue('D' . $row, $stringServText);
+                $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
+                $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
+                $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
+                $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
+                $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
+                $companyWorkSheet->setCellValue('J' . $row, $showTotal);
 
-                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
-                        'alignment' => array(
-                            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-                            'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                        )
-                    ));
+                $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    )
+                ));
 
-                    $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
-                            'font' => [
-                                'size' => 12,
-                                'name'  => 'Times New Roman'
-                            ],
-                        ]
-                    );
+                $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+                        'font' => [
+                            'size' => 12,
+                            'name' => 'Times New Roman'
+                        ],
+                    ]
+                );
 
-                    $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(17);
 
-                    $row++;
+                $row++;
             }
         }
 
@@ -1372,24 +1374,24 @@ class CompanyController extends Controller
     public function actionClosedownload()
     {
 
-        if(Yii::$app->request->post('tender_id')) {
+        if (Yii::$app->request->post('tender_id')) {
 
             $id = Yii::$app->request->post('tender_id');
             $tender_close = Yii::$app->request->post('tender_close');
 
             $model = Tender::findOne(['id' => $id]);
 
-            if($tender_close == 1) {
+            if ($tender_close == 1) {
                 $model->tender_close = 0;
             } else {
                 $model->tender_close = 1;
             }
 
-           if($model->save()) {
-               echo json_encode(['success' => 'true']);
-           } else {
-               echo json_encode(['success' => 'false']);
-           }
+            if ($model->save()) {
+                echo json_encode(['success' => 'true']);
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
 
         } else {
             echo json_encode(['success' => 'false']);
@@ -1425,49 +1427,49 @@ class CompanyController extends Controller
 
     public function actionTenderownerupdate($id)
     {
-            $model = TenderOwner::findOne(['id' => $id]);
-             $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
+        $model = TenderOwner::findOne(['id' => $id]);
+        $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
 
 
         $hasEditable = Yii::$app->request->post('hasEditable', false);
-            if ($hasEditable) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
 
-                // Подготовка данных перед сохранением
-                $arrUpdate = Yii::$app->request->post();
-                foreach ($arrUpdate['TenderOwner'] as $name => $value) {
-                    if ($name == 'date_from') {
-                        $arrUpdate['TenderOwner'][$name] = (String) strtotime($value);
-                    } else if ($name == 'date_to') {
-                        $arrUpdate['TenderOwner'][$name] = (String) strtotime($value);
-                    } else if ($name == 'reason_not_take') {
-                        $model->user_comment = Yii::$app->user->identity->id;
-                        $model->save();
-                    }
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+            foreach ($arrUpdate['TenderOwner'] as $name => $value) {
+                if ($name == 'date_from') {
+                    $arrUpdate['TenderOwner'][$name] = (String)strtotime($value);
+                } else if ($name == 'date_to') {
+                    $arrUpdate['TenderOwner'][$name] = (String)strtotime($value);
+                } else if ($name == 'reason_not_take') {
+                    $model->user_comment = Yii::$app->user->identity->id;
+                    $model->save();
                 }
+            }
 
-                if ($model->load($arrUpdate) && $model->save()) {
-                    $output = [];
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
 
-                    foreach (Yii::$app->request->post('TenderOwner') as $name => $value) {
+                foreach (Yii::$app->request->post('TenderOwner') as $name => $value) {
 
-                        if ($name == 'tender_user') {
-                            $output[] = $usersList[$value];
-                        } else if ($name == 'purchase') {
-                            $output[] = $value . " ₽";
-                        } else {
-                            $output[] = $value;
-                        }
-
+                    if ($name == 'tender_user') {
+                        $output[] = $usersList[$value];
+                    } else if ($name == 'purchase') {
+                        $output[] = $value . " ₽";
+                    } else {
+                        $output[] = $value;
                     }
 
-                    return ['output' => implode(', ', $output), 'message' => ''];
-                } else {
-                    return ['message' => 'не получилось'];
                 }
+
+                return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];
             }
+        } else {
+            return ['message' => 'не получилось'];
+        }
 
     }
 
@@ -1481,6 +1483,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
+                'status' => SORT_ASC,
                 'date_to' => SORT_ASC,
                 'purchase' => SORT_DESC,
             ]
@@ -1504,10 +1507,21 @@ class CompanyController extends Controller
 
         return $this->render('tender/tenderownerlist', [
             'dataProvider' => $dataProvider,
-            'searchModel'  => $searchModel,
+            'searchModel' => $searchModel,
             'win' => $win,
             'model' => $model,
         ]);
+
+    }
+
+    public function actionAjaxstatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+        $model = TenderOwner::findOne(['id' => $id]);
+        $model->id = $id;
+        $model->status = $status;
+        $model->save();
 
     }
 
@@ -1530,6 +1544,108 @@ class CompanyController extends Controller
         $model->save();
 
         return $this->redirect(['company/tenderownerlist?win=1']);
+    }
+
+    public function actionUploadtenderexel()
+    {
+        if (Yii::$app->request->isPost) {
+            // Загрузка в распределение тендеров из экселя
+            $uploadFile = UploadedFile::getInstanceByName('files');
+
+            if (isset($uploadFile)) {
+
+                // Проверяем что загружен Excel файл
+                $arrFileName = explode('.', $uploadFile->name);
+                $countArrFileName = count($arrFileName) - 1;
+
+                if (($arrFileName[$countArrFileName] == 'xlsx') || ($arrFileName[$countArrFileName] == 'xls')) {
+                    $pExcel = PHPExcel_IOFactory::load($uploadFile->tempName);
+
+                    // Загружаем только первую страницу
+                    $firstPage = false;
+                    $tables = [];
+
+                    foreach ($pExcel->getWorksheetIterator() as $worksheet) {
+
+                        if ($firstPage == false) {
+                            $tables[] = $worksheet->toArray();
+                            $firstPage = true;
+                        }
+
+                    }
+
+                    $tables = $tables[0];
+
+                    // Цикл по строкам
+                    $numRows = count($tables);
+
+                    $numTrueDis = 0;
+
+                    if ($numRows > 1) {
+
+                        for ($i = 0; $i < $numRows; $i++) {
+
+                            // Цикл по столбцам
+                            if ($i > 0) {
+
+                                $numCol = count($tables[$i]);
+
+                                if ($numCol > 1) {
+                                    // Проверка
+
+                                    $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
+                                    $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
+                                    $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
+                                    $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
+
+                                    $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                    $purchase_name = (str_replace('&#034;', '', $purchase_name));
+
+                                    $fz = $tables[$i][7];
+                                    $customer = $tables[$i][11];
+                                    $customer_full = $tables[$i][12];
+                                    $inn_customer = (String) $tables[$i][13];
+                                    $purchase = str_replace(',', '', (String) $tables[$i][17]);
+                                    $city = $tables[$i][19];
+                                    $link_official = $tables[$i][21];
+                                    $request_security = str_replace(',', '', (String) $tables[$i][22]);
+                                    $electronic_platform = $tables[$i][26];
+                                    $link = $tables[$i][27];
+
+                                    if ($date_from) {
+
+                                        $model = new TenderOwner();
+                                        $model->date_from = $date_from;
+                                        $model->date_to = $date_to;
+                                        $model->date_bidding = $date_bidding;
+                                        $model->date_consideration = $date_consideration;
+                                        $model->purchase_name = $purchase_name;
+                                        $model->fz = $fz;
+                                        $model->customer = $customer;
+                                        $model->customer_full = $customer_full;
+                                        $model->inn_customer = $inn_customer;
+                                        $model->purchase = $purchase;
+                                        $model->city = $city;
+                                        $model->link_official = $link_official;
+                                        $model->request_security = $request_security;
+                                        $model->electronic_platform = $electronic_platform;
+                                        $model->link = $link;
+                                        $model->save();
+
+
+                                        $numTrueDis++;
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($numTrueDis > 0) {
+                            return $this->redirect(['/company/tenderownerlist', 'win' => 1]);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Получение списков для изменения в тендерах

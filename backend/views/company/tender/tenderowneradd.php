@@ -35,9 +35,14 @@ echo Tabs::widget([
     ],
     ]); ?>
 
-    <?= $form->field($model, 'city')->input('text', ['class' => 'form-control', 'placeholder' => 'Город']) ?>
-    <?= $form->field($model, 'text')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите текст']) ?>
-    <?= $form->field($model, 'purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Сумма закупки']) ?>
+    <?= $form->field($model, 'customer')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'customer_full')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите полное наименование заказчика']) ?>
+    <?= $form->field($model, 'purchase_name')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите что закупают']) ?>
+    <?= $form->field($model, 'purchase')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'request_security')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'city')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'inn_customer')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'fz')->input('text', ['class' => 'form-control']) ?>
     <?= $form->field($model, 'date_from')->widget(DatePicker::className(), [
             'type' => DatePicker::TYPE_INPUT,
             'options' => ['placeholder' => 'Дата начала'],
@@ -56,6 +61,29 @@ echo Tabs::widget([
                 'weekStart'=>1,
             ]
         ]) ?>
+
+    <?= $form->field($model, 'date_bidding')->widget(DatePicker::className(), [
+            'type' => DatePicker::TYPE_INPUT,
+            'options' => ['placeholder' => 'Дата и время начала торгов'],
+            'pluginOptions' => [
+                'format' => 'dd.mm.yyyy',
+                'autoclose'=>true,
+                'weekStart'=>1,
+            ]
+        ]) ?>
+
+    <?= $form->field($model, 'date_consideration')->widget(DatePicker::className(), [
+            'type' => DatePicker::TYPE_INPUT,
+            'options' => ['placeholder' => 'Дата и время рассмотрения заявок'],
+            'pluginOptions' => [
+                'format' => 'dd.mm.yyyy',
+                'autoclose'=>true,
+                'weekStart'=>1,
+            ]
+        ]) ?>
+
+    <?= $form->field($model, 'link_official')->input('text', ['class' => 'form-control']) ?>
+    <?= $form->field($model, 'electronic_platform')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку с http://']) ?>
     <?= $form->field($model, 'link')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите ссылку с http://']) ?>
 
     <div class="form-group">
