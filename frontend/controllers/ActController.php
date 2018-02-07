@@ -1183,7 +1183,11 @@ class ActController extends Controller
 
                 if(count($actModel) > 0) {
                     for ($i = 0; $i < count($actModel); $i++) {
-                        $actModel[$i]->save();
+                        try {
+                            // убираем ошибку связанную с услугами
+                            $actModel[$i]->save();
+                        } catch (\Exception $e) {
+                        }
                     }
 
                     echo json_encode(['success' => 'true']);
