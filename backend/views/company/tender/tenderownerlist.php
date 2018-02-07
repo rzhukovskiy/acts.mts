@@ -831,7 +831,7 @@ $collumn = [
     ];
 }
 
-$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['OR', ['tender_id' => 0], ['tender_user' => 0], ['reason_not_take' => '']])->select('id')->column();
+$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']])->select('id')->column();
     if (count($delete) > 0) {
        for ($i = 0; $i < count($delete); $i++) {
         $modelSet = TenderOwner::findOne(['id' => $delete[$i]]);
