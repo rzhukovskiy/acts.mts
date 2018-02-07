@@ -637,21 +637,26 @@ class ActController extends Controller
 
         $showError = '';
 
-        $serviceList = '';
+        $serviceList = [];
 
-        /* старый вывод услуг в лк
-         * if($type == 2) {
-            $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $type])
-                ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
+        // Шиномонтаж услуги только где заданы цены или услуги с не фиксированными ценами
+        if($type == 4) {
+            $serviceList = Service::find()->where(['type' => $type])
+                ->innerJoin('company_service', '`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`')
+                ->orderBy('description')->select(['description', 'service.id as id'])
                 ->indexBy('id')->column();
+
+            $arrNoFixServices = Service::find()->where(['type' => $type, 'is_fixed' => 0])
+                ->orderBy('description')->select(['description', 'id'])
+                ->indexBy('id')->column();
+
+            $serviceList = array_merge($serviceList, $arrNoFixServices);
+
         } else {
             $serviceList = Service::find()->where(['type' => $type])
                 ->orderBy('description')->select(['description', 'id'])
                 ->indexBy('id')->column();
-        }*/
-        $serviceList = Service::find()->where(['type' => $type])
-            ->orderBy('description')->select(['description', 'id'])
-            ->indexBy('id')->column();
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $entryId = Yii::$app->request->post('entry_id', false);

@@ -328,8 +328,24 @@ class ActController extends Controller
                 } else {
 
                     if (($type == 2) || ($type == 3) || ($type == 4)) {
-                        $serviceList = Service::find()->where(['type' => $type])
-                            ->orderBy('description')->select(['description', 'id', 'is_fixed'])->asArray()->all();
+
+                        // Шиномонтаж услуги только где заданы цены или услуги с не фиксированными ценами
+                        if($type == 4) {
+                            $serviceList = Service::find()->where(['type' => $type])
+                                ->innerJoin('company_service', '`company_service`.`company_id`=' . $user_id . ' AND `company_service`.`service_id` = `service`.`id`')
+                                ->orderBy('description')->select(['description', 'service.id as id', 'service.is_fixed'])
+                                ->indexBy('id')->asArray()->all();
+
+                            $arrNoFixServices = Service::find()->where(['type' => $type, 'is_fixed' => 0])
+                                ->orderBy('description')->select(['description', 'id', 'is_fixed'])
+                                ->indexBy('id')->asArray()->all();
+
+                            $serviceList = array_merge($serviceList, $arrNoFixServices);
+
+                        } else {
+                            $serviceList = Service::find()->where(['type' => $type])
+                                ->orderBy('description')->select(['description', 'id', 'is_fixed'])->asArray()->all();
+                        }
 
                         $arrServiceID = [];
 
