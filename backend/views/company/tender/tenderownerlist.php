@@ -6,10 +6,14 @@ use yii\bootstrap\Tabs;
 use common\models\User;
 use yii\helpers\Url;
 use common\models\TenderOwner;
+use yii\bootstrap\Modal;
+use yii\widgets\ActiveForm;
 
 $this->title = 'Распределение тендеров';
 
 $actionLinkGetComments = Url::to('@web/company/getcomments');
+$isAdmin = (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? 1 : 0;
+$ajaxstatus = Url::to('@web/company/ajaxstatus');
 
 $css = "#previewStatus {
 background:#fff;
@@ -191,10 +195,58 @@ window.onload=function(){
            if($win == 2 || $win == 0) {
             $('.place_list').html(resTables);
             }
-       }
+       };
+       
+// открываем модальное окно добавить вложения
+$('.showFormAttachButt').on('click', function(){
+$('#showFormAttach').modal('show');
+});
+
+$('#showFormAttach div[class="modal-dialog modal-lg"] div[class="modal-content"] div[class="modal-body"]').css('padding', '20px 0px 120px 25px');
+
+$('.change-status').change(function(){
+       
+     var select=$(this);
+        $.ajax({
+            url: '$ajaxstatus',
+            type: "post",
+            data: {status:$(this).val(),id:$(this).data('id')},
+            success: function(data){
+                select.parent().attr('class',data);
+                if(($isAdmin!=1)&&(select.data('status')!=1)){
+                    select.attr('disabled', 'disabled');
+                }
+            }
+        });
+    });
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
+$modalAttach = Modal::begin([
+    'header' => '<h5>Добавить Exel</h5>',
+    'id' => 'showFormAttach',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default hideButtonComment', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div style='font-size: 15px; margin-left:15px;'>Выберите файл:</div>";
+
+$form = ActiveForm::begin([
+    'action' => ['/company/uploadtenderexel'],
+    'options' => ['enctype' => 'multipart/form-data', 'accept-charset' => 'UTF-8', 'class' => 'form-horizontal col-sm-10', 'style' => 'margin-top: 20px;'],
+    'fieldConfig' => [
+        'template' => '<div class="col-sm-6">{input}</div>',
+        'inputOptions' => ['class' => 'form-control input-sm'],
+    ],
+]);
+
+echo Html::fileInput("files", '',['accept' => '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel']) . '<br />';
+
+echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm']);
+
+ActiveForm::end();
+
+Modal::end();
 echo Tabs::widget([
     'items' => [
         ['label' => 'Новые', 'url' => ['company/tenderownerlist?win=1'], 'active' => $win == 1],
@@ -226,6 +278,32 @@ $collumn = [
         },
     ],
     [
+        'attribute' => 'customer',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->customer) {
+                return $data->customer;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+    'attribute' => 'purchase_name',
+    'vAlign'=>'middle',
+    'value' => function ($data) {
+
+        if ($data->purchase_name) {
+            return $data->purchase_name;
+        } else {
+            return '-';
+        }
+
+    },
+    ],
+    [
         'attribute' => 'purchase',
         'vAlign'=>'middle',
         'contentOptions' => ['style' => 'min-width: 130px'],
@@ -246,7 +324,7 @@ $collumn = [
         'value' => function ($data) {
 
             if ($data->date_from) {
-                return date('d.m.Y', $data->date_from);
+                return date('d.m.Y H:i', $data->date_from);
             } else {
                 return '-';
             }
@@ -260,7 +338,7 @@ $collumn = [
         'value' => function ($data) {
 
             if ($data->date_to) {
-                return date('d.m.Y', $data->date_to);
+                return date('d.m.Y H:i', $data->date_to);
             } else {
                 return '-';
             }
@@ -274,6 +352,24 @@ $collumn = [
 
             if ($data->city) {
                 return $data->city;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'electronic_platform',
+        'vAlign'=>'middle',
+        'format' => 'raw',
+        'value' => function ($data) {
+
+            if (isset($data->electronic_platform)) {
+                if ($data->electronic_platform) {
+                    return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                } else {
+                    return '-';
+                }
             } else {
                 return '-';
             }
@@ -302,6 +398,7 @@ $collumn = [
         'attribute' => 'tender_user',
         'vAlign'=>'middle',
         'format' => 'raw',
+        'contentOptions' => ['style' => 'text-align: center'],
         'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
         'header' => 'Ответственный<br />сотрудник',
         'value' => function ($data) {
@@ -312,6 +409,23 @@ $collumn = [
                 return '';
             }
 
+        },
+    ],
+    [
+        'attribute' => 'status',
+        'format' => 'raw',
+        'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'min-width: 60px; vertical-align: middle'],
+        'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+        'value' => function ($data, $key, $index, $column) {
+            return Html::activeDropDownList($data, 'status', TenderOwner::$status,
+                [
+                    'class'              => 'form-control change-status',
+                    'data-id'            => $data->id,
+                    'data-status'        => $data->status,
+                ]
+
+            );
         },
     ],
     [
@@ -337,6 +451,21 @@ $collumn = [
 } else if ($win == 3) {
     $collumn = [
         [
+            'attribute' => 'status',
+            'content' => function ($data) {
+
+                if (isset($data->status)) {
+                    return TenderOwner::$status[$data->status];
+                } else {
+                    return '-';
+                }
+            },
+            'group' => true,
+            'groupedRow' => true,
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
+        ],
+        [
             'header' => '№',
             'vAlign'=>'middle',
             'class' => 'kartik\grid\SerialColumn'
@@ -355,8 +484,38 @@ $collumn = [
                 }
 
             },
-            'contentOptions' =>function ($model, $key, $index, $column){
-                return ['data-owner' => $model->id];
+            'contentOptions' =>function ($data, $key, $index, $column){
+                return ['data-owner' => $data->id];
+            },
+        ],
+        [
+            'attribute' => 'customer',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->customer) {
+                    return $data->customer;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'purchase_name',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'value' => function ($data) {
+
+                if ($data->purchase_name) {
+                    return '<span class="showStatus">' . $data->purchase_name . '</span>';
+                } else {
+                    return '-';
+                }
+
+            },
+            'contentOptions' =>function ($data, $key, $index, $column){
+                return ['data-owner' => $data->id];
             },
         ],
         [
@@ -380,7 +539,7 @@ $collumn = [
             'value' => function ($data) {
 
                 if ($data->date_from) {
-                    return date('d.m.Y', $data->date_from);
+                    return date('d.m.Y H:i', $data->date_from);
                 } else {
                     return '-';
                 }
@@ -394,7 +553,7 @@ $collumn = [
             'value' => function ($data) {
 
                 if ($data->date_to) {
-                    return date('d.m.Y', $data->date_to);
+                    return date('d.m.Y H:i', $data->date_to);
                 } else {
                     return '-';
                 }
@@ -408,6 +567,24 @@ $collumn = [
 
                 if ($data->city) {
                     return $data->city;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'electronic_platform',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'value' => function ($data) {
+
+                if (isset($data->electronic_platform)) {
+                    if ($data->electronic_platform) {
+                        return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                    } else {
+                        return '-';
+                    }
                 } else {
                     return '-';
                 }
@@ -430,6 +607,23 @@ $collumn = [
                     return '-';
                 }
 
+            },
+        ],
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'min-width: 60px; vertical-align: middle'],
+            'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'status', TenderOwner::$status,
+                    [
+                        'class'              => 'form-control change-status',
+                        'data-id'            => $data->id,
+                        'data-status'        => $data->status,
+                    ]
+
+                );
             },
         ],
         [
@@ -478,11 +672,36 @@ $collumn = [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'pageSummary' => 'Всего',
-            'header' => 'Текст',
             'value' => function ($data) {
 
                 if ($data->text) {
                     return $data->text;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'customer',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->customer) {
+                    return $data->customer;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'purchase_name',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->purchase_name) {
+                    return $data->purchase_name;
                 } else {
                     return '-';
                 }
@@ -512,7 +731,7 @@ $collumn = [
             'value' => function ($data) {
 
                 if ($data->date_from) {
-                    return date('d.m.Y', $data->date_from);
+                    return date('d.m.Y H:i', $data->date_from);
                 } else {
                     return '-';
                 }
@@ -526,7 +745,7 @@ $collumn = [
             'value' => function ($data) {
 
                 if ($data->date_to) {
-                    return date('d.m.Y', $data->date_to);
+                    return date('d.m.Y H:i', $data->date_to);
                 } else {
                     return '-';
                 }
@@ -547,13 +766,17 @@ $collumn = [
             },
         ],
         [
-            'attribute' => 'data',
+            'attribute' => 'electronic_platform',
             'vAlign'=>'middle',
-            'filter' => false,
+            'format' => 'raw',
             'value' => function ($data) {
 
-                if ($data->data) {
-                    return date('d.m.Y', $data->data);
+                if (isset($data->electronic_platform)) {
+                    if ($data->electronic_platform) {
+                        return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                    } else {
+                        return '-';
+                    }
                 } else {
                     return '-';
                 }
@@ -568,7 +791,7 @@ $collumn = [
 
                 if (isset($data->link)) {
                     if ($data->link) {
-                    return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                        return Html::a('ссылка', $data->link, ['target' => '_blank']);
                     } else {
                         return '-';
                     }
@@ -608,6 +831,15 @@ $collumn = [
     ];
 }
 
+$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['OR', ['tender_id' => 0], ['tender_user' => 0], ['reason_not_take' => '']])->select('id')->column();
+    if (count($delete) > 0) {
+       for ($i = 0; $i < count($delete); $i++) {
+        $modelSet = TenderOwner::findOne(['id' => $delete[$i]]);
+        $modelSet->status = 11;
+        $modelSet->save();
+       }
+    }
+
 $statTable = '<div class="place_list"></div>';
 
 ?>
@@ -616,7 +848,7 @@ $statTable = '<div class="place_list"></div>';
     <div class="panel-heading">
         Распределение тендеров
         <div class="header-btn pull-right">
-            <?= Yii::$app->user->identity->role == User::ROLE_ADMIN ? Html::a('Добавить', ['company/tenderowneradd'], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?= Yii::$app->user->identity->role == User::ROLE_ADMIN ? Html::a('Добавить', ['company/tenderowneradd'], ['class' => 'btn btn-success btn-sm']) . '&nbsp&nbsp<span class="btn btn-warning btn-sm showFormAttachButt" style="margin-right:15px;">Добавить Exel</span>' : '' ?>
         </div>
     </div>
     <div class="panel-body">
@@ -627,7 +859,7 @@ $statTable = '<div class="place_list"></div>';
             'striped' => false,
             'export' => false,
             'summary' => false,
-            'showPageSummary' => true,
+            'showPageSummary' => ($win == 0 || $win == 2) ? true : '',
             'emptyText' => '',
             'layout' => '{items}',
             'beforeHeader' => [
