@@ -634,7 +634,7 @@ class Act extends ActiveRecord
 
                             // Нашли нужное замещение
                             if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = $replaceCont;
+                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
                             }
 
                         }
@@ -642,9 +642,9 @@ class Act extends ActiveRecord
                     }
                 }
 
-                if($numServiceHaveClient < $numServiceTrue) {
+                /*if($numServiceHaveClient < $numServiceTrue) {
                     $arrReplaceNeed = [];
-                }
+                }*/
 
             // END Проверяем на наличие замещений
 
@@ -927,7 +927,7 @@ class Act extends ActiveRecord
 
                             // Нашли нужное замещение
                             if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = $replaceCont;
+                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
                                 $numReplacePartner = $numServiceTrue;
                                 $numReplaceClient = count($replaceCont) - $numReplacePartner;
                             }
@@ -1154,7 +1154,7 @@ class Act extends ActiveRecord
 
                         // Нашли нужное замещение
                         if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                            $arrReplaceNeed = $replaceCont;
+                            $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
                             $numReplacePartner = $numServiceTrue;
                             $numReplaceClient = count($replaceCont) - $numReplacePartner;
                         }
