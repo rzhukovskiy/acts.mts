@@ -1483,6 +1483,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
+                'status' => SORT_ASC,
                 'date_to' => SORT_ASC,
                 'purchase' => SORT_DESC,
             ]
