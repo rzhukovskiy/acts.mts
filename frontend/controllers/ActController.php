@@ -43,12 +43,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate', 'penalty'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate', 'penalty', 'resaveact'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate', 'penalty'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate', 'penalty', 'resaveact'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -1162,6 +1162,36 @@ class ActController extends Controller
             }
 
             return $numCreate;
+        }
+    }
+
+    // Пересохранение акта
+    public function actionResaveact()
+    {
+        if(Yii::$app->request->post('data')) {
+
+            $arrAct = json_decode(Yii::$app->request->post('data'));
+
+            if(count($arrAct) > 0) {
+
+                $actModel = Act::findAll(['id' => $arrAct]);
+
+                if(count($actModel) > 0) {
+                    for ($i = 0; $i < count($actModel); $i++) {
+                        $actModel[$i]->save();
+                    }
+
+                    echo json_encode(['success' => 'true']);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
         }
     }
 

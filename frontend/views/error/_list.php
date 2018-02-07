@@ -8,12 +8,75 @@
  */
 
 use common\models\Act;
-use common\models\Card;
+use yii\web\View;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
 use kartik\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
+
+$actionResave = Url::to('@web/act/resaveact');
+
+$script = <<< JS
+
+$('.AllResave').on('click', function(){
+    // Выделить все
+    $('.resave').prop('checked','checked');
+});
+$('.UnResave').on('click', function(){
+    // Снять все выделения
+    $('.resave').removeAttr('checked');
+});
+$('.doResave').on('click', function(){
+    
+    // Выполнить пересохранение
+    var actArr = [];
+    
+    $('.resave').each(function (id, value) {
+        
+        if($(this).prop("checked")) {
+            actArr.push($(this).data("id"));
+        }
+        
+    });
+    
+    // Отправление данных
+    if(actArr.length > 0) {
+        
+        var doResave = confirm("Вы уверены что хотите выполнить пересохранение?");
+    
+        if(doResave == true) {
+        
+        $.ajax({
+                type     :'POST',
+                cache    : true,
+                data:'data=' + JSON.stringify(actArr),
+                url  : '$actionResave',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                    // Удачно
+                    alert('Успешно');
+                    window.location.reload();
+                } else {
+                    // Неудачно
+                    alert('Ошибка пересохранения');
+                }
+                
+                }
+        });
+        
+        }
+        
+    }
+    
+});
+
+JS;
+$this->registerJs($script, View::POS_READY);
 
 $columns = [
     [
@@ -130,6 +193,15 @@ $columns = [
         },
     ],
     [
+        'header' => 'Сохранить',
+        'format' => 'raw',
+        'contentOptions' => ['class' => 'text-center kv-align-middle'],
+        'value' => function ($data) {
+            return '<input type="checkbox" class="resave" data-id="' . $data->id . '">';
+        },
+        //'visible' => Yii::$app->user->identity->role != \common\models\User::ROLE_ADMIN,
+    ],
+    [
         'header'         => '',
         'class'          => 'kartik\grid\ActionColumn',
         'template'       => '{update}{delete}',
@@ -167,13 +239,17 @@ $columns = [
     ],
 ];
 
+$buttons = '<span class="btn btn-warning btn-sm doResave" style="float:right;">Пересохранить выделенные</span>';
+$buttons .= '<span class="btn btn-success btn-sm UnResave" style="float:right;">Снять выделение</span>';
+$buttons .= '<span class="btn btn-danger btn-sm AllResave" style="float:right;">Выделить все</span>';
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'summary' => false,
     'emptyText' => '',
-    'floatHeader' => true,
+    'floatHeader' => false,
+    'resizableColumns' => false,
     'floatHeaderOptions' => ['top' => '0'],
     'panel' => [
         'type' => 'primary',
@@ -185,5 +261,31 @@ echo GridView::widget([
     'hover' => false,
     'striped' => false,
     'export' => false,
+    'beforeHeader' => [
+        [
+            'columns' => [
+                [
+                    'content' => $buttons,
+                    'options' => [
+                        'style' => 'vertical-align: middle',
+                        'colspan' => count($columns),
+                        'class' => 'kv-grid-group-filter',
+                    ],
+                ]
+            ],
+            'options' => ['class' => 'extend-header'],
+        ],
+        [
+            'columns' => [
+                [
+                    'content' => '&nbsp',
+                    'options' => [
+                        'colspan' => count($columns),
+                    ]
+                ]
+            ],
+            'options' => ['class' => 'kv-group-header'],
+        ],
+    ],
     'columns' => $columns,
 ]);
