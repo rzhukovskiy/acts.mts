@@ -122,26 +122,37 @@ $(document).ready(function () {
 $('body').on('change','.select-period', function(e) {
     switch ($(this).val()) {
         case '1':
+            $('#day').fadeOut();
             $('#year').fadeIn();
             $('#month').fadeIn();
             $('#half').fadeOut();
             $('#quarter').fadeOut();
             break;
         case '2':
+            $('#day').fadeOut();
             $('#year').fadeIn();
             $('#quarter').fadeIn();
             $('#month').fadeOut();
             $('#half').fadeOut();
             break;
         case '3':
+            $('#day').fadeOut();
             $('#year').fadeIn();
             $('#half').fadeIn();
             $('#month').fadeOut();
             $('#quarter').fadeOut();
             break;
         case '4':
+            $('#day').fadeOut();
             $('#year').fadeIn();
             $('#month').fadeOut();
+            $('#quarter').fadeOut();
+            $('#half').fadeOut();
+            break;
+        case '5':
+            $('#day').fadeIn();
+            $('#year').fadeIn();
+            $('#month').fadeIn();
             $('#quarter').fadeOut();
             $('#half').fadeOut();
             break;
@@ -181,6 +192,12 @@ $('body').on('click','.date-send', function(e) {
         case '4':
             startDate = new Date($('#year option:selected').text(), 0, 1);
             endDate = new Date(parseInt($('#year option:selected').text()) + 1, 0, 1);
+            break;
+        case '5':
+            startDate = new Date($('#year option:selected').text(), $('#month').val(), $('#day').val(), 3, 0, 0);
+            endDate = new Date($('#year option:selected').text(), $('#month').val(), $('#day').val(), 23, 59, 59);
+            endDate = endDate.getTime() + ((60*60*3)*1000);
+            endDate = new Date(endDate);
             break;
         default:
             startDate = new Date(2010, 0, 1);

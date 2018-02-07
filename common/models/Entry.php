@@ -54,6 +54,8 @@ class Entry extends ActiveRecord
         self::STATUS_APPROVED => 'записан',
     ];
 
+    public static $periodList = ['все время', 'месяц', 'квартал', 'полгода', 'год', 'день'];
+
     private $card_number;
     /**
      * @inheritdoc

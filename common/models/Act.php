@@ -568,9 +568,8 @@ class Act extends ActiveRecord
 
             // Проверяем на наличие замещений
             $arrReplaceNeed = [];
-            if((Yii::$app->user->identity->id != 1) && (Yii::$app->user->identity->id != 176) && (Yii::$app->user->identity->id != 238)) {
 
-                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
 
                 $numServReplace = 0;
                 $numServiceTrue = 0;
@@ -647,7 +646,6 @@ class Act extends ActiveRecord
                     $arrReplaceNeed = [];
                 }
 
-            }
             // END Проверяем на наличие замещений
 
             $totalExpense = 0;
@@ -716,7 +714,6 @@ class Act extends ActiveRecord
 
                 $arrClientsType = [];
 
-                if((Yii::$app->user->identity->id != 1) && (Yii::$app->user->identity->id != 176) && (Yii::$app->user->identity->id != 238)) {
                     if (count($arrReplaceNeed) > 0) {
                         // Удаляем услуги выбранные у клиента
                         for ($j = 0; $j < count($arrReplaceNeed); $j++) {
@@ -746,7 +743,6 @@ class Act extends ActiveRecord
                         // END Удаляем услуги выбранные у клиента
 
                     }
-                }
                 // END Выполняем замещение клиент
 
                 $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
@@ -877,7 +873,7 @@ class Act extends ActiveRecord
             if (!empty($this->serviceList)) {
 
                 // Проверяем на наличие замещений
-                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
 
                 $numServReplace = 0;
                 $numServiceTrue = 0;
@@ -1122,7 +1118,7 @@ class Act extends ActiveRecord
         } else {
             // Для асинхронных актов при редактировании
             // Проверяем на наличие замещений
-            $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->select('id')->asArray()->column();
+            $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
 
             $numServReplace = 0;
             $numServiceTrue = 0;
