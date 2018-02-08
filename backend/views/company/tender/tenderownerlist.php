@@ -186,13 +186,15 @@ window.onload=function(){
            nameTabs = 'Количество в архиве';
             } else if ($win == 0) {
            nameTabs = 'Количество в работе';
+            } else if ($win == 3) {
+           nameTabs = 'Статусы';
             }
             resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
              '<tr style="background: #428bca; color: #fff;">' +
               '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
                '</tr>' +
                 '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
-           if($win == 2 || $win == 0) {
+           if($win == 3 || $win == 2 || $win == 0) {
             $('.place_list').html(resTables);
             }
        };
@@ -266,6 +268,7 @@ $collumn = [
     ],
     [
         'attribute' => 'text',
+        'filter' => false,
         'vAlign'=>'middle',
         'value' => function ($data) {
 
@@ -505,6 +508,7 @@ $collumn = [
             'attribute' => 'text',
             'vAlign'=>'middle',
             'format' => 'raw',
+            'filter' => false,
             'header' => 'Текст',
             'value' => function ($data) {
 
@@ -675,7 +679,7 @@ $collumn = [
             'format' => 'raw',
             'vAlign'=>'middle',
             'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
-            'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+            'filter' => Html::activeDropDownList($searchModel, 'status', TenderOwner::$status, ['class' => 'form-control']),
             'value' => function ($data, $key, $index, $column) {
                 return Html::activeDropDownList($data, 'status', TenderOwner::$status,
                     [
@@ -731,6 +735,7 @@ $collumn = [
         ],
         [
             'attribute' => 'text',
+            'filter' => false,
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -981,6 +986,7 @@ $collumn = [
         [
             'attribute' => 'text',
             'vAlign'=>'middle',
+            'filter' => false,
             'value' => function ($data) {
 
                 if ($data->text) {
@@ -1196,11 +1202,12 @@ $statTable = '<div class="place_list"></div>';
         <?php
         echo GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'hover' => false,
             'striped' => false,
             'export' => false,
             'summary' => false,
-            'showPageSummary' => ($win == 0 || $win == 2) ? true : '',
+            'showPageSummary' => ($win == 0 || $win == 2 || $win == 3) ? true : '',
             'emptyText' => '',
             'layout' => '{items}',
             'beforeHeader' => [
