@@ -182,11 +182,6 @@ $this->registerJs($script, View::POS_READY);
                         ->column())->error(false) ?>
                 </td>
                 <td>
-                    <?= $form->field($model, 'type_id')->dropDownList(Type::find()
-                        ->select(['name', 'id'])
-                        ->orderBy('id ASC')
-                        ->indexBy('id')
-                        ->column(), ['readonly' => !$admin, 'class' => 'form-control reset'])->error(false) ?>
                 </td>
             </tr>
 
@@ -194,7 +189,17 @@ $this->registerJs($script, View::POS_READY);
 
                 <tr>
                     <td colspan="4">
-                        <div class="col-sm-12">
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
+                            <label class="control-label">Тип ТС партнера</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['readonly' => !$admin, 'class' => 'form-control reset', 'prompt' => 'Выберите тип ТС партнера'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги партнера (<?= $model->partner->name ?>)</label>
 
                             <div class="form-group" style="height: 25px;">
@@ -353,6 +358,15 @@ $this->registerJs($script, View::POS_READY);
                         </div>
 
                         <div class="col-sm-12" style="margin-top: 30px;">
+                            <label class="control-label">Тип ТС клиента</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_client')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС клиента'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги клиента (<?= $model->client->name ?>)</label>
 
                             <div class="form-group" style="height: 25px;">
@@ -514,7 +528,17 @@ $this->registerJs($script, View::POS_READY);
 
             <tr>
                 <td colspan="4">
-                    <div class="col-sm-12">
+
+                    <div class="col-sm-12" style="margin-top: 10px;">
+                        <label class="control-label">Тип ТС партнера</label>
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-8">
+                                <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['readonly' => !$admin, 'class' => 'form-control reset', 'prompt' => 'Выберите тип ТС партнера'])->label(false)->error(false) ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12" style="margin-top: 10px;">
                         <label class="control-label">Услуги партнера (<?= $model->partner->name ?>)</label>
                         <?php
                         $partnerSum=0;
@@ -586,6 +610,15 @@ $this->registerJs($script, View::POS_READY);
                     </div>
 
                     <div class="col-sm-12" style="margin-top: 30px;">
+                        <label class="control-label">Тип ТС клиента</label>
+                        <div class="form-group" style="height: 25px;">
+                            <div class="col-xs-8">
+                                <?= $form->field($model, 'type_client')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС клиента'])->label(false)->error(false) ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12" style="margin-top: 10px;">
                         <label class="control-label">Услуги клиента (<?= $model->client->name ?>)</label>
                         <?php
                         $clientSum=0;
