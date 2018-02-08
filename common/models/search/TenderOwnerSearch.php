@@ -25,7 +25,7 @@ class TenderOwnerSearch extends TenderOwner
     {
         return [
             [['text', 'data', 'link'], 'string'],
-            [['tender_user', 'tender_id'], 'integer'],
+            [['tender_user', 'tender_id', 'status'], 'integer'],
         ];
     }
 
@@ -63,6 +63,11 @@ class TenderOwnerSearch extends TenderOwner
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'status' => $this->status,
+        ]);
 
         return $dataProvider;
     }

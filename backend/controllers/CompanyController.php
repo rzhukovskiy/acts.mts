@@ -1490,6 +1490,7 @@ class CompanyController extends Controller
         ];
         if ($win == 1) {
             $dataProvider->query->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']]);
+
         } else if ($win == 2) {
             $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['!=', 'tender_id', ''], ['NOT', ['tender_id' => null]]])->orderBy('tender_user');
         } else if ($win == 3) {
