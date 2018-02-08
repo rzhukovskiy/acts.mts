@@ -570,6 +570,7 @@ class Act extends ActiveRecord
             $arrReplaceNeed = [];
 
                 $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
+                $newCarType = 0;
 
                 $numServReplace = 0;
                 $numServiceTrue = 0;
@@ -634,7 +635,13 @@ class Act extends ActiveRecord
 
                             // Нашли нужное замещение
                             if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = $replaceCont;
+                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
+
+                                // Записываем Тип ТС из замещения
+                                if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                    $newCarType = $replaceCont[$j]['car_type'];
+                                }
+
                             }
 
                         }
@@ -642,9 +649,9 @@ class Act extends ActiveRecord
                     }
                 }
 
-                if($numServiceHaveClient < $numServiceTrue) {
+                /*if($numServiceHaveClient < $numServiceTrue) {
                     $arrReplaceNeed = [];
-                }
+                }*/
 
             // END Проверяем на наличие замещений
 
@@ -760,7 +767,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->client_id,
-                            'type_id'    => $this->type_id,
+                            'type_id'    => $newCarType > 0 ? $newCarType : $this->type_id,
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
@@ -815,7 +822,7 @@ class Act extends ActiveRecord
                             $clientService = CompanyService::findOne([
                                 'service_id' => $arrReplaceNeed[$j]['service_id'],
                                 'company_id' => $this->client_id,
-                                'type_id' => ($arrReplaceNeed[$j]['car_type'] > 0) ? $arrReplaceNeed[$j]['car_type'] : $this->type_id,
+                                'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
                             ]);
 
                             if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -874,6 +881,7 @@ class Act extends ActiveRecord
 
                 // Проверяем на наличие замещений
                 $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
+                $newCarType = 0;
 
                 $numServReplace = 0;
                 $numServiceTrue = 0;
@@ -927,9 +935,15 @@ class Act extends ActiveRecord
 
                             // Нашли нужное замещение
                             if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = $replaceCont;
+                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
                                 $numReplacePartner = $numServiceTrue;
                                 $numReplaceClient = count($replaceCont) - $numReplacePartner;
+
+                                // Записываем Тип ТС из замещения
+                                if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                    $newCarType = $replaceCont[$j]['car_type'];
+                                }
+
                             }
 
                         }
@@ -987,7 +1001,7 @@ class Act extends ActiveRecord
                             $clientService = CompanyService::findOne([
                                 'service_id' => $serviceData['service_id'],
                                 'company_id' => $this->client_id,
-                                'type_id' => $this->type_id,
+                                'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
                             ]);
 
                             if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -1077,7 +1091,7 @@ class Act extends ActiveRecord
                                 $clientService = CompanyService::findOne([
                                     'service_id' => $arrReplaceNeed[$j]['service_id'],
                                     'company_id' => $this->client_id,
-                                    'type_id' => ($arrReplaceNeed[$j]['car_type'] > 0) ? $arrReplaceNeed[$j]['car_type'] : $this->type_id,
+                                    'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
                                 ]);
 
                                 if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -1119,6 +1133,7 @@ class Act extends ActiveRecord
             // Для асинхронных актов при редактировании
             // Проверяем на наличие замещений
             $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
+            $newCarType = 0;
 
             $numServReplace = 0;
             $numServiceTrue = 0;
@@ -1154,9 +1169,15 @@ class Act extends ActiveRecord
 
                         // Нашли нужное замещение
                         if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                            $arrReplaceNeed = $replaceCont;
+                            $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
                             $numReplacePartner = $numServiceTrue;
                             $numReplaceClient = count($replaceCont) - $numReplacePartner;
+
+                            // Записываем Тип ТС из замещения
+                            if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                $newCarType = $replaceCont[$j]['car_type'];
+                            }
+
                         }
 
                     }

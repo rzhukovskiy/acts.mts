@@ -43,12 +43,12 @@ class ActController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate', 'penalty'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'closeload', 'exportsave', 'rotate', 'penalty', 'resaveact'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate', 'penalty'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'closeload', 'exportsave', 'rotate', 'penalty', 'resaveact'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
@@ -637,21 +637,28 @@ class ActController extends Controller
 
         $showError = '';
 
-        $serviceList = '';
+        $serviceList = [];
 
-        /* старый вывод услуг в лк
-         * if($type == 2) {
-            $serviceList = Service::find()->innerJoin('company_service', '(`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`) OR `service`.`id`=52')->where(['`service`.`type`' => $type])
-                ->groupBy('`service`.`id`')->orderBy('`service`.`id`')->select(['description', '`service`.`id`'])
+        // Шиномонтаж услуги только где заданы цены или услуги с не фиксированными ценами
+        if($type == 4) {
+            $serviceList = Service::find()->where(['type' => $type])
+                ->innerJoin('company_service', '`company_service`.`company_id`=' . Yii::$app->user->identity->company_id . ' AND `company_service`.`service_id` = `service`.`id`')
+                ->orderBy('description')->select(['description', 'service.id as id'])
                 ->indexBy('id')->column();
+
+            $arrNoFixServices = Service::find()->where(['type' => $type, 'is_fixed' => 0])
+                ->orderBy('description')->select(['description', 'id'])
+                ->indexBy('id')->column();
+
+            foreach ($arrNoFixServices as $key => $value) {
+                $serviceList[$key] = $value;
+            }
+
         } else {
             $serviceList = Service::find()->where(['type' => $type])
                 ->orderBy('description')->select(['description', 'id'])
                 ->indexBy('id')->column();
-        }*/
-        $serviceList = Service::find()->where(['type' => $type])
-            ->orderBy('description')->select(['description', 'id'])
-            ->indexBy('id')->column();
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $entryId = Yii::$app->request->post('entry_id', false);
@@ -1162,6 +1169,40 @@ class ActController extends Controller
             }
 
             return $numCreate;
+        }
+    }
+
+    // Пересохранение акта
+    public function actionResaveact()
+    {
+        if(Yii::$app->request->post('data')) {
+
+            $arrAct = json_decode(Yii::$app->request->post('data'));
+
+            if(count($arrAct) > 0) {
+
+                $actModel = Act::findAll(['id' => $arrAct]);
+
+                if(count($actModel) > 0) {
+                    for ($i = 0; $i < count($actModel); $i++) {
+                        try {
+                            // убираем ошибку связанную с услугами
+                            $actModel[$i]->save();
+                        } catch (\Exception $e) {
+                        }
+                    }
+
+                    echo json_encode(['success' => 'true']);
+                } else {
+                    echo json_encode(['success' => 'false']);
+                }
+
+            } else {
+                echo json_encode(['success' => 'false']);
+            }
+
+        } else {
+            echo json_encode(['success' => 'false']);
         }
     }
 
