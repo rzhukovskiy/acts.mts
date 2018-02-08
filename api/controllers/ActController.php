@@ -340,7 +340,9 @@ class ActController extends Controller
                                 ->orderBy('description')->select(['description', 'id', 'is_fixed'])
                                 ->indexBy('id')->asArray()->all();
 
-                            $serviceList = array_merge($serviceList, $arrNoFixServices);
+                            foreach ($arrNoFixServices as $key => $value) {
+                                $serviceList[$key] = $value;
+                            }
 
                         } else {
                             $serviceList = Service::find()->where(['type' => $type])
