@@ -69,22 +69,22 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
                     [
-                        'actions' => ['archive', 'refuse', 'archive3', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'map', 'attribute', 'price'],
+                        'actions' => ['archive', 'refuse', 'archive3', 'new', 'new2', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'map', 'attribute', 'price'],
                         'allow' => true,
                         'roles' => [User::ROLE_ACCOUNT],
                     ],
@@ -239,6 +239,91 @@ class CompanyController extends Controller
             $badgeSearch->type = $type;
             $badgeSearch->user_id = $user->id;
             $badgeSearch->status = Company::STATUS_NEW;
+            $badgeSearch->user_id = $user->id;
+            $userData[$user->id] = ['badge' => $badgeSearch->search()->count, 'username' => $user->username];
+        }
+
+        $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
+
+        return $this->render('list',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'type' => $type,
+                'model' => $model,
+                'listType' => $listType,
+                'userData' => $userData,
+                'admin' => Yii::$app->user->identity->role == User::ROLE_ADMIN,
+            ]);
+    }
+
+    public function actionNew2($type)
+    {
+        /** @var User $currentUser */
+        $currentUser = Yii::$app->user->identity;
+
+        $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+        $searchModel->type = $type;
+        $searchModel->status = Company::STATUS_NEW2;
+
+        if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+            $listType = Company::$listType;
+        } else {
+            $searchModel->user_id = Yii::$app->user->identity->id;
+            $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW2);
+        }
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // Подкатегории для сервиса
+        if ($type == 3) {
+            $requestSupType = 0;
+
+            if (Yii::$app->request->get('sub')) {
+                $requestSupType = Yii::$app->request->get('sub');
+            }
+
+            if ($requestSupType > 0) {
+                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
+            }
+
+        }
+        // Подкатегории для сервиса
+
+        $dataProvider->sort = [
+            'defaultOrder' => [
+                'created_at' => SORT_DESC,
+            ]
+        ];
+
+        $model = new Company();
+        $model->type = $type;
+
+        foreach ($listType as $type_id => &$typeData) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type_id;
+            $badgeSearch->status = Company::STATUS_NEW2;
+            if ($currentUser && $currentUser->role != User::ROLE_ADMIN) {
+                $badgeSearch->user_id = $currentUser->id;
+            }
+            $typeData['badge'] = $badgeSearch->search()->count;
+        }
+
+        $searchModelUser = new UserSearch();
+        $dataProviderUser = $searchModelUser
+            ->search(Yii::$app->request->queryParams);
+        $dataProviderUser->query
+            ->joinWith('departments')
+            ->andWhere(['is not', 'department_id', null]);
+        $dataProviderUser->pagination = false;
+        $userList = $dataProviderUser->getModels();
+
+        $userData = [];
+        foreach ($userList as $user) {
+            $badgeSearch = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
+            $badgeSearch->type = $type;
+            $badgeSearch->user_id = $user->id;
+            $badgeSearch->status = Company::STATUS_NEW2;
             $badgeSearch->user_id = $user->id;
             $userData[$user->id] = ['badge' => $badgeSearch->search()->count, 'username' => $user->username];
         }
@@ -2151,6 +2236,11 @@ class CompanyController extends Controller
                     $DepartmentCompany->company_id = $model->id;
                     $DepartmentCompany->user_id = Yii::$app->user->identity->id;
                     $DepartmentCompany->remove_id = 0;
+                    if ($model->status == Company::STATUS_NEW2) {
+                        $DepartmentCompany->type = 1;
+                    } else {
+                        $DepartmentCompany->type = 0;
+                    }
                     $DepartmentCompany->save();
                 } else {
                     $DepartmentCompany = new DepartmentCompany();

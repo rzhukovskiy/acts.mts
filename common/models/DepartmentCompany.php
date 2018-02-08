@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property integer $user_id
  * @property string $remove_date
  * @property integer $remove_id
+ * @property integer $type
  */
 class DepartmentCompany extends ActiveRecord
 {
@@ -37,7 +38,7 @@ class DepartmentCompany extends ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'user_id', 'remove_id'], 'integer'],
+            [['company_id', 'user_id', 'remove_id', 'type'], 'integer'],
             [['remove_date'], 'safe'],
         ];
     }
@@ -54,6 +55,7 @@ class DepartmentCompany extends ActiveRecord
             'remove_id' => 'Сотрудник',
             'companyNum' => 'Количество',
             'remove_date' => 'Дата переноса',
+            'type' => 'Тип',
         ];
     }
 
