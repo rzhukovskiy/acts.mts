@@ -174,14 +174,14 @@ if($searchModel->type == 3) {
                         'Company[type]' => $searchModel->type,
                         'sub' => $requestSupType,
                         'Company[sub_type]' => $requestSupType,
-                        'Company[status]' => Company::STATUS_NEW
+                        'Company[status]' => Company::STATUS_NEW2
                     ], ['class' => 'btn btn-danger btn-sm']);
                 } else {
                     echo Html::a('Добавить', [
                         'company/create',
                         'Company[type]' => $searchModel->type,
                         'Company[sub_type]' => $requestSupType,
-                        'Company[status]' => Company::STATUS_NEW
+                        'Company[status]' => Company::STATUS_NEW2
                     ], ['class' => 'btn btn-danger btn-sm']);
                 }
             }
