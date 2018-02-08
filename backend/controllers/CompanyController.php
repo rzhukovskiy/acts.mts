@@ -69,17 +69,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -1546,6 +1546,223 @@ class CompanyController extends Controller
         return $this->redirect(['company/tenderownerlist?win=1']);
     }
 
+    public function actionSendtotender($id)
+    {
+        $TenderOwner = TenderOwner::findOne(['id' => $id]);
+        // Проверка на сущ. инн заказчика
+        if (isset($TenderOwner->inn_customer)) {
+            if ($TenderOwner->inn_customer) {
+                // Получаем ID компании
+                $inn = CompanyInfo::find()->innerJoin('company', '`company`.`id` = `company_info`.`company_id` AND `company`.`status` = 5')->where(['company_info.inn' => $TenderOwner->inn_customer])->select('company_info.company_id')->column();
+                // Проверяем на сущ. ID компании
+                if (isset($inn[0])) {
+                    if ($inn[0]) {
+                        $tender = new Tender();
+                        $tender->company_id = $inn[0];
+                        $tender->place = $TenderOwner->electronic_platform;
+                        $tender->customer = $TenderOwner->customer;
+                        $tender->price_nds = $TenderOwner->purchase;
+                        $tender->user_id = $TenderOwner->tender_user;
+                        $tender->inn_customer = $TenderOwner->inn_customer;
+                        $tender->purchase = $TenderOwner->purchase_name;
+                        $tender->city = $TenderOwner->city;
+
+                        // проверка на существование даты
+                        if (isset($TenderOwner->date_from)) {
+                            if ($TenderOwner->date_from) {
+                            $tender->date_request_start = date('H:i d-m-Y', (int) $TenderOwner->date_from);
+                            }
+                        }
+                        if (isset($TenderOwner->date_to)) {
+                            if ($TenderOwner->date_to) {
+                            $tender->date_request_end = date('H:i d-m-Y', (int) $TenderOwner->date_to);
+                            }
+                        }
+                        if (isset($TenderOwner->date_bidding)) {
+                            if ($TenderOwner->date_bidding) {
+                                $tender->time_bidding_start = date('H:i d-m-Y', (int) $TenderOwner->date_bidding);
+                            }
+                        }
+                        if (isset($TenderOwner->date_consideration)) {
+                            if ($TenderOwner->date_consideration) {
+                                $tender->time_request_process = date('H:i d-m-Y', (int) $TenderOwner->date_consideration);
+                            }
+                        }
+
+                        $tender->site = $TenderOwner->link_official;
+                        $tender->link = $TenderOwner->link;
+                        $tender->customer_full = $TenderOwner->customer_full;
+                        $tender->request_security = $TenderOwner->request_security;
+                        $tender->number_purchase = $TenderOwner->number;
+                        if ($tender->save()) {
+                            $TenderOwner->tender_id = $tender->id;
+                            $TenderOwner->save();
+                            return $this->redirect(['/company/fulltender', 'tender_id' => $tender->id]);
+                        } else {
+                            return $this->redirect(['/company/tenderownerlist', 'win' => 0]);
+                        }
+                    } else {
+                        // Если нет ID компании создаем компанию, записываем пользователя, записываем инн, создаем тендер
+                        if (isset($TenderOwner->customer)) {
+                            if ($TenderOwner->customer) {
+                                $company = new Company();
+                                $company->name = $TenderOwner->customer;
+                                $company->address = $TenderOwner->city;
+                                $company->status = 5;
+                                $company->type = 1;
+
+                                if ($company->save()) {
+                                    $TenderHystory = new TenderHystory();
+                                    $TenderHystory->company_id = $company->id;
+                                    $TenderHystory->user_id = $TenderOwner->tender_user;
+                                    $TenderHystory->remove_id = 0;
+                                    $TenderHystory->save();
+
+                                    $companyInfo = new CompanyInfo();
+                                    $companyInfo->company_id = $company->id;
+                                    $companyInfo->inn = $TenderOwner->inn_customer;
+                                    $companyInfo->save();
+
+                                    $tender = new Tender();
+                                    $tender->company_id = $company->id;
+                                    $tender->place = $TenderOwner->electronic_platform;
+                                    $tender->customer = $TenderOwner->customer;
+                                    $tender->price_nds = $TenderOwner->purchase;
+                                    $tender->user_id = $TenderOwner->tender_user;
+                                    $tender->inn_customer = $TenderOwner->inn_customer;
+                                    $tender->purchase = $TenderOwner->purchase_name;
+                                    $tender->city = $TenderOwner->city;
+
+                                    // проверка на существование даты
+                                    if (isset($TenderOwner->date_from)) {
+                                        if ($TenderOwner->date_from) {
+                                            $tender->date_request_start = date('H:i d-m-Y', (int) $TenderOwner->date_from);
+                                        }
+                                    }
+                                    if (isset($TenderOwner->date_to)) {
+                                        if ($TenderOwner->date_to) {
+                                            $tender->date_request_end = date('H:i d-m-Y', (int) $TenderOwner->date_to);
+                                        }
+                                    }
+                                    if (isset($TenderOwner->date_bidding)) {
+                                        if ($TenderOwner->date_bidding) {
+                                            $tender->time_bidding_start = date('H:i d-m-Y', (int) $TenderOwner->date_bidding);
+                                        }
+                                    }
+                                    if (isset($TenderOwner->date_consideration)) {
+                                        if ($TenderOwner->date_consideration) {
+                                            $tender->time_request_process = date('H:i d-m-Y', (int) $TenderOwner->date_consideration);
+                                        }
+                                    }
+
+                                    $tender->site = $TenderOwner->link_official;
+                                    $tender->link = $TenderOwner->link;
+                                    $tender->customer_full = $TenderOwner->customer_full;
+                                    $tender->request_security = $TenderOwner->request_security;
+                                    $tender->number_purchase = $TenderOwner->number;
+
+                                    if ($tender->save()) {
+                                        $TenderOwner->tender_id = $tender->id;
+                                        $TenderOwner->save();
+                                        return $this->redirect(['/company/fulltender', 'tender_id' => $tender->id]);
+                                    } else {
+                                        return $this->redirect(['/company/tenderownerlist', 'win' => 0]);
+                                    }
+                                } else {
+                                    print_r($company->errors);
+                                }
+                        } else {
+                            echo 'Компания не заполнена';
+                        }
+                    } else {
+                            echo 'Компания не заполнена';
+                    }
+                }
+                } else {
+                    // Если нет ID компании создаем компанию, записываем пользователя, записываем инн, создаем тендер
+                    if (isset($TenderOwner->customer)) {
+                        if ($TenderOwner->customer) {
+                            $company = new Company();
+                            $company->name = $TenderOwner->customer;
+                            $company->address = $TenderOwner->city;
+                            $company->status = 5;
+                            $company->type = 1;
+
+                            if ($company->save()) {
+                                $TenderHystory = new TenderHystory();
+                                $TenderHystory->company_id = $company->id;
+                                $TenderHystory->user_id = $TenderOwner->tender_user;
+                                $TenderHystory->remove_id = 0;
+                                $TenderHystory->save();
+
+                                $companyInfo = new CompanyInfo();
+                                $companyInfo->company_id = $company->id;
+                                $companyInfo->inn = $TenderOwner->inn_customer;
+                                $companyInfo->save();
+
+                                $tender = new Tender();
+                                $tender->company_id = $company->id;
+                                $tender->place = $TenderOwner->electronic_platform;
+                                $tender->customer = $TenderOwner->customer;
+                                $tender->price_nds = $TenderOwner->purchase;
+                                $tender->user_id = $TenderOwner->tender_user;
+                                $tender->inn_customer = $TenderOwner->inn_customer;
+                                $tender->purchase = $TenderOwner->purchase_name;
+                                $tender->city = $TenderOwner->city;
+
+                                // проверка на существование даты
+                                if (isset($TenderOwner->date_from)) {
+                                    if ($TenderOwner->date_from) {
+                                        $tender->date_request_start = date('H:i d-m-Y', (int) $TenderOwner->date_from);
+                                    }
+                                }
+                                if (isset($TenderOwner->date_to)) {
+                                    if ($TenderOwner->date_to) {
+                                        $tender->date_request_end = date('H:i d-m-Y', (int) $TenderOwner->date_to);
+                                    }
+                                }
+                                if (isset($TenderOwner->date_bidding)) {
+                                    if ($TenderOwner->date_bidding) {
+                                        $tender->time_bidding_start = date('H:i d-m-Y', (int) $TenderOwner->date_bidding);
+                                    }
+                                }
+                                if (isset($TenderOwner->date_consideration)) {
+                                    if ($TenderOwner->date_consideration) {
+                                        $tender->time_request_process = date('H:i d-m-Y', (int) $TenderOwner->date_consideration);
+                                    }
+                                }
+
+                                $tender->site = $TenderOwner->link_official;
+                                $tender->link = $TenderOwner->link;
+                                $tender->customer_full = $TenderOwner->customer_full;
+                                $tender->request_security = $TenderOwner->request_security;
+                                $tender->number_purchase = $TenderOwner->number;
+
+                                    if ($tender->save()) {
+                                        $TenderOwner->tender_id = $tender->id;
+                                        $TenderOwner->save();
+                                        return $this->redirect(['/company/fulltender', 'tender_id' => $tender->id]);
+                                    } else {
+                                        return $this->redirect(['/company/tenderownerlist', 'win' => 0]);
+                                    }
+                            } else {
+                                print_r($company->errors);
+                            }
+                        } else {
+                            echo 'Компания не заполнена';
+                        }
+                    } else {
+                        echo 'Компания не заполнена';
+                    }
+                }
+            } else {
+                echo 'ИНН не заполнен';
+            }
+        } else {
+            echo 'ИНН не заполнен';
+        }
+    }
+
     public function actionUploadtenderexel()
     {
         if (Yii::$app->request->isPost) {
@@ -1593,6 +1810,7 @@ class CompanyController extends Controller
                                 if ($numCol > 1) {
                                     // Проверка
 
+                                    $number = (String) $tables[$i][0];
                                     $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
                                     $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
                                     $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
@@ -1615,6 +1833,7 @@ class CompanyController extends Controller
                                     if ($date_from) {
 
                                         $model = new TenderOwner();
+                                        $model->number = $number;
                                         $model->date_from = $date_from;
                                         $model->date_to = $date_to;
                                         $model->date_bidding = $date_bidding;

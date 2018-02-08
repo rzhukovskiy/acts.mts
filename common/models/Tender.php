@@ -18,6 +18,8 @@ use yii\behaviors\TimestampBehavior;
  * @property string $service_type
  * @property float $price_nds
  * @property float $final_price
+ * @property float $request_security
+ * @property float $contract_security
  * @property integer $federal_law
  * @property integer $method_purchase
  * @property integer $status_request_security
@@ -44,6 +46,8 @@ use yii\behaviors\TimestampBehavior;
  * @property string $comment_date_contract
  * @property integer $tender_close
  * @property string $site
+ * @property string $link
+ * @property string $customer_full
  */
 class Tender extends ActiveRecord
 {
@@ -89,12 +93,11 @@ class Tender extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'purchase_status', 'work_user_id', 'site_address'], 'integer'],
-            [['price_nds', 'final_price', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'tender_close'], 'safe'],
+            [['price_nds', 'final_price', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'tender_close', 'request_security', 'contract_security'], 'safe'],
             [['date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
-            [['city', 'place', 'number_purchase', 'customer'], 'string', 'max' => 255],
+            [['city', 'place', 'number_purchase', 'customer', 'link'], 'string', 'max' => 255],
             [['inn_customer', 'site'], 'string', 'max' => 200],
-            [['purchase'], 'string', 'max' => 255],
-            [['comment', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer'], 'string', 'max' => 10000],
+            [['comment', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer', 'purchase', 'customer_full'], 'string', 'max' => 10000],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
             ];
     }
@@ -143,6 +146,10 @@ class Tender extends ActiveRecord
             'site_address' => 'Адрес площадки',
             'purchase' => 'Что закупается?',
             'type_payment' => 'Тип платежа',
+            'customer_full' => 'Заказчик полное',
+            'link' => 'Документация',
+            'contract_security' => 'Обеспечение контракта',
+            'request_security' => 'Обеспечения заявки',
 
         ];
     }

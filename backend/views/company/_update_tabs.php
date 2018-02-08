@@ -59,10 +59,16 @@ if($model->status == Company::STATUS_TENDER) {
             'url'   => [Company::$listStatus[$model->status]['en'], 'type' => $model->type],
         ],
         [
+            'label'  => 'Инфо',
+            'url'    => ['company/info', 'id' => $model->id],
+            'active' => \Yii::$app->controller->action->id == 'info',
+        ],
+        [
             'label'  => 'Процесс',
             'url'    => ['company/update', 'id' => $model->id],
             'active' => \Yii::$app->controller->action->id == 'update',
-        ],[
+        ],
+        [
             'label' => 'Тендеры',
             'url' => ['company/tenders', 'id' => $model->id],
             'active' => \Yii::$app->controller->action->id == 'tenders',

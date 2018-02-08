@@ -579,6 +579,28 @@ $this->registerJs($script, View::POS_READY);
         </td>
     </tr>
     <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('link') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'link',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта (с http://)'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('purchase_status') ?></td>
         <td>
             <?php
@@ -685,7 +707,7 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'date_request_start',
-                'displayValue' => $model->date_request_start ? date('d.m.Y', $model->date_request_start) : '',
+                'displayValue' => $model->date_request_start ? date('d.m.Y H:i', $model->date_request_start) : '',
                 'inputType' => Editable::INPUT_DATE,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
@@ -695,11 +717,11 @@ $this->registerJs($script, View::POS_READY);
                     'class' => 'form-control',
                     'removeButton' => false,
                     'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy',
+                        'format' => 'dd.mm.yyyy hh:ii',
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
                     ],
-                    'options'=>['value' => $model->date_request_start ? date('d.m.Y', $model->date_request_start) : '']
+                    'options'=>['value' => $model->date_request_start ? date('d.m.Y H:i', $model->date_request_start) : '']
                 ],
                 'formOptions' => [
                     'action' => ['/company/updatetender', 'id' => $model->id],
@@ -730,7 +752,7 @@ $this->registerJs($script, View::POS_READY);
                     'class' => 'form-control',
                     'removeButton' => false,
                     'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
+                        'format' => 'dd.mm.yyyy hh:ii',
                         'weekStart'=>1,
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
@@ -765,7 +787,7 @@ $this->registerJs($script, View::POS_READY);
                     'class' => 'form-control',
                     'removeButton' => false,
                     'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
+                        'format' => 'dd.mm.yyyy hh:ii',
                         'weekStart'=>1,
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
@@ -800,7 +822,7 @@ $this->registerJs($script, View::POS_READY);
                     'class' => 'form-control',
                     'removeButton' => false,
                     'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
+                        'format' => 'dd.mm.yyyy hh:ii',
                         'weekStart'=>1,
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
@@ -835,7 +857,7 @@ $this->registerJs($script, View::POS_READY);
                     'class' => 'form-control',
                     'removeButton' => false,
                     'pluginOptions' => [
-                        'format' => 'dd.mm.yyyy hh:i',
+                        'format' => 'dd.mm.yyyy hh:ii',
                         'weekStart'=>1,
                         'autoclose' => true,
                         'pickerPosition' => 'bottom-right',
@@ -859,6 +881,29 @@ $this->registerJs($script, View::POS_READY);
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
                 'attribute' => 'customer',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('customer_full') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'inputType'       => Editable::INPUT_TEXTAREA,
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'customer_full',
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'disabled' => $model->tender_close == 1 ? true : false,
@@ -1195,6 +1240,29 @@ $this->registerJs($script, View::POS_READY);
         </td>
     </tr>
     <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('request_security') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'request_security',
+                'displayValue' => $model->request_security ? ($model->request_security . ' ₽') : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
+    <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
         <td>
             <?php
@@ -1229,7 +1297,29 @@ $this->registerJs($script, View::POS_READY);
             <?= ($model->date_status_request) ? date('d.m.Y H:i', $model->date_status_request) : '-' ?>
         </td>
     </tr>
-
+    <tr>
+        <td class="list-label-md"><?= $model->getAttributeLabel('contract_security') ?></td>
+        <td>
+            <?= Editable::widget([
+                'model' => $model,
+                'buttonsTemplate' => '{submit}',
+                'submitButton' => [
+                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                ],
+                'attribute' => 'contract_security',
+                'displayValue' => $model->contract_security ? ($model->contract_security . ' ₽') : '',
+                'asPopover' => true,
+                'placement' => PopoverX::ALIGN_LEFT,
+                'disabled' => $model->tender_close == 1 ? true : false,
+                'size' => 'lg',
+                'options' => ['class' => 'form-control'],
+                'formOptions' => [
+                    'action' => ['/company/updatetender', 'id' => $model->id],
+                ],
+                'valueIfNull' => '<span class="text-danger">не задано</span>',
+            ]); ?>
+        </td>
+    </tr>
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('status_contract_security') ?></td>
         <td>

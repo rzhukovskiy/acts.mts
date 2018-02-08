@@ -190,12 +190,12 @@ $this->registerJs($script, \yii\web\View::POS_READY);
                     }
                 ],
                 [
-                    'attribute' => 'email',
+                    'header' => 'ИНН',
                     'content' => function ($data) {
 
-                        if(isset($data->info->email)) {
-                            if($data->info->email) {
-                                return $data->info->email;
+                        if(isset($data->info->inn)) {
+                            if($data->info->inn) {
+                                return $data->info->inn;
                             } else {
                                 return 'не задан';
                             }

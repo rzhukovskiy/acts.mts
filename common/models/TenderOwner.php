@@ -24,6 +24,7 @@ use common\traits\JsonTrait;
  * @property string $fz
  * @property string $purchase_name
  * @property string $inn_customer
+ * @property string $number
  * @property integer $tender_user
  * @property integer $tender_id
  * @property integer $status
@@ -80,6 +81,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             [['purchase', 'request_security'], 'safe'],
             [['text', 'reason_not_take', 'customer_full', 'purchase_name'], 'string', 'max' => 5000],
             [['data', 'date_from', 'date_to', 'inn_customer', 'date_consideration', 'date_bidding'], 'string', 'max' => 20],
+            [['number'], 'string', 'max' => 30],
             [['link', 'city', 'electronic_platform', 'link_official', 'customer', 'fz'], 'string', 'max' => 255],
             [['tender_user', 'tender_id', 'status'], 'integer'],
         ];
@@ -105,7 +107,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             'date_bidding' => 'Дата и время начала торгов',
             'date_consideration' => 'Дата и время рассмотрения заявок',
             'purchase_name' => 'Что закупают?',
-            'fz' => 'ФЗ',
+            'fz' => 'Тип заявки',
             'customer' => 'Заказчик',
             'customer_full' => 'Заказчик полное',
             'inn_customer' => 'ИНН заказчика',
@@ -113,6 +115,7 @@ class TenderOwner extends \yii\db\ActiveRecord
             'request_security' => 'Обеспечение заявки',
             'electronic_platform' => 'Электронная площадка',
             'status' => 'Статус',
+            'number' => 'Номер',
         ];
     }
 

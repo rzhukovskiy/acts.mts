@@ -241,7 +241,7 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
-                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите ФЗ'],
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите тип заявки'],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
                         ],
@@ -259,7 +259,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'date_from',
-                        'displayValue' => $model->date_from ? date('d.m.Y', $model->date_from) : '',
+                        'displayValue' => $model->date_from ? date('d.m.Y H:i', $model->date_from) : '',
                         'inputType' => Editable::INPUT_DATE,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
@@ -269,11 +269,11 @@ echo Tabs::widget([
                             'class' => 'form-control',
                             'removeButton' => false,
                             'pluginOptions' => [
-                                'format' => 'dd.mm.yyyy',
+                                'format' => 'dd.mm.yyyy hh:ii',
                                 'autoclose' => true,
                                 'pickerPosition' => 'bottom-right',
                             ],
-                            'options'=>['value' => $model->date_from ? date('d.m.Y', $model->date_from) : '']
+                            'options'=>['value' => $model->date_from ? date('d.m.Y H:i', $model->date_from) : '']
                         ],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
@@ -293,7 +293,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'date_to',
-                        'displayValue' => $model->date_to ? date('d.m.Y', $model->date_to) : '',
+                        'displayValue' => $model->date_to ? date('d.m.Y H:i', $model->date_to) : '',
                         'inputType' => Editable::INPUT_DATE,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
@@ -303,11 +303,11 @@ echo Tabs::widget([
                             'class' => 'form-control',
                             'removeButton' => false,
                             'pluginOptions' => [
-                                'format' => 'dd.mm.yyyy',
+                                'format' => 'dd.mm.yyyy hh:ii',
                                 'autoclose' => true,
                                 'pickerPosition' => 'bottom-right',
                             ],
-                            'options'=>['value' => $model->date_to ? date('d.m.Y', $model->date_to) : '']
+                            'options'=>['value' => $model->date_to ? date('d.m.Y H:i', $model->date_to) : '']
                         ],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
@@ -327,7 +327,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'date_bidding',
-                        'displayValue' => $model->date_bidding ? date('d.m.Y', $model->date_bidding) : '',
+                        'displayValue' => $model->date_bidding ? date('d.m.Y H:i', $model->date_bidding) : '',
                         'inputType' => Editable::INPUT_DATE,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
@@ -337,11 +337,11 @@ echo Tabs::widget([
                             'class' => 'form-control',
                             'removeButton' => false,
                             'pluginOptions' => [
-                                'format' => 'dd.mm.yyyy',
+                                'format' => 'dd.mm.yyyy hh:ii',
                                 'autoclose' => true,
                                 'pickerPosition' => 'bottom-right',
                             ],
-                            'options'=>['value' => $model->date_bidding ? date('d.m.Y', $model->date_bidding) : '']
+                            'options'=>['value' => $model->date_bidding ? date('d.m.Y H:i', $model->date_bidding) : '']
                         ],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
@@ -361,7 +361,7 @@ echo Tabs::widget([
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'date_consideration',
-                        'displayValue' => $model->date_consideration ? date('d.m.Y', $model->date_consideration) : '',
+                        'displayValue' => $model->date_consideration ? date('d.m.Y H:i', $model->date_consideration) : '',
                         'inputType' => Editable::INPUT_DATE,
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
@@ -371,11 +371,11 @@ echo Tabs::widget([
                             'class' => 'form-control',
                             'removeButton' => false,
                             'pluginOptions' => [
-                                'format' => 'dd.mm.yyyy',
+                                'format' => 'dd.mm.yyyy hh:ii',
                                 'autoclose' => true,
                                 'pickerPosition' => 'bottom-right',
                             ],
-                            'options'=>['value' => $model->date_consideration ? date('d.m.Y', $model->date_consideration) : '']
+                            'options'=>['value' => $model->date_consideration ? date('d.m.Y H:i', $model->date_consideration) : '']
                         ],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],

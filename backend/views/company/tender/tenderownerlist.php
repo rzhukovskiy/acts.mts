@@ -278,6 +278,19 @@ $collumn = [
         },
     ],
     [
+        'attribute' => 'number',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->number) {
+                return $data->number;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
         'attribute' => 'customer',
         'vAlign'=>'middle',
         'value' => function ($data) {
@@ -292,6 +305,7 @@ $collumn = [
     ],
     [
     'attribute' => 'purchase_name',
+    'contentOptions' => ['style' => 'min-width: 330px'],
     'vAlign'=>'middle',
     'value' => function ($data) {
 
@@ -304,9 +318,22 @@ $collumn = [
     },
     ],
     [
+        'attribute' => 'fz',
+        'vAlign'=>'middle',
+        'value' => function ($data) {
+
+            if ($data->fz) {
+                return $data->fz;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
         'attribute' => 'purchase',
         'vAlign'=>'middle',
-        'contentOptions' => ['style' => 'min-width: 130px'],
+        'contentOptions' => ['style' => 'min-width: 115px'],
         'value' => function ($data) {
 
             if ($data->purchase) {
@@ -360,13 +387,16 @@ $collumn = [
     ],
     [
         'attribute' => 'electronic_platform',
+        'header' => 'Эл. площадка',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'text-align: center'],
         'format' => 'raw',
         'value' => function ($data) {
 
             if (isset($data->electronic_platform)) {
                 if ($data->electronic_platform) {
-                    return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                    $platform = str_replace('http://', '',$data->electronic_platform);
+                    return str_replace('https://', '',$platform);
                 } else {
                     return '-';
                 }
@@ -377,14 +407,16 @@ $collumn = [
         },
     ],
     [
-        'attribute' => 'link',
+        'attribute' => 'link_official',
+        'header' => 'Док-я',
         'vAlign'=>'middle',
         'format' => 'raw',
+        'contentOptions' => ['style' => 'text-align: center'],
         'value' => function ($data) {
 
-            if (isset($data->link)) {
-                if ($data->link) {
-                    return Html::a('ссылка', $data->link, ['target' => '_blank']);
+            if (isset($data->link_official)) {
+                if ($data->link_official) {
+                    return Html::a('ссылка', $data->link_official, ['target' => '_blank']);
                 } else {
                     return '-';
                 }
@@ -415,8 +447,7 @@ $collumn = [
         'attribute' => 'status',
         'format' => 'raw',
         'vAlign'=>'middle',
-        'contentOptions' => ['style' => 'min-width: 60px; vertical-align: middle'],
-        'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+        'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
         'value' => function ($data, $key, $index, $column) {
             return Html::activeDropDownList($data, 'status', TenderOwner::$status,
                 [
@@ -489,6 +520,19 @@ $collumn = [
             },
         ],
         [
+            'attribute' => 'number',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->number) {
+                    return $data->number;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
             'attribute' => 'customer',
             'vAlign'=>'middle',
             'value' => function ($data) {
@@ -516,6 +560,19 @@ $collumn = [
             },
             'contentOptions' =>function ($data, $key, $index, $column){
                 return ['data-owner' => $data->id];
+            },
+        ],
+        [
+            'attribute' => 'fz',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->fz) {
+                    return $data->fz;
+                } else {
+                    return '-';
+                }
+
             },
         ],
         [
@@ -575,13 +632,16 @@ $collumn = [
         ],
         [
             'attribute' => 'electronic_platform',
+            'header' => 'Эл. площадка',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'text-align: center'],
             'format' => 'raw',
             'value' => function ($data) {
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
                     } else {
                         return '-';
                     }
@@ -592,14 +652,15 @@ $collumn = [
             },
         ],
         [
-            'attribute' => 'link',
+            'attribute' => 'link_official',
             'vAlign'=>'middle',
+            'header' => 'Док-я',
             'format' => 'raw',
             'value' => function ($data) {
 
-                if (isset($data->link)) {
-                    if ($data->link) {
-                        return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                if (isset($data->link_official)) {
+                    if ($data->link_official) {
+                        return Html::a('ссылка', $data->link_official, ['target' => '_blank']);
                     } else {
                         return '-';
                     }
@@ -613,7 +674,7 @@ $collumn = [
             'attribute' => 'status',
             'format' => 'raw',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'min-width: 60px; vertical-align: middle'],
+            'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
             'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
             'value' => function ($data, $key, $index, $column) {
                 return Html::activeDropDownList($data, 'status', TenderOwner::$status,
@@ -633,6 +694,255 @@ $collumn = [
             'template' => '{update}{delete}',
             'contentOptions' => ['style' => 'min-width: 60px'],
             'buttons' => [
+                'update' => function ($url, $data, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                        ['/company/tenderownerfull', 'id' => $data->id]);
+                },
+                'delete' => function ($url, $data, $key) {
+                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', ['/company/ownerdelete', 'id' => $data->id],
+                            ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                    }
+                },
+            ],
+        ],
+    ];
+} else if ($win == 0) {
+    $collumn = [
+        [
+            'header' => 'Имя сотрудника',
+            'content' => function ($data) {
+
+                if (isset($data->username)) {
+                    return $data->username;
+                } else {
+                    return '-';
+                }
+            },
+            'group' => true,
+            'groupedRow' => true,
+            'groupOddCssClass' => 'kv-group-header',
+            'groupEvenCssClass' => 'kv-group-header',
+        ],
+        [
+            'header' => '№',
+            'vAlign'=>'middle',
+            'class' => 'kartik\grid\SerialColumn'
+        ],
+        [
+            'attribute' => 'text',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->text) {
+                    return $data->text;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'number',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->number) {
+                    return $data->number;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'customer',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->customer) {
+                    return $data->customer;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'purchase_name',
+            'contentOptions' => ['style' => 'min-width: 330px'],
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->purchase_name) {
+                    return $data->purchase_name;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'fz',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->fz) {
+                    return $data->fz;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'purchase',
+            'vAlign'=>'middle',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM,
+            'contentOptions' => ['style' => 'min-width: 115px'],
+            'value' => function ($data) {
+
+                if ($data->purchase) {
+                    return $data->purchase  . ' ₽';
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_from',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_from) {
+                    return date('d.m.Y H:i', $data->date_from);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'date_to',
+            'vAlign'=>'middle',
+            'filter' => false,
+            'value' => function ($data) {
+
+                if ($data->date_to) {
+                    return date('d.m.Y H:i', $data->date_to);
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'city',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'electronic_platform',
+            'header' => 'Эл. площадка',
+            'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'text-align: center'],
+            'format' => 'raw',
+            'value' => function ($data) {
+
+                if (isset($data->electronic_platform)) {
+                    if ($data->electronic_platform) {
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'link_official',
+            'header' => 'Док-я',
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'contentOptions' => ['style' => 'text-align: center'],
+            'value' => function ($data) {
+
+                if (isset($data->link_official)) {
+                    if ($data->link_official) {
+                        return Html::a('ссылка', $data->link_official, ['target' => '_blank']);
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'vAlign'=>'middle',
+            'format' => 'raw',
+            'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
+            'contentOptions' => ['style' => 'text-align: center'],
+            'header' => 'Отправить<br />в закупки',
+            'value' => function ($data) {
+
+             if (!isset($data->tender_id)) {
+                if (!$data->tender_id) {
+                    return Html::a('Отправить', ['/company/sendtotender', 'id' => $data->id], ['class' => 'btn btn-success btn-sm']);
+                } else {
+                    return '';
+                }
+             } else {
+                    return '';
+             }
+            },
+        ],
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
+            'value' => function ($data, $key, $index, $column) {
+                return Html::activeDropDownList($data, 'status', TenderOwner::$status,
+                    [
+                        'class'              => 'form-control change-status',
+                        'data-id'            => $data->id,
+                        'data-status'        => $data->status,
+                    ]
+
+                );
+            },
+        ],
+        [
+            'class' => 'kartik\grid\ActionColumn',
+            'header' => 'Действие',
+            'vAlign'=>'middle',
+            'template' => '{link}{update}{delete}',
+            'contentOptions' => ['style' => 'min-width: 60px'],
+            'buttons' => [
+                'link' => function ($url, $data, $key) {
+                    if (isset($data->tender_id)) {
+                        return Html::a('<span class="glyphicon glyphicon-new-window" style="font-size: 17px;"></span>',
+                            ['company/fulltender', 'tender_id' => $data->tender_id]);
+                    } else {
+                        return '';
+                    }
+                },
                 'update' => function ($url, $data, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
                         ['/company/tenderownerfull', 'id' => $data->id]);
@@ -671,11 +981,23 @@ $collumn = [
         [
             'attribute' => 'text',
             'vAlign'=>'middle',
-            'pageSummary' => 'Всего',
             'value' => function ($data) {
 
                 if ($data->text) {
                     return $data->text;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
+            'attribute' => 'number',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->number) {
+                    return $data->number;
                 } else {
                     return '-';
                 }
@@ -697,6 +1019,7 @@ $collumn = [
         ],
         [
             'attribute' => 'purchase_name',
+            'contentOptions' => ['style' => 'min-width: 330px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -709,11 +1032,24 @@ $collumn = [
             },
         ],
         [
+            'attribute' => 'fz',
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->fz) {
+                    return $data->fz;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
             'attribute' => 'purchase',
             'vAlign'=>'middle',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM,
-            'contentOptions' => ['style' => 'min-width: 130px'],
+            'contentOptions' => ['style' => 'min-width: 115px'],
             'value' => function ($data) {
 
                 if ($data->purchase) {
@@ -767,13 +1103,16 @@ $collumn = [
         ],
         [
             'attribute' => 'electronic_platform',
+            'header' => 'Эл. площадка',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'text-align: center'],
             'format' => 'raw',
             'value' => function ($data) {
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        return Html::a('ссылка', $data->electronic_platform, ['target' => '_blank']);
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
                     } else {
                         return '-';
                     }
@@ -784,14 +1123,16 @@ $collumn = [
             },
         ],
         [
-            'attribute' => 'link',
+            'attribute' => 'link_official',
+            'header' => 'Док-я',
             'vAlign'=>'middle',
             'format' => 'raw',
+            'contentOptions' => ['style' => 'text-align: center'],
             'value' => function ($data) {
 
-                if (isset($data->link)) {
-                    if ($data->link) {
-                        return Html::a('ссылка', $data->link, ['target' => '_blank']);
+                if (isset($data->link_official)) {
+                    if ($data->link_official) {
+                        return Html::a('ссылка', $data->link_official, ['target' => '_blank']);
                     } else {
                         return '-';
                     }
