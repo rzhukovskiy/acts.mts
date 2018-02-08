@@ -44,6 +44,7 @@ if(Yii::$app->controller->action->id != 'replace') {
     ]);
 
     echo $this->render('_replace', [
+        'searchModel' => $searchModel,
         'dataProvider' => $dataProvider,
         'type' => $type,
         'CarTypes' => $CarTypes,

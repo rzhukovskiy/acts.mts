@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\Company;
 use common\models\Mark;
+use common\models\search\ServiceReplaceSearch;
 use common\models\search\ServiceSearch;
 use common\models\ServiceReplace;
 use common\models\ServiceReplaceItem;
@@ -140,18 +141,10 @@ class ServiceController extends Controller
     public function actionReplace($type)
     {
 
-        $searchModel = ServiceReplace::find()->where(['type' => $type]);
+        $searchModel = new ServiceReplaceSearch();
+        $searchModel->type = $type;
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $searchModel,
-            'pagination' => false,
-        ]);
-
-        $dataProvider->sort = [
-            'defaultOrder' => [
-                'id'    => SORT_ASC,
-            ]
-        ];
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $model = new ServiceReplace();
         $CarTypes = Type::find()->select('name')->indexBy('id')->asArray()->column();

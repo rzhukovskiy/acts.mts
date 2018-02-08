@@ -2,7 +2,6 @@
 
 namespace common\models\search;
 
-use common\models\CarHistory;
 use common\models\Changes;
 use yii;
 use yii\data\ActiveDataProvider;
