@@ -467,7 +467,6 @@ JS;
             ?>
         </td>
         <td>
-            <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column())->error(false) ?>
             <?php
 
 $css = ".glyphicon-envelope {
@@ -553,7 +552,17 @@ JS;
 
                 <tr>
                     <td colspan="4">
-                        <div class="col-sm-12">
+
+                        <div class="col-sm-12" style="margin-top: 30px;">
+                            <label class="control-label">Тип ТС партнера</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС партнера'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги партнера (<?= $model->partner->name ?>)</label>
 
                             <div class="form-group" style="height: 25px;">
@@ -722,6 +731,15 @@ JS;
                         </div>
 
                         <div class="col-sm-12" style="margin-top: 30px;">
+                            <label class="control-label">Тип ТС клиента</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_client')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС клиента'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги клиента (<?= $model->client->name ?>)</label>
 
                             <div class="form-group" style="height: 25px;">
@@ -893,7 +911,17 @@ JS;
 
                 <tr>
                     <td colspan="4">
-                        <div class="col-sm-12">
+
+                        <div class="col-sm-12" style="margin-top: 30px;">
+                            <label class="control-label">Тип ТС партнера</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_id')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС партнера'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги партнера</label>
                             <?php foreach ($partnerScopes as $scope) {
 
@@ -954,6 +982,15 @@ JS;
                         </div>
 
                         <div class="col-sm-12" style="margin-top: 30px;">
+                            <label class="control-label">Тип ТС клиента</label>
+                            <div class="form-group" style="height: 25px;">
+                                <div class="col-xs-8">
+                                    <?= $form->field($model, 'type_client')->dropdownList(Type::find()->select(['name', 'id'])->orderBy('id ASC')->indexBy('id')->column(), ['prompt' => 'Выберите тип ТС клиента'])->label(false)->error(false) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 10px;">
                             <label class="control-label">Услуги клиента</label>
                             <?php foreach ($clientScopes as $scope) {
 

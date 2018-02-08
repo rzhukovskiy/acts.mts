@@ -25,6 +25,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $client_id
  * @property integer $partner_id
  * @property integer $type_id
+ * @property integer $type_client
  * @property integer $mark_id
  * @property integer $card_id
  * @property integer $card_number
@@ -167,6 +168,7 @@ class Act extends ActiveRecord
                     'clientServiceList',
                     'mark_id',
                     'type_id', 
+                    'type_client',
                     'card_number'
                 ],
                 'safe'
@@ -197,6 +199,7 @@ class Act extends ActiveRecord
             'extra_car_number' => 'п/п',
             'mark_id'      => 'Марка',
             'type_id'      => 'Тип',
+            'type_client'      => 'Тип клиента',
             'income'       => 'Сумма',
             'expense'      => 'Сумма',
             'check'        => 'Чек',
@@ -494,6 +497,7 @@ class Act extends ActiveRecord
             if(Yii::$app->user->isGuest == 0) {
                 if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
                     $this->type_id = $car->type_id;
+                    $this->type_client = $car->type_id;
                 }
             }
 
@@ -505,6 +509,15 @@ class Act extends ActiveRecord
         if (!$this->client_id) {
             $this->addError('client', 'Клиент не выбран.');
             return false;
+        }
+
+        // Задаем значение для типа тс клиента по умолчанию если он не задан
+        if(isset($this->type_client)) {
+            if($this->type_client == 0) {
+                $this->type_client = $this->type_id;
+            }
+        } else {
+            $this->type_client = $this->type_id;
         }
 
         if ($insert) {
@@ -537,7 +550,7 @@ class Act extends ActiveRecord
                     $clientService = CompanyService::findOne([
                         'service_id' => ArrayHelper::getValue($serviceData, 'service_id', null),
                         'company_id' => $this->client_id,
-                        'type_id'    => $this->type_id,
+                        'type_id'    => $this->type_client,
                     ]);
                     if (!empty($clientService) && $clientService->service->is_fixed) {
                         $totalIncome += $clientService->price * $serviceData['amount'];
@@ -640,6 +653,7 @@ class Act extends ActiveRecord
                                 // Записываем Тип ТС из замещения
                                 if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
                                     $newCarType = $replaceCont[$j]['car_type'];
+                                    $this->type_client = $newCarType;
                                 }
 
                             }
@@ -767,7 +781,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->client_id,
-                            'type_id'    => $newCarType > 0 ? $newCarType : $this->type_id,
+                            'type_id'    => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
@@ -822,7 +836,7 @@ class Act extends ActiveRecord
                             $clientService = CompanyService::findOne([
                                 'service_id' => $arrReplaceNeed[$j]['service_id'],
                                 'company_id' => $this->client_id,
-                                'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
+                                'type_id' => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
                             ]);
 
                             if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -942,6 +956,7 @@ class Act extends ActiveRecord
                                 // Записываем Тип ТС из замещения
                                 if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
                                     $newCarType = $replaceCont[$j]['car_type'];
+                                    $this->type_client = $newCarType;
                                 }
 
                             }
@@ -951,6 +966,12 @@ class Act extends ActiveRecord
                     }
                 }
                 // END Проверяем на наличие замещений
+
+                // Если в замещении задан тип тс для клиента, то жестко изменяем его в бд
+                if($newCarType > 0) {
+                    Yii::$app->db->createCommand()->update('{{%act}}', ['type_client' => $newCarType], ['id' => $this->id])->execute();
+                }
+                // Если в замещении задан тип тс для клиента, то жестко изменяем его в бд
 
                 $numRepairServiceClient = 0;
 
@@ -1001,7 +1022,7 @@ class Act extends ActiveRecord
                             $clientService = CompanyService::findOne([
                                 'service_id' => $serviceData['service_id'],
                                 'company_id' => $this->client_id,
-                                'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
+                                'type_id' => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
                             ]);
 
                             if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -1091,7 +1112,7 @@ class Act extends ActiveRecord
                                 $clientService = CompanyService::findOne([
                                     'service_id' => $arrReplaceNeed[$j]['service_id'],
                                     'company_id' => $this->client_id,
-                                    'type_id' => $newCarType > 0 ? $newCarType : $this->type_id,
+                                    'type_id' => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
                                 ]);
 
                                 if (!empty($clientService) && $clientService->service->is_fixed) {
@@ -1176,6 +1197,7 @@ class Act extends ActiveRecord
                             // Записываем Тип ТС из замещения
                             if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
                                 $newCarType = $replaceCont[$j]['car_type'];
+                                $this->type_client = $newCarType;
                             }
 
                         }
