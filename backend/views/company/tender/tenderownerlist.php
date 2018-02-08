@@ -389,13 +389,14 @@ $collumn = [
         'attribute' => 'electronic_platform',
         'header' => 'Эл. площадка',
         'vAlign'=>'middle',
-        'contentOptions' => ['style' => 'max-width:50px; text-align: center'],
+        'contentOptions' => ['style' => 'text-align: center'],
         'format' => 'raw',
         'value' => function ($data) {
 
             if (isset($data->electronic_platform)) {
                 if ($data->electronic_platform) {
-                    return $data->electronic_platform;
+                    $platform = str_replace('http://', '',$data->electronic_platform);
+                    return str_replace('https://', '',$platform);
                 } else {
                     return '-';
                 }
@@ -633,13 +634,14 @@ $collumn = [
             'attribute' => 'electronic_platform',
             'header' => 'Эл. площадка',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'max-width:50px; text-align: center'],
+            'contentOptions' => ['style' => 'text-align: center'],
             'format' => 'raw',
             'value' => function ($data) {
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        return $data->electronic_platform;
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
                     } else {
                         return '-';
                     }
@@ -854,13 +856,14 @@ $collumn = [
             'attribute' => 'electronic_platform',
             'header' => 'Эл. площадка',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'max-width:50px; text-align: center'],
+            'contentOptions' => ['style' => 'text-align: center'],
             'format' => 'raw',
             'value' => function ($data) {
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        return $data->electronic_platform;
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
                     } else {
                         return '-';
                     }
@@ -1102,13 +1105,14 @@ $collumn = [
             'attribute' => 'electronic_platform',
             'header' => 'Эл. площадка',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'max-width:50px; text-align: center'],
+            'contentOptions' => ['style' => 'text-align: center'],
             'format' => 'raw',
             'value' => function ($data) {
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        return $data->electronic_platform;
+                        $platform = str_replace('http://', '',$data->electronic_platform);
+                        return str_replace('https://', '',$platform);
                     } else {
                         return '-';
                     }
