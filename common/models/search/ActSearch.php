@@ -28,8 +28,9 @@ class ActSearch extends Act
     public function rules()
     {
         return [
-            [['card_number', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
+            [['card_number', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
             [['car_number', 'extra_car_number', 'period', 'address'], 'string'],
+            [['partner_id'], 'safe'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_PARTNER],
         ];
@@ -110,8 +111,13 @@ class ActSearch extends Act
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['AND', ['!=', 'actErrors.error_type', 19], ['!=', 'actErrors.error_type', 20]]);
 
-                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
-                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                if($this->partner_id) {
+                    $query->andFilterWhere(['act.partner_id' => $this->partner_id]);
+                }
+                if($this->client_id) {
+                    $query->andFilterWhere(['act.client_id' => $this->client_id]);
+                }
+
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
 
                 $query->orderBy('partner_id, served_at');
@@ -130,8 +136,13 @@ class ActSearch extends Act
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['actErrors.error_type' => 19]);
 
-                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
-                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                if($this->partner_id) {
+                    $query->andFilterWhere(['act.partner_id' => $this->partner_id]);
+                }
+                if($this->client_id) {
+                    $query->andFilterWhere(['act.client_id' => $this->client_id]);
+                }
+
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
 
                 $query->orderBy('partner_id, served_at');
@@ -150,8 +161,13 @@ class ActSearch extends Act
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['actErrors.error_type' => 20]);
 
-                $query->andFilterWhere(['like', 'partner.name', $this->partner_id]);
-                $query->andFilterWhere(['like', 'client.name', $this->client_id]);
+                if($this->partner_id) {
+                    $query->andFilterWhere(['act.partner_id' => $this->partner_id]);
+                }
+                if($this->client_id) {
+                    $query->andFilterWhere(['act.client_id' => $this->client_id]);
+                }
+
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
 
                 $query->orderBy('partner_id, served_at');
