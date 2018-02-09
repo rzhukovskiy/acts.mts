@@ -61,7 +61,7 @@ use yii\helpers\Html;
         <tr><td colspan="4"><label>Список ТС из файла:</label></td></tr>
         <?php
         $form = ActiveForm::begin([
-            'action' => ['act/disinfect'],
+            'action' => ['act/disinfectfile'],
             'method' => 'post',
             'id' => 'act-form',
             'options' => ['enctype' => 'multipart/form-data'],
