@@ -79,6 +79,20 @@ $('.doResave').on('click', function(){
 JS;
 $this->registerJs($script, View::POS_READY);
 
+$partnerFilter = '';
+$clientFilter = '';
+
+if((Yii::$app->controller->action->id == 'list') && (Yii::$app->controller->id == 'error')) {
+    $partnerFilter = Html::activeDropDownList($searchModel, 'partner_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`partner_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['!=', 'act_error.error_type', 19], ['!=', 'act_error.error_type', 20], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('partner_id')->column(), ['class' => 'form-control', 'prompt' => 'Все партнеры']);
+    $clientFilter = Html::activeDropDownList($searchModel, 'client_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`client_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['!=', 'act_error.error_type', 19], ['!=', 'act_error.error_type', 20], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('client_id')->column(), ['class' => 'form-control', 'prompt' => 'Все клиенты']);
+} elseif((Yii::$app->controller->action->id == 'losses') && (Yii::$app->controller->id == 'error')) {
+    $partnerFilter = Html::activeDropDownList($searchModel, 'partner_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`partner_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['act_error.error_type' => 19], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('partner_id')->column(), ['class' => 'form-control', 'prompt' => 'Все партнеры']);
+    $clientFilter = Html::activeDropDownList($searchModel, 'client_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`client_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['act_error.error_type' => 19], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('client_id')->column(), ['class' => 'form-control', 'prompt' => 'Все клиенты']);
+} elseif((Yii::$app->controller->action->id == 'async') && (Yii::$app->controller->id == 'error')) {
+    $partnerFilter = Html::activeDropDownList($searchModel, 'partner_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`partner_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['act_error.error_type' => 20], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('partner_id')->column(), ['class' => 'form-control', 'prompt' => 'Все партнеры']);
+    $clientFilter = Html::activeDropDownList($searchModel, 'client_id', Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('company', '`company`.`id` = `act`.`client_id`')->where(['AND', ['act.service_type' => Yii::$app->request->get('type')], ['act_error.error_type' => 20], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $searchModel->period]])->select('company.name')->indexBy('client_id')->column(), ['class' => 'form-control', 'prompt' => 'Все клиенты']);
+}
+
 $columns = [
     [
         'header' => '№',
@@ -97,14 +111,14 @@ $columns = [
     ],
     [
         'attribute' => 'partner_id',
-        'filter' => true,
+        'filter' => $partnerFilter,
         'value' => function ($data) {
             return isset($data->partner) ? $data->partner->name : '';
         },
     ],
     [
         'attribute' => 'client_id',
-        'filter' => true,
+        'filter' => $clientFilter,
         'value' => function ($data) {
             return isset($data->client) ? $data->client->name : '';
         },

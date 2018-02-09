@@ -17,6 +17,7 @@ if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::R
     foreach (Service::$listType as $type_id => $typeData) {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
         $searchModel->service_type = $type_id;
+        $searchModel->period = date('n-Y');
         $badgeCount = $searchModel->search(Yii::$app->request->queryParams)->getCount();
 
         $items[] = [
