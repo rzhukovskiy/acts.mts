@@ -2237,9 +2237,9 @@ class CompanyController extends Controller
                     $DepartmentCompany->user_id = Yii::$app->user->identity->id;
                     $DepartmentCompany->remove_id = 0;
                     if ($model->status == Company::STATUS_NEW2) {
-                        $DepartmentCompany->type = 1;
+                        $DepartmentCompany->type_user = 1;
                     } else {
-                        $DepartmentCompany->type = 0;
+                        $DepartmentCompany->type_user = 0;
                     }
                     $DepartmentCompany->save();
                 } else {
