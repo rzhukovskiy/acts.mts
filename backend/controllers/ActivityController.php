@@ -33,17 +33,17 @@ class ActivityController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['new', 'shownew', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -92,6 +92,79 @@ class ActivityController extends Controller
     {
 
         $searchModel = new DepartmentCompanySearch(['scenario' => 'shownew']);
+        $searchModel->type = $type;
+        $searchModel->user_id = $user_id;
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if(!isset($params['ActSearch']['dateFrom'])) {
+            $params['ActSearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+            $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
+        }
+
+        if(!isset($params['ActSearch']['dateTo'])) {
+            $params['ActSearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
+            $searchModel->dateTo = $params['ActSearch']['dateTo'];
+        }
+        // Если не выбран период то показываем только текущий год
+
+        $dataProvider = $searchModel->search($params);
+
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+
+    public function actionNew2($type)
+    {
+
+        $searchModel = new DepartmentCompanySearch(['scenario' => 'new2']);
+        $searchModel->type = $type;
+
+        $params = Yii::$app->request->queryParams;
+
+        // Если не выбран период то показываем только текущий год
+        if(!isset($params['ActSearch']['dateFrom'])) {
+            $params['ActSearch']['dateFrom'] = date("Y-m-t", strtotime("-1 month")) . 'T21:00:00.000Z';
+            $searchModel->dateFrom = $params['ActSearch']['dateFrom'];
+        }
+
+        if(!isset($params['ActSearch']['dateTo'])) {
+            $params['ActSearch']['dateTo'] = date("Y-m-t") . 'T21:00:00.000Z';
+            $searchModel->dateTo = $params['ActSearch']['dateTo'];
+        }
+        // Если не выбран период то показываем только текущий год
+
+        $dataProvider = $searchModel->search($params);
+
+        $authorMembers = DepartmentUserCompanyType::find()->innerJoin('user', '`user`.`id` = `department_user_company_type`.`user_id`')->select('`username`')->indexBy('user_id')->groupBy('user_id')->column();
+
+        $listType = Company::$listType;
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'authorMembers' => $authorMembers,
+            'listType' => $listType,
+            'type' => $type,
+        ]);
+
+    }
+
+    public function actionShownew2($user_id, $type)
+    {
+
+        $searchModel = new DepartmentCompanySearch(['scenario' => 'shownew2']);
         $searchModel->type = $type;
         $searchModel->user_id = $user_id;
 

@@ -11,6 +11,6 @@ class m180208_144527_update_departament_company extends Migration
 
     public function down()
     {
-        $this->dropColumn('{{%department_company}}','type');
+        $this->dropColumn('{{%department_company}}','type_user');
     }
 }

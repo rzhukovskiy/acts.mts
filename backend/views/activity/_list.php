@@ -115,7 +115,7 @@ CanvasJsAsset::register($this);
 
         $filters = 'Выбор периода: ' . $periodForm;
 
-        if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'archive')) {
+        if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2') || (Yii::$app->controller->action->id == 'archive')) {
 
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -155,10 +155,10 @@ CanvasJsAsset::register($this);
                 ],
                 'columns' => [
                     [
-                        'attribute' => (Yii::$app->controller->action->id == 'new' ? 'user_id' : 'remove_id'),
+                        'attribute' => (((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2')) ? 'user_id' : 'remove_id'),
                         'contentOptions' => ['class' => 'value_0', 'style' => 'min-width: 300px'],
                         'value' => function ($data) {
-                            if(Yii::$app->controller->action->id == 'new') {
+                            if ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2')) {
                                 return $GLOBALS['authorMembers'][$data->user_id];
                             } else {
                                 return $GLOBALS['authorMembers'][$data->remove_id];
@@ -167,7 +167,7 @@ CanvasJsAsset::register($this);
                     ],
                     [
                         'attribute' => 'companyNum',
-                        'header' => ((Yii::$app->controller->action->id == 'new') ? 'Количество' : 'Перенесено в архив'),
+                        'header' => (((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2')) ? 'Количество' : 'Перенесено в архив'),
                         'pageSummary' => true,
                         'pageSummaryFunc' => GridView::F_SUM,
                         'contentOptions' => ['class' => 'value_1', 'style' => 'width: 300px'],
@@ -181,7 +181,7 @@ CanvasJsAsset::register($this);
 
                                 $toId = 0;
 
-                                if(Yii::$app->controller->action->id == 'new') {
+                                if ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2')) {
                                     $toId = $model->user_id;
                                 } else {
                                     $toId = $model->remove_id;
@@ -435,6 +435,88 @@ CanvasJsAsset::register($this);
                 ],
             ]);
 
+        } elseif(Yii::$app->controller->action->id == 'shownew2') {
+
+            $GLOBALS['name'] = '';
+
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'hover' => false,
+                'striped' => false,
+                'export' => false,
+                'summary' => false,
+                'emptyText' => '',
+                'layout' => '{items}',
+                'filterSelector' => '.ext-filter',
+                'beforeHeader' => [
+                    [
+                        'columns' => [
+                            [
+                                'content' => $filters,
+                                'options' => [
+                                    'style' => 'vertical-align: middle',
+                                    'colspan' => 4,
+                                    'class' => 'kv-grid-group-filter',
+                                ],
+                            ]
+                        ],
+                        'options' => ['class' => 'extend-header'],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'content' => '&nbsp',
+                                'options' => [
+                                    'colspan' => 4,
+                                ]
+                            ]
+                        ],
+                        'options' => ['class' => 'kv-group-header'],
+                    ],
+                ],
+                'columns' => [
+                    [
+                        'attribute' => 'user_id',
+                        'group' => true,
+                        'groupedRow' => true,
+                        'groupOddCssClass' => 'kv-group-header',
+                        'groupEvenCssClass' => 'kv-group-header',
+                        'value' => function ($data) {
+                            $GLOBALS['name'] = $GLOBALS['authorMembers'][$data->user_id];
+                            return $GLOBALS['authorMembers'][$data->user_id];
+                        },
+                    ],
+                    [
+                        'header' => '№',
+                        'class' => 'kartik\grid\SerialColumn'
+                    ],
+                    [
+                        'attribute' => 'company_id',
+                        'value' => function ($data) {
+                            return $data->company->name;
+                        },
+                    ],
+                    [
+                        'header' => 'Дата создания',
+                        'contentOptions' => ['class' => 'value_0'],
+                        'value' => function ($data) {
+                            return date('d.m.Y', $data->company->created_at);
+                        },
+                    ],
+                    [
+                        'class' => 'kartik\grid\ActionColumn',
+                        'template' => '{view}',
+                        'contentOptions' => ['style' => 'min-width: 80px'],
+                        'buttons' => [
+                            'view' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                                    ['/company/state', 'id' => $model->company_id]);
+                            },
+                        ],
+                    ],
+                ],
+            ]);
+
         } elseif(Yii::$app->controller->action->id == 'showarchive') {
 
             $GLOBALS['name'] = '';
@@ -571,7 +653,7 @@ echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" st
 
 $js = "";
 
-if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'tender')) {
+if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'new2') || (Yii::$app->controller->action->id == 'archive') || (Yii::$app->controller->action->id == 'tender')) {
     $js = "
             var dataTable = [];
             console.log('Hello');

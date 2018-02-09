@@ -265,6 +265,12 @@ class menuLeftWidget extends Widget
                                 ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew'))),
                         ],
                         [
+                            'label'  => 'Статистика<br />заявок 2',
+                            'url' => ['/activity/new2', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'new2') || (Yii::$app->controller->action->id == 'shownew2'))),
+                        ],
+                        [
                             'label'  => 'Статистика<br />архива',
                             'url' => ['/activity/archive', 'type' => Service::TYPE_WASH],
                             'active' => ((Yii::$app->controller->id == 'activity') &&
@@ -481,6 +487,12 @@ class menuLeftWidget extends Widget
                             'url' => ['/activity/new', 'type' => Service::TYPE_WASH],
                             'active' => ((Yii::$app->controller->id == 'activity') &&
                                 ((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->action->id == 'shownew'))),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />заявок 2',
+                            'url' => ['/activity/new2', 'type' => Service::TYPE_WASH],
+                            'active' => ((Yii::$app->controller->id == 'activity') &&
+                                ((Yii::$app->controller->action->id == 'new2') || (Yii::$app->controller->action->id == 'shownew2'))),
                         ],
                         [
                             'label'  => 'Статистика<br />архива',
