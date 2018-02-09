@@ -449,6 +449,7 @@ $collumn = [
     [
         'attribute' => 'status',
         'format' => 'raw',
+        'filter' => false,
         'vAlign'=>'middle',
         'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
         'value' => function ($data, $key, $index, $column) {
@@ -920,6 +921,7 @@ $collumn = [
         [
             'attribute' => 'status',
             'format' => 'raw',
+            'filter' => false,
             'vAlign'=>'middle',
             'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
             'value' => function ($data, $key, $index, $column) {

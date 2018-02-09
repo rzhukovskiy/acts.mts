@@ -48,6 +48,7 @@ class TenderOwner extends \yii\db\ActiveRecord
     const STATUS_NOT_PASS = 9;
     const STATUS_CASH_SEARCH = 10;
     const STATUS_NOT_HAVE_TIME = 11;
+    const STATUS_OTHER = 12;
 
     public static $status = [
         self::STATUS_NOT => 'Выберите статус',
@@ -62,6 +63,7 @@ class TenderOwner extends \yii\db\ActiveRecord
         self::STATUS_NOT_PASS => 'Подача на бум. носителе (не проходим по срокам подачи)',
         self::STATUS_CASH_SEARCH => 'Платная поисковая система',
         self::STATUS_NOT_HAVE_TIME => 'Не успели',
+        self::STATUS_OTHER => 'Другое',
     ];
 
     /**
