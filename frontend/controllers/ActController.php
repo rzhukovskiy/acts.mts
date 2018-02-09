@@ -58,7 +58,7 @@ class ActController extends Controller
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'deldisinfect', 'create-entry', 'closeload'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'disinfectfile', 'deldisinfect', 'create-entry', 'closeload'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -413,6 +413,24 @@ class ActController extends Controller
             }
         }
 
+        return $this->render('disinfect', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'showError' => $showError,
+            'serviceList' => Service::find()->where(['type' => Service::TYPE_DISINFECT])->select(['description', 'id'])->indexBy('id')->column(),
+            'companyList' => Company::find()->byType(Company::TYPE_OWNER)->select(['name', 'id'])->indexBy('id')->active()->column(),
+            'role' => Yii::$app->user->identity->role,
+        ]);
+    }
+
+    public function actionDisinfectfile($showError = '')
+    {
+        $dataProvider = null;
+        $searchModel = new CarSearch(['scenario' => Car::SCENARIO_INFECTED]);
+        $searchModel->period = date('n-Y', strtotime("+1 month"));
+        $searchModel->periodel = date('n-Y', strtotime("+1 month"));
+        $searchModel->periodex = date('n-Y', strtotime("+1 month"));
+
         if(Yii::$app->request->isPost) {
             // Массовая дезинфекция из файла
             $uploadFile = UploadedFile::getInstanceByName('CarList');
@@ -534,7 +552,7 @@ class ActController extends Controller
                                 if (($numTrueDis == 0) && ($showError == '')) {
                                     $showError = 'Неверный формат файла.';
                                 } else if (($numTrueDis > 0) && ($showError == '')) {
-                                    return $this->redirect(['act/disinfect', 'CarSearch[period]' => $period, 'CarSearch[company_id]' => $company_id, 'serviceId' => $service_id]);
+                                    $showError = 'Успешно обработано';
                                 }
 
                             }
