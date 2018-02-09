@@ -12,7 +12,7 @@ $requestType = Yii::$app->request->get('type');
 
 $items = [];
 
-if(($action == 'new') || ($action == 'archive')) {
+if(($action == 'new') || ($action == 'new2') || ($action == 'archive')) {
     foreach ($listType as $type_id => $typeData) {
         $items[] = [
             'label' => Company::$listType[$type_id]['ru'],
@@ -47,7 +47,7 @@ if(($action == 'new') || ($action == 'archive')) {
     ];
     $items[] = [
         'label' => 'Подробная статистика',
-        'active' => $action == 'shownew' || $action == 'showarchive',
+        'active' => $action == 'shownew' || $action == 'shownew' || $action == 'showarchive',
     ];
 }
 

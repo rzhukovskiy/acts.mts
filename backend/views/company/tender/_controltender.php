@@ -161,6 +161,11 @@ if (isset($arrLists[9])){
                     'class' => 'kartik\grid\SerialColumn'
                 ],
                 [
+                    'header' => 'ID',
+                    'attribute' => 'tender_id',
+                    'vAlign'=>'middle',
+                ],
+                [
                     'attribute' => 'user_id',
                     'header' => 'Сотрудник',
                     'filter' => Html::activeDropDownList($searchModel, 'user_id', isset($GLOBALS['usersList']) ? $GLOBALS['usersList'] : [], ['class' => 'form-control', 'prompt' => 'Все сотрудники']),

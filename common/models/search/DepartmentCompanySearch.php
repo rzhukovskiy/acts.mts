@@ -34,6 +34,8 @@ class DepartmentCompanySearch extends DepartmentCompany
         return [
             'new' => ['dateFrom', 'dateTo', 'type', 'period'],
             'shownew' => ['dateFrom', 'dateTo', 'type', 'period', 'user_id'],
+            'new2' => ['dateFrom', 'dateTo', 'type', 'period'],
+            'shownew2' => ['dateFrom', 'dateTo', 'type', 'period', 'user_id'],
             'archive' => ['dateFrom', 'dateTo', 'type', 'period'],
             'showarchive' => ['dateFrom', 'dateTo', 'type', 'period', 'user_id'],
             'default' => [],
@@ -82,6 +84,28 @@ class DepartmentCompanySearch extends DepartmentCompany
             case 'shownew':
 
                 $query->with('company')->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->where(['OR', ['AND', '`department_company`.`remove_date` IS NULL', '`company`.`status` = 1'], ['AND', '`department_company`.`remove_date` IS NOT NULL', '`company`.`status` = 2']])->andWhere(['`department_company`.`user_id`' => $this->user_id])->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 0])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
+
+                $query->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $this->dateFrom, $this->dateTo]);
+
+                break;
+
+            case 'new2':
+
+                $query->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+
+                $query->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $this->dateFrom, $this->dateTo]);
+
+                $dataProvider->sort = [
+                    'defaultOrder' => [
+                        'user_id'    => SORT_DESC,
+                    ]
+                ];
+
+                break;
+
+            case 'shownew2':
+
+                $query->with('company')->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['`department_company`.`user_id`' => $this->user_id])->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, `company`.`created_at`')->orderBy('`company`.`created_at` ASC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $this->dateFrom, $this->dateTo]);
 
