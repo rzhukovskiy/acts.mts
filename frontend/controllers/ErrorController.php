@@ -51,6 +51,7 @@ class ErrorController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('n-Y');
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -67,6 +68,7 @@ class ErrorController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('n-Y');
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -83,6 +85,7 @@ class ErrorController extends Controller
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ASYNC]);
         $searchModel->service_type = $type;
+        $searchModel->period = date('n-Y');
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

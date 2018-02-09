@@ -43,19 +43,19 @@ class menuLeftWidget extends Widget
         foreach (Service::$listType as $type_id => $typeData) {
             $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ERROR]);
             $searchModel->service_type = $type_id;
-            $errorsCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+            $errorsCount += $searchModel->search([])->getCount();
         }
         $lossesCount = 0;
         foreach (Service::$listType as $type_id => $typeData) {
             $searchModel = new ActSearch(['scenario' => Act::SCENARIO_LOSSES]);
             $searchModel->service_type = $type_id;
-            $lossesCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+            $lossesCount += $searchModel->search([])->getCount();
         }
         $asyncCount = 0;
         foreach (Service::$listType as $type_id => $typeData) {
             $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ASYNC]);
             $searchModel->service_type = $type_id;
-            $asyncCount += $searchModel->search(Yii::$app->request->queryParams)->getCount();
+            $asyncCount += $searchModel->search([])->getCount();
         }
 
         $items = [];

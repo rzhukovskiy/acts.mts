@@ -15,6 +15,7 @@ use common\models\Type;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use kartik\date\DatePicker;
 
 $actionResave = Url::to('@web/act/resaveact');
 
@@ -96,13 +97,14 @@ $columns = [
     ],
     [
         'attribute' => 'partner_id',
-        'filter' => false,
+        'filter' => true,
         'value' => function ($data) {
             return isset($data->partner) ? $data->partner->name : '';
         },
     ],
     [
         'attribute' => 'client_id',
+        'filter' => true,
         'value' => function ($data) {
             return isset($data->client) ? $data->client->name : '';
         },
@@ -239,7 +241,26 @@ $columns = [
     ],
 ];
 
-$buttons = '<span class="btn btn-warning btn-sm doResave" style="float:right;">Пересохранить выделенные</span>';
+$buttons = 'Период: ' . DatePicker::widget([
+        'model'         => $searchModel,
+        'attribute'     => 'period',
+        'type'          => DatePicker::TYPE_INPUT,
+        'language'      => 'ru',
+        'pluginOptions' => [
+            'autoclose'       => true,
+            'changeMonth'     => true,
+            'changeYear'      => true,
+            'showButtonPanel' => true,
+            'format'          => 'm-yyyy',
+            'maxViewMode'     => 2,
+            'minViewMode'     => 1,
+        ],
+        'options'       => [
+            'class' => 'form-control ext-filter',
+        ]
+    ]);;
+
+$buttons .= '<span class="btn btn-warning btn-sm doResave" style="float:right;">Пересохранить выделенные</span>';
 $buttons .= '<span class="btn btn-success btn-sm UnResave" style="float:right;">Снять выделение</span>';
 $buttons .= '<span class="btn btn-danger btn-sm AllResave" style="float:right;">Выделить все</span>';
 
@@ -251,6 +272,7 @@ echo GridView::widget([
     'floatHeader' => false,
     'resizableColumns' => false,
     'floatHeaderOptions' => ['top' => '0'],
+    'filterSelector' => '.ext-filter',
     'panel' => [
         'type' => 'primary',
         'heading' => (Yii::$app->controller->action->id == 'losses') ? 'Убыточные акты' : ((Yii::$app->controller->action->id == 'async') ? 'Асинхронные акты' : 'Ошибочные акты'),
