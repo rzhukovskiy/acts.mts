@@ -1555,7 +1555,7 @@ class EmailController extends Controller
             $i = 1;
             $summ = 0;
 
-            $old_id = 0;
+            $oldPeriod = '';
 
             foreach ($ArrDebt as $keyP => $valueP) {
                 foreach ($valueP as $key => $value) {
@@ -1566,14 +1566,14 @@ class EmailController extends Controller
                         $in = (int) $arrPeriod[1];
                         $showDate = DateHelper::$months[$in][0] . ' ' . $arrPeriod[0];
 
-                        if($old_id != $new_id) {
+                        if($oldPeriod != $keyP) {
 
-                            $resText .= '<br /><b>' . $ArrDebt[$keyP][$key][$keyT][0] . '</b><br />';
-                            $resText .= $showDate . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+                            $resText .= '<br /><b>' . $showDate . '</b><br />';
+                            $resText .= $ArrDebt[$keyP][$key][$keyT][0] . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
 
-                            $old_id = $new_id;
+                            $oldPeriod = $keyP;
                         } else {
-                            $resText .= $showDate . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+                            $resText .= $ArrDebt[$keyP][$key][$keyT][0] . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
                         }
 
                         $summ += $ArrDebt[$keyP][$key][$keyT][1];
