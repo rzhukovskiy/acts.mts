@@ -176,12 +176,28 @@ window.onload=function(){
         i++;
      });
     
-       for (var key in userName) {
-    if (userName.hasOwnProperty(key)) {
-        resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ key +'</td><td style="padding: 3px 5px 3px 5px">' + userName[key] + '</td></tr>';
+    // Сортировка
+    var sortArr = [];
+
+    for (var index in userName) {
+        if (userName.hasOwnProperty(index)) {  
+            sortArr.push({v:userName[index], k: index});
+        }
     }
-}
-// Подсчет кол.
+
+    sortArr.sort(function(a,b){
+        if(a.v < b.v){ return 1}
+            if(a.v > b.v){ return -1}
+                return 0;
+    });
+    // Сортировка
+
+    for (var key in sortArr) {
+        if (sortArr.hasOwnProperty(key)) {  
+            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px">' + sortArr[key].v + '</td></tr>';
+        }
+    }
+
             if ($win == 2) {
            nameTabs = 'Количество в архиве';
             } else if ($win == 0) {
