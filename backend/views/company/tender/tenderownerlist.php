@@ -677,19 +677,16 @@ $collumn = [
         ],
         [
             'attribute' => 'status',
-            'format' => 'raw',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
             'filter' => Html::activeDropDownList($searchModel, 'status', TenderOwner::$status, ['class' => 'form-control']),
-            'value' => function ($data, $key, $index, $column) {
-                return Html::activeDropDownList($data, 'status', TenderOwner::$status,
-                    [
-                        'class'              => 'form-control change-status',
-                        'data-id'            => $data->id,
-                        'data-status'        => $data->status,
-                    ]
+            'value' => function ($data) {
 
-                );
+                if ($data->status) {
+                    return TenderOwner::$status[$data->status];
+                } else {
+                    return '-';
+                }
+
             },
         ],
         [
@@ -1180,7 +1177,7 @@ $collumn = [
     ];
 }
 
-$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']])->select('id')->column();
+$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['AND', ['tender_user' => 0], ['status' => 0]])->select('id')->column();
     if (count($delete) > 0) {
        for ($i = 0; $i < count($delete); $i++) {
         $modelSet = TenderOwner::findOne(['id' => $delete[$i]]);
