@@ -117,12 +117,7 @@ class CompanySearch extends Company
 
                     $query->leftJoin('department_company', 'department_company.company_id = company.id');
 
-                    if(isset($params['CompanySearch']['dep_user_id'])) {
-                        if($params['CompanySearch']['dep_user_id'] > 0) {
-                            $this->dep_user_id = $params['CompanySearch']['dep_user_id'];
-                            $query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
-                        }
-                    }
+
 
                     $query->leftJoin('user', 'department_company.user_id = user.id');
                     $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');

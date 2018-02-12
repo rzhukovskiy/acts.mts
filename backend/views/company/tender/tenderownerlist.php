@@ -693,19 +693,16 @@ $collumn = [
         ],
         [
             'attribute' => 'status',
-            'format' => 'raw',
             'vAlign'=>'middle',
-            'contentOptions' => ['style' => 'min-width: 150px; vertical-align: middle'],
             'filter' => Html::activeDropDownList($searchModel, 'status', TenderOwner::$status, ['class' => 'form-control']),
-            'value' => function ($data, $key, $index, $column) {
-                return Html::activeDropDownList($data, 'status', TenderOwner::$status,
-                    [
-                        'class'              => 'form-control change-status',
-                        'data-id'            => $data->id,
-                        'data-status'        => $data->status,
-                    ]
+            'value' => function ($data) {
 
-                );
+                if ($data->status) {
+                    return TenderOwner::$status[$data->status];
+                } else {
+                    return '-';
+                }
+
             },
         ],
         [
@@ -884,8 +881,8 @@ $collumn = [
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        $platform = str_replace('http://', '',$data->electronic_platform);
-                        return str_replace('https://', '',$platform);
+                        $platform = str_replace('http://', '', $data->electronic_platform);
+                        return str_replace('https://', '', $platform);
                     } else {
                         return '-';
                     }
@@ -918,19 +915,22 @@ $collumn = [
         [
             'vAlign'=>'middle',
             'format' => 'raw',
-            'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
             'contentOptions' => ['style' => 'text-align: center'],
             'header' => 'Отправить<br />в закупки',
             'value' => function ($data) {
 
              if (!isset($data->tender_id)) {
                 if (!$data->tender_id) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->tender_user == Yii::$app->user->identity->id)) {
                     return Html::a('Отправить', ['/company/sendtotender', 'id' => $data->id], ['class' => 'btn btn-success btn-sm']);
+                    } else {
+                           return '-';
+                    }
                 } else {
-                    return '';
+                       return '-';
                 }
              } else {
-                    return '';
+                    return '-';
              }
             },
         ],
@@ -1196,7 +1196,7 @@ $collumn = [
     ];
 }
 
-$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']])->select('id')->column();
+$delete = TenderOwner::find()->where(['AND', ['<', 'date_to', time()], ['!=', 'date_to', '']])->andWhere(['AND', ['tender_user' => 0], ['status' => 0]])->select('id')->column();
     if (count($delete) > 0) {
        for ($i = 0; $i < count($delete); $i++) {
         $modelSet = TenderOwner::findOne(['id' => $delete[$i]]);

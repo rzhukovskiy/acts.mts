@@ -16,50 +16,50 @@ $ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
 $script = <<< JS
 // формат числа
 window.onload=function(){
-  var formatSum7 = $('td[data-col-seq="7"]');
-  $(formatSum7).each(function (id, value) {
+  var formatSum8 = $('td[data-col-seq="8"]');
+  $(formatSum8).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   var nomber = 0;
-  var formatSum9 = $('td[data-col-seq="9"] .kv-editable .kv-editable-value');
-  $(formatSum9).each(function (id, value) {
+  var formatSum10 = $('td[data-col-seq="10"] .kv-editable .kv-editable-value');
+  $(formatSum10).each(function (id, value) {
       var thisId = $(this);
        if(!isNaN(parseFloat($(this).text()))) {
        nomber += parseFloat($(this).text());
        }
       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-  $('.kv-page-summary-container td:eq(9)').text(nomber.toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+  $('.kv-page-summary-container td:eq(10)').text(nomber.toFixed(2).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
       
-  var formatSum11 = $('td[data-col-seq="11"]');
-  $(formatSum11).each(function (id, value) {
-       var thisId = $(this);
-       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
-});
-  
   var formatSum12 = $('td[data-col-seq="12"]');
   $(formatSum12).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum7a = $('.kv-page-summary-container td:eq(7)');
-  $(formatSum7a).each(function (id, value) {
+  var formatSum13 = $('td[data-col-seq="13"]');
+  $(formatSum13).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+});
+  
+  var formatSum8a = $('.kv-page-summary-container td:eq(8)');
+  $(formatSum8a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
 
   
-    var formatSum11a = $('.kv-page-summary-container td:eq(11)');
-  $(formatSum11a).each(function (id, value) {
+    var formatSum12a = $('.kv-page-summary-container td:eq(12)');
+  $(formatSum12a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
   
-  var formatSum12a = $('.kv-page-summary-container td:eq(12)');
-  $(formatSum12a).each(function (id, value) {
+  var formatSum13a = $('.kv-page-summary-container td:eq(13)');
+  $(formatSum13a).each(function (id, value) {
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });

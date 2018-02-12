@@ -188,7 +188,23 @@ class CompanyController extends Controller
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_NEW);
         }
 
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->search($params);
+
+        if (isset($params['CompanySearch']['dep_user_id'])) {
+            if ($params['CompanySearch']['dep_user_id'] > 0) {
+                $searchModel->dep_user_id = $params['CompanySearch']['dep_user_id'];
+                $dataProvider->query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
+            }
+        } else {
+            $exists = Company::find()->innerJoin('department_company', 'department_company.company_id = company.id')->where(['AND',['company.status' => $searchModel->status], ['company.type' => $searchModel->type], ['department_company.user_id' => Yii::$app->user->identity->id]])->limit(1)->exists();
+            if (Yii::$app->user->identity->role != User::ROLE_ADMIN && ($exists)) {
+                $searchModel->dep_user_id = Yii::$app->user->identity->id;
+                $dataProvider->query->andWhere(['department_company.user_id' => Yii::$app->user->identity->id]);
+            }
+        }
+
+
 
         // Подкатегории для сервиса
         if ($type == 3) {
@@ -1574,20 +1590,13 @@ class CompanyController extends Controller
             ]
         ];
         if ($win == 1) {
-            $dataProvider->query->andWhere(['AND', ['tender_user' => 0], ['is', 'reason_not_take', null]])->orWhere(['AND', ['tender_user' => 0], ['reason_not_take' => '']]);
-
+            $dataProvider->query->andwhere(['AND', ['tender_user' => 0], ['status' => 0]]);
         } else if ($win == 2) {
             $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['!=', 'tender_id', ''], ['NOT', ['tender_id' => null]]])->orderBy('tender_user');
         } else if ($win == 3) {
-            $dataProvider->query->andWhere(['!=', 'reason_not_take', ''])->orWhere(['!=', 'reason_not_take', null]);
-        } else if ($win == 256) {
-            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 256])->orderBy('tender_user');
-        } else if ($win == 654) {
-            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 654])->orderBy('tender_user');
-        } else if ($win == 756) {
-            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->andWhere(['tender_user' => 756])->orderBy('tender_user');
+            $dataProvider->query->andwhere(['>', 'status', 0]);
         } else {
-            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['is', 'reason_not_take', null]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['reason_not_take' => '']])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['is', 'reason_not_take', null]])->orderBy('tender_user');
+            $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['status' => 0]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['status' => 0]])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['status' => 0]])->orderBy('tender_user');
         }
 
 
