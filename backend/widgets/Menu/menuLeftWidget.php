@@ -289,6 +289,13 @@ class menuLeftWidget extends Widget
                     'url' => ['/email/list'],
                     'active' => Yii::$app->controller->id == 'email'
                 ],
+                [
+                    'label' => 'Заказ химии',
+                    'url' => ['/delivery/listchemistry'],
+                    'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
+                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
+                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
+                ],
             ];
         } // Account manager links
         elseif ($currentUser->role == User::ROLE_ACCOUNT) {
@@ -527,6 +534,13 @@ class menuLeftWidget extends Widget
                     'label' => 'Почтовые<br />шаблоны',
                     'url' => ['/email/list'],
                     'active' => Yii::$app->controller->id == 'email'
+                ],
+                [
+                    'label' => 'Заказ химии',
+                    'url' => ['/delivery/listchemistry'],
+                    'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
+                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
+                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
                 ],
             ];
             if ($currentUser->is_account) {

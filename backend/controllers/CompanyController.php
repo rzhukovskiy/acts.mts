@@ -191,19 +191,20 @@ class CompanyController extends Controller
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->search($params);
 
+        // загрузка страницы с компаниями текущего пользователя
         if (isset($params['CompanySearch']['dep_user_id'])) {
             if ($params['CompanySearch']['dep_user_id'] > 0) {
                 $searchModel->dep_user_id = $params['CompanySearch']['dep_user_id'];
                 $dataProvider->query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
             }
         } else {
-            $exists = Company::find()->innerJoin('department_company', 'department_company.company_id = company.id')->where(['AND',['company.status' => $searchModel->status], ['company.type' => $searchModel->type], ['department_company.user_id' => Yii::$app->user->identity->id]])->limit(1)->exists();
+            $exists = Company::find()->innerJoin('department_company', 'department_company.company_id = company.id')->where(['AND',['company.status' => $searchModel->status], ['company.type' => $searchModel->type], ['department_company.user_id' => Yii::$app->user->identity->id]])->exists();
             if (Yii::$app->user->identity->role != User::ROLE_ADMIN && ($exists)) {
                 $searchModel->dep_user_id = Yii::$app->user->identity->id;
                 $dataProvider->query->andWhere(['department_company.user_id' => Yii::$app->user->identity->id]);
             }
         }
-
+        // загрузка страницы с компаниями текущего пользователя
 
 
         // Подкатегории для сервиса
