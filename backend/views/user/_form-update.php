@@ -78,6 +78,21 @@ use common\models\Company;
     </div>
 
     <div class="form-group field-department-name required">
+        <label class="col-sm-2 control-label" for="department-name">Заявки 2</label>
+        <div class="col-sm-10">
+            <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {
+                echo Html::checkbox('CompanyType[' . Company::STATUS_NEW2 . '][' . $companyTypeId . ']', $userModel->can($companyTypeId, Company::STATUS_NEW2), [
+                    'label' => $companyTypeData['ru'],
+                    'labelOptions' => [
+                        'class' => 'checkbox-inline',
+                        'style' => 'margin-right: 10px;'
+                    ]
+                ]);
+            } ?>
+        </div>
+    </div>
+
+    <div class="form-group field-department-name required">
         <label class="col-sm-2 control-label" for="department-name">Архив</label>
         <div class="col-sm-10">
             <?php foreach (Company::$listType as $companyTypeId => $companyTypeData) {

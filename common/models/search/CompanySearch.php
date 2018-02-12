@@ -94,7 +94,7 @@ class CompanySearch extends Company
                         $query->andWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
-                if ($this->status == Company::STATUS_NEW) {
+                if ($this->status == Company::STATUS_NEW || $this->status == Company::STATUS_NEW2) {
 
                     /*if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
                         $query->leftJoin('department_company', 'department_company.company_id = company.id');
@@ -116,8 +116,6 @@ class CompanySearch extends Company
                     }*/
 
                     $query->leftJoin('department_company', 'department_company.company_id = company.id');
-
-
 
                     $query->leftJoin('user', 'department_company.user_id = user.id');
                     $query->select('`company`.*, `department_company`.`user_id`, `department_company`.`company_id`');
@@ -229,7 +227,7 @@ class CompanySearch extends Company
                         $query->andWhere(['company.type' => array_keys($currentUser->getAllCompanyType($this->status))]);
                     }
                 }
-                if ($this->status == Company::STATUS_NEW) {
+                if ($this->status == Company::STATUS_NEW || $this->status == Company::STATUS_NEW2) {
                     $query->orderBy('communication_at ASC');
                 } else {
                     $query->orderBy('address ASC');
