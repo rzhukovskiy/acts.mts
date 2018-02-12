@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $id
  * @property integer $tender_id
  * @property integer $tender_user
+ * @property integer $status
  * @property string $text
  * @property string $link
  * @property string $data

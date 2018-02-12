@@ -1591,12 +1591,12 @@ class CompanyController extends Controller
             ]
         ];
         if ($win == 1) {
-            $dataProvider->query->where(['AND', ['tender_user' => 0], ['status' => 0]]);
+            $dataProvider->query->andwhere(['AND', ['tender_user' => 0], ['status' => 0]]);
 
         } else if ($win == 2) {
             $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['!=', 'tender_id', ''], ['NOT', ['tender_id' => null]]])->orderBy('tender_user');
         } else if ($win == 3) {
-            $dataProvider->query->where(['>', 'status', 0]);
+            $dataProvider->query->andwhere(['>', 'status', 0]);
         } else {
             $dataProvider->query->andWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['status' => 0]])->orWhere(['AND', ['!=', 'tender_user', 0], ['tender_id' => ''], ['status' => 0]])->orWhere(['AND', ['!=', 'tender_user', 0], ['is', 'tender_id', null], ['status' => 0]])->orderBy('tender_user');
         }
