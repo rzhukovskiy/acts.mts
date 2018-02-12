@@ -35,6 +35,14 @@ if((Yii::$app->controller->action->id == 'list') && (Yii::$app->controller->id =
             'role' => $role,
         ]);
 
+} elseif((Yii::$app->controller->action->id == 'double') && (Yii::$app->controller->id == 'error')) {
+    $this->title = 'Задвоенные акты ';
+
+    echo $this->render('_tabsdouble',
+        [
+            'role' => $role,
+        ]);
+
 } else {
     $this->title = 'Акты';
 

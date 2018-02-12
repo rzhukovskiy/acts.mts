@@ -49,6 +49,7 @@ class ActSearch extends Act
             self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
             self::SCENARIO_LOSSES => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
             self::SCENARIO_ASYNC => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
+            self::SCENARIO_DOUBLE => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
             self::SCENARIO_HISTORY => ['card_number', 'client_id', 'car_number', 'dateFrom', 'dateTo', 'service_type', 'address', 'mark_id', 'type_id'],
             'default' => [],
         ];
@@ -109,7 +110,7 @@ class ActSearch extends Act
                     'actErrors as actErrors',
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
-                $query->andWhere(['AND', ['!=', 'actErrors.error_type', 19], ['!=', 'actErrors.error_type', 20]]);
+                $query->andWhere(['AND', ['!=', 'actErrors.error_type', 19], ['!=', 'actErrors.error_type', 20], ['!=', 'actErrors.error_type', 21]]);
 
                 if($this->partner_id) {
                     $query->andFilterWhere(['act.partner_id' => $this->partner_id]);
@@ -160,6 +161,31 @@ class ActSearch extends Act
                 ]);
                 $query->andWhere(['is NOT', 'actErrors.act_id', null]);
                 $query->andWhere(['actErrors.error_type' => 20]);
+
+                if($this->partner_id) {
+                    $query->andFilterWhere(['act.partner_id' => $this->partner_id]);
+                }
+                if($this->client_id) {
+                    $query->andFilterWhere(['act.client_id' => $this->client_id]);
+                }
+
+                $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
+                $query->orderBy('partner_id, served_at');
+                break;
+            case self::SCENARIO_DOUBLE:
+                $query->joinWith([
+                    'type',
+                    'mark',
+                    'car car',
+                    'card as card',
+                    'client as client',
+                    'partner as partner',
+                    'car as car',
+                    'actErrors as actErrors',
+                ]);
+                $query->andWhere(['is NOT', 'actErrors.act_id', null]);
+                $query->andWhere(['actErrors.error_type' => 21]);
 
                 if($this->partner_id) {
                     $query->andFilterWhere(['act.partner_id' => $this->partner_id]);

@@ -28,17 +28,17 @@ class ErrorController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync', 'double', 'deldouble'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
+                        'actions' => ['list', 'view', 'numberlist', 'querycar', 'losses', 'dellosses', 'async', 'delasync', 'double', 'deldouble'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'querycar', 'losses', 'dellosses', 'async', 'delasync'],
+                        'actions' => ['list', 'view', 'querycar', 'losses', 'dellosses', 'async', 'delasync', 'double', 'deldouble'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -84,6 +84,23 @@ class ErrorController extends Controller
     public function actionAsync($type)
     {
         $searchModel = new ActSearch(['scenario' => Act::SCENARIO_ASYNC]);
+        $searchModel->service_type = $type;
+        $searchModel->period = date('n-Y');
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'type' => $type,
+            'role' => Yii::$app->user->identity->role,
+            'admin' => Yii::$app->user->can(User::ROLE_ADMIN),
+        ]);
+    }
+
+    public function actionDouble($type)
+    {
+        $searchModel = new ActSearch(['scenario' => Act::SCENARIO_DOUBLE]);
         $searchModel->service_type = $type;
         $searchModel->period = date('n-Y');
 
@@ -172,6 +189,12 @@ class ErrorController extends Controller
     public function actionDelasync($id)
     {
         ActError::deleteAll(['act_id' => $id, 'error_type' => 20]);
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+    public function actionDeldouble($id)
+    {
+        ActError::deleteAll(['act_id' => $id, 'error_type' => 21]);
 
         return $this->redirect(Yii::$app->request->referrer);
     }
