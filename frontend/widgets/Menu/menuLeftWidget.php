@@ -57,6 +57,12 @@ class menuLeftWidget extends Widget
             $searchModel->service_type = $type_id;
             $asyncCount += $searchModel->search([])->getCount();
         }
+        $doubleCount = 0;
+        foreach (Service::$listType as $type_id => $typeData) {
+            $searchModel = new ActSearch(['scenario' => Act::SCENARIO_DOUBLE]);
+            $searchModel->service_type = $type_id;
+            $doubleCount += $searchModel->search([])->getCount();
+        }
 
         $items = [];
         // Admin links
@@ -298,7 +304,7 @@ class menuLeftWidget extends Widget
                         'Ошибочные акты ' .
                         ($errorsCount ? '<span class="label label-danger">' . $errorsCount . '</span>' : ''),
                     'url'    => ['/error/list', 'type' => Company::TYPE_WASH],
-                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses' && Yii::$app->controller->action->id != 'async' && Yii::$app->controller->action->id != 'update',
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id != 'losses' && Yii::$app->controller->action->id != 'async' && Yii::$app->controller->action->id != 'double' && Yii::$app->controller->action->id != 'update',
                 ],
                 [
                     'label'  =>
@@ -313,6 +319,13 @@ class menuLeftWidget extends Widget
                         ($asyncCount ? '<span class="label label-danger">' . $asyncCount . '</span>' : ''),
                     'url'    => ['/error/async', 'type' => Company::TYPE_WASH],
                     'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'async',
+                ],
+                [
+                    'label'  =>
+                        'Задвоенные акты ' .
+                        ($doubleCount ? '<span class="label label-danger">' . $doubleCount . '</span>' : ''),
+                    'url'    => ['/error/double', 'type' => Company::TYPE_WASH],
+                    'active' => Yii::$app->controller->id == 'error' && Yii::$app->controller->action->id == 'double',
                 ],
 
             ];

@@ -67,6 +67,7 @@ class Act extends ActiveRecord
     const SCENARIO_ERROR = 'error';
     const SCENARIO_LOSSES = 'losses';
     const SCENARIO_ASYNC = 'async';
+    const SCENARIO_DOUBLE = 'double';
     const SCENARIO_PARTNER = 'partner';
     const SCENARIO_HISTORY = 'history';
     const SCENARIO_CLIENT = 'client';
@@ -1248,6 +1249,19 @@ class Act extends ActiveRecord
                 $modelActError = new ActError();
                 $modelActError->act_id = $this->id;
                 $modelActError->error_type = 20;
+                $modelActError->save();
+            }
+
+            // Задвоенные акты
+            $dateSecondSearch = date('Y-m-d', strtotime("-2 day"));
+            $dateFirtsSearch = date('Y-m-d', strtotime("-1 day"));
+            $dateNowSearch = date('Y-m-d');
+            $arrSearchActs = Act::find()->where(['AND', ['car_number' => $this->car_number], ['service_type' => $this->service_type]])->andWhere(['OR', ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%Y-%m-%d")' => $dateSecondSearch], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%Y-%m-%d")' => $dateFirtsSearch], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%Y-%m-%d")' => $dateNowSearch]])->count();
+
+            if($arrSearchActs > 1) {
+                $modelActError = new ActError();
+                $modelActError->act_id = $this->id;
+                $modelActError->error_type = 21;
                 $modelActError->save();
             }
 
