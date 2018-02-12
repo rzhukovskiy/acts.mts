@@ -197,8 +197,7 @@ class CompanyController extends Controller
                 $dataProvider->query->andWhere(['department_company.user_id' => $params['CompanySearch']['dep_user_id']]);
             }
         } else {
-            $exists = Company::find()->innerJoin('department_company', 'department_company.company_id = company.id')->where(['AND',['company.status' => $searchModel->status], ['company.type' => $searchModel->type]])->exists();
-            print_r($exists);
+            $exists = Company::find()->innerJoin('department_company', 'department_company.company_id = company.id')->where(['AND',['company.status' => $searchModel->status], ['company.type' => $searchModel->type], ['department_company.user_id' => Yii::$app->user->identity->id]])->limit(1)->exists();
             if (Yii::$app->user->identity->role != User::ROLE_ADMIN && ($exists)) {
                 $searchModel->dep_user_id = Yii::$app->user->identity->id;
                 $dataProvider->query->andWhere(['department_company.user_id' => Yii::$app->user->identity->id]);

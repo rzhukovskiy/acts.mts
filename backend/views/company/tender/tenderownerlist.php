@@ -881,8 +881,8 @@ $collumn = [
 
                 if (isset($data->electronic_platform)) {
                     if ($data->electronic_platform) {
-                        $platform = str_replace('http://', '',$data->electronic_platform);
-                        return str_replace('https://', '',$platform);
+                        $platform = str_replace('http://', '', $data->electronic_platform);
+                        return str_replace('https://', '', $platform);
                     } else {
                         return '-';
                     }
@@ -915,19 +915,22 @@ $collumn = [
         [
             'vAlign'=>'middle',
             'format' => 'raw',
-            'visible' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
             'contentOptions' => ['style' => 'text-align: center'],
             'header' => 'Отправить<br />в закупки',
             'value' => function ($data) {
 
              if (!isset($data->tender_id)) {
                 if (!$data->tender_id) {
+                    if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || ($data->tender_user == Yii::$app->user->identity->id)) {
                     return Html::a('Отправить', ['/company/sendtotender', 'id' => $data->id], ['class' => 'btn btn-success btn-sm']);
+                    } else {
+                           return '-';
+                    }
                 } else {
-                    return '';
+                       return '-';
                 }
              } else {
-                    return '';
+                    return '-';
              }
             },
         ],
