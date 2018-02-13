@@ -129,7 +129,7 @@ use common\models\User;
         $this->title = 'Привязка компаний';
 
         echo $this->render('_tabsLinking');
-        echo $this->render('_FormLink', [
+        echo $this->render('_formLink', [
             'model' => $model,
             'type' => $type,
             'authorMembers' => $authorMembers,
