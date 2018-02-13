@@ -253,9 +253,23 @@ class UserController extends Controller
         $model = new DepartmentLinking();
         $model->type = $type;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            // Успешно
+        // Проверяем на наличие повторов
+        $params = Yii::$app->request->post();
+        if((isset($params['DepartmentLinking']['user_id'])) && (isset($params['DepartmentLinking']['company_id']))) {
+
+            $user_id = $params['DepartmentLinking']['user_id'];
+            $company_id = $params['DepartmentLinking']['company_id'];
+            $checkLink = DepartmentLinking::find()->where(['AND', ['type' => $type], ['user_id' => $user_id], ['company_id' => $company_id]])->exists();
+
+            if(!$checkLink) {
+                // Повторов нет, сохраняем
+                if ($model->load($params) && $model->save()) {
+                    // Успешно
+                }
+            }
+
         }
+        // Проверяем на наличие повторов
 
         return $this->redirect(['linking', 'type' => $type]);
 
@@ -274,9 +288,23 @@ class UserController extends Controller
         $arrCompany = Company::find()->where(['type' => $model->type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
         // Список компаний
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['linking', 'type' => $model->type]);
+        // Проверяем на наличие повторов
+        $params = Yii::$app->request->post();
+        if((isset($params['DepartmentLinking']['user_id'])) && (isset($params['DepartmentLinking']['company_id']))) {
+
+            $user_id = $params['DepartmentLinking']['user_id'];
+            $company_id = $params['DepartmentLinking']['company_id'];
+            $checkLink = DepartmentLinking::find()->where(['AND', ['type' => $model->type], ['user_id' => $user_id], ['company_id' => $company_id]])->exists();
+
+            if(!$checkLink) {
+                // Повторов нет, сохраняем
+                if ($model->load($params) && $model->save()) {
+                    return $this->redirect(['linking', 'type' => $model->type]);
+                }
+            }
+
         }
+        // Проверяем на наличие повторов
 
         return $this->render('updatelink', [
             'model' => $model,

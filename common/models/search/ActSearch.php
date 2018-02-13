@@ -4,6 +4,7 @@ namespace common\models\search;
 
 use common\models\Company;
 use common\models\Service;
+use common\models\User;
 use yii;
 use yii\data\ActiveDataProvider;
 use common\models\Act;
@@ -21,6 +22,7 @@ class ActSearch extends Act
     public $createDay;
     public $day;
     public $address;
+    public $user_id;
 
     /**
      * @inheritdoc
@@ -28,7 +30,7 @@ class ActSearch extends Act
     public function rules()
     {
         return [
-            [['card_number', 'card_id', 'mark_id', 'type_id', 'day', 'service_type'], 'integer'],
+            [['card_number', 'card_id', 'mark_id', 'type_id', 'day', 'service_type', 'user_id'], 'integer'],
             [['car_number', 'extra_car_number', 'period', 'address'], 'string'],
             [['partner_id'], 'safe'],
             ['period', 'default', 'value' => date('n') . '-' . date('Y'), 'on' => self::SCENARIO_CLIENT],
@@ -46,10 +48,10 @@ class ActSearch extends Act
             self::SCENARIO_CAR => ['card_number', 'card_id', 'car_number', 'dateFrom', 'dateTo'],
             self::SCENARIO_CLIENT => ['card_number', 'check', 'client_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
             self::SCENARIO_PARTNER => ['card_number', 'check', 'partner_id', 'card_id', 'mark_id', 'type_id', 'day', 'car_number', 'extra_car_number', 'period', 'service_type', 'address'],
-            self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
-            self::SCENARIO_LOSSES => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
-            self::SCENARIO_ASYNC => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
-            self::SCENARIO_DOUBLE => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period'],
+            self::SCENARIO_ERROR => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period', 'user_id'],
+            self::SCENARIO_LOSSES => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period', 'user_id'],
+            self::SCENARIO_ASYNC => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period', 'user_id'],
+            self::SCENARIO_DOUBLE => ['card_number', 'check', 'service_type', 'client_id', 'partner_id', 'card_id', 'mark_id', 'type_id', 'car_number', 'extra_car_number', 'period', 'user_id'],
             self::SCENARIO_HISTORY => ['card_number', 'client_id', 'car_number', 'dateFrom', 'dateTo', 'service_type', 'address', 'mark_id', 'type_id'],
             'default' => [],
         ];
@@ -121,6 +123,25 @@ class ActSearch extends Act
 
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
 
+                // загрузка страницы с привязкой к текущему пользователю
+                if (isset($params['ActSearch']['user_id'])) {
+                    if ($params['ActSearch']['user_id'] > 0) {
+                        $this->user_id = $params['ActSearch']['user_id'];
+                        $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                        $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                    }
+                } else {
+                    if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                        $exists = Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['!=', 'act_error.error_type', 19], ['!=', 'act_error.error_type', 20], ['!=', 'act_error.error_type', 21], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                        if ($exists) {
+                            $this->user_id = Yii::$app->user->identity->id;
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                        }
+                    }
+                }
+                // загрузка страницы с привязкой к текущему пользователю
+
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_LOSSES:
@@ -145,6 +166,25 @@ class ActSearch extends Act
                 }
 
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
+                // загрузка страницы с привязкой к текущему пользователю
+                if (isset($params['ActSearch']['user_id'])) {
+                    if ($params['ActSearch']['user_id'] > 0) {
+                        $this->user_id = $params['ActSearch']['user_id'];
+                        $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                        $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                    }
+                } else {
+                    if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                        $exists = Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['act_error.error_type' => 19], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                        if ($exists) {
+                            $this->user_id = Yii::$app->user->identity->id;
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                        }
+                    }
+                }
+                // загрузка страницы с привязкой к текущему пользователю
 
                 $query->orderBy('partner_id, served_at');
                 break;
@@ -171,6 +211,25 @@ class ActSearch extends Act
 
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
 
+                // загрузка страницы с привязкой к текущему пользователю
+                if (isset($params['ActSearch']['user_id'])) {
+                    if ($params['ActSearch']['user_id'] > 0) {
+                        $this->user_id = $params['ActSearch']['user_id'];
+                        $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                        $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                    }
+                } else {
+                    if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                        $exists = Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['act_error.error_type' => 20], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                        if ($exists) {
+                            $this->user_id = Yii::$app->user->identity->id;
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                        }
+                    }
+                }
+                // загрузка страницы с привязкой к текущему пользователю
+
                 $query->orderBy('partner_id, served_at');
                 break;
             case self::SCENARIO_DOUBLE:
@@ -195,6 +254,25 @@ class ActSearch extends Act
                 }
 
                 $query->andFilterWhere(['like', 'card_number', $this->card_number])->andFilterWhere(['like', 'car_number', $this->car_number]);
+
+                // загрузка страницы с привязкой к текущему пользователю
+                if (isset($params['ActSearch']['user_id'])) {
+                    if ($params['ActSearch']['user_id'] > 0) {
+                        $this->user_id = $params['ActSearch']['user_id'];
+                        $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                        $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                    }
+                } else {
+                    if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                        $exists = Act::find()->innerJoin('act_error', '`act_error`.`act_id` = `act`.`id`')->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['act_error.error_type' => 21], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                        if ($exists) {
+                            $this->user_id = Yii::$app->user->identity->id;
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                        }
+                    }
+                }
+                // загрузка страницы с привязкой к текущему пользователю
 
                 $query->orderBy('partner_id, served_at');
                 break;
