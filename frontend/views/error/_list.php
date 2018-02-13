@@ -284,6 +284,10 @@ $buttons = 'Период: ' . DatePicker::widget([
         ]
     ]);;
 
+$buttons .= ' Выбор сотрудника: ' . Html::activeDropDownList($searchModel, 'user_id', \common\models\DepartmentLinking::find()->where(['department_linking.type' => Yii::$app->request->get('type')])
+        ->innerJoin('user', 'user.id = department_linking.user_id')
+        ->select(['user.username', 'department_linking.user_id as id'])->indexBy('id')->column(), ['prompt' => 'Все сотрудники','class' => 'form-control ext-filter', 'style' => 'width: 200px;']);
+
 $buttons .= '<span class="btn btn-warning btn-sm doResave" style="float:right;">Пересохранить выделенные</span>';
 $buttons .= '<span class="btn btn-success btn-sm UnResave" style="float:right;">Снять выделение</span>';
 $buttons .= '<span class="btn btn-danger btn-sm AllResave" style="float:right;">Выделить все</span>';
