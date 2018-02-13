@@ -2,11 +2,12 @@
 
 namespace backend\controllers;
 
-use common\models\Company;
+use common\models\DepartmentLinking;
 use common\models\DepartmentUserCompanyType;
 use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
+use common\models\search\DepartmentLinkingSearch;
 use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\User;
@@ -210,6 +211,52 @@ class UserController extends Controller
             return $model;
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    // Привязка сотрудников к компаниям
+    public function actionLinking($type)
+    {
+
+        $searchModel = new DepartmentLinkingSearch();
+        $searchModel->type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $model = new DepartmentLinking();
+        $model->type = $type;
+
+        // Список сотрудников
+        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.id, user.username')->asArray()->all();
+        $authorMembers = [];
+
+        foreach ($workUserData as $name => $value) {
+            $index = $value['id'];
+            $authorMembers[$index] = trim($value['username']);
+        }
+        // Список сотрудников
+
+        return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'type' => $type,
+            'authorMembers' => $authorMembers,
+        ]);
+
+    }
+
+    public function actionCreatelink($type)
+    {
+
+        $model = new DepartmentLinking();
+        $model->type = $type;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // Успешно
+        }
+
+        return $this->redirect(['linking', 'type' => $type]);
+
     }
 
     // Блокировка доступа сотрудникам
