@@ -182,6 +182,12 @@ JS;
 $this->registerJs($script, View::POS_READY);
     // Скрипт скрытия актов в филиалы
 
+    $type_linking = $company ? $company : Yii::$app->request->get('type');
+
+    $filters .= ' Выбор сотрудника: ' . Html::activeDropDownList($searchModel, 'user_id', \common\models\DepartmentLinking::find()->where(['department_linking.type' => $type_linking])
+            ->innerJoin('user', 'user.id = department_linking.user_id')
+            ->select(['user.username', 'department_linking.user_id as id'])->indexBy('id')->column(), ['prompt' => 'Все сотрудники','class' => 'form-control ext-filter', 'style' => 'width: 200px;']);
+
     $filters .= Html::a('Выгрузить', array_merge(['act/export'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
     $filters .= Html::a('Пересчитать', array_merge(['act/fix'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm']);
 }
