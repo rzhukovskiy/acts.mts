@@ -560,6 +560,12 @@ class menuLeftWidget extends Widget
                     ],
                 ],
                 [
+                    'label' => 'Привязка<br />компаний',
+                    'url' => ['/user/linking', 'type' => Company::TYPE_OWNER],
+                    'visible'    => ((Yii::$app->user->identity->id == 176) || (Yii::$app->user->identity->id == 238)) ? true : false,
+                    'active' => Yii::$app->controller->id == 'user',
+                ],
+                [
                     'label' => 'Планирование',
                     'url' => ['/plan/list'],
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'list'),
