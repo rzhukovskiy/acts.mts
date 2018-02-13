@@ -1963,7 +1963,7 @@ class CompanyController extends Controller
                                         $electronic_platform = $tables[$i][19];
                                         $link = $tables[$i][20];
                                     }
-                                    if ($date_from) {
+                                    if ($date_from && $customer && $inn_customer) {
 
                                         $model = new TenderOwner();
                                         $model->number = $number;

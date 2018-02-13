@@ -550,7 +550,7 @@ $this->registerJs($script, View::POS_READY);
     <div class="panel-heading">
         <?= 'Тендер №' . $model->id ?>
         <div class="header-btn pull-right">
-            <span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span>
+            <?= Html::a('Добавить задачу', ['plan/taskadd', 'id' => $model->id], ['class' => 'btn btn-success btn-sm']) . '<span class="btn btn-warning btn-sm listSettings" style="margin-left:10px;">Управление списками</span>' ?>
         </div>
     </div>
     <div class="panel-body">

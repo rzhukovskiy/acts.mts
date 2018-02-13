@@ -32,6 +32,8 @@ echo Tabs::widget([
     'items' => $tabs,
 ]);
 
+$getID = Yii::$app->request->get('id');
+
 ?>
 
 <div class="panel panel-primary">
@@ -52,8 +54,18 @@ echo Tabs::widget([
         <?= $form->field($model, 'for_user')->dropDownList($userListsID, ['class' => 'form-control', 'prompt' => 'Выберите пользователя']) ?>
         <?= $form->field($newmodellink, 'for_user_copy')->dropDownList($userListsID, ['class' => 'form-control', 'multiple' => 'true']) ?>
         <?= $form->field($model, 'priority')->dropDownList(TaskUser::$priorityStatus, ['class' => 'form-control']) ?>
-        <?= $form->field($model, 'title')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите тему']) ?>
-        <?= $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']) ?>
+        <?php if ($getID) {
+            echo $form->field($model, 'title')->input('text', ['value' => 'Проработать цены по тендеру №' . $getID]);
+        } else {
+            echo $form->field($model, 'title')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите тему']);
+        }
+        ?>
+        <?php if ($getID) {
+            echo $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'value' => 'Нужно проработать цены по тендеру']);
+        } else {
+            echo $form->field($model, 'task')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Введите задачу']);
+        }
+        ?>
         <?= $form->field($model, 'data')->widget(DateTimePicker::className(), [
             'type' => DateTimePicker::TYPE_INPUT,
             'options' => ['placeholder' => 'Выберите дату и время'],
@@ -64,7 +76,13 @@ echo Tabs::widget([
                 'todayBtn'=>true,
             ]
         ]) ?>
-        <?= $form->field($model, 'tender_id')->input('number', ['class' => 'form-control', 'placeholder' => 'Введите ID тендера']) ?>
+        <?php if ($getID) {
+            echo $form->field($model, 'tender_id')->input('number', ['value' => $getID]);
+        } else {
+            echo $form->field($model, 'tender_id')->input('number', ['class' => 'form-control', 'placeholder' => 'Введите ID тендера']);
+        }
+         ?>
+
         <?= $form->field($model, 'files[]')->fileInput(['multiple' => true]) ?>
 
 
