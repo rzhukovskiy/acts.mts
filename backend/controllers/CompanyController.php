@@ -1921,28 +1921,48 @@ class CompanyController extends Controller
                                 $numCol = count($tables[$i]);
 
                                 if ($numCol > 1) {
-                                    // Проверка
+                                    // Проверка если эксель 27 столбцов
+                                    if (isset($tables[0][27])) {
+                                        $number = (String) $tables[$i][0];
+                                        $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
+                                        $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
+                                        $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
+                                        $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
 
-                                    $number = (String) $tables[$i][0];
-                                    $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
-                                    $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
-                                    $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
-                                    $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
+                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                        $purchase_name = (str_replace('&#034;', '', $purchase_name));
 
-                                    $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
-                                    $purchase_name = (str_replace('&#034;', '', $purchase_name));
+                                        $fz = $tables[$i][7];
+                                        $customer = $tables[$i][11];
+                                        $customer_full = $tables[$i][12];
+                                        $inn_customer = (String) $tables[$i][13];
+                                        $purchase = str_replace(',', '', (String) $tables[$i][17]);
+                                        $city = $tables[$i][19];
+                                        $link_official = $tables[$i][21];
+                                        $request_security = str_replace(',', '', (String) $tables[$i][22]);
+                                        $electronic_platform = $tables[$i][26];
+                                        $link = $tables[$i][27];
+                                    } else {
+                                        $number = (String) $tables[$i][0];
+                                        $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
+                                        $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
+                                        $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
+                                        $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
 
-                                    $fz = $tables[$i][7];
-                                    $customer = $tables[$i][11];
-                                    $customer_full = $tables[$i][12];
-                                    $inn_customer = (String) $tables[$i][13];
-                                    $purchase = str_replace(',', '', (String) $tables[$i][17]);
-                                    $city = $tables[$i][19];
-                                    $link_official = $tables[$i][21];
-                                    $request_security = str_replace(',', '', (String) $tables[$i][22]);
-                                    $electronic_platform = $tables[$i][26];
-                                    $link = $tables[$i][27];
+                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                        $purchase_name = (str_replace('&#034;', '', $purchase_name));
 
+                                        $fz = $tables[$i][7];
+                                        $customer = $tables[$i][8];
+                                        $customer_full = '';
+                                        $inn_customer = (String) $tables[$i][9];
+                                        $purchase = str_replace(',', '', (String) $tables[$i][11]);
+                                        $city = $tables[$i][12];
+                                        $link_official = $tables[$i][15];
+                                        $request_security = str_replace(',', '', (String) $tables[$i][16]);
+                                        $electronic_platform = $tables[$i][19];
+                                        $link = $tables[$i][20];
+                                    }
                                     if ($date_from) {
 
                                         $model = new TenderOwner();
