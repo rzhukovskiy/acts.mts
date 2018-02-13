@@ -216,7 +216,6 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите ИНН заказчика'],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],
