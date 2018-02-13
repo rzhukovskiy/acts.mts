@@ -218,6 +218,8 @@ class UserController extends Controller
     public function actionLinking($type)
     {
 
+        if((Yii::$app->user->identity->id == 176) || (Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 1)) {
+
         Url::remember();
 
         $searchModel = new DepartmentLinkingSearch();
@@ -245,10 +247,16 @@ class UserController extends Controller
             'arrCompany' => $arrCompany,
         ]);
 
+        } else {
+            return $this->redirect(['/']);
+        }
+
     }
 
     public function actionCreatelink($type)
     {
+
+        if((Yii::$app->user->identity->id == 176) || (Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 1)) {
 
         $model = new DepartmentLinking();
         $model->type = $type;
@@ -273,6 +281,10 @@ class UserController extends Controller
 
         return $this->redirect(['linking', 'type' => $type]);
 
+        } else {
+            return $this->redirect(['/']);
+        }
+
     }
 
     public function actionUpdatelink($id)
@@ -280,47 +292,61 @@ class UserController extends Controller
 
         $model = DepartmentLinking::findOne($id);
 
-        // Список сотрудников
-        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
-        // Список сотрудников
+        if((Yii::$app->user->identity->id == 176) || (Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 1)) {
 
-        // Список компаний
-        $arrCompany = Company::find()->where(['type' => $model->type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
-        // Список компаний
+            // Список сотрудников
+            $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
+            // Список сотрудников
 
-        // Проверяем на наличие повторов
-        $params = Yii::$app->request->post();
-        if((isset($params['DepartmentLinking']['user_id'])) && (isset($params['DepartmentLinking']['company_id']))) {
+            // Список компаний
+            $arrCompany = Company::find()->where(['type' => $model->type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
+            // Список компаний
 
-            $user_id = $params['DepartmentLinking']['user_id'];
-            $company_id = $params['DepartmentLinking']['company_id'];
-            $checkLink = DepartmentLinking::find()->where(['AND', ['type' => $model->type], ['user_id' => $user_id], ['company_id' => $company_id]])->exists();
+            // Проверяем на наличие повторов
+            $params = Yii::$app->request->post();
+            if ((isset($params['DepartmentLinking']['user_id'])) && (isset($params['DepartmentLinking']['company_id']))) {
 
-            if(!$checkLink) {
-                // Повторов нет, сохраняем
-                if ($model->load($params) && $model->save()) {
-                    return $this->redirect(['linking', 'type' => $model->type]);
+                $user_id = $params['DepartmentLinking']['user_id'];
+                $company_id = $params['DepartmentLinking']['company_id'];
+                $checkLink = DepartmentLinking::find()->where(['AND', ['type' => $model->type], ['user_id' => $user_id], ['company_id' => $company_id]])->exists();
+
+                if (!$checkLink) {
+                    // Повторов нет, сохраняем
+                    if ($model->load($params) && $model->save()) {
+                        return $this->redirect(['linking', 'type' => $model->type]);
+                    }
                 }
+
             }
+            // Проверяем на наличие повторов
 
+            return $this->render('updatelink', [
+                'model' => $model,
+                'type' => $model->type,
+                'authorMembers' => $authorMembers,
+                'arrCompany' => $arrCompany,
+            ]);
+
+        } else {
+            return $this->redirect(['/']);
         }
-        // Проверяем на наличие повторов
-
-        return $this->render('updatelink', [
-            'model' => $model,
-            'type' => $model->type,
-            'authorMembers' => $authorMembers,
-            'arrCompany' => $arrCompany,
-        ]);
 
     }
 
     public function actionDeletelink($id)
     {
+
+        if((Yii::$app->user->identity->id == 176) || (Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 1)) {
+
         $modelLink = DepartmentLinking::findOne($id);
         $modelLink->delete();
 
         return $this->redirect(Yii::$app->getRequest()->referrer);
+
+        } else {
+            return $this->redirect(['/']);
+        }
+
     }
 
     // Блокировка доступа сотрудникам
