@@ -294,14 +294,10 @@ class ActivityController extends Controller
 
         $dataProvider = $searchModel->search($params);
 
-        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.id, user.username')->asArray()->all();
-        $authorMembers = [];
-
-        foreach ($workUserData as $name => $value) {
-            $index = $value['id'];
-            $authorMembers[$index] = trim($value['username']);
-        }
+        // Список сотрудников
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.username, user.id as id')->indexBy('id')->column();
         asort($authorMembers);
+        // Список сотрудников
 
         $listType = Company::$listType;
 
@@ -337,14 +333,10 @@ class ActivityController extends Controller
 
         $dataProvider = $searchModel->search($params);
 
-        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.id, user.username')->asArray()->all();
-        $authorMembers = [];
-
-        foreach ($workUserData as $name => $value) {
-            $index = $value['id'];
-            $authorMembers[$index] = trim($value['username']);
-        }
+        // Список сотрудников
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->andWhere(['department_id' => $type])->select('user.username, user.id as id')->indexBy('id')->column();
         asort($authorMembers);
+        // Список сотрудников
 
         $listType = Company::$listType;
 

@@ -51,13 +51,7 @@ class ChangesController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Список сотрудников
-        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.id, user.username')->asArray()->all();
-        $authorMembers = [];
-
-        foreach ($workUserData as $name => $value) {
-            $index = $value['id'];
-            $authorMembers[$index] = trim($value['username']);
-        }
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
         // Список сотрудников
 
         // Список компаний
@@ -82,13 +76,7 @@ class ChangesController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Список сотрудников
-        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.id, user.username')->asArray()->all();
-        $authorMembers = [];
-
-        foreach ($workUserData as $name => $value) {
-            $index = $value['id'];
-            $authorMembers[$index] = trim($value['username']);
-        }
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
         // Список сотрудников
 
         // Список типов ТС
