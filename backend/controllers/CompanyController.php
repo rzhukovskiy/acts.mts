@@ -1943,27 +1943,27 @@ class CompanyController extends Controller
                                         $electronic_platform = $tables[$i][26];
                                         $link = $tables[$i][27];
                                     } else {
-                                        $number = (String) $tables[$i][0];
+                                        $number = '';
                                         $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
                                         $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
-                                        $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
-                                        $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
+                                        $date_bidding = '';
+                                        $date_consideration = '';
 
-                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][1]));
                                         $purchase_name = (str_replace('&#034;', '', $purchase_name));
 
-                                        $fz = $tables[$i][7];
-                                        $customer = $tables[$i][8];
+                                        $fz = '';
+                                        $customer = $tables[$i][5];
                                         $customer_full = '';
-                                        $inn_customer = (String) $tables[$i][9];
-                                        $purchase = str_replace(',', '', (String) $tables[$i][11]);
-                                        $city = $tables[$i][12];
-                                        $link_official = $tables[$i][15];
-                                        $request_security = str_replace(',', '', (String) $tables[$i][16]);
-                                        $electronic_platform = $tables[$i][19];
-                                        $link = $tables[$i][20];
+                                        $inn_customer = '';
+                                        $purchase = str_replace(',', '', (String) $tables[$i][4]);
+                                        $city = $tables[$i][8];
+                                        $link_official = $tables[$i][7];
+                                        $request_security = '';
+                                        $electronic_platform = $tables[$i][6];
+                                        $link = '';
                                     }
-                                    if ($date_from && $customer && $inn_customer) {
+                                    if ($date_from && $customer) {
 
                                         $model = new TenderOwner();
                                         $model->number = $number;
