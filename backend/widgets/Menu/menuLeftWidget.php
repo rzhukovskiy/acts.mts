@@ -144,6 +144,28 @@ class menuLeftWidget extends Widget
                     ],
                 ],
                 [
+                    'label'  => 'Статистика<br />тендеров',
+                    'url'    => '#',
+                    'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                    'items'  => [
+                        [
+                            'label'  => 'Статистика<br />эл.площадок',
+                            'url' => ['/company/statplace', 'type' => 1],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
+                        ],
+                       /* [
+                            'label'  => 'Статистика<br />денежных<br />средств',
+                            'url' => ['/company/statprice'],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                        ],*/
+                    ],
+                ],
+                [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/new', 'type' => Company::TYPE_WASH],
                     'active' => (
@@ -403,7 +425,29 @@ class menuLeftWidget extends Widget
                         ],
                     ],
                 ],
-
+                [
+                    'label'  => 'Статистика<br />тендеров',
+                    'url'    => '#',
+                    'visible'    => ((Yii::$app->user->identity->id == 238) || (Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756) || (Yii::$app->user->identity->id == 708)  || (Yii::$app->user->identity->id == 176)) ? true : false,
+                    'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                    'items'  => [
+                        [
+                            'label'  => 'Статистика<br />эл.площадок',
+                            'url' => ['/company/statplace', 'type' => 1],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
+                        ],
+                        /*[
+                            'label'  => 'Статистика<br />денежных<br />средств',
+                            'url' => ['/company/statprice'],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                        ],*/
+                    ],
+                ],
                 [
                     'label' => 'Заявки' . ($countNew ? '<span class="label label-success">' . $countNew . '</span>' : ''),
                     'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_NEW)],

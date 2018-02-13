@@ -176,21 +176,28 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'contact',
                 ],
                 [
-                    'label'  => 'Карты',
-                    'url'    => ['/card/list'],
-                    'active' => Yii::$app->controller->id == 'card'
-                        && Yii::$app->controller->action->id != 'diapason'
-                        && Yii::$app->controller->action->id != 'lost',
-                ],
-                [
-                    'label'  => 'Потерянные карты',
-                    'url'    => ['/card/lost'],
-                    'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action->id == 'lost',
-                ],
-                [
-                    'label'  => 'Диапазон карт',
-                    'url'    => ['/card/diapason'],
-                    'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action->id == 'diapason',
+                    'label'  => 'Информация по картам',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'card',
+                    'items'  => [
+                        [
+                            'label'  => 'Карты',
+                            'url'    => ['/card/list'],
+                            'active' => Yii::$app->controller->id == 'card'
+                                && Yii::$app->controller->action->id != 'diapason'
+                                && Yii::$app->controller->action->id != 'lost',
+                        ],
+                        [
+                            'label'  => 'Потерянные карты',
+                            'url'    => ['/card/lost'],
+                            'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action->id == 'lost',
+                        ],
+                        [
+                            'label'  => 'Диапазон карт',
+                            'url'    => ['/card/diapason'],
+                            'active' => Yii::$app->controller->id == 'card' && Yii::$app->controller->action->id == 'diapason',
+                        ],
+                    ]
                 ],
                 [
                     'label'  => 'Информация ТС',
