@@ -69,17 +69,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -1921,28 +1921,48 @@ class CompanyController extends Controller
                                 $numCol = count($tables[$i]);
 
                                 if ($numCol > 1) {
-                                    // Проверка
+                                    // Проверка если эксель 27 столбцов
+                                    if (isset($tables[0][27])) {
+                                        $number = (String) $tables[$i][0];
+                                        $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
+                                        $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
+                                        $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
+                                        $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
 
-                                    $number = (String) $tables[$i][0];
-                                    $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
-                                    $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
-                                    $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
-                                    $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
+                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                        $purchase_name = (str_replace('&#034;', '', $purchase_name));
 
-                                    $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
-                                    $purchase_name = (str_replace('&#034;', '', $purchase_name));
+                                        $fz = $tables[$i][7];
+                                        $customer = $tables[$i][11];
+                                        $customer_full = $tables[$i][12];
+                                        $inn_customer = (String) $tables[$i][13];
+                                        $purchase = str_replace(',', '', (String) $tables[$i][17]);
+                                        $city = $tables[$i][19];
+                                        $link_official = $tables[$i][21];
+                                        $request_security = str_replace(',', '', (String) $tables[$i][22]);
+                                        $electronic_platform = $tables[$i][26];
+                                        $link = $tables[$i][27];
+                                    } else {
+                                        $number = (String) $tables[$i][0];
+                                        $date_from = (str_replace('/', '-', (String) $tables[$i][2]));
+                                        $date_to = (str_replace('/', '-', (String) $tables[$i][3]));
+                                        $date_bidding = (str_replace('/', '-', (String) $tables[$i][4]));
+                                        $date_consideration = (str_replace('/', '-', (String) $tables[$i][5]));
 
-                                    $fz = $tables[$i][7];
-                                    $customer = $tables[$i][11];
-                                    $customer_full = $tables[$i][12];
-                                    $inn_customer = (String) $tables[$i][13];
-                                    $purchase = str_replace(',', '', (String) $tables[$i][17]);
-                                    $city = $tables[$i][19];
-                                    $link_official = $tables[$i][21];
-                                    $request_security = str_replace(',', '', (String) $tables[$i][22]);
-                                    $electronic_platform = $tables[$i][26];
-                                    $link = $tables[$i][27];
+                                        $purchase_name = (str_replace('\\', '', (String) $tables[$i][6]));
+                                        $purchase_name = (str_replace('&#034;', '', $purchase_name));
 
+                                        $fz = $tables[$i][7];
+                                        $customer = $tables[$i][8];
+                                        $customer_full = '';
+                                        $inn_customer = (String) $tables[$i][9];
+                                        $purchase = str_replace(',', '', (String) $tables[$i][11]);
+                                        $city = $tables[$i][12];
+                                        $link_official = $tables[$i][15];
+                                        $request_security = str_replace(',', '', (String) $tables[$i][16]);
+                                        $electronic_platform = $tables[$i][19];
+                                        $link = $tables[$i][20];
+                                    }
                                     if ($date_from) {
 
                                         $model = new TenderOwner();
@@ -2829,6 +2849,72 @@ class CompanyController extends Controller
         } else {
             echo json_encode(['success' => 'false']);
         }
+
+    }
+
+    public function actionStatplace($type)
+    {
+       $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
+
+        $searchModel = new TenderSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // победные
+        if ($type == 1) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            // проигранные
+        } else if ($type == 2) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            // отклоненные
+        } else if ($type == 3) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            // общие
+        } else {
+            $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+        }
+
+
+        return $this->render('/stattender/statplace', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'namePlace' => $namePlace,
+            'type' => $type,
+        ]);
+    }
+
+    public function actionShowstatplace($site_address, $type)
+    {
+
+        $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
+
+        $searchModel = new TenderSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // победные
+        if ($type == 1) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['site_address' => $site_address]);
+            // проигранные
+        } else if ($type == 2) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['site_address' => $site_address]);
+            // отклоненные
+        } else if ($type == 3) {
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['site_address' => $site_address]);
+            // общие
+        } else {
+            $dataProvider->query->andWhere(['site_address' => $site_address]);
+        }
+
+        return $this->render('/stattender/statplace', [
+            'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
+            'type' => $type,
+            'namePlace' => $namePlace,
+        ]);
+
+    }
+
+    public function actionStatprice()
+    {
 
     }
 
