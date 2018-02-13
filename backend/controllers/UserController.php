@@ -3,10 +3,12 @@
 namespace backend\controllers;
 
 use common\models\Company;
+use common\models\DepartmentLinking;
 use common\models\DepartmentUserCompanyType;
 use common\models\forms\userAddForm;
 use common\models\forms\userUpdateForm;
 use common\models\LoginForm;
+use common\models\search\DepartmentLinkingSearch;
 use common\models\search\UserSearch;
 use common\models\Service;
 use common\models\User;
@@ -210,6 +212,87 @@ class UserController extends Controller
             return $model;
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    // Привязка сотрудников к компаниям
+    public function actionLinking($type)
+    {
+
+        Url::remember();
+
+        $searchModel = new DepartmentLinkingSearch();
+        $searchModel->type = $type;
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $model = new DepartmentLinking();
+        $model->type = $type;
+
+        // Список сотрудников
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
+        // Список сотрудников
+
+        // Список компаний
+        $arrCompany = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
+        // Список компаний
+
+        return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'type' => $type,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
+        ]);
+
+    }
+
+    public function actionCreatelink($type)
+    {
+
+        $model = new DepartmentLinking();
+        $model->type = $type;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // Успешно
+        }
+
+        return $this->redirect(['linking', 'type' => $type]);
+
+    }
+
+    public function actionUpdatelink($id)
+    {
+
+        $model = DepartmentLinking::findOne($id);
+
+        // Список сотрудников
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
+        // Список сотрудников
+
+        // Список компаний
+        $arrCompany = Company::find()->where(['type' => $model->type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
+        // Список компаний
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['linking', 'type' => $model->type]);
+        }
+
+        return $this->render('updatelink', [
+            'model' => $model,
+            'type' => $model->type,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
+        ]);
+
+    }
+
+    public function actionDeletelink($id)
+    {
+        $modelLink = DepartmentLinking::findOne($id);
+        $modelLink->delete();
+
+        return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
     // Блокировка доступа сотрудникам

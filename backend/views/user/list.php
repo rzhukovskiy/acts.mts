@@ -12,11 +12,18 @@ use common\models\User;
  * @var $newUser \common\models\User
  */
 
-$this->title = 'Пользователи';
-
 ?>
 <div class="user-index">
-    <?= $this->render('_tabs') ?>
+    <?php
+
+    // Разделяем вывод сотрудников и вывод привязок
+    if(Yii::$app->controller->action->id == 'list') {
+
+        $this->title = 'Пользователи';
+
+        echo $this->render('_tabs');
+
+    ?>
     <div class="panel panel-primary">
         <div class="panel-heading">Добавить пользователя</div>
         <div class="panel-body">
@@ -114,4 +121,39 @@ $this->title = 'Пользователи';
             <?php Pjax::end(); ?>
         </div>
     </div>
+
+    <?php
+
+    } else {
+
+        $this->title = 'Привязка компаний';
+
+        echo $this->render('_tabsLinking');
+        echo $this->render('_formLink', [
+            'model' => $model,
+            'type' => $type,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
+        ]);
+
+        ?>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">Привязка компаний</div>
+        <div class="panel-body">
+
+    <?php
+
+        echo $this->render('_linking', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
+        ]);
+    }
+
+    ?>
+        </div>
+    </div>
+
 </div>

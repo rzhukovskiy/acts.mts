@@ -1,6 +1,7 @@
 <?php
 use common\models\Department;
 use yii\bootstrap\Tabs;
+use common\models\Company;
 
 /**
  * @var $this \yii\web\View
@@ -18,6 +19,12 @@ foreach (Department::find()->active()->all() as $department) {
         'active' => $action == 'list' && $requestDepartment == $department->id,
     ];
 }
+
+$items[] = [
+    'label' => 'Привязка',
+    'url' => ['/user/linking', 'type' => Company::TYPE_OWNER],
+    'active' => Yii::$app->controller->action->id == 'linking',
+];
 
 echo Tabs::widget([
     'items' => $items,
