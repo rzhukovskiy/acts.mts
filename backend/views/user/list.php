@@ -132,8 +132,8 @@ use common\models\User;
         echo $this->render('_FormLink', [
             'model' => $model,
             'type' => $type,
-            'searchModel' => $searchModel,
             'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
         ]);
 
         ?>
@@ -147,6 +147,8 @@ use common\models\User;
         echo $this->render('_linking', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
         ]);
     }
 

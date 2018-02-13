@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Company;
 use common\models\DepartmentLinking;
 use common\models\DepartmentUserCompanyType;
 use common\models\forms\userAddForm;
@@ -217,6 +218,8 @@ class UserController extends Controller
     public function actionLinking($type)
     {
 
+        Url::remember();
+
         $searchModel = new DepartmentLinkingSearch();
         $searchModel->type = $type;
 
@@ -226,14 +229,12 @@ class UserController extends Controller
         $model->type = $type;
 
         // Список сотрудников
-        $workUserData = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.id, user.username')->asArray()->all();
-        $authorMembers = [];
-
-        foreach ($workUserData as $name => $value) {
-            $index = $value['id'];
-            $authorMembers[$index] = trim($value['username']);
-        }
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
         // Список сотрудников
+
+        // Список компаний
+        $arrCompany = Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
+        // Список компаний
 
         return $this->render('list', [
             'searchModel' => $searchModel,
@@ -241,6 +242,7 @@ class UserController extends Controller
             'model' => $model,
             'type' => $type,
             'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
         ]);
 
     }
@@ -257,6 +259,40 @@ class UserController extends Controller
 
         return $this->redirect(['linking', 'type' => $type]);
 
+    }
+
+    public function actionUpdatelink($id)
+    {
+
+        $model = DepartmentLinking::findOne($id);
+
+        // Список сотрудников
+        $authorMembers = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->select('user.username, user.id as id')->indexBy('id')->column();
+        // Список сотрудников
+
+        // Список компаний
+        $arrCompany = Company::find()->where(['type' => $model->type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column();
+        // Список компаний
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['linking', 'type' => $model->type]);
+        }
+
+        return $this->render('updatelink', [
+            'model' => $model,
+            'type' => $model->type,
+            'authorMembers' => $authorMembers,
+            'arrCompany' => $arrCompany,
+        ]);
+
+    }
+
+    public function actionDeletelink($id)
+    {
+        $modelLink = DepartmentLinking::findOne($id);
+        $modelLink->delete();
+
+        return $this->redirect(Yii::$app->getRequest()->referrer);
     }
 
     // Блокировка доступа сотрудникам

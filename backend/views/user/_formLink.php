@@ -43,7 +43,7 @@ use common\models\Service;
             </tr>
             <tr>
                 <td><?= $form->field($model, 'user_id')->dropDownList($authorMembers, ['class' => 'form-control input-sm', 'prompt' => 'Выберите сотрудника'])->label(false) ?></td>
-                <td><?= $form->field($model, 'company_id')->dropDownList(Company::find()->where(['type' => $type])->andWhere(['OR', ['status' => 2], ['status' => 10]])->select('name')->indexBy('id')->orderBy('name')->asArray()->column(), ['class' => 'form-control input-sm', 'prompt' => 'Выберите компанию'])->label(false) ?></td>
+                <td><?= $form->field($model, 'company_id')->dropDownList($arrCompany, ['class' => 'form-control input-sm', 'prompt' => 'Выберите компанию'])->label(false) ?></td>
             </tr>
             <tr>
                 <td colspan="2"><?= Html::submitButton($model->isNewRecord ? 'Добавить' : 'Обновить', ['class' => 'btn btn-primary btn-sm']) ?></td>
