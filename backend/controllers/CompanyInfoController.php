@@ -123,6 +123,15 @@ class CompanyInfoController extends Controller
                         } else {
                             $output[] = 'Да';
                         }
+
+                    } elseif($name == 'edo') {
+
+                        if ($value == 0) {
+                            $output[] = 'Нет';
+                        } else {
+                            $output[] = 'Да';
+                        }
+
                     } elseif($name == 'geolocation') {
                     } elseif($name == 'lat') {
                     } elseif($name == 'lng') {
