@@ -21,6 +21,14 @@ foreach ($serviceList as $type_id) {
     ];
 }
 
+if ($action == 'archive') {
+    $items[] = [
+        'label' => 'Общее',
+        'url' => ['/order/allarchive'],
+
+    ];
+}
+
 echo Tabs::widget([
     'items' => $items,
 ]);
