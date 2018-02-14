@@ -22,6 +22,7 @@ echo $this->render('_list', [
     'role' => $role,
     'hideFilter' => false,
     'columns' => $columns,
+    'company' => $company,
     'is_locked' => $is_locked,
 ]);
 

@@ -293,7 +293,30 @@ $this->registerJs($script, View::POS_READY);
                 </tr>
 
             <?php } ?>
-
+            <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('edo') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'edo',
+                        'displayValue' => ($modelCompanyInfo->edo == 0) ? 'Нет' : 'Да',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'data' => ['0' => 'Нет', '1' => 'Да'],
+                        'options' => ['class' => 'form-control'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
             <tr>
                 <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('contract') ?></td>
                 <td>

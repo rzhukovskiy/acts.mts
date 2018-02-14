@@ -360,6 +360,31 @@ class ActSearch extends Act
                 } else {
                     $query->andFilterWhere(['client_id' => $this->client_id]);
                 }
+
+                // загрузка страницы с привязкой к текущему пользователю
+                $role = Yii::$app->user->identity->role;
+                if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
+
+                    if (isset($params['ActSearch']['user_id'])) {
+                        if ($params['ActSearch']['user_id'] > 0) {
+                            $this->user_id = $params['ActSearch']['user_id'];
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.client_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => Company::TYPE_OWNER]]);
+                        }
+                    } else {
+                        if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                            $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.client_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                            if ($exists) {
+                                $this->user_id = Yii::$app->user->identity->id;
+                                $query->innerJoin('department_linking', 'department_linking.company_id = act.client_id');
+                                $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => Company::TYPE_OWNER]]);
+                            }
+                        }
+                    }
+
+                }
+                // загрузка страницы с привязкой к текущему пользователю
+
                 $query->orderBy('client.parent_id, act.client_id, served_at');
                 break;
 
@@ -387,6 +412,31 @@ class ActSearch extends Act
                 }
 
                 $query->andFilterWhere(['partner_id' => $this->partner_id]);
+
+                // загрузка страницы с привязкой к текущему пользователю
+                $role = Yii::$app->user->identity->role;
+                if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
+
+                    if (isset($params['ActSearch']['user_id'])) {
+                        if ($params['ActSearch']['user_id'] > 0) {
+                            $this->user_id = $params['ActSearch']['user_id'];
+                            $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                            $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                        }
+                    } else {
+                        if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                            $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                            if ($exists) {
+                                $this->user_id = Yii::$app->user->identity->id;
+                                $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                                $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                            }
+                        }
+                    }
+
+                }
+                // загрузка страницы с привязкой к текущему пользователю
+
                 $query->orderBy('partner.parent_id, act.partner_id, served_at');
                 break;
 
