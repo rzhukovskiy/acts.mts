@@ -1944,7 +1944,7 @@ $this->registerJs($script, View::POS_READY);
                         },
                     ],
                     [
-                        'attribute' => 'return',
+                        'attribute' => 'tender_return',
                         'format'    => 'raw',
                         'value'     => function ($data) {
                             return Editable::widget([
@@ -1955,20 +1955,20 @@ $this->registerJs($script, View::POS_READY);
                                 ],
                                 'valueIfNull'     => '(не задано)',
                                 'buttonsTemplate' => '{submit}',
-                                'displayValue' => isset($data->return) ? $data->return : '',
+                                'displayValue' => isset($data->tender_return) ? $data->tender_return : '',
                                 'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
                                 'contentOptions' => ['style' => 'min-width: 100px'],
                                 'submitButton'    => [
                                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                                 ],
-                                'attribute'       => 'return',
+                                'attribute'       => 'tender_return',
                                 'asPopover'       => true,
                                 'size'            => 'md',
                                 'options'         => [
                                     'class'       => 'form-control',
                                     'placeholder' => 'Введите сумму возврата',
-                                    'id'          => 'return' . $data->id,
-                                    'value'       => $data->return
+                                    'id'          => 'tender_return' . $data->id,
+                                    'value'       => $data->tender_return
                                 ],
                             ]);
                         },

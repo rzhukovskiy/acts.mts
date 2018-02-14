@@ -300,7 +300,7 @@ if (isset($arrLists[9])){
                     },
                 ],
                 [
-                    'attribute' => 'return',
+                    'attribute' => 'tender_return',
                     'format'    => 'raw',
                     'contentOptions' => [
                             'style' => 'min-width: 100px',
@@ -314,19 +314,19 @@ if (isset($arrLists[9])){
                             ],
                             'valueIfNull'     => '(не задано)',
                             'buttonsTemplate' => '{submit}',
-                            'displayValue' => isset($data->return) ? $data->return : '',
+                            'displayValue' => isset($data->tender_return) ? $data->tender_return : '',
                             'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0) ? false : true,
                             'submitButton'    => [
                                 'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                             ],
-                            'attribute'       => 'return',
+                            'attribute'       => 'tender_return',
                             'asPopover'       => true,
                             'size'            => 'md',
                             'options'         => [
                                 'class'       => 'form-control',
                                 'placeholder' => 'Введите сумму возврата',
-                                'id'          => 'return' . $data->id,
-                                'value'       => $data->return
+                                'id'          => 'tender_return' . $data->id,
+                                'value'       => $data->tender_return
                             ],
                         ]);
                     },
@@ -374,8 +374,8 @@ if (isset($arrLists[9])){
                     'value' => function ($data) {
 
             if($data->payment_status == 1 || $data->payment_status == 2) {
-                if ($data->send || $data->return) {
-                    return $data->send - $data->return;
+                if ($data->send || $data->tender_return) {
+                    return $data->send - $data->tender_return;
                 } else {
                     return '-';
                 }
@@ -393,8 +393,8 @@ if (isset($arrLists[9])){
                     'value' => function ($data) {
 
                         if($data->payment_status == 0) {
-                            if ($data->send || $data->return) {
-                                return $data->send - $data->return;
+                            if ($data->send || $data->tender_return) {
+                                return $data->send - $data->tender_return;
                             } else {
                                 return '-';
                             }

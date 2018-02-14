@@ -157,12 +157,12 @@ class menuLeftWidget extends Widget
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
                         ],
-                       /* [
+                        [
                             'label'  => 'Статистика<br />денежных<br />средств',
-                            'url' => ['/company/statprice'],
+                            'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
-                        ],*/
+                        ],
                     ],
                 ],
                 [
@@ -440,12 +440,12 @@ class menuLeftWidget extends Widget
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
                         ],
-                        /*[
+                        [
                             'label'  => 'Статистика<br />денежных<br />средств',
-                            'url' => ['/company/statprice'],
+                            'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
-                        ],*/
+                        ],
                     ],
                 ],
                 [

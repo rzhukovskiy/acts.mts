@@ -69,17 +69,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -1044,7 +1044,7 @@ class CompanyController extends Controller
     public function actionControltender()
     {
 
-        $searchModel = new TenderControlSearch();
+        $searchModel = new TenderControlSearch(['scenario' => 'all']);
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -2913,9 +2913,56 @@ class CompanyController extends Controller
 
     }
 
-    public function actionStatprice()
+    public function actionStatprice($type)
     {
+        {
+            $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
 
+            $searchModel = new TenderControlSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+                 // Возвратные
+            if ($type == 1) {
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->groupBy('site_address')->select(['site_address', 'send' => 'SUM(send)']);
+                // Невозвратные
+            } else {
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->groupBy('site_address')->select(['site_address', 'send' => 'SUM(send)']);
+            }
+
+
+            return $this->render('/stattender/statprice', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'namePlace' => $namePlace,
+                'type' => $type,
+            ]);
+        }
+    }
+
+    public function actionShowstatprice($site_address, $type)
+    {
+        {
+            $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
+
+            $searchModel = new TenderControlSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            // Возвратные
+            if ($type == 1) {
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->andWhere(['site_address' => $site_address]);
+                // Невозвратные
+            } else {
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->andWhere(['site_address' => $site_address]);
+            }
+
+
+            return $this->render('/stattender/statprice', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'namePlace' => $namePlace,
+                'type' => $type,
+            ]);
+        }
     }
 
     public function actionOffer($type)
