@@ -111,7 +111,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         $arrDopListFiles = [];
         $arrStatusFile = [];
 
-        $arrEdoTmp = \common\models\Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['AND', ['company.type' => ($company == 1 ? $company : Yii::$app->request->get('type'))], ['company_info.edo' => 1]])->select('company_id')->indexBy('name')->column();
+        $arrEdoTmp = \common\models\Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['AND', ['company.type' => ($company == 1 ? $company : Yii::$app->request->get('type'))], ['company_info.edo' => 1]])->select('company_id')->indexBy('REPLACE(REPLACE(name, "ё", "е"), "\"", "")')->column();
         $arrEdoList = [];
         foreach ($arrEdoTmp as $key => $value) {
             $index = str_replace('"', '', $key);
