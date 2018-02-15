@@ -35,7 +35,7 @@ class OrderController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'view', 'archive'],
+                        'actions' => ['list', 'view', 'archive', 'allarchive', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_ACCOUNT, User::ROLE_MANAGER, User::ROLE_WATCHER],
                     ],
@@ -154,6 +154,21 @@ class OrderController extends Controller
         ]);
     }
 
+    public function actionAllarchive()
+    {
+        $searchModel = new EntrySearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->orderBy('created_at');
+
+        $listCity = Company::find()->active()->andWhere(['type' => Company::TYPE_WASH])->groupBy('address')->select(['address', 'address'])->indexBy('address')->column();
+        return $this->render('allarchive', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'listCity' => $listCity,
+        ]);
+    }
+
     /**
      * Shows an existing Company model.
      * @param integer $id
@@ -210,6 +225,79 @@ class OrderController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionCompare()
+    {
+        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrYear') || Yii::$app->request->post('arrMonthYears') || Yii::$app->request->post('arrDay') || Yii::$app->request->post('arrDayCount')) {
+            $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
+            $arrMonthYears = json_decode(Yii::$app->request->post("arrMonthYears"));
+            $arrYear = json_decode(Yii::$app->request->post("arrYear"));
+            $Day = json_decode(Yii::$app->request->post("arrDay"));
+            $arrDayCount = json_decode(Yii::$app->request->post("arrDayCount"));
+            $ressArray =[];
+
+            if (count($arrMonth) > 0) {
+                for ($i = 0; $i < count($arrMonth); $i++) {
+
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `service_type`, created_at AS served_at FROM `entry` WHERE MONTH(FROM_UNIXTIME(created_at)) =" . $arrMonth[$i] . " AND YEAR(FROM_UNIXTIME(created_at)) =" . $arrMonthYears[$i] . " GROUP BY `service_type`");
+                    $queryArray = $query->queryAll();
+
+                    for ($j = 0; $j < count($queryArray); $j++) {
+                        $arr = $queryArray[$j];
+                        $index = $arr['service_type'];
+                        $indexM = $arrMonth[$i];
+                        $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                        $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
+                    }
+                }
+            } else if ($Day) {
+                $dataStart = date("Y-m-01", strtotime($Day));
+
+                 $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `service_type`, created_at AS served_at FROM `entry` WHERE (DATE (FROM_UNIXTIME(created_at)) BETWEEN '". $dataStart ."T00:00:00.000Z' AND '". $Day ."T23:59:59.000Z') GROUP BY DAY(FROM_UNIXTIME(created_at)), `service_type` ORDER BY created_at ASC");
+                 $queryArray = $query->queryAll();
+
+                for ($j = 0; $j < count($queryArray); $j++) {
+                    $arr = $queryArray[$j];
+                    $index = $arr['service_type'];
+                    $indexM = date("j", $arr['served_at']);
+                    $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
+                }
+            } else if (count($arrDayCount) > 0) {
+                for ($i = 0; $i < count($arrDayCount); $i++) {
+
+                    $dataStart = date("Y-m-01", strtotime($arrDayCount[$i]));
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `service_type`, created_at AS served_at FROM `entry` WHERE (DATE (FROM_UNIXTIME(created_at)) BETWEEN '". $dataStart ."T00:00:00.000Z' AND '". $arrDayCount[$i] ."T23:59:59.000Z') GROUP BY `service_type`");
+                    $queryArray = $query->queryAll();
+
+                    for ($j = 0; $j < count($queryArray); $j++) {
+                        $arr = $queryArray[$j];
+                        $index = $arr['service_type'];
+                        $indexM = date("n", $arr['served_at']);
+                        $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                        $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
+                        $ressArray[$index][$indexM]['day'] = date("j", strtotime($arrDayCount[$i]));
+                    }
+                }
+            } else {
+                for ($i = 0; $i < count($arrYear); $i++) {
+
+                    $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `service_type`, created_at AS served_at FROM `entry` WHERE YEAR(FROM_UNIXTIME(created_at)) =" . $arrYear[$i] . " GROUP BY `service_type`");
+                    $queryArray = $query->queryAll();
+
+                    for ($j = 0; $j < count($queryArray); $j++) {
+                        $arr = $queryArray[$j];
+                        $index = $arr['service_type'];
+                        $indexM = $arrYear[$i];
+                        $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    }
+                }
+            }
+            return json_encode(['result' => json_encode($ressArray), 'success' => 'true']);
+        } else {
+            return json_encode(['success' => 'false']);
         }
     }
 }

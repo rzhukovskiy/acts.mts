@@ -21,7 +21,7 @@ use yii\db\ActiveRecord;
  * @property string $purchase
  * @property string $type_payment
  * @property string $money_unblocking
- * @property string $return
+ * @property string $tender_return
  * @property string $date_return
  * @property string $comment
  * @property string $payment_status
@@ -54,7 +54,7 @@ class TenderControl extends ActiveRecord
     {
         return [
             [['user_id', 'site_address', 'type_payment', 'payment_status', 'is_archive', 'tender_id'], 'integer'],
-            [['send', 'return'], 'safe'],
+            [['send', 'tender_return'], 'safe'],
             [['comment'], 'string', 'max' => 10000],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return'], 'string', 'max' => 20],
             [['platform', 'customer', 'purchase'], 'string', 'max' => 255],
@@ -79,7 +79,7 @@ class TenderControl extends ActiveRecord
             'purchase' => 'Что закупается?',
             'type_payment' => 'Тип платежа',
             'money_unblocking' => 'Дата разблокировки денег',
-            'return' => 'Нам вернули',
+            'tender_return' => 'Нам вернули',
             'date_return' => 'Фактическая дата перевода с ЭТП',
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',
