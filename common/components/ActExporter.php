@@ -64,6 +64,16 @@ class ActExporter
         $type = Service::$listType[$this->serviceType]['en'];
         $filename = "files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time) . "/all.zip";
 
+        // Удаляем все файлы из текущей папки
+        $path = \Yii::getAlias("@webroot/files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time) . "/");
+
+        if (file_exists($path)) {
+            foreach (glob($path . '*') as $file) {
+                unlink($file);
+            }
+        }
+        // Удаляем все файлы из текущей папки
+
         if ($zip->open($filename, ZipArchive::OVERWRITE) !== TRUE) {
             $zip = null;
         }
@@ -77,7 +87,7 @@ class ActExporter
         }
 
         if($this->serviceType != 3) {
-            $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['OR', ['act_status' => 5], ['act_status' => 6], ['act_status' => 7]])->andWhere(['act_date' => $dataformat])->select('client_id')->asArray()->column();
+            $queryMountActs = MonthlyAct::find()->where(['type_id' => $this->serviceType])->andWhere(['act_status' => 5])->andWhere(['act_date' => $dataformat])->select('client_id')->asArray()->column();
 
             for ($za = 0; $za < count($queryMountActs); $za++) {
                 $index = $queryMountActs[$za];
@@ -808,7 +818,7 @@ class ActExporter
                     mkdir($path, 0755, 1);
                 }
 
-                $filename = $serviceDescription . " Справка $company->name от " . date('m-Y', $this->time) . "-$files.xlsx";
+                $filename = $serviceDescription . " Справка " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . "-$files.xlsx";
 
                 $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
                 $objWriter->save($fullFilename);
@@ -858,10 +868,10 @@ class ActExporter
 
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $firstCheck = $dataList[0];
-            $fileNameCheck = "Акт {$company->name} - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
+            $fileNameCheck = "Акт " . str_replace('ё', 'е', $company->name) . " - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
             $dataExpl = date('m-Y', $firstCheck->served_at);
         } else {
-            $fileNameCheck = $serviceDescription. " Акт $company->name от " . date('m-Y', $this->time) . ".xls";;
+            $fileNameCheck = $serviceDescription. " Акт " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";;
             $dataExpl = date('m-Y', $this->time);
         }
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
@@ -2239,9 +2249,9 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Акт {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Акт " . str_replace('ё', 'е', $company->name) . " - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            $filename = $serviceDescription. " Акт $company->name от " . date('m-Y', $this->time) . ".xls";
+            $filename = $serviceDescription. " Акт " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);
@@ -2440,9 +2450,9 @@ class ActExporter
 
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $firstCheck = $dataList[0];
-            $fileNameCheck = "Счет {$company->name} - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
+            $fileNameCheck = "Счет " . str_replace('ё', 'е', $company->name) . " - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
         } else {
-            $fileNameCheck = $serviceDescription . " Счет $company->name от " . date('m-Y', $this->time) . ".xls";
+            $fileNameCheck = $serviceDescription . " Счет " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";
         }
         $fileNameCheck = str_replace('"', '', $fileNameCheck);
         $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
@@ -2612,9 +2622,9 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Счет {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Счет " . str_replace('ё', 'е', $company->name) . " - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            $filename = $serviceDescription . " Счет $company->name от " . date('m-Y', $this->time) . ".xls";
+            $filename = $serviceDescription . " Счет " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);
@@ -3458,9 +3468,9 @@ class ActExporter
         }
         if ($this->serviceType == Company::TYPE_SERVICE) {
             $first = $dataList[0];
-            $filename = "Статистика_анализ_" . $textService . " {$company->name} - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
+            $filename = "Статистика_анализ_" . $textService . " " . str_replace('ё', 'е', $company->name) . " - {$first->car_number} - {$first->id} от " . date('d-m-Y', $first->served_at) . ".xls";
         } else {
-            $filename = $serviceDescription. " Статистика_анализ_" . $textService . " $company->name от " . date('m-Y', $this->time) . ".xls";
+            $filename = $serviceDescription. " Статистика_анализ_" . $textService . " " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";
         }
         $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
         $objWriter->save($fullFilename);
