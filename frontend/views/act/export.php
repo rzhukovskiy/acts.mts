@@ -111,7 +111,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
         $arrDopListFiles = [];
         $arrStatusFile = [];
 
-        $arrEdoTmp = \common\models\Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['AND', ['company.type' => ($company ? $company : $type)], ['company_info.edo' => 1]])->select('company_id')->indexBy('name')->column();
+        $arrEdoTmp = \common\models\Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['AND', ['company.type' => ($company == 1 ? $company : Yii::$app->request->get('type'))], ['company_info.edo' => 1]])->select('company_id')->indexBy('name')->column();
         $arrEdoList = [];
         foreach ($arrEdoTmp as $key => $value) {
             $index = str_replace('"', '', $key);
@@ -365,7 +365,7 @@ $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-
                 // Проверяем статус файла
 
                 // Проверка на ЕДО
-                
+
                 if(isset($arrEdoList[trim($tmpStrint)])) {
 
                     $arrEdoDFiles[str_replace(' ', '_', $tmpStrint)][0] = $tmpStrint;
