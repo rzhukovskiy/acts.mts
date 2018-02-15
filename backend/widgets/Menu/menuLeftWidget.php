@@ -157,12 +157,12 @@ class menuLeftWidget extends Widget
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
                         ],
-                       /* [
+                        [
                             'label'  => 'Статистика<br />денежных<br />средств',
-                            'url' => ['/company/statprice'],
+                            'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
-                        ],*/
+                        ],
                     ],
                 ],
                 [
@@ -440,12 +440,12 @@ class menuLeftWidget extends Widget
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace'),
                         ],
-                        /*[
+                        [
                             'label'  => 'Статистика<br />денежных<br />средств',
-                            'url' => ['/company/statprice'],
+                            'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
-                        ],*/
+                        ],
                     ],
                 ],
                 [
@@ -461,7 +461,7 @@ class menuLeftWidget extends Widget
                 ],
                 [
                     'label' => 'Заявки 2' . ($countNew2 ? '<span class="label label-success">' . $countNew2 . '</span>' : ''),
-                    'url' => ['/company/new2', 'type' => Company::TYPE_WASH],
+                    'url' => ['/company/' . Company::$listStatus[Company::STATUS_NEW2]['en'], 'type' => $currentUser->getFirstCompanyTypeMenu(Company::STATUS_NEW2)],
                     'active' => (
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == Company::$listStatus[Company::STATUS_NEW2]['en']) ||
                         ($company && Yii::$app->controller->id == 'company' && $company->status == Company::STATUS_NEW2 && Yii::$app->controller->action->id != 'fullcontroltender')
