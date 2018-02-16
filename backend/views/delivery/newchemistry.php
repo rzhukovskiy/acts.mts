@@ -33,6 +33,7 @@ echo Tabs::widget([
         ]); ?>
 
         <?= $form->field($model, 'wash_name')->input('text', ['class' => 'form-control']) ?>
+        <?= $form->field($model, 'city')->input('text', ['class' => 'form-control']) ?>
         <?= $form->field($model, 'date_send')->widget(DatePicker::className(), [
             'type' => DatePicker::TYPE_INPUT,
             'pluginOptions' => [

@@ -28,6 +28,20 @@ $this->title = 'Заказ химии';
             },
         ],
         [
+            'attribute' => 'city',
+            'filter' => false,
+            'vAlign'=>'middle',
+            'value' => function ($data) {
+
+                if ($data->city) {
+                    return $data->city;
+                } else {
+                    return '-';
+                }
+
+            },
+        ],
+        [
             'attribute' => 'date_send',
             'vAlign'=>'middle',
             'filter' => false,

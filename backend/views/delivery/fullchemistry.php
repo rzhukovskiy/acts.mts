@@ -49,6 +49,29 @@ echo Tabs::widget([
                 </td>
             </tr>
             <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('city') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'city',
+                        'displayValue' => isset($model->city) ? $model->city : '',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите город'],
+                        'formOptions' => [
+                            'action' => ['/delivery/updatechemistry', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $model->getAttributeLabel('date_send') ?></td>
                 <td>
                     <?= Editable::widget([

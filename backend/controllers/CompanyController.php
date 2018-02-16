@@ -362,7 +362,7 @@ class CompanyController extends Controller
             $userData[$user->id] = ['badge' => $badgeSearch->search()->count, 'username' => $user->username];
         }
 
-        $this->view->title = 'Заявки - ' . Company::$listType[$type]['ru'];
+        $this->view->title = 'Заявки 2 - ' . Company::$listType[$type]['ru'];
 
         return $this->render('list',
             [
