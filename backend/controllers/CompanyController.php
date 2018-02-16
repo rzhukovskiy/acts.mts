@@ -2856,8 +2856,9 @@ class CompanyController extends Controller
     {
        $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
 
-        $searchModel = new TenderSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new TenderSearch(['scenario' => 'statplace']);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->search($params);
 
         // победные
         if ($type == 1) {
@@ -2872,7 +2873,6 @@ class CompanyController extends Controller
         } else {
             $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
         }
-
 
         return $this->render('/stattender/statplace', [
             'dataProvider' => $dataProvider,
@@ -2892,16 +2892,16 @@ class CompanyController extends Controller
 
         // победные
         if ($type == 1) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['site_address' => $site_address]);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['site_address' => $site_address])->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $searchModel->dateFrom, $searchModel->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
             // проигранные
         } else if ($type == 2) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['site_address' => $site_address]);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['site_address' => $site_address])->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $searchModel->dateFrom, $searchModel->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
             // отклоненные
         } else if ($type == 3) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['site_address' => $site_address]);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['site_address' => $site_address])->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $searchModel->dateFrom, $searchModel->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
             // общие
         } else {
-            $dataProvider->query->andWhere(['site_address' => $site_address]);
+            $dataProvider->query->andWhere(['site_address' => $site_address])->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $searchModel->dateFrom, $searchModel->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
         }
 
         return $this->render('/stattender/statplace', [
@@ -2918,7 +2918,7 @@ class CompanyController extends Controller
         {
             $namePlace = TenderLists::find()->select('description')->indexby('id')->column();
 
-            $searchModel = new TenderControlSearch();
+            $searchModel = new TenderControlSearch(['scenario' => 'statprice']);
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
                  // Возвратные
@@ -2949,10 +2949,10 @@ class CompanyController extends Controller
 
             // Возвратные
             if ($type == 1) {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->andWhere(['site_address' => $site_address]);
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
                 // Невозвратные
             } else {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->andWhere(['site_address' => $site_address]);
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
             }
 
 

@@ -27,6 +27,9 @@ use yii\data\ActiveDataProvider;
  */
 class TenderControlSearch extends TenderControl
 {
+    public $dateFrom;
+    public $dateTo;
+    public $period;
     /**
      * @inheritdoc
      */
@@ -36,6 +39,7 @@ class TenderControlSearch extends TenderControl
             [['user_id', 'site_address', 'type_payment', 'is_archive'], 'integer'],
             [['send', 'tender_return'], 'safe'],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'], 'string'],
+            [['dateFrom', 'dateTo', 'period'], 'safe'],
         ];
     }
 
@@ -47,7 +51,8 @@ class TenderControlSearch extends TenderControl
         // bypass scenarios() implementation in the parent class
         return [
             'all' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'],
-            'default' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'],
+            'statprice' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
+            'default' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
         ];
     }
 
@@ -102,6 +107,20 @@ class TenderControlSearch extends TenderControl
                     ->andFilterWhere(['like', 'customer', $this->customer])
                     ->andFilterWhere(['like', 'purchase', $this->purchase])
                     ->andFilterWhere(['like', 'tender_return', $this->tender_return]);
+
+                break;
+
+            case 'statprice':
+
+                // Если период не задан то задаем 10 лет.
+                if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
+                    $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+                    $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $this->dateFrom, $this->dateTo]);
+
+                } else {
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $this->dateFrom, $this->dateTo]);
+                }
 
                 break;
 
