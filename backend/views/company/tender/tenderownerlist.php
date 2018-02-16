@@ -283,20 +283,6 @@ $collumn = [
         'class' => 'kartik\grid\SerialColumn'
     ],
     [
-        'attribute' => 'text',
-        'filter' => false,
-        'vAlign'=>'middle',
-        'value' => function ($data) {
-
-            if ($data->text) {
-                return $data->text;
-            } else {
-                return '-';
-            }
-
-        },
-    ],
-    [
         'attribute' => 'number',
         'vAlign'=>'middle',
         'value' => function ($data) {
@@ -522,25 +508,6 @@ $collumn = [
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
-            'attribute' => 'text',
-            'vAlign'=>'middle',
-            'format' => 'raw',
-            'filter' => false,
-            'header' => 'Текст',
-            'value' => function ($data) {
-
-                if ($data->text) {
-                    return '<span class="showStatus">' . $data->text . '</span>';
-                } else {
-                    return '-';
-                }
-
-            },
-            'contentOptions' =>function ($data, $key, $index, $column){
-                return ['data-owner' => $data->id];
-            },
-        ],
-        [
             'attribute' => 'number',
             'vAlign'=>'middle',
             'value' => function ($data) {
@@ -746,20 +713,6 @@ $collumn = [
             'header' => '№',
             'vAlign'=>'middle',
             'class' => 'kartik\grid\SerialColumn'
-        ],
-        [
-            'attribute' => 'text',
-            'filter' => false,
-            'vAlign'=>'middle',
-            'value' => function ($data) {
-
-                if ($data->text) {
-                    return $data->text;
-                } else {
-                    return '-';
-                }
-
-            },
         ],
         [
             'attribute' => 'number',
@@ -1000,20 +953,6 @@ $collumn = [
             'header' => '№',
             'vAlign'=>'middle',
             'class' => 'kartik\grid\SerialColumn'
-        ],
-        [
-            'attribute' => 'text',
-            'vAlign'=>'middle',
-            'filter' => false,
-            'value' => function ($data) {
-
-                if ($data->text) {
-                    return $data->text;
-                } else {
-                    return '-';
-                }
-
-            },
         ],
         [
             'attribute' => 'number',
