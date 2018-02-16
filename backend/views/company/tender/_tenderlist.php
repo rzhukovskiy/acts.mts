@@ -264,7 +264,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->time_bidding_start) {
-                            return date('d.m.Y', $data->time_bidding_start);
+                            return date('d.m.Y H:i', $data->time_bidding_start);
                         } else {
                             return '-';
                         }
@@ -279,7 +279,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->time_bidding_end) {
-                            return date('d.m.Y', $data->time_bidding_end);
+                            return date('d.m.Y H:i', $data->time_bidding_end);
                         } else {
                             return '-';
                         }
