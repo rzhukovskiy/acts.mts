@@ -298,6 +298,7 @@ $collumn = [
     [
         'attribute' => 'customer',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'max-width: 230px'],
         'value' => function ($data) {
 
             if ($data->customer) {
@@ -310,7 +311,7 @@ $collumn = [
     ],
     [
     'attribute' => 'purchase_name',
-    'contentOptions' => ['style' => 'min-width: 330px'],
+    'contentOptions' => ['style' => 'max-width: 380px'],
     'vAlign'=>'middle',
     'value' => function ($data) {
 
@@ -325,6 +326,7 @@ $collumn = [
     [
         'attribute' => 'fz',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'max-width: 180px'],
         'value' => function ($data) {
 
             if ($data->fz) {
@@ -380,6 +382,7 @@ $collumn = [
     [
         'attribute' => 'city',
         'vAlign'=>'middle',
+        'contentOptions' => ['style' => 'max-width: 220px'],
         'value' => function ($data) {
 
             if ($data->city) {
@@ -523,6 +526,7 @@ $collumn = [
         [
             'attribute' => 'customer',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'max-width: 230px'],
             'value' => function ($data) {
 
                 if ($data->customer) {
@@ -538,7 +542,6 @@ $collumn = [
             'vAlign'=>'middle',
             'format' => 'raw',
             'value' => function ($data) {
-
                 if ($data->purchase_name) {
                     return '<span class="showStatus">' . $data->purchase_name . '</span>';
                 } else {
@@ -547,11 +550,12 @@ $collumn = [
 
             },
             'contentOptions' =>function ($data, $key, $index, $column){
-                return ['data-owner' => $data->id];
+                return ['data-owner' => $data->id, 'style' => 'max-width: 380px'];
             },
         ],
         [
             'attribute' => 'fz',
+            'contentOptions' => ['style' => 'max-width: 180px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -607,6 +611,7 @@ $collumn = [
         ],
         [
             'attribute' => 'city',
+            'contentOptions' => ['style' => 'max-width: 220px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -730,6 +735,7 @@ $collumn = [
         [
             'attribute' => 'customer',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'max-width: 230px'],
             'value' => function ($data) {
 
                 if ($data->customer) {
@@ -742,7 +748,7 @@ $collumn = [
         ],
         [
             'attribute' => 'purchase_name',
-            'contentOptions' => ['style' => 'min-width: 330px'],
+            'contentOptions' => ['style' => 'max-width: 380px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -756,6 +762,7 @@ $collumn = [
         ],
         [
             'attribute' => 'fz',
+            'contentOptions' => ['style' => 'max-width: 180px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -813,6 +820,7 @@ $collumn = [
         ],
         [
             'attribute' => 'city',
+            'contentOptions' => ['style' => 'max-width: 220px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -970,6 +978,7 @@ $collumn = [
         [
             'attribute' => 'customer',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'max-width: 230px'],
             'value' => function ($data) {
 
                 if ($data->customer) {
@@ -982,7 +991,7 @@ $collumn = [
         ],
         [
             'attribute' => 'purchase_name',
-            'contentOptions' => ['style' => 'min-width: 330px'],
+            'contentOptions' => ['style' => 'max-width: 380px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
@@ -997,6 +1006,7 @@ $collumn = [
         [
             'attribute' => 'fz',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'max-width: 180px'],
             'value' => function ($data) {
 
                 if ($data->fz) {
@@ -1053,6 +1063,7 @@ $collumn = [
         ],
         [
             'attribute' => 'city',
+            'contentOptions' => ['style' => 'max-width: 220px'],
             'vAlign'=>'middle',
             'value' => function ($data) {
 
