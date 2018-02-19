@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property string $wash_name
  * @property string $date_send
  * @property string $size
+ * @property string $city
  */
 class Delivery extends ActiveRecord
 {
@@ -30,7 +31,7 @@ class Delivery extends ActiveRecord
     {
         return [
             [['wash_name'], 'required'],
-            [['wash_name'], 'string', 'max' => 255],
+            [['wash_name', 'city'], 'string', 'max' => 255],
             [['date_send', 'size'], 'string', 'max' => 20],
         ];
     }
@@ -45,6 +46,7 @@ class Delivery extends ActiveRecord
             'wash_name' => 'Название мойки',
             'date_send' => 'Дата отправки',
             'size' => 'Литраж',
+            'city' => 'Город',
         ];
     }
 

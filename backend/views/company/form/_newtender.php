@@ -463,7 +463,7 @@ $form = ActiveForm::begin([
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите начало подачи заявки'],
     'pluginOptions' => [
-        'format' => 'dd.mm.yyyy',
+        'format' => 'dd.mm.yyyy hh:ii',
         'autoclose'=>true,
         'weekStart'=>1,
     ]
@@ -472,7 +472,7 @@ $form = ActiveForm::begin([
     'type' => DateTimePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите окончание подачи заявки'],
     'pluginOptions' => [
-        'format' => 'dd.mm.yyyy hh:i',
+        'format' => 'dd.mm.yyyy hh:ii',
         'autoclose'=>true,
         'weekStart'=>1,
         'todayBtn'=>true,
@@ -482,7 +482,7 @@ $form = ActiveForm::begin([
     'type' => DateTimePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите дату и время рассмотрения заявок'],
     'pluginOptions' => [
-        'format' => 'dd.mm.yyyy hh:i',
+        'format' => 'dd.mm.yyyy hh:ii',
         'autoclose'=>true,
         'weekStart'=>1,
         'todayBtn'=>true,
@@ -492,7 +492,7 @@ $form = ActiveForm::begin([
     'type' => DateTimePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите дату и время начала торгов'],
     'pluginOptions' => [
-        'format' => 'dd.mm.yyyy hh:i',
+        'format' => 'dd.mm.yyyy hh:ii',
         'autoclose'=>true,
         'weekStart'=>1,
         'todayBtn'=>true,
@@ -503,7 +503,7 @@ $form = ActiveForm::begin([
     'type' => DateTimePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите дату и время подведения итогов'],
     'pluginOptions' => [
-        'format' => 'dd.mm.yyyy hh:i',
+        'format' => 'dd.mm.yyyy hh:ii',
         'autoclose'=>true,
         'weekStart'=>1,
         'todayBtn'=>true,

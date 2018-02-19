@@ -29,6 +29,30 @@ echo Tabs::widget([
     <div class="panel-body">
         <table class="table table-bordered list-data">
             <tr>
+                <td class="list-label-md">
+                    <?= $model->getAttributeLabel('text') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $model,
+                        'buttonsTemplate' => '{submit}',
+                        'inputType'       => Editable::INPUT_TEXTAREA,
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'text',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'disabled' => true,
+                        'options' => ['class' => 'form-control'],
+                        'formOptions' => [
+                            'action' => ['/company/tenderownerupdate', 'id' => $model->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="list-label-md"><?= $model->getAttributeLabel('tender_user') ?></td>
                 <td>
                     <?php
@@ -70,7 +94,6 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'disabled' => Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : true,
                         'options' => ['class' => 'form-control', 'placeholder' => 'Введите заказчика'],
                         'formOptions' => [
                             'action' => ['/company/tenderownerupdate', 'id' => $model->id],

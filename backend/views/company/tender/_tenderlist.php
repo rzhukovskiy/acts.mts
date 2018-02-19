@@ -88,30 +88,6 @@ $GLOBALS['dateTo'] = $searchModel->dateTo;
 /**
  * Виджет выбора диапазона дат
  */
-$halfs = [
-    '1е полугодие',
-    '2е полугодие'
-];
-$quarters = [
-    '1й квартал',
-    '2й квартал',
-    '3й квартал',
-    '4й квартал',
-];
-$months = [
-    'январь',
-    'февраль',
-    'март',
-    'апрель',
-    'май',
-    'июнь',
-    'июль',
-    'август',
-    'сентябрь',
-    'октябрь',
-    'ноябрь',
-    'декабрь',
-];
 
 $halfs = [
     '1е полугодие',
@@ -288,7 +264,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->time_bidding_start) {
-                            return date('d.m.Y', $data->time_bidding_start);
+                            return date('d.m.Y H:i', $data->time_bidding_start);
                         } else {
                             return '-';
                         }
@@ -303,7 +279,7 @@ $columns = [
                     'value' => function ($data) {
 
                         if ($data->time_bidding_end) {
-                            return date('d.m.Y', $data->time_bidding_end);
+                            return date('d.m.Y H:i', $data->time_bidding_end);
                         } else {
                             return '-';
                         }

@@ -14,6 +14,11 @@ window.onload=function(){
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 }); 
+    var formatSum11 = $('td[data-col-seq="11"]');
+  $(formatSum11).each(function (id, value) {
+       var thisId = $(this);
+       thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+}); 
 };
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
@@ -345,10 +350,28 @@ $columns = [
         'pageSummary' => true,
         'pageSummaryFunc' => GridView::F_SUM,
         'header' => 'Максимальная<br /> стоимость закупки',
+        'contentOptions' => ['style' => 'min-width: 120px'],
         'value' => function ($data) {
 
             if ($data->price_nds) {
                 return $data->price_nds;
+            } else {
+                return '-';
+            }
+
+        },
+    ],
+    [
+        'attribute' => 'final_price',
+        'vAlign'=>'middle',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+        'header' => 'Стоимость<br />закупки по<br />завершению закупки',
+        'contentOptions' => ['style' => 'min-width: 120px'],
+        'value' => function ($data) {
+
+            if ($data->final_price) {
+                return $data->final_price;
             } else {
                 return '-';
             }

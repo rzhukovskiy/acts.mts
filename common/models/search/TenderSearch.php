@@ -53,6 +53,7 @@ class TenderSearch extends Company
         return [
             'tender' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
             'tenderlist' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
+            'statplace' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
             'activity' => ['dateFrom', 'dateTo', 'service_type', 'period', 'work_user_id'],
             'default' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
         ];
@@ -167,6 +168,20 @@ class TenderSearch extends Company
                 }
 
                 $query->select('`tender`.`id` as `id`, `tender`.`customer` as `customer`, `tender`.`work_user_time` as `work_user_time`, `tender`.`work_user_id`, COUNT(Distinct `tender`.`id`) as `created_at`');
+
+                break;
+
+            case 'statplace':
+
+                // Если период не задан то задаем 10 лет.
+                if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
+                    $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+                    $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
+                    $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
+
+                } else {
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
+                }
 
                 break;
 
