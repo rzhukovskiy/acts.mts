@@ -326,11 +326,25 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'email'
                 ],
                 [
-                    'label' => 'Заказ химии',
-                    'url' => ['/delivery/listchemistry'],
-                    'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
-                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
-                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
+                    'label'  => 'Поставки',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'delivery',
+                    'items'  => [
+                        [
+                            'label' => 'Заказ химии',
+                            'url' => ['/delivery/listchemistry'],
+                            'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
+                        ],
+                        [
+                            'label' => 'Отправка<br />чеков',
+                            'url' => ['/delivery/listchecks'],
+                            'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchecks') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchecks') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchecks')
+                        ],
+                    ],
                 ],
             ];
         } // Account manager links
@@ -614,11 +628,25 @@ class menuLeftWidget extends Widget
                     'active' => Yii::$app->controller->id == 'email'
                 ],
                 [
-                    'label' => 'Заказ химии',
-                    'url' => ['/delivery/listchemistry'],
-                    'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
-                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
-                        (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
+                    'label'  => 'Поставки',
+                    'url'    => '#',
+                    'active' => Yii::$app->controller->id == 'delivery',
+                    'items'  => [
+                        [
+                            'label' => 'Заказ химии',
+                            'url' => ['/delivery/listchemistry'],
+                            'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchemistry') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchemistry') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchemistry')
+                        ],
+                        [
+                            'label' => 'Отправка<br />чеков',
+                            'url' => ['/delivery/listchecks'],
+                            'active' => (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'listchecks') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'newchecks') ||
+                                (Yii::$app->controller->id == 'delivery' && Yii::$app->controller->action->id == 'fullchecks')
+                        ],
+                    ],
                 ],
             ];
             if ($currentUser->is_account) {

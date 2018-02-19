@@ -8,7 +8,10 @@
 
 namespace backend\controllers;
 
+use common\models\Act;
+use common\models\Company;
 use common\models\Delivery;
+use common\models\HistoryChecks;
 use common\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -28,12 +31,12 @@ class DeliveryController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['listchemistry', 'newchemistry', 'fullchemistry', 'updatechemistry'],
+                        'actions' => ['listchemistry', 'newchemistry', 'fullchemistry', 'updatechemistry', 'listchecks', 'newchecks', 'fullchecks', 'updatechecks', 'actcount'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['listchemistry', 'newchemistry', 'fullchemistry', 'updatechemistry'],
+                        'actions' => ['listchemistry', 'newchemistry', 'fullchemistry', 'updatechemistry', 'listchecks', 'newchecks', 'fullchecks', 'updatechecks', 'actcount'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ],
@@ -104,6 +107,129 @@ class DeliveryController extends Controller
 
             if ($model->load($arrUpdate) && $model->save()) {
                 $output = [];
+                return ['output' => implode(', ', $output), 'message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        } else {
+            return ['message' => 'не получилось'];
+        }
+    }
+    public function actionListchecks()
+    {
+        $searchModel = HistoryChecks::find();
+        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $usersList = User::find()->select('username')->indexby('id')->column();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+
+        return $this->render('/delivery/listchecks', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'companyWash' => $companyWash,
+            'usersList' => $usersList,
+
+        ]);
+
+    }
+
+    public function actionNewchecks()
+    {
+        $model = new HistoryChecks();
+        $model->user_id = Yii::$app->user->identity->id;
+
+        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            return $this->redirect(['/delivery/listchecks']);
+
+        } else {
+            return $this->render('/delivery/newchecks', [
+                'model' => $model,
+                'companyWash' => $companyWash,
+            ]);
+        }
+    }
+
+    public function actionFullchecks($id)
+    {
+        $searchModel = HistoryChecks::find()->where(['company_id' => $id]);
+        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $usersList = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $searchModel,
+            'pagination' => false,
+        ]);
+
+
+        return $this->render('/delivery/fullchecks', [
+            'dataProvider' => $dataProvider,
+            'company_id' => $id,
+            'companyWash' => $companyWash,
+            'usersList' => $usersList,
+
+        ]);
+    }
+
+    public function actionActcount()
+    {
+
+        if (Yii::$app->request->post('company_id') && Yii::$app->request->post('date')) {
+
+            $company_id = Yii::$app->request->post('company_id');
+            $date = Yii::$app->request->post('date');
+
+            $count = Act::find()->where(['between', "served_at", $date, time()])->andWhere(['AND', ['partner_id' => $company_id], ['service_type' => Company::TYPE_WASH]])->count();
+
+            if ($count) {
+                return json_encode(['result' => $count, 'success' => 'true']);
+            } else {
+                return json_encode(['success' => 'false']);
+            }
+
+        } else {
+            return json_encode(['success' => 'false']);
+        }
+
+    }
+
+    public function actionUpdatechecks($id)
+    {
+        $model = HistoryChecks::findOne(['id' => $id]);
+        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+
+            foreach ($arrUpdate as $name => $value) {
+                if ($name == 'date_send') {
+                    $arrUpdate['HistoryChecks'][$name] = (String) strtotime($value);
+                }
+            }
+
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
+
+                if (Yii::$app->request->post('HistoryChecks')) {
+
+                    foreach (Yii::$app->request->post('HistoryChecks') as $name => $value) {
+
+                        if ($name == 'company_id') {
+                            $output[] = $companyWash[$value];
+                        }
+
+                    }
+                }
+
                 return ['output' => implode(', ', $output), 'message' => ''];
             } else {
                 return ['message' => 'не получилось'];

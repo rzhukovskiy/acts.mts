@@ -2245,6 +2245,7 @@ class CompanyController extends Controller
 
             $model = TenderOwner::findOne(['id' => $id]);
             $userLists = User::find()->select('username')->indexby('id')->column();
+
             if (isset($model->reason_not_take)) {
                 if (isset($model->user_comment)) {
                 $resComm = "<u style='color:#757575;'>Комментарий от</u><b> " . $userLists[$model->user_comment] . "</b>: " . nl2br($model->reason_not_take) . "<br />";
@@ -2494,68 +2495,6 @@ class CompanyController extends Controller
                 return json_encode(['message' => 'не получилось']);
             }
 
-            if((isset($newDayCont['payTypeDay'])) && (isset($newDayCont['payDay']))) {
-
-                $newDayType = $newDayCont['payTypeDay'];
-                $newDay = $newDayCont['payDay'];
-                $newPrePaid = '';
-
-                if($newDayType == 4) {
-                    $newDay = 3;
-                }
-
-                if (($newDayType >= 0) && ($newDay >= 0)) {
-
-                    if(isset($newDayCont['prePaid'])) {
-
-                        if(($newDayCont['prePaid'] != '') && ($newDayCont['prePaid'] != ' ') && (($newDayType == 2) || ($newDayType == 3) || ($newDayType == 4)) && ($newDayCont['prePaid'] > 0)) {
-                            $newPrePaid = ':' . $newDayCont['prePaid'];
-                        }
-
-                    }
-
-                    $companyInfo = CompanyInfo::findOne($id);
-                    $companyInfo->pay = $newDayType . ':' . $newDay . $newPrePaid;
-
-                    if ($companyInfo->save()) {
-
-                        $stringRes = '';
-
-                        $arrPayData = explode(':', $newDayType . ':' . $newDay . $newPrePaid);
-
-                        if(count($arrPayData) > 1) {
-
-                            if($arrPayData[0] == 4) {
-                                $stringRes = 'Аванс ' . $arrPayData[2] . ' руб.';
-                            } else {
-
-                                if (count($arrPayData) == 3) {
-                                    $stringRes .= $arrPayData[2] . ' руб. + ';
-                                }
-
-                                if (($arrPayData[0] == 0) || ($arrPayData[0] == 2)) {
-                                    $stringRes .= $arrPayData[1] . ' банковских дней';
-                                } else {
-                                    $stringRes .= $arrPayData[1] . ' календарных дней';
-                                }
-
-                            }
-
-                        }
-
-                        return json_encode(['output' => $stringRes, 'message' => '']);
-                    } else {
-                        return json_encode(['message' => 'не получилось']);
-                    }
-
-                } else {
-                    return json_encode(['message' => 'не получилось']);
-                }
-
-            } else {
-                return json_encode(['message' => 'не получилось']);
-            }
-
         } else {
             return 1;
         }
@@ -2573,6 +2512,9 @@ class CompanyController extends Controller
             $modelDepartmentCompany->remove_id = Yii::$app->user->identity->id;
             $modelDepartmentCompany->save();
         }
+/*        if ($model->status == Company::STATUS_TENDER) {
+
+        }*/
 
         $model->status = $status;
         $model->save();
