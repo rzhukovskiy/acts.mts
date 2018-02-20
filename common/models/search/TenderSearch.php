@@ -141,12 +141,17 @@ class TenderSearch extends Company
                     $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
                 }
 
-                if (!isset($this->user_id) && !$this->user_id) {
-                    if ((Yii::$app->user->identity->id == 256) || (Yii::$app->user->identity->id == 654) || (Yii::$app->user->identity->id == 756)) {
+                // загрузка страницы с тендерами текущего пользователя
+                if (isset($params['TenderSearch']['user_id'])) {
+                    if ($params['TenderSearch']['user_id'] > 0) {
+                        $this->user_id = $params['TenderSearch']['user_id'];
+                        $query->andWhere(['user_id' => $params['TenderSearch']['user_id']]);
+                    }
+                } else {
+                    $exists = Tender::find()->where(['user_id' => Yii::$app->user->identity->id])->andWhere(['OR', ['purchase_status' => 15], ['purchase_status' => 18], ['purchase_status' => 19], ['purchase_status' => 57], ['purchase_status' => 58], ['purchase_status' => 85]])->exists();
+                    if (Yii::$app->user->identity->role != User::ROLE_ADMIN && ($exists)) {
                         $this->user_id = Yii::$app->user->identity->id;
-                        $query->andFilterWhere([
-                            'user_id' => $this->user_id,
-                        ]);
+                        $query->andWhere(['user_id' => Yii::$app->user->identity->id]);
                     }
                 }
 
