@@ -195,6 +195,7 @@ JS;
                 <?= $modelCompany->status != Company::STATUS_NEW ?
                     Html::a('В заявки', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_NEW], ['class' => 'btn btn-success btn-sm']) : '' ?>
             <?php } ?>
+
             <?= $admin ? Html::a('Удалить', ['company/delete','id' => $modelCompany->id], ['class' => 'btn btn-danger btn-sm']) : ''?>
         </div>
     </div>

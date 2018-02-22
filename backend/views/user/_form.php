@@ -23,6 +23,7 @@ use yii\widgets\ActiveForm;
         ],
     ]);
     echo $form->field($model, 'username')->textInput();
+    echo $form->field($model, 'email')->textInput();
     echo $form->field($model, 'code')->textInput();
     echo $form->field($model, 'code_pass')->textInput();
     echo $form->field($model, 'password')->passwordInput();

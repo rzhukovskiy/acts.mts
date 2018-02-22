@@ -10,12 +10,12 @@ use yii\helpers\Url;
 $actionActCount = Url::to('@web/delivery/actcount');
 $script = <<< JS
 // считаем общее количетво по 4 столбцу
-  var oldvalue = 0;
-  var summ = 0;
+  var summChecks = 0;
   var formatSum5 = $('td[data-col-seq="5"]');
   $(formatSum5).each(function (id, value) {
-       summ = parseInt($(this).text()) + oldvalue;
-       oldvalue = parseInt($(this).text());
+      if ($.isNumeric($(this).text())) {
+       summChecks += parseInt($(this).text());
+       }
 });
   
 // записываем самую маленькую дату из всех
@@ -34,6 +34,7 @@ $script = <<< JS
        }  
   
 });
+  
   sendActCount();
   function sendActCount() {
           $.ajax({
@@ -47,10 +48,10 @@ $script = <<< JS
                 
                 if (response.success == 'true') { 
                 // Удачно
-                if ((summ - response.result) > 50) {
-                 $('.kv-grid-group-filter').html("<span style='color:#2d6f31;'>Оставшееся количество чеков: " + (summ - response.result) + "</span>");   
+                if ((summChecks - response.result) > 50) {
+                 $('.kv-grid-group-filter').html("<span style='color:#2d6f31;'>Оставшееся количество чеков: " + (summChecks - response.result) + "</span>");   
                 } else {
-                 $('.kv-grid-group-filter').html("<span style='color:#8e3532;'>Оставшееся количество чеков: " + (summ - response.result) + "</span>");
+                 $('.kv-grid-group-filter').html("<span style='color:#8e3532;'>Оставшееся количество чеков: " + (summChecks - response.result) + "</span>");
                 }
                 
                 } else {
@@ -180,9 +181,32 @@ $column = [
         'value' => function ($data) {
 
             if ($data->serial_number) {
+                $allcountChecks = 0;
                 $serial_number = str_replace(' ', '', $data->serial_number);
-                $serial_number = explode('-', $serial_number);
-                return $serial_number[1]-$serial_number[0];
+
+                if (mb_strpos($serial_number, ',') > 0) {
+                    $serial_number = explode(',', $serial_number);
+
+                    for ($j = 0; $j < count($serial_number); $j++) {
+                        $countChecks = explode('-', $serial_number[$j]);
+                        if ($countChecks[1] > $countChecks[0]) {
+                            $countChecks = $countChecks[1] - $countChecks[0];
+                            $allcountChecks += $countChecks;
+                        } else {
+                            $allcountChecks = '-';
+                        }
+                    }
+                } else {
+                    $countChecks = explode('-', $serial_number);
+                    if ($countChecks[1] > $countChecks[0]) {
+                        $countChecks = $countChecks[1] - $countChecks[0];
+                        $allcountChecks = $countChecks;
+                    } else {
+                        $allcountChecks = '-';
+                    }
+                }
+
+                return $allcountChecks;
             } else {
                 return '-';
             }

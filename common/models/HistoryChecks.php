@@ -29,7 +29,7 @@ class HistoryChecks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['company_id', 'user_id', 'serial_number', 'date_send'], 'required'],
+            [['company_id', 'user_id', 'date_send'], 'required'],
             [['company_id', 'user_id'], 'integer'],
             [['date_send'], 'string', 'max' => 20],
             [['serial_number'], 'string', 'max' => 70],

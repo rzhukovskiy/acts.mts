@@ -9,9 +9,13 @@
 namespace backend\controllers;
 
 use common\components\DateHelper;
+use common\models\Act;
 use common\models\Company;
 use common\models\CompanyDriver;
+use common\models\CompanyInfo;
+use common\models\DepartmentLinking;
 use common\models\Email;
+use common\models\HistoryChecks;
 use common\models\MonthlyAct;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -50,7 +54,7 @@ class EmailController extends Controller
                         'roles' => [User::ROLE_WATCHER],
                     ],
                     [
-                        'actions' => ['cronmailer', 'cronaddressnew', 'crondebt'],
+                        'actions' => ['cronmailer', 'cronaddressnew', 'crondebt', 'cronchecks'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -1603,6 +1607,210 @@ class EmailController extends Controller
         return 1;
 
         // Рассылка 2 раза в неделю о должниках Араму и Юле
+
+    }
+
+    public function actionCronchecks()
+    {
+
+        // Ежедневная проверка на количество чеков у мойки и рассылка уведомлений, если заканчиваются чеки
+        if(isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+            $company_id = [];
+            $linksEmail = [];
+            $userOnCompany = [];
+            $index = 0;
+            $oldIndex = 0;
+            $oldValue = 0;
+            $serial_number = 0;
+            $countChecks = 0;
+            $oldCompany = '';
+
+            $date = time();
+            // получаем список всех отправленных чеков
+            $arrChecks = HistoryChecks::find()->select('company_id, serial_number, date_send')->orderBy('company_id DESC')->all();
+
+            // записываем ид компаний в массив
+            for ($i = 0; $i < count($arrChecks); $i++) {
+                $index = $arrChecks[$i]['company_id'];
+
+                //записываем самую маленькую дату в массив к ид компании
+                if ($oldIndex == $index) {
+                    if (($oldValue > $arrChecks[$i]['date_send'])) {
+                        $company_id[$index]['date_send'] = $arrChecks[$i]['date_send'];
+                    }
+                } else {
+                    $company_id[$index]['date_send'] = $arrChecks[$i]['date_send'];
+                }
+                // вычисляем количество отправленных чеков из формата 1-2,5-6 и записываем в массив к ид компании
+                if ($arrChecks[$i]['serial_number']) {
+
+                    $serial_number = str_replace(' ', '', $arrChecks[$i]['serial_number']);
+
+                    if (mb_strpos($serial_number, ',') > 0) {
+                        $serial_number = explode(',', $serial_number);
+
+                        for ($j = 0; $j < count($serial_number); $j++) {
+                            $countChecks = explode('-', $serial_number[$j]);
+                            if ($countChecks[1] > $countChecks[0]) {
+                                $countChecks = $countChecks[1] - $countChecks[0];
+
+                                if (isset($company_id[$index]['serial_number'])) {
+                                    if ($company_id[$index]['serial_number'] > 0) {
+                                        $company_id[$index]['serial_number'] += $countChecks;
+                                    } else {
+                                        $company_id[$index]['serial_number'] = $countChecks;
+                                    }
+                                } else {
+                                    $company_id[$index]['serial_number'] = $countChecks;
+                                }
+
+                            } else {
+                                $countChecks = 0;
+                                if (isset($company_id[$index]['serial_number'])) {
+                                    if ($company_id[$index]['serial_number'] > 0) {
+                                        $company_id[$index]['serial_number'] += $countChecks;
+                                    } else {
+                                        $company_id[$index]['serial_number'] = $countChecks;
+                                    }
+                                } else {
+                                    $company_id[$index]['serial_number'] = $countChecks;
+                                }
+                            }
+                        }
+
+                    } else {
+                        $countChecks = explode('-', $serial_number);
+                        if ($countChecks[1] > $countChecks[0]) {
+                            $countChecks = $countChecks[1] - $countChecks[0];
+                            if (isset($company_id[$index]['serial_number'])) {
+                                if ($company_id[$index]['serial_number'] > 0) {
+                                    $company_id[$index]['serial_number'] += $countChecks;
+                                } else {
+                                    $company_id[$index]['serial_number'] = $countChecks;
+                                }
+                            } else {
+                                $company_id[$index]['serial_number'] = $countChecks;
+                            }
+                        } else {
+                            $countChecks = 0;
+                            if (isset($company_id[$index]['serial_number'])) {
+                                if ($company_id[$index]['serial_number'] > 0) {
+                                    $company_id[$index]['serial_number'] += $countChecks;
+                                } else {
+                                    $company_id[$index]['serial_number'] = $countChecks;
+                                }
+                            } else {
+                                $company_id[$index]['serial_number'] = $countChecks;
+                            }
+                        }
+                    }
+                } else {
+                    $countChecks = 0;
+                    if (isset($company_id[$index]['serial_number'])) {
+                        if ($company_id[$index]['serial_number'] > 0) {
+                            $company_id[$index]['serial_number'] += $countChecks;
+                        } else {
+                            $company_id[$index]['serial_number'] = $countChecks;
+                        }
+                    } else {
+                        $company_id[$index]['serial_number'] = $countChecks;
+                    }
+                }
+
+                $oldIndex = $index;
+                $oldValue = $arrChecks[$i]['date_send'];
+
+
+            }
+            // юзер ид и эмайл
+            $userID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('id, email')->asArray()->all();
+            // компани ид и юзер ид
+            $companyID = DepartmentLinking::find()->where(['type' => 2])->select('user_id as id, company_id')->asArray()->all();
+
+            for ($i = 0; $i < count($userID); $i++) {
+                $index = $userID[$i]['id'];
+                for ($j = 0; $j < count($companyID); $j++) {
+                    if ($index == $companyID[$j]['id']) {
+                        if (isset($userOnCompany[$index][0])) {
+                            $userOnCompany[$index][0][] = $companyID[$j]['company_id'];
+                            $userOnCompany[$index][1] = $userID[$i]['email'];
+                        } else {
+                            $userOnCompany[$index][0] = [$companyID[$j]['company_id']];
+                            $userOnCompany[$index][1] = $userID[$i]['email'];
+                        }
+                    }
+                }
+
+            }
+
+            $userJulia = User::find()->where(['id' => 238])->select('email')->column();
+            $juliaText = '';
+
+            $companyOnText = [];
+            // перебираем массив с полученными ранее результатами
+            foreach ($company_id as $key => $value) {
+                // считаем количество использованных чеков
+                $countAct = Act::find()->where(['between', "served_at", $value['date_send'], $date])->andWhere(['AND', ['partner_id' => $key], ['service_type' => Company::TYPE_WASH]])->count();
+                $count = $value['serial_number'] - $countAct;
+                // получаем имя компании и установленный лимит, при котором отправлять уведомление
+                $companyCountChecks = CompanyInfo::find()->innerJoin('company', 'company.id = company_info.company_id')->where(['company_info.company_id' => $key])->select('company_info.count_checks, company.name')->asArray()->all();
+                // получаем дату последней отправки чеков
+                $companyDateLast = HistoryChecks::find()->where(['company_id' => $key])->select('date_send')->orderBy('date_send DESC')->limit(1)->column();
+                // проверяем установлен ли лимит для мойки
+
+                if (($count < $companyCountChecks[0]['count_checks']) || ((!$companyCountChecks[0]['count_checks']) && ($count <= 50))) {
+
+                    $checkLinking = true;
+                    // добавляем в массив текст отправления
+                    foreach ($userOnCompany as $index => $val) {
+                        for ($i = 0; $i < count($val[0]); $i++) {
+
+                            if ($key == $val[0][$i]) {
+
+                                if (isset($userOnCompany[$index][2])) {
+                                    $userOnCompany[$index][2] .= '<br/><br/><b>Мойка:</b> ' . $companyCountChecks[0]['name'] . '<br/><b>Дата последней отправки:</b> ' . date('d-m-Y', $companyDateLast[0]) . '<br/><b>Оставшееся количество чеков:</b> ' . $count . '<br/>';
+                                } else {
+                                    $userOnCompany[$index][2] = '<b>Мойка:</b> ' . $companyCountChecks[0]['name'] . '<br/><b>Дата последней отправки:</b> ' . date('d-m-Y', $companyDateLast[0]) . '<br/><b>Оставшееся количество чеков:</b> ' . $count;
+                                }
+
+                                $checkLinking = false;
+                            }
+                        }
+                    }
+                    // проверяем есть ли привязка пользователя к компании
+                    if ($checkLinking) {
+                        $juliaText .= '<b>Мойка:</b> ' . $companyCountChecks[0]['name'] . '<br/><b>Дата последней отправки:</b> ' . date('d-m-Y', $companyDateLast[0]) . '<br/><b>Оставшееся количество чеков:</b> ' . $count . '<br/><br/>';
+                    }
+
+                }
+
+            }
+
+            foreach ($userOnCompany as $index => $val) {
+                if (isset($userOnCompany[$index][2])) {
+                    $sendEmail = $userOnCompany[$index][1];
+                    $resText = $userOnCompany[$index][2];
+                    Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($sendEmail)
+                        ->setSubject('Заканчиваются чеки ' . date('d.m.Y'))
+                        ->setHtmlBody("<b>Заканчиваются чеки</b><br /><br />" . $resText)->send();
+                }
+            }
+
+            Yii::$app->mailer->compose()
+                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo($userJulia[0])
+                ->setSubject('Заканчиваются чеки ' . date('d.m.Y'))
+                ->setHtmlBody("<b>Заканчиваются чеки</b><br /><br />" . $juliaText)->send();
+
+        }
+
+        return 1;
+
+        // Ежедневная проверка на количество чеков у мойки и рассылка уведомлений, если заканчиваются чеки
 
     }
 

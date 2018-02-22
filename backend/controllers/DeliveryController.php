@@ -10,7 +10,9 @@ namespace backend\controllers;
 
 use common\models\Act;
 use common\models\Company;
+use common\models\CompanyInfo;
 use common\models\Delivery;
+use common\models\DepartmentLinking;
 use common\models\HistoryChecks;
 use common\models\User;
 use yii;
@@ -142,8 +144,27 @@ class DeliveryController extends Controller
         $model = new HistoryChecks();
         $model->user_id = Yii::$app->user->identity->id;
 
+        $array =[];
+
+        if (Yii::$app->request->post()) {
+            $array = Yii::$app->request->post();
+            $serialNumber = '';
+
+            for ($i = 0; $i < count($array['HistoryChecks']['serial_number']); $i++) {
+                if (($i + 1) < count($array['HistoryChecks']['serial_number'])) {
+                    $serialNumber .= $array['HistoryChecks']['serial_number'][$i] . ', ';
+                } else {
+                    $serialNumber .= $array['HistoryChecks']['serial_number'][$i];
+                }
+            }
+
+            $array['HistoryChecks']['serial_number'] = $serialNumber;
+        }
+
+           // print_r($array);
+
         $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
-        if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+        if ($model->load($array) && $model->save() && (Yii::$app->request->isPost)) {
 
             return $this->redirect(['/delivery/listchecks']);
 
@@ -165,7 +186,6 @@ class DeliveryController extends Controller
             'query' => $searchModel,
             'pagination' => false,
         ]);
-
 
         return $this->render('/delivery/fullchecks', [
             'dataProvider' => $dataProvider,
@@ -238,4 +258,5 @@ class DeliveryController extends Controller
             return ['message' => 'не получилось'];
         }
     }
+
 }

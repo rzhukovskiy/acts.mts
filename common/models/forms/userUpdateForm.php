@@ -22,6 +22,7 @@ class userUpdateForm extends Model
     {
         return [
             [['username', 'company_id'], 'required', 'message' => 'Поле обязательно для заполнения {attribute}.'],
+            [['email'], 'email'],
             ['newPassword', 'string', 'min' => 4, 'tooShort' => 'Длинна пароля должна быть более {min, number} символов'],
             ['newPassword', 'string', 'max' => 24, 'tooLong' => 'Максимальная длинна пароля {max, number} символа.'],
             [['code', 'code_pass', 'is_account', 'role'], 'safe'],

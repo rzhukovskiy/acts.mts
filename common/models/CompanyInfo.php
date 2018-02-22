@@ -28,7 +28,8 @@ use yii\db\ActiveRecord;
  * @property string $lat
  * @property string $lng
  * @property integer $contract_date
- * @property integer $comment
+ * @property string $comment
+ * @property integer $count_checks
  *
  * @property Company $company
  *
@@ -62,7 +63,7 @@ class CompanyInfo extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['website', 'inn', 'lat', 'lng', 'geolocation'], 'safe'],
-            [['company_id', 'contract_date', 'time_location', 'nds', 'edo'], 'integer'],
+            [['company_id', 'contract_date', 'time_location', 'nds', 'edo', 'count_checks'], 'integer'],
             ['comment', 'string', 'max' => 2500],
             [['contract_date_str', 'pay', 'contract', 'phone', 'index', 'city', 'street', 'house', 'address_mail', 'email'], 'string', 'max' => 255],        ];
     }
@@ -96,6 +97,7 @@ class CompanyInfo extends ActiveRecord
             'lat' => 'Широта',
             'lng' => 'Долгота',
             'geolocation' => 'Координаты для карты',
+            'count_checks' => 'Лимит чеков',
         ];
     }
 

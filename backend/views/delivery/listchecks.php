@@ -130,8 +130,28 @@ $column = [
 
             if ($data->serial_number) {
                 $serial_number = str_replace(' ', '', $data->serial_number);
-                $serial_number = explode('-', $serial_number);
-                return $serial_number[1]-$serial_number[0];
+
+                if (mb_strpos($serial_number, ',') > 0) {
+                $serial_number = explode(',', $serial_number);
+
+                    for ($j = 0; $j < count($serial_number); $j++) {
+                        $countChecks = explode('-', $serial_number[$j]);
+                        if ($countChecks[1] > $countChecks[0]) {
+                            $countChecks = $countChecks[1] - $countChecks[0];
+                        } else {
+                            $countChecks = '-';
+                        }
+                    }
+                } else {
+                    $countChecks = explode('-', $serial_number);
+                    if ($countChecks[1] > $countChecks[0]) {
+                        $countChecks = $countChecks[1] - $countChecks[0];
+                } else {
+                        $countChecks = '-';
+                    }
+                }
+
+                return $countChecks;
             } else {
                 return '-';
             }

@@ -367,7 +367,32 @@ $this->registerJs($script, View::POS_READY);
                     ]); ?>
                 </td>
             </tr>
-
+            <?php
+            $arrtypecomp = Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['company.id' => $modelCompanyInfo->company_id])->select('company.type')->column();
+            ?>
+            <?php if($arrtypecomp[0] == 2) { ?>
+            <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('count_checks') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'count_checks',
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Лимит чеков'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
+            <?php } ?>
             <?php
             // Выводим какие услуги компания у нас покупает, а какие нет
             if(($model->type == 1) && (($model->status == Company::STATUS_ARCHIVE) || ($model->status == Company::STATUS_ACTIVE))) {
