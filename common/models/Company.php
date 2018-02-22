@@ -890,8 +890,10 @@ class Company extends ActiveRecord
 
         } else {
 
+            // Срочно раскоментировать, если система штрафов будет работать
 
-            if (!$insert) {
+            // При отключинии штрафов у нас в системе, удалить эту компанию из базы штрафовнет
+            /*if (!$insert) {
 
                 $modelPenalty = new Penalty();
                 $modelPenalty->createToken();
@@ -917,8 +919,8 @@ class Company extends ActiveRecord
 
                 }
 
-            }
-
+            }*/
+            // Срочно раскоментировать, если система штрафов будет работать
         }
         // Контроль штрафов
 
