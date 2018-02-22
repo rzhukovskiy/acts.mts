@@ -1799,13 +1799,15 @@ class EmailController extends Controller
                         ->setHtmlBody("<b>Заканчиваются чеки</b><br /><br />" . $resText)->send();
                 }
             }
-
+            if (isset($userJulia[0])) {
+                if ($juliaText != '') {
             Yii::$app->mailer->compose()
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                 ->setTo($userJulia[0])
                 ->setSubject('Заканчиваются чеки ' . date('d.m.Y'))
                 ->setHtmlBody("<b>Заканчиваются чеки</b><br /><br />" . $juliaText)->send();
-
+                }
+            }
         }
 
         return 1;
