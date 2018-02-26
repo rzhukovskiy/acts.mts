@@ -753,7 +753,7 @@ class CompanyController extends Controller
 
         $dataProvider->sort = [
             'defaultOrder' => [
-                'term_contract' => SORT_DESC,
+                'term_contract' => SORT_ASC,
             ]
         ];
 
@@ -1228,7 +1228,7 @@ class CompanyController extends Controller
     public static function createExcelTenders()
     {
 
-        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, cost_purchase_completion, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
+        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
 
         $objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -1266,7 +1266,6 @@ class CompanyController extends Controller
             $companyWorkSheet->getColumnDimension('G')->setWidth(40);
             $companyWorkSheet->getColumnDimension('H')->setWidth(35);
             $companyWorkSheet->getColumnDimension('I')->setWidth(40);
-            $companyWorkSheet->getColumnDimension('J')->setWidth(40);
 
             // Заголовки
             $companyWorkSheet->setCellValue('A' . $row, 'Заказчик');
@@ -1275,19 +1274,18 @@ class CompanyController extends Controller
             $companyWorkSheet->setCellValue('D' . $row, 'Закупаемые услуги');
             $companyWorkSheet->setCellValue('E' . $row, 'Номер закупки на площадке');
             $companyWorkSheet->setCellValue('F' . $row, 'Электронная площадка');
-            $companyWorkSheet->setCellValue('G' . $row, 'Стоимость закупки по завершению закупки без НДС');
-            $companyWorkSheet->setCellValue('H' . $row, 'Дата заключения договора');
-            $companyWorkSheet->setCellValue('I' . $row, 'Дата окончания заключенного договора');
-            $companyWorkSheet->setCellValue('J' . $row, 'Осталось дней до окончания договора');
+            $companyWorkSheet->setCellValue('G' . $row, 'Дата заключения договора');
+            $companyWorkSheet->setCellValue('H' . $row, 'Дата окончания заключенного договора');
+            $companyWorkSheet->setCellValue('I' . $row, 'Осталось дней до окончания договора');
 
-            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
+            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
                 'alignment' => array(
                     'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                     'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
                 )
             ));
 
-            $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+            $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'size' => 12,
@@ -1431,19 +1429,18 @@ class CompanyController extends Controller
                 $companyWorkSheet->setCellValue('D' . $row, $stringServText);
                 $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
                 $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
-                $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['cost_purchase_completion']) ? ($arrTenders[$i]['cost_purchase_completion'] . ' р.') : '-');
-                $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
-                $companyWorkSheet->setCellValue('I' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
-                $companyWorkSheet->setCellValue('J' . $row, $showTotal);
+                $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
+                $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
+                $companyWorkSheet->setCellValue('I' . $row, $showTotal);
 
-                $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray(array(
+                $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray(array(
                     'alignment' => array(
                         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                         'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
                     )
                 ));
 
-                $companyWorkSheet->getStyle('A' . $row . ':J' . $row)->applyFromArray([
+                $companyWorkSheet->getStyle('A' . $row . ':I' . $row)->applyFromArray([
                         'font' => [
                             'size' => 12,
                             'name' => 'Times New Roman'

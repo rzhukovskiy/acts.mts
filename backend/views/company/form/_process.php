@@ -32,7 +32,7 @@ $mailTemplateID = 6;
 $tracklink = '';
 $trackID = '';
 
-if ($modelCompany->status == Company::STATUS_TENDER || $replaceTender) {
+if ($modelCompany->status == Company::STATUS_TENDER || $replaceTender || $modelCompany->type == 1) {
 $script = <<< JS
     $('#company-worktime-targ').click(function() {
         $('#everyday').hide();
