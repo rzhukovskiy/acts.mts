@@ -8,6 +8,8 @@ use yii\bootstrap\Tabs;
  * @var $model Company
  */
 
+$replaceTender = Company::find()->innerJoin('tender_hystory', 'tender_hystory.company_id = company.id')->where(['company.id' => $model->id])->exists();
+
 $items = [
     [
         'label' => Company::$listType[$model->type]['ru'],
@@ -52,7 +54,15 @@ $items[] = [
     'active' => \Yii::$app->controller->action->id == 'price',
 ];
 
-if($model->status == Company::STATUS_TENDER) {
+if ($replaceTender) {
+    $items[] = [
+        'label' => 'Тендеры',
+        'url' => ['company/tenders', 'id' => $model->id],
+        'active' => \Yii::$app->controller->action->id == 'tenders',
+    ];
+}
+
+if($model->status == Company::STATUS_TENDER && $replaceTender) {
     $items = [
         [
             'label' => Company::$listType[$model->type]['ru'],

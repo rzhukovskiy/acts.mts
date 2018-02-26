@@ -21,6 +21,7 @@ echo $this->render('_modal', [
     'modelCompany' => $modelCompany,
 ]);
 
+$replaceTender = Company::find()->innerJoin('tender_hystory', 'tender_hystory.company_id = company.id')->where(['company.id' => $modelCompany->id])->exists();
 $workTime = $modelCompany->getWorkTimeArray();
 
 // получаем email назначения
@@ -31,7 +32,33 @@ $mailTemplateID = 6;
 $tracklink = '';
 $trackID = '';
 
+if ($modelCompany->status == Company::STATUS_TENDER || $replaceTender) {
 $script = <<< JS
+    $('#company-worktime-targ').click(function() {
+        $('#everyday').hide();
+        $('#anyday').show();
+        $('.modaltime').appendTo('form#w23');
+        $('.modaltime').show();     
+    });
+    
+    $('input[type="radio"]').on('change', function () {
+        var value = $('input[type="radio"]:checked').val();
+        if(value == 0){
+            $('#everyday').hide();
+            $('#anyday').hide();
+        } else if(value == 1){
+            $('#anyday').hide();
+            $('#everyday').show();
+        } else if(value == 2){
+            $('#everyday').hide();
+            $('#anyday').show();
+        }
+    });
+    
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+} else {
+    $script = <<< JS
     $('#company-worktime-targ').click(function() {
         $('#everyday').hide();
         $('#anyday').show();
@@ -54,7 +81,8 @@ $script = <<< JS
     });
     
 JS;
-$this->registerJs($script, \yii\web\View::POS_READY);
+    $this->registerJs($script, \yii\web\View::POS_READY);
+}
 
 if($modelCompanyOffer->mail_number) {
     $email = 'Email не указан! ' . Html::a('Указать', Url::to('@web/company/info?id=') . $modelCompanyOffer->company_id, ['target' => 'blank']);
@@ -195,7 +223,10 @@ JS;
                 <?= $modelCompany->status != Company::STATUS_NEW ?
                     Html::a('В заявки', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_NEW], ['class' => 'btn btn-success btn-sm']) : '' ?>
             <?php } ?>
-
+            <?php if($modelCompany->status == Company::STATUS_TENDER) { ?>
+                <?= $modelCompany->status != Company::STATUS_ARCHIVE ?
+                    Html::a('В архив', ['company/status', 'id' => $modelCompany->id, 'status' => Company::STATUS_ARCHIVE], ['class' => 'btn btn-success btn-sm']) : '' ?>
+            <?php } ?>
             <?= $admin ? Html::a('Удалить', ['company/delete','id' => $modelCompany->id], ['class' => 'btn btn-danger btn-sm']) : ''?>
         </div>
     </div>

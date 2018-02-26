@@ -123,8 +123,9 @@ class CompanySearch extends Company
                     $query->orderBy('department_company.user_id DESC, communication_at ASC');
 
                 } else if ($this->status == Company::STATUS_TENDER) {
+                    // на данный момент не работает, т.к в экшене обращается к ф-ии searchTender
 
-                    $query->leftJoin('tender_hystory', 'tender_hystory.company_id = company.id');
+                    /*$query->leftJoin('tender_hystory', 'tender_hystory.company_id = company.id');
 
                     if(isset($params['CompanySearch']['dep_user_id'])) {
                         if($params['CompanySearch']['dep_user_id'] > 0) {
@@ -134,7 +135,7 @@ class CompanySearch extends Company
                     }
                     $query->leftJoin('user', 'tender_hystory.user_id = user.id');
                     $query->select('`company`.*, `tender_hystory`.`user_id`, `tender_hystory`.`company_id`');
-                    $query->orderBy('tender_hystory.user_id DESC, communication_at ASC');
+                    $query->orderBy('tender_hystory.user_id DESC, communication_at ASC');*/
 
                 } else {
                     $query->orderBy('address ASC');
@@ -370,6 +371,56 @@ class CompanySearch extends Company
             'company.status' => $this->status,
         ]);
         $query->andFilterWhere(['like', 'name', $this->name]);
+
+        return $dataProvider;
+    }
+
+    public function searchTender($params=[])
+    {
+        $query = Company::find()->innerJoin('tender_hystory', 'tender_hystory.company_id = company.id')->where(['!=', 'company.status', Company::STATUS_DELETED]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->alias('company');
+
+        $query->joinWith(['info info', 'offer offer']);
+
+        if(isset($params['CompanySearch']['dep_user_id'])) {
+            if($params['CompanySearch']['dep_user_id'] > 0) {
+                $this->dep_user_id = $params['CompanySearch']['dep_user_id'];
+                $query->andWhere(['tender_hystory.user_id' => $params['CompanySearch']['dep_user_id']]);
+            }
+        }
+        $query->leftJoin('user', 'tender_hystory.user_id = user.id');
+        $query->select('`company`.*, `tender_hystory`.`user_id`, `tender_hystory`.`company_id`');
+        $query->orderBy('tender_hystory.user_id DESC');
+
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'type' => $this->type,
+            'company.status' => $this->status,
+        ]);
+        $query->andFilterWhere(['like', 'address', $this->address]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+
+        switch ($this->scenario) {
+            case self::SCENARIO_OFFER:
+                $query->andFilterWhere(['like', 'CONCAT_WS(",",info.index,info.city,info.street,info.house)', $this->getFullAddress()]);
+                break;
+        }
 
         return $dataProvider;
     }

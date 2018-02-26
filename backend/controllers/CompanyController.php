@@ -664,7 +664,6 @@ class CompanyController extends Controller
 
         $searchModel = new CompanySearch(['scenario' => Company::SCENARIO_OFFER]);
         $searchModel->type = $type;
-        $searchModel->status = Company::STATUS_TENDER;
 
         if (Yii::$app->user->identity->role == User::ROLE_ADMIN) {
             $listType = Company::$listType;
@@ -673,22 +672,7 @@ class CompanyController extends Controller
             $listType = Yii::$app->user->identity->getAllCompanyType(Company::STATUS_TENDER);
         }
 
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // Подкатегории для сервиса
-        if ($type == 3) {
-            $requestSupType = 0;
-
-            if (Yii::$app->request->get('sub')) {
-                $requestSupType = Yii::$app->request->get('sub');
-            }
-
-            if ($requestSupType > 0) {
-                $dataProvider->query->innerJoin('company_sub_type', 'company_sub_type.company_id = company.id AND company_sub_type.sub_type = ' . $requestSupType);
-            }
-
-        }
-        // Подкатегории для сервиса
+        $dataProvider = $searchModel->searchTender(Yii::$app->request->queryParams);
 
         $dataProvider->sort = [
             'defaultOrder' => [
@@ -2504,7 +2488,6 @@ class CompanyController extends Controller
     public function actionStatus($id, $status)
     {
         $model = $this->findModel($id);
-
         // Записываем дату переноса из заявок
         if ($model->status == Company::STATUS_NEW) {
             $modelDepartmentCompany = DepartmentCompany::findOne(['company_id' => $id]);
@@ -3173,6 +3156,8 @@ class CompanyController extends Controller
         if($model->status == Company::STATUS_TENDER) {
             Tender::deleteAll(['company_id' => $model->id]);
         }
+        // Удаляем из тендер хистори
+        TenderHystory::deleteAll(['company_id' => $model->id]);
         // Удаляем тендеры
 
         // Удалить запись имени пользователя добавившего заявку
