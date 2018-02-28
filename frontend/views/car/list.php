@@ -158,7 +158,7 @@ echo GridView::widget([
             'columns' => [
                 [
                     'content' => $filters,
-                    'options' => ['colspan' => 6, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
+                    'options' => ['colspan' => 7, 'style' => 'vertical-align: middle', 'class' => 'kv-grid-group-filter period-select'],
                 ],
             ],
             'options' => ['class' => 'filters extend-header'],
