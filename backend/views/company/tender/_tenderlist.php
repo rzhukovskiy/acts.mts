@@ -61,7 +61,7 @@ for (i in userName) {
 
     for (var key in sortArr) {
         if (sortArr.hasOwnProperty(key)) {  
-            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + sortArr[key].v + '</td></tr>';
+            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="300px;">' + sortArr[key].v + '</td></tr>';
         }
     }
 
@@ -94,7 +94,7 @@ for (i in userName) {
 
     for (var owner in newsortArr) {
         if (newsortArr.hasOwnProperty(owner)) {  
-            resUsersOwner += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ newsortArr[owner].k +'</td><td style="padding: 3px 5px 3px 5px">' + newsortArr[owner].v + '</td></tr>';
+            resUsersOwner += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ newsortArr[owner].k +'</td><td style="padding: 3px 5px 3px 5px" width="300px;">' + newsortArr[owner].v + '</td></tr>';
         }
     }
 
