@@ -254,7 +254,6 @@ $css = "hr {
 .deleteButton:hover {
 cursor:pointer;
 }
-}
 ";
 $this->registerCss($css);
 
@@ -752,7 +751,7 @@ $this->registerCss($css);
 </div>
 <?php
 
-// Модальное окно
+// Модальное окно добавление адреса
 $modalLists = Modal::begin([
     'header' => '<h5>Добавление адресов</h5>',
     'id' => 'showLists',
@@ -807,7 +806,7 @@ echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-s
 ActiveForm::end();
 
 Modal::end();
-// Модальное окно дней с подсчетом
+// Модальное окно добавление адреса
 
 if($trackID) {
 
