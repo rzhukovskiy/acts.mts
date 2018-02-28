@@ -644,6 +644,7 @@ $this->registerJs($script, View::POS_READY);
                 ],
                 'attribute' => 'user_id',
                 'displayValue' => isset($usersList[$model->user_id]) ? $usersList[$model->user_id] : '',
+                'disabled' => (Yii::$app->user->identity->role != User::ROLE_ADMIN || $model->tender_close == 1) ? true : false,
                 'asPopover' => true,
                 'placement' => PopoverX::ALIGN_LEFT,
                 'size' => 'lg',

@@ -16,6 +16,8 @@ use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\CompanyInfo;
 use common\models\Email;
+use yii\widgets\ActiveForm;
+use common\models\CompanyAddress;
 
 echo $this->render('_modal', [
     'modelCompany' => $modelCompany,
@@ -32,12 +34,11 @@ $mailTemplateID = 6;
 $tracklink = '';
 $trackID = '';
 
-if ($modelCompany->status == Company::STATUS_TENDER || $replaceTender || $modelCompany->type == 1) {
 $script = <<< JS
     $('#company-worktime-targ').click(function() {
         $('#everyday').hide();
         $('#anyday').show();
-        $('.modaltime').appendTo('form#w23');
+        $('.modaltime').appendTo('#company-worktime-popover .kv-editable-form');
         $('.modaltime').show();     
     });
     
@@ -57,32 +58,77 @@ $script = <<< JS
     
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
-} else {
-    $script = <<< JS
-    $('#company-worktime-targ').click(function() {
-        $('#everyday').hide();
-        $('#anyday').show();
-        $('.modaltime').appendTo('form#w26');
-        $('.modaltime').show();     
+
+$actionDelete = Url::to('@web/company/deleteaddress');
+$script = <<< JS
+// динамическое добавление адреса
+
+scopeIndex = 0;
+$('#showLists').on('click', '.addButton', function(e)
+    {
+        scopeIndex++;
+        e.preventDefault();
+
+        var currentEntry = $(this).parents('.form-group:last'),
+            newEntry = $(currentEntry.clone()).insertAfter(currentEntry);
+        
+        newEntry.find('input').each(function() {
+            $(this).attr('name', $(this).attr('name').replace(/[0-9]+/g, scopeIndex));
+        });
+        newEntry.find('select').each(function() {
+            $(this).attr('name', $(this).attr('name').replace(/[0-9]+/g, scopeIndex));
+        });
+
+        newEntry.find('input').val('');
+        currentEntry.find('.glyphicon-plus').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        currentEntry.find('.addButton').removeClass('addButton').addClass('removeButton');
+    }).on('click', '.removeButton', function(e)
+    {
+        $(this).parents('.form-group:first').remove();
+
+        e.preventDefault();
+        return false;
     });
+
+// открываем модальное окно
+$('.showButton').on('click', function() {
+    $('#showLists').modal('show');
     
-    $('input[type="radio"]').on('change', function () {
-        var value = $('input[type="radio"]:checked').val();
-        if(value == 0){
-            $('#everyday').hide();
-            $('#anyday').hide();
-        } else if(value == 1){
-            $('#anyday').hide();
-            $('#everyday').show();
-        } else if(value == 2){
-            $('#everyday').hide();
-            $('#anyday').show();
-        }
-    });
+});
+
+// удаление
+
+$('.deleteButton').click(function(){
     
+    var deleteID = $(this).data('id');
+    var checkdeleteID = confirm("Вы уверены что хотите удалить адрес?");
+    
+    if(checkdeleteID == true) {     
+       
+   
+          $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'id=' + deleteID,
+                url  : '$actionDelete',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                } else {
+                alert('Не удалось удалить')
+                }
+                
+                }
+                });
+           }
+
+});
 JS;
-    $this->registerJs($script, \yii\web\View::POS_READY);
-}
+$this->registerJs($script, \yii\web\View::POS_READY);
 
 if($modelCompanyOffer->mail_number) {
     $email = 'Email не указан! ' . Html::a('Указать', Url::to('@web/company/info?id=') . $modelCompanyOffer->company_id, ['target' => 'blank']);
@@ -195,10 +241,22 @@ if(validateEmail('$email')) {
 
 // Запрос клиента по номеру ТС
 
+
 JS;
     $this->registerJs($script, View::POS_READY);
 
 }
+
+$css = "hr {
+    margin-top: 6px;
+    margin-bottom:6px;
+}
+.deleteButton:hover {
+cursor:pointer;
+}
+}
+";
+$this->registerCss($css);
 
 ?>
 
@@ -251,7 +309,7 @@ JS;
             </tr>
             <tr>
                 <td class="list-label-md">Адрес организации</td>
-                <td>
+                <td class="forCheckbox">
                     <?php
                     $editable = Editable::begin([
                         'model' => $modelCompanyInfo,
@@ -277,6 +335,49 @@ JS;
                         $form->field($modelCompanyInfo, 'house') .
                         $form->field($modelCompanyInfo, 'index');
                     Editable::end();
+                    ?>
+                        <button type="button" class="btn btn-primary input-sm showButton"><i
+                                    class="glyphicon glyphicon-plus"></i></button>
+
+                    <?php
+                    $allAddress = CompanyAddress::find()->where(['company_id' => $modelCompany->id])->select('id, type, address')->asArray()->all();
+                    if (count($allAddress) > 0) {
+                        echo '<br />';
+                        for ($i = 0; $i < count($allAddress); $i++) {
+                        $idAddress = $allAddress[$i]['id'];
+                        $typeAddress = $allAddress[$i]['type'];
+                        $fullAddress = $allAddress[$i]['address'];
+
+                            $modelAddress = CompanyAddress::findOne(['id' => $idAddress]);
+
+                            echo '<hr/>';
+                            echo CompanyAddress::$listType[$typeAddress] . ' адрес: ';
+                            Editable::begin([
+                                'model' => $modelAddress,
+                                'inputType' => Editable::INPUT_TEXTAREA,
+                                'attribute' => 'address',
+                                'buttonsTemplate' => '{submit}',
+                                'submitButton' => [
+                                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'displayValue' => $fullAddress,
+                                'asPopover' => true,
+                                'placement' => PopoverX::ALIGN_LEFT,
+                                'size' => 'lg',
+                                'options' => [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Введите адрес',
+                                    'id'          => $idAddress,
+                                ],
+                                'formOptions' => [
+                                    'action' => ['/company/updateaddress', 'id' => $idAddress],
+                                ],
+                            ]);
+                            Editable::end();
+                            echo '<span class="glyphicon glyphicon-trash deleteButton" data-id="' . $idAddress . '"></span>';
+                        }
+                    }
+
                     ?>
                 </td>
             </tr>
@@ -650,6 +751,64 @@ JS;
     </div>
 </div>
 <?php
+
+// Модальное окно
+$modalLists = Modal::begin([
+    'header' => '<h5>Добавление адресов</h5>',
+    'id' => 'showLists',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+$form = ActiveForm::begin([
+    'action' => ['/company/newaddress', 'id' => $modelCompany->id],
+    'options' => ['accept-charset' => 'UTF-8'],
+]);
+
+echo '<table>
+<tr>
+                        <td style="padding-left: 150px;">
+                        <div class="col-xs-2">
+                            <label class="control-label">Город</label>
+                        </div>
+                        </td>
+                        <td style="padding-left: 100px;">
+                        <div class="col-xs-2">
+                            <label class="control-label">Улица</label>
+                        </div>
+                        </td>
+                        <td style="padding-left: 90px;">
+                        <div class="col-xs-2">
+                            <label class="control-label">Строение</label>
+                        </div>
+                        </td>
+                        <td style="padding-left: 80px;">
+                        <div class="col-xs-2">
+                            <label class="control-label">Индекс</label>
+                        </div>
+                        </td>
+
+             </tr>
+             </table>
+<div class="form-group">
+<div class="col-xs-2">' . Html::dropDownList("CompanyAddress[address][type][0]", 'type', CompanyAddress::$listType, ['class' => 'form-control', 'style' => 'width:130px;', 'prompt' => 'Выберите тип']) . '</div>
+
+    <div class="col-xs-2" style="margin-right: 20px;">' . Html::input('text', "CompanyAddress[address][city][0]", '', ['class' => 'form-control', 'style' => 'width:150px;']) . '</div>
+
+    <div class="col-xs-2" style="margin-right: 20px;">' . Html::input('text', "CompanyAddress[address][street][0]", '', ['class' => 'form-control', 'style' => 'width:150px;']) . '</div>
+    
+    <div class="col-xs-2" style="margin-right: 20px;">' . Html::input('text', "CompanyAddress[address][building][0]", '', ['class' => 'form-control', 'style' => 'width:150px;']) . '</div>
+    
+    <div class="col-xs-2" style="margin-right: 30px;">' . Html::input('text', "CompanyAddress[address][index][0]", '', ['class' => 'form-control', 'style' => 'width:150px;']) . '</div>
+<button type="button" class="btn btn-primary input-sm addButton"><i class="glyphicon glyphicon-plus"></i></button></div>';
+
+echo Html::submitButton('Сохранить', ['class' => 'btn btn-primary btn-sm', 'style' => 'margin-top: 10px; margin-left: 20px;']);
+
+ActiveForm::end();
+
+Modal::end();
+// Модальное окно дней с подсчетом
+
 if($trackID) {
 
     // Почтовый шаблон для уведомления

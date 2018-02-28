@@ -161,8 +161,6 @@ class DeliveryController extends Controller
             $array['HistoryChecks']['serial_number'] = $serialNumber;
         }
 
-           // print_r($array);
-
         $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
         if ($model->load($array) && $model->save() && (Yii::$app->request->isPost)) {
 

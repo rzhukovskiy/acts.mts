@@ -12,6 +12,7 @@ use common\models\Act;
 use common\models\Car;
 use common\models\Changes;
 use common\models\Company;
+use common\models\CompanyAddress;
 use common\models\CompanyDriver;
 use common\models\CompanyInfo;
 use common\models\CompanyMember;
@@ -69,17 +70,17 @@ class CompanyController extends Controller
                 'rules' => [
                     [
 
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'delete', 'attribute', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'ownerdelete', 'getcomments', 'uploadtenderexel', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice', 'newaddress', 'updateaddress', 'deleteaddress'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'updatemember', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice', 'newaddress', 'updateaddress', 'deleteaddress'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice'],
+                        'actions' => ['add-price', 'ajaxpaymentstatus', 'price', 'status', 'new2', 'active', 'archive', 'refuse', 'archive3', 'tender', 'tenders', 'newtender', 'fulltender', 'filtertender', 'tenderlist', 'updatetender', 'new', 'create', 'update', 'info', 'state', 'newstate', 'attaches', 'newattach', 'getcomment', 'getcall', 'member', 'driver', 'offer', 'undriver', 'subtype', 'closedownload', 'listitems', 'newitemlist', 'deleteitemlist', 'edititemlist', 'newtendattach', 'tendersexcel', 'exceltenders', 'controltender', 'newcontroltender', 'fullcontroltender', 'updatecontroltender', 'controlisarchive', 'archivetender', 'tendermembers', 'newtendermembers', 'fulltendermembers', 'updatetendermembers', 'newtenderlinks', 'map', 'membersontender', 'tendermemberwin', 'tenderownerlist', 'tenderowneradd', 'tenderownerupdate', 'tenderownerfull', 'pickup', 'getcomments', 'ajaxstatus', 'sendtotender', 'statplace', 'showstatplace', 'statprice', 'showstatprice', 'newaddress', 'updateaddress', 'deleteaddress'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -2884,6 +2885,95 @@ class CompanyController extends Controller
                 'namePlace' => $namePlace,
                 'type' => $type,
             ]);
+        }
+    }
+
+    public function actionNewaddress($id)
+    {
+        $array = [];
+
+        if (Yii::$app->request->post()) {
+            $array = Yii::$app->request->post();
+            $address = '';
+            $city = '';
+            $street = '';
+
+                for ($i = 0; $i < count($array['CompanyAddress']['address']['type']); $i++) {
+                    if ($array['CompanyAddress']['address']['city'][$i]) {
+                        $city = $array['CompanyAddress']['address']['city'][$i];
+                    } else {
+                        $city = '';
+                    }
+
+                    if ($array['CompanyAddress']['address']['street'][$i]) {
+                        $street = $array['CompanyAddress']['address']['street'][$i];
+                    } else {
+                        $street = '';
+                    }
+
+                    if ($array['CompanyAddress']['address']['building'][$i]) {
+                        $building = $array['CompanyAddress']['address']['building'][$i];
+                    } else {
+                        $building = '';
+                    }
+
+                    if ($array['CompanyAddress']['address']['index'][$i]) {
+                        $index = $array['CompanyAddress']['address']['index'][$i];
+                    } else {
+                        $index = '';
+                    }
+
+                    $address = $city . ', ' . $street . ', ' . $building . ', ' . $index;
+
+                    if ($city && $street) {
+                        if ($array['CompanyAddress']['address']['type'][$i] > 0) {
+                            $model = new CompanyAddress();
+                            $model->company_id = $id;
+                            $model->type = $array['CompanyAddress']['address']['type'][$i];
+                            $model->address = $address;
+                            $model->save();
+                        }
+                    }
+                }
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
+
+    }
+
+    public function actionUpdateaddress($id)
+    {
+        $model = CompanyAddress::findOne(['id' => $id]);
+
+        $hasEditable = Yii::$app->request->post('hasEditable', false);
+        if ($hasEditable) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            // Подготовка данных перед сохранением
+            $arrUpdate = Yii::$app->request->post();
+
+            if ($model->load($arrUpdate) && $model->save()) {
+                $output = [];
+                return ['output' => implode(', ', $output), 'message' => ''];
+            } else {
+                return ['message' => 'не получилось'];
+            }
+        } else {
+            return ['message' => 'не получилось'];
+        }
+    }
+
+    public function actionDeleteaddress()
+    {
+        if (Yii::$app->request->post('id')) {
+
+            $id = Yii::$app->request->post('id');
+            CompanyAddress::deleteAll(['id' => $id]);
+
+            return $this->redirect(Yii::$app->request->referrer);
+
+        } else {
+            echo json_encode(['success' => 'false']);
         }
     }
 
