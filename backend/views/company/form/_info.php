@@ -367,6 +367,28 @@ $this->registerJs($script, View::POS_READY);
                     ]); ?>
                 </td>
             </tr>
+            <tr>
+                <td class="list-label-md"><?= $modelCompanyInfo->getAttributeLabel('features_work') ?></td>
+                <td>
+                    <?= Editable::widget([
+                        'model' => $modelCompanyInfo,
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-ok"></i>',
+                        ],
+                        'attribute' => 'features_work',
+                        'inputType' => Editable::INPUT_TEXTAREA,
+                        'asPopover' => true,
+                        'placement' => PopoverX::ALIGN_LEFT,
+                        'size' => 'lg',
+                        'options' => ['class' => 'form-control', 'placeholder' => 'Введите особенность работы'],
+                        'formOptions' => [
+                            'action' => ['/company-info/update', 'id' => $modelCompanyInfo->id],
+                        ],
+                        'valueIfNull' => '<span class="text-danger">не задано</span>',
+                    ]); ?>
+                </td>
+            </tr>
             <?php
             $arrtypecomp = Company::find()->innerJoin('company_info', 'company_info.company_id = company.id')->where(['company.id' => $modelCompanyInfo->company_id])->select('company.type')->column();
             ?>
