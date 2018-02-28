@@ -18,5 +18,6 @@ echo $this->render('_tenderlist', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'usersList'     => $usersList,
+    'arrusersOwner' => json_encode($arrusersOwner),
     'admin' => isset($admin) ? $admin : false,
 ]);

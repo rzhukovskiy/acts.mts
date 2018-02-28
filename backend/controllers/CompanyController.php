@@ -726,12 +726,24 @@ class CompanyController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andWhere(['OR', ['purchase_status' => 15], ['purchase_status' => 18], ['purchase_status' => 19], ['purchase_status' => 57], ['purchase_status' => 58], ['purchase_status' => 85]]);
 
+        $usersOwner = TenderOwner::find()->innerJoin('user', 'user.id = tender_owner.tender_user')->andWhere(['AND', ['!=', 'tender_owner.tender_user', 0], ['is', 'tender_owner.tender_id', null], ['tender_owner.status' => 0]])->orWhere(['AND', ['!=', 'tender_owner.tender_user', 0], ['tender_owner.tender_id' => ''], ['tender_owner.status' => 0]])->orWhere(['AND', ['!=', 'tender_owner.tender_user', 0], ['is', 'tender_owner.tender_id', null], ['tender_owner.status' => 0]])->select('user.username')->asArray()->all();
+        $arrusersOwner = [];
+
+        if (count($usersOwner) > 0) {
+        $arr1 = [];
+        for ($i = 0; $i < count($usersOwner); $i++) {
+            $arr1[$i] = $usersOwner[$i]['username'];
+        }
+        $arrusersOwner = array_count_values ($arr1);
+        }
+
         return $this->render('tender/tenderlist',
             [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
                 'listType' => $listType,
                 'usersList' => $usersList,
+                'arrusersOwner' => $arrusersOwner,
             ]);
     }
 

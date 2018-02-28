@@ -15,16 +15,99 @@ window.onload=function(){
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
-var thisuser = '';
-var user4 = $('td[data-col-seq="4"]');
-  $(user4).each(function (id, value) {
-       thisuser += $(this).text();
-       });
-   $('.userDen').text((thisuser.match(/Денис Митрофанов/g) || []).length);
-   $('.userAlyna').text((thisuser.match(/Алена Попова/g) || []).length);
-   $('.userMasha').text((thisuser.match(/Мария Губарева/g) || []).length);
+
+var user4 = $('td[data-col-seq="4"]');     
+       var userName = [];
+       var userNow = '';
+       var resTables = '';
+       var resUsers = '';
+       var resUsersOwner = '';
+       var nameTabs = '';
+       
+     $(user4).each(function (id, value) {
+        var thisId = $(this);
+        
+             
+                 userNow = $(this).text();
+                 if (userNow.length > 3) {
+                     userName.push(userNow);
+                 }
+                 
+     });
+     
+     var arr2 = [];
+for (i in userName) {
+  if (arr2[userName[i]] != undefined) {
+    (arr2[userName[i]] ++)
+  } else {
+    (arr2[userName[i]] = 1)
+  }
+}
+    // Сортировка
+    var sortArr = [];
+
+    for (var index in arr2) {
+        if (arr2.hasOwnProperty(index)) {  
+            sortArr.push({v:arr2[index], k: index});
+        }
+    }
+
+    sortArr.sort(function(a,b){
+        if(a.v < b.v){ return 1}
+            if(a.v > b.v){ return -1}
+                return 0;
+    });
+    // Сортировка
+
+    for (var key in sortArr) {
+        if (sortArr.hasOwnProperty(key)) {  
+            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + sortArr[key].v + '</td></tr>';
+        }
+    }
+
+           nameTabs = 'Статистика сотрудников';
+         
+            resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
+             '<tr style="background: #428bca; color: #fff;">' +
+              '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
+               '</tr>' +
+                '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
+          
+      
+           // Сортировка 
+    var newsortArr = [];
+    
+     var arr3 = $arrusersOwner;
+   
+    for (var indexowner in arr3) {
+        if (arr3.hasOwnProperty(indexowner)) {  
+            newsortArr.push({v:arr3[indexowner], k: indexowner});
+        }
+    }
+
+    newsortArr.sort(function(a,b){
+        if(a.v < b.v){ return 1}
+            if(a.v > b.v){ return -1}
+                return 0;
+    });
+    // Сортировка
+
+    for (var owner in newsortArr) {
+        if (newsortArr.hasOwnProperty(owner)) {  
+            resUsersOwner += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ newsortArr[owner].k +'</td><td style="padding: 3px 5px 3px 5px">' + newsortArr[owner].v + '</td></tr>';
+        }
+    }
+
+           nameTabs = 'В работе';
+         
+            resTables += '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
+             '<tr style="background: #428bca; color: #fff;">' +
+              '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
+               '</tr>' +
+                '<tr style="background: #fff; font-weight: normal;">' + resUsersOwner + '</tr></table>';
+           $('.place_list').html(resTables);
  };
-  
+
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 ?>
@@ -405,60 +488,7 @@ $columns = [
 ],
 ];
 
-$statTable = '';
-$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
-                <tr style="background: #428bca; color: #fff;">
-                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">Статистика сотрудников</td>
-                </tr>';
-$statTable .=  '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
-                    <td class="userDen" width="300px;" style="padding: 3px 5px 3px 5px"></td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 256);
-
-$statTable .=  '<tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
-                    <td class="userAlyna" width="300px;" style="padding: 3px 5px 3px 5px"></td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>", "/company/tenderlist?TenderSearch[user_id]=" . 654);
-
-$statTable .= '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
-                    <td class="userMasha" width="300px;" style="padding: 3px 5px 3px 5px"></td>
-                    <td width="50px" align="center" style="background:#fff; padding:7px 6px 5px 0px;">';
-
-$statTable .= Html::a("<span class=\"glyphicon glyphicon-search\"></span>",  "/company/tenderlist?TenderSearch[user_id]=" . 756);
-
-$statTable .= '</td>
-                </tr>
-            </table>';
-$statTable .= '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">
-                <tr style="background: #428bca; color: #fff;">
-                    <td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">В работе</td>
-                </tr>';
-$statTable .=  '</td>
-                </tr>
-                <tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Денис Митрофанов</td>
-                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userDen .'</td>
-                    </tr>';
-
-$statTable .=  '<tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Алена Попова</td>
-                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userAlyona .'</td>
-                    </tr>';
-
-$statTable .= '<tr style="background: #fff; font-weight: normal;">
-                    <td style="padding: 3px 5px 3px 5px">Мария Губарева</td>
-                    <td width="350px;" style="padding: 3px 5px 3px 5px">' . $userMasha .'</td>
-                    </tr></table>';
-
+$statTable = '<div class="place_list"></div>';
 
 echo GridView::widget([
 'dataProvider' => $dataProvider,
