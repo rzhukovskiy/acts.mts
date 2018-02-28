@@ -2898,7 +2898,7 @@ class CompanyController extends Controller
             $city = '';
             $street = '';
 
-                for ($i = 0; $i < count($array['CompanyAddress']['address']['type']); $i++) {
+            foreach ($array['CompanyAddress']['address']['type'] as $i => $value) {
                     if ($array['CompanyAddress']['address']['city'][$i]) {
                         $city = $array['CompanyAddress']['address']['city'][$i];
                     } else {
