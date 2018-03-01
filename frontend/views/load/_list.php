@@ -253,6 +253,7 @@ if ($role != User::ROLE_ADMIN && !empty(Yii::$app->user->identity->company->chil
             ->select(['name', 'id'])->indexBy('id')->column(), ['prompt' => 'все', 'class' => 'form-control ext-filter']);
 }
 if ($role == User::ROLE_ADMIN || $role == User::ROLE_WATCHER || $role == User::ROLE_MANAGER) {
+    $filters .= Html::activeDropDownList($searchModel, 'user_id', User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->where(['OR', ['department_user.department_id' => 1], ['department_user.department_id' => 7]])->select('user.username')->indexby('user_id')->orderBy('user.username ASC')->column(), ['class' => 'form-control ext-filter', 'prompt' => 'Все сотрудники']);
     $filters .= Html::a('Наклейки', array_merge(['load/stickers'], Yii::$app->getRequest()->get()), ['class' => 'pull-right btn btn-primary btn-sm', 'target' => '_blank']);
     $filters .= '<span class="numClose" style="margin-left: 5px; font-weight: normal; color: #2d6f31;"></span>';
     $filters .= '<span class="numOpen" style="margin-left: 15px; font-weight: normal; color: #8e3532;"></span>';
