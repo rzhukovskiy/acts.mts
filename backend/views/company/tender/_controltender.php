@@ -315,7 +315,7 @@ if (isset($arrLists[9])){
                             'valueIfNull'     => '(не задано)',
                             'buttonsTemplate' => '{submit}',
                             'displayValue' => isset($data->tender_return) ? $data->tender_return : '',
-                            'disabled'        => (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN && $data->is_archive == 0 && Yii::$app->user->identity->id == 708) ? false : true,
+                            'disabled'        => ((\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN || Yii::$app->user->identity->id == 708) && $data->is_archive == 0 ) ? false : true,
                             'submitButton'    => [
                                 'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                             ],
