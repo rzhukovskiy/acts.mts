@@ -151,6 +151,10 @@ class Company extends ActiveRecord
             'en' => 'repair',
             'ru' => 'Ремонт жестянки',
         ],
+        self::TYPE_UNIVERSAL => [
+            'en' => 'autonom',
+            'ru' => 'Автономка',
+        ],
     ];
 
     static $listStatus = [
