@@ -373,11 +373,13 @@ class ActSearch extends Act
                         }
                     } else {
                         if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
-                            $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.client_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => Company::TYPE_OWNER]])->exists();
-                            if ($exists) {
-                                $this->user_id = Yii::$app->user->identity->id;
-                                $query->innerJoin('department_linking', 'department_linking.company_id = act.client_id');
-                                $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => Company::TYPE_OWNER]]);
+                            if (!(Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'export')) {
+                                $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.client_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => Company::TYPE_OWNER]])->exists();
+                                if ($exists) {
+                                    $this->user_id = Yii::$app->user->identity->id;
+                                    $query->innerJoin('department_linking', 'department_linking.company_id = act.client_id');
+                                    $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => Company::TYPE_OWNER]]);
+                                }
                             }
                         }
                     }
@@ -425,11 +427,13 @@ class ActSearch extends Act
                         }
                     } else {
                         if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
-                            $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
-                            if ($exists) {
-                                $this->user_id = Yii::$app->user->identity->id;
-                                $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
-                                $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                            if (!(Yii::$app->controller->id == 'act' && Yii::$app->controller->action->id == 'export')) {
+                                $exists = Act::find()->innerJoin('department_linking', 'department_linking.company_id = act.partner_id')->where(['AND', ['act.service_type' => $this->service_type], ['DATE_FORMAT(FROM_UNIXTIME(`served_at`), "%c-%Y")' => $this->period]])->andWhere(['AND', ['department_linking.user_id' => Yii::$app->user->identity->id], ['department_linking.type' => $this->service_type]])->exists();
+                                if ($exists) {
+                                    $this->user_id = Yii::$app->user->identity->id;
+                                    $query->innerJoin('department_linking', 'department_linking.company_id = act.partner_id');
+                                    $query->andWhere(['AND', ['department_linking.user_id' => $this->user_id], ['department_linking.type' => $this->service_type]]);
+                                }
                             }
                         }
                     }
