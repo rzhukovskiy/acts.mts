@@ -697,7 +697,8 @@ class Act extends ActiveRecord
                         if (!empty($companyService) && $companyService->service->is_fixed) {
 
                             if ((Yii::$app->user->identity->role == User::ROLE_ADMIN) && (isset($serviceData['price'])) && ($serviceData['price'] >= 0)) {
-                                $scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
+                                //$scope->price = ArrayHelper::getValue($serviceData, 'price', 0);
+                                $scope->price = $companyService->price;
                             } else {
                                 $scope->price = $companyService->price;
                             }
