@@ -54,7 +54,7 @@ class EmailController extends Controller
                         'roles' => [User::ROLE_WATCHER],
                     ],
                     [
-                        'actions' => ['cronmailer', 'cronaddressnew', 'crondebt', 'cronchecks'],
+                        'actions' => ['cronmailer', 'cronaddressnew', 'crondebt', 'cronchecks', 'cron-not-signed'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -1813,6 +1813,220 @@ class EmailController extends Controller
         return 1;
 
         // Ежедневная проверка на количество чеков у мойки и рассылка уведомлений, если заканчиваются чеки
+
+    }
+
+    public function actionCronNotSigned()
+    {
+        // Проверка по четвергам на не подписанные акты
+        if (isset(Yii::$app->user->identity->id)) {
+            return $this->redirect('/');
+        } else {
+            $company_id = [];
+            $linksEmail = [];
+            $userOnCompany = [];
+            $index = 0;
+            $oldIndex = 0;
+            $oldServiceIndex = 0;
+            $serviceIndex = 0;
+            $ind = 0;
+
+            $dateFinal = date('Y-m-00', strtotime("-2 month"));
+            $dateStart = date('Y-m-00', strtotime("-7 month"));
+
+            $arrNotSigned = MonthlyAct::find()->where(['AND', ['act_status' => 0], ['is_partner' => 1], ['!=', 'type_id', 5], ['!=', 'type_id', 8], ['between', 'act_date', $dateStart, $dateFinal]])->select('client_id as id, act_date as date, type_id as type, number')->orderBy('monthly_act.client_id, monthly_act.act_date')->asArray()->all();
+
+            for ($j = 0; $j < count($arrNotSigned); $j++) {
+                $query = Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.partner_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND',['monthly_act.act_status' => 0], ['monthly_act.is_partner' => 1], ['!=', 'monthly_act.type_id', 5], ['!=', 'monthly_act.type_id', 8], [">", "act.expense", 0], ['monthly_act.act_date' => $arrNotSigned[$j]['date']], ['act.partner_id' => $arrNotSigned[$j]['id']]])->innerJoin('company', 'company.id = monthly_act.client_id')->select('company.name')->asArray()->all();            if (count($query) > 0) {
+                    // записываем ид партнера в массив
+
+                    $serviceIndex = $arrNotSigned[$j]['id'];
+
+                    if ($oldServiceIndex == $serviceIndex) {
+
+                        $company_id[$serviceIndex]['name'] = $query[0]['name'];
+                        $company_id[$serviceIndex]['type'] = $arrNotSigned[$j]['type'];
+
+                        $company_id[$serviceIndex]['index'][$ind]['date'] = $arrNotSigned[$j]['date'];
+
+                        if (isset($arrNotSigned[$j]['number'])) {
+                            $company_id[$serviceIndex]['index'][$ind]['number'] = $arrNotSigned[$j]['number'];
+                        }
+
+                        $ind++;
+                    } else {
+
+                        $ind = 0;
+
+                        $company_id[$serviceIndex] = [];
+                        $company_id[$serviceIndex]['name'] = $query[0]['name'];
+                        $company_id[$serviceIndex]['type'] = $arrNotSigned[$j]['type'];
+
+                        $company_id[$serviceIndex]['index'][$ind]['date'] = $arrNotSigned[$j]['date'];
+
+                        if (isset($arrNotSigned[$j]['number'])) {
+                            $company_id[$serviceIndex]['index'][$ind]['number'] = $arrNotSigned[$j]['number'];
+                        }
+
+                        $ind++;
+                    }
+                    $oldServiceIndex = $serviceIndex;
+                }
+
+            }
+
+
+            // юзер ид и эмайл
+            $userID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('id, email')->asArray()->all();
+            // компани ид и юзер ид
+            $companyID = DepartmentLinking::find()->where(['OR', ['type' => Company::TYPE_WASH], ['type' => Company::TYPE_SERVICE], ['type' => Company::TYPE_TIRES]])->select('user_id as id, company_id')->asArray()->all();
+
+            // создаем массив с пользователями и привязанным к ним партнерами
+            for ($i = 0; $i < count($userID); $i++) {
+                $index = $userID[$i]['id'];
+                for ($j = 0; $j < count($companyID); $j++) {
+                    if ($index == $companyID[$j]['id']) {
+                        if (isset($userOnCompany[$index][0])) {
+                            $userOnCompany[$index][0][] = $companyID[$j]['company_id'];
+                            $userOnCompany[$index][1] = $userID[$i]['email'];
+                        } else {
+                            $userOnCompany[$index][0] = [$companyID[$j]['company_id']];
+                            $userOnCompany[$index][1] = $userID[$i]['email'];
+                        }
+                    }
+                }
+            }
+
+            $date = '';
+
+            foreach ($company_id as $key => $value) {
+
+
+                // добавляем в массив текст отправления для привязанных пользователей
+                foreach ($userOnCompany as $index => $val) {
+                    for ($i = 0; $i < count($val[0]); $i++) {
+
+                        if ($key == $val[0][$i]) {
+
+                            if (count($value['index']) > 0) {
+                                for ($v = 0; $v < count($value['index']); $v++) {
+                                    if ($date == '') {
+                                        $date = $value['index'][$v]['date'];
+                                    } else {
+                                        $date .= ', ' . $value['index'][$v]['date'];
+                                    }
+                                }
+                            }
+
+                            if ($value['type'] != 3) {
+                                if (isset($userOnCompany[$index][2])) {
+                                    $userOnCompany[$index][2] .= '<br/><b>Партнер:</b> ' . $value['name'] . '<br/><b>Дата:</b> ' . $date . '<br/>';
+                                } else {
+                                    $userOnCompany[$index][2] = '<b>Партнер:</b> ' . $value['name'] . '<br/><b>Дата:</b> ' . $date . '<br/>';
+                                }
+                            }
+
+                            $date = '';
+
+                        }
+
+                    }
+                }
+
+            }
+
+
+
+            // отправляем список в соответствии с привязкой пользователя к партнеру
+            foreach ($userOnCompany as $index => $val) {
+                if (isset($userOnCompany[$index][2])) {
+                    $sendEmail = $userOnCompany[$index][1];
+                    $resText = $userOnCompany[$index][2];
+                    Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($sendEmail)
+                        ->setSubject('Не подписан акт ' . date('d.m.Y'))
+                        ->setHtmlBody($resText)->send();
+                }
+            }
+
+            $userJulia = User::find()->where(['id' => 238])->select('email')->column();
+            $userOksana = User::find()->where(['id' => 379])->select('email')->column();
+            $userRita = User::find()->where(['id' => 364])->select('email')->column();
+            $juliaText = '';
+            $oksanaText = '';
+            $ritaText = '';
+
+            $date = '';
+
+            foreach ($company_id as $index => $val) {
+                $type = $val['type'];
+
+                if (count($val['index']) > 0) {
+                    for ($v = 0; $v < count($val['index']); $v++) {
+                        if ($date == '') {
+                            $date = $val['index'][$v]['date'];
+                        } else {
+                            $date .= ', ' . $val['index'][$v]['date'];
+                        }
+                    }
+                }
+
+                if ($type != 3) {
+                    $juliaText .= Company::$listType[$type]['ru'] . '<br/><b>Партнер:</b> ' . $val['name'] . '<br/><b>Дата:</b> ' . $date . '<br/><br/>';
+                } else {
+                    if (count($val['index']) > 0) {
+                        for ($v = 0; $v < count($val['index']); $v++) {
+                            $juliaText .= Company::$listType[$type]['ru'] . '<br/><b>Партнер:</b> ' . $val['name'] . '<br/><b>Дата:</b> ' . $val['index'][$v]['date'] . '<br/><b>Номер:</b> ' . $val['index'][$v]['number'] .'<br/><br/>';
+                        }
+                    }
+
+                }
+
+                if ($type == 2) {
+                    $oksanaText .= '<b>Партнер:</b> ' . $val['name'] . '<br/><b>Дата:</b> ' . $date . '<br/><br/>';
+                }
+                if ($type == 4) {
+                    $ritaText .= '<b>Партнер:</b> ' . $val['name'] . '<br/><b>Дата:</b> ' . $date . '<br/><br/>';
+                }
+                $date = '';
+            }
+
+            // отправляем юле полный список
+            if (isset($userJulia[0])) {
+                if ($juliaText != '') {
+                    Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($userJulia[0])
+                        ->setSubject('Не подписан акт ' . date('d.m.Y'))
+                        ->setHtmlBody('Полный список не подписанных актов:<br/><br/>' . $juliaText)->send();
+                }
+            }
+
+            // отправляем оксане только мойку
+            if (isset($userOksana[0])) {
+                if ($oksanaText != '') {
+                    Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($userOksana[0])
+                        ->setSubject('Не подписан акт ' . date('d.m.Y'))
+                        ->setHtmlBody('Полный список по мойкам:<br/><br/>' . $oksanaText)->send();
+                }
+            }
+
+            // отправляем рите только шиномонтаж
+            if (isset($userRita[0])) {
+                if ($ritaText != '') {
+                    Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($userRita[0])
+                        ->setSubject('Не подписан акт ' . date('d.m.Y'))
+                        ->setHtmlBody('Полный список по шиномонтажам:<br/><br/>' . $ritaText)->send();
+                }
+            }
+        }
+
+        return 1;
 
     }
 

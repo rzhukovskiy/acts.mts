@@ -17,7 +17,6 @@ $script = <<< JS
        summChecks += parseInt($(this).text());
        }
 });
-  
 // записываем самую маленькую дату из всех
   var olddate = 0;
   var date = 0;

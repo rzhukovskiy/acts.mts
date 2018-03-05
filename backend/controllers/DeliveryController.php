@@ -204,7 +204,7 @@ class DeliveryController extends Controller
 
             $count = Act::find()->where(['between', "served_at", $date, time()])->andWhere(['AND', ['partner_id' => $company_id], ['service_type' => Company::TYPE_WASH]])->count();
 
-            if ($count) {
+            if (isset($count)) {
                 return json_encode(['result' => $count, 'success' => 'true']);
             } else {
                 return json_encode(['success' => 'false']);
