@@ -171,65 +171,67 @@ class ServiceController extends Controller
         $params = Yii::$app->request->post();
 
         // Если не заданы типы ТС
-        if(!isset($params['ServiceReplace']['type_partner'])) {
+        if (!isset($params['ServiceReplace']['type_partner'])) {
             $params['ServiceReplace']['type_partner'] = 0;
-        } elseif(!($params['ServiceReplace']['type_partner'] > 0)) {
+        } elseif (!($params['ServiceReplace']['type_partner'] > 0)) {
             $params['ServiceReplace']['type_partner'] = 0;
         }
 
-        if(!isset($params['ServiceReplace']['type_client'])) {
+        if (!isset($params['ServiceReplace']['type_client'])) {
             $params['ServiceReplace']['type_client'] = 0;
-        } elseif(!($params['ServiceReplace']['type_client'] > 0)) {
+        } elseif (!($params['ServiceReplace']['type_client'] > 0)) {
             $params['ServiceReplace']['type_client'] = 0;
         }
         // Если не заданы типы ТС
 
         // Если не задана марка ТС
-        if(!isset($params['ServiceReplace']['mark_partner'])) {
+        if (!isset($params['ServiceReplace']['mark_partner'])) {
             $params['ServiceReplace']['mark_partner'] = 0;
-        } elseif(!($params['ServiceReplace']['mark_partner'] > 0)) {
+        } elseif (!($params['ServiceReplace']['mark_partner'] > 0)) {
             $params['ServiceReplace']['mark_partner'] = 0;
         }
 
-        if(!isset($params['ServiceReplace']['mark_client'])) {
+        if (!isset($params['ServiceReplace']['mark_client'])) {
             $params['ServiceReplace']['mark_client'] = 0;
-        } elseif(!($params['ServiceReplace']['mark_client'] > 0)) {
+        } elseif (!($params['ServiceReplace']['mark_client'] > 0)) {
             $params['ServiceReplace']['mark_client'] = 0;
         }
         // Если не задана марка ТС
 
-        // не сохранять если не переданы услуги
-        if((isset($params['partner'])) && (isset($params['client']))) {
-            if ((count($params['partner']) > 0) && (count($params['client']) > 0)) {
 
-                // Если задан тип тс то у обоих
-                if(((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
+        // Если задан тип тс то у обоих
+        if (((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
 
-                    if ($model->load($params) && $model->save()) {
-                    // Успешно
+            if ($model->load($params) && $model->save()) {
+                // Успешно
 
-                    // Создаем замещение итемс
-                    foreach ($params['partner'] as $key => $value) {
-                        $item = new ServiceReplaceItem();
-                        $item->replace_id = $model->id;
-                        $item->service_id = $value;
-                        $item->company_id = $model->partner_id;
-                        $item->type = $model->type;
-                        $item->car_type = $model->type_partner;
-                        $item->save();
-                        $item = null;
+                // не сохранять если не переданы услуги
+                if ((isset($params['partner'])) && (isset($params['client']))) {
+                    if ((count($params['partner']) > 0) && (count($params['client']) > 0)) {
+
+                        // Создаем замещение итемс
+                        foreach ($params['partner'] as $key => $value) {
+                            $item = new ServiceReplaceItem();
+                            $item->replace_id = $model->id;
+                            $item->service_id = $value;
+                            $item->company_id = $model->partner_id;
+                            $item->type = $model->type;
+                            $item->car_type = $model->type_partner;
+                            $item->save();
+                            $item = null;
+                        }
+                        foreach ($params['client'] as $key => $value) {
+                            $item = new ServiceReplaceItem();
+                            $item->replace_id = $model->id;
+                            $item->service_id = $value;
+                            $item->company_id = $model->client_id;
+                            $item->type = $model->type;
+                            $item->car_type = $model->type_client;
+                            $item->save();
+                            $item = null;
+                        }
+
                     }
-                    foreach ($params['client'] as $key => $value) {
-                        $item = new ServiceReplaceItem();
-                        $item->replace_id = $model->id;
-                        $item->service_id = $value;
-                        $item->company_id = $model->client_id;
-                        $item->type = $model->type;
-                        $item->car_type = $model->type_client;
-                        $item->save();
-                        $item = null;
-                    }
-                }
 
                 }
 
@@ -247,7 +249,7 @@ class ServiceController extends Controller
 
         $params = Yii::$app->request->post();
 
-        if($params) {
+        if ($params) {
 
             // Если не заданы типы ТС
             if (!isset($params['ServiceReplace']['type_partner'])) {
@@ -264,32 +266,32 @@ class ServiceController extends Controller
             // Если не заданы типы ТС
 
             // Если не задана марка ТС
-            if(!isset($params['ServiceReplace']['mark_partner'])) {
+            if (!isset($params['ServiceReplace']['mark_partner'])) {
                 $params['ServiceReplace']['mark_partner'] = 0;
-            } elseif(!($params['ServiceReplace']['mark_partner'] > 0)) {
+            } elseif (!($params['ServiceReplace']['mark_partner'] > 0)) {
                 $params['ServiceReplace']['mark_partner'] = 0;
             }
 
-            if(!isset($params['ServiceReplace']['mark_client'])) {
+            if (!isset($params['ServiceReplace']['mark_client'])) {
                 $params['ServiceReplace']['mark_client'] = 0;
-            } elseif(!($params['ServiceReplace']['mark_client'] > 0)) {
+            } elseif (!($params['ServiceReplace']['mark_client'] > 0)) {
                 $params['ServiceReplace']['mark_client'] = 0;
             }
             // Если не задана марка ТС
 
             // Если задан тип тс то у обоих
-            if(((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
+            if (((($params['ServiceReplace']['type_partner'] > 0) && ($params['ServiceReplace']['type_client'] > 0)) || (($params['ServiceReplace']['type_partner'] == 0) && ($params['ServiceReplace']['type_client'] == 0))) && ((($params['ServiceReplace']['mark_partner'] > 0) && ($params['ServiceReplace']['mark_client'] > 0)) || (($params['ServiceReplace']['mark_partner'] == 0) && ($params['ServiceReplace']['mark_client'] == 0)))) {
 
-                // не сохранять если не переданы услуги
-                if ((isset($params['partner'])) && (isset($params['client']))) {
-                    if ((count($params['partner']) > 0) && (count($params['client']) > 0)) {
+                if ($model->load($params) && $model->save()) {
 
-                        if ($model->load($params) && $model->save()) {
+                    // Успешно
 
-                            // Успешно
+                    // Создаем замещение итемс
+                    ServiceReplaceItem::deleteAll(['replace_id' => $id]);
 
-                            // Создаем замещение итемс
-                            ServiceReplaceItem::deleteAll(['replace_id' => $id]);
+                    // не сохранять если не переданы услуги
+                    if ((isset($params['partner'])) && (isset($params['client']))) {
+                        if ((count($params['partner']) > 0) && (count($params['client']) > 0)) {
 
                             foreach ($params['partner'] as $key => $value) {
                                 $item = new ServiceReplaceItem();
@@ -312,14 +314,10 @@ class ServiceController extends Controller
                                 $item = null;
                             }
 
-                            return $this->redirect(['replace', 'type' => $model->type]);
                         }
-
-                    } else {
-                        return $this->redirect(['updatereplace', 'id' => $model->id]);
                     }
-                } else {
-                    return $this->redirect(['updatereplace', 'id' => $model->id]);
+
+                    return $this->redirect(['replace', 'type' => $model->type]);
                 }
 
             } else {
