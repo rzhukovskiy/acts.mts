@@ -10,10 +10,43 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use common\models\Mark;
 use common\models\Type;
-use common\models\Card;
 use common\models\Car;
-use kartik\select2\Select2;
 use yii\jui\AutoComplete;
+use yii\web\View;
+use yii\helpers\Url;
+
+$actionLinkType = Url::to('@web/car/gettypeid');
+
+$script = <<< JS
+
+    // получаем тип тс по номеру
+    $(document).on('change', '#act-car_number', function () {
+                  $.ajax({
+                type     :'POST',
+                cache    : false,
+                data: 'number=' + $(this).val(),
+                url  : '$actionLinkType',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == true) { 
+                // Удачно
+                $("#act-type_id").val(response.type_id);
+                
+                } else {
+                // Неудачно
+                $("#act-type_id").val('');
+                $("#act-mark_id").val('');
+                }
+                
+                }
+                });
+    });
+    
+
+JS;
+$this->registerJs($script, View::POS_READY);
 
 ?>
 
@@ -64,9 +97,6 @@ use yii\jui\AutoComplete;
                                     if(ui.content.length==0){
                                         $("#act-mark_id").show();
                                         $("#act-type_id").show();
-                                    }else{
-                                        $("#act-mark_id").hide();
-                                        $("#act-type_id").hide();
                                     }
                                 }'
                             ],
