@@ -26,4 +26,5 @@ echo $this->render('_archivetender', [
     'dataProvider' => $dataProvider,
     'searchModel' => $searchModel,
     'usersList' => $usersList,
+    'win' => $win,
 ]);

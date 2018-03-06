@@ -65,7 +65,7 @@ for (i in userName) {
         }
     }
 
-           nameTabs = 'Статистика сотрудников';
+           nameTabs = 'Закупки сотрудников';
          
             resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
              '<tr style="background: #428bca; color: #fff;">' +
@@ -98,7 +98,7 @@ for (i in userName) {
         }
     }
 
-           nameTabs = 'В работе';
+           nameTabs = 'Распределение тендеров - в работе';
          
             resTables += '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
              '<tr style="background: #428bca; color: #fff;">' +

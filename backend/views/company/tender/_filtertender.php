@@ -162,14 +162,13 @@ $columns = [
                     },
                 ],
                 [
-                    'attribute' => 'place',
+                    'attribute' => 'site_address',
                     'vAlign'=>'middle',
-                    'header' => 'Электронная площадка',
                     'filter' => false,
                     'value' => function ($data) {
 
-                        if ($data->place) {
-                            return $data->place;
+                        if ($data->site_address) {
+                            return $GLOBALS['arrLists'][8][$data->site_address];
                         } else {
                             return '-';
                         }

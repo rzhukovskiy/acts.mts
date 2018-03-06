@@ -1305,7 +1305,7 @@ class CompanyController extends Controller
     public static function createExcelTenders()
     {
 
-        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, place, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
+        $arrTenders = Tender::find()->where(['purchase_status' => 22])->select('inn_customer, customer, city, service_type, number_purchase, site_address, date_contract, term_contract')->orderby('term_contract ASC')->asArray()->all();
 
         $objPHPExcel = new PHPExcel();
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -1379,7 +1379,7 @@ class CompanyController extends Controller
             for ($i = 0; $i < count($arrTenders); $i++) {
 
                 // массив списков
-                $arrayTenderList = TenderLists::find()->where(['type' => 3])->select('id, description, type')->orderBy('type, id')->asArray()->all();
+                $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
 
                 $arrLists = [];
                 $oldType = -1;
@@ -1505,7 +1505,7 @@ class CompanyController extends Controller
                 $companyWorkSheet->setCellValue('C' . $row, isset($arrTenders[$i]['city']) ? (mb_strlen($arrTenders[$i]['city']) > 0 ? $arrTenders[$i]['city'] : '-') : '-');
                 $companyWorkSheet->setCellValue('D' . $row, $stringServText);
                 $companyWorkSheet->setCellValue('E' . $row, isset($arrTenders[$i]['number_purchase']) ? (mb_strlen($arrTenders[$i]['number_purchase']) > 0 ? $arrTenders[$i]['number_purchase'] : '-') : '-');
-                $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['place']) ? (mb_strlen($arrTenders[$i]['place']) > 0 ? $arrTenders[$i]['place'] : '-') : '-');
+                $companyWorkSheet->setCellValue('F' . $row, isset($arrTenders[$i]['site_address']) ? (mb_strlen($arrLists[8][$arrTenders[$i]['site_address']]) > 0 ? $arrLists[8][$arrTenders[$i]['site_address']] : '-') : '-');
                 $companyWorkSheet->setCellValue('G' . $row, isset($arrTenders[$i]['date_contract']) ? (mb_strlen($arrTenders[$i]['date_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['date_contract']) : '-') : '-');
                 $companyWorkSheet->setCellValue('H' . $row, isset($arrTenders[$i]['term_contract']) ? (mb_strlen($arrTenders[$i]['term_contract']) > 3 ? date('d.m.Y', $arrTenders[$i]['term_contract']) : '-') : '-');
                 $companyWorkSheet->setCellValue('I' . $row, $showTotal);
