@@ -37,6 +37,14 @@ $items[] = [
     'active' => $type == 1 && Yii::$app->request->get('company'),
 ];
 
+$items[] = [
+    'label'  => 'Мы должны',
+    'url'    => ['archive', 'type' => -1, 'company' => false,
+        'MonthlyActSearch[dateFrom]' => $searchModel->dateFrom,
+        'MonthlyActSearch[dateTo]' => $searchModel->dateTo],
+    'active' => $type == -1 && !(Yii::$app->request->get('company')),
+];
+
 
 echo Tabs::widget([
     'items' => $items,

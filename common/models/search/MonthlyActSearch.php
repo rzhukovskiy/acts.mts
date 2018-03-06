@@ -210,7 +210,21 @@ class MonthlyActSearch extends MonthlyAct
         $query->innerJoin('{{%act}}');
 
         if ($this->is_partner == self::PARTNER) {
-            $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+
+            if ($this->type_id) {
+                $query->andWhere('company.client_id = act.partner_id AND (act.expense > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+            } else {
+
+                // Мы должны
+
+                if($this->type_debt) {
+                    $query->andWhere('(company.client_id = act.partner_id) AND (company.payment_status=0) AND (act.expense > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['company.type_id' => $this->type_debt])->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                } else {
+                    $query->andWhere('(company.client_id = act.partner_id) AND (company.payment_status=0) AND (act.expense > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                }
+
+            }
+
         } else {
             if ($this->type_id) {
                 $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
