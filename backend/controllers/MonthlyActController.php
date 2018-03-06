@@ -120,7 +120,7 @@ class MonthlyActController extends Controller
     {
         $searchModel = new MonthlyActSearch();
 
-        if(!($type == 1)) {
+        if((!($type == 1)) && (!($type == -1))) {
             $searchModel->type_id = $type;
         }
 
