@@ -201,7 +201,22 @@ $periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date
 $periodForm .= Html::activeTextInput($searchModel, 'dateTo', ['class' => 'date-to ext-filter hidden']);
 $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
 
-$filters = 'Выбор периода: ' . $periodForm;
+// Фильтр по типу в должниках
+$typeFilter = '';
+
+if($type == 1) {
+    $arrCompany = [];
+    foreach (Company::$listType as $key => $value) {
+        if ($key > 1) {
+            $arrCompany[$key] = $value['ru'];
+        }
+    }
+
+    $typeFilter = ' Тип услуг: ' . Html::activeDropDownList($searchModel, 'type_debt', $arrCompany, ['prompt' => 'Все типы','class' => 'form-control ext-filter', 'style' => 'width: 200px;']);
+}
+// Фильтр по типу в должниках
+
+$filters = 'Выбор периода: ' . $periodForm . $typeFilter;
 /**
  * Конец виджета
  */
@@ -433,13 +448,29 @@ readyToSort = 1;
 JS;
     $this->registerJs($script, View::POS_READY);
 
+    $GLOBALS['type_debt'] = $searchModel->type_debt;
+
     $columns[] = [
         'header' => 'Сумма',
         'filter' => Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']),
         'value' => function ($data) {
             $resProfit = 0;
 
-            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+            $profitRes = [];
+            $profitResDes = [];
+
+            if($GLOBALS['type_debt']) {
+
+                // выбран поиск по услугам
+                $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+                // D
+                $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+
+            } else {
+                $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+                // D
+                $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+            }
 
             if(count($profitRes) > 0) {
                 if(isset($profitRes[0])) {
@@ -447,9 +478,7 @@ JS;
                 }
             }
 
-            //
-            $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
-
+            // D
             if(count($profitResDes) > 0) {
                 if(isset($profitResDes[0])) {
                     $resProfit += $profitResDes[0];
@@ -697,6 +726,7 @@ if(!$searchModel->client_id) {
 
     $GLOBALS['dateFrom'] = $searchModel->dateFrom;
     $GLOBALS['dateTo'] = $searchModel->dateTo;
+    $GLOBALS['type_debt'] = $searchModel->type_debt;
     $GLOBALS['comopany'] = $company;
 
     $columns[] = [
@@ -710,7 +740,8 @@ if(!$searchModel->client_id) {
                     'company'                        => $GLOBALS['comopany'],
                     'MonthlyActSearch[client_id]' => $data->client_id,
                     'MonthlyActSearch[dateFrom]' => $GLOBALS['dateFrom'],
-                    'MonthlyActSearch[dateTo]' => $GLOBALS['dateTo']
+                    'MonthlyActSearch[dateTo]' => $GLOBALS['dateTo'],
+                    'MonthlyActSearch[type_debt]' => $GLOBALS['type_debt']
                 ]));
         },
         'format'    => 'raw',
