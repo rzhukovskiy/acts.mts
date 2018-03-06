@@ -496,7 +496,7 @@ class Act extends ActiveRecord
             $this->mark_id = $car->mark_id;
 
             if(Yii::$app->user->isGuest == 0) {
-                if (Yii::$app->user->identity->role != User::ROLE_ADMIN || !$this->type_id) {
+                if (!$this->type_id) {
                     $this->type_id = $car->type_id;
                     $this->type_client = $car->type_id;
                 }
@@ -522,6 +522,62 @@ class Act extends ActiveRecord
         }
 
         if ($insert) {
+
+            // Проверяем на наличие замещений
+            if(Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_client' => 0], ['type_client' => $this->type_client]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id, type_client, type_partner')->asArray()->all();
+                $newCarType = 0;
+
+                $numServReplace = 0;
+                $numServiceTrue = 0;
+
+                if (count($replaceArray) > 0) {
+
+                    for ($i = 0; $i < count($replaceArray); $i++) {
+
+                        $replace_id = $replaceArray[$i]['id'];
+
+                        $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+
+                        $numServReplace = 0;
+                        $numServiceTrue = 0;
+
+                        if (count($replaceCont) > 0) {
+
+                            for ($j = 0; $j < count($replaceCont); $j++) {
+
+                                // Нашли нужное замещение
+                                if ($j == (count($replaceCont) - 1)) {
+
+                                    // Записываем Тип ТС из замещения
+                                    if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                        $newCarType = $replaceCont[$j]['car_type'];
+                                        $this->type_client = $newCarType;
+                                    } else if (($replaceCont[$j]['company_id'] == $this->partner_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                        $newCarType = $replaceCont[$j]['car_type'];
+                                        $this->type_id = $newCarType;
+                                    }
+
+                                }
+
+                            }
+
+                        } else {
+
+                            if ($replaceArray[$i]['type_client'] > 0) {
+                                $this->type_client = $replaceArray[$i]['type_client'];
+                            }
+                            if ($replaceArray[$i]['type_partner'] > 0) {
+                                $this->type_id = $replaceArray[$i]['type_partner'];
+                            }
+
+                        }
+
+                    }
+                }
+            }
+            // END Проверяем на наличие замещений
+
             //преобразуем Герину поебень в нормальный массив
 
             if(isset($this->serviceList[0]['service_id'])) {
@@ -583,7 +639,9 @@ class Act extends ActiveRecord
             // Проверяем на наличие замещений
             $arrReplaceNeed = [];
 
-                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
+            if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
+
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_client' => 0], ['type_client' => $this->type_client]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id, type_client, type_partner')->asArray()->all();
                 $newCarType = 0;
 
                 $numServReplace = 0;
@@ -595,7 +653,7 @@ class Act extends ActiveRecord
 
                     for ($i = 0; $i < count($replaceArray); $i++) {
 
-                        $replace_id = $replaceArray[$i];
+                        $replace_id = $replaceArray[$i]['id'];
 
                         $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
 
@@ -603,60 +661,75 @@ class Act extends ActiveRecord
                         $numServiceTrue = 0;
                         $numServiceHaveClient = 0;
 
-                        for ($j = 0; $j < count($replaceCont); $j++) {
+                        if (count($replaceCont) > 0) {
 
-                            if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+                            for ($j = 0; $j < count($replaceCont); $j++) {
 
-                                $numServReplace++;
-                                $toNextService = false;
+                                if ($replaceCont[$j]['company_id'] == $this->partner_id) {
 
-                                foreach ($this->partnerServiceList as $serviceData) {
-                                    if($toNextService == false) {
-                                        if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
-                                            $numServiceTrue++;
-                                            $toNextService = true;
+                                    $numServReplace++;
+                                    $toNextService = false;
 
-                                            $index = $replaceCont[$j]['service_id'];
+                                    foreach ($this->partnerServiceList as $serviceData) {
+                                        if ($toNextService == false) {
+                                            if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                                $numServiceTrue++;
+                                                $toNextService = true;
 
-                                            if(isset($arrnumServiceReplace[$index])) {
+                                                $index = $replaceCont[$j]['service_id'];
 
-                                                if($arrnumServiceReplace[$index] >= 1) {
-                                                    $arrnumServiceReplace[$index]++;
+                                                if (isset($arrnumServiceReplace[$index])) {
+
+                                                    if ($arrnumServiceReplace[$index] >= 1) {
+                                                        $arrnumServiceReplace[$index]++;
+                                                    } else {
+                                                        $arrnumServiceReplace[$index] = 1;
+                                                    }
+
                                                 } else {
                                                     $arrnumServiceReplace[$index] = 1;
                                                 }
 
-                                            } else {
-                                                $arrnumServiceReplace[$index] = 1;
                                             }
-
                                         }
                                     }
-                                }
 
-                                $toNextService = false;
-                                foreach ($this->clientServiceList as $serviceData) {
-                                    if($toNextService == false) {
-                                        if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
-                                            $numServiceHaveClient++;
-                                            $toNextService = true;
+                                    $toNextService = false;
+                                    foreach ($this->clientServiceList as $serviceData) {
+                                        if ($toNextService == false) {
+                                            if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                                $numServiceHaveClient++;
+                                                $toNextService = true;
+                                            }
                                         }
                                     }
+
                                 }
 
+                                // Нашли нужное замещение
+                                if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                                    $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
+
+                                    // Записываем Тип ТС из замещения
+                                    if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                        $newCarType = $replaceCont[$j]['car_type'];
+                                        $this->type_client = $newCarType;
+                                    } else if (($replaceCont[$j]['company_id'] == $this->partner_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                        $newCarType = $replaceCont[$j]['car_type'];
+                                        $this->type_id = $newCarType;
+                                    }
+
+                                }
 
                             }
 
-                            // Нашли нужное замещение
-                            if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
+                        } else {
 
-                                // Записываем Тип ТС из замещения
-                                if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
-                                    $newCarType = $replaceCont[$j]['car_type'];
-                                    $this->type_client = $newCarType;
-                                }
-
+                            if ($replaceArray[$i]['type_client'] > 0) {
+                                $this->type_client = $replaceArray[$i]['type_client'];
+                            }
+                            if ($replaceArray[$i]['type_partner'] > 0) {
+                                $this->type_id = $replaceArray[$i]['type_partner'];
                             }
 
                         }
@@ -664,10 +737,7 @@ class Act extends ActiveRecord
                     }
                 }
 
-                /*if($numServiceHaveClient < $numServiceTrue) {
-                    $arrReplaceNeed = [];
-                }*/
-
+            }
             // END Проверяем на наличие замещений
 
             $totalExpense = 0;
@@ -692,7 +762,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->partner_id,
-                            'type_id'    => $this->type_id,
+                            'type_id' => $this->type_id,
                         ]);
                         if (!empty($companyService) && $companyService->service->is_fixed) {
 
@@ -714,7 +784,7 @@ class Act extends ActiveRecord
                     }
                     $scope->amount = $serviceData['amount'];
 
-                    if(isset($serviceData['parts'])) {
+                    if (isset($serviceData['parts'])) {
                         $scope->parts = $serviceData['parts'];
                     } else {
                         $scope->parts = 0;
@@ -737,35 +807,35 @@ class Act extends ActiveRecord
 
                 $arrClientsType = [];
 
-                    if (count($arrReplaceNeed) > 0) {
-                        // Удаляем услуги выбранные у клиента
-                        for ($j = 0; $j < count($arrReplaceNeed); $j++) {
-                            if ($arrReplaceNeed[$j]['company_id'] != $this->client_id) {
+                if (count($arrReplaceNeed) > 0) {
+                    // Удаляем услуги выбранные у клиента
+                    for ($j = 0; $j < count($arrReplaceNeed); $j++) {
+                        if ($arrReplaceNeed[$j]['company_id'] != $this->client_id) {
 
-                                foreach ($this->clientServiceList as $key => $serviceData) {
-                                    if (!empty($serviceData['service_id'])) {
-                                        if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
+                            foreach ($this->clientServiceList as $key => $serviceData) {
+                                if (!empty($serviceData['service_id'])) {
+                                    if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
 
-                                            $index = $arrReplaceNeed[$j]['service_id'];
+                                        $index = $arrReplaceNeed[$j]['service_id'];
 
-                                            if(isset($arrnumServiceReplace[$index])) {
+                                        if (isset($arrnumServiceReplace[$index])) {
 
-                                                if($arrnumServiceReplace[$index] > 0) {
-                                                    $arrnumServiceReplace[$index]--;
-                                                    unset($this->clientServiceList[$key]);
-                                                }
-
+                                            if ($arrnumServiceReplace[$index] > 0) {
+                                                $arrnumServiceReplace[$index]--;
+                                                unset($this->clientServiceList[$key]);
                                             }
 
                                         }
+
                                     }
                                 }
-
                             }
-                        }
-                        // END Удаляем услуги выбранные у клиента
 
+                        }
                     }
+                    // END Удаляем услуги выбранные у клиента
+
+                }
                 // END Выполняем замещение клиент
 
                 $kpd = $this->service_type == Service::TYPE_TIRES ? 1.2 : 1;
@@ -783,7 +853,7 @@ class Act extends ActiveRecord
                         $companyService = CompanyService::findOne([
                             'service_id' => $serviceData['service_id'],
                             'company_id' => $this->client_id,
-                            'type_id'    => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
+                            'type_id' => $newCarType > 0 ? $newCarType : ($this->type_client > 0 ? $this->type_client : $this->type_id),
                         ]);
 
                         if (!empty($companyService) && $companyService->service->is_fixed) {
@@ -805,7 +875,7 @@ class Act extends ActiveRecord
                     }
                     $scope->amount = $serviceData['amount'];
 
-                    if(isset($serviceData['parts'])) {
+                    if (isset($serviceData['parts'])) {
                         $scope->parts = $serviceData['parts'];
                     } else {
                         $scope->parts = 0;
@@ -822,14 +892,14 @@ class Act extends ActiveRecord
                         $haveServiceRepair = false;
 
                         foreach ($this->clientServiceList as $serviceData) {
-                            if($haveServiceRepair == false) {
+                            if ($haveServiceRepair == false) {
                                 if ($arrReplaceNeed[$j]['service_id'] == $serviceData['service_id']) {
                                     $haveServiceRepair = true;
                                 }
                             }
                         }
 
-                        if($haveServiceRepair == false) {
+                        if ($haveServiceRepair == false) {
 
                             $scope = new ActScope();
                             $scope->company_id = $this->client_id;
@@ -896,81 +966,101 @@ class Act extends ActiveRecord
             if (!empty($this->serviceList)) {
 
                 // Проверяем на наличие замещений
-                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
-                $newCarType = 0;
+                if (Yii::$app->user->identity->role != User::ROLE_ADMIN) {
 
-                $numServReplace = 0;
-                $numServiceTrue = 0;
-                $arrnumServiceReplace = [];
+                    $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_client' => 0], ['type_client' => $this->type_client]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id, type_client, type_partner')->asArray()->all();
+                    $newCarType = 0;
 
-                if (count($replaceArray) > 0) {
+                    $numServReplace = 0;
+                    $numServiceTrue = 0;
+                    $arrnumServiceReplace = [];
 
-                    for ($i = 0; $i < count($replaceArray); $i++) {
+                    if (count($replaceArray) > 0) {
 
-                        $replace_id = $replaceArray[$i];
+                        for ($i = 0; $i < count($replaceArray); $i++) {
 
-                        $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+                            $replace_id = $replaceArray[$i]['id'];
 
-                        $numServReplace = 0;
-                        $numServiceTrue = 0;
+                            $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
 
-                        for ($j = 0; $j < count($replaceCont); $j++) {
+                            $numServReplace = 0;
+                            $numServiceTrue = 0;
 
-                            if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+                            if (count($replaceCont) > 0) {
 
-                                $numServReplace++;
-                                $toNextService = false;
+                                for ($j = 0; $j < count($replaceCont); $j++) {
 
-                                foreach ($this->serviceList as $serviceData) {
-                                    if ($toNextService == false) {
-                                        if (!empty($serviceData['service_id'])) {
-                                            if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
-                                                $numServiceTrue++;
-                                                $toNextService = true;
+                                    if ($replaceCont[$j]['company_id'] == $this->partner_id) {
 
-                                                $index = $replaceCont[$j]['service_id'];
+                                        $numServReplace++;
+                                        $toNextService = false;
 
-                                                if(isset($arrnumServiceReplace[$index])) {
+                                        foreach ($this->serviceList as $serviceData) {
+                                            if ($toNextService == false) {
+                                                if (!empty($serviceData['service_id'])) {
+                                                    if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                                        $numServiceTrue++;
+                                                        $toNextService = true;
 
-                                                    if($arrnumServiceReplace[$index] >= 1) {
-                                                        $arrnumServiceReplace[$index]++;
-                                                    } else {
-                                                        $arrnumServiceReplace[$index] = 1;
+                                                        $index = $replaceCont[$j]['service_id'];
+
+                                                        if (isset($arrnumServiceReplace[$index])) {
+
+                                                            if ($arrnumServiceReplace[$index] >= 1) {
+                                                                $arrnumServiceReplace[$index]++;
+                                                            } else {
+                                                                $arrnumServiceReplace[$index] = 1;
+                                                            }
+
+                                                        } else {
+                                                            $arrnumServiceReplace[$index] = 1;
+                                                        }
+
                                                     }
-
-                                                } else {
-                                                    $arrnumServiceReplace[$index] = 1;
                                                 }
-
                                             }
                                         }
+
                                     }
+
+                                    // Нашли нужное замещение
+                                    if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                                        $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
+                                        $numReplacePartner = $numServiceTrue;
+                                        $numReplaceClient = count($replaceCont) - $numReplacePartner;
+
+                                        // Записываем Тип ТС из замещения
+                                        if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                            $newCarType = $replaceCont[$j]['car_type'];
+                                            $this->type_client = $newCarType;
+                                        } else if (($replaceCont[$j]['company_id'] == $this->partner_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                            $newCarType = $replaceCont[$j]['car_type'];
+                                            $this->type_id = $newCarType;
+                                        }
+
+                                    }
+
                                 }
 
-                            }
+                            } else {
 
-                            // Нашли нужное замещение
-                            if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                                $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
-                                $numReplacePartner = $numServiceTrue;
-                                $numReplaceClient = count($replaceCont) - $numReplacePartner;
-
-                                // Записываем Тип ТС из замещения
-                                if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
-                                    $newCarType = $replaceCont[$j]['car_type'];
-                                    $this->type_client = $newCarType;
+                                if ($replaceArray[$i]['type_client'] > 0) {
+                                    $this->type_client = $replaceArray[$i]['type_client'];
+                                }
+                                if ($replaceArray[$i]['type_partner'] > 0) {
+                                    $this->type_id = $replaceArray[$i]['type_partner'];
                                 }
 
                             }
 
                         }
-
                     }
+
                 }
                 // END Проверяем на наличие замещений
 
                 // Если в замещении задан тип тс для клиента, то жестко изменяем его в бд
-                if($newCarType > 0) {
+                if ($newCarType > 0) {
                     Yii::$app->db->createCommand()->update('{{%act}}', ['type_client' => $newCarType], ['id' => $this->id])->execute();
                 }
                 // Если в замещении задан тип тс для клиента, то жестко изменяем его в бд
@@ -995,9 +1085,9 @@ class Act extends ActiveRecord
 
                                     $index = $arrReplaceNeed[$j]['service_id'];
 
-                                    if(isset($arrnumServiceReplace[$index])) {
+                                    if (isset($arrnumServiceReplace[$index])) {
 
-                                        if($arrnumServiceReplace[$index] > 0) {
+                                        if ($arrnumServiceReplace[$index] > 0) {
                                             $arrnumServiceReplace[$index]--;
                                         } else {
                                             $removeServiceClient = false;
@@ -1141,11 +1231,11 @@ class Act extends ActiveRecord
                 }
 
                 // Жестко сохряняем доход, расход и прибыль после выполнения замещений
-                if(($this->expense != $totalExpense) || ($this->income != $totalIncome)) {
+                if (($this->expense != $totalExpense) || ($this->income != $totalIncome)) {
 
                     $profit = $totalIncome - $totalExpense;
                     Yii::$app->db->createCommand()->update('{{%act}}', ['expense' => $totalExpense, 'income' => $totalIncome, 'profit' => $profit], ['id' => $this->id])->execute();
-                    
+
                 }
                 // END Сохряняем доход, расход и прибыль после выполнения замещений
 
@@ -1154,59 +1244,77 @@ class Act extends ActiveRecord
 
         } else {
             // Для асинхронных актов при редактировании
+
             // Проверяем на наличие замещений
-            $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_partner' => 0], ['type_partner' => $this->type_id]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id')->asArray()->column();
-            $newCarType = 0;
+            if(Yii::$app->user->identity->role != User::ROLE_ADMIN) {
 
-            $numServReplace = 0;
-            $numServiceTrue = 0;
+                $replaceArray = ServiceReplace::find()->where(['client_id' => $this->client_id, 'partner_id' => $this->partner_id, 'type' => $this->service_type])->andWhere(['OR', ['type_client' => 0], ['type_client' => $this->type_client]])->andWhere(['OR', ['mark_partner' => 0], ['mark_partner' => $this->mark_id]])->select('id, type_client, type_partner')->asArray()->all();
+                $newCarType = 0;
 
-            if(count($replaceArray) > 0) {
+                $numServReplace = 0;
+                $numServiceTrue = 0;
 
-                for ($i = 0; $i < count($replaceArray); $i++) {
+                if (count($replaceArray) > 0) {
 
-                    $replace_id = $replaceArray[$i];
+                    for ($i = 0; $i < count($replaceArray); $i++) {
 
-                    $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
+                        $replace_id = $replaceArray[$i]['id'];
 
-                    $numServReplace = 0;
-                    $numServiceTrue = 0;
+                        $replaceCont = ServiceReplaceItem::find()->where(['replace_id' => $replace_id])->asArray()->select('service_id, company_id, type, car_type')->all();
 
-                    for ($j = 0; $j < count($replaceCont); $j++) {
+                        $numServReplace = 0;
+                        $numServiceTrue = 0;
 
-                        if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+                        if (count($replaceCont) > 0) {
 
-                            $numServReplace++;
-                            $toNextService = false;
+                            for ($j = 0; $j < count($replaceCont); $j++) {
 
-                            foreach ($this->partnerServiceList as $serviceData) {
-                                if($toNextService == false) {
-                                    if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
-                                        $numServiceTrue++;
-                                        $toNextService = true;
+                                if ($replaceCont[$j]['company_id'] == $this->partner_id) {
+
+                                    $numServReplace++;
+                                    $toNextService = false;
+
+                                    foreach ($this->partnerServiceList as $serviceData) {
+                                        if ($toNextService == false) {
+                                            if ($replaceCont[$j]['service_id'] == $serviceData['service_id']) {
+                                                $numServiceTrue++;
+                                                $toNextService = true;
+                                            }
+                                        }
                                     }
+
                                 }
+
+                                // Нашли нужное замещение
+                                if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
+                                    $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
+                                    $numReplacePartner = $numServiceTrue;
+                                    $numReplaceClient = count($replaceCont) - $numReplacePartner;
+
+                                    // Записываем Тип ТС из замещения
+                                    if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
+                                        $newCarType = $replaceCont[$j]['car_type'];
+                                        $this->type_client = $newCarType;
+                                    }
+
+                                }
+
                             }
 
-                        }
+                        } else {
 
-                        // Нашли нужное замещение
-                        if (($j == (count($replaceCont) - 1)) && ($numServReplace == $numServiceTrue) && ($numServReplace > 0)) {
-                            $arrReplaceNeed = array_merge($arrReplaceNeed, $replaceCont);
-                            $numReplacePartner = $numServiceTrue;
-                            $numReplaceClient = count($replaceCont) - $numReplacePartner;
-
-                            // Записываем Тип ТС из замещения
-                            if (($replaceCont[$j]['company_id'] == $this->client_id) && ($replaceCont[$j]['car_type'] > 0)) {
-                                $newCarType = $replaceCont[$j]['car_type'];
-                                $this->type_client = $newCarType;
+                            if ($replaceArray[$i]['type_client'] > 0) {
+                                $this->type_client = $replaceArray[$i]['type_client'];
+                            }
+                            if ($replaceArray[$i]['type_partner'] > 0) {
+                                $this->type_id = $replaceArray[$i]['type_partner'];
                             }
 
                         }
 
                     }
-
                 }
+
             }
             // END Проверяем на наличие замещений
 
