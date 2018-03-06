@@ -6,7 +6,8 @@
  * @var $admin null|bool
  */
 
-use yii\grid\GridView;
+use kartik\grid\GridView;
+use yii\helpers\Html;
 
 ?>
 <div class="panel panel-primary">
@@ -20,7 +21,6 @@ use yii\grid\GridView;
             'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-bordered'],
             'layout' => '{items}',
-            'tableOptions' => ['class' => 'table table-bordered'],
             'emptyText' => '',
             'columns' => [
                 [
@@ -50,10 +50,24 @@ use yii\grid\GridView;
                     },
                 ],
                 [
-                    'class' => 'yii\grid\ActionColumn',
+                    'class' => 'kartik\grid\ActionColumn',
+                    'vAlign'=>'middle',
                     'template' => '{update} {delete}',
-                    'contentOptions' => ['style' => 'min-width: 80px'],
-                    'visible' => $admin,
+                    'contentOptions' => ['style' => 'min-width: 60px'],
+                    'buttons' => [
+                        'update' => function ($url, $data, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>',
+                                ['/company/update', 'id' => $data->id]);
+                        },
+                        'delete' => function ($url, $data, $key) {
+                            if (Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) {
+                                return Html::a('<span class="glyphicon glyphicon-trash"></span>',
+                                    ['/company/delete', 'id' => $data->id],
+                                    ['data-confirm' => "Вы уверены, что хотите удалить?"]);
+                            }
+
+                        },
+                    ],
                 ],
             ],
         ]);

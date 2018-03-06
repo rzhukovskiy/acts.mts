@@ -24,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property string $date_return
  * @property string $comment
  * @property string $payment_status
+ * @property string $requisite
  */
 class TenderControl extends ActiveRecord
 {
@@ -38,6 +39,12 @@ class TenderControl extends ActiveRecord
         self::PAYMENT_STATUS_DONE => '+',
         self::PAYMENT_STATUS_CASH => '+ -',
     ];
+
+    /**
+     * @var UploadedFile
+     */
+    public $filescont;
+
     /**
      * @inheritdoc
      */
@@ -56,7 +63,8 @@ class TenderControl extends ActiveRecord
             [['send', 'tender_return'], 'safe'],
             [['comment'], 'string', 'max' => 10000],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return'], 'string', 'max' => 20],
-            [['customer', 'purchase'], 'string', 'max' => 255],
+            [['customer', 'purchase', 'requisite'], 'string', 'max' => 255],
+            [['filescont'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
         ];
     }
 
@@ -82,6 +90,8 @@ class TenderControl extends ActiveRecord
             'comment' => 'Комментарий',
             'is_archive' => 'Архив',
             'payment_status' => 'Статус',
+            'requisite' => 'Реквизиты',
+            'filescont' => 'Вложения для оплаты',
         ];
     }
 
@@ -127,6 +137,44 @@ class TenderControl extends ActiveRecord
             self::PAYMENT_STATUS_CASH => 'btn-warning',
         ];
         return $paymentStatus[$status];
+
+    }
+
+    public function upload()
+    {
+        $filePath = \Yii::getAlias('@webroot/files/tender_control/' . $this->id . '/');
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tender_control/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tender_control/'), 0775);
+        }
+
+        if (!file_exists(\Yii::getAlias('@webroot/files/tender_control/' . $this->id . '/'))) {
+            mkdir(\Yii::getAlias('@webroot/files/tender_control/' . $this->id . '/'), 0775);
+        }
+
+        foreach ($this->filescont as $file) {
+
+            if (!file_exists($filePath . $file->baseName . '.' . $file->extension)) {
+                $file->saveAs($filePath . $file->baseName . '.' . $file->extension);
+            } else {
+
+                $filename = $filePath . $file->baseName . '.' . $file->extension;
+                $i = 1;
+
+                while (file_exists($filename)) {
+                    $filename = $filePath . $file->baseName . '(' . $i . ').' . $file->extension;
+                    $i++;
+                }
+
+                $file->saveAs($filename);
+
+            }
+
+        }
 
     }
 }
