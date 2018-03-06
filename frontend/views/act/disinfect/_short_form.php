@@ -13,6 +13,7 @@ use common\models\Type;
 use common\models\Car;
 use yii\jui\AutoComplete;
 use yii\web\View;
+use yii\helpers\Url;
 
 $actionLinkType = Url::to('@web/car/gettypeid');
 
