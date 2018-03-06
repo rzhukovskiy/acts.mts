@@ -13,11 +13,12 @@ use common\models\Type;
 use common\models\Car;
 use yii\jui\AutoComplete;
 use yii\web\View;
-use yii\helpers\Url;
 
 $actionLinkType = Url::to('@web/car/gettypeid');
 
 $script = <<< JS
+    var serviceList = $fixedList;
+    var compServList = $arrServList;
 
     // получаем тип тс по номеру
     $(document).on('change', '#act-car_number', function () {
@@ -43,6 +44,7 @@ $script = <<< JS
                 }
                 });
     });
+    
 
 JS;
 $this->registerJs($script, View::POS_READY);
@@ -96,9 +98,6 @@ $this->registerJs($script, View::POS_READY);
                                     if(ui.content.length==0){
                                         $("#act-mark_id").show();
                                         $("#act-type_id").show();
-                                    }else{
-                                        $("#act-mark_id").hide();
-                                        $("#act-type_id").hide();
                                     }
                                 }'
                             ],
