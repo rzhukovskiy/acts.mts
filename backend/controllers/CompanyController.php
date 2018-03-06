@@ -1668,7 +1668,6 @@ class CompanyController extends Controller
                     if ($inn[0]) {
                         $tender = new Tender();
                         $tender->company_id = $inn[0];
-                        $tender->place = $TenderOwner->electronic_platform;
                         $tender->customer = $TenderOwner->customer;
                         $tender->price_nds = $TenderOwner->purchase;
                         $tender->user_id = $TenderOwner->tender_user;
@@ -1734,7 +1733,6 @@ class CompanyController extends Controller
 
                                     $tender = new Tender();
                                     $tender->company_id = $company->id;
-                                    $tender->place = $TenderOwner->electronic_platform;
                                     $tender->customer = $TenderOwner->customer;
                                     $tender->price_nds = $TenderOwner->purchase;
                                     $tender->user_id = $TenderOwner->tender_user;
@@ -1811,7 +1809,6 @@ class CompanyController extends Controller
 
                                 $tender = new Tender();
                                 $tender->company_id = $company->id;
-                                $tender->place = $TenderOwner->electronic_platform;
                                 $tender->customer = $TenderOwner->customer;
                                 $tender->price_nds = $TenderOwner->purchase;
                                 $tender->user_id = $TenderOwner->tender_user;

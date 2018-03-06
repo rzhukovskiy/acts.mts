@@ -12,7 +12,6 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $id
  * @property integer $company_id
  * @property string $city
- * @property string $place
  * @property string $number_purchase
  * @property string $customer
  * @property string $service_type
@@ -22,10 +21,6 @@ use yii\behaviors\TimestampBehavior;
  * @property float $contract_security
  * @property integer $federal_law
  * @property integer $method_purchase
- * @property integer $status_request_security
- * @property string $date_status_request
- * @property integer $status_contract_security
- * @property string $date_status_contract
  * @property string $date_request_start
  * @property string $date_request_end
  * @property string $time_request_process
@@ -93,9 +88,9 @@ class Tender extends ActiveRecord
         return [
             [['company_id'], 'required'],
             [['company_id', 'purchase_status', 'work_user_id', 'site_address'], 'integer'],
-            [['price_nds', 'final_price', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'status_request_security', 'status_contract_security', 'tender_close', 'request_security', 'contract_security'], 'safe'],
-            [['date_status_request', 'date_status_contract', 'date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
-            [['city', 'place', 'number_purchase', 'customer', 'link'], 'string', 'max' => 255],
+            [['price_nds', 'final_price', 'service_type', 'user_id', 'federal_law', 'method_purchase', 'tender_close', 'request_security', 'contract_security'], 'safe'],
+            [['date_request_start', 'date_request_end', 'time_request_process', 'time_bidding_start', 'time_bidding_end', 'date_contract', 'term_contract', 'work_user_time'], 'string', 'max' => 20],
+            [['city', 'number_purchase', 'customer', 'link'], 'string', 'max' => 255],
             [['inn_customer', 'site'], 'string', 'max' => 200],
             [['comment', 'comment_date_contract', 'comment_customer', 'contacts_resp_customer', 'purchase', 'customer_full'], 'string', 'max' => 10000],
             [['files'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 30],
@@ -111,7 +106,6 @@ class Tender extends ActiveRecord
             'id' => 'ID',
             'company_id' => 'Компания',
             'city' => 'Город, Область поставки',
-            'place' => 'Электронная площадка',
             'number_purchase' => 'Номер закупки на площадке',
             'customer' => 'Заказчик',
             'service_type' => 'Закупаемые услуги, товары',
@@ -119,10 +113,6 @@ class Tender extends ActiveRecord
             'final_price' => 'Стоимость закупки по завершению закупки с НДС',
             'federal_law' => 'ФЗ',
             'method_purchase' => 'Способ закупки',
-            'status_request_security' => 'Статус обеспечения заявки',
-            'date_status_request' => 'Дата изменения статуса заявки',
-            'status_contract_security' => 'Статус обеспечения контракта',
-            'date_status_contract' => 'Дата изменения статуса контракта',
             'date_request_start' => 'Начало подачи заявки',
             'date_request_end' => 'Окончание подачи заявки',
             'time_request_process' => 'Дата и время рассмотрения заявок',
@@ -160,8 +150,6 @@ class Tender extends ActiveRecord
         // Если это новая запись то обрабатываем данные из формы здесь
         if($this->isNewRecord) {
             // переводим дату в нужный формат
-            $this->date_status_request = (String) strtotime($this->date_status_request);
-            $this->date_status_contract = (String) strtotime($this->date_status_contract);
             $this->date_request_start = (String) strtotime($this->date_request_start);
             $this->date_request_end = (String) strtotime($this->date_request_end);
             $this->time_request_process = (String) strtotime($this->time_request_process);

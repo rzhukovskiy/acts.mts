@@ -153,29 +153,7 @@ loadListsItems(4);
 
 });
 
-// открываем модальное окно управления списками status_request_security
-$('.status_request_security').on('click', function() {
-    
-$('#showListsName').modal('hide');
-$('#showSettingsList').modal('show');
 
-$('.settings_name').text('Управление списками: ' + $(this).text());
-
-loadListsItems(6);
-
-});
-
-// открываем модальное окно управления списками status_contract_security
-$('.status_contract_security').on('click', function() {
-    
-$('#showListsName').modal('hide');
-$('#showSettingsList').modal('show');
-
-$('.settings_name').text('Управление списками: ' + $(this).text());
-
-loadListsItems(7);
-
-});
 
 // открываем модальное окно  site_address
 $('.site_address').on('click', function() {
@@ -241,14 +219,6 @@ function loadListsItems(type) {
                         selectObj = $("#tender-federal_law");
                         break;
                     }
-                    case 6: {
-                        selectObj = $("#tender-status_request_security");
-                        break;
-                    }
-                    case 7: {
-                        selectObj = $("#tender-status_contract_security");
-                        break;
-                    }
                     case 8: {
                         selectObj = $("#tendercontrol-site_address");
                         break;
@@ -276,12 +246,6 @@ function loadListsItems(type) {
                     }
                     if(type == 4) {
                         selectObj.append($("<option></option>").text("Выберите ФЗ"));
-                    }
-                    if(type == 6) {
-                        selectObj.append($("<option></option>").text("Выберите статус обеспечения заявки"));
-                    }
-                    if(type == 7) {
-                        selectObj.append($("<option></option>").text("Выберите статус обеспечения контракта"));
                     }
                     if(type == 8) {
                         selectObj.append($("<option></option>").text("Выберите адрес площадки"));
@@ -519,12 +483,9 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'federal_law')->dropDownList(isset($arrLists[4]) ? $arrLists[4] : [], ['class' => 'form-control', 'prompt' => 'Выберите ФЗ']) ?>
 <?= $form->field($model, 'purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите что закупается']) ?>
 <?= $form->field($model, 'number_purchase')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите номер закупки на площадке']) ?>
-<?= $form->field($model, 'place')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите адрес сайта']) ?>
 <?= $form->field($model, 'site_address')->dropDownList($arrsite, ['class' => 'form-control', 'prompt' => 'Выберите адрес площадки']) ?>
 <?= $form->field($model, 'price_nds')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите максимальную стоимость закупки']) ?>
 <?= $form->field($model, 'final_price')->input('text', ['class' => 'form-control', 'placeholder' => 'Введите стоимость закупки по завершению закупки с НДС']) ?>
-<?= $form->field($model, 'status_request_security')->dropDownList(isset($arrLists[6]) ? $arrLists[6] : [], ['class' => 'form-control', 'prompt' => 'Выберите статус обеспечения заявки']) ?>
-<?= $form->field($model, 'status_contract_security')->dropDownList(isset($arrLists[7]) ? $arrLists[7] : [], ['class' => 'form-control', 'prompt' => 'Выберите статус обеспечения контракта']) ?>
 <?= $form->field($model, 'date_contract')->widget(DatePicker::className(), [
     'type' => DatePicker::TYPE_INPUT,
     'options' => ['placeholder' => 'Выберите дату заключения договора'],
@@ -570,8 +531,6 @@ echo "<div class='method_purchase' style='font-size: 15px; margin-left:15px; mar
 echo "<div class='service_type' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('service_type') . "</div>";
 echo "<div class='federal_law' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('federal_law') . "</div>";
 echo "<div class='type_payment' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('type_payment') . "</div>";
-echo "<div class='status_request_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_request_security') . "</div>";
-echo "<div class='status_contract_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_contract_security') . "</div>";
 
 Modal::end();
 // Модальное окно с названиями списков

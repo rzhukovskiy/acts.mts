@@ -16,7 +16,6 @@ use yii\db\ActiveRecord;
  * @property string $date_send
  * @property string $date_enlistment
  * @property string $site_address
- * @property string $platform
  * @property string $customer
  * @property string $purchase
  * @property string $type_payment
@@ -57,7 +56,7 @@ class TenderControl extends ActiveRecord
             [['send', 'tender_return'], 'safe'],
             [['comment'], 'string', 'max' => 10000],
             [['date_send', 'date_enlistment', 'money_unblocking', 'date_return'], 'string', 'max' => 20],
-            [['platform', 'customer', 'purchase'], 'string', 'max' => 255],
+            [['customer', 'purchase'], 'string', 'max' => 255],
         ];
     }
 
@@ -74,7 +73,6 @@ class TenderControl extends ActiveRecord
             'date_send' => 'Дата отправки',
             'date_enlistment' => 'Дата зачисления',
             'site_address' => 'Адрес площадки',
-            'platform' => 'Электронная площадка',
             'customer' => 'Заказчик',
             'purchase' => 'Что закупается?',
             'type_payment' => 'Тип платежа',

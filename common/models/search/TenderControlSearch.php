@@ -21,7 +21,6 @@ use yii\data\ActiveDataProvider;
  * @property string $date_enlistment
  * @property string $money_unblocking
  * @property string $date_return
- * @property string $platform
  * @property string $customer
  * @property string $purchase
  */
@@ -38,7 +37,7 @@ class TenderControlSearch extends TenderControl
         return [
             [['user_id', 'site_address', 'type_payment', 'is_archive'], 'integer'],
             [['send', 'tender_return'], 'safe'],
-            [['date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'], 'string'],
+            [['date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'site_address'], 'string'],
             [['dateFrom', 'dateTo', 'period'], 'safe'],
         ];
     }
@@ -50,9 +49,9 @@ class TenderControlSearch extends TenderControl
     {
         // bypass scenarios() implementation in the parent class
         return [
-            'all' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase'],
-            'statprice' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
-            'default' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'platform', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
+            'all' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'site_address'],
+            'statprice' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
+            'default' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
         ];
     }
 
@@ -100,10 +99,10 @@ class TenderControlSearch extends TenderControl
                     'user_id' => $this->user_id,
                     'type_payment' => $this->type_payment,
                     'is_archive' => $this->is_archive,
+                    'site_address' => $this->site_address,
                 ]);
 
                 $query->andFilterWhere(['like', 'send', $this->send])
-                    ->andFilterWhere(['like', 'platform', $this->platform])
                     ->andFilterWhere(['like', 'customer', $this->customer])
                     ->andFilterWhere(['like', 'purchase', $this->purchase])
                     ->andFilterWhere(['like', 'tender_return', $this->tender_return]);

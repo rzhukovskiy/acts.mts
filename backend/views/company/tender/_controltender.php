@@ -197,13 +197,14 @@ if (isset($arrLists[9])){
                     },
                 ],
                 [
-                    'attribute' => 'platform',
+                    'attribute' => 'site_address',
+                    'filter' => Html::activeDropDownList($searchModel, 'site_address', isset($GLOBALS['arrLists'][8]) ? $GLOBALS['arrLists'][8] : [], ['class' => 'form-control', 'prompt' => 'Все площадки']),
                     'vAlign'=>'middle',
                     'header' => 'Площадка',
                     'value' => function ($data) {
 
-                        if ($data->platform) {
-                            return $data->platform;
+                        if ($data->site_address) {
+                            return $GLOBALS['arrLists'][8][$data->site_address];
                         } else {
                             return '-';
                         }

@@ -232,29 +232,6 @@ loadListsItems(4);
 
 });
 
-// открываем модальное окно управления списками status_request_security
-$('.status_request_security').on('click', function() {
-    
-$('#showListsName').modal('hide');
-$('#showSettingsList').modal('show');
-
-$('.settings_name').text('Управление списками: ' + $(this).text());
-
-loadListsItems(6);
-
-});
-
-// открываем модальное окно управления списками status_contract_security
-$('.status_contract_security').on('click', function() {
-    
-$('#showListsName').modal('hide');
-$('#showSettingsList').modal('show');
-
-$('.settings_name').text('Управление списками: ' + $(this).text());
-
-loadListsItems(7);
-
-});
 
 // открываем модальное окно  site_address
 $('.site_address').on('click', function() {
@@ -320,14 +297,7 @@ function loadListsItems(type) {
                         selectObj = $("#tender-federal_law");
                         break;
                     }
-                    case 6: {
-                        selectObj = $("#tender-status_request_security");
-                        break;
-                    }
-                    case 7: {
-                        selectObj = $("#tender-status_contract_security");
-                        break;
-                    }
+                   
                     case 8: {
                         selectObj = $("#tendercontrol-site_address");
                         break;
@@ -355,12 +325,6 @@ function loadListsItems(type) {
                     }
                     if(type == 4) {
                         selectObj.append($("<option></option>").text("Выберите ФЗ"));
-                    }
-                    if(type == 6) {
-                        selectObj.append($("<option></option>").text("Выберите статус обеспечения заявки"));
-                    }
-                    if(type == 7) {
-                        selectObj.append($("<option></option>").text("Выберите статус обеспечения контракта"));
                     }
                     if(type == 8) {
                         selectObj.append($("<option></option>").text("Выберите адрес площадки"));
@@ -523,7 +487,6 @@ $('.SaveItem').on('click', function() {
 $('.field-tendercontrol-purchase').css("display", "none");
 $('.field-tendercontrol-user_id').css("display", "none");
 $('.field-tendercontrol-site_address').css("display", "none");
-$('.field-tendercontrol-platform').css("display", "none");
 $('.field-tendercontrol-customer').css("display", "none");
 
 $('.change-payment_status').change(function(){
@@ -1171,28 +1134,6 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('place') ?></td>
-        <td>
-            <?= Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'place',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'options' => ['class' => 'form-control'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id],
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
 
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('price_nds') ?></td>
@@ -1263,41 +1204,8 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('status_request_security') ?></td>
-        <td>
-            <?php
 
-            $arrStatusRequestList = isset($arrLists[6]) ? $arrLists[6] : [];
 
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'status_request_security',
-                'displayValue' => isset($arrStatusRequestList[$model->status_request_security]) ? $arrStatusRequestList[$model->status_request_security] : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'data' => $arrStatusRequestList,
-                'options' => ['class' => 'form-control', 'prompt' => 'Статус обеспечения заявки'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_status_request') ?></td>
-        <td>
-            <?= ($model->date_status_request) ? date('d.m.Y H:i', $model->date_status_request) : '-' ?>
-        </td>
-    </tr>
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('contract_security') ?></td>
         <td>
@@ -1321,41 +1229,7 @@ $this->registerJs($script, View::POS_READY);
             ]); ?>
         </td>
     </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('status_contract_security') ?></td>
-        <td>
-            <?php
 
-            $arrStatusContractList = isset($arrLists[7]) ? $arrLists[7] : [];
-
-            echo Editable::widget([
-                'model' => $model,
-                'buttonsTemplate' => '{submit}',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'submitButton' => [
-                    'icon' => '<i class="glyphicon glyphicon-ok"></i>',
-                ],
-                'attribute' => 'status_contract_security',
-                'displayValue' => isset($arrStatusContractList[$model->status_contract_security]) ? $arrStatusContractList[$model->status_contract_security] : '',
-                'asPopover' => true,
-                'placement' => PopoverX::ALIGN_LEFT,
-                'disabled' => $model->tender_close == 1 ? true : false,
-                'size' => 'lg',
-                'data' => $arrStatusContractList,
-                'options' => ['class' => 'form-control', 'prompt' => 'Дата изменения статуса заявки'],
-                'formOptions' => [
-                    'action' => ['/company/updatetender', 'id' => $model->id]
-                ],
-                'valueIfNull' => '<span class="text-danger">не задано</span>',
-            ]); ?>
-        </td>
-    </tr>
-    <tr>
-        <td class="list-label-md"><?= $model->getAttributeLabel('date_status_contract') ?></td>
-        <td>
-            <?= ($model->date_status_contract) ? date('d.m.Y H:i', $model->date_status_contract) : '-' ?>
-        </td>
-    </tr>
     <tr>
         <td class="list-label-md"><?= $model->getAttributeLabel('date_contract') ?></td>
         <td>
@@ -1734,37 +1608,6 @@ $this->registerJs($script, View::POS_READY);
                         },
                     ],
                     [
-                        'attribute' => 'platform',
-                        'format'    => 'raw',
-                        'value'     => function ($data) {
-                            return Editable::widget([
-                                'model'           => $data,
-                                'placement'       => PopoverX::ALIGN_LEFT,
-                                'inputType'       => Editable::INPUT_TEXT,
-                                'formOptions'     => [
-                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
-                                ],
-                                'displayValue'    => isset($data->platform) ? $data->platform : '',
-                                'disabled'        => $data->is_archive == 1 ? true : false,
-                                'valueIfNull'     => '(не задано)',
-                                'buttonsTemplate' => '{submit}',
-                                'contentOptions'  => ['style' => 'min-width: 100px'],
-                                'submitButton'    => [
-                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
-                                ],
-                                'attribute'       => 'platform',
-                                'asPopover'       => true,
-                                'size'            => 'md',
-                                'options'         => [
-                                    'class'       => 'form-control',
-                                    'placeholder' => 'Введите электронную площадку',
-                                    'id'          => 'platform' . $data->id,
-                                    'value'       => $data->platform
-                                ],
-                            ]);
-                        },
-                    ],
-                    [
                         'attribute' => 'customer',
                         'format'    => 'raw',
                         'value'     => function ($data) {
@@ -2062,7 +1905,6 @@ $this->registerJs($script, View::POS_READY);
 
     <?= $form->field($newmodel, 'user_id')->hiddenInput(['value' => $model->user_id])->label(false) ?>
     <?= $form->field($newmodel, 'site_address')->hiddenInput(['value' => $model->site_address])->label(false) ?>
-    <?= $form->field($newmodel, 'platform')->hiddenInput(['value' => $model->place])->label(false) ?>
     <?= $form->field($newmodel, 'customer')->hiddenInput(['value' => $model->customer])->label(false) ?>
     <?= $form->field($newmodel, 'purchase')->hiddenInput(['value' => $model->purchase])->label(false) ?>
 
@@ -2113,8 +1955,6 @@ echo "<div class='method_purchase' style='font-size: 15px; margin-left:15px; mar
 echo "<div class='service_type' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('service_type') . "</div>";
 echo "<div class='federal_law' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('federal_law') . "</div>";
 echo "<div class='type_payment' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('type_payment') . "</div>";
-echo "<div class='status_request_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_request_security') . "</div>";
-echo "<div class='status_contract_security' style='font-size: 15px; margin-left:15px; margin-bottom:15px; cursor: pointer;'>" . $model->getAttributeLabel('status_contract_security') . "</div>";
 
 Modal::end();
 // Модальное окно с названиями списков
