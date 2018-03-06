@@ -844,6 +844,7 @@ class CompanyController extends Controller
 
         $model = Tender::findOne(['id' => $tender_id]);
         $newmodel = new TenderControl();
+
         $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
 
         $searchModel = TenderControl::find()->where(['tender_id' => $tender_id]);
@@ -1077,9 +1078,70 @@ class CompanyController extends Controller
         $model = new TenderControl();
         $model->tender_id = $id;
 
+        $mailIrina = Yii::$app->mailer->compose();
+        $mailGerbert = Yii::$app->mailer->compose();
+
+        $userIrina = User::find()->where(['id' => 708])->select('email')->column();
         $usersList = User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id` AND `department_user`.`department_id` = 6')->select('user.username')->indexby('user_id')->column();
 
         if (($model->load(Yii::$app->request->post())) && ($model->save()) && (Yii::$app->request->isPost)) {
+
+            $model->filescont = UploadedFile::getInstances($model, 'filescont');
+
+                if ($model->filescont) {
+
+                    if ($model->upload()) {
+                        // file is uploaded successfully
+                    }
+                }
+
+            if ($model->filescont || $model->requisite) {
+                $requisite = '';
+                if ($model->requisite) {
+                    $requisite = '<br/><b>Реквизиты:</b><br/>' . nl2br($model->requisite);
+                }
+
+                // отправка ирине уведомления об оплате тендера
+                if (isset($userIrina[0])) {
+
+                    $mailIrina = Yii::$app->mailer->compose()
+                        ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                        ->setTo($userIrina[0])
+                        ->setSubject('Срочно оплата тендера ' . date('d.m.Y'))
+                        ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . '<br/><br/>');
+
+                        $pathfolder = \Yii::getAlias('@webroot/files/tender_control/' . $model->id . '/');
+
+                        if (file_exists($pathfolder)) {
+
+                            foreach (FileHelper::findFiles($pathfolder) as $file) {
+                                $mailIrina->attach($pathfolder . basename($file));
+                            }
+
+                        }
+                }
+
+                // отправка герберту уведомления об оплате тендера
+                $mailGerbert = Yii::$app->mailer->compose()
+                    ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                    ->setTo('mtransservice@mail.ru')
+                    ->setSubject('Срочно оплата тендера ' . date('d.m.Y'))
+                    ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . '<br/><br/>');
+
+                    $pathfolder = \Yii::getAlias('@webroot/files/tender_control/' . $model->id . '/');
+
+                    if (file_exists($pathfolder)) {
+
+                        foreach (FileHelper::findFiles($pathfolder) as $file) {
+                            $mailGerbert->attach($pathfolder . basename($file));
+                        }
+
+                    }
+
+                    $mailGerbert->send();
+                    $mailIrina->send();
+
+            }
 
             return $this->redirect(['company/fulltender', 'tender_id' => $id]);
 

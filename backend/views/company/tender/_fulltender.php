@@ -1879,6 +1879,69 @@ $this->registerJs($script, View::POS_READY);
                             ]);
                         },
                     ],
+                    [
+                        'attribute' => 'requisite',
+                        'format'    => 'raw',
+                        'value'     => function ($data) {
+                            return Editable::widget([
+                                'model'           => $data,
+                                'placement'       => PopoverX::ALIGN_LEFT,
+                                'formOptions'     => [
+                                    'action'      => ['/company/updatecontroltender', 'id' => $data->id]
+                                ],
+                                'valueIfNull'     => '(не задано)',
+                                'buttonsTemplate' => '{submit}',
+                                'inputType'       => Editable::INPUT_TEXTAREA,
+                                'disabled'        => $data->is_archive == 1 ? true : false,
+                                'submitButton'    => [
+                                    'icon'        => '<i class="glyphicon glyphicon-ok"></i>',
+                                ],
+                                'attribute'       => 'requisite',
+                                'asPopover'       => true,
+                                'size'            => 'md',
+                                'options'         => [
+                                    'class'       => 'form-control',
+                                    'placeholder' => 'Введите реквизиты',
+                                    'id'          => 'requisite' . $data->id
+                                ],
+                            ]);
+                        },
+                    ],
+                    [
+                        'attribute' => 'filescont',
+                        'vAlign'=>'middle',
+                        'format' => 'raw',
+                        'filter' => false,
+                        'value' => function ($data) {
+
+                            $pathfolder = \Yii::getAlias('@webroot/files/tender_control/' . $data->id . '/');
+                            $shortPath = '/files/tender_control/' . $data->id . '/';
+
+                            if (file_exists($pathfolder)) {
+
+                                $numFiles = 0;
+                                $resLinksFiles = '';
+                                $arrStateID = [];
+
+                                foreach (\yii\helpers\FileHelper::findFiles($pathfolder) as $file) {
+
+                                    $resLinksFiles .= Html::a(basename($file), $shortPath . basename($file), ['target' => '_blank']) . '<br />';
+                                    $numFiles++;
+
+                                }
+
+                                if($numFiles > 0) {
+                                    return $resLinksFiles;
+                                } else {
+                                    return '-<br />';
+                                }
+
+                            } else {
+                                return '-<br />';
+                            }
+
+                        },
+                    ],
                 ],
             ]);
             ?>
@@ -1928,8 +1991,9 @@ $this->registerJs($script, View::POS_READY);
         ]
     ]) ?>
     <?= $form->field($newmodel, 'type_payment')->dropDownList($arrtype, ['class' => 'form-control', 'prompt' => 'Выберите тип платежа']) ?>
-
     <?= $form->field($newmodel, 'comment')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Комментарий']) ?>
+    <?= $form->field($newmodel, 'requisite')->textarea(['maxlength' => true, 'rows' => '4', 'placeholder' => 'Реквизиты']) ?>
+    <?= $form->field($newmodel, 'filescont[]')->fileInput(['multiple' => true]) ?>
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-6" style="padding-bottom: 10px;">
