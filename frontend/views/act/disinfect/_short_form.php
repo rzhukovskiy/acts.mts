@@ -18,8 +18,6 @@ use yii\helpers\Url;
 $actionLinkType = Url::to('@web/car/gettypeid');
 
 $script = <<< JS
-    var serviceList = $fixedList;
-    var compServList = $arrServList;
 
     // получаем тип тс по номеру
     $(document).on('change', '#act-car_number', function () {
