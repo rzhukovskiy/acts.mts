@@ -43,8 +43,13 @@ $GLOBALS['type'] = $type;
 
 if ($type == 1) {
     $name = 'Выигранные';
-} else {
+    $nameTitle = 'Статистика выигранных тендеров';
+} else if ($type == 2) {
     $name = 'Проигранные';
+    $nameTitle = 'Статистика проигранных тендеров';
+} else {
+    $name = 'Общее';
+    $nameTitle = 'Статистика всех тендеров';
 }
 $GLOBALS['name'] = $name;
 
@@ -141,7 +146,7 @@ if (Yii::$app->controller->action->id == 'statwintender') {
             'groupOddCssClass' => 'kv-group-header',
             'groupEvenCssClass' => 'kv-group-header',
             'value' => function ($data) {
-                return $GLOBALS['name'];
+                return $GLOBALS['name'] . ' ' . $GLOBALS['userList'][$data->user_id];
             },
         ],
         [
@@ -189,7 +194,7 @@ if (Yii::$app->controller->action->id == 'statwintender') {
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Статистика денежных средств
+        <?php echo $nameTitle; ?>
     </div>
     <div class="panel-body">
         <?php
