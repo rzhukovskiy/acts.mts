@@ -6,6 +6,8 @@ use common\models\Company;
 use kartik\date\DatePicker;
 use common\models\TenderLists;
 
+$countTender = \common\models\Tender::find()->count();
+
 $script = <<< JS
 // формат числа
 window.onload=function(){
@@ -19,8 +21,11 @@ window.onload=function(){
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 }); 
+
+       var countfinal = $('tr[data-last-row="1"] td[data-col-seq="1"').text();
   
   var user4 = $('td[data-col-seq="4"]');     
+  
        var userName = [];
        var userNow = '';
        var resTables = '';
@@ -47,6 +52,7 @@ for (i in userName) {
     (arr2[userName[i]] = 1)
   }
 }
+
     // Сортировка
     var sortArr = [];
 
@@ -62,12 +68,16 @@ for (i in userName) {
                 return 0;
     });
     // Сортировка
-
+    var count = 0;
     for (var key in sortArr) {
         if (sortArr.hasOwnProperty(key)) {  
-            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="300px;">' + sortArr[key].v + '</td></tr>';
+            count = 100/($countTender/sortArr[key].v);
+            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + sortArr[key].v + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + count.toFixed(2) + ' %</td></tr>';
         }
     }
+    
+    resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">Общее количество</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + countfinal + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + (100/($countTender/countfinal)).toFixed(2) +  ' %</td></tr>';
+    
          if ($win == 1) {
         nameTabs = 'Выигранные закупки';
          } else {
