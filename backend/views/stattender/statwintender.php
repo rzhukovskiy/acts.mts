@@ -10,24 +10,28 @@ CanvasJsAsset::register($this);
 
 $this->title = 'Статистика тендеров';
 
+$countTender = \common\models\Tender::find()->count();
+
 if (Yii::$app->controller->action->id == 'statwintender') {
     $script = <<< JS
 // формат числа
 window.onload=function(){
   var formatSum2a = $('.kv-page-summary-container td:eq(2)');
+  var formatSum3a = $('.kv-page-summary-container td:eq(3)');
   var persent = 0;
   var formatSum2 = $('td[data-col-seq="2"]');
   $(formatSum2).each(function (id, value) {
        var thisId = $(this);
        
-       persent = parseFloat(thisId.text())/parseFloat(formatSum2a.text())*100;
-       thisId.parent('tr').find('td[data-col-seq="3"]').text(persent.toFixed(2) + '%');
+       persent = thisId.text()/$countTender*100;
+       thisId.parent('tr').find('td[data-col-seq="3"]').text(persent.toFixed(2) + ' %');
        persent = 0;
 
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
 
 formatSum2a.text(formatSum2a.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
+formatSum3a.text((formatSum2a.text()/$countTender*100).toFixed(2) + ' %');
 };
 
 JS;
@@ -49,6 +53,7 @@ if (Yii::$app->controller->action->id == 'statwintender') {
         'items' => [
             ['label' => 'Выигранные', 'url' => ['/company/statwintender', 'type' => 1], 'active' => $type == 1],
             ['label' => 'Проигранные', 'url' => ['/company/statwintender', 'type' => 2], 'active' => $type == 2],
+            ['label' => 'Общее', 'url' => ['/company/statwintender', 'type' => 3], 'active' => $type == 3],
         ],
     ]);
 } else {
@@ -101,6 +106,7 @@ if (Yii::$app->controller->action->id == 'statwintender') {
         [
             'header' => '%',
             'vAlign'=>'middle',
+            'contentOptions' => ['style' => 'min-width: 60px'],
             'value' => function ($data) {
                 if ($data->comment) {
                     return $data->comment;
@@ -119,9 +125,9 @@ if (Yii::$app->controller->action->id == 'statwintender') {
             'buttons' => [
                 'update' => function ($url, $data, $key) {
                     return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                        ['/company/showstatprice', 'site_address' => $data->user_id, 'type' => $GLOBALS['type'],
-                            'TenderControlSearch[dateFrom]' => $GLOBALS['dateFrom'],
-                            'TenderControlSearch[dateTo]' => $GLOBALS['dateTo']]);
+                        ['/company/showstatwintender', 'user_id' => $data->user_id, 'type' => $GLOBALS['type'],
+                            'TenderSearch[dateFrom]' => $GLOBALS['dateFrom'],
+                            'TenderSearch[dateTo]' => $GLOBALS['dateTo']]);
                 },
             ],
         ],
@@ -144,13 +150,13 @@ if (Yii::$app->controller->action->id == 'statwintender') {
             'class' => 'kartik\grid\SerialColumn'
         ],
         [
-            'attribute' => 'user_id',
+            'attribute' => 'customer',
             'filter' => false,
             'vAlign'=>'middle',
             'value' => function ($data) {
 
-                if ($data->user_id) {
-                    return $data->user_id;
+                if ($data->customer) {
+                    return $data->customer;
                 } else {
                     return '-';
                 }
@@ -166,9 +172,9 @@ if (Yii::$app->controller->action->id == 'statwintender') {
             'contentOptions' => ['style' => 'min-width: 60px'],
             'buttons' => [
                 'update' => function ($url, $data, $key) {
-                    if ($data->tender_id) {
+                    if ($data->id) {
                         return Html::a('<span class="glyphicon glyphicon-search"></span>',
-                            ['/company/fulltender', 'tender_id' => $data->tender_id]);
+                            ['/company/fulltender', 'tender_id' => $data->id]);
                     } else {
                         return '-';
                     }
