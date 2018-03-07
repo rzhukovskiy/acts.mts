@@ -165,7 +165,7 @@ class menuLeftWidget extends Widget
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
                         ],
                         [
-                            'label'  => 'Статистика<br />выигранных<br />тендеров',
+                            'label'  => 'Статистика<br />тендеров',
                             'url' => ['/company/statwintender', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender'),
@@ -472,7 +472,7 @@ class menuLeftWidget extends Widget
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
                         ],
                         [
-                            'label'  => 'Статистика<br />выигранных<br />тендеров',
+                            'label'  => 'Статистика<br />тендеров',
                             'url' => ['/company/statwintender', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender'),
