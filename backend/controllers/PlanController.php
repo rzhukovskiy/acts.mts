@@ -39,12 +39,12 @@ class PlanController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach'],
+                        'actions' => ['list', 'create', 'update', 'delete', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach', 'put-task'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach'],
+                        'actions' => ['list', 'create', 'update', 'tasklist', 'taskmylist', 'taskadd', 'taskmyadd', 'taskupdate', 'taskmyupdate', 'taskfull', 'taskmyfull', 'ajaxexecutionstatus', 'taskmystatus', 'taskdelete', 'taskmydelete', 'taskmyattach', 'newtendattach', 'getcomments', 'isarchive', 'taskmypriority', 'taskpriority', 'newtaskattach', 'put-task'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER, User::ROLE_ACCOUNT, User::ROLE_MANAGER],
                     ]
@@ -719,6 +719,30 @@ class PlanController extends Controller
         $model->priority = $status;
         $model->save();
 
+    }
+
+    public function actionPutTask($id)
+    {
+        if (Yii::$app->request->post()) {
+
+            $array = Yii::$app->request->post('Plan');
+            $userNow = Yii::$app->user->identity->id;
+
+            $model = TaskUser::findOne(['id' => $id]);
+            $model->for_user = $array['for_user'];
+            $model->save();
+
+            $existUser = TaskUserLink::find()->where(['AND', ['task_id' => $id],['for_user_copy' => $userNow]])->exists();
+
+            if (!$existUser) {
+                $userLink = new TaskUserLink();
+                $userLink->task_id = $id;
+                $userLink->for_user_copy = $userNow;
+                $userLink->save();
+
+            }
+            return $this->redirect(Yii::$app->request->referrer);
+        }
     }
 
     public function actionGetcomments()
