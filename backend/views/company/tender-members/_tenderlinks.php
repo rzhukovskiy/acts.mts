@@ -4,6 +4,7 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 use common\models\TenderLinks;
 use yii\helpers\Url;
+use common\models\TenderLists;
 
 $script = <<< JS
 
@@ -26,6 +27,48 @@ window.onload=function(){
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
+// массив списков
+$arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
+
+$arrLists = [];
+$oldType = -1;
+$tmpArray = [];
+
+for ($i = 0; $i < count($arrayTenderList); $i++) {
+
+    if($arrayTenderList[$i]['type'] == $oldType) {
+
+        $index = $arrayTenderList[$i]['id'];
+        $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+    } else {
+
+        if($i > 0) {
+
+            $arrLists[$oldType] = $tmpArray;
+            $tmpArray = [];
+
+            $oldType = $arrayTenderList[$i]['type'];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+
+        } else {
+            $oldType = $arrayTenderList[$i]['type'];
+            $tmpArray = [];
+
+            $index = $arrayTenderList[$i]['id'];
+            $tmpArray[$index] = $arrayTenderList[$i]['description'];
+        }
+    }
+
+    if(($i + 1) == count($arrayTenderList)) {
+        $arrLists[$oldType] = $tmpArray;
+    }
+
+}
+//
+$GLOBALS['arrLists'] = $arrLists;
 ?>
 
 <div class="panel-body">
@@ -96,13 +139,13 @@ $this->registerJs($script, \yii\web\View::POS_READY);
             ],
 
             [
-                'attribute' => 'tender.place',
+                'attribute' => 'tender.site_address',
                 'vAlign'=>'middle',
                 'filter' => false,
                 'value' => function ($data) {
 
-                    if ($data->tender->place) {
-                        return $data->tender->place;
+                    if ($GLOBALS['arrLists'][8][$data->tender->site_address]) {
+                        return $GLOBALS['arrLists'][8][$data->tender->site_address];
                     } else {
                         return '-';
                     }
