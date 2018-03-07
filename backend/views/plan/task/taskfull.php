@@ -103,7 +103,7 @@ echo Tabs::widget([
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
                     ]);
-                    if (Yii::$app->user->identity->role == User::ROLE_ADMIN || Yii::$app->user->identity->id == $model->for_user) {
+                    if (Yii::$app->user->identity->id == $model->for_user) {
                         echo '<span class="btn btn-danger btn-sm putTask">Передать задачу</span>';
                     }
 
