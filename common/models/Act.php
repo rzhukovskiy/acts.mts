@@ -496,7 +496,7 @@ class Act extends ActiveRecord
             $this->mark_id = $car->mark_id;
 
             if(Yii::$app->user->isGuest == 0) {
-                if (!$this->type_id) {
+                if (Yii::$app->user->identity->role == User::ROLE_PARTNER || !$this->type_id) {
                     $this->type_id = $car->type_id;
                     $this->type_client = $car->type_id;
                 }
