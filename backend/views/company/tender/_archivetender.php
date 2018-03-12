@@ -6,6 +6,8 @@ use common\models\Company;
 use kartik\date\DatePicker;
 use common\models\TenderLists;
 
+$countTender = \common\models\Tender::find()->count();
+
 $script = <<< JS
 // формат числа
 window.onload=function(){
@@ -19,6 +21,81 @@ window.onload=function(){
        var thisId = $(this);
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 }); 
+
+       var countfinal = $('tr[data-last-row="1"] td[data-col-seq="1"').text();
+  
+  var user4 = $('td[data-col-seq="4"]');     
+  
+       var userName = [];
+       var userNow = '';
+       var resTables = '';
+       var resUsers = '';
+       var resUsersOwner = '';
+       var nameTabs = '';
+       
+     $(user4).each(function (id, value) {
+        var thisId = $(this);
+        
+             
+                 userNow = $(this).text();
+                 if (userNow.length > 3) {
+                     userName.push(userNow);
+                 }
+                 
+     });
+     
+     var arr2 = [];
+for (i in userName) {
+  if (arr2[userName[i]] != undefined) {
+    (arr2[userName[i]] ++)
+  } else {
+    (arr2[userName[i]] = 1)
+  }
+}
+
+    // Сортировка
+    var sortArr = [];
+
+    for (var index in arr2) {
+        if (arr2.hasOwnProperty(index)) {  
+            sortArr.push({v:arr2[index], k: index});
+        }
+    }
+
+    sortArr.sort(function(a,b){
+        if(a.v < b.v){ return 1}
+            if(a.v > b.v){ return -1}
+                return 0;
+    });
+    // Сортировка
+    var count = 0;
+    for (var key in sortArr) {
+        if (sortArr.hasOwnProperty(key)) {  
+            count = 100/($countTender/sortArr[key].v);
+            resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + sortArr[key].v + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + count.toFixed(2) + ' %</td></tr>';
+        }
+    }
+    
+    resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">Общее количество</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + countfinal + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + (100/($countTender/countfinal)).toFixed(2) +  ' %</td></tr>';
+    
+         if ($win == 1) {
+        nameTabs = 'Выигранные закупки';
+         } else {
+        nameTabs = 'Проигранные закупки';
+         }
+           
+           
+         
+            resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
+             '<tr style="background: #428bca; color: #fff;">' +
+              '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
+               '</tr>' +
+                '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
+          
+      
+          
+           $('.place_list').html(resTables);
+
 };
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
@@ -392,6 +469,9 @@ $columns = [
         ],
     ],
 ];
+
+$statTable = '<div class="place_list"></div>';
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -451,13 +531,13 @@ echo GridView::widget([
         [
             'columns' => [
                 [
-                    'content' => '&nbsp',
+                    'content' => $statTable,
                     'options' => [
                         'colspan' => count($columns),
                     ]
                 ]
             ],
-            'options' => ['class' => 'kv-group-header'],
+            'options' => ['class' => 'kv-grid-group-filter'],
         ],
     ],
     'columns' => $columns,

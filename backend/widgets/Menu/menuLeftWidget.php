@@ -147,6 +147,8 @@ class menuLeftWidget extends Widget
                     'url'    => '#',
                     'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
                     'items'  => [
@@ -161,6 +163,12 @@ class menuLeftWidget extends Widget
                             'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />тендеров',
+                            'url' => ['/company/statwintender', 'type' => 1],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender'),
                         ],
                     ],
                 ],
@@ -446,6 +454,8 @@ class menuLeftWidget extends Widget
                     'visible'    => (User::find()->innerJoin('department_user', '`department_user`.`user_id` = `user`.`id`')->where(['AND', ['department_user.department_id' => 6], ['department_user.user_id' => $currentUser->id]])->exists() || ($currentUser->id == 238) || ($currentUser->id == 708) || ($currentUser->id == 176)) ? true : false,
                     'active' => (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statplace') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') ||
+                        (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatplace') ||
                         (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
                     'items'  => [
@@ -460,6 +470,12 @@ class menuLeftWidget extends Widget
                             'url' => ['/company/statprice', 'type' => 1],
                             'active' =>
                                 (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statprice') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatprice'),
+                        ],
+                        [
+                            'label'  => 'Статистика<br />тендеров',
+                            'url' => ['/company/statwintender', 'type' => 1],
+                            'active' =>
+                                (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'statwintender') || (Yii::$app->controller->id == 'company' && Yii::$app->controller->action->id == 'showstatwintender'),
                         ],
                     ],
                 ],

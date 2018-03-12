@@ -54,6 +54,7 @@ class TenderSearch extends Company
             'tender' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
             'tenderlist' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
             'statplace' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
+            'statwintender' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
             'activity' => ['dateFrom', 'dateTo', 'service_type', 'period', 'work_user_id'],
             'default' => ['date_request_end', 'time_bidding_end', 'customer', 'city', 'purchase_status', 'method_purchase', 'user_id', 'service_type', 'price_nds', 'company_id', 'dateFrom', 'dateTo', 'period'],
         ];
@@ -177,6 +178,20 @@ class TenderSearch extends Company
                 break;
 
             case 'statplace':
+
+                // Если период не задан то задаем 10 лет.
+                if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
+                    $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+                    $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
+                    $query->andWhere(['OR', ['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo], ['is', 'date_request_end', null], ['date_request_end' => '']]);
+
+                } else {
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_request_end))", $this->dateFrom, $this->dateTo]);
+                }
+
+                break;
+
+            case 'statwintender':
 
                 // Если период не задан то задаем 10 лет.
                 if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {

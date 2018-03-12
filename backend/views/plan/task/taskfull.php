@@ -38,6 +38,11 @@ $("body").on('DOMSubtreeModified', "#taskuser-tender_id-targ", function() {
     }
 });
 
+// открываем модальное окно
+$('.putTask').on('click', function() {
+    $('#showLists').modal('show');
+    
+});
 JS;
 $this->registerJs($script, View::POS_READY);
 
@@ -91,13 +96,18 @@ echo Tabs::widget([
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
                         'data' => $userListsData,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
+                        'disabled' => (Yii::$app->user->identity->role == User::ROLE_ADMIN) ? false : true,
                         'options' => ['class' => 'form-control'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id]
                         ],
                         'valueIfNull' => '<span class="text-danger">не задано</span>',
-                    ]); ?>
+                    ]);
+                    if (Yii::$app->user->identity->id == $model->for_user) {
+                        echo '<span class="btn btn-danger btn-sm putTask">Передать задачу</span>';
+                    }
+
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -124,8 +134,8 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'data' => $userListsAll,
-                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user) || (Yii::$app->user->identity->id == $model->for_user)) ? false : true,
+                        'data' => $userListsData,
+                        'disabled' => ((Yii::$app->user->identity->role == User::ROLE_ADMIN) || (Yii::$app->user->identity->id == $model->from_user)) ? false : true,
                         'options' => ['class' => 'form-control', 'multiple' => 'true'],
                         'formOptions' => [
                             'action' => ['/plan/taskupdate', 'id' => $model->id]
@@ -151,7 +161,7 @@ echo Tabs::widget([
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
-                        'data' => $userListsData,
+                        'data' => $userListsAll,
                         'disabled' => Yii::$app->user->identity->role !== User::ROLE_ADMIN ? true : false,
                         'options' => ['class' => 'form-control'],
                         'formOptions' => [
@@ -559,4 +569,23 @@ ActiveForm::end();
 
 Modal::end();
 // Модальное окно добавить вложения
+
+// Модальное окно передача задачи
+$modalLists = Modal::begin([
+    'header' => '<h5>Кому передаете задачу</h5>',
+    'id' => 'showLists',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-sm',
+]);
+
+$form = ActiveForm::begin([
+    'action' => ['/plan/put-task', 'id' => $model->id],
+    'options' => ['accept-charset' => 'UTF-8'],
+]);
+
+echo Html::dropDownList("Plan[for_user]", 'for_user', $userListsData, ['class' => 'form-control', 'style' => 'width:250px;', 'prompt' => 'Выберите пользователя']);
+
+echo Html::submitButton('Передать', ['class' => 'btn btn-primary btn-sm', 'style' => 'margin-top: 10px;']);
+
+ActiveForm::end();
 ?>
