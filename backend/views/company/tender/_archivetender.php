@@ -6,8 +6,6 @@ use common\models\Company;
 use kartik\date\DatePicker;
 use common\models\TenderLists;
 
-$countTender = \common\models\Tender::find()->count();
-
 $script = <<< JS
 // формат числа
 window.onload=function(){
@@ -71,30 +69,28 @@ for (i in userName) {
     var count = 0;
     for (var key in sortArr) {
         if (sortArr.hasOwnProperty(key)) {  
-            count = 100/($countTender/sortArr[key].v);
+            count = 100/(countfinal/sortArr[key].v);
             resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">'+ sortArr[key].k +'</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + sortArr[key].v + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + count.toFixed(2) + ' %</td></tr>';
         }
     }
-    
-    resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">Общее количество</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + countfinal + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + (100/($countTender/countfinal)).toFixed(2) +  ' %</td></tr>';
-    
+    if (countfinal) {
+    resUsers += '<tr style="background: #fff; font-weight: normal;"><td style="padding: 3px 5px 3px 5px">Общее количество</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + countfinal + '</td><td style="padding: 3px 5px 3px 5px" width="200px;">' + (100/(countfinal/countfinal)).toFixed(2) +  ' %</td></tr>';
+    }
          if ($win == 1) {
         nameTabs = 'Выигранные закупки';
          } else {
         nameTabs = 'Проигранные закупки';
          }
            
-           
-         
+        if (resUsers) {
             resTables = '<table width="100%" border="1" bordercolor="#dddddd" style="margin: 15px 0px 15px 0px;">' +
              '<tr style="background: #428bca; color: #fff;">' +
               '<td colspan="3" style="padding: 3px 5px 3px 5px; font-weight: normal;" align="center">' + nameTabs + '</td>' +
                '</tr>' +
                 '<tr style="background: #fff; font-weight: normal;">' + resUsers + '</tr></table>';
           
-      
-          
            $('.place_list').html(resTables);
+           }
 
 };
 JS;

@@ -119,6 +119,8 @@ $(document).ready(function () {
     $(document).on('click', '.btn-ts-select', setActiveValue);
 });
 
+var nowYear = new Date();
+
 $('body').on('change','.select-period', function(e) {
     switch ($(this).val()) {
         case '1':
@@ -127,6 +129,8 @@ $('body').on('change','.select-period', function(e) {
             $('#month').fadeIn();
             $('#half').fadeOut();
             $('#quarter').fadeOut();
+
+            $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
             break;
         case '2':
             $('#day').fadeOut();
@@ -134,6 +138,8 @@ $('body').on('change','.select-period', function(e) {
             $('#quarter').fadeIn();
             $('#month').fadeOut();
             $('#half').fadeOut();
+
+            $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
             break;
         case '3':
             $('#day').fadeOut();
@@ -141,6 +147,8 @@ $('body').on('change','.select-period', function(e) {
             $('#half').fadeIn();
             $('#month').fadeOut();
             $('#quarter').fadeOut();
+
+            $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
             break;
         case '4':
             $('#day').fadeOut();
@@ -148,6 +156,8 @@ $('body').on('change','.select-period', function(e) {
             $('#month').fadeOut();
             $('#quarter').fadeOut();
             $('#half').fadeOut();
+
+            $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
             break;
         case '5':
             $('#day').fadeIn();
@@ -155,6 +165,8 @@ $('body').on('change','.select-period', function(e) {
             $('#month').fadeIn();
             $('#quarter').fadeOut();
             $('#half').fadeOut();
+
+            $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
             break;
         default:
             $('.autoinput').not('.select-period').fadeOut();

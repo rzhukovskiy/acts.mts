@@ -10,7 +10,6 @@ CanvasJsAsset::register($this);
 
 $this->title = 'Статистика тендеров';
 
-$countTender = \common\models\Tender::find()->count();
 
 if (Yii::$app->controller->action->id == 'statwintender') {
     $script = <<< JS
@@ -23,15 +22,14 @@ window.onload=function(){
   $(formatSum2).each(function (id, value) {
        var thisId = $(this);
        
-       persent = thisId.text()/$countTender*100;
+       persent = thisId.text()/parseInt(formatSum2a.text())*100;
        thisId.parent('tr').find('td[data-col-seq="3"]').text(persent.toFixed(2) + ' %');
        persent = 0;
 
        thisId.text(thisId.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
 });
 
-formatSum2a.text(formatSum2a.text().replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 "));
-formatSum3a.text((formatSum2a.text()/$countTender*100).toFixed(2) + ' %');
+formatSum3a.text((formatSum2a.text()/parseInt(formatSum2a.text())*100).toFixed(2) + ' %');
 };
 
 JS;
@@ -397,7 +395,6 @@ if (Yii::$app->controller->action->id == 'statwintender') {
                 }
             }
             
-            console.log(dataTable);
             var options = {
                 title: {
                     text: 'График',

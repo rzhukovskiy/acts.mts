@@ -9,6 +9,8 @@ use yii\web\View;
 
 $this->title = 'Добавление';
 
+$companyList = json_encode($companyWash);
+
 $script = <<< JS
 scopeIndex = 0;
 $('#w1').on('click', '.addButton', function(e)
@@ -32,6 +34,31 @@ $('#w1').on('click', '.addButton', function(e)
         e.preventDefault();
         return false;
     });
+
+
+
+   $('.field-historychecks-company_id div').html('<input id="searchText" type="text" class="form-control" name="searchText" placeholder="Поиск мойки"><br/>' + $('.field-historychecks-company_id div').html());  
+    var arr3 = $companyList;
+    var nowValue = '';   
+     $('#searchText').keyup(function() {
+         
+         nowValue = $(this).val().toLowerCase();
+         
+         
+           $('#historychecks-company_id').val('');
+           $("select[id=historychecks-company_id] option").hide();
+              
+           $.each(arr3,function(key,data) {
+               
+                  if ((data.toString().toLowerCase()).indexOf(nowValue) !== -1) {
+                      $('select[id=historychecks-company_id] option[value=""]').show();
+                      $('select[id=historychecks-company_id] option[value="' + key + '"]').show();
+                      console.log(data);
+                  } 
+                  
+                });  
+       
+});
 JS;
 $this->registerJs($script, View::POS_READY);
 echo Tabs::widget([
@@ -40,6 +67,7 @@ echo Tabs::widget([
         ['label' => 'Добавление', 'url' => ['delivery/newchecks'], 'active' => Yii::$app->controller->action->id == 'newchecks'],
     ],
 ]);
+
 
 ?>
 

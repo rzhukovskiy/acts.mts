@@ -1509,7 +1509,7 @@ class EmailController extends Controller
     public function actionCrondebt()
     {
 
-        // Рассылка 2 раза в неделю о должниках Араму и Юле
+        // Рассылка 2 раза в неделю о должниках Араму и Юле и Герберту
         if(isset(Yii::$app->user->identity->id)) {
             return $this->redirect('/');
         } else {
@@ -1602,11 +1602,19 @@ class EmailController extends Controller
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
                 ->setHtmlBody($resText)->send();
 
+            // Герберт
+            Yii::$app->mailer->compose()
+                ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
+                ->setTo('mtransservice@mail.ru')
+                ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
+                ->setHtmlBody($resText)->send();
+
+
         }
 
         return 1;
 
-        // Рассылка 2 раза в неделю о должниках Араму и Юле
+        // Рассылка 2 раза в неделю о должниках Араму и Юле и Герберту
 
     }
 

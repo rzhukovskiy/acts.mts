@@ -120,7 +120,7 @@ class DeliveryController extends Controller
     public function actionListchecks()
     {
         $searchModel = HistoryChecks::find();
-        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $companyWash = Company::find()->where(['type' => 2])->andWhere(['OR', ['status' => Company::STATUS_ARCHIVE], ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_NEW]])->select('name')->indexby('id')->orderBy('name ASC')->column();
         $usersList = User::find()->select('username')->indexby('id')->column();
 
         $dataProvider = new ActiveDataProvider([
@@ -161,7 +161,7 @@ class DeliveryController extends Controller
             $array['HistoryChecks']['serial_number'] = $serialNumber;
         }
 
-        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $companyWash = Company::find()->where(['type' => 2])->andWhere(['OR', ['status' => Company::STATUS_ARCHIVE], ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_NEW]])->select('name')->indexby('id')->orderBy('name ASC')->column();
         if ($model->load($array) && $model->save() && (Yii::$app->request->isPost)) {
 
             return $this->redirect(['/delivery/listchecks']);
@@ -177,7 +177,7 @@ class DeliveryController extends Controller
     public function actionFullchecks($id)
     {
         $searchModel = HistoryChecks::find()->where(['company_id' => $id]);
-        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $companyWash = Company::find()->where(['type' => 2])->andWhere(['OR', ['status' => Company::STATUS_ARCHIVE], ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_NEW]])->select('name')->indexby('id')->orderBy('name ASC')->column();
         $usersList = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER]])->select('username')->indexby('id')->column();
 
         $dataProvider = new ActiveDataProvider([
@@ -219,7 +219,7 @@ class DeliveryController extends Controller
     public function actionUpdatechecks($id)
     {
         $model = HistoryChecks::findOne(['id' => $id]);
-        $companyWash = Company::find()->where(['type' => 2])->select('name')->indexby('id')->column();
+        $companyWash = Company::find()->where(['type' => 2])->andWhere(['OR', ['status' => Company::STATUS_ARCHIVE], ['status' => Company::STATUS_ACTIVE], ['status' => Company::STATUS_NEW]])->select('name')->indexby('id')->orderBy('name ASC')->column();
 
         $hasEditable = Yii::$app->request->post('hasEditable', false);
         if ($hasEditable) {
