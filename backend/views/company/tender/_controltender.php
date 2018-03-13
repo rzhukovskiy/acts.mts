@@ -135,6 +135,7 @@ if (isset($arrLists[9])){
     $arrtype = $arrLists[9];
     asort($arrtype);
 }
+
 ?>
 
 <div class="panel panel-primary">

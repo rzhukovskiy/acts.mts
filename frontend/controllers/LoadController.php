@@ -39,22 +39,22 @@ class LoadController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments'],
+                        'actions' => ['list', 'update', 'delete', 'view', 'fix', 'export', 'lock', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments', 'fullcompany'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments'],
+                        'actions' => ['list', 'view', 'fix', 'export', 'unlock', 'close', 'contact', 'stickers', 'comment', 'getcomments', 'fullcompany'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER,User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['list', 'view', 'comment', 'getcomments'],
+                        'actions' => ['list', 'view', 'comment'],
                         'allow' => true,
                         'roles' => [User::ROLE_CLIENT],
                     ],
                     [
-                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'comment', 'getcomments'],
+                        'actions' => ['list', 'update', 'view', 'create', 'sign', 'disinfect', 'create-entry', 'comment'],
                         'allow' => true,
                         'roles' => [User::ROLE_PARTNER],
                     ],
@@ -225,6 +225,31 @@ class LoadController extends Controller
 
         } else {
             echo json_encode(['success' => 'false']);
+        }
+
+    }
+
+    public function actionFullcompany()
+    {
+
+        if (Yii::$app->request->post('type') && Yii::$app->request->post('iscompany') && Yii::$app->request->post('period')) {
+
+            $type = Yii::$app->request->post('type');
+            $isCompany = Yii::$app->request->post('iscompany');
+            $period = Yii::$app->request->post('period');
+
+            $periodAct = explode('-', $period);
+            $periodAct = date('Y-m-00', strtotime($periodAct[1] . '-' . $periodAct[0]));
+
+            if ($isCompany == 1) {
+                $ressArray = Company::find()->innerJoin('lock', 'lock.company_id = company.id')->leftJoin('act', 'act.partner_id = company.id AND (date_format(FROM_UNIXTIME(act.served_at), "%Y-%m-00") = "' . $periodAct . '")')->andWhere(['is', 'act.partner_id', null])->andWhere(['lock.period' => $period])->andWhere(['company.type' => $type])->andWhere(['OR', ['company.status' => Company::STATUS_ARCHIVE], ['company.status' => Company::STATUS_ACTIVE]])->select('company.id, company.name, company.address')->asArray()->all();
+                return json_encode(['result' => json_encode($ressArray), 'success' => 'true']);
+            } else {
+                return json_encode(['success' => 'false']);
+            }
+
+        } else {
+            return json_encode(['success' => 'false']);
         }
 
     }
