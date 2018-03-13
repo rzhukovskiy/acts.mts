@@ -97,6 +97,9 @@ $this->registerJs($script, View::POS_READY);
                                     if(ui.content.length==0){
                                         $("#act-mark_id").show();
                                         $("#act-type_id").show();
+                                    }else{
+                                        $("#act-mark_id").hide();
+                                        $("#act-type_id").hide();
                                     }
                                 }'
                             ],
