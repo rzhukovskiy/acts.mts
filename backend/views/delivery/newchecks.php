@@ -36,24 +36,28 @@ $('#w1').on('click', '.addButton', function(e)
     });
 
 
-
    $('.field-historychecks-company_id div').html('<input id="searchText" type="text" class="form-control" name="searchText" placeholder="Поиск мойки"><br/>' + $('.field-historychecks-company_id div').html());  
     var arr3 = $companyList;
     var nowValue = '';   
+    var thisvalue = '';   
      $('#searchText').keyup(function() {
          
          nowValue = $(this).val().toLowerCase();
+         $('#historychecks-company_id').val('');
          
-         
-           $('#historychecks-company_id').val('');
-           $("select[id=historychecks-company_id] option").hide();
-              
+         $('#historychecks-company_id').find('option').each(function(){
+           
+             thisvalue = $(this).val();
+             
+             if ($(this).val() !== '') {
+             $(this).contents().unwrap().wrap('<input value='+ thisvalue + '>');
+             }
+     });
+
            $.each(arr3,function(key,data) {
                
                   if ((data.toString().toLowerCase()).indexOf(nowValue) !== -1) {
-                      $('select[id=historychecks-company_id] option[value=""]').show();
-                      $('select[id=historychecks-company_id] option[value="' + key + '"]').show();
-                      console.log(data);
+                      $('#historychecks-company_id input[value="' + key + '"]').contents().unwrap().wrap('<option value='+ key + '>');
                   } 
                   
                 });  
