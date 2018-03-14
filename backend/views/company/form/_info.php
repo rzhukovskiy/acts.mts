@@ -305,7 +305,7 @@ $this->registerJs($script, View::POS_READY);
                             'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                         ],
                         'attribute' => 'payment_period',
-                        'displayValue' => $modelCompanyInfo->payment_period . '-е число',
+                        'displayValue' => isset($modelCompanyInfo->payment_period) ? $modelCompanyInfo->payment_period . '-е число' : '',
                         'asPopover' => true,
                         'placement' => PopoverX::ALIGN_LEFT,
                         'size' => 'lg',
