@@ -34,13 +34,23 @@ $('#w1').on('click', '.addButton', function(e)
         e.preventDefault();
         return false;
     });
+    // добавляем кнопку поиск
+   $('.field-historychecks-company_id').html('<span class="btn btn-warning btn-sm searchButtom">Поиск</span>' + $('.field-historychecks-company_id').html()); 
+   // добавляем скрытое поле поиска
+   $('.field-historychecks-company_id div').html('<input id="searchText" style="display: none; margin-bottom: 20px;" type="text" class="form-control" name="searchText" placeholder="Поиск мойки">' + $('.field-historychecks-company_id div').html());
+   // открываем скрытое поле поиска
+   $('.searchButtom').on('click', function() {
+    
+       $('#searchText').show();  
+       $(this).hide();
 
+   });
 
-   $('.field-historychecks-company_id div').html('<input id="searchText" type="text" class="form-control" name="searchText" placeholder="Поиск мойки"><br/>' + $('.field-historychecks-company_id div').html());  
     var arr3 = $companyList;
     var nowValue = '';   
     var thisvalue = '';   
-     $('#searchText').keyup(function() {
+    // при вводе в поле поиска скрываем в селекторе ненужные
+    $('#searchText').keyup(function() {
          
          nowValue = $(this).val().toLowerCase();
          $('#historychecks-company_id').val('');
