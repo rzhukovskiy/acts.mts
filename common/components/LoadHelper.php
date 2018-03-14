@@ -11,6 +11,7 @@ namespace common\components;
 
 use common\models\Act;
 use common\models\Company;
+use common\models\CompanyInfo;
 use common\models\Mark;
 use common\models\Service;
 use common\models\Type;
@@ -326,6 +327,18 @@ class LoadHelper
                 ],
 
             ],
+            'payment_period' => [
+                'header' => 'День<br/>составления<br/>акта',
+                'format' => 'raw',
+                'visible' => $GLOBALS['company'] == 1 ? true : false,
+                'value'     => function ($data) {
+                    $datePayment = CompanyInfo::find()->select('payment_period')->where(['company_id' => $data->id])->column();
+                    if ($datePayment[0]) {
+                        return $datePayment[0] . '-е число';
+                    }
+
+                },
+            ],
             'contact' => [
                 'header' => 'Связь с клиентом',
                 'class' => 'kartik\grid\ActionColumn',
@@ -443,38 +456,38 @@ class LoadHelper
         $assets = [
             User::ROLE_ADMIN => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ]
             ],
             User::ROLE_WATCHER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                     Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],
@@ -491,20 +504,20 @@ class LoadHelper
             ],
             User::ROLE_MANAGER => [
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ],
                 [
-                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
-                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick'],
+                    Service::TYPE_WASH => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_SERVICE => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_TIRES => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_DISINFECT => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PARKING => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
+                    Service::TYPE_PENALTY => ['row', 'partner', 'name', 'city', 'expense', 'CloseButt', 'contact', 'comment','buttomClick', 'payment_period'],
                 ]
 //                [
 //                    Service::TYPE_WASH => ['row', 'partner', 'day', 'mark', 'number', 'type', 'card', 'clientService', 'expense', 'check'],

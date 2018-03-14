@@ -37,6 +37,8 @@ $(document).ready(function() {
 
     imagePreview();
 
+    var nowYear = new Date();
+
     $('body').on('change','.select-period', function(e) {
         switch ($(this).val()) {
             case '1':
@@ -44,24 +46,32 @@ $(document).ready(function() {
                 $('#month').fadeIn();
                 $('#half').fadeOut();
                 $('#quarter').fadeOut();
+
+                $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
                 break;
             case '2':
                 $('#year').fadeIn();
                 $('#quarter').fadeIn();
                 $('#month').fadeOut();
                 $('#half').fadeOut();
+
+                $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
                 break;
             case '3':
                 $('#year').fadeIn();
                 $('#half').fadeIn();
                 $('#month').fadeOut();
                 $('#quarter').fadeOut();
+
+                $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
                 break;
             case '4':
                 $('#year').fadeIn();
                 $('#month').fadeOut();
                 $('#quarter').fadeOut();
                 $('#half').fadeOut();
+
+                $('#year option:contains("' + nowYear.getFullYear() + '")').prop('selected', true);
                 break;
             default:
                 $('.autoinput').not('.select-period').fadeOut();

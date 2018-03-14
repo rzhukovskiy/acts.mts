@@ -144,7 +144,7 @@ $GLOBALS['arrLists'] = $arrLists;
                 'filter' => false,
                 'value' => function ($data) {
 
-                    if ($GLOBALS['arrLists'][8][$data->tender->site_address]) {
+                    if (isset($GLOBALS['arrLists'][8][$data->tender->site_address])) {
                         return $GLOBALS['arrLists'][8][$data->tender->site_address];
                     } else {
                         return '-';
