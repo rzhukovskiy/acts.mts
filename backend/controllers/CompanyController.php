@@ -1097,8 +1097,12 @@ class CompanyController extends Controller
 
             if ($model->filescont || $model->requisite) {
                 $requisite = '';
+                $comment = '';
                 if ($model->requisite) {
                     $requisite = '<br/><b>Реквизиты:</b><br/>' . nl2br($model->requisite);
+                }
+                if ($model->comment) {
+                    $comment = '<br/><b>Комментарий:</b><br/>' . nl2br($model->comment);
                 }
 
                 // отправка ирине уведомления об оплате тендера
@@ -1108,7 +1112,7 @@ class CompanyController extends Controller
                         ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                         ->setTo($userIrina[0])
                         ->setSubject('Срочно оплата тендера ' . date('d.m.Y'))
-                        ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . '<br/><br/>');
+                        ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . $comment . '<br/><br/>');
 
                         $pathfolder = \Yii::getAlias('@webroot/files/tender_control/' . $model->id . '/');
 
@@ -1126,7 +1130,7 @@ class CompanyController extends Controller
                     ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                     ->setTo('mtransservice@mail.ru')
                     ->setSubject('Срочно оплата тендера ' . date('d.m.Y'))
-                    ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . '<br/><br/>');
+                    ->setHtmlBody('Оплата тендера:<br/><br/><b>Сумма:</b> ' . $model->send . $requisite . $comment . '<br/><br/>');
 
                     $pathfolder = \Yii::getAlias('@webroot/files/tender_control/' . $model->id . '/');
 
