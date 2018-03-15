@@ -120,7 +120,7 @@ class MonthlyActController extends Controller
     {
         $searchModel = new MonthlyActSearch();
 
-        if((!($type == 1)) && (!($type == -1))) {
+        if((!($type == 1)) && (!($type == -1)) && (!($type == -99))) {
             $searchModel->type_id = $type;
         }
 
@@ -142,6 +142,7 @@ class MonthlyActController extends Controller
         // Если не выбран период то
 
         $dataProvider = $searchModel->searchArchive($params);
+        $dataProviderDuble = $searchModel->searchArchiveDuble($params);
 
         $models = $dataProvider->getModels();
         $totalProfit = array_sum(ArrayHelper::getColumn($models, 'profit'));
@@ -155,6 +156,7 @@ class MonthlyActController extends Controller
         return $this->render('archive/list',
             [
                 'dataProvider' => $dataProvider,
+                'dataProviderDuble' => $dataProviderDuble,
                 'searchModel'  => $searchModel,
                 'totalProfit'  => $totalProfit,
                 'listType'     => $listType,

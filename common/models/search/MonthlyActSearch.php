@@ -261,4 +261,107 @@ class MonthlyActSearch extends MonthlyAct
 
         return $dataProvider;
     }
+
+    public function searchArchiveDuble($params)
+    {
+
+        $query = MonthlyAct::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query'      => $query,
+            'pagination' => false,
+            'sort'=>[
+                'defaultOrder'=>[
+                    'parent_key' => SORT_ASC
+                ]
+            ]
+        ]);
+
+        $sort = $dataProvider->getSort();
+        $sort->attributes = array_merge($sort->attributes,
+            [
+                'parent_key' => [
+                    'asc'  => ['parent_key' => SORT_ASC],
+                    'desc' => ['parent_key' => SORT_DESC]
+                ]
+            ]);
+        $dataProvider->setSort($sort);
+
+        $this->load($params);
+        $this->is_partner = 0;
+
+        $query->alias('company');
+        $query->joinWith('client client')->addSelect([
+            'company.*',
+            new yii\db\Expression('IF(IFNULL(client.parent_id,0)=0, client.id*1000, client.parent_id*1000+client.id) as parent_key')
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        if($this->type_id) {
+            $query->andFilterWhere([
+                'company.id' => $this->id,
+                'company.client_id' => $this->client_id,
+                'company.type_id' => $this->type_id,
+                'company.is_partner' => $this->is_partner,
+                'company.created_at' => $this->created_at,
+                'company.updated_at' => $this->updated_at,
+            ]);
+        } else {
+            $query->andFilterWhere([
+                'company.id' => $this->id,
+                'company.client_id' => $this->client_id,
+                'company.is_partner' => $this->is_partner,
+                'company.created_at' => $this->created_at,
+                'company.updated_at' => $this->updated_at,
+            ]);
+        }
+
+        $query->andFilterWhere(['between', "act_date", $this->dateFrom, $this->dateTo]);
+
+        $query->andFilterWhere(['company.act_status' => $this->act_status]);
+
+        $query->innerJoin('{{%act}}');
+
+            if ($this->type_id) {
+                $query->andWhere('company.client_id = act.client_id AND (act.income > 0) AND (act.service_type=' . $this->type_id . ') AND (act.served_at BETWEEN \'' . strtotime($this->dateFrom) . '\' AND \'' . strtotime($this->dateTo) . '\')');
+            } else {
+
+                // Должники
+                if($this->type_debt) {
+                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['company.type_id' => $this->type_debt])->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                } else {
+                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                }
+                // Должники
+
+            }
+        //
+
+        $query->andWhere('client.name LIKE "%' . $this->client_name . '%" ');
+        $query->andWhere('client.address LIKE "%' . $this->client_city . '%" ');
+
+        if(!$this->client_id) {
+            if ($this->type_id) {
+                $query->groupBy('company.client_id');
+            } else {
+                $query->groupBy('company.client_id');
+                $query->orderBy('company.type_id');
+            }
+        } else {
+            if (!$this->type_id) {
+                $query->groupBy('company.id');
+                $query->orderBy('company.type_id, company.act_date');
+            }
+        }
+
+        return $dataProvider;
+    }
 }

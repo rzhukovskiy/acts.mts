@@ -204,7 +204,7 @@ $periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-prima
 // Фильтр по типу в должниках
 $typeFilter = '';
 
-if(($type == 1) || ($type == -1)) {
+if(($type == 1) || ($type == -1) || ($type == -99)) {
     $arrCompany = [];
     foreach (Company::$listType as $key => $value) {
         if ($key > 1) {
@@ -216,7 +216,7 @@ if(($type == 1) || ($type == -1)) {
 }
 // Фильтр по типу в должниках
 
-$filters = 'Выбор периода: ' . $periodForm . $typeFilter;
+$filters = 'Выбор периода: ' . $periodForm . $typeFilter . '<span class="pull-right winProfit" style="padding-top: 10px; padding-right: 30px;"></span>';
 /**
  * Конец виджета
  */
@@ -231,7 +231,7 @@ echo $this->render('_tabs',
     ]);
 ?>
 <?php
-
+$columnsCompany = [];
 $columns = [];
 $columns[] = [
     'header'        => '№',
@@ -240,6 +240,23 @@ $columns[] = [
     'footerOptions' => ['style' => 'font-weight: bold'],
 ];
 $columns[] = [
+    'attribute' => 'client_name',
+    'label'     => 'Клиент',
+    'content'   => function ($data) use ($type) {
+        return $data->client->name;
+    },
+    'format'    => 'raw',
+    'filter'    => ($searchModel->client_id ? false : true),
+    'pageSummary' => 'Итого',
+];
+
+$columnsCompany[] = [
+    'header'        => '№',
+    'class' => '\kartik\grid\SerialColumn',
+    'footer'        => 'Итого:',
+    'footerOptions' => ['style' => 'font-weight: bold'],
+];
+$columnsCompany[] = [
     'attribute' => 'client_name',
     'label'     => 'Клиент',
     'content'   => function ($data) use ($type) {
@@ -516,8 +533,159 @@ JS;
     ];
 }
 
+if((!$searchModel->client_id) && (Yii::$app->request->get('type') == -99)) {
+
+$script = <<< JS
+var partnerProfit = 0;
+var companyProfit = 0;
+
+partnerProfit = $('#monthly-act-grid .kv-page-summary-container td:eq(2)').text();
+companyProfit = $('#monthly-act-gridDuble .kv-page-summary-container td:eq(2)').text();
+
+var fullProfit = (companyProfit - partnerProfit).toFixed(4);
+arrProfit = fullProfit.toString().split('.');
+$('.winProfit').text('Итого: ' + arrProfit[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + '.' + arrProfit[1] + ' ₽');
+
+if (fullProfit > 0) {
+   $('.winProfit').css({color: '#116b0c'});  
+} else {
+   $('.winProfit').css({color: '#d9534e'});   
+}
+
+JS;
+$this->registerJs($script, View::POS_READY);
+
+    $GLOBALS['type_debt'] = $searchModel->type_debt;
+
+    $columns[] = [
+        'header' => 'Сумма',
+        'contentOptions' => ['style' => 'width: 360px'],
+        'filter' => Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']),
+        'value' => function ($data) {
+            $resProfit = 0;
+
+            $profitRes = [];
+            $profitResDes = [];
+
+                // Мы должны
+
+                if($GLOBALS['type_debt']) {
+
+                    // выбран поиск по услугам
+                    $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.partner_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.expense", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.expense) as profit')->column();
+                    // D
+                    $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.partner_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.partner_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.expense", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.expense) as profit')->column();
+
+                } else {
+                    $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.partner_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.expense", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.expense) as profit')->column();
+                    // D
+                    $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.partner_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.partner_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.expense", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.expense) as profit')->column();
+                }
+
+
+            if(count($profitRes) > 0) {
+                if(isset($profitRes[0])) {
+                    $resProfit += $profitRes[0];
+                }
+            }
+
+            // D
+            if(count($profitResDes) > 0) {
+                if(isset($profitResDes[0])) {
+                    $resProfit += $profitResDes[0];
+                }
+            }
+
+            return $resProfit;
+        },
+        'format' => 'html',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+    ];
+
+    $columnsCompany[] = [
+        'header' => 'Сумма',
+        'contentOptions' => ['style' => 'width: 360px'],
+        'filter' => Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']),
+        'value' => function ($data) {
+            $resProfit = 0;
+
+            $profitRes = [];
+            $profitResDes = [];
+
+                // Должники
+
+                if($GLOBALS['type_debt']) {
+
+                    // выбран поиск по услугам
+                    $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+                    // D
+                    $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['monthly_act.type_id' => $GLOBALS['type_debt']])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+
+                } else {
+                    $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+                    // D
+                    $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit')->column();
+                }
+
+
+            if(count($profitRes) > 0) {
+                if(isset($profitRes[0])) {
+                    $resProfit += $profitRes[0];
+                }
+            }
+
+            // D
+            if(count($profitResDes) > 0) {
+                if(isset($profitResDes[0])) {
+                    $resProfit += $profitResDes[0];
+                }
+            }
+
+            return $resProfit;
+        },
+        'format' => 'html',
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+    ];
+
+}
+
 if($searchModel->client_id) {
     $columns[] = [
+        'attribute' => 'act_date',
+        'label'     => 'Дата',
+        'filter'    => false,
+        'content'   => function ($data) {
+
+            // Фикс ошибки вывода даты на англ языке
+            $dataArr = explode('-', $data->dateFix());
+            if(count($dataArr) == 3) {
+
+                $monthName = [
+                    1 => ['Январь', 'Января', 'Январе'],
+                    2 => ['Февраль', 'Февраля', 'Феврале'],
+                    3 => ['Март', 'Марта', 'Марте'],
+                    4 => ['Апрель', 'Апреля', 'Апреле'],
+                    5 => ['Май', 'Мая', 'Мае'],
+                    6 => ['Июнь', 'Июня', 'Июне'],
+                    7 => ['Июль', 'Июля', 'Июле'],
+                    8 => ['Август', 'Августа', 'Августе'],
+                    9 => ['Сентябрь', 'Сентября', 'Сентябре'],
+                    10 => ['Октябрь', 'Октября', 'Октябре'],
+                    11 => ['Ноябрь', 'Ноября', 'Ноябре'],
+                    12 => ['Декабрь', 'Декабря', 'Декабре']
+                ];
+
+                $mountID = (int) $dataArr[1];
+                return $monthName[$mountID][0] . ' ' . $dataArr[0];
+            } else {
+                return Yii::$app->formatter->asDate($data->dateFix(), 'LLLL yyyy');
+            }
+
+        },
+    ];
+    $columnsCompany[] = [
         'attribute' => 'act_date',
         'label'     => 'Дата',
         'filter'    => false,
@@ -566,6 +734,19 @@ if($searchModel->client_id && (!$searchModel->type_id)) {
             return Company::$listType[$data->type_id]['ru'];
         },
     ];
+    $columnsCompany[] = [
+        'attribute'         => 'type_id',
+        'label'             => 'Услуга',
+        'filter'    => false,
+        'group'             => true,  // enable grouping
+        'options'           => ['class' => 'kv-grouped-header'],
+        'groupedRow'        => true,  // enable grouping
+        'groupOddCssClass'  => 'kv-group-header',  // configure odd group cell css class
+        'groupEvenCssClass' => 'kv-group-header', // configure even group cell css class
+        'content'           => function ($data) {
+            return Company::$listType[$data->type_id]['ru'];
+        },
+    ];
 }
 
 if($searchModel->client_id && $searchModel->type_id == Company::TYPE_DISINFECT) {
@@ -577,10 +758,26 @@ if($searchModel->client_id && $searchModel->type_id == Company::TYPE_DISINFECT) 
             return $data->service->description;
         },
     ];
+    $columnsCompany[] = [
+        'attribute' => 'service_id',
+        'filter'    => false,
+        'label'     => 'Услуга',
+        'content'   => function ($data) {
+            return $data->service->description;
+        },
+    ];
 }
 
 if($searchModel->client_id && $searchModel->type_id == Company::TYPE_SERVICE) {
     $columns[] = [
+        'attribute' => 'number',
+        'label'     => 'Номер',
+        'filter'    => false,
+        'content'   => function ($data) {
+            return $data->number;
+        },
+    ];
+    $columnsCompany[] = [
         'attribute' => 'number',
         'label'     => 'Номер',
         'filter'    => false,
@@ -752,6 +949,81 @@ $this->registerJs($script, View::POS_READY);
 
     ];
 
+    $columnsCompany[] = [
+        'attribute'     => 'profit',
+        'value'         => function ($data) {
+
+            if($data->type_id == 5) {
+
+                $profitRes = [];
+
+                    $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = ' . $data->service_id)->where(['AND', ['monthly_act.client_id' => $data->client_id], ['monthly_act.type_id' => 5], ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $GLOBALS['dateFrom'], $GLOBALS['dateTo']]])->andWhere(['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]])->select('SUM(act.income) as profit')->column();
+
+
+                if(count($profitRes) > 0) {
+                    if(isset($profitRes[0])) {
+                        return $profitRes[0];
+                    }
+                }
+
+                return 0;
+            } else {
+                return $data->profit;
+            }
+
+        },
+        'format'        => 'html',
+        'filter'    => ((Yii::$app->request->get('type') == 1) || (Yii::$app->request->get('type') == -1)) ? Html::textarea('', '',['class' => 'form-control searchPrice', 'rows' => 1, 'style' => 'resize: none; padding: 8px 2px;']) : false,
+        'pageSummary' => true,
+        'pageSummaryFunc' => GridView::F_SUM,
+    ];
+
+    $columnsCompany[] = [
+        'attribute' => 'payment_status',
+        'value' => function ($model, $key, $index, $column) {
+            return Html::activeDropDownList($model,
+                'payment_status',
+                MonthlyAct::$paymentStatus,
+                [
+                    'class'              => 'form-control change-payment_status',
+                    'data-id'            => $model->id,
+                    'data-paymentStatus' => $model->payment_status,
+                    'disabled'       => \Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : 'disabled',
+                ]
+
+            );
+        },
+        'filter' => false,
+        'format' => 'raw',
+        'contentOptions' => function ($model) {
+            return [
+                'class' => MonthlyAct::colorForPaymentStatus($model->payment_status),
+                'style' => 'width: 200px'
+            ];
+        },
+    ];
+
+    $columnsCompany[] = [
+        'attribute' => 'act_status',
+        'value' => function ($model, $key, $index, $column) {
+            return Html::activeDropDownList($model,
+                'act_status',
+                MonthlyAct::passActStatus($model->act_status),
+                [
+                    'class'          => 'form-control change-act_status',
+                    'data-id'        => $model->id,
+                    'data-actStatus' => $model->act_status,
+                    'disabled'       => \Yii::$app->user->identity->role == User::ROLE_ADMIN ? false : 'disabled',
+                ]);
+        },
+        'contentOptions' => function ($model) {
+            return ['class' => MonthlyAct::colorForStatus($model->act_status), 'style' => 'width: 240px'];
+        },
+        'filter' => false,
+        'format' => 'raw',
+
+    ];
+
 }
 
 if(!$searchModel->client_id) {
@@ -779,9 +1051,28 @@ if(!$searchModel->client_id) {
         'format'    => 'raw',
         'filter'    => false,
     ];
+
+    $columnsCompany[] = [
+        'label'     => '',
+        'contentOptions' => ['style' => 'width: 70px', 'align' => 'center'],
+        'content'   => function ($data) use ($type) {
+            return Html::a('<span class="glyphicon glyphicon-search"></span>',
+                \yii\helpers\Url::to([
+                    '/monthly-act/archive',
+                    'type'                        => $type,
+                    'company'                        => $GLOBALS['comopany'],
+                    'MonthlyActSearch[client_id]' => $data->client_id,
+                    'MonthlyActSearch[dateFrom]' => $GLOBALS['dateFrom'],
+                    'MonthlyActSearch[dateTo]' => $GLOBALS['dateTo'],
+                    'MonthlyActSearch[type_debt]' => $GLOBALS['type_debt']
+                ]));
+        },
+        'format'    => 'raw',
+        'filter'    => false,
+    ];
 }
 
-if($searchModel->client_id) {
+if($searchModel->client_id && Yii::$app->request->get('type') != -99) {
     echo GridView::widget([
         'id'               => 'monthly-act-grid',
         'dataProvider'     => $dataProvider,
@@ -829,7 +1120,7 @@ if($searchModel->client_id) {
         ],
         'columns'          => $columns,
     ]);
-} else {
+} else if (Yii::$app->request->get('type') != -99) {
     echo GridView::widget([
         'id'               => 'monthly-act-grid',
         'dataProvider'     => $dataProvider,
@@ -876,6 +1167,78 @@ if($searchModel->client_id) {
             ],
         ],
         'columns'          => $columns,
+    ]);
+}
+
+if(Yii::$app->request->get('type') == -99) {
+    echo GridView::widget([
+        'id'               => 'monthly-act-grid',
+        'dataProvider'     => $dataProvider,
+        'filterModel' => $searchModel,
+        'showPageSummary' => true,
+        'summary'          => false,
+        'emptyText'        => '',
+        'panel'            => [
+            'type'    => 'primary',
+            'heading' => 'Архив актов по партнерам',
+            'before'  => false,
+            'footer'  => false,
+            'after'   => false,
+        ],
+        'resizableColumns' => false,
+        'hover'            => false,
+        'striped'          => false,
+        'export'           => false,
+        'filterSelector'   => '.ext-filter',
+        'beforeHeader'     => [
+            [
+                'columns' => [
+                    [
+                        'content' => $filters,
+                        'options' => [
+                            'colspan' => count($columns),
+                            'style'   => 'vertical-align: middle',
+                            'class'   => 'kv-grid-group-filter period-select'
+                        ],
+                    ],
+                ],
+                'options' => ['class' => 'filters extend-header'],
+            ],
+            [
+                'columns' => [
+                    [
+                        'content' => '&nbsp',
+                        'options' => [
+                            'colspan' => count($columns),
+                        ]
+                    ]
+                ],
+                'options' => ['class' => 'kv-group-header'],
+            ],
+        ],
+        'columns'          => $columns,
+    ]);
+
+    echo GridView::widget([
+        'id'               => 'monthly-act-gridDuble',
+        'dataProvider'     => $dataProviderDuble,
+        'filterModel' => $searchModel,
+        'showPageSummary' => true,
+        'summary'          => false,
+        'emptyText'        => '',
+        'panel'            => [
+            'type'    => 'primary',
+            'heading' => 'Архив актов по компаниям',
+            'before'  => false,
+            'footer'  => false,
+            'after'   => false,
+        ],
+        'resizableColumns' => false,
+        'hover'            => false,
+        'striped'          => false,
+        'export'           => false,
+        'filterSelector'   => '.ext-filter',
+        'columns'          => $columnsCompany,
     ]);
 }
 

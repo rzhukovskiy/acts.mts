@@ -45,6 +45,13 @@ $items[] = [
     'active' => $type == -1 && !(Yii::$app->request->get('company')),
 ];
 
+$items[] = [
+    'label'  => 'Общее',
+    'url'    => ['archive', 'type' => -99,
+        'MonthlyActSearch[dateFrom]' => $searchModel->dateFrom,
+        'MonthlyActSearch[dateTo]' => $searchModel->dateTo],
+    'active' => $type == -99,
+];
 
 echo Tabs::widget([
     'items' => $items,
