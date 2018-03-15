@@ -2858,16 +2858,16 @@ class CompanyController extends Controller
 
         // победные
         if ($type == 1) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 21], ['purchase_status' => 22]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->orderBy('COUNT(site_address) DESC')->select(['site_address', 'link' => 'COUNT(site_address)']);
             // проигранные
         } else if ($type == 2) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 17], ['purchase_status' => 23]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->orderBy('COUNT(site_address) DESC')->select(['site_address', 'link' => 'COUNT(site_address)']);
             // отклоненные
         } else if ($type == 3) {
-            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            $dataProvider->query->andWhere(['OR', ['purchase_status' => 16], ['purchase_status' => 20]])->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->orderBy('COUNT(site_address) DESC')->select(['site_address', 'link' => 'COUNT(site_address)']);
             // общие
         } else {
-            $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->select(['site_address', 'link' => 'COUNT(site_address)']);
+            $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->groupBy('site_address')->orderBy('COUNT(site_address) DESC')->select(['site_address', 'link' => 'COUNT(site_address)']);
         }
 
         return $this->render('/stattender/statplace', [
@@ -2919,10 +2919,10 @@ class CompanyController extends Controller
 
                  // Возвратные
             if ($type == 1) {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->groupBy('site_address')->select(['site_address', 'send' => 'SUM(send)']);
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
                 // Невозвратные
             } else {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->groupBy('site_address')->select(['site_address', 'send' => 'SUM(send)']);
+                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
             }
 
 

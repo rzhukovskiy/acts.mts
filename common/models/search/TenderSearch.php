@@ -170,7 +170,7 @@ class TenderSearch extends Company
                     $query->orderBy('`tender`.`work_user_time`');
                 } else {
                     $query->groupBy('`tender`.`work_user_id`');
-                    $query->orderBy('`tender`.`work_user_id`');
+                    $query->orderBy('COUNT(Distinct `tender`.`id`) DESC');
                 }
 
                 $query->select('`tender`.`id` as `id`, `tender`.`customer` as `customer`, `tender`.`work_user_time` as `work_user_time`, `tender`.`work_user_id`, COUNT(Distinct `tender`.`id`) as `created_at`');

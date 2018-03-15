@@ -69,15 +69,9 @@ class DepartmentCompanySearch extends DepartmentCompany
         switch ($this->scenario) {
             case 'new':
 
-                $query->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->where(['OR', ['AND', '`department_company`.`remove_date` IS NULL', '`company`.`status` = 1'], ['AND', '`department_company`.`remove_date` IS NOT NULL', '`company`.`status` = 2']])->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 0])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+                $query->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->where(['OR', ['AND', '`department_company`.`remove_date` IS NULL', '`company`.`status` = 1'], ['AND', '`department_company`.`remove_date` IS NOT NULL', '`company`.`status` = 2']])->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 0])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`')->orderBy('COUNT(Distinct `department_company`.`company_id`) DESC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $this->dateFrom, $this->dateTo]);
-
-                $dataProvider->sort = [
-                    'defaultOrder' => [
-                        'user_id'    => SORT_DESC,
-                    ]
-                ];
 
                 break;
 
@@ -91,7 +85,7 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'new2':
 
-                $query->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`');
+                $query->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $this->type])->andWhere(['department_company.type_user' => 1])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`user_id`')->orderBy('COUNT(Distinct `department_company`.`company_id`) DESC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $this->dateFrom, $this->dateTo]);
 
@@ -113,7 +107,7 @@ class DepartmentCompanySearch extends DepartmentCompany
 
             case 'archive':
 
-                $query->where(['>', '`department_company`.`remove_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['department_company.type_user' => 0])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`remove_id`');
+                $query->where(['>', '`department_company`.`remove_id`', 0])->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $this->type])->andWhere(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['department_company.type_user' => 0])->select('`department_company`.*, `company`.`id`, `company`.`name`, COUNT(Distinct `department_company`.`company_id`) as companyNum')->groupBy('`department_company`.`remove_id`')->orderBy('COUNT(Distinct `department_company`.`company_id`) DESC');
 
                 $query->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $this->dateFrom, $this->dateTo]);
 
