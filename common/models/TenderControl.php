@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $tender_id
  * @property integer $user_id
+ * @property integer $is_archive
  * @property string $send
  * @property string $date_send
  * @property string $date_enlistment

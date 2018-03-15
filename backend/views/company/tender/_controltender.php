@@ -12,6 +12,7 @@ use common\models\User;
 
 $isAdmin = (\Yii::$app->user->identity->role == \common\models\User::ROLE_ADMIN) ? 1 : 0;
 $ajaxpaymentstatus = Url::to('@web/company/ajaxpaymentstatus');
+$controlisarchive = Url::to('@web/company/controlisarchive');
 
 $script = <<< JS
 // формат числа
@@ -79,8 +80,63 @@ $('.change-payment_status').change(function(){
             }
         });
     });
+
+var idKds = 0;
+// Клик отправить в архив
+$('.glyphicon-floppy-save').on('click', function(){
+    var checkIsArchive = confirm("Вы уверены, что хотите перенести в архив?");
+    idKds = $(this).data('id');
+    
+    if(checkIsArchive == true) { 
+       sendIsArchive();
+    }
+});
+
+// Клик отправить из архив
+$('.glyphicon-floppy-open').on('click', function(){
+    var checkIsArchive = confirm("Вы уверены, что хотите перенести в активные?");
+    idKds = $(this).data('id');
+    
+    if(checkIsArchive == true) {
+      sendIsArchive();
+     } 
+});
+
+function sendIsArchive() {
+          $.ajax({
+                type     :'POST',
+                cache    : true,
+                data: 'id=' + idKds,
+                url  : '$controlisarchive',
+                success  : function(data) {
+                    
+                var response = $.parseJSON(data);
+                
+                if (response.success == 'true') { 
+                // Удачно
+                
+                $('tr[data-key="' + idKds + '"]').hide();
+                
+                } else {
+                // Неудачно
+                }
+                
+                }
+                });
+}
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
+
+$css = "
+.glyphicon-floppy-save:hover {
+cursor:pointer;
+}
+.glyphicon-floppy-open:hover {
+cursor:pointer;
+}
+";
+$this->registerCss($css);
+
 // массив списков
 $arrayTenderList = TenderLists::find()->select('id, description, type')->orderBy('type, id')->asArray()->all();
 
@@ -422,11 +478,9 @@ if (isset($arrLists[9])){
                         },
                         'archive' => function ($url, $data, $key) {
                             if ($data->is_archive == 0) {
-                                return Html::a('<span class="glyphicon glyphicon-floppy-save" style="margin-left: 5px; font-size: 16px;"> </span>', ['/company/controlisarchive', 'id' => $data->id],
-                                    ['data-confirm' => "Вы уверены, что хотите перенести в архив?"]);
+                                return '<span class="glyphicon glyphicon-floppy-save" data-id="' . $data->id . '" style="margin-left: 5px; font-size: 16px;"></span>';
                             } else if (($data->is_archive == 1) && (Yii::$app->user->identity->role == User::ROLE_ADMIN)) {
-                                return Html::a('<span class="glyphicon glyphicon-floppy-open" style="margin-left: 5px; font-size: 16px;"> </span>', ['/company/controlisarchive', 'id' => $data->id, 'is_archive' => $data->is_archive],
-                                    ['data-confirm' => "Вы уверены, что хотите перенести в активные?"]);
+                                return '<span class="glyphicon glyphicon-floppy-open" data-id="' . $data->id . '" style="margin-left: 5px; font-size: 16px;"></span>';
                             } else {
                                 return '';
                             }

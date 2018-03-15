@@ -1261,23 +1261,22 @@ class CompanyController extends Controller
     public function actionControlisarchive()
     {
 
-        if (Yii::$app->request->get('id')) {
+        if(Yii::$app->request->post('id')) {
 
-            $id = Yii::$app->request->get('id');
-            $is_archive = Yii::$app->request->get('is_archive');
+            $id = Yii::$app->request->post('id');
 
             $model = TenderControl::findOne(['id' => $id]);
 
-            if ($is_archive == 1) {
-                $model->is_archive = 0;
-            } else {
+            if ($model->is_archive == 0) {
                 $model->is_archive = 1;
+            } else {
+                $model->is_archive = 0;
             }
 
             if ($model->save()) {
-                return $this->redirect(['company/controltender']);
+                echo json_encode(['success' => 'true']);
             } else {
-                return $this->redirect(['company/controltender']);
+                echo json_encode(['success' => 'false']);
             }
 
         } else {
