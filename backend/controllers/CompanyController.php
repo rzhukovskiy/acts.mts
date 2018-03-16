@@ -2922,10 +2922,10 @@ class CompanyController extends Controller
 
                  // Возвратные
             if ($type == 1) {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
+                $dataProvider->query->andWhere(['payment_status' => 1])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
                 // Невозвратные
             } else {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
+                $dataProvider->query->andWhere(['payment_status' => 0])->groupBy('site_address')->orderBy('SUM(send) DESC')->select(['site_address', 'send' => 'SUM(send)']);
             }
 
 
