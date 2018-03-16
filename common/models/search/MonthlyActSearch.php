@@ -220,7 +220,7 @@ class MonthlyActSearch extends MonthlyAct
                 if($this->type_debt) {
                     $query->andWhere('(company.client_id = act.partner_id) AND (company.payment_status=0) AND (act.expense > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['company.type_id' => $this->type_debt])->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
                 } else {
-                    $query->andWhere('(company.client_id = act.partner_id) AND (company.payment_status=0) AND (act.expense > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                    $query->andWhere('(company.client_id = act.partner_id) AND (company.payment_status=0) AND (act.expense > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']])->andWhere(['!=', 'company.type_id', Company::TYPE_PENALTY]);
                 }
 
             }
@@ -234,7 +234,7 @@ class MonthlyActSearch extends MonthlyAct
                 if($this->type_debt) {
                     $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['company.type_id' => $this->type_debt])->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
                 } else {
-                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']])->andWhere(['!=', 'company.type_id', Company::TYPE_PENALTY]);
                 }
                 // Должники
 
@@ -338,7 +338,7 @@ class MonthlyActSearch extends MonthlyAct
                 if($this->type_debt) {
                     $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['company.type_id' => $this->type_debt])->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
                 } else {
-                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']]);
+                    $query->andWhere('(company.client_id = act.client_id) AND (company.payment_status=0) AND (act.income > 0) AND (act.service_type=company.type_id) AND (date_format(FROM_UNIXTIME(`act`.`served_at`), "%Y-%m-00")= company.act_date)')->andWhere(['OR', ['AND', ['!=', 'company.type_id', 3], ['!=', 'company.act_date', (date("Y-m") . '-00')]], ['AND', ['company.type_id' => 3], '`act`.`id`=`company`.`act_id`']])->andWhere(['!=', 'company.type_id', Company::TYPE_PENALTY]);
                 }
                 // Должники
 

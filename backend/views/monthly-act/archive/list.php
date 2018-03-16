@@ -208,7 +208,9 @@ if(($type == 1) || ($type == -1) || ($type == -99)) {
     $arrCompany = [];
     foreach (Company::$listType as $key => $value) {
         if ($key > 1) {
+            if ($key != Company::TYPE_PENALTY) {
             $arrCompany[$key] = $value['ru'];
+            }
         }
     }
 
