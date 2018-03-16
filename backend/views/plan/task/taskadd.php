@@ -42,7 +42,7 @@ $script = <<< JS
     // добавляем кнопку поиск
    $('.field-taskuser-for_user').html('<span class="btn btn-warning btn-sm searchButtom">Поиск</span>' + $('.field-taskuser-for_user').html()); 
    // добавляем скрытое поле поиска
-   $('.field-taskuser-for_user div').html('<input id="searchText" style="display: none; margin-bottom: 20px;" type="text" class="form-control" name="searchText" placeholder="Поиск мойки">' + $('.field-taskuser-for_user div').html());
+   $('.field-taskuser-for_user div').html('<input id="searchText" style="display: none; margin-bottom: 20px;" type="text" class="form-control" name="searchText" placeholder="Поиск пользователя">' + $('.field-taskuser-for_user div').html());
    // открываем скрытое поле поиска
    $('.searchButtom').on('click', function() {
     
@@ -67,15 +67,15 @@ $script = <<< JS
              if ($(this).val() !== '') {
              $(this).contents().unwrap().wrap('<input value='+ thisvalue + '>');
              }
-     });
+         });
 
-           $.each(arr3,function(key,data) {
+         $.each(arr3,function(key,data) {
                
                   if ((data.toString().toLowerCase()).indexOf(nowValue) !== -1) {
                       $('#taskuser-for_user input[value="' + key + '"]').contents().unwrap().wrap('<option value='+ key + '>');
                   } 
                   
-                });  
+         });  
        
 });
 JS;
