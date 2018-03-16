@@ -192,6 +192,103 @@ if (isset($arrLists[9])){
     asort($arrtype);
 }
 
+/**
+ * Виджет выбора диапазона дат
+ */
+
+$halfs = [
+    '1е полугодие',
+    '2е полугодие'
+];
+$quarters = [
+    '1й квартал',
+    '2й квартал',
+    '3й квартал',
+    '4й квартал',
+];
+$months = [
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
+];
+
+$ts1 = strtotime($searchModel->dateFrom);
+$ts2 = strtotime($searchModel->dateTo);
+
+$year1 = date('Y', $ts1);
+$year2 = date('Y', $ts2);
+
+$month1 = date('m', $ts1);
+$month2 = date('m', $ts2);
+
+$diff = (($year2 - $year1) * 12) + ($month2 - $month1);
+switch ($diff) {
+    case 1:
+        $period = 1;
+        break;
+    case 3:
+        $period = 2;
+        break;
+    case 6:
+        $period = 3;
+        break;
+    case 12:
+        $period = 4;
+        break;
+    default:
+        $period = 0;
+}
+$rangeYear = range(date('Y') - 10, date('Y'));
+$currentYear = isset($searchModel->dateFrom)
+    ? date('Y', strtotime($searchModel->dateFrom))
+    : date('Y');
+
+$currentMonth = isset($searchModel->dateFrom)
+    ? date('n', strtotime($searchModel->dateFrom))
+    : date('n');
+$currentMonth--;
+
+$filters = '';
+$periodForm = '';
+$periodForm .= Html::dropDownList('period', $period, \common\models\Tender::$periodList, [
+    'class' =>'select-period form-control',
+    'style' => 'margin-right: 10px;'
+]);
+$periodForm .= Html::dropDownList('month', $currentMonth, $months, [
+    'id' => 'month',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 1 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('half', $currentMonth < 5 ? 0 : 1, $halfs, [
+    'id' => 'half',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 6 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('quarter', floor($currentMonth / 3), $quarters, [
+    'id' => 'quarter',
+    'class' => 'autoinput form-control',
+    'style' => $diff == 3 ? '' : 'display:none'
+]);
+$periodForm .= Html::dropDownList('year', array_search($currentYear, $rangeYear), range(date('Y') - 10, date('Y')), [
+    'id' => 'year',
+    'class' => 'autoinput form-control',
+    'style' => $diff && $diff <= 12 ? '' : 'display:none'
+]);
+$periodForm .= Html::activeTextInput($searchModel, 'dateFrom', ['class' => 'date-from ext-filter hidden']);
+$periodForm .= Html::activeTextInput($searchModel, 'dateTo',  ['class' => 'date-to ext-filter hidden']);
+$periodForm .= Html::submitButton('Показать', ['class' => 'btn btn-primary date-send', 'style' => 'margin-left: 10px;']);
+
+$filters = 'Выбор периода: ' . $periodForm;
+
 ?>
 
 <div class="panel panel-primary">
@@ -208,9 +305,37 @@ if (isset($arrLists[9])){
             'striped' => false,
             'export' => false,
             'summary' => false,
+            'resizableColumns' => false,
             'showPageSummary' => true,
             'emptyText' => '',
             'layout' => '{items}',
+            'filterSelector' => '.ext-filter',
+            'beforeHeader' => [
+                [
+                    'columns' => [
+                        [
+                            'content' => $filters,
+                            'options' => [
+                                'style' => 'vertical-align: middle',
+                                'colspan' => 15,
+                                'class' => 'kv-grid-group-filter',
+                            ],
+                        ]
+                    ],
+                    'options' => ['class' => 'extend-header'],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'content' => '&nbsp',
+                            'options' => [
+                                'colspan' => 15,
+                            ]
+                        ]
+                    ],
+                    'options' => ['class' => 'kv-group-header'],
+                ],
+            ],
             'columns' => [
                 [
                     'header' => '№',

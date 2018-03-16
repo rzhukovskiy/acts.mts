@@ -49,7 +49,7 @@ class TenderControlSearch extends TenderControl
     {
         // bypass scenarios() implementation in the parent class
         return [
-            'all' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'site_address'],
+            'all' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'site_address', 'dateFrom', 'dateTo', 'period'],
             'statprice' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
             'default' => ['user_id', 'site_address', 'type_payment', 'is_archive', 'send', 'tender_return', 'date_send', 'date_enlistment', 'money_unblocking', 'date_return', 'customer', 'purchase', 'dateFrom', 'dateTo', 'period'],
         ];
@@ -101,6 +101,16 @@ class TenderControlSearch extends TenderControl
                     'is_archive' => $this->is_archive,
                     'site_address' => $this->site_address,
                 ]);
+
+                // Если период не задан то задаем 10 лет.
+                if ((!isset($this->dateFrom)) && (!isset($this->dateTo))) {
+                    $this->dateFrom = (((int) date('Y', time())) - 10) . '-12-31T21:00:00.000Z';
+                    $this->dateTo = (((int) date('Y', time())) + 1) . '-12-31T21:00:00.000Z';
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $this->dateFrom, $this->dateTo]);
+
+                } else {
+                    $query->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $this->dateFrom, $this->dateTo]);
+                }
 
                 $query->andFilterWhere(['like', 'send', $this->send])
                     ->andFilterWhere(['like', 'customer', $this->customer])

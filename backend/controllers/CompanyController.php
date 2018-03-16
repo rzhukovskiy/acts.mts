@@ -2948,10 +2948,10 @@ class CompanyController extends Controller
 
             // Возвратные
             if ($type == 1) {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 1])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
+                $dataProvider->query->andWhere(['payment_status' => 1])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
                 // Невозвратные
             } else {
-                $dataProvider->query->andWhere(['AND', ['!=', 'site_address', ''], ['!=', 'site_address', 76]])->andWhere(['payment_status' => 0])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
+                $dataProvider->query->andWhere(['payment_status' => 0])->andWhere(['site_address' => $site_address])->andWhere(['between', "DATE(FROM_UNIXTIME(date_send))", $searchModel->dateFrom, $searchModel->dateTo]);
             }
 
 
