@@ -1591,7 +1591,7 @@ class EmailController extends Controller
             // Юля
             Yii::$app->mailer->compose()
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
-                ->setTo('merkulova@mtransservice.ru')
+                ->setTo('merkulova.mtransservice@mail.ru')
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
                 ->setHtmlBody($resText)->send();
 

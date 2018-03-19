@@ -16,6 +16,10 @@ $actionLinkCompare = Url::to('@web/company/comparewintender');
 $nowMonth = date('n', strtotime("-1 month"));
 $nowYear = date('Y', time());
 
+$GLOBALS['userList'] = $userList;
+$GLOBALS['type'] = $type;
+$dubleUserList = json_encode($userList);
+
 if (Yii::$app->controller->action->id == 'statwintender') {
     $script = <<< JS
 // формат числа
@@ -96,13 +100,14 @@ function sendCompare() {
          
                 type     :'POST',
                 cache    : true,
-                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrMonthYears=' + JSON.stringify(arrMonthYears),
+                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrMonthYears=' + JSON.stringify(arrMonthYears) + '&type=' + '$type',
                 url  : '$actionLinkCompare',
                 success  : function(data) {
                 var resTables = "";
-                var reswash = [];
+                var resUser = [];
                 var resall = "";
                 var arrKey = [];
+                var userList = $dubleUserList;
                 var response = $.parseJSON(data);
                
                 var countServe = '';
@@ -136,8 +141,7 @@ function sendCompare() {
                 oldvalue[6] = [];
                 oldvalue[6]['1'] = '';
                 
-                var splitFloat = "";
-                var splitInt = "";
+                var oldId = '';
                 
                var sumArr = [];
       
@@ -152,67 +156,77 @@ function sendCompare() {
                  });
                  
                 $.each(arr,function(key,data) {
+                    
+                   if (oldId != key) {
+                      oldvalue[2]['1'] = ''; 
+                   }
+                    
                    
-                 $.each(data, function(index,value) {
-                    
-                        if(!sumArr[index]) {
-                            sumArr[index] = [];
-                        }
-                     
-                        if(!sumArr[index]['countServe']) {
-                            sumArr[index]['countServe'] = 0;
-                        }
+                     $.each(data, function(index,value) {
                         
-                        sumArr[index]['countServe'] += parseFloat(value['countServe']);
-                        sumArr[index]['served_at'] = value['served_at'];
-                     i = 0;
-                     $.each(arrKey, function(nomber,id) {
-                    
-                     if (key == id) {
-                        
-                        if(oldvalue[2]['1'] != '') {
-                        if (oldvalue[2]['1'] > parseFloat(value['countServe'])) {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[2]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
-                        } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[2]['1'])/oldvalue[2]['1']*100).toFixed(1))  + '%</span>';
-                        }
-                        } else {
-                           countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
-                        }
-                       
-                        oldvalue[2]['1'] = parseFloat(value['countServe']);
-                        
-                        var dateShow = new Date(parseInt(value['served_at']) * 1000);
-                        
-                           reswash[id].push("<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>");
-                       
-                     }
-                     i++;
-                     });
-                     
-                            });
-                 
-
-                 
-                    });
-                
-                console.log(reswash);
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>" + '123' + "</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>Месяц</td><td>Количество</td></tr>" + reswash + "</table></br>";
-
-                        $.each(sumArr, function(index,value) {
-                       
-                         if (typeof sumArr[index] !== 'undefined' && sumArr[index] !== null) {
+                            if(!sumArr[index]) {
+                                sumArr[index] = [];
+                            }
                          
-                         if(oldvalue[6]['1'] != '') {
-                        if (oldvalue[6]['1'] > parseFloat(value['countServe'])) {
-                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
-                        } else {
-                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
-                        }
-                        } else {
-                           countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
-                        }
+                            if(!sumArr[index]['countServe']) {
+                                sumArr[index]['countServe'] = 0;
+                            }
+                            
+                            sumArr[index]['countServe'] += parseFloat(value['countServe']);
+                            sumArr[index]['served_at'] = value['served_at'];
+                            
+                         $.each(arrKey, function(number,id) {
                         
+                             if (key == id) {
+                                
+                                if(oldvalue[2]['1'] != '') {
+                                if (oldvalue[2]['1'] > parseFloat(value['countServe'])) {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[2]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                } else {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[2]['1'])/oldvalue[2]['1']*100).toFixed(1))  + '%</span>';
+                                }
+                                } else {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                                }
+                               
+                                oldvalue[2]['1'] = parseFloat(value['countServe']);
+                                
+                                var dateShow = new Date(parseInt(value['served_at']) * 1000);
+                                
+                                if (typeof resUser[id] !== 'undefined' && resUser[id] !== null) {
+                                   resUser[id] += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>";
+                                } else {
+                                   resUser[id] = "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>"; 
+                                }
+                               
+                             }
+                         });
+                         
+                     });
+                     oldId = key;
+                });
+                
+                $.each(resUser, function(index,value) {
+                    if (value) {
+                        resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>" + userList[index] + "</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>Месяц</td><td>Количество</td></tr>" + value + "</table></br>";  
+                    }
+                });
+                
+
+                    $.each(sumArr, function(index,value) {
+                       
+                       if (typeof sumArr[index] !== 'undefined' && sumArr[index] !== null) {
+                         
+                            if(oldvalue[6]['1'] != '') {
+                                if (oldvalue[6]['1'] > parseFloat(value['countServe'])) {
+                                   countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                } else {
+                                   countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                }
+                            } else {
+                               countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            }
+                            
                         oldvalue[6]['1'] = parseFloat(value['countServe']);
                         
                         var dateShow = new Date(parseInt(value['served_at']) * 1000);
@@ -220,22 +234,17 @@ function sendCompare() {
                             resall += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>";
                         
                          }
-                         });
+                    });
                         
-                    var nameColomn = "";
-                    nameColomn = 'Месяц';
-                    
-                   
-                   
                      if (resall.length > 0) {
-                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Общая</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>" + nameColomn + "</td><td>Количество</td></tr>" + resall +"</table></br>";
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Общая</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>Месяц</td><td>Количество</td></tr>" + resall +"</table></br>";
                      }
                 
                     $('.place_list').html(resTables);
                     
                 } else {
                 // Неудачно
-                $('.place_list').html();
+                $('.place_list').html('Попробуйте выбрать другие месяца');
                 }
                 
                 }
@@ -244,8 +253,12 @@ function sendCompare() {
 JS;
 $this->registerJs($script, \yii\web\View::POS_READY);
 
-$GLOBALS['userList'] = $userList;
-$GLOBALS['type'] = $type;
+$css = ".modal {
+    overflow-y: auto;
+    font-size:17px;
+}
+";
+$this->registerCss($css);
 
 if ($type == 1) {
     $name = 'Выигранные';

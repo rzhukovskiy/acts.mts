@@ -3024,14 +3024,26 @@ class CompanyController extends Controller
 
     public function actionComparewintender()
     {
-        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrMonthYears')) {
+        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrMonthYears') || Yii::$app->request->post('type')) {
             $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
             $arrMonthYears = json_decode(Yii::$app->request->post("arrMonthYears"));
+            $type = json_decode(Yii::$app->request->post("type"));
             $ressArray =[];
+            $query = [];
 
                 for ($i = 0; $i < count($arrMonth); $i++) {
+                    if ($type == 1) {
+                        $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `user_id`, date_request_end AS served_at FROM `tender` WHERE MONTH(FROM_UNIXTIME(date_request_end)) ='" . $arrMonth[$i] . "' AND YEAR(FROM_UNIXTIME(date_request_end)) ='" . $arrMonthYears[$i] . "' AND ((`purchase_status`=21) OR (`purchase_status`=22)) GROUP BY `user_id`");
+                    }
 
-                    $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `user_id`, date_request_end AS served_at FROM `tender` WHERE MONTH(FROM_UNIXTIME(date_request_end)) ='" . $arrMonth[$i] . "' AND YEAR(FROM_UNIXTIME(date_request_end)) ='" . $arrMonthYears[$i] . "' GROUP BY `user_id`");
+                    if ($type == 2) {
+                        $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `user_id`, date_request_end AS served_at FROM `tender` WHERE MONTH(FROM_UNIXTIME(date_request_end)) ='" . $arrMonth[$i] . "' AND YEAR(FROM_UNIXTIME(date_request_end)) ='" . $arrMonthYears[$i] . "' AND ((`purchase_status`=16) OR (`purchase_status`=17) OR (`purchase_status`=20) OR (`purchase_status`=23)) GROUP BY `user_id`");
+                    }
+
+                    if ($type == 3) {
+                        $query = Yii::$app->db->createCommand("SELECT COUNT(id) AS countServe, `user_id`, date_request_end AS served_at FROM `tender` WHERE MONTH(FROM_UNIXTIME(date_request_end)) ='" . $arrMonth[$i] . "' AND YEAR(FROM_UNIXTIME(date_request_end)) ='" . $arrMonthYears[$i] . "' GROUP BY `user_id`");
+
+                    }
                     $queryArray = $query->queryAll();
 
                     for ($j = 0; $j < count($queryArray); $j++) {

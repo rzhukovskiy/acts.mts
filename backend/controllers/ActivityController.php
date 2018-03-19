@@ -33,17 +33,17 @@ class ActivityController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_ADMIN],
                     ],
                     [
-                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_MANAGER],
                     ],
                     [
-                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender'],
+                        'actions' => ['new', 'shownew', 'new2', 'shownew2', 'archive', 'showarchive', 'tender', 'showtender', 'compare'],
                         'allow' => true,
                         'roles' => [User::ROLE_WATCHER],
                     ],
@@ -347,6 +347,60 @@ class ActivityController extends Controller
             'listType' => $listType,
             'type' => $type,
         ]);
+
+    }
+
+    public function actionCompare()
+    {
+
+        if (Yii::$app->request->post('arrMonth') || Yii::$app->request->post('arrMonthYears') || Yii::$app->request->post('type') || Yii::$app->request->post('category')) {
+            $arrMonth = json_decode(Yii::$app->request->post("arrMonth"));
+            $arrMonthYears = json_decode(Yii::$app->request->post("arrMonthYears"));
+            $type = json_decode(Yii::$app->request->post("type"));
+            $category = json_decode(Yii::$app->request->post("category"));
+
+            $ressArray = [];
+            $queryArray = [];
+            $text = '';
+
+            for ($i = 0; $i < count($arrMonth); $i++) {
+                if (strlen($arrMonth[$i]) < 2) {
+                    $text = '0';
+                }
+                $date = $arrMonthYears[$i] . '-' . $text . $arrMonth[$i];
+                $dateStart = $date . '-01T00:00:00.000Z';
+                $dateFinal = $date . '-' . date('t', strtotime($date)) . 'T21:00:00.000Z';
+
+                // категория заявки
+                if ($category == 1) {
+                $queryArray = DepartmentCompany::find()->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->where(['OR', ['AND', '`department_company`.`remove_date` IS NULL', '`company`.`status` = 1'], ['AND', '`department_company`.`remove_date` IS NOT NULL', '`company`.`status` = 2']])->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $type])->andWhere(['department_company.type_user' => 0])->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $dateStart, $dateFinal])->select('department_company.user_id, company.created_at AS served_at, COUNT(Distinct `department_company`.`company_id`) as countServe')->groupBy('`department_company`.`user_id`')->asArray()->all();
+                }
+                // категория заявки 2
+                if ($category == 2) {
+                    $queryArray = DepartmentCompany::find()->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere('`department_company`.`user_id` > 0')->andWhere(['`company`.`type`' => $type])->andWhere(['department_company.type_user' => 1])->andWhere(['between', "DATE(FROM_UNIXTIME(`company`.`created_at`))", $dateStart, $dateFinal])->select('department_company.user_id, company.created_at AS served_at, COUNT(Distinct `department_company`.`company_id`) as countServe')->groupBy('`department_company`.`user_id`')->asArray()->all();
+                }
+                // категория архив
+                if ($category == 3) {
+                    $queryArray = DepartmentCompany::find()->innerJoin('company', '`company`.`id` = `department_company`.`company_id`')->andWhere(['>', '`department_company`.`remove_id`', 0])->andWhere(['not', ['`department_company`.`remove_date`' => null]])->andWhere(['`company`.`type`' => $type])->andWhere(['OR', ['`company`.`status`' => 2], ['`company`.`status`' => 10]])->andWhere(['department_company.type_user' => 0])->andWhere(['between', "DATE(FROM_UNIXTIME(`department_company`.`remove_date`))", $dateStart, $dateFinal])->select('department_company.user_id, department_company.remove_date AS served_at, COUNT(Distinct `department_company`.`company_id`) as countServe')->groupBy('`department_company`.`remove_id`')->orderBy('COUNT(Distinct `department_company`.`company_id`) DESC')->asArray()->all();
+                }
+                // категория тендеры
+                if ($category == 4) {
+                    $queryArray = Tender::find()->innerJoin('department_user', '`department_user`.`user_id` = `tender`.`work_user_id`')->andWhere(['department_id' => $type])->andWhere(['between', "DATE(FROM_UNIXTIME(work_user_time))", $dateStart, $dateFinal])->groupBy('`tender`.`work_user_id`')->select('tender.work_user_id as user_id, work_user_time AS served_at, COUNT(Distinct `tender`.`id`) as countServe')->asArray()->all();
+                }
+
+                for ($j = 0; $j < count($queryArray); $j++) {
+                    $arr = $queryArray[$j];
+                    $index = $arr['user_id'];
+                    $indexM = $arrMonth[$i];
+                    $ressArray[$index][$indexM]['countServe'] = $arr['countServe'];
+                    $ressArray[$index][$indexM]['served_at'] = $arr['served_at'];
+                }
+            }
+
+            return json_encode(['result' => json_encode($ressArray), 'success' => 'true']);
+        } else {
+            return json_encode(['success' => 'false']);
+        }
 
     }
 

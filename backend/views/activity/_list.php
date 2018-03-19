@@ -4,9 +4,239 @@ use yii\helpers\Html;
 use common\models\DepartmentCompany;
 use kartik\grid\GridView;
 use common\assets\CanvasJs\CanvasJsAsset;
+use yii\helpers\Url;
+use yii\bootstrap\Modal;
 
 CanvasJsAsset::register($this);
 
+$actionLinkCompare = Url::to('@web/activity/compare');
+$nowMonth = date('n', strtotime("-1 month"));
+$nowYear = date('Y', time());
+$dubleUserList = json_encode($authorMembers);
+
+$category = 0;
+if(Yii::$app->controller->action->id == 'new') {
+    $category = 1;
+} else if (Yii::$app->controller->action->id == 'new2') {
+    $category = 2;
+} else if (Yii::$app->controller->action->id == 'archive') {
+    $category = 3;
+} else if (Yii::$app->controller->action->id == 'tender') {
+    $category = 4;
+}
+
+$script = <<< JS
+// сравнения
+var arrMonth = [];
+var arrMonthYears = [];
+
+// открываем модальное окно сравнения по месяцу
+$('.compare').on('click', function() {
+    $('#showListsName').modal('show');
+    // убираем галочки
+    $('input[type="checkbox"]').removeAttr('checked');
+    $('input[type="checkbox"][value="$nowMonth"]').prop('checked','checked');
+    
+    //сбрасываем селектор
+    arrMonthYears = [];
+    arrMonth = [];
+    var now = new Date();
+    var yearM = now.getFullYear();
+    $('.yearMonth').val(yearM);
+    
+});
+
+// Нажимаем на кнопку сравнить В месяцах
+
+$('.addNewItem').on('click', function() {
+    
+    arrMonth = [];
+    $('#showListsName').modal('hide');
+    
+        var selectMonth = 1;
+    
+       $('.monthList').each(function (value) {
+      if ($(this).is(':checked')) {
+          arrMonth.push($(this).val());
+          
+          if($("#yearOnMonth[data-month='" + selectMonth + "']") != "undefined" && $("#yearOnMonth[data-month='" + selectMonth + "']") !== null) {  
+          arrMonthYears.push($("#yearOnMonth[data-month='" + selectMonth + "']").val());
+          }
+          
+     }
+     selectMonth++;
+       
+});
+      sendCompare();
+    $('#showSettingsList').modal('show');
+});                                              
+
+function sendCompare() {
+          $.ajax({
+         
+                type     :'POST',
+                cache    : true,
+                data: 'arrMonth=' + JSON.stringify(arrMonth) + '&arrMonthYears=' + JSON.stringify(arrMonthYears) + '&type=' + '$type' + '&category=' + '$category',
+                url  : '$actionLinkCompare',
+                success  : function(data) {
+                var resTables = "";
+                var resUser = [];
+                var resall = "";
+                var arrKey = [];
+                var userList = $dubleUserList;
+                var response = $.parseJSON(data);
+               
+                var countServe = '';
+                
+                var month = [];
+                month['1'] = "Январь";
+                month['2'] = "Февраль";
+                month['3'] = "Март";
+                month['4'] = "Апрель";
+                month['5'] = "Май";
+                month['6'] = "Июнь";
+                month['7'] = "Июль";
+                month['8'] = "Август";
+                month['9'] = "Сентябрь";
+                month['10'] = "Октябрь";
+                month['11'] = "Ноябрь";
+                month['12'] = "Декабрь";
+                               
+                var today = new Date();
+                var yr = today.getFullYear();
+                var year = [];
+                var i = 0;
+                year[yr] = yr;
+                for (i = 10; i > 0; i--) {
+                year[yr-i] = yr - i;
+                }
+                
+                var oldvalue = [];
+                oldvalue[2] = [];
+                oldvalue[2]['1'] = '';
+                oldvalue[6] = [];
+                oldvalue[6]['1'] = '';
+                
+                var oldId = '';
+                
+               var sumArr = [];
+      
+                if (response.success == 'true') {
+                  
+                // Удачно
+                var arr = $.parseJSON(response.result);
+                
+               
+                 i = 0;
+                 $.each(arr,function(key) {
+                     arrKey[i] = key;
+                     i++;
+                 });
+                 
+                $.each(arr,function(key,data) {
+                    
+                   if (oldId != key) {
+                      oldvalue[2]['1'] = ''; 
+                   }
+                    
+                   
+                     $.each(data, function(index,value) {
+                        
+                            if(!sumArr[index]) {
+                                sumArr[index] = [];
+                            }
+                         
+                            if(!sumArr[index]['countServe']) {
+                                sumArr[index]['countServe'] = 0;
+                            }
+                            
+                            sumArr[index]['countServe'] += parseFloat(value['countServe']);
+                            sumArr[index]['served_at'] = value['served_at'];
+                            
+                         $.each(arrKey, function(number,id) {
+                        
+                             if (key == id) {
+                                
+                                if(oldvalue[2]['1'] != '') {
+                                if (oldvalue[2]['1'] > parseFloat(value['countServe'])) {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[2]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                } else {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' +  Math.abs(((value['countServe'] - oldvalue[2]['1'])/oldvalue[2]['1']*100).toFixed(1))  + '%</span>';
+                                }
+                                } else {
+                                   countServe = value['countServe'].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                                }
+                               
+                                oldvalue[2]['1'] = parseFloat(value['countServe']);
+                                
+                                var dateShow = new Date(parseInt(value['served_at']) * 1000);
+                                
+                                if (typeof resUser[id] !== 'undefined' && resUser[id] !== null) {
+                                   resUser[id] += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>";
+                                } else {
+                                   resUser[id] = "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>"; 
+                                }
+                               
+                             }
+                         });
+                         
+                     });
+                     oldId = key;
+                });
+                
+                $.each(resUser, function(index,value) {
+                    if (value) {
+                        resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>" + userList[index] + "</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>Месяц</td><td>Количество</td></tr>" + value + "</table></br>";  
+                    }
+                });
+                
+
+                    $.each(sumArr, function(index,value) {
+                       
+                       if (typeof sumArr[index] !== 'undefined' && sumArr[index] !== null) {
+                         
+                            if(oldvalue[6]['1'] != '') {
+                                if (oldvalue[6]['1'] > parseFloat(value['countServe'])) {
+                                   countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:red;">&#8595 </span><span style="color:red; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                } else {
+                                   countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ") + ' <span style="color:green;">&#8593 </span><span style="color:green; font-size:13px;">' + Math.abs(((value['countServe'] - oldvalue[6]['1'])/value['countServe']*100).toFixed(1)) + '%</span>';
+                                }
+                            } else {
+                               countServe = value['countServe'].toFixed(0).replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g,"\$1 ");
+                            }
+                            
+                        oldvalue[6]['1'] = parseFloat(value['countServe']);
+                        
+                        var dateShow = new Date(parseInt(value['served_at']) * 1000);
+                        
+                            resall += "<tr><td>" + month[index] + ' ' + dateShow.getFullYear() + "</td><td>" + countServe + "</td></tr>";
+                        
+                         }
+                    });
+                        
+                     if (resall.length > 0) {
+                     resTables += "<table border='1' width='100%' bordercolor='#dddddd'><tr height='25px'><td colspan='5' align='center' style='color: #000000;'>Общая</td></tr><tr height='25px' style='background:#dff0d8;'><td style='width:300px;'>Месяц</td><td>Количество</td></tr>" + resall +"</table></br>";
+                     }
+                
+                    $('.place_list').html(resTables);
+                    
+                } else {
+                // Неудачно
+                $('.place_list').html('Попробуйте выбрать другие месяца');
+                }
+                
+                }
+                });
+}
+JS;
+$this->registerJs($script, \yii\web\View::POS_READY);
+
+$css = ".modal {
+    overflow-y: auto;
+    font-size:17px;
+}
+";
+$this->registerCss($css);
 ?>
 
 <div class="panel panel-primary">
@@ -131,7 +361,7 @@ CanvasJsAsset::register($this);
                     [
                         'columns' => [
                             [
-                                'content' => $filters,
+                                'content' => $filters . '<span class="pull-right btn btn-warning btn-sm compare" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Сравнение по месяцу</span>',
                                 'options' => [
                                     'style' => 'vertical-align: middle',
                                     'colspan' => 3,
@@ -213,7 +443,7 @@ CanvasJsAsset::register($this);
                     [
                         'columns' => [
                             [
-                                'content' => $filters,
+                                'content' => $filters . '<span class="pull-right btn btn-warning btn-sm compare" style="padding: 6px 8px; margin-top: 2px; border:1px solid #c18431;">Сравнение по месяцу</span>',
                                 'options' => [
                                     'style' => 'vertical-align: middle',
                                     'colspan' => 3,
@@ -649,6 +879,7 @@ CanvasJsAsset::register($this);
 
 <?php
 
+
 echo "<div class=\"grid-view hide-resize\"><div class=\"panel panel-primary\" style='padding: 10px;'><div id=\"chart_div\" style=\"width:100%;height:500px;\"></div></div></div>";
 
 $js = "";
@@ -853,4 +1084,70 @@ if((Yii::$app->controller->action->id == 'new') || (Yii::$app->controller->actio
 
 $this->registerJs($js);
 
+// Модальное окно месяца
+$modalListsName = Modal::begin([
+    'header' => '<h5>Выбор месяца</h5>',
+    'id' => 'showListsName',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-sm',
+]);
+
+// Вывод селектора для года
+$select = [];
+
+for ($j = 1; $j <= 12; $j++) {
+
+    $yearOnMonth = "";
+
+    for ($i = 10; $i > 0; $i--) {
+        $yearOnMonth .= "<option value='" . date('Y', strtotime("-$i year")) . "'>" . date('Y', strtotime("-$i year")) . "</option>";
+    }
+
+    $nowYearOnMonth = "<option selected value='" . date('Y', time()) . "'>" . date('Y', time()) . "</option>";
+    $select[$j] = "<select id='yearOnMonth' class='yearMonth' data-month='" . $j . "'>$yearOnMonth $nowYearOnMonth</select>";
+
+}
+
+echo "<table><tr><td><input type='checkbox' class='monthList' value='1'> Январь </td><td>" . $select[1] . "</td></tr>" . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='2'> Февраль </td><td>" . $select[2] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='3'> Март </td><td>" . $select[3] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='4'> Апрель </td><td>" . $select[4] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='5'> Май </td><td>" . $select[5] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='6'> Июнь </td><td>" . $select[6] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='7'> Июль </td><td>" . $select[7] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='8'> Август </td><td>" . $select[8] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='9'> Сентябрь </td><td>" . $select[9] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='10'> Октябрь </td><td>" . $select[10] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='11'> Ноябрь </td><td>" . $select[11] . "</td></tr>";
+
+echo "<tr><td><input type='checkbox' class='monthList' value='12'> Декабрь </td><td>" . $select[12] . "</td></tr></table>";
+
+echo "</br><span class='btn btn-primary btn-sm addNewItem'>Сравнить</span></div>";
+
+Modal::end();
+// Модальное окно месяца
+
+
+// Модальное окно сравнения
+$modalListsName = Modal::begin([
+    'header' => '<h5 class="settings_name">Сравнение</h5>',
+    'id' => 'showSettingsList',
+    'toggleButton' => ['label' => 'открыть окно','class' => 'btn btn-default', 'style' => 'display:none;'],
+    'size'=>'modal-lg',
+]);
+
+echo "<div class='place_list' style='margin-left:15px; margin-right:15px;'></div>";
+
+Modal::end();
+// Модальное окно
 ?>
