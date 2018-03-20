@@ -17,6 +17,11 @@ use common\models\DepartmentLinking;
 use common\models\Email;
 use common\models\HistoryChecks;
 use common\models\MonthlyAct;
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Fill;
+use PHPExcel_Worksheet;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -1518,73 +1523,618 @@ class EmailController extends Controller
             $dateFrom = date('Y-m-t', strtotime("-6 month")) . 'T21:00:00.000Z';
             $dateTo = date('Y-m-t') . 'T21:00:00.000Z';
 
-            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->andWhere(['!=', 'monthly_act.type_id', Company::TYPE_PENALTY])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.act_date, monthly_act.client_id, monthly_act.type_id')->asArray()->all();
+            $profitRes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['monthly_act.type_id' => 5], ['monthly_act.service_id' => 4]], ['!=', 'monthly_act.type_id', 5]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->andWhere(['!=', 'monthly_act.type_id', Company::TYPE_PENALTY])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.client_id, monthly_act.act_date, monthly_act.type_id')->asArray()->all();
 
             if(count($profitRes) > 0) {
                 foreach ($profitRes as $key => $value) {
 
                     $arrDate = $profitRes[$key];
-                    $indexP = $arrDate['date'];
+                    $indexD = $arrDate['date'];
                     $index = $arrDate['id'];
                     $indexT = $arrDate['type'];
 
-                    $ArrDebt[$indexP][$index][$indexT][0] = $arrDate['name'];
-                    $ArrDebt[$indexP][$index][$indexT][1] = $arrDate['profit'];
+                    $ArrDebt[$index][$indexT][$indexD][0] = $arrDate['name'];
+                    $ArrDebt[$index][$indexT][$indexD][1] = $arrDate['profit'];
                 }
             }
 
             // дез
-            $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.act_date, monthly_act.client_id, monthly_act.type_id')->asArray()->all();
+            $profitResDes = \common\models\Act::find()->innerJoin('monthly_act', 'monthly_act.client_id = act.client_id AND monthly_act.type_id = act.service_type AND (monthly_act.act_date = DATE_FORMAT(from_unixtime(act.served_at), "%Y-%m-00"))')->innerJoin('act_scope', 'act_scope.act_id = act.id AND act_scope.company_id = act.client_id AND act_scope.service_id = 5')->innerJoin('company', 'company.id = monthly_act.client_id')->where(['AND', ['monthly_act.payment_status' => 0], ['monthly_act.type_id' => 5], [">", "act.income", 0], ['between', 'act_date', $dateFrom, $dateTo]])->andWhere(['OR', ['AND', ['!=', 'monthly_act.type_id', 3], ['!=', 'monthly_act.act_date', (date("Y-m") . '-00')]], ['AND', ['monthly_act.type_id' => 3], '`act`.`id`=`monthly_act`.`act_id`']])->select('SUM(act.income) as profit, company.name as name, monthly_act.client_id as id, monthly_act.id as mid, monthly_act.act_date as date, monthly_act.type_id as type')->groupBy('monthly_act.id')->indexBy('mid')->orderBy('monthly_act.client_id, monthly_act.act_date, monthly_act.type_id')->asArray()->all();
 
             if(count($profitResDes) > 0) {
                 foreach ($profitResDes as $key => $value) {
 
                     $arrDate = $profitResDes[$key];
-                    $indexP = $arrDate['date'];
+                    $indexD = $arrDate['date'];
                     $index = $arrDate['id'];
                     $indexT = $arrDate['type'];
 
-                    if((isset($ArrDebt[$indexP][$index][$indexT][0])) && (isset($ArrDebt[$indexP][$index][$indexT][1]))) {
-                        $ArrDebt[$indexP][$index][$indexT][1] += $arrDate['profit'];
+                    if((isset($ArrDebt[$index][$indexT][$indexD][0])) && (isset($ArrDebt[$index][$indexT][$indexD][1]))) {
+                        $ArrDebt[$index][$indexT][$indexD][1] += $arrDate['profit'];
                     } else {
-                        $ArrDebt[$indexP][$index][$indexT][0] = $arrDate['name'];
-                        $ArrDebt[$indexP][$index][$indexT][1] = $arrDate['profit'];
+                        $ArrDebt[$index][$indexT][$indexD][0] = $arrDate['name'];
+                        $ArrDebt[$index][$indexT][$indexD][1] = $arrDate['profit'];
                     }
 
                 }
             }
+
+            $objPHPExcel = new PHPExcel();
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+            // Creating a workbook
+            $objPHPExcel->getProperties()->setCreator('Mtransservice');
+            $objPHPExcel->getProperties()->setTitle('Отчет по должникам');
+            $objPHPExcel->getProperties()->setSubject('Отчет по должникам');
+            $objPHPExcel->getProperties()->setDescription('Должники за последние 5 месяцев');
+            $objPHPExcel->getProperties()->setCategory('');
+            $objPHPExcel->removeSheetByIndex(0);
+
+            //adding worksheet
+            $debtWorkSheet = new PHPExcel_Worksheet($objPHPExcel, 'Отчет по должникам');
+            $objPHPExcel->addSheet($debtWorkSheet);
+
+            $debtWorkSheet->getPageMargins()->setTop(2);
+            $debtWorkSheet->getPageMargins()->setLeft(0.5);
+
+            $row = 1;
 
             $resText = '<b style="color:#069;">Должники за последние 5 месяцев:</b><br />';
             $arrTypes = Company::$listType;
             $i = 1;
             $summ = 0;
 
-            $oldPeriod = '';
+            $old_id = 0;
+            $old_type = 0;
+            $summCompany = 0;
 
-            foreach ($ArrDebt as $keyP => $valueP) {
-                foreach ($valueP as $key => $value) {
-                    foreach ($value as $keyT => $valueT) {
+            $tmpRow = 0;
+            $indexTypes[0] = 0;
+            $indexTypes[1] = 0;
+            $indexTypes[2] = 0;
+            $indexTypes[3] = 0;
+            $indexTypes[4] = 0;
+            $indexTypes[5] = 0;
 
-                        $new_id = $key;
-                        $arrPeriod = explode('-', $keyP);
-                        $in = (int) $arrPeriod[1];
+            $sumTypes[0] = 0;
+            $sumTypes[1] = 0;
+            $sumTypes[2] = 0;
+            $sumTypes[3] = 0;
+            $sumTypes[4] = 0;
+            $sumTypes[5] = 0;
+
+            foreach ($ArrDebt as $id => $value) {
+                foreach ($value as $idType => $valueT) {
+                    foreach ($valueT as $keyD => $valueD) {
+
+                        $new_id = $id;
+                        $arrPeriod = explode('-', $keyD);
+                        $in = (int)$arrPeriod[1];
                         $showDate = DateHelper::$months[$in][0] . ' ' . $arrPeriod[0];
 
-                        if($oldPeriod != $keyP) {
+                        if ($old_id != $new_id) {
 
-                            $resText .= '<br /><b>' . $showDate . '</b><br />';
-                            $resText .= $ArrDebt[$keyP][$key][$keyT][0] . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+                            if($i > 1) {
 
-                            $oldPeriod = $keyP;
+                                $row = $row + (max($indexTypes) - $row);
+
+                                // Сумма итого для каждого типа
+                                $debtWorkSheet->getRowDimension($row)->setRowHeight(23);
+
+                                $debtWorkSheet->mergeCells('B' . $row . ':C' . $row);
+                                $debtWorkSheet->mergeCells('E' . $row . ':F' . $row);
+                                $debtWorkSheet->mergeCells('H' . $row . ':I' . $row);
+                                $debtWorkSheet->mergeCells('K' . $row . ':L' . $row);
+
+                                $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                    'alignment' => array(
+                                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                    )
+                                ));
+
+                                $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                        'font' => [
+                                            'size' => 14,
+                                            'name' => 'Times New Roman'
+                                        ],
+                                    ]
+                                );
+
+                                $debtWorkSheet->setCellValue('A' . $row, "Итого:");
+                                $debtWorkSheet->setCellValue('D' . $row, "Итого:");
+                                $debtWorkSheet->setCellValue('G' . $row, "Итого:");
+                                $debtWorkSheet->setCellValue('J' . $row, "Итого:");
+
+
+                                $debtWorkSheet->setCellValue('B' . $row, $sumTypes[2] . "₽");
+                                $debtWorkSheet->setCellValue('E' . $row, $sumTypes[4] . "₽");
+                                $debtWorkSheet->setCellValue('H' . $row, $sumTypes[5] . "₽");
+                                $debtWorkSheet->setCellValue('K' . $row, $sumTypes[3] . "₽");
+
+                                $row++;
+                                // Сумма итого для каждого типа
+
+                                // Сумма всего
+                                $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+
+                                $debtWorkSheet->getRowDimension($row)->setRowHeight(23);
+
+                                $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                    'alignment' => array(
+                                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                    )
+                                ));
+
+                                $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                        'font' => [
+                                            'size' => 14,
+                                            'name' => 'Times New Roman'
+                                        ],
+                                    ]
+                                );
+
+                                $debtWorkSheet->setCellValue('A' . $row, "Всего: " . $summCompany . "₽");
+                                $summCompany = 0;
+                                $row++;
+                                // Сумма всего
+
+                                $debtWorkSheet->getRowDimension($row)->setRowHeight(22);
+                                $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+                                $row++;
+                            }
+
+                            //headers
+                            $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                'alignment' => array(
+                                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                )
+                            ));
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                    'font' => [
+                                        'size' => 18,
+                                        'name' => 'Times New Roman'
+                                    ],
+                                ]
+                            );
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->getFill()->applyFromArray([
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'startcolor' => [
+                                        'rgb' => 'e9ef43'
+                                    ]
+                                ]
+                            );
+
+                            $debtWorkSheet->getRowDimension($row)->setRowHeight(25);
+
+                            $debtWorkSheet->setCellValue('A' . $row, $ArrDebt[$id][$idType][$keyD][0]);
+
+                            $row++;
+                            //headers
+
+                            // Types
+                            $debtWorkSheet->getRowDimension($row)->setRowHeight(25);
+
+                            $debtWorkSheet->mergeCells('A' . $row . ':C' . $row);
+                            $debtWorkSheet->mergeCells('D' . $row . ':F' . $row);
+                            $debtWorkSheet->mergeCells('G' . $row . ':I' . $row);
+                            $debtWorkSheet->mergeCells('J' . $row . ':L' . $row);
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                'alignment' => array(
+                                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                )
+                            ));
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                    'font' => [
+                                        'size' => 18,
+                                        'name' => 'Times New Roman'
+                                    ],
+                                ]
+                            );
+
+                            $debtWorkSheet->getStyle('A' . $row . ':C' . $row)->getFill()->applyFromArray([
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'startcolor' => [
+                                        'rgb' => '93d65c'
+                                    ]
+                                ]
+                            );
+
+                            $debtWorkSheet->getStyle('D' . $row . ':F' . $row)->getFill()->applyFromArray([
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'startcolor' => [
+                                        'rgb' => '4cb2e5'
+                                    ]
+                                ]
+                            );
+
+                            $debtWorkSheet->getStyle('G' . $row . ':I' . $row)->getFill()->applyFromArray([
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'startcolor' => [
+                                        'rgb' => 'e5b24c'
+                                    ]
+                                ]
+                            );
+
+                            $debtWorkSheet->getStyle('J' . $row . ':L' . $row)->getFill()->applyFromArray([
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'startcolor' => [
+                                        'rgb' => 'b01717'
+                                    ]
+                                ]
+                            );
+
+                            $debtWorkSheet->setCellValue('A' . $row, "Мойка");
+                            $debtWorkSheet->setCellValue('D' . $row, "Шиномонтаж");
+                            $debtWorkSheet->setCellValue('G' . $row, "Дезинфекция");
+                            $debtWorkSheet->setCellValue('J' . $row, "Сервис");
+
+                            $row++;
+                            // Types
+
+                            // Titels
+                            $debtWorkSheet->getRowDimension($row)->setRowHeight(25);
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                'alignment' => array(
+                                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                )
+                            ));
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                    'font' => [
+                                        'size' => 18,
+                                        'name' => 'Times New Roman'
+                                    ],
+                                ]
+                            );
+
+                            $debtWorkSheet->setCellValue('A' . $row, "Период");
+                            $debtWorkSheet->setCellValue('B' . $row, "Сумма");
+                            $debtWorkSheet->setCellValue('C' . $row, "Комментарий");
+                            $debtWorkSheet->setCellValue('D' . $row, "Период");
+                            $debtWorkSheet->setCellValue('E' . $row, "Сумма");
+                            $debtWorkSheet->setCellValue('F' . $row, "Комментарий");
+                            $debtWorkSheet->setCellValue('G' . $row, "Период");
+                            $debtWorkSheet->setCellValue('H' . $row, "Сумма");
+                            $debtWorkSheet->setCellValue('I' . $row, "Комментарий");
+                            $debtWorkSheet->setCellValue('J' . $row, "Период");
+                            $debtWorkSheet->setCellValue('K' . $row, "Сумма");
+                            $debtWorkSheet->setCellValue('L' . $row, "Комментарий");
+
+
+                            $debtWorkSheet->getColumnDimension('A')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('B')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('C')->setWidth(23);
+                            $debtWorkSheet->getColumnDimension('D')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('E')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('F')->setWidth(23);
+                            $debtWorkSheet->getColumnDimension('G')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('H')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('I')->setWidth(23);
+                            $debtWorkSheet->getColumnDimension('J')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('K')->setWidth(15);
+                            $debtWorkSheet->getColumnDimension('L')->setWidth(23);
+
+                            $row++;
+                            // Titels
+
+                            // Values
+                            $debtWorkSheet->getRowDimension($row)->setRowHeight(25);
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                                'alignment' => array(
+                                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                )
+                            ));
+
+                            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                                    'font' => [
+                                        'size' => 14,
+                                        'name' => 'Times New Roman'
+                                    ],
+                                ]
+                            );
+
+                            switch ($idType) {
+                                case 2:
+                                    $debtWorkSheet->setCellValue('A' . $row, $showDate);
+                                    $debtWorkSheet->setCellValue('B' . $row, $ArrDebt[$id][$idType][$keyD][1]);
+                                    $debtWorkSheet->setCellValue('C' . $row, "");
+
+                                    $indexTypes[2] = ($row + 1);
+                                    $indexTypes[3] = $row;
+                                    $indexTypes[4] = $row;
+                                    $indexTypes[5] = $row;
+
+                                    break;
+                                case 3:
+                                    $debtWorkSheet->setCellValue('J' . $row, $showDate);
+                                    $debtWorkSheet->setCellValue('K' . $row, $ArrDebt[$id][$idType][$keyD][1]);
+                                    $debtWorkSheet->setCellValue('L' . $row, "");
+
+                                    $indexTypes[2] = $row;
+                                    $indexTypes[3] = ($row + 1);
+                                    $indexTypes[4] = $row;
+                                    $indexTypes[5] = $row;
+
+                                    break;
+                                case 4:
+                                    $debtWorkSheet->setCellValue('D' . $row, $showDate);
+                                    $debtWorkSheet->setCellValue('E' . $row, $ArrDebt[$id][$idType][$keyD][1]);
+                                    $debtWorkSheet->setCellValue('F' . $row, "");
+
+                                    $indexTypes[2] = $row;
+                                    $indexTypes[3] = $row;
+                                    $indexTypes[4] = ($row + 1);
+                                    $indexTypes[5] = $row;
+
+                                    break;
+                                case 5:
+                                    $debtWorkSheet->setCellValue('G' . $row, $showDate);
+                                    $debtWorkSheet->setCellValue('H' . $row, $ArrDebt[$id][$idType][$keyD][1]);
+                                    $debtWorkSheet->setCellValue('I' . $row, "");
+
+                                    $indexTypes[2] = $row;
+                                    $indexTypes[3] = $row;
+                                    $indexTypes[4] = $row;
+                                    $indexTypes[5] = ($row + 1);
+
+                                    break;
+                                default:
+                                    break;
+                            }
+                            // Values
+
+                            $resText .= '<br /><b>' . $ArrDebt[$id][$idType][$keyD][0] . '</b><br />';
+                            $resText .= $showDate . ' - ' . $arrTypes[$idType]['ru'] . ' - ' . $ArrDebt[$id][$idType][$keyD][1] . '₽<br />';
+
+                            $sumTypes[0] = 0;
+                            $sumTypes[1] = 0;
+                            $sumTypes[2] = 0;
+                            $sumTypes[3] = 0;
+                            $sumTypes[4] = 0;
+                            $sumTypes[5] = 0;
+
+                            $old_id = $new_id;
+                            $old_type = $idType;
+
                         } else {
-                            $resText .= $ArrDebt[$keyP][$key][$keyT][0] . ' - ' . $arrTypes[$keyT]['ru'] . ' - ' . $ArrDebt[$keyP][$key][$keyT][1] . '₽<br />';
+
+                            // Values
+
+                            $tmpRow = 0;
+
+                            $tmpRow = $indexTypes[$idType];
+                            $indexTypes[$idType]++;
+
+                            if($idType != $old_type) {
+
+                                switch ($idType) {
+                                    case 2:
+
+                                        $debtWorkSheet->setCellValue('A' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('B' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('C' . $tmpRow, "");
+                                        break;
+                                    case 3:
+
+                                        $debtWorkSheet->setCellValue('J' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('K' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('L' . $tmpRow, "");
+                                        break;
+                                    case 4:
+
+                                        $debtWorkSheet->setCellValue('D' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('E' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('F' . $tmpRow, "");
+                                        break;
+                                    case 5:
+
+                                        $debtWorkSheet->setCellValue('G' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('H' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('I' . $tmpRow, "");
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                $debtWorkSheet->getRowDimension($tmpRow)->setRowHeight(25);
+
+                                $debtWorkSheet->getStyle('A' . $tmpRow . ':L' . $tmpRow)->applyFromArray(array(
+                                    'alignment' => array(
+                                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                    )
+                                ));
+
+                                $debtWorkSheet->getStyle('A' . $tmpRow . ':L' . $tmpRow)->applyFromArray([
+                                        'font' => [
+                                            'size' => 14,
+                                            'name' => 'Times New Roman'
+                                        ],
+                                    ]
+                                );
+
+                                $tmpRow++;
+
+                            } else {
+
+                                $debtWorkSheet->getRowDimension($tmpRow)->setRowHeight(25);
+
+                                $debtWorkSheet->getStyle('A' . $tmpRow . ':L' . $tmpRow)->applyFromArray(array(
+                                    'alignment' => array(
+                                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                                    )
+                                ));
+
+                                $debtWorkSheet->getStyle('A' . $tmpRow . ':L' . $tmpRow)->applyFromArray([
+                                        'font' => [
+                                            'size' => 14,
+                                            'name' => 'Times New Roman'
+                                        ],
+                                    ]
+                                );
+
+                                switch ($idType) {
+                                    case 2:
+                                        $debtWorkSheet->setCellValue('A' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('B' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('C' . $tmpRow, "");
+                                        break;
+                                    case 3:
+                                        $debtWorkSheet->setCellValue('J' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('K' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('L' . $tmpRow, "");
+                                        break;
+                                    case 4:
+                                        $debtWorkSheet->setCellValue('D' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('E' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('F' . $tmpRow, "");
+                                        break;
+                                    case 5:
+                                        $debtWorkSheet->setCellValue('G' . $tmpRow, $showDate);
+                                        $debtWorkSheet->setCellValue('H' . $tmpRow, $ArrDebt[$id][$idType][$keyD][1]);
+                                        $debtWorkSheet->setCellValue('I' . $tmpRow, "");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            // Values
+
+                            $resText .= $showDate . ' - ' . $arrTypes[$idType]['ru'] . ' - ' . $ArrDebt[$id][$idType][$keyD][1] . '₽<br />';
+
+                            $old_type = $idType;
+
                         }
 
-                        $summ += $ArrDebt[$keyP][$key][$keyT][1];
+                        $sumTypes[$idType] += $ArrDebt[$id][$idType][$keyD][1];
+                        $summCompany += $ArrDebt[$id][$idType][$keyD][1];
+                        $summ += $ArrDebt[$id][$idType][$keyD][1];
                         $i++;
+
                     }
                 }
             }
+
+            $objPHPExcel->getActiveSheet()->setSelectedCells('A1');
+            $row = $row + (max($indexTypes) - $row);
+
+            // Сумма итого для каждого типа  последней компании
+            $debtWorkSheet->getRowDimension($row)->setRowHeight(23);
+
+            $debtWorkSheet->mergeCells('B' . $row . ':C' . $row);
+            $debtWorkSheet->mergeCells('E' . $row . ':F' . $row);
+            $debtWorkSheet->mergeCells('H' . $row . ':I' . $row);
+            $debtWorkSheet->mergeCells('K' . $row . ':L' . $row);
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                    'font' => [
+                        'size' => 14,
+                        'name' => 'Times New Roman'
+                    ],
+                ]
+            );
+
+            $debtWorkSheet->setCellValue('A' . $row, "Итого:");
+            $debtWorkSheet->setCellValue('D' . $row, "Итого:");
+            $debtWorkSheet->setCellValue('G' . $row, "Итого:");
+            $debtWorkSheet->setCellValue('J' . $row, "Итого:");
+
+
+            $debtWorkSheet->setCellValue('B' . $row, $sumTypes[2] . "₽");
+            $debtWorkSheet->setCellValue('E' . $row, $sumTypes[4] . "₽");
+            $debtWorkSheet->setCellValue('H' . $row, $sumTypes[5] . "₽");
+            $debtWorkSheet->setCellValue('K' . $row, $sumTypes[3] . "₽");
+
+            $row++;
+            // Сумма итого для каждого типа  последней компании
+
+            // Сумма всего последней компании
+
+            $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+
+            $debtWorkSheet->getRowDimension($row)->setRowHeight(23);
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                    'font' => [
+                        'size' => 14,
+                        'name' => 'Times New Roman'
+                    ],
+                ]
+            );
+
+            $debtWorkSheet->setCellValue('A' . $row, "Всего: " . $summCompany . "₽");
+            $summCompany = 0;
+            $row++;
+            // Сумма всего последней компании
+
+            // Итоговая сумма
+            $debtWorkSheet->getRowDimension($row)->setRowHeight(22);
+            $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+            $row++;
+
+            $debtWorkSheet->mergeCells('A' . $row . ':L' . $row);
+
+            $debtWorkSheet->getRowDimension($row)->setRowHeight(23);
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            $debtWorkSheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                    'font' => [
+                        'size' => 15,
+                        'name' => 'Times New Roman'
+                    ],
+                ]
+            );
+
+            $debtWorkSheet->setCellValue('A' . $row, "Итого: " . $summ . "₽");
+            // Итоговая сумма
+
+            //saving document
+            $pathFile = \Yii::getAlias('@webroot/files/');
+
+            if (!is_dir($pathFile)) {
+                mkdir($pathFile, 0755, 1);
+            }
+
+            $prefix = trim("Должники");
+            $prefix = str_replace(' ', '_', $prefix);
+
+            $filename = $prefix . '.xls';
+
+            $objWriter->save($pathFile . $filename);
 
             $resText .= '<br /><b style="color:#069;">Общая сумма: </b>' . $summ . '₽';
 
@@ -1593,21 +2143,24 @@ class EmailController extends Controller
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                 ->setTo('merkulova.mtransservice@mail.ru')
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
-                ->setHtmlBody($resText)->send();
+                ->attach($pathFile . $filename)
+                ->setTextBody("Должники за последние 5 месяцев")->send();
 
             // Арам
             Yii::$app->mailer->compose()
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                 ->setTo('aram.mtransservice@mail.ru')
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
-                ->setHtmlBody($resText)->send();
+                ->attach($pathFile . $filename)
+                ->setTextBody("Должники за последние 5 месяцев")->send();
 
             // Герберт
             Yii::$app->mailer->compose()
                 ->setFrom(['system@mtransservice.ru' => 'Международный Транспортный Сервис'])
                 ->setTo('mtransservice@mail.ru')
                 ->setSubject('Рассылка по должникам ' . date('d.m.Y'))
-                ->setHtmlBody($resText)->send();
+                ->attach($pathFile . $filename)
+                ->setTextBody("Должники за последние 5 месяцев")->send();
 
 
         }
