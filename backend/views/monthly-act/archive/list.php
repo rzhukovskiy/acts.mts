@@ -218,6 +218,11 @@ if(($type == 1) || ($type == -1) || ($type == -99)) {
 }
 // Фильтр по типу в должниках
 
+if($type == 1) {
+    // Кнопка скачать Excel отчет о должниках
+    $typeFilter .= Html::a('Отчет за 5 месяцев', ['monthly-act/debt-excel'], ['class' => 'pull-right btn btn-warning', 'style' => 'padding:7px 16px 8px 16px;', 'target' => '_blank']);
+}
+
 $filters = 'Выбор периода: ' . $periodForm . $typeFilter . '<span class="pull-right winProfit" style="padding-top: 10px; padding-right: 30px;"></span>';
 /**
  * Конец виджета
