@@ -69,6 +69,7 @@ class menuLeftWidget extends Widget
         $searchModel = new MessageSearch();
         $searchModel->user_to = $currentUser->id;
         $searchModel->is_read = null;
+
         $countMessage = $searchModel->search([])->count;
 
         $countOwner = TenderOwnerSearch::find()->where(['AND', ['tender_user' => 0], ['status' => 0]])->count();
@@ -265,9 +266,9 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmylist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyfull'),
                 ],
                 [
-                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
-                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
-                    'active' => (Yii::$app->controller->id == 'message'),
+                    'label' => 'Информирование' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'url' => ['/informing/list', 'type' => 1],
+                    'active' => (Yii::$app->controller->id == 'informing'),
                 ],
                 [
                     'label' => 'Запись ТС',
@@ -368,9 +369,9 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'plan'),
                 ],
                 [
-                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
-                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
-                    'active' => (Yii::$app->controller->id == 'message'),
+                    'label' => 'Информирование' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'url' => ['/informing/list', 'type' => 1],
+                    'active' => (Yii::$app->controller->id == 'informing'),
                 ],
                 [
                     'label' => 'Архив' . ($countArchive ? '<span class="label label-success">' . $countArchive . '</span>' : ''),
@@ -609,9 +610,9 @@ class menuLeftWidget extends Widget
                     'active' => (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'tasklist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskfull') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmylist') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyadd') || (Yii::$app->controller->id == 'plan' && Yii::$app->controller->action->id == 'taskmyfull'),
                     ],
                 [
-                    'label' => 'Сообщения' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
-                    'url' => ['/message/list', 'department_id' => Department::getFirstId()],
-                    'active' => (Yii::$app->controller->id == 'message'),
+                    'label' => 'Информирование' . ($countMessage ? '<span class="label label-success">' . $countMessage . '</span>' : ''),
+                    'url' => ['/informing/list', 'type' => 1],
+                    'active' => (Yii::$app->controller->id == 'informing'),
                 ],
                 [
                     'label' => 'Почтовые<br />шаблоны',
