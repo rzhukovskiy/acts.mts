@@ -94,6 +94,7 @@ if($company) {
 $type = Service::$listType[$type]['en'];
 $time = \DateTime::createFromFormat('m-Y-d', $searchModel->period . '-01')->getTimestamp();
 $path = "files/acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-Y', $time);
+$pathNew = "files/new_acts/" . ($company ? 'client' : 'partner') . "/$type/" . date('m-Y', $time);
 
 ?>
 

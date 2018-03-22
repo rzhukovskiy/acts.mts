@@ -4,6 +4,7 @@ namespace common\components;
 use common\models\Act;
 use common\models\ActScope;
 use common\models\Company;
+use common\models\CompanyInfo;
 use common\models\MonthlyAct;
 use common\models\Car;
 use common\models\Requisites;
@@ -66,6 +67,15 @@ class ActExporter
 
         // Удаляем все файлы из текущей папки
         $path = \Yii::getAlias("@webroot/files/acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time) . "/");
+
+        if (file_exists($path)) {
+            foreach (glob($path . '*') as $file) {
+                unlink($file);
+            }
+        }
+
+        //
+        $path = \Yii::getAlias("@webroot/files/new_acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time) . "/");
 
         if (file_exists($path)) {
             foreach (glob($path . '*') as $file) {
@@ -383,6 +393,7 @@ class ActExporter
                         }*/
 
                         $this->generateAct($company, array($data), $zip);
+                        $this->newGenerateAct($company, $dataList, $zip);
 
                     }
                     break;
@@ -418,6 +429,7 @@ class ActExporter
 
                             } else {
                                 $this->generateAct($company, $dataList, $zip, $serviceDescription);
+                                $this->newGenerateAct($company, $dataList, $zip, $serviceDescription);
                             }
 
                         }
@@ -443,6 +455,7 @@ class ActExporter
 
                     } else {
                         $this->generateAct($company, $dataList, $zip);
+                        $this->newGenerateAct($company, $dataList, $zip);
                     }
 
             }
@@ -21652,5 +21665,1285 @@ class ActExporter
         if ($zip) $zip->addFile($fullFilename, iconv('utf-8', 'cp866', $filename));
 
     }
+
+    // Новая форма акта
+    private function newGenerateAct($company, $dataList, &$zip, $serviceDescription = null)
+    {
+
+        // Запрос НДС
+        $ndsArr = CompanyInfo::find()->where(['company_id' => $company->id])->select('nds')->column();
+        $companyNDS = isset($ndsArr[0]) ? $ndsArr[0] : 0;
+        // Запрос НДС
+
+        $this->objPHPExcel = new PHPExcel();
+        $objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel5');
+
+        // Creating a workbook
+        $this->objPHPExcel->getProperties()->setCreator('Mtransservice');
+        $this->objPHPExcel->getProperties()->setTitle('Акт');
+        $this->objPHPExcel->getProperties()->setSubject('Акт');
+        $this->objPHPExcel->getProperties()->setDescription('');
+        $this->objPHPExcel->getProperties()->setCategory('');
+        $this->objPHPExcel->removeSheetByIndex(0);
+
+        //adding worksheet
+        $companyWorkSheet = new PHPExcel_Worksheet($this->objPHPExcel, 'акт');
+        $this->objPHPExcel->addSheet($companyWorkSheet);
+
+        $companyWorkSheet->getPageMargins()->setTop(2);
+        $companyWorkSheet->getPageMargins()->setLeft(0.5);
+        $companyWorkSheet->getRowDimension(1)->setRowHeight(1);
+        $companyWorkSheet->getColumnDimension('A')->setWidth(2);
+        $companyWorkSheet->getDefaultRowDimension()->setRowHeight(20);
+
+        //headers;
+        $monthName = DateHelper::getMonthName($this->time);
+        $date = date_create(date('Y-m-d', $this->time));
+        date_add($date, date_interval_create_from_date_string("1 month"));
+        $currentMonthName = DateHelper::getMonthName($date->getTimestamp());
+
+        // Высчитываем номер для акта и счета
+        $fileNameCheck = '';
+        $numberAct = '';
+        $dataExpl = '';
+
+        if ($this->serviceType == Company::TYPE_SERVICE) {
+            $firstCheck = $dataList[0];
+            $fileNameCheck = "Акт " . str_replace('ё', 'е', $company->name) . " - {$firstCheck->car_number} - {$firstCheck->id} от " . date('d-m-Y', $firstCheck->served_at) . ".xls";
+            $dataExpl = date('m-Y', $firstCheck->served_at);
+        } else {
+            $fileNameCheck = $serviceDescription. " Акт " . str_replace('ё', 'е', $company->name) . " от " . date('m-Y', $this->time) . ".xls";;
+            $dataExpl = date('m-Y', $this->time);
+        }
+        $fileNameCheck = str_replace('"', '', $fileNameCheck);
+        $fileNameCheck = str_replace(' ', '_', $fileNameCheck);
+        $fileNameCheck = str_replace('«', '', $fileNameCheck);
+        $fileNameCheck = str_replace('»', '', $fileNameCheck);
+
+        $companyInt = 0;
+
+        if($this->company) {
+            $companyInt = 1;
+        }
+
+        if($this->checkDoQueryNumber == false) {
+            $this->arrActNumbers = ActData::find()->where(['type' => $this->serviceType, 'company' => $companyInt, 'period' => $dataExpl])->select('number, name')->all();
+            $this->checkDoQueryNumber = true;
+        }
+
+        if (count($this->arrActNumbers) > 0) {
+
+            for($i = 0; $i < count($this->arrActNumbers); $i++) {
+                if($this->arrActNumbers[$i]['name'] == $fileNameCheck) {
+                    $numberAct = $this->arrActNumbers[$i]['number'];
+                }
+            }
+
+        }
+
+        if($numberAct == '') {
+            $newActData = new ActData();
+            $newActData->type = $this->serviceType;
+            $newActData->company = $companyInt;
+            $newActData->period = $dataExpl;
+            $newActData->name = $fileNameCheck;
+
+            if($newActData->save()) {
+
+                if($serviceDescription == 'доп. дезинфекция') {
+                    $numberAct = 'DD' . $newActData->id;
+                } else {
+                    switch ($this->serviceType) {
+                        case 2:
+                            $numberAct = 'M' . $newActData->id;
+                            break;
+                        case 3:
+                            $numberAct = 'S' . $newActData->id;
+                            break;
+                        case 4:
+                            $numberAct = 'T' . $newActData->id;
+                            break;
+                        case 5:
+                            $numberAct = 'D' . $newActData->id;
+                            break;
+                        case 7:
+                            $numberAct = 'P' . $newActData->id;
+                            break;
+                    }
+                }
+
+                $newActData->number = $numberAct;
+                $newActData->save();
+
+            }
+
+        }
+
+        // Высчитываем номер для акта и счета
+        $row = 8;
+
+        if ($this->serviceType == Company::TYPE_DISINFECT) {
+            $companyWorkSheet->getStyle('B2:H4')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                )
+            ));
+            $companyWorkSheet->mergeCells('B2:H2');
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
+            $companyWorkSheet->setCellValue('B2', $text);
+            $companyWorkSheet->mergeCells('B3:H3');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
+            $companyWorkSheet->setCellValue('B3', $text);
+            $companyWorkSheet->mergeCells('B4:H4');
+            $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
+            $companyWorkSheet->setCellValue('B4', $text);
+
+            $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+            $companyWorkSheet->getStyle('E5')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                )
+            ));
+            if ($this->company) {
+                if ($serviceDescription == 'доп. дезинфекция') {
+                    $companyWorkSheet->setCellValue('H5', date('t ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                } else {
+                    $companyWorkSheet->setCellValue('H5', date('1 ', $this->time) . $monthName[1] . date(' Y', $this->time));
+                }
+            } else {
+                $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+            }
+
+            $companyWorkSheet->mergeCells('B' . $row . ':H' . $row);
+            $companyWorkSheet->mergeCells('B7:H7');
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('B' . $row, "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B7', "Заказчик: $company->name");
+
+                $row++;
+
+                $companyWorkSheet->mergeCells('B' . $row . ':H' . $row);
+                $companyWorkSheet->setCellValue('B' . $row, "Лицензия № ЛО-36-01-002839");
+                $row++;
+
+            } else {
+                $companyWorkSheet->setCellValue('B7', "Исполнитель: $company->name");
+                $companyWorkSheet->setCellValue('B' . $row, "Заказчик: ООО «Международный Транспортный Сервис»");
+                $row++;
+            }
+
+            $row++;
+
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(100);
+
+            $companyWorkSheet->mergeCells('B' . $row . ':H' . $row);
+            $companyWorkSheet->getStyle('B' . $row . ':H' . $row)->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B' . $row . ':H' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
+                )
+            ));
+            $companyWorkSheet->setCellValue('B' . $row, $company->getRequisitesByType($this->serviceType, 'header'));
+        } else if ($this->serviceType == Company::TYPE_WASH) {
+            $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                )
+            ));
+            $companyWorkSheet->mergeCells('B2:I2');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('B2:K2');
+            }
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
+            $companyWorkSheet->setCellValue('B2', $text);
+            $companyWorkSheet->mergeCells('B3:I3');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
+            $companyWorkSheet->setCellValue('B3', $text);
+            $companyWorkSheet->mergeCells('B4:I4');
+            $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
+            $companyWorkSheet->setCellValue('B4', $text);
+
+            $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+            $companyWorkSheet->getStyle('H5:I5')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                )
+            ));
+            $companyWorkSheet->mergeCells('H5:I5');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('H5:K5');
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
+            } else {
+                $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+            }
+
+            $companyWorkSheet->mergeCells('B8:I8');
+            $companyWorkSheet->mergeCells('B7:I7');
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B7', "Заказчик: $company->name");
+            } else {
+                $companyWorkSheet->setCellValue('B7', "Исполнитель: $company->name");
+                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+            }
+
+            $companyWorkSheet->mergeCells('B10:I10');
+            $companyWorkSheet->getStyle('B10:I10')->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B10:I10')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
+                )
+            ));
+            $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
+            $row = 10;
+        } else {
+            $companyWorkSheet->getStyle('B2:I4')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                )
+            ));
+            $companyWorkSheet->mergeCells('B2:I2');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('B2:I2');
+            }
+            $text = "АКТ СДАЧИ-ПРИЕМКИ РАБОТ (УСЛУГ)" . " № " . $numberAct;
+            $companyWorkSheet->setCellValue('B2', $text);
+            $companyWorkSheet->mergeCells('B3:I3');
+            $text = "по договору на оказание услуг " . $company->getRequisitesByType($this->serviceType, 'contract');
+            $companyWorkSheet->setCellValue('B3', $text);
+            $companyWorkSheet->mergeCells('B4:I4');
+            $text = "За услуги, оказанные в $monthName[2] " . date('Y', $this->time) . ".";
+            $companyWorkSheet->setCellValue('B4', $text);
+
+            $companyWorkSheet->setCellValue('B5', 'г.Воронеж');
+            $companyWorkSheet->getStyle('H5:I5')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                )
+            ));
+            $companyWorkSheet->mergeCells('H5:I5');
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells('H5:I5');
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('H5', date("t ", $this->time) . $monthName[1] . date(' Y', $this->time));
+            } else {
+                $companyWorkSheet->setCellValue('H5', date('d ') . $currentMonthName[1] . date(' Y'));
+            }
+
+            $companyWorkSheet->mergeCells('B8:I8');
+            $companyWorkSheet->mergeCells('B7:I7');
+            if ($this->company) {
+                $companyWorkSheet->setCellValue('B8', "Исполнитель: ООО «Международный Транспортный Сервис»");
+                $companyWorkSheet->setCellValue('B7', "Заказчик: $company->name");
+            } else {
+                $companyWorkSheet->setCellValue('B7', "Исполнитель: $company->name");
+                $companyWorkSheet->setCellValue('B8', "Заказчик: ООО «Международный Транспортный Сервис»");
+            }
+
+            $companyWorkSheet->mergeCells('B10:I10');
+            $companyWorkSheet->getStyle('B10:I10')->getAlignment()->setWrapText(true);
+            $companyWorkSheet->getStyle('B10:I10')->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY,
+                )
+            ));
+            $companyWorkSheet->getRowDimension(10)->setRowHeight(100);
+            $companyWorkSheet->setCellValue('B10', $company->getRequisitesByType($this->serviceType, 'header'));
+            $row = 10;
+        }
+
+        $row++; $row++;
+
+        $rowStarts = $row;
+
+        //main values
+        $num = 0;
+        $total = 0;
+        $count = 0;
+        $checkService = false;
+        switch($this->serviceType) {
+            case Company::TYPE_SERVICE:
+                $checkService = true;
+                $first = $dataList[0];
+                $companyWorkSheet->setCellValue('H5', date("d ", $first->served_at) . $monthName[1] . date(' Y', $this->time));
+            case Company::TYPE_TIRES:
+
+                $companyWorkSheet->getDefaultStyle()->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                    )
+                ));
+                $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+                $companyWorkSheet->getColumnDimension('D')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('E')->setWidth(10);
+                $companyWorkSheet->getColumnDimension('F')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $column = 1;
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "№");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Наименование работ, услуг");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Кол-во");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Ед.");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Цена");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сумма");
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+
+                /** @var Act $data */
+                $num = 0;
+
+                $numMarket = 0;
+                $numService = 0;
+                $totalMarket = 0;
+                $totalService = 0;
+                foreach ($dataList as $data) {
+
+                    if($checkService == false) {
+
+                        $num++;
+
+                        if ($this->company) {
+                            $listScope = $data->clientScopes;
+                        } else {
+                            $listScope = $data->partnerScopes;
+                        }
+                        foreach ($listScope as $scope) {
+                            $total += $scope->amount * $scope->price;
+                        }
+
+                    } else {
+
+                        $num++;
+
+                        // Запасные части
+
+                        /** @var ActScope $scope */
+                        if ($this->company) {
+                            $listScope = $data->clientScopes;
+                        } else {
+                            $listScope = $data->partnerScopes;
+                        }
+                        foreach ($listScope as $scope) {
+                            if($scope->parts == 1) {
+                                $numMarket++;
+                                $total += $scope->amount * $scope->price;
+                                $totalMarket += $scope->amount * $scope->price;
+                            }
+                        }
+
+                        // Услуги
+
+                        /** @var ActScope $scope */
+                        if ($this->company) {
+                            $listScope = $data->clientScopes;
+                        } else {
+                            $listScope = $data->partnerScopes;
+                        }
+                        foreach ($listScope as $scope) {
+                            if($scope->parts == 0) {
+                                $numService++;
+                                $total += $scope->amount * $scope->price;
+                                $totalService += $scope->amount * $scope->price;
+                            }
+                        }
+
+                    }
+
+                }
+
+                // Данные
+                $row++;
+                $column = 1;
+
+                //Сумма с ндс
+                if($companyNDS == 1) {
+                    $total = $total * 1.18;
+                }
+                //Сумма с ндс
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 1);
+
+                if($checkService) {
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сервис автотранспорта за " . $monthName[3] . date(' Y', $this->time) . "г.");
+                } else {
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Шиномонтаж автотранспорта за " . $monthName[3] . date(' Y', $this->time) . "г.");
+                }
+
+                $column = $column + 2;
+
+                if($checkService) {
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $numService);
+
+                    if($companyNDS == 1) {
+                        $totalService = $totalService * 1.18;
+                    }
+
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $totalService);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $totalService);
+                } else {
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                }
+
+                // Запчасти
+                if(($checkService) && ($numMarket > 0)) {
+                    $row++;
+                    $column = 1;
+
+                    //Сумма с ндс
+                    if($companyNDS == 1) {
+                        $total = $total * 1.18;
+                    }
+                    //Сумма с ндс
+
+                    $companyWorkSheet->mergeCells("C$row:E$row");
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 2);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Запасные части за " . $monthName[3] . date(' Y', $this->time) . "г.");
+
+                    $column = $column + 2;
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $numMarket);
+
+                    if($companyNDS == 1) {
+                        $totalMarket = $totalMarket * 1.18;
+                    }
+
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $totalMarket);
+                    $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $totalMarket);
+                }
+                // Запчасти
+
+                // Данные
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle('K12')->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                            ),
+                        )
+                    );
+                }
+
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle("K12:K$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                            )
+                        );
+                }
+
+                break;
+
+            case Company::TYPE_PARKING:
+
+                $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+                $companyWorkSheet->getColumnDimension('D')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('E')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('F')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                if($company->is_split) {
+                    $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
+                }
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $column = 1;
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "№");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Наименование работ, услуг");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Кол-во");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Ед.");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Цена");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сумма");
+
+                foreach ($dataList as $data) {
+                    $num++;
+                    if ($this->company) {
+                        $total += $data->income;
+                    } else {
+                        $total += $data->expense;
+                    }
+                }
+
+                // Данные
+                $row++;
+                $column = 1;
+
+                //Сумма с ндс
+                if($companyNDS == 1) {
+                    $total = $total * 1.18;
+                }
+                //Сумма с ндс
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 1);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Стоянка автотранспорта за " . $monthName[3] . date(' Y', $this->time) . "г.");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                // Данные
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle('K12')->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                            ),
+                        )
+                    );
+                }
+
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle("K12:K$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                            )
+                        );
+                }
+                break;
+
+            case Company::TYPE_PENALTY:
+
+                $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+                $companyWorkSheet->getColumnDimension('D')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('E')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('F')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                if($company->is_split) {
+                    $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
+                }
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $column = 1;
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "№");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Наименование работ, услуг");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Кол-во");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Ед.");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Цена");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сумма");
+
+                foreach ($dataList as $data) {
+                    $num++;
+                    if ($this->company) {
+                        $total += $data->income;
+                    } else {
+                        $total += $data->expense;
+                    }
+                }
+
+                // Данные
+                $row++;
+                $column = 1;
+
+                //Сумма с ндс
+                if($companyNDS == 1) {
+                    $total = $total * 1.18;
+                }
+                //Сумма с ндс
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 1);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Штрафы за " . $monthName[3] . date(' Y', $this->time) . "г.");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                // Данные
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle('K12')->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                            ),
+                        )
+                    );
+                }
+
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle("K12:K$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                            )
+                        );
+                }
+                break;
+
+            case Company::TYPE_WASH:
+                $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+                $companyWorkSheet->getColumnDimension('D')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('E')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('F')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('G')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('H')->setAutoSize(true);
+                $companyWorkSheet->getColumnDimension('I')->setAutoSize(true);
+                if($company->is_split) {
+                    $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
+                }
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $column = 1;
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "№");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Наименование работ, услуг");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Кол-во");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Ед.");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Цена");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сумма");
+
+                foreach ($dataList as $data) {
+                    $num++;
+                    if ($this->company) {
+                        $total += $data->income;
+                    } else {
+                        $total += $data->expense;
+                    }
+                }
+
+                // Данные
+                $row++;
+                $column = 1;
+
+                //Сумма с ндс
+                if($companyNDS == 1) {
+                    $total = $total * 1.18;
+                }
+                //Сумма с ндс
+
+                $companyWorkSheet->mergeCells("C$row:E$row");
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 1);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Мойка автотранспорта за " . $monthName[3] . date(' Y', $this->time) . "г.");
+
+                $column = $column + 2;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                // Данные
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':I' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle('K12')->applyFromArray(array(
+                            'font' => array(
+                                'bold' => true,
+                                'color' => array('argb' => 'FF006699'),
+                            ),
+                        )
+                    );
+                }
+
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":I$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+                if($company->is_split) {
+                    $companyWorkSheet->getStyle("K12:K$row")
+                        ->applyFromArray(array(
+                                'borders' => array(
+                                    'allborders' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                        'color' => array('argb' => 'FF000000'),
+                                    ),
+                                ),
+                            )
+                        );
+                }
+                break;
+
+            case Company::TYPE_DISINFECT:
+
+                $companyWorkSheet->getColumnDimension('B')->setWidth(5);
+                $companyWorkSheet->getColumnDimension('C')->setWidth(30);
+                if($company->is_split) {
+                    $companyWorkSheet->getColumnDimension('K')->setAutoSize(true);
+                }
+
+                $companyWorkSheet->mergeCells("C$row:D$row");
+
+                $column = 1;
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "№");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Наименование работ, услуг");
+
+                $column = $column + 1;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Кол-во");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Ед.");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Цена");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Сумма");
+
+                foreach ($dataList as $data) {
+                    $num++;
+                    if ($this->company) {
+                        $total += $data->income;
+                    } else {
+                        $total += $data->expense;
+                    }
+                }
+
+                // Данные
+                $row++;
+                $column = 1;
+
+                //Сумма с ндс
+                if($companyNDS == 1) {
+                    $total = $total * 1.18;
+                }
+                //Сумма с ндс
+
+                $companyWorkSheet->mergeCells("C$row:D$row");
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, 1);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "Дезинфекция автотранспорта за " . $monthName[3] . date(' Y', $this->time) . "г.");
+
+                $column = $column + 1;
+
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $num);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, "шт");
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                $companyWorkSheet->setCellValueByColumnAndRow($column++, $row, $total);
+                // Данные
+
+                $companyWorkSheet->getStyle('B' . $rowStarts . ':H' . $rowStarts)->applyFromArray(array(
+                        'font' => array(
+                            'bold' => true,
+                            'color' => array('argb' => 'FF006699'),
+                        ),
+                    )
+                );
+
+                $companyWorkSheet->getStyle("B" . $rowStarts . ":H$row")
+                    ->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('argb' => 'FF000000'),
+                                ),
+                            ),
+                        )
+                    );
+
+                break;
+        }
+
+        //footer
+        if ($this->serviceType == Company::TYPE_DISINFECT) {
+            $row++;
+            $companyWorkSheet->setCellValue("G$row", "Итого:");
+            $companyWorkSheet->setCellValue("H$row", "$total");
+
+            // НДС
+            $row++;
+            $companyWorkSheet->mergeCells("F$row:G$row");
+
+            $companyWorkSheet->getStyle('F' . $row . ':G' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            if($companyNDS == 1) {
+                $companyWorkSheet->setCellValue('F' . $row , "В том числе НДС");
+                $companyWorkSheet->setCellValue('H' . $row , ($total * 18 / 118));
+
+                $companyWorkSheet->getStyle('H' . $row)->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    )
+                ));
+
+            } else {
+                $companyWorkSheet->setCellValue('F' . $row , "Без налога (НДС)");
+
+                $companyWorkSheet->getStyle('H' . $row)->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    )
+                ));
+
+                $companyWorkSheet->setCellValue('H' . $row , "-");
+            }
+            // НДС
+
+            $row++;$row++;
+            $companyWorkSheet->mergeCells("B$row:H$row");
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(23);
+            $companyWorkSheet->getStyle("B$row:H$row")->getAlignment()->setWrapText(true);
+
+            $text = "Общее количество обслуженных автотранспортных средств - " . $num;
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++;
+            $companyWorkSheet->mergeCells("B$row:H$row");
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+            $companyWorkSheet->getStyle("B$row:H$row")->getAlignment()->setWrapText(true);
+
+            // Количество символов после запятой
+            $intVal = (Int) $total;
+            $checkVal = $total - $intVal;
+
+            if($checkVal > 0) {
+                $total = sprintf("%.4f", $total);
+            } else {
+                $total = $intVal;
+            }
+            // Количество символов после запятой
+
+            $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей." . ($companyNDS == 1 ? '' : ' НДС нет.');
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++;
+            $companyWorkSheet->mergeCells("B$row:H$row");
+            $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+            $companyWorkSheet->getStyle("B$row:H$row")->getAlignment()->setWrapText(true);
+            $text = "Настоящий Акт составлен в 2 (двух) экземплярах, один из которых находится у Исполнителя, второй – у Заказчика.";
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++; $row++;
+            $companyWorkSheet->setCellValue("B$row", "Работу сдал");
+            $companyWorkSheet->mergeCells("G$row:H$row");
+            $companyWorkSheet->mergeCells("E$row:F$row");
+            $companyWorkSheet->setCellValue("E$row", "Работу принял");
+
+            $row++; $row++;
+            $companyWorkSheet->setCellValue("B$row", "Исполнитель");
+            $companyWorkSheet->mergeCells("G$row:H$row");
+            $companyWorkSheet->mergeCells("E$row:F$row");
+            $companyWorkSheet->setCellValue("E$row", "Заказчик");
+
+            $row++;
+            if($company->is_act_sign == 1) {
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/sign.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(50);
+                //печать
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/post.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(100);
+            } else if($company->is_act_sign == 2) {
+                //подпись
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/sign.png');
+                $objDrawing->setCoordinates("C$row");
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(50);
+            }
+
+            $row++;
+
+            $companyWorkSheet->mergeCells("B$row:D$row");
+            $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
+
+            $row++;
+            $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+            $companyWorkSheet->mergeCells("E$row:G$row");
+            $companyWorkSheet->setCellValue("E$row", "$company->director ____________");
+
+            $row++;
+
+            $companyWorkSheet->setCellValue("E$row", "М.П.");
+        } else {
+            $row++;
+            if ($this->serviceType == Company::TYPE_WASH) {
+                if($company->is_split) {
+                    $companyWorkSheet->setCellValue("I$row", "Итого:");
+                    $companyWorkSheet->setCellValue("I$row", "$total");
+                } else {
+                    $companyWorkSheet->setCellValue("H$row", "Итого:");
+                    $companyWorkSheet->setCellValue("I$row", "$total");
+                }
+            } else {
+                $companyWorkSheet->setCellValue("H$row", "Итого:");
+                $companyWorkSheet->setCellValue("I$row", "$total");
+            }
+
+            // НДС
+            $row++;
+            $companyWorkSheet->mergeCells("G$row:H$row");
+
+            $companyWorkSheet->getStyle('G' . $row . ':H' . $row)->applyFromArray(array(
+                'alignment' => array(
+                    'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                    'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                )
+            ));
+
+            if($companyNDS == 1) {
+                $companyWorkSheet->setCellValue('G' . $row , "В том числе НДС");
+                $companyWorkSheet->setCellValue('I' . $row , ($total * 18 / 118));
+
+                $companyWorkSheet->getStyle('I' . $row)->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    )
+                ));
+
+            } else {
+                $companyWorkSheet->setCellValue('G' . $row , "Без налога (НДС)");
+
+                $companyWorkSheet->getStyle('I' . $row)->applyFromArray(array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    )
+                ));
+
+                $companyWorkSheet->setCellValue('I' . $row , "-");
+            }
+            // НДС
+
+            $row++;$row++;
+            if ($this->serviceType == Company::TYPE_WASH) {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if ($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:I$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+            }
+
+            $text = "Общее количество обслуженных автотранспортных средств - " . $num;
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++;
+            if ($this->serviceType == Company::TYPE_WASH) {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if ($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:I$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+            }
+
+            // Количество символов после запятой
+            $intVal = (Int) $total;
+            $checkVal = $total - $intVal;
+
+            if($checkVal > 0) {
+                $total = sprintf("%.4f", $total);
+            } else {
+                $total = $intVal;
+            }
+            // Количество символов после запятой
+
+            $text = "Общая стоимость выполненных услуг составляет: $total (" . DigitHelper::num2str($total) . ") рублей." . ($companyNDS == 1 ? '' : ' НДС нет.');
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++;
+            if ($this->serviceType == Company::TYPE_WASH) {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if ($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:K$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+            } else {
+                $companyWorkSheet->mergeCells("B$row:I$row");
+                if($company->is_split) {
+                    $companyWorkSheet->mergeCells("B$row:I$row");
+                }
+                $companyWorkSheet->getRowDimension($row)->setRowHeight(30);
+                $companyWorkSheet->getStyle("B$row:I$row")->getAlignment()->setWrapText(true);
+
+            }
+            $text = "Настоящий Акт составлен в 2 (двух) экземплярах, один из которых находится у Исполнителя, второй – у Заказчика.";
+            $companyWorkSheet->setCellValue("B$row", $text);
+
+            $row++; $row++;
+            $companyWorkSheet->mergeCells("B$row:E$row");
+            $companyWorkSheet->mergeCells("G$row:I$row");
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells("G$row:I$row");
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue("B$row", "Работу сдал");
+                $companyWorkSheet->setCellValue("G$row", "Работу принял");
+            } else {
+                $companyWorkSheet->setCellValue("B$row", "Работу принял");
+                $companyWorkSheet->setCellValue("G$row", "Работу сдал");
+            }
+
+            $row++; $row++;
+            $companyWorkSheet->mergeCells("B$row:E$row");
+            $companyWorkSheet->mergeCells("G$row:I$row");
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells("G$row:I$row");
+            }
+            if ($this->company) {
+                $companyWorkSheet->setCellValue("B$row", "Исполнитель");
+                $companyWorkSheet->setCellValue("G$row", "Заказчик");
+            } else {
+                $companyWorkSheet->setCellValue("B$row", "Заказчик");
+                $companyWorkSheet->setCellValue("G$row", "Исполнитель");
+            }
+
+            $row++;
+            //подпись
+            if ($company->is_act_sign == 1) {
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName('Sample image');
+                $objDrawing->setDescription('Sample image');
+                $objDrawing->setPath('images/sign.png');
+
+                if ($this->serviceType == Company::TYPE_WASH) {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(50);
+                } else {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(10);
+                }
+                //печать
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setPath('images/post.png');
+                $objDrawing->setCoordinates("D$row");
+                $objDrawing->setResizeProportional(false);
+                $objDrawing->setWidth(100);
+                $objDrawing->setHeight(200);
+                $objDrawing->setWorksheet($companyWorkSheet);
+                $objDrawing->setOffsetX(30);
+            } else if ($company->is_act_sign == 2) {
+                $objDrawing = new \PHPExcel_Worksheet_Drawing();
+                $objDrawing->setName('Sample image');
+                $objDrawing->setDescription('Sample image');
+                $objDrawing->setPath('images/sign.png');
+
+                if ($this->serviceType == Company::TYPE_WASH) {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(50);
+                } else {
+                    $objDrawing->setCoordinates("C$row");
+                    $objDrawing->setWorksheet($companyWorkSheet);
+                    $objDrawing->setOffsetX(10);
+                }
+            }
+
+            $row++;
+
+            $companyWorkSheet->mergeCells("B$row:E$row");
+            if($this->serviceType == 2) {
+                $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Автомойка"');
+            } elseif($this->serviceType == 3) {
+                $companyWorkSheet->setCellValue("B$row", 'Руководитель Управления Сервисного обслуживания');
+            } elseif($this->serviceType == 4) {
+                $companyWorkSheet->setCellValue("B$row", 'Руководитель отдела "Шиномонтаж" ');
+            } elseif($this->serviceType == 5) {
+                $companyWorkSheet->setCellValue("B$row", 'Генеральный директор');
+            }
+
+            $row++;
+            $companyWorkSheet->mergeCells("B$row:E$row");
+            $companyWorkSheet->mergeCells("G$row:I$row");
+            if($company->is_split) {
+                $companyWorkSheet->mergeCells("G$row:I$row");
+            }
+
+            $docNumberMember = "";
+
+            if($this->serviceType == 2) {
+                $companyWorkSheet->setCellValue("B$row", "Филиппова О.С. ____________");
+                $docNumberMember = "№10/05-2017 от 10.05.2017";
+            } elseif($this->serviceType == 3) {
+                $companyWorkSheet->setCellValue("B$row", "Меркулова Ю. Ф. ____________");
+                $docNumberMember = "№6 от 25.04.2017";
+            } elseif($this->serviceType == 4) {
+                $companyWorkSheet->setCellValue("B$row", "Григорян М.К. ____________");
+                $docNumberMember = "№01/05-2017 от 01.05.2017";
+            } elseif($this->serviceType == 5) {
+                $companyWorkSheet->setCellValue("B$row", "Петросян А.Р. ____________");
+                $docNumberMember = "";
+            }
+
+            $companyWorkSheet->setCellValue("G$row", "$company->director ____________");
+
+            $row++;
+            $rowMP = $row;
+
+            if($this->serviceType != 5) {
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", "на основании доверенности");
+
+                $row++;
+
+                $companyWorkSheet->mergeCells("B$row:E$row");
+                $companyWorkSheet->setCellValue("B$row", $docNumberMember);
+
+                $rowMP = $row - 1;
+            }
+
+            $companyWorkSheet->setCellValue("G$rowMP", "М.П.");
+        }
+
+        //saving document
+        $type = Service::$listType[$this->serviceType]['en'];
+        $path = "files/new_acts/" . ($this->company ? 'client' : 'partner') . "/$type/" . date('m-Y', $this->time);
+        if (!is_dir($path)) {
+            mkdir($path, 0755, 1);
+        }
+        if ($this->serviceType == Company::TYPE_SERVICE) {
+            $first = $dataList[0];
+            $filename = "Акт от " . date('d-m-Y ', $first->served_at) . str_replace('ё', 'е', $company->name) . " - {$first->car_number} - {$first->id}" . ".xls";
+        } else {
+            $filename = $serviceDescription. " Акт от " . date('m-Y ', $this->time) . str_replace('ё', 'е', $company->name) . ".xls";
+        }
+        $fullFilename = str_replace(' ', '_', "$path/" . str_replace('"', '', "$filename"));
+        $objWriter->save($fullFilename);
+        if ($zip) $zip->addFile($fullFilename, iconv('utf-8', 'cp866', $filename));
+
+    }
+    // Новая форма акта
 
 }
