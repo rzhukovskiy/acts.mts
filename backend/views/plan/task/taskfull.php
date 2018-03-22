@@ -234,7 +234,7 @@ echo Tabs::widget([
             <tr>
                 <td class="list-label-md">
                     <?= $model->getAttributeLabel('task') ?></td>
-                <td>
+                <td style='word-break: break-all;'>
                     <?= Editable::widget([
                         'model' => $model,
                         'buttonsTemplate' => '{submit}',

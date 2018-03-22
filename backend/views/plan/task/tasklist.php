@@ -235,8 +235,8 @@ if ($type == 1) {
                 }
 
             },
-            'contentOptions' =>function ($model, $key, $index, $column){
-                 return ['data-task' => $model->id];
+            'contentOptions' => function ($model, $key, $index, $column){
+                 return ['data-task' => $model->id, 'style' => 'min-width: 500px; word-break: break-all;'];
             },
         ],
         [
@@ -343,7 +343,7 @@ if ($type == 1) {
             'contentOptions' => function ($data) {
                 return [
                     'class' => TaskUser::colorForExecutionStatus($data->status),
-                    'style' => 'width: 155px',
+                    'style' => 'min-width: 155px; vertical-align:middle',
                 ];
             },
         ],
@@ -426,7 +426,7 @@ if ($type == 1) {
 
             },
             'contentOptions' =>function ($model, $key, $index, $column){
-                return ['data-task' => $model->id];
+                return ['data-task' => $model->id, 'style' => 'min-width: 500px; word-break: break-all;'];
             },
         ],
         [
@@ -551,7 +551,7 @@ if ($type == 1) {
             'contentOptions' => function ($data) {
                 return [
                     'class' => TaskUser::colorForExecutionStatus($data->status),
-                    'style' => 'width: 155px',
+                    'style' => 'min-width: 155px; vertical-align:middle',
                 ];
             },
         ],
@@ -597,14 +597,14 @@ if ($type == 1) {
             'value' => function ($data) {
 
                 if ($data->task) {
-                    return '<span class="showStatus">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
+                    return '<span class="showStatus" style="width: 200px; overflow: hidden;">' . (((isset($data->title)) && (mb_strlen($data->title) > 1)) ? ('<b>Тема: ' . $data->title . '</b><br />') : "") . mb_substr(nl2br($data->task), 0, 300) . '</span>' . (mb_strlen($data->task) > 300 ? ('&nbsp&nbsp<a target="_blank" href="/plan/taskfull?id=' . $data->id . '" style="color: darkred">Подробнее</a>') : '');
                 } else {
                     return '-';
                 }
 
             },
             'contentOptions' =>function ($model, $key, $index, $column){
-                return ['data-task' => $model->id];
+                return ['data-task' => $model->id, 'style' => 'min-width: 500px; word-break: break-all;'];
             },
         ],
         [
@@ -726,7 +726,7 @@ if ($type == 1) {
             'contentOptions' => function ($data) {
                 return [
                     'class' => TaskUser::colorForExecutionStatus($data->status),
-                    'style' => 'width: 155px',
+                    'style' => 'min-width: 155px; vertical-align:middle',
                 ];
             },
         ],
@@ -779,7 +779,7 @@ if ($type == 1) {
 
             },
             'contentOptions' =>function ($model, $key, $index, $column){
-                return ['data-task' => $model->id];
+                return ['data-task' => $model->id, 'style' => 'min-width: 500px; word-break: break-all;'];
             },
         ],
         [
@@ -912,7 +912,7 @@ if ($type == 1) {
             'contentOptions' => function ($data) {
                 return [
                     'class' => TaskUser::colorForExecutionStatus($data->status),
-                    'style' => 'width: 155px',
+                    'style' => 'min-width: 155px; vertical-align:middle',
                 ];
             },
         ],

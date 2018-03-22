@@ -260,6 +260,7 @@ $css = ".modal {
 ";
 $this->registerCss($css);
 
+
 if ($type == 1) {
     $name = 'Выигранные';
     $nameTitle = 'Статистика выигранных тендеров';
