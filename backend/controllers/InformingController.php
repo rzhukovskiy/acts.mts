@@ -38,7 +38,7 @@ class InformingController extends Controller
     public function actionCreate()
     {
 
-        $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id]])->select('id, username')->indexby('id')->asArray()->all();
+        $userListsID = User::find()->where(['AND', ['!=', 'role', User::ROLE_CLIENT], ['!=', 'role', User::ROLE_PARTNER], ['!=', 'id', Yii::$app->user->identity->id], ['!=', 'status', 0]])->select('id, username')->indexby('id')->asArray()->all();
 
         $model = new Informing();
         $model->from_user = Yii::$app->user->identity->id;
