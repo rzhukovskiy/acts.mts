@@ -220,7 +220,7 @@ $column = [
                 'valueIfNull'     => '(не задано)',
                 'buttonsTemplate' => '{submit}',
                 'displayValue'    => mb_substr(nl2br($data->text), 0, 300) . (mb_strlen($data->text) > 300 ? ('.........') : ''),
-                'disabled'        => $data->is_archive ? true : false,
+                'disabled'        => (($data->is_archive == 0) && (Yii::$app->user->identity->id == $data->from_user || Yii::$app->user->identity->role == User::ROLE_ADMIN)) ? false : true,
                 'submitButton'    => [
                     'icon' => '<i class="glyphicon glyphicon-ok"></i>',
                 ],
