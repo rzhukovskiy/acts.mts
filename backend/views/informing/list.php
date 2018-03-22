@@ -30,6 +30,7 @@ $('.change-agree_status').each(function (id, value) {
        if (thisId.data('agreestatus') == 1) {
           thisId.parent('td').addClass("btn-success");
           thisId.val('1');
+          thisId.prop('disabled',true);
        } else {
           thisId.parent('td').addClass("btn-danger");
           thisId.val('0');
@@ -58,6 +59,7 @@ $('.change-agree_status').each(function (id, value) {
                 thisId.parent('td').removeClass();
                  if (informingVal == 1) {
                       thisId.parent('td').addClass("btn-success");
+                      thisId.prop('disabled',true);
                  } else {
                       thisId.parent('td').addClass("btn-danger");
                  }
