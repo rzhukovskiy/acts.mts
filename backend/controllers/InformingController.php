@@ -204,7 +204,7 @@ class InformingController extends Controller
                     if ($usersList[$i]['status'] == 1) {
                         $agree = 'Ознакомлен';
                     } else {
-                        $agree = 'Не ознакомлен';
+                        $agree = '<b>Не ознакомлен</b>';
                     }
 
                     $resText .= '<tr><td>' . $nameUser . '</td><td>&nbsp - &nbsp</td><td>' . $agree . '</td></tr>';
